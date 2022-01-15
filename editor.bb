@@ -9070,12 +9070,12 @@ Function CameraControls()
 		
 		TurnEntity Camera1,0,1,0
 	EndIf
-	If KeyDown(55) ;Or KeyDown(4)
+	If KeyDown(55) ;Or KeyDown(4) ; numpad *
 		
 		TurnEntity Camera1,0,-1,0
 	EndIf
 	
-	If KeyDown(76) ; numpad 5 or ???
+	If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
 		; reset camera rotation
 		RotateEntity Camera1,65,0,0
 	EndIf
