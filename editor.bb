@@ -2944,18 +2944,20 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				NewWidth=InputInt("Enter Width: ")
-				DeltaWidth=NewWidth-levelWidth
-				If NewWidth>levelWidth
-					For i=1 To DeltaWidth
-						WidthLeftChange=1
-						ResizeLevel()
-					Next
-				ElseIf NewWidth<levelWidth
-					For i=1 To -DeltaWidth
-						WidthLeftChange=-1
-						ResizeLevel()
-					Next
-				EndIf
+				DeltaWidth=NewWidth-LevelWidth
+				;If NewWidth>LevelWidth
+				;	For i=1 To DeltaWidth
+				;		WidthLeftChange=1
+				;		ResizeLevel()
+				;	Next
+				;ElseIf NewWidth<LevelWidth
+				;	For i=1 To -DeltaWidth
+				;		WidthLeftChange=-1
+				;		ResizeLevel()
+				;	Next
+				;EndIf
+				WidthLeftChange=DeltaWidth
+				ReSizeLevel()
 			Else
 				WidthLeftChange=1
 				ReSizeLevel()
@@ -2973,18 +2975,20 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				NewWidth=InputInt("Enter Width: ")
-				DeltaWidth=NewWidth-levelWidth
-				If NewWidth>levelWidth
-					For i=1 To DeltaWidth
-						WidthRightChange=1
-						ResizeLevel()
-					Next
-				ElseIf NewWidth<levelWidth
-					For i=1 To -DeltaWidth
-						WidthRightChange=-1
-						ResizeLevel()
-					Next
-				EndIf
+				DeltaWidth=NewWidth-LevelWidth
+				;If NewWidth>LevelWidth
+				;	For i=1 To DeltaWidth
+				;		WidthRightChange=1
+				;		ResizeLevel()
+				;	Next
+				;ElseIf NewWidth<LevelWidth
+				;	For i=1 To -DeltaWidth
+				;		WidthRightChange=-1
+				;		ResizeLevel()
+				;	Next
+				;EndIf
+				WidthRightChange=DeltaWidth
+				ReSizeLevel()
 			Else
 				WidthRightChange=1
 				ReSizeLevel()
@@ -3016,17 +3020,19 @@ Function EditorLocalControls()
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				NewHeight=InputInt("Enter Height: ")
 				DeltaHeight=NewHeight-LevelHeight
-				If NewHeight>LevelHeight
-					For i=1 To DeltaHeight
-						HeightTopChange=1
-						ResizeLevel()
-					Next
-				ElseIf NewHeight<LevelHeight
-					For i=1 To -DeltaHeight
-						HeightTopChange=-1
-						ResizeLevel()
-					Next
-				EndIf
+				;If NewHeight>LevelHeight
+				;	For i=1 To DeltaHeight
+				;		HeightTopChange=1
+				;		ResizeLevel()
+				;	Next
+				;ElseIf NewHeight<LevelHeight
+				;	For i=1 To -DeltaHeight
+				;		HeightTopChange=-1
+				;		ResizeLevel()
+				;	Next
+				;EndIf
+				HeightTopChange=DeltaHeight
+				ResizeLevel()
 			Else
 				HeightTopChange=1
 				ReSizeLevel()
@@ -3045,17 +3051,19 @@ Function EditorLocalControls()
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				NewHeight=InputInt("Enter Height: ")
 				DeltaHeight=NewHeight-LevelHeight
-				If NewHeight>LevelHeight
-					For i=1 To DeltaHeight
-						HeightBottomChange=1
-						ResizeLevel()
-					Next
-				ElseIf NewHeight<LevelHeight
-					For i=1 To -DeltaHeight
-						HeightBottomChange=-1
-						ResizeLevel()
-					Next
-				EndIf
+				;If NewHeight>LevelHeight
+				;	For i=1 To DeltaHeight
+				;		HeightBottomChange=1
+				;		ResizeLevel()
+				;	Next
+				;ElseIf NewHeight<LevelHeight
+				;	For i=1 To -DeltaHeight
+				;		HeightBottomChange=-1
+				;		ResizeLevel()
+				;	Next
+				;EndIf
+				HeightBottomChange=DeltaHeight
+				ResizeLevel()
 			Else
 				HeightBottomChange=1
 				ReSizeLevel()
@@ -8736,6 +8744,19 @@ End Function
 
 Function ReSizeLevel()
 
+	If LevelWidth+WidthLeftChange>100
+		WidthLeftChange=100-LevelWidth
+	EndIf
+	If LevelWidth+WidthRightChange>100
+		WidthRightChange=100-LevelWidth
+	EndIf
+	If LevelHeight+HeightTopChange>100
+		HeightTopChange=100-LevelHeight
+	EndIf
+	If LevelHeight+HeightBottomChange>100
+		HeightBottomChange=100-LevelHeight
+	EndIf
+
 	CopyLevel()
 	ResetLevel()
 	For i=0 To LevelWidth-1
@@ -8794,8 +8815,6 @@ Function ReSizeLevel()
 		EndIf
 	EndIf
 
-
-
 	
 	LevelWidth=LevelWidth+WidthLeftChange+WidthRightChange
 	LevelHeight=LevelHeight+HeightTopChange+HeightBottomChange
@@ -8806,6 +8825,7 @@ Function ReSizeLevel()
 			UpdateWaterTile(i,j)
 		Next
 	Next
+	
 	
 	; and move the object
 	If WidthLeftChange<>0
