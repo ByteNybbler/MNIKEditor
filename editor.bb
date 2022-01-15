@@ -3130,6 +3130,9 @@ Function EditorLocalControls()
 				LeftMouseReleased=False
 				EditorMode=3
 				PasteObjectData(CurrentGrabbedObject)
+			ElseIf DeleteKey=True And DeleteKeyReleased=True
+				DeleteKeyReleased=False
+				DeleteObject(CurrentGrabbedObject)
 			EndIf
 		EndIf
 	EndIf
