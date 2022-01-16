@@ -780,12 +780,12 @@ Global BarrelMesh,BarrelTexture1,BarrelTexture2,BarrelTexture3
 BarrelMesh=MyLoadMesh("data\models\barrels\barrel.b3d",0)
 BarrelTexture1=MyLoadTexture("Data\models\barrels\barrel1.jpg",1)
 BarrelTexture2=MyLoadTexture("Data\models\barrels\barrel2.jpg",1)
-BarrelTexture3=MyLoadTexture("Data\models\barrels\barrel3.jpg",1)
+BarrelTexture3=MyLoadTexture("Data\newmodels\barrels\barrel3.jpg",1)
 HideEntity BarrelMesh
 
 ; Prism
-Global PrismMesh=MyLoadMesh ("data\models\retro\prism.3ds",0)
-Global PrismTexture=MyLoadTexture ("data\models\retro\prism.jpg",1)
+Global PrismMesh=MyLoadMesh ("data\newmodels\retro\prism.3ds",0)
+Global PrismTexture=MyLoadTexture ("data\newmodels\retro\prism.jpg",1)
 EntityTexture PrismMesh,PrismTexture
 HideEntity PrismMesh
 
@@ -3090,6 +3090,10 @@ Function EditorLocalControls()
 	Color 255,255,255
 	Text StartX+92-11*4,StartY,"ADJUSTMENTS"
 	
+	If CurrentGrabbedObject<>-1
+		Text StartX+2,StartY,"#"+CurrentGrabbedObject
+	EndIf
+	
 	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
 		
 		DisplayObjectAdjuster(i)
@@ -3978,8 +3982,12 @@ Function LoadObjectPreset()
 	CurrentObjectFutureInt16=ReadInt(file)
 	CurrentObjectExclamation=ReadInt(file)
 	CurrentObjectShadow=ReadInt(file)
-	CurrentObjectLinked=ReadInt(file)
-	CurrentObjectLinkBack=ReadInt(file)
+	;CurrentObjectLinked=ReadInt(file)
+	ReadInt(file)
+	CurrentObjectLinked=-1
+	;CurrentObjectLinkBack=ReadInt(file)
+	ReadInt(file)
+	CurrentObjectLinkBack=-1
 	CurrentObjectFutureInt21=ReadInt(file)
 	CurrentObjectFrozen=ReadInt(file)
 	CurrentObjectFutureInt23=ReadInt(file)
@@ -4104,6 +4112,16 @@ Function LoadObjectPreset()
 	NofObjectAdjusters=NofObjectAdjusters+1
 	ObjectAdjuster$(NofObjectAdjusters)="Teleportable"
 	NofObjectAdjusters=NofObjectAdjusters+1
+	ObjectAdjuster$(NofObjectAdjusters)="Linked"
+	NofObjectAdjusters=NofObjectAdjusters+1
+	ObjectAdjuster$(NofObjectAdjusters)="LinkBack"
+	NofObjectAdjusters=NofObjectAdjusters+1
+	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDX"
+	;NofObjectAdjusters=NofObjectAdjusters+1
+	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDY"
+	;NofObjectAdjusters=NofObjectAdjusters+1
+	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDZ"
+	;NofObjectAdjusters=NofObjectAdjusters+1
 	
 	CloseFile file
 	
@@ -4634,7 +4652,34 @@ Function DeleteObject(i)
 	For j=i+1 To NofObjects-1
 		CopyObjectData(j,j-1)
 	Next
+	
 	NofObjects=NofObjects-1
+	
+	For j=0 To NofObjects-1
+		If ObjectLinked(j)=i
+			ObjectLinked(j)=-1
+		Else If ObjectLinked(j)>i
+			ObjectLinked(j)=ObjectLinked(j)-1
+		EndIf
+		
+		If ObjectLinkBack(j)=i
+			ObjectLinkBack(j)=-1
+		Else If ObjectLinkBack(j)>i
+			ObjectLinkBack(j)=ObjectLinkBack(j)-1
+		EndIf
+	Next
+	
+	If CurrentObjectLinked=i
+		CurrentObjectLinked=-1
+	Else If CurrentObjectLinked>i
+		CurrentObjectLinked=CurrentObjectLinked-1
+	EndIf
+	
+	If CurrentObjectLinkBack=i
+		CurrentObjectLinkBack=-1
+	Else If CurrentObjectLinkBack>i
+		CurrentObjectLinkBack=CurrentObjectLinkBack-1
+	EndIf
 	
 
 End Function
@@ -6618,6 +6663,18 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectScaleAdjust)
 	Case "Exclamation"
 		tex$=Str$(CurrentObjectExclamation)
+		
+	Case "Linked"
+		tex$=Str$(CurrentObjectLinked)
+	Case "LinkBack"
+		tex$=Str$(CurrentObjectLinkBack)
+		
+	Case "ObjectDX"
+		tex$=Str$(CurrentObjectDX)
+	Case "ObjectDY"
+		tex$=Str$(CurrentObjectDY)
+	Case "ObjectDZ"
+		tex$=Str$(CurrentObjectDZ)
 
 
 
@@ -7678,6 +7735,18 @@ Function AdjustObjectAdjuster(i)
 
 	Case "Exclamation"
 		CurrentObjectExclamation=AdjustInt("Exclamation: ", CurrentObjectExclamation, 1, 10, 150)
+	
+	Case "Linked"
+		CurrentObjectLinked=AdjustInt("Linked: ", CurrentObjectLinked, 1, 10, 150)
+	Case "LinkBack"
+		CurrentObjectLinkBack=AdjustInt("LinkBack: ", CurrentObjectLinkBack, 1, 10, 150)
+		
+	Case "ObjectDX"
+		CurrentObjectDX=AdjustFloat#("ObjectDX: ", CurrentObjectDX, 0.01, 0.1, 150)
+	Case "ObjectDY"
+		CurrentObjectDY=AdjustFloat#("ObjectDY: ", CurrentObjectDY, 0.01, 0.1, 150)
+	Case "ObjectDZ"
+		CurrentObjectDZ=AdjustFloat#("ObjectDZ: ", CurrentObjectDZ, 0.01, 0.1, 150)
 
 
 
@@ -9198,7 +9267,7 @@ Function SaveLevel()
 	
 	; Objects
 	
-	
+	PlayerIndex=ObjectIndexEditorToGameInner(NofObjects)
 	
 	WriteInt file,NofObjects
 	For i=0 To NofObjects-1
@@ -9304,8 +9373,10 @@ Function SaveLevel()
 		WriteInt file,ObjectFutureInt16(Dest)
 		WriteInt file,ObjectExclamation(Dest)
 		WriteInt file,ObjectShadow(Dest)
-		WriteInt file,-1;ObjectLinked(Dest)
-		WriteInt file,-1;ObjectLinkBack(Dest)
+		;WriteInt file,-1;ObjectLinked(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectLinked(Dest), PlayerIndex)
+		;WriteInt file,-1;ObjectLinkBack(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectLinkBack(Dest), PlayerIndex)
 		WriteInt file,ObjectFutureInt21(Dest)
 		WriteInt file,ObjectFrozen(Dest)
 		WriteInt file,ObjectFutureInt23(Dest)
@@ -9690,39 +9761,39 @@ Function LoadLevel(levelnumber)
 			
 			
 			
-	If CurrentHatModel>0
-	
+		If CurrentHatModel>0
 		
-		EntityTexture CurrentHatModel,CurrentHatTexture
-		ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
-		RotateEntity CurrentHatModel,0,0,0
-		TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
+			
+			EntityTexture CurrentHatModel,CurrentHatTexture
+			ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
+			RotateEntity CurrentHatModel,0,0,0
+			TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+			TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
+			
+			bone=FindChild(CurrentObjectModel,"hat_bone")
 		
-		bone=FindChild(CurrentObjectModel,"hat_bone")
+			PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 	
-		PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
-
-
-	EndIf
 	
-	If CurrentAccModel>0
-	
+		EndIf
 		
-		EntityTexture CurrentAccModel,CurrentAccTexture
-		ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
-		RotateEntity CurrentAccModel,0,0,0
-		TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
+		If CurrentAccModel>0
 		
-		bone=FindChild(CurrentObjectModel,"hat_bone")
+			
+			EntityTexture CurrentAccModel,CurrentAccTexture
+			ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
+			RotateEntity CurrentAccModel,0,0,0
+			TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+			TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
+			
+			bone=FindChild(CurrentObjectModel,"hat_bone")
+		
+			PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 	
-		PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
-
-
-	EndIf
+	
+		EndIf
 
 
 	
@@ -10247,6 +10318,16 @@ Function LoadLevel(levelnumber)
 		
 
 	Next
+	
+	
+	; finalize object data
+	;PlayerIndex=ObjectIndexGameToEditorInner(NofObjects)
+	PlayerIndex=NofObjects
+	For j=0 To NofObjects-1
+		ObjectLinked(j)=ObjectIndexGameToEditor(ObjectLinked(j), PlayerIndex)
+		ObjectLinkBack(j)=ObjectIndexGameToEditor(ObjectLinkBack(j), PlayerIndex)
+	Next
+	
 	
 	LevelEdgeStyle=ReadInt(file)
 	
@@ -16113,6 +16194,141 @@ Function SpecialFolderLocation$(folderID)
 	FreeBank str_bank
 	
 	Return location$
+
+End Function
+
+Function ObjectIndexEditorToGameInner(Index)
+
+	Result=Index
+	
+	For i=0 To Index-1
+		If ObjectHasShadow(i)
+			Result=Result+1
+		EndIf
+		Result=Result+ObjectCountAccessories(i)
+	Next
+	
+	Return Result
+
+End Function
+
+Function ObjectIndexEditorToGame(Index, PlayerIndex)
+
+	If Index=-2
+		Return PlayerIndex
+	Else
+		Return ObjectIndexEditorToGameInner(Index)
+	EndIf
+
+End Function
+
+Function ObjectIndexGameToEditorInner(Index)
+
+	Result=Index
+	
+	For i=0 To Result-1
+		If ObjectHasShadow(i)
+			Result=Result-1
+		EndIf
+		Result=Result-ObjectCountAccessories(i)
+	Next
+	
+	Return Result
+
+End Function
+
+Function ObjectIndexGameToEditor(Index, PlayerIndex)
+
+	Result=ObjectIndexGameToEditorInner(Index)
+	If Result=PlayerIndex
+		Return -2
+	Else
+		Return Result
+	EndIf
+	
+	;If Index=PlayerIndex
+	;	Return -2
+	;Else
+	;	Return ObjectIndexGameToEditorInner(Index)
+	;EndIf
+
+End Function
+
+; reflects the in-game logic for spawning shadows
+Function ObjectHasShadow(Dest)
+
+	Select ObjectModelName$(Dest)
+
+	Case "!StinkerWee","!Scritter","!BabyBoomer","!RainbowBubble"
+		Return True
+	Case "!Turtle","!Thwart","!Troll"
+		Return True
+	Case "!Chomper","!Bowler","!Kaboom"
+		Return True
+	Case "!Crab"
+		Return True
+	Case "!FlipBridge"
+		Return True
+	Case "!NPC" ; Normally this shadow is created by the CreateStinkerModel function.
+		Return True
+	Default
+		Return False
+	End Select
+
+End Function
+
+
+Function ObjectCountAccessories(Dest)
+
+	If ObjectModelName$(Dest)="!NPC"
+		Code$="!T"
+		If ObjectData(Dest,0)<10
+			Code$=Code$+"00"+Str$(ObjectData(Dest,0))
+		Else If ObjectData(Dest,0)<100
+			Code$=Code$+"0"+Str$(ObjectData(Dest,0))
+		Else
+			Code$=Code$+Str$(ObjectData(Dest,0))
+		EndIf
+		Code$=Code$+Chr$(65+ObjectData(Dest,1))
+		If ObjectData(Dest,2)>0
+			If ObjectData(Dest,2)<10
+				 Code$=Code$+"00"+Str$(ObjectData(Dest,2))
+			Else If ObjectData(Dest,2)<100
+				 Code$=Code$+"0"+Str$(ObjectData(Dest,2))
+			Else
+				 Code$=Code$+""+Str$(ObjectData(Dest,2))
+			EndIf
+			Code$=Code$+Chr$(64+ObjectData(dest,3))+"0"
+		EndIf
+		If ObjectData(Dest,4)>0 And ObjectData(Dest,2)>0 Then Code$=Code$+" "
+		If ObjectData(Dest,4)>0
+			If ObjectData(Dest,4)<10
+				 Code$=Code$+"00"+Str$(ObjectData(Dest,4))
+			Else If ObjectData(Dest,4)<100
+				 Code$=Code$+"0"+Str$(ObjectData(Dest,4))
+			Else
+				 Code$=Code$+""+Str$(ObjectData(Dest,4))
+			EndIf
+			Code$=Code$+Chr$(65+ObjectData(dest,5))+"0"
+		EndIf
+		
+		Return CodeCountAccessories(Code$)
+	Else
+		Return 0
+	EndIf
+
+End Function
+
+
+Function CodeCountAccessories(code$)
+
+	Result=0
+	
+	For j=1 To (Len(code$)-5)/6
+		Result=Result+1
+	Next
+	
+	Return Result
 
 End Function
 
