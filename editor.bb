@@ -4076,6 +4076,7 @@ Function LoadObjectPreset()
 	;AddAdjuster("ObjectDZ")
 	AddAdjuster("MoveXGoal")
 	AddAdjuster("MoveYGoal")
+	AddAdjuster("Speed")
 	AddAdjuster("Indigo")
 	;AddAdjuster("Flying")
 	AddAdjuster("Caged")
@@ -6710,6 +6711,9 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Indigo"
 		tex$=Str$(CurrentObjectIndigo)
+		
+	Case "Speed"
+		tex$=Str$(CurrentObjectSpeed)
 
 
 
@@ -7808,6 +7812,9 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "Indigo"
 		CurrentObjectIndigo=AdjustInt("Indigo: ", CurrentObjectIndigo, 1, 10, 150)
+		
+	Case "Speed"
+		CurrentObjectSpeed=AdjustFloat#("Speed: ", CurrentObjectSpeed, 0.01, 0.1, 150)
 
 
 
