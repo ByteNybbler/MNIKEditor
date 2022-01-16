@@ -369,7 +369,7 @@ Dim ObjectTalkable(1000),ObjectCurrentAnim(1000),ObjectStandardAnim(1000),Object
 Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectMovementTimer(1000),ObjectMovementSpeed(1000),ObjectMoveXGoal(1000)
 Dim ObjectMoveYGoal(1000),ObjectFutureInt12(1000),ObjectFutureInt13(1000),ObjectCaged(1000),ObjectDead(1000)
 Dim ObjectDeadTimer(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
-Dim ObjectFlying(1000),ObjectFrozen(1000),ObjectFutureInt23(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
+Dim ObjectFlying(1000),ObjectFrozen(1000),ObjectIndigo(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
 Dim ObjectScaleAdjust#(1000),ObjectFutureFloat2#(1000),ObjectFutureFloat3#(1000),ObjectFutureFloat4#(1000),ObjectFutureFloat5#(1000)
 Dim ObjectFutureFloat6#(1000),ObjectFutureFloat7#(1000),ObjectFutureFloat8#(1000),ObjectFutureFloat9#(1000),ObjectFutureFloat10#(1000)
 Dim ObjectFutureString1$(1000),ObjectFutureString2$(1000)
@@ -412,7 +412,7 @@ Global CurrentObjectTalkable,CurrentObjectCurrentAnim,CurrentObjectStandardAnim,
 Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectMovementTimer,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
 Global CurrentObjectMoveYGoal,CurrentObjectFutureInt12,CurrentObjectFutureInt13,CurrentObjectCaged,CurrentObjectDead
 Global CurrentObjectDeadTimer,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
-Global CurrentObjectFlying,CurrentObjectFrozen,CurrentObjectFutureInt23,CurrentObjectFutureInt24,CurrentObjectFutureInt25
+Global CurrentObjectFlying,CurrentObjectFrozen,CurrentObjectIndigo,CurrentObjectFutureInt24,CurrentObjectFutureInt25
 Global CurrentObjectScaleAdjust#,CurrentObjectFutureFloat2#,CurrentObjectFutureFloat3#,CurrentObjectFutureFloat4#,CurrentObjectFutureFloat5#
 Global CurrentObjectFutureFloat6#,CurrentObjectFutureFloat7#,CurrentObjectFutureFloat8#,CurrentObjectFutureFloat9#,CurrentObjectFutureFloat10#
 Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
@@ -3990,7 +3990,7 @@ Function LoadObjectPreset()
 	CurrentObjectLinkBack=-1
 	CurrentObjectFlying=ReadInt(file)
 	CurrentObjectFrozen=ReadInt(file)
-	CurrentObjectFutureInt23=ReadInt(file)
+	CurrentObjectIndigo=ReadInt(file)
 	CurrentObjectFutureInt24=ReadInt(file)
 	CurrentObjectFutureInt25=ReadInt(file)
 
@@ -4076,9 +4076,10 @@ Function LoadObjectPreset()
 	;AddAdjuster("ObjectDZ")
 	AddAdjuster("MoveXGoal")
 	AddAdjuster("MoveYGoal")
-	AddAdjuster("Flying")
-	;AddAdjuster("Caged")
-	;AddAdjuster("Dead")
+	AddAdjuster("Indigo")
+	;AddAdjuster("Flying")
+	AddAdjuster("Caged")
+	AddAdjuster("Dead")
 	;AddAdjuster("DeadTimer")
 	;AddAdjuster("MovementTimer")
 
@@ -4296,7 +4297,7 @@ Function PlaceObject(x#,y#)
 	ObjectLinkBack(NofObjects)=CurrentObjectLinkBack
 	ObjectFlying(NofObjects)=CurrentObjectFlying
 	ObjectFrozen(NofObjects)=CurrentObjectFrozen
-	ObjectFutureInt23(NofObjects)=CurrentObjectFutureInt23
+	ObjectIndigo(NofObjects)=CurrentObjectIndigo
 	ObjectFutureInt24(NofObjects)=CurrentObjectFutureInt24
 	ObjectFutureInt25(NofObjects)=CurrentObjectFutureInt25
 
@@ -4503,7 +4504,7 @@ Function GrabObject(x#,y#)
 	CurrentObjectLinkBack=ObjectLinkBack(Dest)
 	CurrentObjectFlying=ObjectFlying(Dest)
 	CurrentObjectFrozen=ObjectFrozen(Dest)
-	CurrentObjectFutureInt23=ObjectFutureInt23(Dest)
+	CurrentObjectIndigo=ObjectIndigo(Dest)
 	CurrentObjectFutureInt24=ObjectFutureInt24(Dest)
 	CurrentObjectFutureInt25=ObjectFutureInt25(Dest)
 
@@ -4792,7 +4793,7 @@ Function CopyObjectData(Source,Dest)
 	ObjectLinkBack(Dest)=ObjectLinkBack(Source)
 	ObjectFlying(Dest)=ObjectFlying(Source)
 	ObjectFrozen(Dest)=ObjectFrozen(Source)
-	ObjectFutureInt23(Dest)=ObjectFutureInt23(Source)
+	ObjectIndigo(Dest)=ObjectIndigo(Source)
 	ObjectFutureInt24(Dest)=ObjectFutureInt24(Source)
 	ObjectFutureInt25(Dest)=ObjectFutureInt25(Source)
 	ObjectScaleAdjust(Dest)=ObjectScaleAdjust(Source)
@@ -4928,7 +4929,7 @@ Function PasteObjectData(Dest)
 	ObjectLinkBack(Dest)=CurrentObjectLinkBack
 	ObjectFlying(Dest)=CurrentObjectFlying
 	ObjectFrozen(Dest)=CurrentObjectFrozen
-	ObjectFutureInt23(Dest)=CurrentObjectFutureInt23
+	ObjectIndigo(Dest)=CurrentObjectIndigo
 	ObjectFutureInt24(Dest)=CurrentObjectFutureInt24
 	ObjectFutureInt25(Dest)=CurrentObjectFutureInt25
 	ObjectScaleAdjust(Dest)=CurrentObjectScaleAdjust
@@ -6706,6 +6707,9 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		tex$=CurrentObjectFlying+" ("+State+")"
+		
+	Case "Indigo"
+		tex$=Str$(CurrentObjectIndigo)
 
 
 
@@ -7801,6 +7805,9 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "Flying"
 		CurrentObjectFlying=AdjustInt("Flying: ", CurrentObjectFlying, 1, 10, 150)
+		
+	Case "Indigo"
+		CurrentObjectIndigo=AdjustInt("Indigo: ", CurrentObjectIndigo, 1, 10, 150)
 
 
 
@@ -9435,7 +9442,7 @@ Function SaveLevel()
 		WriteInt file,ObjectIndexEditorToGame(ObjectLinkBack(Dest), PlayerIndex)
 		WriteInt file,ObjectFlying(Dest)
 		WriteInt file,ObjectFrozen(Dest)
-		WriteInt file,ObjectFutureInt23(Dest)
+		WriteInt file,ObjectIndigo(Dest)
 		WriteInt file,ObjectFutureInt24(Dest)
 		WriteInt file,ObjectFutureInt25(Dest)
 		WriteFloat file,ObjectScaleAdjust(Dest)
@@ -9722,7 +9729,7 @@ Function LoadLevel(levelnumber)
 		ObjectLinkBack(Dest)=ReadInt(file)
 		ObjectFlying(Dest)=ReadInt(file)
 		ObjectFrozen(Dest)=ReadInt(file)
-		ObjectFutureInt23(Dest)=ReadInt(file)
+		ObjectIndigo(Dest)=ReadInt(file)
 		ObjectFutureInt24(Dest)=ReadInt(file)
 		ObjectFutureInt25(Dest)=ReadInt(file)
 		ObjectScaleAdjust(Dest)=ReadFloat(file)
