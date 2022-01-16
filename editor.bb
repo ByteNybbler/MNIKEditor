@@ -354,7 +354,7 @@ Dim ObjectPitch2#(1000),ObjectYaw2#(1000),ObjectRoll2#(1000)
 Dim ObjectXGoal#(1000),ObjectYGoal#(1000),ObjectZGoal#(1000)
 Dim ObjectMovementType(1000),ObjectMovementTypeData(1000),ObjectSpeed#(1000)
 Dim ObjectRadius#(1000),ObjectRadiusType(1000)
-Dim ObjectCollisionPower(1000)
+Dim ObjectData10(1000)
 Dim ObjectPushDX#(1000),ObjectPushDY#(1000)
 Dim ObjectAttackPower(1000),ObjectDefensePower(1000),ObjectDestructionType(1000)
 Dim ObjectID(1000),ObjectType(1000),ObjectSubType(1000)
@@ -397,7 +397,7 @@ Global CurrentObjectPitch2#, CurrentObjectYaw2#, CurrentObjectRoll2#
 Global CurrentObjectXGoal#, CurrentObjectYGoal#, CurrentObjectZGoal#
 Global CurrentObjectMovementType, CurrentObjectMovementTypeData, CurrentObjectSpeed#
 Global CurrentObjectRadius#, CurrentObjectRadiusType
-Global CurrentObjectCollisionPower
+Global CurrentObjectData10
 Global CurrentObjectPushDX#, CurrentObjectPushDY#
 Global CurrentObjectAttackPower, CurrentObjectDefensePower, CurrentObjectDestructionType
 Global CurrentObjectID, CurrentObjectType, CurrentObjectSubType
@@ -3933,7 +3933,7 @@ Function LoadObjectPreset()
 	CurrentObjectSpeed#=ReadFloat(file)
 	CurrentObjectRadius#=ReadFloat(file)
 	CurrentObjectRadiusType=ReadInt(file)
-	CurrentObjectCollisionPower=ReadInt(file)
+	CurrentObjectData10=ReadInt(file)
 	CurrentObjectPushDX#=ReadFloat(file)
 	CurrentObjectPushDY#=ReadFloat(file)
 	CurrentObjectAttackPower=ReadInt(file)
@@ -4076,6 +4076,7 @@ Function LoadObjectPreset()
 	;AddAdjuster("ObjectDZ")
 	AddAdjuster("MoveXGoal")
 	AddAdjuster("MoveYGoal")
+	AddAdjuster("Data10")
 	AddAdjuster("DestructionType")
 	AddAdjuster("Indigo")
 	;AddAdjuster("Flying")
@@ -4247,7 +4248,7 @@ Function PlaceObject(x#,y#)
 	ObjectSpeed#(NofObjects)=CurrentObjectSpeed#
 	ObjectRadius#(NofObjects)=CurrentObjectRadius#
 	ObjectRadiusType(NofObjects)=CurrentObjectRadiusType
-	ObjectCollisionPower(NofObjects)=CurrentObjectCollisionPower
+	ObjectData10(NofObjects)=CurrentObjectData10
 	ObjectPushDX#(NofObjects)=CurrentObjectPushDX#
 	ObjectPushDY#(NofObjects)=CurrentObjectPushDY#
 	ObjectAttackPower(NofObjects)=CurrentObjectAttackPower
@@ -4451,7 +4452,7 @@ Function GrabObject(x#,y#)
 	CurrentObjectSpeed#=ObjectSpeed#(Dest)
 	CurrentObjectRadius#=ObjectRadius#(Dest)
 	CurrentObjectRadiusType=ObjectRadiusType(Dest)
-	CurrentObjectCollisionPower=ObjectCollisionPower(Dest)
+	CurrentObjectData10=ObjectData10(Dest)
 	CurrentObjectPushDX#=ObjectPushDX#(Dest)
 	CurrentObjectPushDY#=ObjectPushDY#(Dest)
 	CurrentObjectAttackPower=ObjectAttackPower(Dest)
@@ -4727,7 +4728,7 @@ Function CopyObjectData(Source,Dest)
 	ObjectRadius(Dest)=ObjectRadius(Source)
 	ObjectRadiusType(Dest)=ObjectRadiusType(Source)
 	
-	ObjectCollisionPower(Dest)=ObjectCollisionPower(Source)
+	ObjectData10(Dest)=ObjectData10(Source)
 	
 	ObjectPushDX(Dest)=ObjectPushDX(Source)
 	ObjectPushDY(Dest)=ObjectPushDY(Source)
@@ -4863,7 +4864,7 @@ Function PasteObjectData(Dest)
 	ObjectRadius(Dest)=CurrentObjectRadius
 	ObjectRadiusType(Dest)=CurrentObjectRadiusType
 	
-	ObjectCollisionPower(Dest)=CurrentObjectCollisionPower
+	ObjectData10(Dest)=CurrentObjectData10
 	
 	ObjectPushDX(Dest)=CurrentObjectPushDX
 	ObjectPushDY(Dest)=CurrentObjectPushDY
@@ -6695,6 +6696,9 @@ Function DisplayObjectAdjuster(i)
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObjectMoveYGoal)
 		
+	Case "Data10"
+		tex$=Str$(CurrentObjectData10)
+		
 	Case "Caged"
 		tex$=Str$(CurrentObjectCaged)
 	Case "Dead"
@@ -7818,6 +7822,9 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectMoveXGoal=AdjustInt("MoveXGoal: ", CurrentObjectMoveXGoal, 1, 10, 150)
 	Case "MoveYGoal"
 		CurrentObjectMoveYGoal=AdjustInt("MoveYGoal: ", CurrentObjectMoveYGoal, 1, 10, 150)
+		
+	Case "Data10"
+		CurrentObjectData10=AdjustInt("Data10: ", CurrentObjectData10, 1, 10, 150)
 		
 	Case "Caged"
 		CurrentObjectCaged=AdjustInt("Caged: ", CurrentObjectCaged, 1, 10, 150)
@@ -9404,7 +9411,7 @@ Function SaveLevel()
 		WriteFloat file,ObjectRadius(Dest)
 		WriteInt file,ObjectRadiusType(Dest)
 	
-		WriteInt file,ObjectCollisionPower(Dest)
+		WriteInt file,ObjectData10(Dest)
 	
 		WriteFloat file,ObjectPushDX(Dest)
 		WriteFloat file,ObjectPushDY(Dest)
@@ -9692,7 +9699,7 @@ Function LoadLevel(levelnumber)
 		ObjectRadius(Dest)=ReadFloat(file)
 		ObjectRadiusType(Dest)=ReadInt(file)
 	
-		ObjectCollisionPower(Dest)=ReadInt(file)
+		ObjectData10(Dest)=ReadInt(file)
 	
 		ObjectPushDX(Dest)=ReadFloat(file)
 		ObjectPushDY(Dest)=ReadFloat(file)
