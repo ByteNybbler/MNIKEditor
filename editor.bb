@@ -4076,13 +4076,11 @@ Function LoadObjectPreset()
 	;AddAdjuster("ObjectDZ")
 	AddAdjuster("MoveXGoal")
 	AddAdjuster("MoveYGoal")
-	;AddAdjuster("Data10")
-	AddAdjuster("DestructionType")
-	AddAdjuster("Indigo")
-	;AddAdjuster("Flying")
-	AddAdjuster("Caged")
 	AddAdjuster("Dead")
-	;AddAdjuster("DeadTimer")
+	AddAdjuster("Caged")
+	AddAdjuster("Indigo")
+	AddAdjuster("DestructionType")
+	;AddAdjuster("Flying")
 	;AddAdjuster("MovementTimer")
 
 	
@@ -6701,8 +6699,16 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Caged"
 		tex$=Str$(CurrentObjectCaged)
+		
 	Case "Dead"
 		tex$=Str$(CurrentObjectDead)
+		Select CurrentObjectDead
+			Case 1
+				tex$="Spinning"
+			Case 3
+				tex$="Sinking"
+		End Select
+		
 	Case "DeadTimer"
 		tex$=Str$(CurrentObjectDeadTimer)
 	Case "MovementTimer"
