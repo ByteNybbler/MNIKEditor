@@ -369,7 +369,7 @@ Dim ObjectTalkable(1000),ObjectCurrentAnim(1000),ObjectStandardAnim(1000),Object
 Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectMovementTimer(1000),ObjectMovementSpeed(1000),ObjectMoveXGoal(1000)
 Dim ObjectMoveYGoal(1000),ObjectFutureInt12(1000),ObjectFutureInt13(1000),ObjectCaged(1000),ObjectDead(1000)
 Dim ObjectDeadTimer(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
-Dim ObjectFutureInt21(1000),ObjectFrozen(1000),ObjectFutureInt23(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
+Dim ObjectFlying(1000),ObjectFrozen(1000),ObjectFutureInt23(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
 Dim ObjectScaleAdjust#(1000),ObjectFutureFloat2#(1000),ObjectFutureFloat3#(1000),ObjectFutureFloat4#(1000),ObjectFutureFloat5#(1000)
 Dim ObjectFutureFloat6#(1000),ObjectFutureFloat7#(1000),ObjectFutureFloat8#(1000),ObjectFutureFloat9#(1000),ObjectFutureFloat10#(1000)
 Dim ObjectFutureString1$(1000),ObjectFutureString2$(1000)
@@ -412,7 +412,7 @@ Global CurrentObjectTalkable,CurrentObjectCurrentAnim,CurrentObjectStandardAnim,
 Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectMovementTimer,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
 Global CurrentObjectMoveYGoal,CurrentObjectFutureInt12,CurrentObjectFutureInt13,CurrentObjectCaged,CurrentObjectDead
 Global CurrentObjectDeadTimer,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
-Global CurrentObjectFutureInt21,CurrentObjectFrozen,CurrentObjectFutureInt23,CurrentObjectFutureInt24,CurrentObjectFutureInt25
+Global CurrentObjectFlying,CurrentObjectFrozen,CurrentObjectFutureInt23,CurrentObjectFutureInt24,CurrentObjectFutureInt25
 Global CurrentObjectScaleAdjust#,CurrentObjectFutureFloat2#,CurrentObjectFutureFloat3#,CurrentObjectFutureFloat4#,CurrentObjectFutureFloat5#
 Global CurrentObjectFutureFloat6#,CurrentObjectFutureFloat7#,CurrentObjectFutureFloat8#,CurrentObjectFutureFloat9#,CurrentObjectFutureFloat10#
 Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
@@ -3988,7 +3988,7 @@ Function LoadObjectPreset()
 	;CurrentObjectLinkBack=ReadInt(file)
 	ReadInt(file)
 	CurrentObjectLinkBack=-1
-	CurrentObjectFutureInt21=ReadInt(file)
+	CurrentObjectFlying=ReadInt(file)
 	CurrentObjectFrozen=ReadInt(file)
 	CurrentObjectFutureInt23=ReadInt(file)
 	CurrentObjectFutureInt24=ReadInt(file)
@@ -4022,122 +4022,66 @@ Function LoadObjectPreset()
 	;Next
 	
 	; Add these adjusters to every object.
-	ObjectAdjuster$(NofObjectAdjusters)="ID"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Active"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ActivationType"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ActivationSpeed"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Type"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="SubType"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ModelName"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="TextureName"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="MovementSpeed"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="MovementType"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="MovementTypeData"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="TileTypeCollision"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ObjectTypeCollision"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ButtonPush"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="XAdjust"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="YAdjust"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ZAdjust"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="YawAdjust"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="RollAdjust"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="PitchAdjust"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="XScale"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="YScale"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ZScale"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ScaleAdjust"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data0"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data1"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data2"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data3"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data4"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data5"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data6"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data7"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data8"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Data9"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ObjectTextData0"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="ObjectTextData1"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Talkable"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Exclamation"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Timer"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="TimerMax1"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="TimerMax2"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="DefensePower"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="WaterReact"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Freezable"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Teleportable"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Linked"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="LinkBack"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	;ObjectAdjuster$(NofObjectAdjusters)="Parent"
-	;NofObjectAdjusters=NofObjectAdjusters+1
-	;ObjectAdjuster$(NofObjectAdjusters)="Child"
-	;NofObjectAdjusters=NofObjectAdjusters+1
-	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDX"
-	;NofObjectAdjusters=NofObjectAdjusters+1
-	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDY"
-	;NofObjectAdjusters=NofObjectAdjusters+1
-	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDZ"
-	;NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="MoveXGoal"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="MoveYGoal"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Caged"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="Dead"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="DeadTimer"
-	NofObjectAdjusters=NofObjectAdjusters+1
-	ObjectAdjuster$(NofObjectAdjusters)="MovementTimer"
-	NofObjectAdjusters=NofObjectAdjusters+1
+	AddAdjuster("ID")
+	AddAdjuster("Active")
+	AddAdjuster("ActivationType")
+	AddAdjuster("ActivationSpeed")
+	AddAdjuster("Type")
+	AddAdjuster("SubType")
+	AddAdjuster("ModelName")
+	AddAdjuster("TextureName")
+	AddAdjuster("MovementSpeed")
+	AddAdjuster("MovementType")
+	AddAdjuster("MovementTypeData")
+	AddAdjuster("TileTypeCollision")
+	AddAdjuster("ObjectTypeCollision")
+	AddAdjuster("ButtonPush")
+	AddAdjuster("XAdjust")
+	AddAdjuster("YAdjust")
+	AddAdjuster("ZAdjust")
+	AddAdjuster("YawAdjust")
+	AddAdjuster("RollAdjust")
+	AddAdjuster("PitchAdjust")
+	AddAdjuster("XScale")
+	AddAdjuster("YScale")
+	AddAdjuster("ZScale")
+	AddAdjuster("ScaleAdjust")
+	AddAdjuster("Data0")
+	AddAdjuster("Data1")
+	AddAdjuster("Data2")
+	AddAdjuster("Data3")
+	AddAdjuster("Data4")
+	AddAdjuster("Data5")
+	AddAdjuster("Data6")
+	AddAdjuster("Data7")
+	AddAdjuster("Data8")
+	AddAdjuster("Data9")
+	AddAdjuster("ObjectTextData0")
+	AddAdjuster("ObjectTextData1")
+	AddAdjuster("Talkable")
+	AddAdjuster("Exclamation")
+	AddAdjuster("Timer")
+	AddAdjuster("TimerMax1")
+	AddAdjuster("TimerMax2")
+	AddAdjuster("DefensePower")
+	AddAdjuster("WaterReact")
+	AddAdjuster("Freezable")
+	AddAdjuster("Teleportable")
+	AddAdjuster("Linked")
+	AddAdjuster("LinkBack")
+	;AddAdjuster("Parent")
+	;AddAdjuster("Child")
+	;AddAdjuster("ObjectDX")
+	;AddAdjuster("ObjectDY")
+	;AddAdjuster("ObjectDZ")
+	AddAdjuster("MoveXGoal")
+	AddAdjuster("MoveYGoal")
+	AddAdjuster("Flying")
+	;AddAdjuster("Caged")
+	;AddAdjuster("Dead")
+	;AddAdjuster("DeadTimer")
+	;AddAdjuster("MovementTimer")
+
 	
 	CloseFile file
 	
@@ -4146,6 +4090,16 @@ Function LoadObjectPreset()
 	
 
 End Function
+
+
+Function AddAdjuster(Name$)
+
+	ObjectAdjuster$(NofObjectAdjusters)=Name$
+	NofObjectAdjusters=NofObjectAdjusters+1
+
+End Function
+
+
 
 Function PlaceObject(x#,y#)
 
@@ -4340,7 +4294,7 @@ Function PlaceObject(x#,y#)
 	ObjectShadow(NofObjects)=CurrentObjectShadow
 	ObjectLinked(NofObjects)=CurrentObjectLinked
 	ObjectLinkBack(NofObjects)=CurrentObjectLinkBack
-	ObjectFutureInt21(NofObjects)=CurrentObjectFutureInt21
+	ObjectFlying(NofObjects)=CurrentObjectFlying
 	ObjectFrozen(NofObjects)=CurrentObjectFrozen
 	ObjectFutureInt23(NofObjects)=CurrentObjectFutureInt23
 	ObjectFutureInt24(NofObjects)=CurrentObjectFutureInt24
@@ -4547,7 +4501,7 @@ Function GrabObject(x#,y#)
 	CurrentObjectShadow=ObjectShadow(Dest)
 	CurrentObjectLinked=ObjectLinked(Dest)
 	CurrentObjectLinkBack=ObjectLinkBack(Dest)
-	CurrentObjectFutureInt21=ObjectFutureInt21(Dest)
+	CurrentObjectFlying=ObjectFlying(Dest)
 	CurrentObjectFrozen=ObjectFrozen(Dest)
 	CurrentObjectFutureInt23=ObjectFutureInt23(Dest)
 	CurrentObjectFutureInt24=ObjectFutureInt24(Dest)
@@ -4836,7 +4790,7 @@ Function CopyObjectData(Source,Dest)
 	ObjectShadow(Dest)=ObjectShadow(Source)
 	ObjectLinked(Dest)=ObjectLinked(Source)
 	ObjectLinkBack(Dest)=ObjectLinkBack(Source)
-	ObjectFutureInt21(Dest)=ObjectFutureInt21(Source)
+	ObjectFlying(Dest)=ObjectFlying(Source)
 	ObjectFrozen(Dest)=ObjectFrozen(Source)
 	ObjectFutureInt23(Dest)=ObjectFutureInt23(Source)
 	ObjectFutureInt24(Dest)=ObjectFutureInt24(Source)
@@ -4972,7 +4926,7 @@ Function PasteObjectData(Dest)
 	ObjectShadow(Dest)=CurrentObjectShadow
 	ObjectLinked(Dest)=CurrentObjectLinked
 	ObjectLinkBack(Dest)=CurrentObjectLinkBack
-	ObjectFutureInt21(Dest)=CurrentObjectFutureInt21
+	ObjectFlying(Dest)=CurrentObjectFlying
 	ObjectFrozen(Dest)=CurrentObjectFrozen
 	ObjectFutureInt23(Dest)=CurrentObjectFutureInt23
 	ObjectFutureInt24(Dest)=CurrentObjectFutureInt24
@@ -6734,6 +6688,24 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectDeadTimer)
 	Case "MovementTimer"
 		tex$=Str$(CurrentObjectMovementTimer)
+		
+	Case "Flying"
+		State$="Grounded"
+		If CurrentObjectFlying/10 = 1	; bounced by spring
+			If CurrentObjectFlying Mod 10 >=1 And CurrentObjectFlying Mod 10<=3 Then State$="Spr East"
+			If CurrentObjectFlying Mod 10 >=5 And CurrentObjectFlying Mod 10<=7 Then State$="Spr West"
+			If CurrentObjectFlying Mod 10 >=3 And CurrentObjectFlying Mod 10<=5 Then State$="Spr South"
+			If CurrentObjectFlying Mod 10 >=7 Or CurrentObjectFlying Mod 10<=1 Then State$="Spr North"
+		EndIf
+	
+		If CurrentObjectFlying/10 = 2	; on ice
+			If CurrentObjectFlying Mod 10 >=1 And CurrentObjectFlying Mod 10<=3 Then State$="Ice East"
+			If CurrentObjectFlying Mod 10 >=5 And CurrentObjectFlying Mod 10<=7 Then State$="Ice West"
+			If CurrentObjectFlying Mod 10 >=3 And CurrentObjectFlying Mod 10<=5 Then State$="Ice South"
+			If CurrentObjectFlying Mod 10 >=7 Or CurrentObjectFlying Mod 10<=1 Then State$="Ice North"
+		EndIf
+
+		tex$=CurrentObjectFlying+" ("+State+")"
 
 
 
@@ -7826,6 +7798,9 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectDeadTimer=AdjustInt("DeadTimer: ", CurrentObjectDeadTimer, 1, 25, 150)
 	Case "MovementTimer"
 		CurrentObjectMovementTimer=AdjustInt("MovementTimer: ", CurrentObjectMovementTimer, 1, 25, 150)
+		
+	Case "Flying"
+		CurrentObjectFlying=AdjustInt("Flying: ", CurrentObjectFlying, 1, 10, 150)
 
 
 
@@ -9458,7 +9433,7 @@ Function SaveLevel()
 		WriteInt file,ObjectIndexEditorToGame(ObjectLinked(Dest), PlayerIndex)
 		;WriteInt file,-1;ObjectLinkBack(Dest)
 		WriteInt file,ObjectIndexEditorToGame(ObjectLinkBack(Dest), PlayerIndex)
-		WriteInt file,ObjectFutureInt21(Dest)
+		WriteInt file,ObjectFlying(Dest)
 		WriteInt file,ObjectFrozen(Dest)
 		WriteInt file,ObjectFutureInt23(Dest)
 		WriteInt file,ObjectFutureInt24(Dest)
@@ -9745,7 +9720,7 @@ Function LoadLevel(levelnumber)
 		ObjectShadow(Dest)=ReadInt(file)
 		ObjectLinked(Dest)=ReadInt(file)
 		ObjectLinkBack(Dest)=ReadInt(file)
-		ObjectFutureInt21(Dest)=ReadInt(file)
+		ObjectFlying(Dest)=ReadInt(file)
 		ObjectFrozen(Dest)=ReadInt(file)
 		ObjectFutureInt23(Dest)=ReadInt(file)
 		ObjectFutureInt24(Dest)=ReadInt(file)
