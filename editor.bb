@@ -4076,7 +4076,7 @@ Function LoadObjectPreset()
 	;AddAdjuster("ObjectDZ")
 	AddAdjuster("MoveXGoal")
 	AddAdjuster("MoveYGoal")
-	AddAdjuster("Speed")
+	AddAdjuster("DestructionType")
 	AddAdjuster("Indigo")
 	;AddAdjuster("Flying")
 	AddAdjuster("Caged")
@@ -5048,7 +5048,20 @@ Function DisplayObjectAdjuster(i)
 		End Select
 		
 		
-
+		
+	Case "AttackPower"
+		tex$=Str$(CurrentObjectAttackPower)
+		
+	Case "DestructionType"
+		tex$=Str$(CurrentObjectDestructionType)
+		Select CurrentObjectDestructionType
+			Case 0
+				tex$="None"
+			Case 1
+				tex$="White"
+			Case 2
+				tex$="MODDED" ; Purple
+		End Select
 
 
 	Case "YawAdjust"
@@ -6714,6 +6727,8 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Speed"
 		tex$=Str$(CurrentObjectSpeed)
+	Case "Radius"
+		tex$=Str$(CurrentObjectRadius)
 
 
 
@@ -6876,7 +6891,13 @@ Function AdjustObjectAdjuster(i)
 		If CurrentObjectDefensePower>=34 Then CurrentObjectDefensePower=0
 		If CurrentObjectDefensePower<0 Then CurrentObjectDefensePower=33
 		
-		;Delay 150
+	Case "AttackPower"
+		CurrentObjectAttackPower=AdjustInt("AttackPower: ", CurrentObjectAttackPower, 1, 10, 150)
+		
+	Case "DestructionType"
+		CurrentObjectDestructionType=AdjustInt("DestructionType: ", CurrentObjectDestructionType, 1, 10, 150)
+		
+	
 	Case "YawAdjust"		
 		CurrentObjectYawAdjust=AdjustInt("YawAdjust: ", CurrentObjectYawAdjust, 1, 45, 150)
 		
@@ -7815,6 +7836,8 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "Speed"
 		CurrentObjectSpeed=AdjustFloat#("Speed: ", CurrentObjectSpeed, 0.01, 0.1, 150)
+	Case "Radius"
+		CurrentObjectRadius=AdjustFloat#("Radius: ", CurrentObjectRadius, 0.01, 0.1, 150)
 
 
 
