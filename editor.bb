@@ -366,9 +366,9 @@ Dim ObjectReactive(1000)
 Dim ObjectChild(1000),ObjectParent(1000)
 Dim ObjectData(1000,10),ObjectTextData$(1000,4)
 Dim ObjectTalkable(1000),ObjectCurrentAnim(1000),ObjectStandardAnim(1000),ObjectTileX(1000),ObjectTileY(1000)
-Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectFutureInt8(1000),ObjectMovementSpeed(1000),ObjectMoveXGoal(1000)
+Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectMovementTimer(1000),ObjectMovementSpeed(1000),ObjectMoveXGoal(1000)
 Dim ObjectMoveYGoal(1000),ObjectFutureInt12(1000),ObjectFutureInt13(1000),ObjectCaged(1000),ObjectDead(1000)
-Dim ObjectFutureInt16(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
+Dim ObjectDeadTimer(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
 Dim ObjectFutureInt21(1000),ObjectFrozen(1000),ObjectFutureInt23(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
 Dim ObjectScaleAdjust#(1000),ObjectFutureFloat2#(1000),ObjectFutureFloat3#(1000),ObjectFutureFloat4#(1000),ObjectFutureFloat5#(1000)
 Dim ObjectFutureFloat6#(1000),ObjectFutureFloat7#(1000),ObjectFutureFloat8#(1000),ObjectFutureFloat9#(1000),ObjectFutureFloat10#(1000)
@@ -409,9 +409,9 @@ Global CurrentObjectReactive
 Global CurrentObjectChild, CurrentObjectParent
 Dim CurrentObjectData(10), CurrentObjectTextData$(4)
 Global CurrentObjectTalkable,CurrentObjectCurrentAnim,CurrentObjectStandardAnim,CurrentObjectTileX,CurrentObjectTileY
-Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectFutureInt8,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
+Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectMovementTimer,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
 Global CurrentObjectMoveYGoal,CurrentObjectFutureInt12,CurrentObjectFutureInt13,CurrentObjectCaged,CurrentObjectDead
-Global CurrentObjectFutureInt16,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
+Global CurrentObjectDeadTimer,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
 Global CurrentObjectFutureInt21,CurrentObjectFrozen,CurrentObjectFutureInt23,CurrentObjectFutureInt24,CurrentObjectFutureInt25
 Global CurrentObjectScaleAdjust#,CurrentObjectFutureFloat2#,CurrentObjectFutureFloat3#,CurrentObjectFutureFloat4#,CurrentObjectFutureFloat5#
 Global CurrentObjectFutureFloat6#,CurrentObjectFutureFloat7#,CurrentObjectFutureFloat8#,CurrentObjectFutureFloat9#,CurrentObjectFutureFloat10#
@@ -3971,7 +3971,7 @@ Function LoadObjectPreset()
 	CurrentObjectTileY=ReadInt(file)
 	CurrentObjectTileX2=ReadInt(file)
 	CurrentObjectTileY2=ReadInt(file)
-	CurrentObjectFutureInt8=ReadInt(file)
+	CurrentObjectMovementTimer=ReadInt(file)
 	CurrentObjectMovementSpeed=ReadInt(file)
 	CurrentObjectMoveXGoal=ReadInt(file)
 	CurrentObjectMoveYGoal=ReadInt(file)
@@ -3979,7 +3979,7 @@ Function LoadObjectPreset()
 	CurrentObjectFutureInt13=ReadInt(file)
 	CurrentObjectCaged=ReadInt(file)
 	CurrentObjectDead=ReadInt(file)
-	CurrentObjectFutureInt16=ReadInt(file)
+	CurrentObjectDeadTimer=ReadInt(file)
 	CurrentObjectExclamation=ReadInt(file)
 	CurrentObjectShadow=ReadInt(file)
 	;CurrentObjectLinked=ReadInt(file)
@@ -4133,6 +4133,10 @@ Function LoadObjectPreset()
 	ObjectAdjuster$(NofObjectAdjusters)="Caged"
 	NofObjectAdjusters=NofObjectAdjusters+1
 	ObjectAdjuster$(NofObjectAdjusters)="Dead"
+	NofObjectAdjusters=NofObjectAdjusters+1
+	ObjectAdjuster$(NofObjectAdjusters)="DeadTimer"
+	NofObjectAdjusters=NofObjectAdjusters+1
+	ObjectAdjuster$(NofObjectAdjusters)="MovementTimer"
 	NofObjectAdjusters=NofObjectAdjusters+1
 	
 	CloseFile file
@@ -4323,7 +4327,7 @@ Function PlaceObject(x#,y#)
 	ObjectCurrentAnim(NofObjects)=CurrentObjectCurrentAnim
 	ObjectStandardAnim(NofObjects)=CurrentObjectStandardAnim
 	
-	ObjectFutureInt8(NofObjects)=CurrentObjectFutureInt8
+	ObjectMovementTimer(NofObjects)=CurrentObjectMovementTimer
 	ObjectMovementSpeed(NofObjects)=CurrentObjectMovementSpeed
 	ObjectMoveXGoal(NofObjects)=CurrentObjectMoveXGoal
 	ObjectMoveYGoal(NofObjects)=CurrentObjectMoveYGoal
@@ -4331,7 +4335,7 @@ Function PlaceObject(x#,y#)
 	ObjectFutureInt13(NofObjects)=CurrentObjectFutureInt13
 	ObjectCaged(NofObjects)=CurrentObjectCaged
 	ObjectDead(NofObjects)=CurrentObjectDead
-	ObjectFutureInt16(NofObjects)=CurrentObjectFutureInt16
+	ObjectDeadTimer(NofObjects)=CurrentObjectDeadTimer
 	ObjectExclamation(NofObjects)=CurrentObjectExclamation
 	ObjectShadow(NofObjects)=CurrentObjectShadow
 	ObjectLinked(NofObjects)=CurrentObjectLinked
@@ -4530,7 +4534,7 @@ Function GrabObject(x#,y#)
 	CurrentObjectTileY=ObjectTileY(Dest)
 	CurrentObjectTileX2=ObjectTileX2(Dest)
 	CurrentObjectTileY2=ObjectTileY2(Dest)
-	CurrentObjectFutureInt8=ObjectFutureInt8(Dest)
+	CurrentObjectMovementTimer=ObjectMovementTimer(Dest)
 	CurrentObjectMovementSpeed=ObjectMovementSpeed(Dest)
 	CurrentObjectMoveXGoal=ObjectMoveXGoal(Dest)
 	CurrentObjectMoveYGoal=ObjectMoveYGoal(Dest)
@@ -4538,7 +4542,7 @@ Function GrabObject(x#,y#)
 	CurrentObjectFutureInt13=ObjectFutureInt13(Dest)
 	CurrentObjectCaged=ObjectCaged(Dest)
 	CurrentObjectDead=ObjectDead(Dest)
-	CurrentObjectFutureInt16=ObjectFutureInt16(Dest)
+	CurrentObjectDeadTimer=ObjectDeadTimer(Dest)
 	CurrentObjectExclamation=ObjectExclamation(Dest)
 	CurrentObjectShadow=ObjectShadow(Dest)
 	CurrentObjectLinked=ObjectLinked(Dest)
@@ -4819,7 +4823,7 @@ Function CopyObjectData(Source,Dest)
 	ObjectTileY(Dest)=ObjectTileY(Source)
 	ObjectTileX2(Dest)=ObjectTileX2(Source)
 	ObjectTileY2(Dest)=ObjectTileY2(Source)
-	ObjectFutureInt8(Dest)=ObjectFutureInt8(Source)
+	ObjectMovementTimer(Dest)=ObjectMovementTimer(Source)
 	ObjectMovementSpeed(Dest)=ObjectMovementSpeed(Source)
 	ObjectMoveXGoal(Dest)=ObjectMoveXGoal(Source)
 	ObjectMoveYGoal(Dest)=ObjectMoveYGoal(Source)
@@ -4827,7 +4831,7 @@ Function CopyObjectData(Source,Dest)
 	ObjectFutureInt13(Dest)=ObjectFutureInt13(Source)
 	ObjectCaged(Dest)=ObjectCaged(Source)
 	ObjectDead(Dest)=ObjectDead(Source)
-	ObjectFutureInt16(Dest)=ObjectFutureInt16(Source)
+	ObjectDeadTimer(Dest)=ObjectDeadTimer(Source)
 	ObjectExclamation(Dest)=ObjectExclamation(Source)
 	ObjectShadow(Dest)=ObjectShadow(Source)
 	ObjectLinked(Dest)=ObjectLinked(Source)
@@ -4955,7 +4959,7 @@ Function PasteObjectData(Dest)
 	ObjectTileY(Dest)=CurrentObjectTileY
 	ObjectTileX2(Dest)=CurrentObjectTileX2
 	ObjectTileY2(Dest)=CurrentObjectTileY2
-	ObjectFutureInt8(Dest)=CurrentObjectFutureInt8
+	ObjectMovementTimer(Dest)=CurrentObjectMovementTimer
 	ObjectMovementSpeed(Dest)=CurrentObjectMovementSpeed
 	ObjectMoveXGoal(Dest)=CurrentObjectMoveXGoal
 	ObjectMoveYGoal(Dest)=CurrentObjectMoveYGoal
@@ -4963,7 +4967,7 @@ Function PasteObjectData(Dest)
 	ObjectFutureInt13(Dest)=CurrentObjectFutureInt13
 	ObjectCaged(Dest)=CurrentObjectCaged
 	ObjectDead(Dest)=CurrentObjectDead
-	ObjectFutureInt16(Dest)=CurrentObjectFutureInt16
+	ObjectDeadTimer(Dest)=CurrentObjectDeadTimer
 	ObjectExclamation(Dest)=CurrentObjectExclamation
 	ObjectShadow(Dest)=CurrentObjectShadow
 	ObjectLinked(Dest)=CurrentObjectLinked
@@ -6726,6 +6730,11 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectCaged)
 	Case "Dead"
 		tex$=Str$(CurrentObjectDead)
+	Case "DeadTimer"
+		tex$=Str$(CurrentObjectDeadTimer)
+	Case "MovementTimer"
+		tex$=Str$(CurrentObjectMovementTimer)
+
 
 
 
@@ -7813,6 +7822,10 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectCaged=AdjustInt("Caged: ", CurrentObjectCaged, 1, 10, 150)
 	Case "Dead"
 		CurrentObjectDead=AdjustInt("Dead: ", CurrentObjectDead, 1, 10, 150)
+	Case "DeadTimer"
+		CurrentObjectDeadTimer=AdjustInt("DeadTimer: ", CurrentObjectDeadTimer, 1, 25, 150)
+	Case "MovementTimer"
+		CurrentObjectMovementTimer=AdjustInt("MovementTimer: ", CurrentObjectMovementTimer, 1, 25, 150)
 
 
 
@@ -9430,7 +9443,7 @@ Function SaveLevel()
 		WriteInt file,ObjectTileY(Dest)
 		WriteInt file,ObjectTileX2(Dest)
 		WriteInt file,ObjectTileY2(Dest)
-		WriteInt file,ObjectFutureInt8(Dest)
+		WriteInt file,ObjectMovementTimer(Dest)
 		WriteInt file,ObjectMovementSpeed(Dest)
 		WriteInt file,ObjectMoveXGoal(Dest)
 		WriteInt file,ObjectMoveYGoal(Dest)
@@ -9438,7 +9451,7 @@ Function SaveLevel()
 		WriteInt file,ObjectFutureInt13(Dest)
 		WriteInt file,ObjectCaged(Dest)
 		WriteInt file,ObjectDead(Dest)
-		WriteInt file,ObjectFutureInt16(Dest)
+		WriteInt file,ObjectDeadTimer(Dest)
 		WriteInt file,ObjectExclamation(Dest)
 		WriteInt file,ObjectShadow(Dest)
 		;WriteInt file,-1;ObjectLinked(Dest)
@@ -9719,7 +9732,7 @@ Function LoadLevel(levelnumber)
 		ObjectTileY(Dest)=ReadInt(file)
 		ObjectTileX2(Dest)=ReadInt(file)
 		ObjectTileY2(Dest)=ReadInt(file)
-		ObjectFutureInt8(Dest)=ReadInt(file)
+		ObjectMovementTimer(Dest)=ReadInt(file)
 		ObjectMovementSpeed(Dest)=ReadInt(file)
 		ObjectMoveXGoal(Dest)=ReadInt(file)
 		ObjectMoveYGoal(Dest)=ReadInt(file)
@@ -9727,7 +9740,7 @@ Function LoadLevel(levelnumber)
 		ObjectFutureInt13(Dest)=ReadInt(file)
 		ObjectCaged(Dest)=ReadInt(file)
 		ObjectDead(Dest)=ReadInt(file)
-		ObjectFutureInt16(Dest)=ReadInt(file)
+		ObjectDeadTimer(Dest)=ReadInt(file)
 		ObjectExclamation(Dest)=ReadInt(file)
 		ObjectShadow(Dest)=ReadInt(file)
 		ObjectLinked(Dest)=ReadInt(file)
