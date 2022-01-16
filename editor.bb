@@ -367,7 +367,7 @@ Dim ObjectChild(1000),ObjectParent(1000)
 Dim ObjectData(1000,10),ObjectTextData$(1000,4)
 Dim ObjectTalkable(1000),ObjectCurrentAnim(1000),ObjectStandardAnim(1000),ObjectTileX(1000),ObjectTileY(1000)
 Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectFutureInt8(1000),ObjectMovementSpeed(1000),ObjectMoveXGoal(1000)
-Dim ObjectMoveYGoal(1000),ObjectFutureInt12(1000),ObjectFutureInt13(1000),ObjectFutureInt14(1000),ObjectFutureInt15(1000)
+Dim ObjectMoveYGoal(1000),ObjectFutureInt12(1000),ObjectFutureInt13(1000),ObjectCaged(1000),ObjectFutureInt15(1000)
 Dim ObjectFutureInt16(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
 Dim ObjectFutureInt21(1000),ObjectFrozen(1000),ObjectFutureInt23(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
 Dim ObjectScaleAdjust#(1000),ObjectFutureFloat2#(1000),ObjectFutureFloat3#(1000),ObjectFutureFloat4#(1000),ObjectFutureFloat5#(1000)
@@ -410,7 +410,7 @@ Global CurrentObjectChild, CurrentObjectParent
 Dim CurrentObjectData(10), CurrentObjectTextData$(4)
 Global CurrentObjectTalkable,CurrentObjectCurrentAnim,CurrentObjectStandardAnim,CurrentObjectTileX,CurrentObjectTileY
 Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectFutureInt8,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
-Global CurrentObjectMoveYGoal,CurrentObjectFutureInt12,CurrentObjectFutureInt13,CurrentObjectFutureInt14,CurrentObjectFutureInt15
+Global CurrentObjectMoveYGoal,CurrentObjectFutureInt12,CurrentObjectFutureInt13,CurrentObjectCaged,CurrentObjectFutureInt15
 Global CurrentObjectFutureInt16,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
 Global CurrentObjectFutureInt21,CurrentObjectFrozen,CurrentObjectFutureInt23,CurrentObjectFutureInt24,CurrentObjectFutureInt25
 Global CurrentObjectScaleAdjust#,CurrentObjectFutureFloat2#,CurrentObjectFutureFloat3#,CurrentObjectFutureFloat4#,CurrentObjectFutureFloat5#
@@ -3977,7 +3977,7 @@ Function LoadObjectPreset()
 	CurrentObjectMoveYGoal=ReadInt(file)
 	CurrentObjectFutureInt12=ReadInt(file)
 	CurrentObjectFutureInt13=ReadInt(file)
-	CurrentObjectFutureInt14=ReadInt(file)
+	CurrentObjectCaged=ReadInt(file)
 	CurrentObjectFutureInt15=ReadInt(file)
 	CurrentObjectFutureInt16=ReadInt(file)
 	CurrentObjectExclamation=ReadInt(file)
@@ -4129,6 +4129,8 @@ Function LoadObjectPreset()
 	ObjectAdjuster$(NofObjectAdjusters)="MoveXGoal"
 	NofObjectAdjusters=NofObjectAdjusters+1
 	ObjectAdjuster$(NofObjectAdjusters)="MoveYGoal"
+	NofObjectAdjusters=NofObjectAdjusters+1
+	ObjectAdjuster$(NofObjectAdjusters)="Caged"
 	NofObjectAdjusters=NofObjectAdjusters+1
 	
 	CloseFile file
@@ -4325,7 +4327,7 @@ Function PlaceObject(x#,y#)
 	ObjectMoveYGoal(NofObjects)=CurrentObjectMoveYGoal
 	ObjectFutureInt12(NofObjects)=CurrentObjectFutureInt12
 	ObjectFutureInt13(NofObjects)=CurrentObjectFutureInt13
-	ObjectFutureInt14(NofObjects)=CurrentObjectFutureInt14
+	ObjectCaged(NofObjects)=CurrentObjectCaged
 	ObjectFutureInt15(NofObjects)=CurrentObjectFutureInt15
 	ObjectFutureInt16(NofObjects)=CurrentObjectFutureInt16
 	ObjectExclamation(NofObjects)=CurrentObjectExclamation
@@ -4532,7 +4534,7 @@ Function GrabObject(x#,y#)
 	CurrentObjectMoveYGoal=ObjectMoveYGoal(Dest)
 	CurrentObjectFutureInt12=ObjectFutureInt12(Dest)
 	CurrentObjectFutureInt13=ObjectFutureInt13(Dest)
-	CurrentObjectFutureInt14=ObjectFutureInt14(Dest)
+	CurrentObjectCaged=ObjectCaged(Dest)
 	CurrentObjectFutureInt15=ObjectFutureInt15(Dest)
 	CurrentObjectFutureInt16=ObjectFutureInt16(Dest)
 	CurrentObjectExclamation=ObjectExclamation(Dest)
@@ -4821,7 +4823,7 @@ Function CopyObjectData(Source,Dest)
 	ObjectMoveYGoal(Dest)=ObjectMoveYGoal(Source)
 	ObjectFutureInt12(Dest)=ObjectFutureInt12(Source)
 	ObjectFutureInt13(Dest)=ObjectFutureInt13(Source)
-	ObjectFutureInt14(Dest)=ObjectFutureInt14(Source)
+	ObjectCaged(Dest)=ObjectCaged(Source)
 	ObjectFutureInt15(Dest)=ObjectFutureInt15(Source)
 	ObjectFutureInt16(Dest)=ObjectFutureInt16(Source)
 	ObjectExclamation(Dest)=ObjectExclamation(Source)
@@ -4957,7 +4959,7 @@ Function PasteObjectData(Dest)
 	ObjectMoveYGoal(Dest)=CurrentObjectMoveYGoal
 	ObjectFutureInt12(Dest)=CurrentObjectFutureInt12
 	ObjectFutureInt13(Dest)=CurrentObjectFutureInt13
-	ObjectFutureInt14(Dest)=CurrentObjectFutureInt14
+	ObjectCaged(Dest)=CurrentObjectCaged
 	ObjectFutureInt15(Dest)=CurrentObjectFutureInt15
 	ObjectFutureInt16(Dest)=CurrentObjectFutureInt16
 	ObjectExclamation(Dest)=CurrentObjectExclamation
@@ -6717,6 +6719,9 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectMoveXGoal)
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObjectMoveYGoal)
+		
+	Case "Caged"
+		tex$=Str$(CurrentObjectCaged)
 
 
 
@@ -7799,6 +7804,9 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectMoveXGoal=AdjustInt("MoveXGoal: ", CurrentObjectMoveXGoal, 1, 10, 150)
 	Case "MoveYGoal"
 		CurrentObjectMoveYGoal=AdjustInt("MoveYGoal: ", CurrentObjectMoveYGoal, 1, 10, 150)
+		
+	Case "Caged"
+		CurrentObjectCaged=AdjustInt("Caged: ", CurrentObjectCaged, 1, 10, 150)
 
 
 
@@ -9422,7 +9430,7 @@ Function SaveLevel()
 		WriteInt file,ObjectMoveYGoal(Dest)
 		WriteInt file,ObjectFutureInt12(Dest)
 		WriteInt file,ObjectFutureInt13(Dest)
-		WriteInt file,ObjectFutureInt14(Dest)
+		WriteInt file,ObjectCaged(Dest)
 		WriteInt file,ObjectFutureInt15(Dest)
 		WriteInt file,ObjectFutureInt16(Dest)
 		WriteInt file,ObjectExclamation(Dest)
@@ -9711,7 +9719,7 @@ Function LoadLevel(levelnumber)
 		ObjectMoveYGoal(Dest)=ReadInt(file)
 		ObjectFutureInt12(Dest)=ReadInt(file)
 		ObjectFutureInt13(Dest)=ReadInt(file)
-		ObjectFutureInt14(Dest)=ReadInt(file)
+		ObjectCaged(Dest)=ReadInt(file)
 		ObjectFutureInt15(Dest)=ReadInt(file)
 		ObjectFutureInt16(Dest)=ReadInt(file)
 		ObjectExclamation(Dest)=ReadInt(file)
