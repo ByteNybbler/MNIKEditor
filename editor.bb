@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/15/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/16/22)"
 
 Global MASTERUSER=True
 
@@ -4116,6 +4116,10 @@ Function LoadObjectPreset()
 	NofObjectAdjusters=NofObjectAdjusters+1
 	ObjectAdjuster$(NofObjectAdjusters)="LinkBack"
 	NofObjectAdjusters=NofObjectAdjusters+1
+	;ObjectAdjuster$(NofObjectAdjusters)="Parent"
+	;NofObjectAdjusters=NofObjectAdjusters+1
+	;ObjectAdjuster$(NofObjectAdjusters)="Child"
+	;NofObjectAdjusters=NofObjectAdjusters+1
 	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDX"
 	;NofObjectAdjusters=NofObjectAdjusters+1
 	;ObjectAdjuster$(NofObjectAdjusters)="ObjectDY"
@@ -4667,6 +4671,18 @@ Function DeleteObject(i)
 		Else If ObjectLinkBack(j)>i
 			ObjectLinkBack(j)=ObjectLinkBack(j)-1
 		EndIf
+		
+		If ObjectParent(j)=i
+			ObjectParent(j)=-1
+		Else If ObjectParent(j)>i
+			ObjectParent(j)=ObjectParent(j)-1
+		EndIf
+		
+		If ObjectChild(j)=i
+			ObjectChild(j)=-1
+		Else If ObjectChild(j)>i
+			ObjectChild(j)=ObjectChild(j)-1
+		EndIf
 	Next
 	
 	If CurrentObjectLinked=i
@@ -4679,6 +4695,18 @@ Function DeleteObject(i)
 		CurrentObjectLinkBack=-1
 	Else If CurrentObjectLinkBack>i
 		CurrentObjectLinkBack=CurrentObjectLinkBack-1
+	EndIf
+	
+	If CurrentObjectParent=i
+		CurrentObjectParent=-1
+	Else If CurrentObjectParent>i
+		CurrentObjectParent=CurrentObjectParent-1
+	EndIf
+	
+	If CurrentObjectChild=i
+		CurrentObjectChild=-1
+	Else If CurrentObjectChild>i
+		CurrentObjectChild=CurrentObjectChild-1
 	EndIf
 	
 
@@ -6668,6 +6696,11 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectLinked)
 	Case "LinkBack"
 		tex$=Str$(CurrentObjectLinkBack)
+	
+	Case "Parent"
+		tex$=Str$(CurrentObjectParent)
+	Case "Child"
+		tex$=Str$(CurrentObjectChild)
 		
 	Case "ObjectDX"
 		tex$=Str$(CurrentObjectDX)
@@ -7740,6 +7773,11 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectLinked=AdjustInt("Linked: ", CurrentObjectLinked, 1, 10, 150)
 	Case "LinkBack"
 		CurrentObjectLinkBack=AdjustInt("LinkBack: ", CurrentObjectLinkBack, 1, 10, 150)
+		
+	Case "Parent"
+		CurrentObjectParent=AdjustInt("Parent: ", CurrentObjectParent, 1, 10, 150)
+	Case "Child"
+		CurrentObjectChild=AdjustInt("Child: ", CurrentObjectChild, 1, 10, 150)
 		
 	Case "ObjectDX"
 		CurrentObjectDX=AdjustFloat#("ObjectDX: ", CurrentObjectDX, 0.01, 0.1, 150)
@@ -9345,8 +9383,10 @@ Function SaveLevel()
 	
 		WriteInt file,ObjectReactive(Dest)
 
-		WriteInt file,ObjectChild(Dest)
-		WriteInt file,ObjectParent(Dest)
+		;WriteInt file,ObjectChild(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectChild(Dest), PlayerIndex)
+		;WriteInt file,ObjectParent(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectParent(Dest), PlayerIndex)
 	
 		For k=0 To 9
 			WriteInt file,ObjectData(Dest,k)
@@ -10321,11 +10361,12 @@ Function LoadLevel(levelnumber)
 	
 	
 	; finalize object data
-	;PlayerIndex=ObjectIndexGameToEditorInner(NofObjects)
 	PlayerIndex=NofObjects
 	For j=0 To NofObjects-1
 		ObjectLinked(j)=ObjectIndexGameToEditor(ObjectLinked(j), PlayerIndex)
 		ObjectLinkBack(j)=ObjectIndexGameToEditor(ObjectLinkBack(j), PlayerIndex)
+		ObjectParent(j)=ObjectIndexGameToEditor(ObjectParent(j), PlayerIndex)
+		ObjectChild(j)=ObjectIndexGameToEditor(ObjectChild(j), PlayerIndex)
 	Next
 	
 	
