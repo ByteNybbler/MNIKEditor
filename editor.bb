@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/16/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/17/22)"
 
 Global MASTERUSER=True
 
@@ -4065,7 +4065,7 @@ Function LoadObjectPreset()
 	AddAdjuster("TimerMax2")
 	AddAdjuster("DefensePower")
 	AddAdjuster("WaterReact")
-	AddAdjuster("Freezable")
+	AddAdjuster("Frozen")
 	AddAdjuster("Teleportable")
 	AddAdjuster("Linked")
 	AddAdjuster("LinkBack")
@@ -5227,6 +5227,9 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Freezable"
 		tex$=Str$(CurrentObjectFreezable)
+		
+	Case "Frozen"
+		tex$=Str$(CurrentObjectFrozen)
 		
 	Case "Teleportable"
 		tex$=Str$(CurrentObjectTeleportable)
@@ -7048,7 +7051,9 @@ Function AdjustObjectAdjuster(i)
 	Case "WaterReact"
 		CurrentObjectWaterReact=AdjustInt("WaterReact: ", CurrentObjectWaterReact, 1, 10, 150)
 	Case "Freezable"
-		CurrentObjectFreezable=AdjustInt("Freezable: ", CurrentObjectFreezable, 1, 10, 150)		
+		CurrentObjectFreezable=AdjustInt("Freezable: ", CurrentObjectFreezable, 1, 10, 150)
+	Case "Frozen"
+		CurrentObjectFrozen=AdjustInt("Frozen: ", CurrentObjectFrozen, 1, 10, 150)		
 	Case "Teleportable"
 		CurrentObjectTeleportable=1-CurrentObjectTeleportable
 		If MouseScroll=0
