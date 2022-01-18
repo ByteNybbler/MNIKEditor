@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/17/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/18/22)"
 
 Global MASTERUSER=True
 
@@ -133,6 +133,8 @@ Until winningcondition$(nofwinningconditions-1)="Done"
 nofwinningconditions=nofwinningconditions-1
 
 Global CurrentLevelNumber
+
+Global ShowingError=False
 
 ; END EDITOR MASTER DATA
 
@@ -1665,6 +1667,8 @@ End Function
 
 
 Function EditorGlobalControls()
+
+	ShowingError=False
 
 	If MouseDown(1)=True
 		LeftMouse=True
@@ -4101,8 +4105,26 @@ Function AddAdjuster(Name$)
 End Function
 
 
+; for preventing several of the same error from pausing the same frame for a long time
+Function ShowError(message$)
+
+	If ShowingError=False
+		ShowingError=True ; will reset at the start of every frame
+		Locate 0,0
+		Print message$
+		Delay 1000
+	EndIf
+
+End Function
+
+
 
 Function PlaceObject(x#,y#)
+
+	If NofObjects>999
+		ShowError("1000 object limit reached; refusing to place any more")
+		Return
+	EndIf
 
 
 	; first check if another object exists on the same tile
