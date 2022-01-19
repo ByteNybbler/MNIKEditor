@@ -1988,6 +1988,72 @@ Function EditorLocalControls()
 				
 				BlockMode=1
 				Delay 100
+			Else If FillMode=1 And DeleteKey=True And DeleteKeyReleased=True
+				; flood fill but it deletes
+				DeleteKeyReleased=False
+				
+				; initialize state
+				For i=0 To LevelWidth-1
+					For j=0 To LevelHeight-1
+						LevelTileVisited(i,j)=False
+					Next
+				Next
+				
+				SetLevelTileAsTarget(x,y)
+				DeleteObjectAt(x,y)
+				FloodStackX(0)=x
+				FloodStackY(0)=y
+				ElementCount=1
+				While ElementCount<>0
+					ElementCount=ElementCount-1
+					thisx=FloodStackX(ElementCount)
+					thisy=FloodStackY(ElementCount)
+												
+					If thisx>0
+						nextx=thisx-1
+						nexty=thisy
+						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+							DeleteObjectAt(nextx,nexty)
+							LevelTileVisited(nextx,nexty)=True
+							FloodStackX(ElementCount)=nextx
+							FloodStackY(ElementCount)=nexty
+							ElementCount=ElementCount+1
+						EndIf
+					EndIf
+					If thisx<LevelWidth-1
+						nextx=thisx+1
+						nexty=thisy
+						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+							DeleteObjectAt(nextx,nexty)
+							LevelTileVisited(nextx,nexty)=True
+							FloodStackX(ElementCount)=nextx
+							FloodStackY(ElementCount)=nexty
+							ElementCount=ElementCount+1
+						EndIf
+					EndIf
+					If thisy>0
+						nextx=thisx
+						nexty=thisy-1
+						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+							DeleteObjectAt(nextx,nexty)
+							LevelTileVisited(nextx,nexty)=True
+							FloodStackX(ElementCount)=nextx
+							FloodStackY(ElementCount)=nexty
+							ElementCount=ElementCount+1
+						EndIf
+					EndIf
+					If thisy<LevelHeight-1
+						nextx=thisx
+						nexty=thisy+1
+						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+							DeleteObjectAt(nextx,nexty)
+							LevelTileVisited(nextx,nexty)=True
+							FloodStackX(ElementCount)=nextx
+							FloodStackY(ElementCount)=nexty
+							ElementCount=ElementCount+1
+						EndIf
+					EndIf
+				Wend
 			EndIf
 		
 		Else
@@ -4672,15 +4738,15 @@ Function UpdateObjectVisibility(Dest)
 			HideEntity ObjectAccEntity(Dest)
 		EndIf
 	Else
-		ShowMessage("If comparison with ObjectEntity for "+Dest, 50)
+		;ShowMessage("If comparison with ObjectEntity for "+Dest, 50)
 		If ObjectEntity(Dest)>0
 			ShowEntity ObjectEntity(Dest)
 		EndIf
-		ShowMessage("If comparison with ObjectHatEntity "+ObjectHatEntity(Dest)+" For "+Dest, 50)
+		;ShowMessage("If comparison with ObjectHatEntity "+ObjectHatEntity(Dest)+" For "+Dest, 50)
 		If ObjectHatEntity(Dest)>0
 			ShowEntity ObjectHatEntity(Dest)
 		EndIf
-		ShowMessage("If comparison with ObjectAccEntity for "+Dest, 50)
+		;ShowMessage("If comparison with ObjectAccEntity for "+Dest, 50)
 		If ObjectAccEntity(Dest)>0
 			ShowEntity ObjectAccEntity(Dest)
 		EndIf
@@ -10754,14 +10820,7 @@ Function LoadLevel(levelnumber)
 
 
 	NofObjects=ReadInt(file)
-	For i=0 To NofObjects-1
-		Locate 0,0
-		Color 0,0,0
-		Rect 0,0,500,40,True
-		Color 255,255,255
-		Print "Object "+i
-		Delay 10
-		
+	For i=0 To NofObjects-1		
 		Dest=i
 		ObjectModelName$(i)=ReadString$(file)
 		ObjectTextureName$(i)=ReadString$(file)
