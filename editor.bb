@@ -3593,6 +3593,13 @@ Function EditorLocalControls()
 					For j=0 To LevelHeight-1
 						LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
 						WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
+						;UpdateLevelTile(i,j)
+						;UpdateWaterTile(i,j)
+					Next
+				Next
+				;ReBuildLevelModel()
+				For i=0 To LevelWidth-1
+					For j=0 To LevelHeight-1
 						UpdateLevelTile(i,j)
 						UpdateWaterTile(i,j)
 					Next
@@ -3602,6 +3609,7 @@ Function EditorLocalControls()
 					UpdateObjectPosition(i)
 				Next
 				CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
+				BuildCurrentObjectModel()
 			EndIf
 		EndIf
 	EndIf
@@ -4598,11 +4606,11 @@ Function UpdateObjectPosition(Dest)
 	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
 	
 	If ObjectHatEntity(Dest)>0
-		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*CurrentObjectZScale/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 	EndIf
 	
 	If ObjectAccEntity(Dest)>0
-		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*CurrentObjectZScale/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 	EndIf
 
 End Function
@@ -4610,6 +4618,7 @@ End Function
 
 Function UpdateObjectEntityToCurrent(Dest)
 
+	FreeModel(Dest)
 	ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
 	
 	UpdateObjectVisibility(Dest)
@@ -4858,7 +4867,7 @@ Function FreeClothes(i)
 
 End Function
 
-Function FreeObject(i)
+Function FreeModel(i)
 
 	FreeClothes(i)
 
@@ -4871,6 +4880,11 @@ Function FreeObject(i)
 		ObjectTexture(i)=0
 	EndIf
 
+End Function
+
+Function FreeObject(i)
+
+	FreeModel(i)
 	
 	If ObjectPositionMarker(i)>0
 		FreeEntity ObjectPositionMarker(i)
@@ -5102,7 +5116,7 @@ End Function
 
 Function PasteObjectData(Dest)
 
-	FreeClothes(Dest)
+	;FreeClothes(Dest)
 	
 	;ObjectHatEntity(Dest)=CurrentObjectHatEntity
 	;ObjectAccEntity(Dest)=CurrentObjectAccEntity
@@ -5232,7 +5246,7 @@ Function PasteObjectData(Dest)
 	;	ObjectAdjusterString$(Dest,i)=CurrentObjectAdjusterString$(i)
 	;Next
 	
-	FreeEntity(ObjectEntity(Dest))
+	;FreeEntity(ObjectEntity(Dest))
 	UpdateObjectEntityToCurrent(Dest)
 
 	
@@ -7104,7 +7118,7 @@ End Function
 Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 
 	Fast=False
-	If KeyDown(42) Or KeyDown(54) Then Fast=True ; shift
+	If ShiftDown() Then Fast=True
 	RawInput=False
 	If CtrlDown() Then RawInput=True
 	
@@ -7130,7 +7144,7 @@ End Function
 Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
 
 	Fast=False
-	If KeyDown(42) Or KeyDown(54) Then Fast=True ; shift
+	If ShiftDown() Then Fast=True
 	RawInput=False
 	If CtrlDown() Then RawInput=True
 	
@@ -7139,7 +7153,7 @@ Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, Delay
 	
 	If LeftMouse=True
 		If RawInput=True
-			Return InputInt(ValueName$)
+			Return InputFloat#(ValueName$)
 		Else
 			Delay DelayTime
 			Return CurrentValue+Adj
@@ -7207,17 +7221,17 @@ Function AdjustObjectAdjuster(i)
 		
 	
 	Case "YawAdjust"		
-		CurrentObjectYawAdjust=AdjustInt("YawAdjust: ", CurrentObjectYawAdjust, 1, 45, 150)
+		CurrentObjectYawAdjust=AdjustFloat#("YawAdjust: ", CurrentObjectYawAdjust, 1, 45, 150)
 		
 		If CurrentObjectYawAdjust>=360 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust-360
 		If CurrentObjectYawAdjust<0 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust+360
 	Case "PitchAdjust"
-		CurrentObjectPitchAdjust=AdjustInt("PitchAdjust: ", CurrentObjectPitchAdjust, 1, 45, 150)
+		CurrentObjectPitchAdjust=AdjustFloat#("PitchAdjust: ", CurrentObjectPitchAdjust, 1, 45, 150)
 		
 		If CurrentObjectPitchAdjust>=360 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust-360
 		If CurrentObjectPitchAdjust<0 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust+360
 	Case "RollAdjust"
-		CurrentObjectRollAdjust=AdjustInt("RollAdjust: ", CurrentObjectRollAdjust, 1, 45, 150)
+		CurrentObjectRollAdjust=AdjustFloat#("RollAdjust: ", CurrentObjectRollAdjust, 1, 45, 150)
 		
 		If CurrentObjectRollAdjust>=360 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust-360
 		If CurrentObjectRollAdjust<0 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust+360
