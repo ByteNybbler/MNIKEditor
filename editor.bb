@@ -3416,7 +3416,7 @@ Function EditorLocalControls()
 	
 	If MX>=500 And MX<600
 		If my>520 And my<550
-			If LeftMouse=True And LeftMouseReleased=True
+			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 				;BorderExpandOption=Not BorderExpandOption
 				;WidescreenRangeLevel=WidescreenRangeLevel+1
 				;If WidescreenRangeLevel>1
@@ -3426,14 +3426,14 @@ Function EditorLocalControls()
 				;EndIf
 				
 				BrushSize=BrushSize+2
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
-			If RightMouse=True And RightMouseReleased=True
+			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 				BrushSize=BrushSize-2
 				If BrushSize<1
 					BrushSize=1
 				EndIf
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
 	EndIf
