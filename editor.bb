@@ -4596,6 +4596,14 @@ End Function
 Function UpdateObjectPosition(Dest)
 
 	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+	
+	If ObjectHatEntity(Dest)>0
+		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*CurrentObjectZScale/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+	EndIf
+	
+	If ObjectAccEntity(Dest)>0
+		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*CurrentObjectZScale/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+	EndIf
 
 End Function
 
@@ -4605,8 +4613,6 @@ Function UpdateObjectEntityToCurrent(Dest)
 	ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
 	
 	UpdateObjectVisibility(Dest)
-	
-	UpdateObjectPosition(Dest)
 	
 	If CurrentHatModel>0
 		If CurrentObjectData(2)>9 ; two digit
@@ -4624,9 +4630,6 @@ Function UpdateObjectEntityToCurrent(Dest)
 		TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
 
 		EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
-	
-		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*CurrentObjectZScale/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
-		
 	EndIf
 	
 	If CurrentAccModel>0
@@ -4641,12 +4644,9 @@ Function UpdateObjectEntityToCurrent(Dest)
 		TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
 
 		EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
-
-
-		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*CurrentObjectZScale/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
-		
-
 	EndIf
+	
+	UpdateObjectPosition(Dest)
 
 End Function
 
@@ -5104,10 +5104,10 @@ Function PasteObjectData(Dest)
 
 	FreeClothes(Dest)
 	
-	ObjectHatEntity(Dest)=CurrentObjectHatEntity
-	ObjectAccEntity(Dest)=CurrentObjectAccEntity
-	ObjectHatTexture(Dest)=CurrentObjectHatTexture
-	ObjectAccTexture(Dest)=CurrentObjectAccTexture
+	;ObjectHatEntity(Dest)=CurrentObjectHatEntity
+	;ObjectAccEntity(Dest)=CurrentObjectAccEntity
+	;ObjectHatTexture(Dest)=CurrentObjectHatTexture
+	;ObjectAccTexture(Dest)=CurrentObjectAccTexture
 
 	ObjectModelName$(Dest)=CurrentObjectModelName$
 	ObjectTextureName$(Dest)=CurrentObjectTextureName$
