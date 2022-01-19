@@ -4370,14 +4370,24 @@ Function AddAdjuster(Name$)
 End Function
 
 
+Function ShowMessage(message$)
+
+		Locate 0,0
+		Color 0,0,0
+		Rect 0,0,500,40,True
+		Color 255,255,255
+		Print message$
+		Delay 1000	
+
+End Function
+
+
 ; for preventing several of the same error from pausing the same frame for a long time
-Function ShowError(message$)
+Function ShowMessageOnce(message$)
 
 	If ShowingError=False
 		ShowingError=True ; will reset at the start of every frame
-		Locate 0,0
-		Print message$
-		Delay 1000
+		ShowMessage(message$)
 	EndIf
 
 End Function
@@ -4395,7 +4405,7 @@ Function PlaceObject(x#,y#)
 	EndIf
 
 	If NofObjects>999
-		ShowError("1000 object limit reached; refusing to place any more")
+		ShowMessageOnce("1000 object limit reached; refusing to place any more")
 		Return
 	EndIf
 
@@ -4616,7 +4626,7 @@ Function PlaceObject(x#,y#)
 	
 	UpdateObjectEntityToCurrent(NofObjects)
 	
-		
+	
 	CreateObjectPositionMarker(NofObjects)
 	
 	
@@ -4686,41 +4696,44 @@ End Function
 Function UpdateObjectEntityToCurrent(Dest)
 
 	FreeModel(Dest)
-	ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
 	
-	UpdateObjectVisibility(Dest)
+	CreateObjectModel(Dest)
 	
-	If CurrentHatModel>0
-		If CurrentObjectData(2)>9 ; two digit
-			ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+".3ds",0)
-			ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-		Else
-			ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory00"+Str$(CurrentObjectData(2)+".3ds"),0)
-			ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory00"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-		EndIf
-		
-		ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-		
-		RotateEntity ObjectHatEntity(Dest),0,0,0
-		TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
-
-		EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
-	EndIf
+	;ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
 	
-	If CurrentAccModel>0
-		ObjectAccEntity(Dest)=MyLoadMesh("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+".3ds",0)
-		ObjectAccTexture(Dest)=MyLoadTexture("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+Chr$(65+CurrentObjectData(5))+".jpg",4)
+	;UpdateObjectVisibility(Dest)
 	
-	
-		ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-		
-		RotateEntity ObjectAccEntity(Dest),0,0,0
-		TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
-
-		EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
-	EndIf
+	;If CurrentHatModel>0
+	;	If CurrentObjectData(2)>9 ; two digit
+	;		ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+".3ds",0)
+	;		ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
+	;	Else
+	;		ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory00"+Str$(CurrentObjectData(2)+".3ds"),0)
+	;		ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory00"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
+	;	EndIf
+	;	
+	;	ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+	;	
+	;	RotateEntity ObjectHatEntity(Dest),0,0,0
+	;	TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+	;	TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
+	;
+	;	EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
+	;EndIf
+	;
+	;If CurrentAccModel>0
+	;	ObjectAccEntity(Dest)=MyLoadMesh("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+".3ds",0)
+	;	ObjectAccTexture(Dest)=MyLoadTexture("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+Chr$(65+CurrentObjectData(5))+".jpg",4)
+	;
+	;
+	;	ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+	;	
+	;	RotateEntity ObjectAccEntity(Dest),0,0,0
+	;	TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+	;	TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
+	;
+	;	EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+	;EndIf
 	
 	UpdateObjectPosition(Dest)
 
@@ -5031,13 +5044,17 @@ End Function
 
 Function DeleteObjectAt(x,y)
 
+	DeleteCount=0
 	For i=0 To NofObjects-1
 		If Floor(ObjectX(i))=x And Floor(ObjectY(i))=y
 			DeleteObject(i)
 			EditorMode=3
 			i=i-1
+			DeleteCount=DeleteCount+1
 		EndIf
 	Next
+	;ShowMessage(DeleteCount)
+	Return DeleteCount
 
 End Function
 
@@ -5309,9 +5326,9 @@ Function PasteObjectData(Dest)
 	ObjectFutureString1$(Dest)=CurrentObjectFutureString1$
 	ObjectFutureString2$(Dest)=CurrentObjectFutureString1$
 	
-	;For i=0 To 30
-	;	ObjectAdjusterString$(Dest,i)=CurrentObjectAdjusterString$(i)
-	;Next
+	For i=0 To 30
+		ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
+	Next
 	
 	;FreeEntity(ObjectEntity(Dest))
 	UpdateObjectEntityToCurrent(Dest)
@@ -10710,6 +10727,12 @@ Function LoadLevel(levelnumber)
 
 	NofObjects=ReadInt(file)
 	For i=0 To NofObjects-1
+		Locate 0,0
+		Color 0,0,0
+		Rect 0,0,500,40,True
+		Color 255,255,255
+		Print "Object "+i
+		Delay 10
 		
 		Dest=i
 		ObjectModelName$(i)=ReadString$(file)
