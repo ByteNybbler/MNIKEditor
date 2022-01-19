@@ -4370,24 +4370,24 @@ Function AddAdjuster(Name$)
 End Function
 
 
-Function ShowMessage(message$)
+Function ShowMessage(message$, milliseconds)
 
 		Locate 0,0
 		Color 0,0,0
 		Rect 0,0,500,40,True
 		Color 255,255,255
 		Print message$
-		Delay 1000	
+		Delay milliseconds
 
 End Function
 
 
-; for preventing several of the same error from pausing the same frame for a long time
-Function ShowMessageOnce(message$)
+; for preventing several of the same message from pausing the same frame for a long time
+Function ShowMessageOnce(message$, milliseconds)
 
 	If ShowingError=False
 		ShowingError=True ; will reset at the start of every frame
-		ShowMessage(message$)
+		ShowMessage(message$, milliseconds)
 	EndIf
 
 End Function
@@ -4405,7 +4405,7 @@ Function PlaceObject(x#,y#)
 	EndIf
 
 	If NofObjects>999
-		ShowMessageOnce("1000 object limit reached; refusing to place any more")
+		ShowMessageOnce("1000 object limit reached; refusing to place any more", 1000)
 		Return
 	EndIf
 
@@ -4644,6 +4644,8 @@ End Function
 
 Function CalculateEffectiveID(Dest)
 
+	;ShowMessage("Calculating effective ID for "+Dest, 50)
+
 	Select ObjectType(Dest)
 	Case 10,40,45,210,281,410,424 ; gate, stepping stone, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
 		If ObjectID(Dest)=-1
@@ -4657,8 +4659,12 @@ End Function
 
 Function UpdateObjectVisibility(Dest)
 
+	;ShowMessage("Updating object visibility for "+Dest, 50)
+
 	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest))
-		HideEntity ObjectEntity(Dest)
+		If ObjectEntity(Dest)>0
+			HideEntity ObjectEntity(Dest)
+		EndIf
 		If ObjectHatEntity(Dest)>0
 			HideEntity ObjectHatEntity(Dest)
 		EndIf
@@ -4666,14 +4672,21 @@ Function UpdateObjectVisibility(Dest)
 			HideEntity ObjectAccEntity(Dest)
 		EndIf
 	Else
-		ShowEntity ObjectEntity(Dest)
+		ShowMessage("If comparison with ObjectEntity for "+Dest, 50)
+		If ObjectEntity(Dest)>0
+			ShowEntity ObjectEntity(Dest)
+		EndIf
+		ShowMessage("If comparison with ObjectHatEntity "+ObjectHatEntity(Dest)+" For "+Dest, 50)
 		If ObjectHatEntity(Dest)>0
 			ShowEntity ObjectHatEntity(Dest)
 		EndIf
+		ShowMessage("If comparison with ObjectAccEntity for "+Dest, 50)
 		If ObjectAccEntity(Dest)>0
 			ShowEntity ObjectAccEntity(Dest)
 		EndIf
 	EndIf
+	
+	;ShowMessage("Visibility update complete for "+Dest, 50)
 
 End Function
 
@@ -4925,21 +4938,39 @@ End Function
 
 Function FreeClothes(i)
 
+End Function
+
+Function FreeModel(i)
+
+	If ObjectEntity(i)>0
+		FreeEntity ObjectEntity(i)
+		ObjectEntity(i)=0
+	EndIf
+	
+	If ObjectTexture(i)>0
+		FreeTexture ObjectTexture(i)
+		ObjectTexture(i)=0
+	EndIf
+
+	;ShowMessage("Checking ObjectHatEntity for freeing on "+i+": "+ObjectHatEntity(i), 1000)
 	If ObjectHatEntity(i)>0
 		FreeEntity ObjectHatEntity(i)
 		ObjectHatEntity(i)=0
 	EndIf
 
+	;ShowMessage("Checking ObjectAccEntity for freeing on "+i+": "+ObjectAccEntity(i), 1000)
 	If ObjectAccEntity(i)>0
 		FreeEntity ObjectAccEntity(i)
 		ObjectAccEntity(i)=0
 	EndIf
 	
+	;ShowMessage("Checking ObjectHatTexture for freeing on "+i+": "+ObjectHatTexture(i), 1000)
 	If ObjectHatTexture(i)>0
 		FreeTexture ObjectHatTexture(i)
 		ObjectHatTexture(i)=0
 	EndIf
 
+	;ShowMessage("Checking ObjectAccTexture for freeing on "+i+": "+ObjectAccTexture(i), 1000)
 	If ObjectAccTexture(i)>0
 		FreeTexture ObjectAccTexture(i)
 		ObjectAccTexture(i)=0
@@ -4947,25 +4978,10 @@ Function FreeClothes(i)
 
 End Function
 
-Function FreeModel(i)
-
-	FreeClothes(i)
-
-	If ObjectEntity(i)>0
-		FreeEntity ObjectEntity(i)
-		ObjectEntity(i)=0
-	EndIf
-
-End Function
-
 Function FreeObject(i)
 
 	FreeModel(i)
-	
-	If ObjectTexture(i)>0
-		FreeTexture ObjectTexture(i)
-		ObjectTexture(i)=0
-	EndIf
+
 	If ObjectPositionMarker(i)>0
 		FreeEntity ObjectPositionMarker(i)
 		ObjectPositionMarker(i)=0
@@ -5053,7 +5069,7 @@ Function DeleteObjectAt(x,y)
 			DeleteCount=DeleteCount+1
 		EndIf
 	Next
-	;ShowMessage(DeleteCount)
+	;ShowMessage(DeleteCount, 1000)
 	Return DeleteCount
 
 End Function
@@ -5066,6 +5082,14 @@ Function CopyObjectData(Source,Dest)
 	ObjectAccEntity(Dest)=ObjectAccEntity(Source)
 	ObjectHatTexture(Dest)=ObjectHatTexture(Source)
 	ObjectAccTexture(Dest)=ObjectAccTexture(Source)
+	; making sure there is no aliasing since that previously caused occasional MAVs
+	ObjectEntity(Source)=0
+	ObjectTexture(Source)=0
+	ObjectHatEntity(Source)=0
+	ObjectAccEntity(Source)=0
+	ObjectHatTexture(Source)=0
+	ObjectAccTexture(Source)=0
+	
 
 	ObjectModelName$(Dest)=ObjectModelName$(Source)
 	ObjectTextureName$(Dest)=ObjectTextureName$(Source)
@@ -10621,7 +10645,9 @@ Function LoadLevel(levelnumber)
 
 	
 	; clear current objects first
+	;ShowMessage("Freeing " + NofObjects + " objects...", 1000)
 	For i=0 To NofObjects-1
+		;DeleteObject(i)
 		FreeObject(i)
 	Next
 
@@ -10865,17 +10891,23 @@ Function LoadLevel(levelnumber)
 		Next
 
 
+		;ShowMessage("Creating object model for object "+Dest, 50)
+		
 		CreateObjectModel(Dest)
-				
+		
+		;ShowMessage("Done with object model for object "+Dest, 50)
 		
 		UpdateObjectVisibility(Dest)
+		
+		;ShowMessage("Done with visibility update for object "+Dest, 50)
 
-		PositionEntity ObjectEntity(Dest),ObjectX(i)+ObjectXAdjust(i),ObjectZ(i)+ObjectZAdjust(i),-ObjectY(i)-ObjectYAdjust(i)	
-
+		PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+		
+		;ShowMessage("Done with positioning for object "+Dest, 50)
 
 		CreateObjectPositionMarker(Dest)
 		
-		
+		;ShowMessage("Done with creating position marker for object "+Dest, 50)
 		
 
 	Next
