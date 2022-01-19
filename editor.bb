@@ -1406,13 +1406,6 @@ Until KeyDown(1)
 End
 
 
-;Function FormatZeroes$(integer)
-
-
-
-;End Function
-
-
 Function StartEditorMainLoop()
 	Cls
 	EditorMode=0
@@ -9332,6 +9325,7 @@ Function CameraControls()
 	
 End Function
 
+
 Function SaveLevel()
 
 
@@ -11719,11 +11713,11 @@ Function myFileType(ex$)
 
 End Function
 
-Function DisplayText2(mytext$,x#,y#,red,green,blue)
+Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
 	For i=1 To Len(mytext$)
 		let=Asc(Mid$(mytext$,i,1))-32
-		AddLetter(let,-.97+(x+i-1)*.045,.5-(y-4+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
+		AddLetter(let,-.97+(x+(i-1)*widthmult)*.045,.5-(y-4+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
 	Next
 	
 End Function
@@ -12634,17 +12628,17 @@ Function ResumeMaster()
 		ex$="Current\"
 	EndIf
 	
-	For i=1 To 99
+	For i=1 To LevelMax
 		; check existence of wlv and dia files
 		MasterLevelList(i)=0
-		If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(i)+".wlv")=1
+		If LevelExists(i)
 			MasterLevelList(i)=1
 		EndIf
 	Next
-	For i=1 To 999
+	For i=1 To DialogMax
 		
 		MasterDialogList(i)=0
-		If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(i)+".dia")=1
+		If DialogExists(i)
 			MasterDialogList(i)=1
 		EndIf
 	Next
@@ -12704,26 +12698,35 @@ Function MasterMainLoop()
 		EndIf
 		
 		
-		
+		DigitSpaceMult#=0.8
 		For i=1 To 20
 			flag=False
 			If MouseX()>700 And MouseX()<750 And MouseY()>62+i*20 And MouseY()<=82+i*20
 				flag=True
 			EndIf
-		
+			
 			If i+MasterLevelListStart<10
+				ex$="00"+Str$(i+MasterLevelListStart)
+			Else If i+MasterLevelListStart<100
 				ex$="0"+Str$(i+MasterLevelListStart)
 			Else
 				ex$=Str$(i+MasterLevelListStart)
 			EndIf
 		
 			If flag=True
-				DisplayText2(ex$,39,3+i,255,255,100)
+				r=255
+				g=255
+				b=100
 			Else If MasterLevelList(i+MasterLevelListStart)=0
-				DisplayText2(ex$,39,3+i,100,100,100)
+				r=100
+				g=100
+				b=100
 			Else
-				DisplayText2(ex$,39,3+i,210,210,210)
+				r=210
+				g=210
+				b=210
 			EndIf
+			DisplayText2(ex$,38.7,3+i,r,g,b,DigitSpaceMult) ; previously, x=39
 			
 			flag=False
 			If MouseX()>750 And MouseX()<800 And MouseY()>62+i*20 And MouseY()<=82+i*20
@@ -12739,12 +12742,19 @@ Function MasterMainLoop()
 			EndIf
 			
 			If flag=True
-				DisplayText2(ex$,41.5,3+i,255,255,100)
+				r=255
+				g=255
+				b=100
 			Else If MasterDialogList(i+MasterDialogListStart)=0
-				DisplayText2(ex$,41.5,3+i,100,100,100)
+				r=100
+				g=100
+				b=100
 			Else
-				DisplayText2(ex$,41.5,3+i,210,210,210)
+				r=210
+				g=210
+				b=210
 			EndIf
+			DisplayText2(ex$,41.8,3+i,r,g,b,DigitSpaceMult) ; previously, x=41.5
 	
 		Next
 		
