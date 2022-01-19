@@ -5101,6 +5101,8 @@ End Function
 
 
 Function PasteObjectData(Dest)
+
+	FreeClothes(Dest)
 	
 	ObjectHatEntity(Dest)=CurrentObjectHatEntity
 	ObjectAccEntity(Dest)=CurrentObjectAccEntity
@@ -5230,7 +5232,6 @@ Function PasteObjectData(Dest)
 	;	ObjectAdjusterString$(Dest,i)=CurrentObjectAdjusterString$(i)
 	;Next
 	
-	FreeClothes(Dest)
 	FreeEntity(ObjectEntity(Dest))
 	UpdateObjectEntityToCurrent(Dest)
 
