@@ -12519,8 +12519,13 @@ Function StartMaster()
 	CameraProjMode Camera3,0
 	CameraProjMode Camera4,0
 	CameraProjMode Camera,1
-
 	
+	
+	If AdventureCurrentArchive=1
+		ex$="Archive\"
+	Else
+		ex$="Current\"
+	EndIf
 	
 	For i=1 To MaxLevel
 		; check existence of wlv and dia files
