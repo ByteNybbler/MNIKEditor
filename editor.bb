@@ -13266,26 +13266,33 @@ Function MasterMainLoop()
 		EndIf
 		
 		; load dialog
-		For i=1 To 20
-			If MouseX()>750 And MouseX()<800 And MouseY()>62+i*20 And MouseY()<=82+i*20
-				SelectedDialog = i+MasterDialogListStart
-				If MasterDialogList(SelectedDialog)=1
-					; already exists - load
-					currentdialog=SelectedDialog
-					;loaddialogfile()
-					
-				Else
-					; new dialog
-					;ClearDialogFile()
-					currentdialog=SelectedDialog
-
-					
-				EndIf
+		If MouseX()>750 And MouseX()<800
+			If CtrlDown()
+				currentdialog=InputInt("Enter dia number: ")
 				StartDialog()
-				Repeat
-				Until MouseDown(1)=0
+			Else
+				For i=1 To 20
+					If MouseY()>62+i*20 And MouseY()<=82+i*20
+						SelectedDialog = i+MasterDialogListStart
+						If MasterDialogList(SelectedDialog)=1
+							; already exists - load
+							currentdialog=SelectedDialog
+							;loaddialogfile()
+							
+						Else
+							; new dialog
+							;ClearDialogFile()
+							currentdialog=SelectedDialog
+		
+							
+						EndIf
+						StartDialog()
+						Repeat
+						Until MouseDown(1)=0
+					EndIf
+				Next
 			EndIf
-		Next
+		EndIf
 
 		
 		
