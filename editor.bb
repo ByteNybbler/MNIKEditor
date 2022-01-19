@@ -8123,6 +8123,36 @@ Function UpdateWaterTile(i,j)
 
 End Function
 
+Function CreateSpellBallMesh(subtype)
+
+	entity=CreateSphere(4)
+	Select subtype
+	Case 7,8
+		EntityColor Entity,255,255,255
+	Case 0
+		EntityColor Entity,255,120,0
+	Case 1
+		EntityColor Entity,255,180,50
+	Case 2
+		EntityColor Entity,255,255,50
+	Case 3
+		EntityColor Entity,50,255,50
+	Case 4
+		EntityColor Entity,100,200,255
+	Case 5
+		EntityColor Entity,50,50,255
+	Case 6
+		EntityColor Entity,255,50,255
+	Case 9
+		EntityColor Entity,67,67,67
+	End Select 
+	ScaleMesh Entity,.15,.15,.15
+	EntityBlend Entity,3
+	
+	Return Entity
+
+End Function
+
 Function BuildCurrentTileModel()
 	
 	j=0
@@ -8629,6 +8659,9 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=MyLoadmesh("data\models\houses\door01.3ds",0)
 	Else If CurrentObjectModelName$="!Square"
 		CurrentObjectModel=MyLoadmesh("data\models\squares\square1.b3d",0)
+		
+	Else If CurrentObjectModelName$="!SpellBall"
+		CurrentObjectModel=CreateSpellBallMesh(7) ; use white magic spellball mesh
 		
 	Else If CurrentObjectModelName$="!Fence1"
 		CurrentObjectModel=CopyEntity(fence1)
