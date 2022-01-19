@@ -169,6 +169,7 @@ Global LevelMusic,LevelWeather
 Global Leveltimer
 
 Global CurrentGrabbedObject=-1
+Global BrushSize=1
 
 
 
@@ -1596,14 +1597,17 @@ Function EditorMainLoop()
 		Text 400+4,580,LevelEdgeStyle
 	EndIf
 	
-	Text 500,520,"   WIDESCREEN"
-	If WidescreenRangeLevel=0
-		Text 500,535,"   RANGE: OFF"
-	ElseIf WidescreenRangeLevel=1
-		Text 500,535,"   RANGE: ON"
-	Else
-		Text 500,535,"   RANGE: MASTER"
-	EndIf
+	;Text 500,520,"   WIDESCREEN"
+	;If WidescreenRangeLevel=0
+	;	Text 500,535,"   RANGE: OFF"
+	;ElseIf WidescreenRangeLevel=1
+	;	Text 500,535,"   RANGE: ON"
+	;Else
+	;	Text 500,535,"   RANGE: MASTER"
+	;EndIf
+	
+	Text 500,520,"   BRUSH"
+	Text 500,535,"   SIZE "+BrushSize
 	
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
@@ -1739,6 +1743,7 @@ Function EditorLocalControls()
 				ShowEntity CursorMesh
 				ShowEntity CursorMesh2
 				PositionEntity CursorMesh,x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
+				ScaleEntity CursorMesh,BrushSize,1,BrushSize
 				PositionEntity CursorMesh2,x+.5,0,-y-.5
 				Color 0,0,0
 				Rect 0,500,500,12,True
@@ -1799,11 +1804,18 @@ Function EditorLocalControls()
 				;		; flood fill
 					Else 
 						; default
-						If EditorMode=0
-							ChangeLevelTile(x,y,True)
-						ElseIf EditorMode=3
-							PlaceObject(x,y)
-						EndIf
+						BrushOffset=BrushSize/2
+						BrushXStart=x-BrushOffset
+						BrushYStart=y-BrushOffset
+						For i=0 To BrushSize-1
+							For j=0 To BrushSize-1
+								If EditorMode=0
+									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
+								ElseIf EditorMode=3
+									PlaceObject(BrushXStart+i,BrushYStart+j)
+								EndIf
+							Next
+						Next
 					EndIf
 					
 					If EditorMode=3
@@ -1858,7 +1870,16 @@ Function EditorLocalControls()
 			If DeleteKey=True And DeleteKeyReleased=True
 				
 				DeleteKeyReleased=False
-				DeleteObjectAt(x,y)
+				
+				BrushOffset=BrushSize/2
+				BrushXStart=x-BrushOffset
+				BrushYStart=y-BrushOffset
+				For i=0 To BrushSize-1
+					For j=0 To BrushSize-1
+						DeleteObjectAt(BrushXStart+i,BrushYStart+j)
+					Next
+				Next
+				
 				
 			EndIf
 			
@@ -3397,13 +3418,21 @@ Function EditorLocalControls()
 		If my>520 And my<550
 			If LeftMouse=True And LeftMouseReleased=True
 				;BorderExpandOption=Not BorderExpandOption
-				WidescreenRangeLevel=WidescreenRangeLevel+1
-				If WidescreenRangeLevel>1
-					WidescreenRangeLevel=-1
-				ElseIf WidescreenRangeLevel<-1
-					WidescreenRangeLevel=1
-				EndIf
+				;WidescreenRangeLevel=WidescreenRangeLevel+1
+				;If WidescreenRangeLevel>1
+				;	WidescreenRangeLevel=-1
+				;ElseIf WidescreenRangeLevel<-1
+				;	WidescreenRangeLevel=1
+				;EndIf
 				
+				BrushSize=BrushSize+2
+				Delay 100
+			EndIf
+			If RightMouse=True And RightMouseReleased=True
+				BrushSize=BrushSize-2
+				If BrushSize<1
+					BrushSize=1
+				EndIf
 				Delay 100
 			EndIf
 		EndIf
@@ -4061,6 +4090,14 @@ End Function
 
 Function PlaceObject(x#,y#)
 
+	floorx=Floor(x)
+	floory=Floor(y)
+	
+	If floorx<0 Or floory<0 Or floorx>LevelWidth-1 Or floory>LevelHeight-1
+		; don't place anything
+		Return
+	EndIf
+
 	If NofObjects>999
 		ShowError("1000 object limit reached; refusing to place any more")
 		Return
@@ -4082,10 +4119,10 @@ Function PlaceObject(x#,y#)
 
 
 	; And Place
-	ObjectTileX(NofObjects)=Floor(x)
-	ObjectTileX2(NofObjects)=Floor(x)
-	ObjectTileY(NofObjects)=Floor(y)
-	ObjectTileY2(NofObjects)=Floor(y)
+	ObjectTileX(NofObjects)=floorx
+	ObjectTileX2(NofObjects)=floorx
+	ObjectTileY(NofObjects)=floory
+	ObjectTileY2(NofObjects)=floory
 
 
 
