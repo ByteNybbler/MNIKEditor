@@ -12622,20 +12622,14 @@ Function ResumeMaster()
 	CameraProjMode Camera,1
 
 	
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
-	
-	For i=1 To LevelMax
+	For i=1 To MaxLevel
 		; check existence of wlv and dia files
 		MasterLevelList(i)=0
 		If LevelExists(i)
 			MasterLevelList(i)=1
 		EndIf
 	Next
-	For i=1 To DialogMax
+	For i=1 To MaxDialog
 		
 		MasterDialogList(i)=0
 		If DialogExists(i)
@@ -13245,23 +13239,31 @@ Function MasterMainLoop()
 
 		
 		; load level
-		For i=1 To 20
-			If MouseX()>700 And MouseX()<750 And MouseY()>62+i*20 And MouseY()<=82+i*20
-				SelectedLevel=i+MasterLevelListStart
-				If MasterLevelList(SelectedLevel)=1
-					; already exists - load
-					LoadLevel(SelectedLevel)
-					
-				Else
-					; new level
-					NewLevel(SelectedLevel)					
-				EndIf
+		If MouseX()>700 And MouseX()<750
+			If CtrlDown()
+				SelectedLevel=InputInt("Enter wlv number: ")
+				AccessLevel(SelectedLevel)
 				StartEditorMainLoop()
-				Repeat
-				Until MouseDown(1)=0
-
+			Else
+				For i=1 To 20
+					If MouseY()>62+i*20 And MouseY()<=82+i*20
+						SelectedLevel=i+MasterLevelListStart
+						;If MasterLevelList(SelectedLevel)=1
+						;	; already exists - load
+						;	LoadLevel(SelectedLevel)
+						;	
+						;Else
+						;	; new level
+						;	NewLevel(SelectedLevel)					
+						;EndIf
+						AccessLevel(SelectedLevel)
+						StartEditorMainLoop()
+						Repeat
+						Until MouseDown(1)=0
+					EndIf
+				Next
 			EndIf
-		Next
+		EndIf
 		
 		; load dialog
 		For i=1 To 20
