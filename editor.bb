@@ -454,6 +454,8 @@ Global CurrentObjectScaleAdjust#,CurrentObjectFutureFloat2#,CurrentObjectFutureF
 Global CurrentObjectFutureFloat6#,CurrentObjectFutureFloat7#,CurrentObjectFutureFloat8#,CurrentObjectFutureFloat9#,CurrentObjectFutureFloat10#
 Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
 
+Global IDFilterEnabled=False
+Global IDFilterAllow=-1
 
 
 ; Object PRESETS
@@ -1648,7 +1650,18 @@ Function EditorMainLoop()
 	Text 500,520,"   BRUSH"
 	Text 500,535,"   SIZE "+BrushSize
 	
-	Text 500,565,"   ELEVATION"
+	Text 500,565,"   ELEVATE"
+	
+	If IDFilterEnabled
+		Color 255,155,0
+	EndIf
+	Text 600,520,"ID FILTER:"
+	If IDFilterEnabled
+		Text 600,535,IDFilterAllow
+	Else
+		Text 600,535,"OFF"
+	EndIf
+	Color 255,255,0
 	
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
@@ -3614,6 +3627,35 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
+	If MX>=600 And MX<700
+		; ID filter
+		If my>520 And my<550
+			If LeftMouse=True And LeftMouseReleased=True
+				If IDFilterEnabled=False Or CtrlDown()
+					IDFilterAllow=InputInt("Enter the ID to filter for: ")
+					IDFilterEnabled=True
+				Else
+					IDFilterEnabled=False
+				EndIf
+				For j=0 To NofObjects-1
+					UpdateObjectVisibility(j)
+				Next
+				Delay 100
+			EndIf
+			If IDFilterEnabled And MouseScroll<>0
+				If ShiftDown()
+					Adj=50
+				Else
+					Adj=1
+				EndIf
+				IDFilterAllow=IDFilterAllow+Adj*MouseScroll
+				For j=0 To NofObjects-1
+					UpdateObjectVisibility(j)
+				Next
+			EndIf
+		EndIf
+	EndIf
+	
 	If LeftMouse=True And LeftMouseReleased=True
 
 		If MX>700
@@ -4590,12 +4632,37 @@ Function PlaceObject(x#,y#)
 End Function
 
 
+Function CalculateEffectiveID(Dest)
+
+	Select ObjectType(Dest)
+	Case 10,40,45,210,281,410,424 ; gate, stepping stone, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
+		If ObjectID(Dest)=-1
+			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
+		EndIf
+	End Select
+	Return ObjectID(Dest)
+
+End Function
+
+
 Function UpdateObjectVisibility(Dest)
 
-	If ShowObjectMesh=False
+	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest))
 		HideEntity ObjectEntity(Dest)
+		If ObjectHatEntity(Dest)>0
+			HideEntity ObjectHatEntity(Dest)
+		EndIf
+		If ObjectAccEntity(Dest)>0
+			HideEntity ObjectAccEntity(Dest)
+		EndIf
 	Else
 		ShowEntity ObjectEntity(Dest)
+		If ObjectHatEntity(Dest)>0
+			ShowEntity ObjectHatEntity(Dest)
+		EndIf
+		If ObjectAccEntity(Dest)>0
+			ShowEntity ObjectAccEntity(Dest)
+		EndIf
 	EndIf
 
 End Function
