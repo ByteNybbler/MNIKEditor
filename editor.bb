@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/18/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/19/22)"
 
 Global MASTERUSER=True
 
@@ -1723,14 +1723,14 @@ Function EditorLocalControls()
 	
 	Fast=False
 	If ShiftDown() Then Fast=True
-
 	
 	
 	; *************************************
-	; Placing Tiles on the Editor Field
+	; Placing Tiles and Objects on the Editor Field
 	; *************************************
-	If EditorMode=0
-		If mx>=0 And mx<500 And my>=0 And my<500 And editormode=0
+	
+	If EditorMode=0 Or EditorMode=3
+		If mx>=0 And mx<500 And my>=0 And my<500
 			Entity=CameraPick(camera1,MouseX(),MouseY())
 			If Entity>0
 				
@@ -1780,23 +1780,44 @@ Function EditorLocalControls()
 						Delay 100
 					Else If blockmode=2
 						; fill block
-						For i=cornleft To cornright
-							For j=cornup To corndown
-								ChangeLevelTile(i,j,True)
+						If EditorMode=0
+							For i=cornleft To cornright
+								For j=cornup To corndown
+									ChangeLevelTile(i,j,True)
+								Next
 							Next
-						Next
+						ElseIf EditorMode=3
+							For i=cornleft To cornright
+								For j=cornup To corndown
+									PlaceObject(i,j)
+								Next
+							Next
+						EndIf
 						blockmode=1
 						Delay 100
 				;	Else If fillmode=1
 				;		; flood fill
 					Else 
 						; default
-						ChangeLevelTile(x,y,True)
+						If EditorMode=0
+							ChangeLevelTile(x,y,True)
+						ElseIf EditorMode=3
+							PlaceObject(x,y)
+						EndIf
+					EndIf
+					
+					If EditorMode=3
+						LeftMouseReleased=False
 					EndIf
 				EndIf
 				If RightMouse=True And RightMouseReleased=True
 					RightMouseReleased=False
-					GrabLevelTile(x,y)
+					
+					If EditorMode=0
+						GrabLevelTile(x,y)
+					ElseIf EditorMode=3
+						GrabObject(x,y)
+					EndIf
 					;BlockMode=0
 					;FillMode=0
 				EndIf
@@ -1807,7 +1828,18 @@ Function EditorLocalControls()
 				y=-1
 			EndIf
 	
-		
+			If BlockMode=2 And DeleteKey=True And DeleteKeyReleased=True
+				DeleteKeyReleased=False
+				
+				For i=cornleft To cornright
+						For j=cornup To corndown
+							DeleteObjectAt(i,j)
+						Next
+					Next
+				
+				BlockMode=1
+				Delay 100
+			EndIf
 		
 		Else
 			HideEntity CursorMesh
@@ -1815,99 +1847,6 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	; *************************************
-	; Placing Objects on the Editor Field
-	; *************************************
-	If EditorMode=3
-		If mx>=0 And mx<500 And my>=0 And my<500 
-			Entity=CameraPick(camera1,MouseX(),MouseY())
-			If Entity>0
-				
-				x=Floor(PickedX())
-				y=Floor(-PickedZ())
-				ShowEntity CursorMesh
-				ShowEntity CursorMesh2
-				PositionEntity CursorMesh,x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
-				PositionEntity CursorMesh2,x+.5,0,-y-.5
-				Color 0,0,0
-				Rect 0,500,500,12,True
-				Color 255,255,255
-				Text 0,500,"X:"+Str$(x)+", Y:"+Str$(Abs(y))
-
-
-				HideEntity BlockModeMesh
-				If BlockMode=2
-					; show the block
-					ShowEntity BlockModeMesh
-					If x>BlockCornerx
-						cornleft=Blockcornerx
-						cornright=x
-					Else
-						cornleft=x
-						cornright=Blockcornerx
-					EndIf
-					If y>BlockCornery
-						cornup=BlockCornery
-						corndown=y
-					Else
-						cornup=y
-						corndown=blockcornery
-					EndIf
-					VertexCoords BlockModeSurface,0,cornleft-0,0.1,-(cornup)
-					VertexCoords BlockModeSurface,1,cornright+1,0.1,-(cornup)
-					VertexCoords BlockModeSurface,2,cornleft-0,0.1,-(corndown+1)
-					VertexCoords BlockModeSurface,3,cornright+1,0.1,-(corndown+1)
-				EndIf
-				
-
-				If LeftMouse=True And LeftMouseReleased=True
-				
-					If BlockMode=1
-						; place one corner of block
-						BlockCornerX=x
-						BlockCornerY=y
-						blockmode=2
-						Delay 100
-					Else If blockmode=2
-						; fill block
-						For i=cornleft To cornright
-							For j=cornup To corndown
-								PlaceObject(i,j)
-							Next
-						Next
-						blockmode=1
-						Delay 100
-				;	Else If fillmode=1
-				;		; flood fill
-					Else 
-						; default
-						PlaceObject(x,y)
-					EndIf
-					
-					;PlaceObject(x,y)
-					LeftMouseReleased=False
-					
-				EndIf
-				If RightMouse=True And RightMouseReleased=True
-					
-					GrabObject(x,y)
-					RightMouseReleased=False
-					
-				EndIf
-				
-				
-			Else
-				HideEntity CursorMesh
-				HideEntity CursorMesh2
-				x=-1
-				y=-1
-			EndIf
-		
-		Else
-			HideEntity CursorMesh
-			HideEntity CursorMesh2
-		EndIf
-	EndIf
 	
 	If mx>=0 And mx<500 And my>=0 And my<500
 		Entity=CameraPick(camera1,MouseX(),MouseY())
@@ -1919,13 +1858,8 @@ Function EditorLocalControls()
 			If DeleteKey=True And DeleteKeyReleased=True
 				
 				DeleteKeyReleased=False
-				For i=0 To NofObjects-1
-					
-					If Floor(ObjectX(i))=x And Floor(ObjectY(i))=y
-						DeleteObject(i)
-						EditorMode=3
-					EndIf
-				Next
+				DeleteObjectAt(x,y)
+				
 			EndIf
 			
 		Else
@@ -1937,6 +1871,7 @@ Function EditorLocalControls()
 		EndIf
 
 	EndIf
+	
 
 
 	
@@ -4703,6 +4638,18 @@ Function DeleteObject(i)
 		CurrentObjectChild=CurrentObjectChild-1
 	EndIf
 	
+
+End Function
+
+Function DeleteObjectAt(x,y)
+
+	For i=0 To NofObjects-1
+		If Floor(ObjectX(i))=x And Floor(ObjectY(i))=y
+			DeleteObject(i)
+			EditorMode=3
+			i=i-1
+		EndIf
+	Next
 
 End Function
 
