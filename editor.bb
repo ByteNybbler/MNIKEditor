@@ -268,6 +268,7 @@ Dim CopyWaterTileTurbulence#(100,100)
 Global ChunkTileU#,ChunkTileV#
 
 Global CurrentMesh,CurrentSurface
+
 Global CurrentTileTexture=8
 Global CurrentTileRotation
 Global CurrentTileSideTexture=6
@@ -293,6 +294,35 @@ Global CurrentWaterTileHeight2,CurrentWaterTileTurbulence2
 Global CurrentWaterTileUse=True
 Global CurrentWaterTileHeightUse=True
 Global CurrentWaterTileTurbulenceUse=True
+
+Global TargetTileTexture=8
+Global TargetTileRotation
+Global TargetTileSideTexture=6
+Global TargetTileSideRotation
+Global TargetTileRandom#,TargetTileRandom2
+Global TargetTileHeight#,TargetTileHeight2
+Global TargetTileExtrusion#,TargetTileExtrusion2
+Global TargetTileRounding
+Global TargetTileEdgeRandom
+Global TargetTileLogic, TargetTileLogic2
+
+Global TargetTileTextureUse=True
+Global TargetTileSideTextureUse=True
+Global TargetTileHeightUse=True
+Global TargetTileExtrusionUse=True
+Global TargetTileRandomUse=True
+Global TargetTileRoundingUse=True
+Global TargetTileEdgeRandomUse=True
+Global TargetTileLogicUse=True
+
+Global TargetWaterTile,TargetWaterTileTexture,TargetWaterTileRotation,TargetWaterTileHeight#,TargetWaterTileTurbulence#
+Global TargetWaterTileHeight2,TargetWaterTileTurbulence2
+Global TargetWaterTileUse=True
+Global TargetWaterTileHeightUse=True
+Global TargetWaterTileTurbulenceUse=True
+
+Dim FloodStackX(10250) ; no pun intended hahahahaha
+Dim FloodStackY(10250)
 
 ; TILE PRESETS
 ; ========================
@@ -1542,6 +1572,13 @@ Function EditorMainLoop()
 	
 	
 	Text 0,550,"    WIPE"
+	
+	
+	If FillMode=0
+		Text 0,580,"    FILL"
+	Else If FillMode=1
+		Text 0,580,"   >FILL<"
+	EndIf
 
 	
 	Text 100,520,"   FLIP X"
@@ -1800,8 +1837,40 @@ Function EditorLocalControls()
 						EndIf
 						blockmode=1
 						Delay 100
-				;	Else If fillmode=1
-				;		; flood fill
+					Else If fillmode=1
+						; flood fill
+						SetLevelTileAsTarget(x,y)
+						FloodStackX(0)=x
+						FloodStackY(0)=y
+						ElementCount=1
+						While ElementCount<>0
+							ElementCount=ElementCount-1
+							thisx=FloodStackX(ElementCount)
+							thisy=FloodStackY(ElementCount)
+							If LevelTileMatchesTarget(thisx,thisy)
+								ChangeLevelTile(thisx,thisy,True)
+								If thisx>0
+									FloodStackX(ElementCount)=thisx-1
+									FloodStackY(ElementCount)=thisy
+									ElementCount=ElementCount+1
+								EndIf
+								If thisx<LevelWidth-1
+									FloodStackX(ElementCount)=thisx+1
+									FloodStackY(ElementCount)=thisy
+									ElementCount=ElementCount+1
+								EndIf
+								If thisy>0
+									FloodStackX(ElementCount)=thisx
+									FloodStackY(ElementCount)=thisy-1
+									ElementCount=ElementCount+1
+								EndIf
+								If thisy<LevelHeight-1
+									FloodStackX(ElementCount)=thisx
+									FloodStackY(ElementCount)=thisy+1
+									ElementCount=ElementCount+1
+								EndIf
+							EndIf
+						Wend
 					Else 
 						; default
 						BrushOffset=BrushSize/2
@@ -3247,6 +3316,7 @@ Function EditorLocalControls()
 				Else
 					blockmode=0
 				EndIf
+				FillMode=0
 				
 				Delay 100
 				
@@ -3261,6 +3331,21 @@ Function EditorLocalControls()
 						ChangeLevelTile(i,j,True)
 					Next
 				Next
+			EndIf
+		EndIf
+		
+		If my>=570 And my<600
+			If LeftMouse=True And LeftMouseReleased=True
+				;fill
+				If fillmode=0 
+					fillmode=1
+				Else
+					fillmode=0
+				EndIf
+				BlockMode=0
+				
+				Delay 100
+				
 			EndIf
 		EndIf
 	
@@ -3772,6 +3857,7 @@ Function ChangeLevelTile(i,j,update)
 
 
 End Function
+
 Function GrabLevelTile(i,j)
 	
 	CurrentTileTexture=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
@@ -3785,7 +3871,7 @@ Function GrabLevelTile(i,j)
 	CurrentTileEdgeRandom=LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
 	CurrentTileLogic=LevelTileLogic(i,j)
 	
-	CurrentTileRandom2=CurrenTileRandom*1000
+	CurrentTileRandom2=CurrentTileRandom*1000
 	CurrentTileHeight2=CurrentTileHeight*100
 	CurrentTileExtrusion2=CurrentTileExtrusion*100
 	CurrentTileLogic2=CurrentTileLogic*10
@@ -3799,6 +3885,83 @@ Function GrabLevelTile(i,j)
 
 
 	BuildCurrentTileModel()
+
+End Function
+
+Function SetLevelTileAsTarget(i,j)
+	
+	TargetTileTexture=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
+	TargetTileRotation=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+	TargetTileSideTexture=LevelTileSideTexture(i,j) ; texture for extrusion walls
+	TargetTileSideRotation=LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+	TargetTileRandom=LevelTileRandom#(i,j) ; random height pertubation of tile
+	TargetTileHeight=LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
+	TargetTileExtrusion=LevelTileExtrusion#(i,j); extrusion with walls around it 
+	TargetTileRounding=LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
+	TargetTileEdgeRandom=LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
+	TargetTileLogic=LevelTileLogic(i,j)
+	
+	;TargetTileRandom2=TargetTileRandom*1000
+	;TargetTileHeight2=TargetTileHeight*100
+	;TargetTileExtrusion2=TargetTileExtrusion*100
+	;TargetTileLogic2=TargetTileLogic*10
+	
+	TargetWaterTileTexture=WaterTileTexture(i,j)
+	TargetWaterTileRotation=WaterTileRotation(i,j)
+	TargetWaterTileHeight=WaterTileHeight(i,j)
+	TargetWaterTileTurbulence=WaterTileTurbulence(i,j)
+	;TargetWaterTileHeight2=TargetWaterTileHeight*100
+	;TargetWaterTileTurbulence2=TargetWaterTileTurbulence*100
+
+End Function
+
+Function LevelTileMatchesTarget(i,j)
+
+	If TargetTileTextureUse And TargetTileTexture<>LevelTileTexture(i,j)
+		Return False
+	EndIf
+	;If TargetTileRotation<>LevelTileRotation(i,j)
+	;	Return False
+	;EndIf
+	If TargetTileSideTextureUse And TargetTileSideTexture<>LevelTileSideTexture(i,j)
+		Return False
+	EndIf
+	;If TargetTileSideRotation<>LevelTileSideRotation(i,j)
+	;	Return False
+	;EndIf
+	If TargetTileRandomUse And TargetTileRandom<>LevelTileRandom#(i,j)
+		Return False
+	EndIf
+	If TargetTileHeightUse And TargetTileHeight<>LevelTileHeight#(i,j)
+		Return False
+	EndIf
+	If TargetTileExtrusionUse And TargetTileExtrusion<>LevelTileExtrusion#(i,j)
+		Return False
+	EndIf
+	If TargetTileRoundingUse And TargetTileRounding<>LevelTileRounding(i,j)
+		Return False
+	EndIf
+	If TargetTileEdgeRandomUse And TargetTileEdgeRandom<>LevelTileEdgeRandom(i,j)
+		Return False
+	EndIf
+	If TargetTileLogicUse And TargetTileLogic<>LevelTileLogic(i,j)
+		Return False
+	EndIf
+	
+	If TargetWaterTileUse And TargetWaterTileTexture<>WaterTileTexture(i,j)
+		Return False
+	EndIf
+	;If TargetWaterTileRotation<>WaterTileRotation(i,j)
+	;	Return False
+	;EndIf
+	If TargetWaterTileHeightUse And TargetWaterTileHeight<>WaterTileHeight(i,j)
+		Return False
+	EndIf
+	If TargetWaterTileTurbulenceUse And TargetWaterTileTurbulence<>WaterTileTurbulence(i,j)
+		Return False
+	EndIf
+	
+	Return True
 
 End Function
 
