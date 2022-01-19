@@ -13059,28 +13059,29 @@ Function MasterMainLoop()
 	mb=0
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
+	MouseScroll=MouseZSpeed()
 	
 	; level/dialog list start
 	If MouseX()>700 And MouseX()<750
 		If (MouseY()>482 And MouseY()<502 And mb>0) Or MouseScroll<0
 			MasterLevelListStart=MasterLevelListStart+adj
 			If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
-			Delay 150
+			If MouseScroll=0 Then Delay 150
 		Else If (MouseY()>62 And MouseY()<82 And mb>0) Or MouseScroll>0
 			MasterLevelListStart=MasterLevelListStart-adj
 			If MasterLevelListStart<0 Then MasterLevelListStart=0
-			Delay 150
+			If MouseScroll=0 Then Delay 150
 		EndIf
 	EndIf
 	If MouseX()>750 And MouseX()<800
 		If (MouseY()>482 And MouseY()<502 And mb>0) Or MouseScroll<0
 			MasterDialogListStart=MasterDialogListStart+adj
 			If MasterDialogListStart>MaxDialog-20 Then MasterDialogListStart=MaxDialog-20
-			Delay 150
+			If MouseScroll=0 Then Delay 150
 		Else If (MouseY()>62 And MouseY()<82 And mb>0) Or MouseScroll>0
 			MasterDialogListStart=MasterDialogListStart-adj
 			If MasterDialogListStart<0 Then MasterDialogListStart=0
-			Delay 150
+			If MouseScroll=0 Then Delay 150
 		EndIf
 	EndIf
 	
