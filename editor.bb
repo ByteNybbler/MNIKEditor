@@ -265,6 +265,8 @@ Dim CopyWaterTileRotation(100,100)
 Dim CopyWaterTileHeight#(100,100)
 Dim CopyWaterTileTurbulence#(100,100)
 
+Dim LevelTileVisited(100,100) ; for use in the flood fill algorithm
+
 Global ChunkTileU#,ChunkTileV#
 
 Global CurrentMesh,CurrentSurface
@@ -1839,7 +1841,20 @@ Function EditorLocalControls()
 						Delay 100
 					Else If fillmode=1
 						; flood fill
+						
+						; initialize state
+						For i=0 To LevelWidth-1
+							For j=0 To LevelHeight-1
+								LevelTileVisited(i,j)=False
+							Next
+						Next
+						
 						SetLevelTileAsTarget(x,y)
+						If EditorMode=0
+							ChangeLevelTile(x,y,True)
+						ElseIf EditorMode=3
+							PlaceObject(x,y)
+						EndIf
 						FloodStackX(0)=x
 						FloodStackY(0)=y
 						ElementCount=1
@@ -1847,26 +1862,87 @@ Function EditorLocalControls()
 							ElementCount=ElementCount-1
 							thisx=FloodStackX(ElementCount)
 							thisy=FloodStackY(ElementCount)
-							If LevelTileMatchesTarget(thisx,thisy)
-								ChangeLevelTile(thisx,thisy,True)
-								If thisx>0
-									FloodStackX(ElementCount)=thisx-1
-									FloodStackY(ElementCount)=thisy
+							;If LevelTileMatchesTarget(thisx,thisy)
+							;	ChangeLevelTile(thisx,thisy,True)
+							;	If thisx>0
+							;		FloodStackX(ElementCount)=thisx-1
+							;		FloodStackY(ElementCount)=thisy
+							;		ElementCount=ElementCount+1
+							;	EndIf
+							;	If thisx<LevelWidth-1
+							;		FloodStackX(ElementCount)=thisx+1
+							;		FloodStackY(ElementCount)=thisy
+							;		ElementCount=ElementCount+1
+							;	EndIf
+							;	If thisy>0
+							;		FloodStackX(ElementCount)=thisx
+							;		FloodStackY(ElementCount)=thisy-1
+							;		ElementCount=ElementCount+1
+							;	EndIf
+							;	If thisy<LevelHeight-1
+							;		FloodStackX(ElementCount)=thisx
+							;		FloodStackY(ElementCount)=thisy+1
+							;		ElementCount=ElementCount+1
+							;	EndIf
+							;EndIf
+							
+							If thisx>0
+								nextx=thisx-1
+								nexty=thisy
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									If EditorMode=0
+										ChangeLevelTile(nextx,nexty,True)
+									ElseIf EditorMode=3
+										PlaceObject(nextx,nexty)
+									EndIf
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
 									ElementCount=ElementCount+1
 								EndIf
-								If thisx<LevelWidth-1
-									FloodStackX(ElementCount)=thisx+1
-									FloodStackY(ElementCount)=thisy
+							EndIf
+							If thisx<LevelWidth-1
+								nextx=thisx+1
+								nexty=thisy
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									If EditorMode=0
+										ChangeLevelTile(nextx,nexty,True)
+									ElseIf EditorMode=3
+										PlaceObject(nextx,nexty)
+									EndIf
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
 									ElementCount=ElementCount+1
 								EndIf
-								If thisy>0
-									FloodStackX(ElementCount)=thisx
-									FloodStackY(ElementCount)=thisy-1
+							EndIf
+							If thisy>0
+								nextx=thisx
+								nexty=thisy-1
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									If EditorMode=0
+										ChangeLevelTile(nextx,nexty,True)
+									ElseIf EditorMode=3
+										PlaceObject(nextx,nexty)
+									EndIf
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
 									ElementCount=ElementCount+1
 								EndIf
-								If thisy<LevelHeight-1
-									FloodStackX(ElementCount)=thisx
-									FloodStackY(ElementCount)=thisy+1
+							EndIf
+							If thisy<LevelHeight-1
+								nextx=thisx
+								nexty=thisy+1
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									If EditorMode=0
+										ChangeLevelTile(nextx,nexty,True)
+									ElseIf EditorMode=3
+										PlaceObject(nextx,nexty)
+									EndIf
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
 									ElementCount=ElementCount+1
 								EndIf
 							EndIf
