@@ -9637,580 +9637,7 @@ Function CalculateUV(Texture,i2,j2,Rotation,size)
 End Function
 
 
-Function CameraControls()
-	; scroll wheel
-	MouseScroll=MouseZSpeed()
-	MouseDeltaX = MouseXSpeed()
-	MouseDeltaY = MouseYSpeed()
-
-	Adj#=0.1
-	If ShiftDown() Then Adj=0.4
-
-
-	If KeyDown(75) Or KeyDown(203) Or KeyDown(30) ; numpad 4 or left arrow or A
-		
-		TranslateEntity Camera1,-Adj,0,0
-	EndIf
-	If KeyDown(77) Or KeyDown(205) Or KeyDown(32) ; numpad 6 or right arrow or D
-		
-		TranslateEntity Camera1,Adj,0,0
-	EndIf
-	If KeyDown(72) Or KeyDown(200) Or KeyDown(17) ; numpad 8 or up arrow or W
-	
-		TranslateEntity Camera1,0,0,Adj
-	EndIf
-	If KeyDown(80) Or KeyDown(208) Or KeyDown(31) ; numpad 2 or down arrow or S
-	
-		TranslateEntity Camera1,0,0,-Adj
-	EndIf
-	If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
-	
-		TranslateEntity Camera1,0,0.1,0
-	EndIf
-	If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
-	
-		TranslateEntity Camera1,0,-0.1,0
-	EndIf
-	If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
-		
-		TurnEntity Camera1,1,0,0
-	EndIf
-	If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
-	
-		TurnEntity Camera1,-1,0,0
-	EndIf
-	If KeyDown(181) ;Or KeyDown(3) ; numpad /
-		
-		TurnEntity Camera1,0,1,0
-	EndIf
-	If KeyDown(55) ;Or KeyDown(4) ; numpad *
-		
-		TurnEntity Camera1,0,-1,0
-	EndIf
-	
-	If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
-		; reset camera rotation
-		RotateEntity Camera1,65,0,0
-	EndIf
-	
-	If MouseX() < 510
-		SpeedFactor#=3.0*Adj
-		TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
-	EndIf
-	
-	If KeyDown(57) ; space bar
-		CameraPanning=True
-		If LeftMouse=True
-			SpeedFactor#=0.25*Adj
-			TranslateEntity Camera1,-MouseDeltaX * SpeedFactor,0,MouseDeltaY * SpeedFactor
-		EndIf
-	Else
-		CameraPanning=False
-	EndIf
-
-		
-	
-End Function
-
-
-Function SaveLevel()
-
-
-	
-		
-	If AdventureCurrentArchive=1
-		ex2$="Archive\"
-	Else
-		ex2$="Current\"
-	EndIf
-
-
-	
-
-	file=WriteFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+currentlevelnumber+".wlv")
-	
-	If (currentlevelnumber>94 And currentlevelnumber<99) Or Left$(Upper$(adventurefilename$),5)="ZACHY"
-		; WA3 VAULTS
-		WriteInt file,LevelWidth+121
-	Else
-		WriteInt file,LevelWidth
-	EndIf
-	WriteInt file,LevelHeight
-	For j=0 To LevelHeight-1
-		For i=0 To LevelWidth-1
-			WriteInt file,LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
-			WriteInt file,LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-			WriteInt file,LevelTileSideTexture(i,j) ; texture for extrusion walls
-			WriteInt file,LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-			WriteFloat file,LevelTileRandom#(i,j) ; random height pertubation of tile
-			WriteFloat file,LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
-			WriteFloat file,LevelTileExtrusion#(i,j); extrusion with walls around it 
-			WriteInt file,LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
-			WriteInt file,LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
-			
-			
-			WriteInt file,LevelTileLogic(i,j)
-			
-
-			
-		Next
-	Next
-	
-	For j=0 To LevelHeight-1
-		For i=0 To LevelWidth-1
-			WriteInt file,WaterTileTexture(i,j)
-			WriteInt file,WaterTileRotation(i,j)
-			WriteFloat file,WaterTileHeight(i,j)
-			WriteFloat file,WaterTileTurbulence(i,j)
-		Next
-	Next
-	
-	; Globals
-	WriteInt file,WaterFlow
-	WriteInt file,WaterTransparent
-	WriteInt file,WaterGlow
-	
-	If CurrentLevelTexture=-1
-		WriteString file, LevelTextureCustomName$
-	Else
-		WriteString file,LevelTextureName$(CurrentLevelTexture)
-	EndIf
-	If CurrentWaterTexture=-1
-		WriteString file, WaterTextureCustomName$
-	Else
-		WriteString file,WaterTextureName$(CurrentWaterTexture)
-	EndIf
-	
-	
-
-	
-	
-	
-	
-	; Objects
-	
-	PlayerIndex=ObjectIndexEditorToGameInner(NofObjects)
-	
-	WriteInt file,NofObjects
-	For i=0 To NofObjects-1
-		Dest=i
-		
-		WriteString file,ObjectModelName$(i)
-		WriteString file,ObjectTextureName$(i)
-		WriteFloat file,ObjectXScale(i)
-		WriteFloat file,ObjectYScale(i)
-		WriteFloat file,ObjectZScale(i)
-		WriteFloat file,ObjectXAdjust(i)
-		WriteFloat file,ObjectYAdjust(i)
-		WriteFloat file,ObjectZAdjust(i)
-		WriteFloat file,ObjectPitchAdjust(i)
-		WriteFloat file,ObjectYawAdjust(i)
-		WriteFloat file,ObjectRollAdjust(i)
-	
-		WriteFloat file,ObjectX(Dest)
-		WriteFloat file,ObjectY(Dest)
-		WriteFloat file,ObjectZ(Dest)
-		WriteFloat file,ObjectOldX(Dest)
-		WriteFloat file,ObjectOldY(Dest)
-		WriteFloat file,ObjectOldZ(Dest)
-
-		WriteFloat file,ObjectDX(Dest)
-		WriteFloat file,ObjectDY(Dest)
-		WriteFloat file,ObjectDZ(Dest)
-	
-		WriteFloat file,ObjectPitch(Dest)
-		WriteFloat file,ObjectYaw(Dest)
-		WriteFloat file,ObjectRoll(Dest)
-		WriteFloat file,ObjectPitch2(Dest)
-		WriteFloat file,ObjectYaw2(Dest)
-		WriteFloat file,ObjectRoll2(Dest)
-
-		WriteFloat file,ObjectXGoal(Dest)
-		WriteFloat file,ObjectYGoal(Dest)
-		WriteFloat file,ObjectZGoal(Dest)
-	
-		WriteInt file,ObjectMovementType(Dest)
-		WriteInt file,ObjectMovementTypeData(Dest)
-		WriteFloat file,ObjectSpeed(Dest)
-		WriteFloat file,ObjectRadius(Dest)
-		WriteInt file,ObjectRadiusType(Dest)
-	
-		WriteInt file,ObjectData10(Dest)
-	
-		WriteFloat file,ObjectPushDX(Dest)
-		WriteFloat file,ObjectPushDY(Dest)
-	
-		WriteInt file,ObjectAttackPower(Dest)
-		WriteInt file,ObjectDefensePower(Dest)
-		WriteInt file,ObjectDestructionType(Dest)
-	
-		WriteInt file,ObjectID(Dest)
-		WriteInt file,ObjectType(Dest)
-		WriteInt file,ObjectSubType(Dest)
-	
-		WriteInt file,ObjectActive(Dest)
-		WriteInt file,ObjectLastActive(Dest)
-		WriteInt file,ObjectActivationType(Dest)
-		WriteInt file,ObjectActivationSpeed(Dest)
-	
-		WriteInt file,ObjectStatus(Dest)
-		WriteInt file,ObjectTimer(Dest)
-		WriteInt file,ObjectTimerMax1(Dest)
-		WriteInt file,ObjectTimerMax2(Dest)
-	
-		WriteInt file,ObjectTeleportable(Dest)
-		WriteInt file,ObjectButtonPush(Dest)
-		WriteInt file,ObjectWaterReact(Dest)
-	
-		WriteInt file,ObjectTelekinesisable(Dest)
-		WriteInt file,ObjectFreezable(Dest)
-	
-		WriteInt file,ObjectReactive(Dest)
-
-		;WriteInt file,ObjectChild(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectChild(Dest), PlayerIndex)
-		;WriteInt file,ObjectParent(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectParent(Dest), PlayerIndex)
-	
-		For k=0 To 9
-			WriteInt file,ObjectData(Dest,k)
-		Next
-		For k=0 To 3
-			WriteString file,ObjectTextData(Dest,k)
-		Next
-		
-		WriteInt file,ObjectTalkable(Dest)
-		WriteInt file,ObjectCurrentAnim(Dest)
-		WriteInt file,ObjectStandardAnim(Dest)
-		WriteInt file,ObjectTileX(Dest)
-		WriteInt file,ObjectTileY(Dest)
-		WriteInt file,ObjectTileX2(Dest)
-		WriteInt file,ObjectTileY2(Dest)
-		WriteInt file,ObjectMovementTimer(Dest)
-		WriteInt file,ObjectMovementSpeed(Dest)
-		WriteInt file,ObjectMoveXGoal(Dest)
-		WriteInt file,ObjectMoveYGoal(Dest)
-		WriteInt file,ObjectFutureInt12(Dest)
-		WriteInt file,ObjectFutureInt13(Dest)
-		WriteInt file,ObjectCaged(Dest)
-		WriteInt file,ObjectDead(Dest)
-		WriteInt file,ObjectDeadTimer(Dest)
-		WriteInt file,ObjectExclamation(Dest)
-		WriteInt file,ObjectShadow(Dest)
-		;WriteInt file,-1;ObjectLinked(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectLinked(Dest), PlayerIndex)
-		;WriteInt file,-1;ObjectLinkBack(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectLinkBack(Dest), PlayerIndex)
-		WriteInt file,ObjectFlying(Dest)
-		WriteInt file,ObjectFrozen(Dest)
-		WriteInt file,ObjectIndigo(Dest)
-		WriteInt file,ObjectFutureInt24(Dest)
-		WriteInt file,ObjectFutureInt25(Dest)
-		WriteFloat file,ObjectScaleAdjust(Dest)
-		WriteFloat file,ObjectFutureFloat2(Dest)
-		WriteFloat file,ObjectFutureFloat3(Dest)
-		WriteFloat file,ObjectFutureFloat4(Dest)
-		WriteFloat file,ObjectFutureFloat5(Dest)
-		WriteFloat file,ObjectFutureFloat6(Dest)
-		WriteFloat file,ObjectFutureFloat7(Dest)
-		WriteFloat file,ObjectFutureFloat8(Dest)
-		WriteFloat file,ObjectFutureFloat9(Dest)
-		WriteFloat file,ObjectFutureFloat10(Dest)
-		WriteString file,ObjectFutureString1$(Dest)
-		WriteString file,ObjectFutureString2$(Dest)
-		
-		For k=0 To 30
-			;WriteString file,ObjectAdjusterString$(Dest,k)
-			WriteString file,""
-		Next
-		
-
-
-	Next
-
-	WriteInt file,LevelEdgeStyle
-	
-	WriteInt file,LightRed
-	WriteInt file,LightGreen
-	WriteInt file,LightBlue
-	
-	WriteInt file,AmbientRed
-	WriteInt file,AmbientGreen
-	WriteInt file,AmbientBlue
-
-
-	
-	WriteInt file,LevelMusic
-	WriteInt file,LevelWeather
-	
-	WriteString file,adventuretitle$
-	
-	WriteInt file,-2
-	WriteInt file,WidescreenRangeLevel
-	
-	CloseFile file
-
-	
-
-End Function
-
-
-
-Function LoadLevel(levelnumber)
-
-	CurrentLevelNumber=levelnumber
-
-	resetlevel()
-	
-		
-		
-	If AdventureCurrentArchive=1
-		ex2$="Archive\"
-	Else
-		ex2$="Current\"
-	EndIf
-
-	
-	
-
-	
-	; clear current objects first
-	For i=0 To NofObjects-1
-		FreeObject(i)
-	Next
-
-	file=ReadFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+levelnumber+".wlv")
-	LevelWidth=ReadInt(File)
-	If levelwidth>121
-		; WA3 VAULTS
-		LevelWidth=LevelWidth-121
-	EndIf
-
-	LevelHeight=ReadInt(File)
-	For j=0 To LevelHeight-1
-		For i=0 To LevelWidth-1
-			LevelTileTexture(i,j)=ReadInt(file) ; corresponding to squares in LevelTexture
-			LevelTileRotation(i,j)=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
-			LevelTileSideTexture(i,j)=ReadInt(file) ; texture for extrusion walls
-			LevelTileSideRotation(i,j)=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
-			LevelTileRandom#(i,j)=ReadFloat(file) ; random height pertubation of tile
-			LevelTileHeight#(i,j)=ReadFloat(file) ; height of "center" - e.g. to make ditches and hills
-			LevelTileExtrusion#(i,j)=ReadFloat(file); extrusion with walls around it 
-			LevelTileRounding(i,j)=ReadInt(file); 0-no, 1-yes: are floors rounded if on a drop-off corner
-			LevelTileEdgeRandom(i,j)=ReadInt(file); 0-no, 1-yes: are edges rippled
-			LevelTileLogic(i,j)=ReadInt(file)
-			
-			
-			
-		Next
-	Next
-	For j=0 To LevelHeight-1
-		For i=0 To LevelWidth-1
-			WaterTileTexture(i,j)=ReadInt(file)
-			WaterTileRotation(i,j)=ReadInt(file)
-			WaterTileHeight(i,j)=ReadFloat(file)
-			WaterTileTurbulence(i,j)=ReadFloat(file)
-		Next
-	Next
-	WaterFlow=ReadInt(file)
-	WaterTransparent=ReadInt(File)
-	WaterGlow=ReadInt(File)
-	
-	currentleveltexture=-1
-	currentwatertexture=-1
-	a$=ReadString$(file)
-	For i=0 To nofleveltextures-1
-		If a$=levelTextureName$(i) Then CurrentLevelTexture=i
-	Next
-	If currentleveltexture=-1
-		LevelTextureCustomName$=a$
-	EndIf
-	
-	a$=ReadString$(file)
-	For i=0 To nofwatertextures-1
-		If a$=waterTextureName$(i) Then CurrentwaterTexture=i
-	Next
-	If currentwatertexture=-1
-		WaterTextureCustomName$=a$
-	EndIf
-
-
-	FreeTexture leveltexture
-	FreeTexture watertexture
-	leveltexture=0
-	If currentleveltexture=-1
-		LevelTexture=LoadTexture(globaldirname$+"\custom\leveltextures\leveltex "+LevelTextureCustomName$+".bmp",1)
-		If leveltexture=0
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color 255,255,0
-			Print "CUSTOM TEXTURE NOT FOUND... REVERTING."
-			Delay 2000
-			currentleveltexture=1
-			LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-		EndIf
-	Else
-		LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-		
-	EndIf
-	
-	watertexture=0
-	If currentwatertexture=-1
-		WaterTexture=LoadTexture(globaldirname$+"\custom\leveltextures\watertex "+WaterTextureCustomName$+".jpg",2)
-		If Watertexture=0
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color 255,255,0
-			Print "CUSTOM WATERTEXTURE NOT FOUND... REVERTING."
-			Delay 2000
-			currentwatertexture=0
-			WaterTexture=myLoadTexture("data\Leveltextures\"+WaterTexturename$(CurrentWaterTexture),2)
-		EndIf
-	Else
-		waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
-	EndIf
-	
-	EntityTexture TexturePlane,LevelTexture
-	EntityTexture CurrentWaterTile,WaterTexture
-	
-	leftmousereleased=False
-		
-
-
-
-
-	NofObjects=ReadInt(file)
-	For i=0 To NofObjects-1
-		
-		Dest=i
-		ObjectModelName$(i)=ReadString$(file)
-		ObjectTextureName$(i)=ReadString$(file)
-		ObjectXScale(i)=ReadFloat(file)
-		ObjectYScale(i)=ReadFloat(file)
-		ObjectZScale(i)=ReadFloat(file)
-		ObjectXAdjust(i)=ReadFloat(file)
-		ObjectYAdjust(i)=ReadFloat(file)
-		ObjectZAdjust(i)=ReadFloat(file)
-		ObjectPitchAdjust(i)=ReadFloat(file)
-		ObjectYawAdjust(i)=ReadFloat(file)
-		ObjectRollAdjust(i)=ReadFloat(file)
-	
-		ObjectX(Dest)=ReadFloat(file)
-		ObjectY(Dest)=ReadFloat(file)
-		ObjectZ(Dest)=ReadFloat(file)
-		ObjectOldX(Dest)=ReadFloat(file)
-		ObjectOldY(Dest)=ReadFloat(file)
-		ObjectOldZ(Dest)=ReadFloat(file)
-
-		ObjectDX(Dest)=ReadFloat(file)
-		ObjectDY(Dest)=ReadFloat(file)
-		ObjectDZ(Dest)=ReadFloat(file)
-	
-		ObjectPitch(Dest)=ReadFloat(file)
-		ObjectYaw(Dest)=ReadFloat(file)
-		ObjectRoll(Dest)=ReadFloat(file)
-		ObjectPitch2(Dest)=ReadFloat(file)
-		ObjectYaw2(Dest)=ReadFloat(file)
-		ObjectRoll2(Dest)=ReadFloat(file)
-
-		ObjectXGoal(Dest)=ReadFloat(file)
-		ObjectYGoal(Dest)=ReadFloat(file)
-		ObjectZGoal(Dest)=ReadFloat(file)
-	
-		ObjectMovementType(Dest)=ReadInt(file)
-		ObjectMovementTypeData(Dest)=ReadInt(file)
-		ObjectSpeed(Dest)=ReadFloat(file)
-		ObjectRadius(Dest)=ReadFloat(file)
-		ObjectRadiusType(Dest)=ReadInt(file)
-	
-		ObjectData10(Dest)=ReadInt(file)
-	
-		ObjectPushDX(Dest)=ReadFloat(file)
-		ObjectPushDY(Dest)=ReadFloat(file)
-	
-		ObjectAttackPower(Dest)=ReadInt(file)
-		ObjectDefensePower(Dest)=ReadInt(file)
-		ObjectDestructionType(Dest)=ReadInt(file)
-	
-		ObjectID(Dest)=ReadInt(file)
-		
-		ObjectType(Dest)=ReadInt(file)
-		ObjectSubType(Dest)=ReadInt(file)
-	
-		ObjectActive(Dest)=ReadInt(file)
-		ObjectLastActive(Dest)=ReadInt(file)
-		ObjectActivationType(Dest)=ReadInt(file)
-		ObjectActivationSpeed(Dest)=ReadInt(file)
-	
-		ObjectStatus(Dest)=ReadInt(file)
-		ObjectTimer(Dest)=ReadInt(file)
-		ObjectTimerMax1(Dest)=ReadInt(file)
-		ObjectTimerMax2(Dest)=ReadInt(file)
-	
-		ObjectTeleportable(Dest)=ReadInt(file)
-		ObjectButtonPush(Dest)=ReadInt(file)
-		ObjectWaterReact(Dest)=ReadInt(file)
-	
-		ObjectTelekinesisable(Dest)=ReadInt(file)
-		ObjectFreezable(Dest)=ReadInt(file)
-	
-		ObjectReactive(Dest)=ReadInt(file)
-
-		ObjectChild(Dest)=ReadInt(file)
-		ObjectParent(Dest)=ReadInt(file)
-
-
-	
-		For k=0 To 9
-			ObjectData(Dest,k)=ReadInt(file)
-		Next
-		For k=0 To 3
-			ObjectTextData$(Dest,k)=ReadString$(file)
-		Next
-		
-		ObjectTalkable(Dest)=ReadInt(file)
-		ObjectCurrentAnim(Dest)=ReadInt(file)
-		ObjectStandardAnim(Dest)=ReadInt(file)
-		ObjectTileX(Dest)=ReadInt(file)
-		ObjectTileY(Dest)=ReadInt(file)
-		ObjectTileX2(Dest)=ReadInt(file)
-		ObjectTileY2(Dest)=ReadInt(file)
-		ObjectMovementTimer(Dest)=ReadInt(file)
-		ObjectMovementSpeed(Dest)=ReadInt(file)
-		ObjectMoveXGoal(Dest)=ReadInt(file)
-		ObjectMoveYGoal(Dest)=ReadInt(file)
-		ObjectFutureInt12(Dest)=ReadInt(file)
-		ObjectFutureInt13(Dest)=ReadInt(file)
-		ObjectCaged(Dest)=ReadInt(file)
-		ObjectDead(Dest)=ReadInt(file)
-		ObjectDeadTimer(Dest)=ReadInt(file)
-		ObjectExclamation(Dest)=ReadInt(file)
-		ObjectShadow(Dest)=ReadInt(file)
-		ObjectLinked(Dest)=ReadInt(file)
-		ObjectLinkBack(Dest)=ReadInt(file)
-		ObjectFlying(Dest)=ReadInt(file)
-		ObjectFrozen(Dest)=ReadInt(file)
-		ObjectIndigo(Dest)=ReadInt(file)
-		ObjectFutureInt24(Dest)=ReadInt(file)
-		ObjectFutureInt25(Dest)=ReadInt(file)
-		ObjectScaleAdjust(Dest)=ReadFloat(file)
-		ObjectFutureFloat2(Dest)=ReadFloat(file)	
-		ObjectFutureFloat3(Dest)=ReadFloat(file)
-		ObjectFutureFloat4(Dest)=ReadFloat(file)
-		ObjectFutureFloat5(Dest)=ReadFloat(file)
-		ObjectFutureFloat6(Dest)=ReadFloat(file)
-		ObjectFutureFloat7(Dest)=ReadFloat(file)	
-		ObjectFutureFloat8(Dest)=ReadFloat(file)
-		ObjectFutureFloat9(Dest)=ReadFloat(file)
-		ObjectFutureFloat10(Dest)=ReadFloat(file)
-		ObjectFutureString1$(Dest)=ReadString(file)
-		ObjectFutureString2$(Dest)=ReadString(file)
-		
-		For k=0 To 30
-			ObjectAdjusterString$(Dest,k)=ReadString(file)
-		Next
+Function CreateObjectModel(Dest)
 
 		If ObjectModelName$(Dest)="!Button"
 			ObjectEntity(Dest)=CreateButtonMesh(ObjectSubType(Dest),ObjectData(Dest,0),ObjectData(Dest,1),ObjectData(Dest,2),ObjectData(Dest,3))
@@ -10832,7 +10259,589 @@ Function LoadLevel(levelnumber)
 
 
 		EndIf
+
+
+End Function
+
+
+Function CameraControls()
+	; scroll wheel
+	MouseScroll=MouseZSpeed()
+	MouseDeltaX = MouseXSpeed()
+	MouseDeltaY = MouseYSpeed()
+
+	Adj#=0.1
+	If ShiftDown() Then Adj=0.4
+
+
+	If KeyDown(75) Or KeyDown(203) Or KeyDown(30) ; numpad 4 or left arrow or A
 		
+		TranslateEntity Camera1,-Adj,0,0
+	EndIf
+	If KeyDown(77) Or KeyDown(205) Or KeyDown(32) ; numpad 6 or right arrow or D
+		
+		TranslateEntity Camera1,Adj,0,0
+	EndIf
+	If KeyDown(72) Or KeyDown(200) Or KeyDown(17) ; numpad 8 or up arrow or W
+	
+		TranslateEntity Camera1,0,0,Adj
+	EndIf
+	If KeyDown(80) Or KeyDown(208) Or KeyDown(31) ; numpad 2 or down arrow or S
+	
+		TranslateEntity Camera1,0,0,-Adj
+	EndIf
+	If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
+	
+		TranslateEntity Camera1,0,0.1,0
+	EndIf
+	If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
+	
+		TranslateEntity Camera1,0,-0.1,0
+	EndIf
+	If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
+		
+		TurnEntity Camera1,1,0,0
+	EndIf
+	If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
+	
+		TurnEntity Camera1,-1,0,0
+	EndIf
+	If KeyDown(181) ;Or KeyDown(3) ; numpad /
+		
+		TurnEntity Camera1,0,1,0
+	EndIf
+	If KeyDown(55) ;Or KeyDown(4) ; numpad *
+		
+		TurnEntity Camera1,0,-1,0
+	EndIf
+	
+	If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
+		; reset camera rotation
+		RotateEntity Camera1,65,0,0
+	EndIf
+	
+	If MouseX() < 510
+		SpeedFactor#=3.0*Adj
+		TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
+	EndIf
+	
+	If KeyDown(57) ; space bar
+		CameraPanning=True
+		If LeftMouse=True
+			SpeedFactor#=0.25*Adj
+			TranslateEntity Camera1,-MouseDeltaX * SpeedFactor,0,MouseDeltaY * SpeedFactor
+		EndIf
+	Else
+		CameraPanning=False
+	EndIf
+
+		
+	
+End Function
+
+
+Function SaveLevel()
+
+
+	
+		
+	If AdventureCurrentArchive=1
+		ex2$="Archive\"
+	Else
+		ex2$="Current\"
+	EndIf
+
+
+	
+
+	file=WriteFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+currentlevelnumber+".wlv")
+	
+	If (currentlevelnumber>94 And currentlevelnumber<99) Or Left$(Upper$(adventurefilename$),5)="ZACHY"
+		; WA3 VAULTS
+		WriteInt file,LevelWidth+121
+	Else
+		WriteInt file,LevelWidth
+	EndIf
+	WriteInt file,LevelHeight
+	For j=0 To LevelHeight-1
+		For i=0 To LevelWidth-1
+			WriteInt file,LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
+			WriteInt file,LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+			WriteInt file,LevelTileSideTexture(i,j) ; texture for extrusion walls
+			WriteInt file,LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+			WriteFloat file,LevelTileRandom#(i,j) ; random height pertubation of tile
+			WriteFloat file,LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
+			WriteFloat file,LevelTileExtrusion#(i,j); extrusion with walls around it 
+			WriteInt file,LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
+			WriteInt file,LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
+			
+			
+			WriteInt file,LevelTileLogic(i,j)
+			
+
+			
+		Next
+	Next
+	
+	For j=0 To LevelHeight-1
+		For i=0 To LevelWidth-1
+			WriteInt file,WaterTileTexture(i,j)
+			WriteInt file,WaterTileRotation(i,j)
+			WriteFloat file,WaterTileHeight(i,j)
+			WriteFloat file,WaterTileTurbulence(i,j)
+		Next
+	Next
+	
+	; Globals
+	WriteInt file,WaterFlow
+	WriteInt file,WaterTransparent
+	WriteInt file,WaterGlow
+	
+	If CurrentLevelTexture=-1
+		WriteString file, LevelTextureCustomName$
+	Else
+		WriteString file,LevelTextureName$(CurrentLevelTexture)
+	EndIf
+	If CurrentWaterTexture=-1
+		WriteString file, WaterTextureCustomName$
+	Else
+		WriteString file,WaterTextureName$(CurrentWaterTexture)
+	EndIf
+	
+	
+
+	
+	
+	
+	
+	; Objects
+	
+	PlayerIndex=ObjectIndexEditorToGameInner(NofObjects)
+	
+	WriteInt file,NofObjects
+	For i=0 To NofObjects-1
+		Dest=i
+		
+		WriteString file,ObjectModelName$(i)
+		WriteString file,ObjectTextureName$(i)
+		WriteFloat file,ObjectXScale(i)
+		WriteFloat file,ObjectYScale(i)
+		WriteFloat file,ObjectZScale(i)
+		WriteFloat file,ObjectXAdjust(i)
+		WriteFloat file,ObjectYAdjust(i)
+		WriteFloat file,ObjectZAdjust(i)
+		WriteFloat file,ObjectPitchAdjust(i)
+		WriteFloat file,ObjectYawAdjust(i)
+		WriteFloat file,ObjectRollAdjust(i)
+	
+		WriteFloat file,ObjectX(Dest)
+		WriteFloat file,ObjectY(Dest)
+		WriteFloat file,ObjectZ(Dest)
+		WriteFloat file,ObjectOldX(Dest)
+		WriteFloat file,ObjectOldY(Dest)
+		WriteFloat file,ObjectOldZ(Dest)
+
+		WriteFloat file,ObjectDX(Dest)
+		WriteFloat file,ObjectDY(Dest)
+		WriteFloat file,ObjectDZ(Dest)
+	
+		WriteFloat file,ObjectPitch(Dest)
+		WriteFloat file,ObjectYaw(Dest)
+		WriteFloat file,ObjectRoll(Dest)
+		WriteFloat file,ObjectPitch2(Dest)
+		WriteFloat file,ObjectYaw2(Dest)
+		WriteFloat file,ObjectRoll2(Dest)
+
+		WriteFloat file,ObjectXGoal(Dest)
+		WriteFloat file,ObjectYGoal(Dest)
+		WriteFloat file,ObjectZGoal(Dest)
+	
+		WriteInt file,ObjectMovementType(Dest)
+		WriteInt file,ObjectMovementTypeData(Dest)
+		WriteFloat file,ObjectSpeed(Dest)
+		WriteFloat file,ObjectRadius(Dest)
+		WriteInt file,ObjectRadiusType(Dest)
+	
+		WriteInt file,ObjectData10(Dest)
+	
+		WriteFloat file,ObjectPushDX(Dest)
+		WriteFloat file,ObjectPushDY(Dest)
+	
+		WriteInt file,ObjectAttackPower(Dest)
+		WriteInt file,ObjectDefensePower(Dest)
+		WriteInt file,ObjectDestructionType(Dest)
+	
+		WriteInt file,ObjectID(Dest)
+		WriteInt file,ObjectType(Dest)
+		WriteInt file,ObjectSubType(Dest)
+	
+		WriteInt file,ObjectActive(Dest)
+		WriteInt file,ObjectLastActive(Dest)
+		WriteInt file,ObjectActivationType(Dest)
+		WriteInt file,ObjectActivationSpeed(Dest)
+	
+		WriteInt file,ObjectStatus(Dest)
+		WriteInt file,ObjectTimer(Dest)
+		WriteInt file,ObjectTimerMax1(Dest)
+		WriteInt file,ObjectTimerMax2(Dest)
+	
+		WriteInt file,ObjectTeleportable(Dest)
+		WriteInt file,ObjectButtonPush(Dest)
+		WriteInt file,ObjectWaterReact(Dest)
+	
+		WriteInt file,ObjectTelekinesisable(Dest)
+		WriteInt file,ObjectFreezable(Dest)
+	
+		WriteInt file,ObjectReactive(Dest)
+
+		;WriteInt file,ObjectChild(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectChild(Dest), PlayerIndex)
+		;WriteInt file,ObjectParent(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectParent(Dest), PlayerIndex)
+	
+		For k=0 To 9
+			WriteInt file,ObjectData(Dest,k)
+		Next
+		For k=0 To 3
+			WriteString file,ObjectTextData(Dest,k)
+		Next
+		
+		WriteInt file,ObjectTalkable(Dest)
+		WriteInt file,ObjectCurrentAnim(Dest)
+		WriteInt file,ObjectStandardAnim(Dest)
+		WriteInt file,ObjectTileX(Dest)
+		WriteInt file,ObjectTileY(Dest)
+		WriteInt file,ObjectTileX2(Dest)
+		WriteInt file,ObjectTileY2(Dest)
+		WriteInt file,ObjectMovementTimer(Dest)
+		WriteInt file,ObjectMovementSpeed(Dest)
+		WriteInt file,ObjectMoveXGoal(Dest)
+		WriteInt file,ObjectMoveYGoal(Dest)
+		WriteInt file,ObjectFutureInt12(Dest)
+		WriteInt file,ObjectFutureInt13(Dest)
+		WriteInt file,ObjectCaged(Dest)
+		WriteInt file,ObjectDead(Dest)
+		WriteInt file,ObjectDeadTimer(Dest)
+		WriteInt file,ObjectExclamation(Dest)
+		WriteInt file,ObjectShadow(Dest)
+		;WriteInt file,-1;ObjectLinked(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectLinked(Dest), PlayerIndex)
+		;WriteInt file,-1;ObjectLinkBack(Dest)
+		WriteInt file,ObjectIndexEditorToGame(ObjectLinkBack(Dest), PlayerIndex)
+		WriteInt file,ObjectFlying(Dest)
+		WriteInt file,ObjectFrozen(Dest)
+		WriteInt file,ObjectIndigo(Dest)
+		WriteInt file,ObjectFutureInt24(Dest)
+		WriteInt file,ObjectFutureInt25(Dest)
+		WriteFloat file,ObjectScaleAdjust(Dest)
+		WriteFloat file,ObjectFutureFloat2(Dest)
+		WriteFloat file,ObjectFutureFloat3(Dest)
+		WriteFloat file,ObjectFutureFloat4(Dest)
+		WriteFloat file,ObjectFutureFloat5(Dest)
+		WriteFloat file,ObjectFutureFloat6(Dest)
+		WriteFloat file,ObjectFutureFloat7(Dest)
+		WriteFloat file,ObjectFutureFloat8(Dest)
+		WriteFloat file,ObjectFutureFloat9(Dest)
+		WriteFloat file,ObjectFutureFloat10(Dest)
+		WriteString file,ObjectFutureString1$(Dest)
+		WriteString file,ObjectFutureString2$(Dest)
+		
+		For k=0 To 30
+			;WriteString file,ObjectAdjusterString$(Dest,k)
+			WriteString file,""
+		Next
+		
+
+
+	Next
+
+	WriteInt file,LevelEdgeStyle
+	
+	WriteInt file,LightRed
+	WriteInt file,LightGreen
+	WriteInt file,LightBlue
+	
+	WriteInt file,AmbientRed
+	WriteInt file,AmbientGreen
+	WriteInt file,AmbientBlue
+
+
+	
+	WriteInt file,LevelMusic
+	WriteInt file,LevelWeather
+	
+	WriteString file,adventuretitle$
+	
+	WriteInt file,-2
+	WriteInt file,WidescreenRangeLevel
+	
+	CloseFile file
+
+	
+
+End Function
+
+
+
+Function LoadLevel(levelnumber)
+
+	CurrentLevelNumber=levelnumber
+
+	resetlevel()
+	
+		
+		
+	If AdventureCurrentArchive=1
+		ex2$="Archive\"
+	Else
+		ex2$="Current\"
+	EndIf
+
+	
+	
+
+	
+	; clear current objects first
+	For i=0 To NofObjects-1
+		FreeObject(i)
+	Next
+
+	file=ReadFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+levelnumber+".wlv")
+	LevelWidth=ReadInt(File)
+	If levelwidth>121
+		; WA3 VAULTS
+		LevelWidth=LevelWidth-121
+	EndIf
+
+	LevelHeight=ReadInt(File)
+	For j=0 To LevelHeight-1
+		For i=0 To LevelWidth-1
+			LevelTileTexture(i,j)=ReadInt(file) ; corresponding to squares in LevelTexture
+			LevelTileRotation(i,j)=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
+			LevelTileSideTexture(i,j)=ReadInt(file) ; texture for extrusion walls
+			LevelTileSideRotation(i,j)=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
+			LevelTileRandom#(i,j)=ReadFloat(file) ; random height pertubation of tile
+			LevelTileHeight#(i,j)=ReadFloat(file) ; height of "center" - e.g. to make ditches and hills
+			LevelTileExtrusion#(i,j)=ReadFloat(file); extrusion with walls around it 
+			LevelTileRounding(i,j)=ReadInt(file); 0-no, 1-yes: are floors rounded if on a drop-off corner
+			LevelTileEdgeRandom(i,j)=ReadInt(file); 0-no, 1-yes: are edges rippled
+			LevelTileLogic(i,j)=ReadInt(file)
+			
+			
+			
+		Next
+	Next
+	For j=0 To LevelHeight-1
+		For i=0 To LevelWidth-1
+			WaterTileTexture(i,j)=ReadInt(file)
+			WaterTileRotation(i,j)=ReadInt(file)
+			WaterTileHeight(i,j)=ReadFloat(file)
+			WaterTileTurbulence(i,j)=ReadFloat(file)
+		Next
+	Next
+	WaterFlow=ReadInt(file)
+	WaterTransparent=ReadInt(File)
+	WaterGlow=ReadInt(File)
+	
+	currentleveltexture=-1
+	currentwatertexture=-1
+	a$=ReadString$(file)
+	For i=0 To nofleveltextures-1
+		If a$=levelTextureName$(i) Then CurrentLevelTexture=i
+	Next
+	If currentleveltexture=-1
+		LevelTextureCustomName$=a$
+	EndIf
+	
+	a$=ReadString$(file)
+	For i=0 To nofwatertextures-1
+		If a$=waterTextureName$(i) Then CurrentwaterTexture=i
+	Next
+	If currentwatertexture=-1
+		WaterTextureCustomName$=a$
+	EndIf
+
+
+	FreeTexture leveltexture
+	FreeTexture watertexture
+	leveltexture=0
+	If currentleveltexture=-1
+		LevelTexture=LoadTexture(globaldirname$+"\custom\leveltextures\leveltex "+LevelTextureCustomName$+".bmp",1)
+		If leveltexture=0
+			Locate 0,0
+			Color 0,0,0
+			Rect 0,0,500,40,True
+			Color 255,255,0
+			Print "CUSTOM TEXTURE NOT FOUND... REVERTING."
+			Delay 2000
+			currentleveltexture=1
+			LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
+		EndIf
+	Else
+		LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
+		
+	EndIf
+	
+	watertexture=0
+	If currentwatertexture=-1
+		WaterTexture=LoadTexture(globaldirname$+"\custom\leveltextures\watertex "+WaterTextureCustomName$+".jpg",2)
+		If Watertexture=0
+			Locate 0,0
+			Color 0,0,0
+			Rect 0,0,500,40,True
+			Color 255,255,0
+			Print "CUSTOM WATERTEXTURE NOT FOUND... REVERTING."
+			Delay 2000
+			currentwatertexture=0
+			WaterTexture=myLoadTexture("data\Leveltextures\"+WaterTexturename$(CurrentWaterTexture),2)
+		EndIf
+	Else
+		waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
+	EndIf
+	
+	EntityTexture TexturePlane,LevelTexture
+	EntityTexture CurrentWaterTile,WaterTexture
+	
+	leftmousereleased=False
+		
+
+
+
+
+	NofObjects=ReadInt(file)
+	For i=0 To NofObjects-1
+		
+		Dest=i
+		ObjectModelName$(i)=ReadString$(file)
+		ObjectTextureName$(i)=ReadString$(file)
+		ObjectXScale(i)=ReadFloat(file)
+		ObjectYScale(i)=ReadFloat(file)
+		ObjectZScale(i)=ReadFloat(file)
+		ObjectXAdjust(i)=ReadFloat(file)
+		ObjectYAdjust(i)=ReadFloat(file)
+		ObjectZAdjust(i)=ReadFloat(file)
+		ObjectPitchAdjust(i)=ReadFloat(file)
+		ObjectYawAdjust(i)=ReadFloat(file)
+		ObjectRollAdjust(i)=ReadFloat(file)
+	
+		ObjectX(Dest)=ReadFloat(file)
+		ObjectY(Dest)=ReadFloat(file)
+		ObjectZ(Dest)=ReadFloat(file)
+		ObjectOldX(Dest)=ReadFloat(file)
+		ObjectOldY(Dest)=ReadFloat(file)
+		ObjectOldZ(Dest)=ReadFloat(file)
+
+		ObjectDX(Dest)=ReadFloat(file)
+		ObjectDY(Dest)=ReadFloat(file)
+		ObjectDZ(Dest)=ReadFloat(file)
+	
+		ObjectPitch(Dest)=ReadFloat(file)
+		ObjectYaw(Dest)=ReadFloat(file)
+		ObjectRoll(Dest)=ReadFloat(file)
+		ObjectPitch2(Dest)=ReadFloat(file)
+		ObjectYaw2(Dest)=ReadFloat(file)
+		ObjectRoll2(Dest)=ReadFloat(file)
+
+		ObjectXGoal(Dest)=ReadFloat(file)
+		ObjectYGoal(Dest)=ReadFloat(file)
+		ObjectZGoal(Dest)=ReadFloat(file)
+	
+		ObjectMovementType(Dest)=ReadInt(file)
+		ObjectMovementTypeData(Dest)=ReadInt(file)
+		ObjectSpeed(Dest)=ReadFloat(file)
+		ObjectRadius(Dest)=ReadFloat(file)
+		ObjectRadiusType(Dest)=ReadInt(file)
+	
+		ObjectData10(Dest)=ReadInt(file)
+	
+		ObjectPushDX(Dest)=ReadFloat(file)
+		ObjectPushDY(Dest)=ReadFloat(file)
+	
+		ObjectAttackPower(Dest)=ReadInt(file)
+		ObjectDefensePower(Dest)=ReadInt(file)
+		ObjectDestructionType(Dest)=ReadInt(file)
+	
+		ObjectID(Dest)=ReadInt(file)
+		
+		ObjectType(Dest)=ReadInt(file)
+		ObjectSubType(Dest)=ReadInt(file)
+	
+		ObjectActive(Dest)=ReadInt(file)
+		ObjectLastActive(Dest)=ReadInt(file)
+		ObjectActivationType(Dest)=ReadInt(file)
+		ObjectActivationSpeed(Dest)=ReadInt(file)
+	
+		ObjectStatus(Dest)=ReadInt(file)
+		ObjectTimer(Dest)=ReadInt(file)
+		ObjectTimerMax1(Dest)=ReadInt(file)
+		ObjectTimerMax2(Dest)=ReadInt(file)
+	
+		ObjectTeleportable(Dest)=ReadInt(file)
+		ObjectButtonPush(Dest)=ReadInt(file)
+		ObjectWaterReact(Dest)=ReadInt(file)
+	
+		ObjectTelekinesisable(Dest)=ReadInt(file)
+		ObjectFreezable(Dest)=ReadInt(file)
+	
+		ObjectReactive(Dest)=ReadInt(file)
+
+		ObjectChild(Dest)=ReadInt(file)
+		ObjectParent(Dest)=ReadInt(file)
+
+
+	
+		For k=0 To 9
+			ObjectData(Dest,k)=ReadInt(file)
+		Next
+		For k=0 To 3
+			ObjectTextData$(Dest,k)=ReadString$(file)
+		Next
+		
+		ObjectTalkable(Dest)=ReadInt(file)
+		ObjectCurrentAnim(Dest)=ReadInt(file)
+		ObjectStandardAnim(Dest)=ReadInt(file)
+		ObjectTileX(Dest)=ReadInt(file)
+		ObjectTileY(Dest)=ReadInt(file)
+		ObjectTileX2(Dest)=ReadInt(file)
+		ObjectTileY2(Dest)=ReadInt(file)
+		ObjectMovementTimer(Dest)=ReadInt(file)
+		ObjectMovementSpeed(Dest)=ReadInt(file)
+		ObjectMoveXGoal(Dest)=ReadInt(file)
+		ObjectMoveYGoal(Dest)=ReadInt(file)
+		ObjectFutureInt12(Dest)=ReadInt(file)
+		ObjectFutureInt13(Dest)=ReadInt(file)
+		ObjectCaged(Dest)=ReadInt(file)
+		ObjectDead(Dest)=ReadInt(file)
+		ObjectDeadTimer(Dest)=ReadInt(file)
+		ObjectExclamation(Dest)=ReadInt(file)
+		ObjectShadow(Dest)=ReadInt(file)
+		ObjectLinked(Dest)=ReadInt(file)
+		ObjectLinkBack(Dest)=ReadInt(file)
+		ObjectFlying(Dest)=ReadInt(file)
+		ObjectFrozen(Dest)=ReadInt(file)
+		ObjectIndigo(Dest)=ReadInt(file)
+		ObjectFutureInt24(Dest)=ReadInt(file)
+		ObjectFutureInt25(Dest)=ReadInt(file)
+		ObjectScaleAdjust(Dest)=ReadFloat(file)
+		ObjectFutureFloat2(Dest)=ReadFloat(file)	
+		ObjectFutureFloat3(Dest)=ReadFloat(file)
+		ObjectFutureFloat4(Dest)=ReadFloat(file)
+		ObjectFutureFloat5(Dest)=ReadFloat(file)
+		ObjectFutureFloat6(Dest)=ReadFloat(file)
+		ObjectFutureFloat7(Dest)=ReadFloat(file)	
+		ObjectFutureFloat8(Dest)=ReadFloat(file)
+		ObjectFutureFloat9(Dest)=ReadFloat(file)
+		ObjectFutureFloat10(Dest)=ReadFloat(file)
+		ObjectFutureString1$(Dest)=ReadString(file)
+		ObjectFutureString2$(Dest)=ReadString(file)
+		
+		For k=0 To 30
+			ObjectAdjusterString$(Dest,k)=ReadString(file)
+		Next
+
+
+		CreateObjectModel(Dest)
+				
 		
 		UpdateObjectVisibility(Dest)
 
