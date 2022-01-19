@@ -10244,6 +10244,9 @@ Function LoadLevel(levelnumber)
 		Else If ObjectModelName$(Dest)="!Door"
 			ObjectENtity(Dest)=MyLoadmesh("data\models\houses\door01.3ds",0)
 			
+		Else If ObjectModelName$(Dest)="!SpellBall"
+			ObjectEntity(Dest)=CreateSpellBallMesh(7) ; use white magic spellball mesh
+			
 		Else If ObjectModelName$(Dest)="!Fence1"
 			ObjectENtity(Dest)=CopyEntity(fence1)
 		Else If ObjectModelName$(Dest)="!Fence2"
