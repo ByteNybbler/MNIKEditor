@@ -107,7 +107,9 @@ Dim AdventureTextLine$(5)
 
 Global MasterDialogListStart=0
 Global MasterLevelListStart=0
-Dim MasterDialogList(1000),MasterLevelList(100)
+Const MaxDialog=999
+Const MaxLevel=999
+Dim MasterDialogList(1000),MasterLevelList(1000)
 
 
 Global AdventureExitWonLevel, AdventureExitWonX, AdventureExitWonY ; at what hub level and x/y do you reappear if won.
@@ -1402,6 +1404,14 @@ Until KeyDown(1)
 
 
 End
+
+
+;Function FormatZeroes$(integer)
+
+
+
+;End Function
+
 
 Function StartEditorMainLoop()
 	Cls
@@ -9567,6 +9577,8 @@ End Function
 
 Function LoadLevel(levelnumber)
 
+	CurrentLevelNumber=levelnumber
+
 	resetlevel()
 	
 		
@@ -10502,7 +10514,48 @@ Function LoadLevel(levelnumber)
 	
 End Function
 
+Function NewLevel(levelnumber)
+
+	; new level
+	CurrentLevelNumber=levelnumber
+	resetlevel()
+	; clear current objects 
+	
+	For ig=0 To NofObjects-1
+		FreeObject(ig)				
+	Next
+
+	
+	
+	
+	NofObjects=0
+	; reset textures
+	FreeTexture leveltexture
+	FreeTexture watertexture
+	CurrentLevelTexture=0
+	LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
+	CurrentWaterTexture=0	
+	waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
+	EntityTexture TexturePlane,LevelTexture
+	EntityTexture CurrentWaterTile,WaterTexture
+
+
+	rebuildlevelmodel()
+	BuildCurrentTileModel()
+
+End Function
+
 Function CompileLevel()
+
+End Function
+
+Function AccessLevel(levelnumber)
+
+	If LevelExists(levelnumber)=True
+		LoadLevel(levelnumber)
+	Else
+		NewLevel(levelnumber)
+	EndIf
 
 End Function
 
@@ -12426,6 +12479,38 @@ Function GetHubs()
 
 End Function
 
+Function LevelExists(levelnumber)
+
+	If AdventureCurrentArchive=1
+		ex$="Archive\"
+	Else
+		ex$="Current\"
+	EndIf
+
+	If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(levelnumber)+".wlv")=1
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
+
+Function DialogExists(dialognumber)
+
+	If AdventureCurrentArchive=1
+		ex$="Archive\"
+	Else
+		ex$="Current\"
+	EndIf
+
+	If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(dialognumber)+".dia")=1
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
+
 Function StartMaster()
 	EditorMode=8
 	
@@ -12436,23 +12521,18 @@ Function StartMaster()
 	CameraProjMode Camera,1
 
 	
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
 	
-	For i=1 To 99
+	For i=1 To MaxLevel
 		; check existence of wlv and dia files
 		MasterLevelList(i)=0
-		If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(i)+".wlv")=1
+		If LevelExists(i)
 			MasterLevelList(i)=1
 		EndIf
 	Next
 	
-	For i=1 To 999
+	For i=1 To MaxDialog
 		MasterDialogList(i)=0
-		If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(i)+".dia")=1
+		If DialogExists(i)
 			MasterDialogList(i)=1
 		EndIf
 	Next
@@ -12974,6 +13054,32 @@ Function MasterMainLoop()
 	mb=0
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
+	
+	; level/dialog list start
+	If MouseX()>700 And MouseX()<750
+		If (MouseY()>482 And MouseY()<502 And mb>0) Or MouseScroll<0
+			MasterLevelListStart=MasterLevelListStart+adj
+			If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
+			Delay 150
+		Else If (MouseY()>62 And MouseY()<82 And mb>0) Or MouseScroll>0
+			MasterLevelListStart=MasterLevelListStart-adj
+			If MasterLevelListStart<0 Then MasterLevelListStart=0
+			Delay 150
+		EndIf
+	EndIf
+	If MouseX()>750 And MouseX()<800
+		If (MouseY()>482 And MouseY()<502 And mb>0) Or MouseScroll<0
+			MasterDialogListStart=MasterDialogListStart+adj
+			If MasterDialogListStart>MaxDialog-20 Then MasterDialogListStart=MaxDialog-20
+			Delay 150
+		Else If (MouseY()>62 And MouseY()<82 And mb>0) Or MouseScroll>0
+			MasterDialogListStart=MasterDialogListStart-adj
+			If MasterDialogListStart<0 Then MasterDialogListStart=0
+			Delay 150
+		EndIf
+	EndIf
+	
+	
 	If mb>0
 	
 		;new advanced mode 2019
@@ -13006,30 +13112,6 @@ Function MasterMainLoop()
 				Delay 150
 			EndIf
 
-		EndIf
-		
-		; level/dialog list start
-		If MouseX()>700 And MouseX()<750
-			If MouseY()>482 And MouseY()<502
-				MasterLevelListStart=MasterLevelListStart+adj
-				If MasterLevelListStart>79 Then MasterLevelListStart=79
-				Delay 150
-			Else If MouseY()>62 And MouseY()<82
-				MasterLevelListStart=MasterLevelListStart-adj
-				If MasterLevelListStart<0 Then MasterLevelListStart=0
-				Delay 150
-			EndIf
-		EndIf
-		If MouseX()>750 And MouseX()<800
-			If MouseY()>482 And MouseY()<502
-				MasterDialogListStart=MasterDialogListStart+adj
-				If MasterDialogListStart>979 Then MasterDialogListStart=979
-				Delay 150
-			Else If MouseY()>62 And MouseY()<82
-				MasterDialogListStart=MasterDialogListStart-adj
-				If MasterDialogListStart<0 Then MasterDialogListStart=0
-				Delay 150
-			EndIf
 		EndIf
 		
 		
@@ -13149,39 +13231,14 @@ Function MasterMainLoop()
 		; load level
 		For i=1 To 20
 			If MouseX()>700 And MouseX()<750 And MouseY()>62+i*20 And MouseY()<=82+i*20
-				If MasterLevelList(i+MasterLevelListStart)=1
+				SelectedLevel=i+MasterLevelListStart
+				If MasterLevelList(SelectedLevel)=1
 					; already exists - load
-					currentlevelnumber=i+Masterlevelliststart
-					loadlevel(i+Masterlevelliststart)
+					LoadLevel(SelectedLevel)
 					
 				Else
 					; new level
-					currentlevelnumber=i+Masterlevelliststart
-					resetlevel()
-					; clear current objects 
-					
-					For ig=0 To NofObjects-1
-						FreeObject(ig)				
-					Next
-
-					
-					
-					
-					NofObjects=0
-					; reset textures
-					FreeTexture leveltexture
-					FreeTexture watertexture
-					CurrentLevelTexture=0
-					LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-					CurrentWaterTexture=0	
-					waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
-					EntityTexture TexturePlane,LevelTexture
-					EntityTexture CurrentWaterTile,WaterTexture
-			
-			
-					rebuildlevelmodel()
-					BuildCurrentTileModel()
-					
+					NewLevel(SelectedLevel)					
 				EndIf
 				StartEditorMainLoop()
 				Repeat
@@ -13193,15 +13250,16 @@ Function MasterMainLoop()
 		; load dialog
 		For i=1 To 20
 			If MouseX()>750 And MouseX()<800 And MouseY()>62+i*20 And MouseY()<=82+i*20
-				If MasterDialogList(i+MasterDialogListStart)=1
+				SelectedDialog = i+MasterDialogListStart
+				If MasterDialogList(SelectedDialog)=1
 					; already exists - load
-					currentdialog=i+MasterDialogliststart
+					currentdialog=SelectedDialog
 					;loaddialogfile()
 					
 				Else
 					; new dialog
 					;ClearDialogFile()
-					currentdialog=i+MasterDialogliststart
+					currentdialog=SelectedDialog
 
 					
 				EndIf
