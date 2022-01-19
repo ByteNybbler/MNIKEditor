@@ -4039,7 +4039,8 @@ Function LoadObjectPreset()
 	AddAdjuster("TextureName")
 	AddAdjuster("MovementSpeed")
 	AddAdjuster("MovementType")
-	AddAdjuster("MovementTypeData")
+	;AddAdjuster("MovementTypeData")
+	AddAdjuster("MovementTimer")
 	AddAdjuster("TileTypeCollision")
 	AddAdjuster("ObjectTypeCollision")
 	AddAdjuster("ButtonPush")
@@ -4089,6 +4090,7 @@ Function LoadObjectPreset()
 	AddAdjuster("DestructionType")
 	;AddAdjuster("Flying")
 	;AddAdjuster("MovementTimer")
+	AddAdjuster("Status")
 
 	
 	CloseFile file
@@ -6767,6 +6769,9 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectSpeed)
 	Case "Radius"
 		tex$=Str$(CurrentObjectRadius)
+		
+	Case "Status"
+		tex$=Str$(CurrentObjectStatus)
 
 
 
@@ -7881,6 +7886,9 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectSpeed=AdjustFloat#("Speed: ", CurrentObjectSpeed, 0.01, 0.1, 150)
 	Case "Radius"
 		CurrentObjectRadius=AdjustFloat#("Radius: ", CurrentObjectRadius, 0.01, 0.1, 150)
+		
+	Case "Status"
+		CurrentObjectStatus=AdjustInt("Status: ", CurrentObjectStatus, 1, 10, 150)
 
 
 
