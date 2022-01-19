@@ -4695,45 +4695,45 @@ End Function
 
 Function UpdateObjectEntityToCurrent(Dest)
 
-	FreeModel(Dest)
+	;FreeModel(Dest)
 	
-	CreateObjectModel(Dest)
+	;CreateObjectModel(Dest)
 	
-	;ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
+	ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
 	
-	;UpdateObjectVisibility(Dest)
+	UpdateObjectVisibility(Dest)
 	
-	;If CurrentHatModel>0
-	;	If CurrentObjectData(2)>9 ; two digit
-	;		ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+".3ds",0)
-	;		ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-	;	Else
-	;		ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory00"+Str$(CurrentObjectData(2)+".3ds"),0)
-	;		ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory00"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-	;	EndIf
-	;	
-	;	ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-	;	
-	;	RotateEntity ObjectHatEntity(Dest),0,0,0
-	;	TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-	;	TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
-	;
-	;	EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
-	;EndIf
-	;
-	;If CurrentAccModel>0
-	;	ObjectAccEntity(Dest)=MyLoadMesh("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+".3ds",0)
-	;	ObjectAccTexture(Dest)=MyLoadTexture("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+Chr$(65+CurrentObjectData(5))+".jpg",4)
-	;
-	;
-	;	ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-	;	
-	;	RotateEntity ObjectAccEntity(Dest),0,0,0
-	;	TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-	;	TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
-	;
-	;	EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
-	;EndIf
+	If CurrentHatModel>0
+		If CurrentObjectData(2)>9 ; two digit
+			ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+".3ds",0)
+			ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
+		Else
+			ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory00"+Str$(CurrentObjectData(2)+".3ds"),0)
+			ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory00"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
+		EndIf
+		
+		ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+		
+		RotateEntity ObjectHatEntity(Dest),0,0,0
+		TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+		TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
+	
+		EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
+	EndIf
+	
+	If CurrentAccModel>0
+		ObjectAccEntity(Dest)=MyLoadMesh("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+".3ds",0)
+		ObjectAccTexture(Dest)=MyLoadTexture("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+Chr$(65+CurrentObjectData(5))+".jpg",4)
+	
+	
+		ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+		
+		RotateEntity ObjectAccEntity(Dest),0,0,0
+		TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+		TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
+	
+		EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+	EndIf
 	
 	UpdateObjectPosition(Dest)
 
@@ -5331,6 +5331,8 @@ Function PasteObjectData(Dest)
 	Next
 	
 	;FreeEntity(ObjectEntity(Dest))
+	FreeModel(Dest)
+	
 	UpdateObjectEntityToCurrent(Dest)
 
 	
