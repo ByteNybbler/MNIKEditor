@@ -1862,30 +1862,7 @@ Function EditorLocalControls()
 							ElementCount=ElementCount-1
 							thisx=FloodStackX(ElementCount)
 							thisy=FloodStackY(ElementCount)
-							;If LevelTileMatchesTarget(thisx,thisy)
-							;	ChangeLevelTile(thisx,thisy,True)
-							;	If thisx>0
-							;		FloodStackX(ElementCount)=thisx-1
-							;		FloodStackY(ElementCount)=thisy
-							;		ElementCount=ElementCount+1
-							;	EndIf
-							;	If thisx<LevelWidth-1
-							;		FloodStackX(ElementCount)=thisx+1
-							;		FloodStackY(ElementCount)=thisy
-							;		ElementCount=ElementCount+1
-							;	EndIf
-							;	If thisy>0
-							;		FloodStackX(ElementCount)=thisx
-							;		FloodStackY(ElementCount)=thisy-1
-							;		ElementCount=ElementCount+1
-							;	EndIf
-							;	If thisy<LevelHeight-1
-							;		FloodStackX(ElementCount)=thisx
-							;		FloodStackY(ElementCount)=thisy+1
-							;		ElementCount=ElementCount+1
-							;	EndIf
-							;EndIf
-							
+														
 							If thisx>0
 								nextx=thisx-1
 								nexty=thisy
@@ -3402,11 +3379,14 @@ Function EditorLocalControls()
 		If my>=540 And my<570
 			If LeftMouse=True And LeftMouseReleased=True
 				;wipe
-				For i=0 To LevelWidth-1
-					For j=0 To LevelHeight-1
-						ChangeLevelTile(i,j,True)
+				Confirm$=InputString$("Are you sure you want to wipe? Type Y to confirm: ")
+				If Confirm="Y" Or Confirm="y"
+					For i=0 To LevelWidth-1
+						For j=0 To LevelHeight-1
+							ChangeLevelTile(i,j,True)
+						Next
 					Next
-				Next
+				EndIf
 			EndIf
 		EndIf
 		
