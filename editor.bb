@@ -4942,10 +4942,6 @@ Function FreeModel(i)
 		FreeEntity ObjectEntity(i)
 		ObjectEntity(i)=0
 	EndIf
-	If ObjectTexture(i)>0
-		FreeTexture ObjectTexture(i)
-		ObjectTexture(i)=0
-	EndIf
 
 End Function
 
@@ -4953,6 +4949,10 @@ Function FreeObject(i)
 
 	FreeModel(i)
 	
+	If ObjectTexture(i)>0
+		FreeTexture ObjectTexture(i)
+		ObjectTexture(i)=0
+	EndIf
 	If ObjectPositionMarker(i)>0
 		FreeEntity ObjectPositionMarker(i)
 		ObjectPositionMarker(i)=0
