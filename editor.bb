@@ -1648,6 +1648,8 @@ Function EditorMainLoop()
 	Text 500,520,"   BRUSH"
 	Text 500,535,"   SIZE "+BrushSize
 	
+	Text 500,565,"   ELEVATION"
+	
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
 		Text 704,520," > CANCEL <"
@@ -3472,16 +3474,20 @@ Function EditorLocalControls()
 		Else If my>565 And my<595
 			If LeftMouse=True And LeftMouseReleased=True
 				ShowObjectMesh=Not ShowObjectMesh
-				If ShowObjectMesh=True
-					For j=0 To NofObjects-1
-						ShowEntity ObjectEntity(j)
-					Next
-				EndIf
-				If ShowObjectMesh=False
-					For j=0 To NofObjects-1
-						HideEntity ObjectEntity(j)
-					Next
-				EndIf
+				;If ShowObjectMesh=True
+				;	For j=0 To NofObjects-1
+				;		ShowEntity ObjectEntity(j)
+				;	Next
+				;EndIf
+				;If ShowObjectMesh=False
+				;	For j=0 To NofObjects-1
+				;		HideEntity ObjectEntity(j)
+				;	Next
+				;EndIf
+				
+				For j=0 To NofObjects-1
+					UpdateObjectVisibility(j)
+				Next
 	
 				
 				Delay 100
@@ -3556,6 +3562,7 @@ Function EditorLocalControls()
 	EndIf
 	
 	If MX>=500 And MX<600
+		; brush size
 		If my>520 And my<550
 			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 				;BorderExpandOption=Not BorderExpandOption
@@ -3575,6 +3582,26 @@ Function EditorLocalControls()
 					BrushSize=1
 				EndIf
 				If MouseScroll=0 Then Delay 100
+			EndIf
+		EndIf
+		
+		; elevation
+		If my>565 And my<595
+			If LeftMouse=True And LeftMouseReleased=True				
+				Adjustment#=InputFloat#("Amount to shift level up/down: ")
+				For i=0 To LevelWidth-1
+					For j=0 To LevelHeight-1
+						LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
+						WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
+						UpdateLevelTile(i,j)
+						UpdateWaterTile(i,j)
+					Next
+				Next
+				For i=0 To NofObjects-1
+					ObjectZAdjust(i)=ObjectZAdjust(i)+Adjustment
+					UpdateObjectPosition(i)
+				Next
+				CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
 			EndIf
 		EndIf
 	EndIf
@@ -4555,15 +4582,31 @@ Function PlaceObject(x#,y#)
 End Function
 
 
+Function UpdateObjectVisibility(Dest)
+
+	If ShowObjectMesh=False
+		HideEntity ObjectEntity(Dest)
+	Else
+		ShowEntity ObjectEntity(Dest)
+	EndIf
+
+End Function
+
+
+Function UpdateObjectPosition(Dest)
+
+	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+
+End Function
+
+
 Function UpdateObjectEntityToCurrent(Dest)
 
 	ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
 	
-	If ShowObjectMesh=False
-		HideEntity ObjectEntity(Dest)
-	EndIf
+	UpdateObjectVisibility(Dest)
 	
-	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+	UpdateObjectPosition(Dest)
 	
 	If CurrentHatModel>0
 		If CurrentObjectData(2)>9 ; two digit
@@ -4791,16 +4834,8 @@ Function CreateObjectPositionMarker(i)
 	
 End Function
 
-Function FreeObject(i)
+Function FreeClothes(i)
 
-	If ObjectEntity(i)>0
-		FreeEntity ObjectEntity(i)
-		ObjectEntity(i)=0
-	EndIf
-	If ObjectTexture(i)>0
-		FreeTexture ObjectTexture(i)
-		ObjectTexture(i)=0
-	EndIf
 	If ObjectHatEntity(i)>0
 		FreeEntity ObjectHatEntity(i)
 		ObjectHatEntity(i)=0
@@ -4820,6 +4855,22 @@ Function FreeObject(i)
 		FreeTexture ObjectAccTexture(i)
 		ObjectAccTexture(i)=0
 	EndIf
+
+End Function
+
+Function FreeObject(i)
+
+	FreeClothes(i)
+
+	If ObjectEntity(i)>0
+		FreeEntity ObjectEntity(i)
+		ObjectEntity(i)=0
+	EndIf
+	If ObjectTexture(i)>0
+		FreeTexture ObjectTexture(i)
+		ObjectTexture(i)=0
+	EndIf
+
 	
 	If ObjectPositionMarker(i)>0
 		FreeEntity ObjectPositionMarker(i)
@@ -5179,6 +5230,7 @@ Function PasteObjectData(Dest)
 	;	ObjectAdjusterString$(Dest,i)=CurrentObjectAdjusterString$(i)
 	;Next
 	
+	FreeClothes(Dest)
 	FreeEntity(ObjectEntity(Dest))
 	UpdateObjectEntityToCurrent(Dest)
 
@@ -7038,6 +7090,15 @@ Function InputInt(title$)
 	Color 255,255,255
 	Return Input(title$)
 End Function
+
+Function InputFloat#(title$)
+	Locate 0,0
+	Color 0,0,0
+	Rect 0,0,500,40,True
+	Color 255,255,255
+	Return Input$(title$)
+End Function
+
 
 Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 
@@ -10690,10 +10751,8 @@ Function LoadLevel(levelnumber)
 
 		EndIf
 		
-
-		If ShowObjectMesh=False
-			HideEntity ObjectEntity(Dest)
-		EndIf
+		
+		UpdateObjectVisibility(Dest)
 
 		PositionEntity ObjectEntity(Dest),ObjectX(i)+ObjectXAdjust(i),ObjectZ(i)+ObjectZAdjust(i),-ObjectY(i)-ObjectYAdjust(i)	
 
