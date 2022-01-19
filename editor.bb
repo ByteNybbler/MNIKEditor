@@ -1804,6 +1804,22 @@ Function EditorLocalControls()
 				Color 255,255,255
 				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
 				
+				If FillMode>0
+					r=255
+					g=255
+					b=0
+				Else If BlockMode>0
+					r=0
+					g=255
+					b=255
+				Else
+					r=255
+					g=255
+					b=255
+				EndIf
+				EntityColor CursorMesh,r,g,b
+				EntityColor CursorMesh2,r,g,b
+				
 				
 				HideEntity BlockModeMesh
 				If BlockMode=2
