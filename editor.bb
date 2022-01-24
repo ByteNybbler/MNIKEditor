@@ -3781,6 +3781,82 @@ End Function
 
 
 
+Function LevelTileLogicHasVisuals(i,j)
+
+	Return LevelTileLogic(i,j)>0 And LevelTileLogic(i,j)<15
+
+End Function
+
+
+
+Function ColorLevelTileLogic(i,j)
+
+	Select LevelTileLogic(i,j)
+	Case 1 ; wall
+		red=255
+		green=0
+		blue=0
+	Case 2; water
+		red=0
+		green=0
+		blue=255
+	Case 3; teleporter
+		red=140
+		green=100
+		blue=0
+	Case 4; bridge
+		red=70
+		green=70
+		blue=15
+	Case 5; lava
+		red=140
+		green=0
+		blue=255
+	Case 6 ; 06
+		red=40
+		green=40
+		blue=40
+	Case 7 ; 07
+		red=80
+		green=80
+		blue=80
+	Case 8 ; 08
+		red=120
+		green=120
+		blue=120
+	Case 9; button
+		red=255
+		green=255
+		blue=0
+	Case 10; stinker exit
+		red=0
+		green=255
+		blue=0
+	Case 11,12,13; ice
+		red=0
+		green=255
+		blue=255
+	Case 14; ice float
+		red=255
+		green=255
+		blue=255
+	Default
+		red=0
+		green=0
+		blue=0
+	End Select
+
+	
+	VertexColor LogicSurface(j),i*4+0,red,green,blue;,.5
+	VertexColor LogicSurface(j),i*4+1,red,green,blue;,.5
+	VertexColor LogicSurface(j),i*4+2,red,green,blue;,.5
+	VertexColor LogicSurface(j),i*4+3,red,green,blue;,.5
+		
+
+End Function
+
+
+
 Function ReBuildLevelModel()
 
 	For i=0 To 99
@@ -3944,7 +4020,8 @@ Function BuildLevelModel()
 		ClearSurface LogicSurface(j)
 		For i=0 To LevelWidth-1
 		
-			If LevelTileLogic(i,j)=1 Or LevelTileLogic(i,j)=2 Or LevelTileLogic(i,j)=11 Or LevelTileLogic(i,j)=12 Or LevelTileLogic(i,j)=13
+			;If LevelTileLogic(i,j)=1 Or LevelTileLogic(i,j)=2 Or LevelTileLogic(i,j)=11 Or LevelTileLogic(i,j)=12 Or LevelTileLogic(i,j)=13
+			If LevelTileLogicHasVisuals(i,j)
 				nologicshow=0
 			Else
 				nologicshow=-300
@@ -3964,30 +4041,7 @@ Function BuildLevelModel()
 			AddTriangle (LogicSurface(j),i*4+0,i*4+1,i*4+2)
 			AddTriangle (LogicSurface(j),i*4+1,i*4+3,i*4+2)
 			
-			Select LevelTileLogic(i,j)
-			Case 1 ; wall
-				red=255
-				green=0
-				blue=0
-			Case 2; water
-				red=0
-				green=0
-				blue=255
-			Case 11,12,13; ice
-				red=0
-				green=255
-				blue=255
-			Default
-				red=0
-				green=0
-				blue=0
-			End Select
-		
-			
-			VertexColor LogicSurface(j),i*4+0,red,green,blue;,.5
-			VertexColor LogicSurface(j),i*4+1,red,green,blue;,.5
-			VertexColor LogicSurface(j),i*4+2,red,green,blue;,.5
-			VertexColor LogicSurface(j),i*4+3,red,green,blue;,.5
+			ColorLevelTileLogic(i,j)
 
 		Next
 		UpdateNormals LogicMesh(j)
@@ -8554,7 +8608,7 @@ Function UpdateWaterTile(i,j)
 	; also do logic tile here
 	; top face
 	
-	If LevelTileLogic(i,j)=1 Or LevelTileLogic(i,j)=2 Or LevelTileLogic(i,j)=11 Or LevelTileLogic(i,j)=12 Or LevelTileLogic(i,j)=13
+	If LevelTileLogicHasVisuals(i,j)
 		nologicshow=0
 	Else
 		nologicshow=-300
@@ -8571,33 +8625,8 @@ Function UpdateWaterTile(i,j)
 	VertexCoords LogicSurface(j),i*4+3,i+1+nologicshow,height,-j-1
 				
 	
-	Select LevelTileLogic(i,j)
-	Case 1 ; wall
-		red=255
-		green=0
-		blue=0
-	Case 2; water
-		red=0
-		green=0
-		blue=255
-	Case 11,12,13; ice
-		red=0
-		green=255
-		blue=255
-	Default
-		red=0
-		green=0
-		blue=0
-	End Select
+	ColorLevelTileLogic(i,j)
 
-	
-	VertexColor LogicSurface(j),i*4+0,red,green,blue;,.5
-	VertexColor LogicSurface(j),i*4+1,red,green,blue;,.5
-	VertexColor LogicSurface(j),i*4+2,red,green,blue;,.5
-	VertexColor LogicSurface(j),i*4+3,red,green,blue;,.5
-
-
-	
 			
 
 
