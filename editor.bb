@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/24/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/25/22)"
 
 Global MASTERUSER=True
 
@@ -4690,7 +4690,7 @@ Function PlaceObject(x#,y#)
 	EndIf
 	ObjectZ#(NofObjects)=CurrentObjectZ#
 	
-	
+	; extra adjustments	
 	If CurrentObjectType=50 ; spellball
 		CurrentObjectData(2)=ObjectTileX(NofObjects)
 		CurrentObjectData(3)=ObjectTileY(NofObjects)
@@ -5518,13 +5518,13 @@ Function PasteObjectData(Dest)
 		ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
 	Next
 	
-	;FreeEntity(ObjectEntity(Dest))
 	FreeModel(Dest)
 	
 	UpdateObjectEntityToCurrent(Dest)
 
 	
 End Function
+
 
 
 
@@ -9634,6 +9634,14 @@ Function ReSizeLevel()
 				DeleteObject(i)
 			Else
 				PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
+				
+				; extra adjustments	
+				If ObjectType(i)=50 ; spellball
+					ObjectData(i,2)=ObjectTileX(i)
+					ObjectData(i,3)=ObjectTileY(i)
+					ObjectData(i,4)=ObjectTileX(i)
+					ObjectData(i,5)=ObjectTileY(i)
+				EndIf
 			EndIf
 		Next
 	EndIf
@@ -9645,6 +9653,14 @@ Function ReSizeLevel()
 				DeleteObject(i)
 			Else
 				PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
+				
+				; extra adjustments	
+				If ObjectType(i)=50 ; spellball
+					ObjectData(i,2)=ObjectTileX(i)
+					ObjectData(i,3)=ObjectTileY(i)
+					ObjectData(i,4)=ObjectTileX(i)
+					ObjectData(i,5)=ObjectTileY(i)
+				EndIf
 			EndIf
 		Next
 	EndIf
