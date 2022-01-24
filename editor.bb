@@ -4820,6 +4820,8 @@ Function CalculateEffectiveID(Dest)
 		If ObjectID(Dest)=-1
 			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 		EndIf
+	Case 280 ; spring
+		Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 	End Select
 	Return ObjectID(Dest)
 
@@ -4827,8 +4829,6 @@ End Function
 
 
 Function UpdateObjectVisibility(Dest)
-
-	;ShowMessage("Updating object visibility for "+Dest, 50)
 
 	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest))
 		If ObjectEntity(Dest)>0
@@ -4841,21 +4841,16 @@ Function UpdateObjectVisibility(Dest)
 			HideEntity ObjectAccEntity(Dest)
 		EndIf
 	Else
-		;ShowMessage("If comparison with ObjectEntity for "+Dest, 50)
 		If ObjectEntity(Dest)>0
 			ShowEntity ObjectEntity(Dest)
 		EndIf
-		;ShowMessage("If comparison with ObjectHatEntity "+ObjectHatEntity(Dest)+" For "+Dest, 50)
 		If ObjectHatEntity(Dest)>0
 			ShowEntity ObjectHatEntity(Dest)
 		EndIf
-		;ShowMessage("If comparison with ObjectAccEntity for "+Dest, 50)
 		If ObjectAccEntity(Dest)>0
 			ShowEntity ObjectAccEntity(Dest)
 		EndIf
 	EndIf
-	
-	;ShowMessage("Visibility update complete for "+Dest, 50)
 
 End Function
 
