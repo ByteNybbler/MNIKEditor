@@ -559,13 +559,14 @@ PositionEntity Camera3,0.5,210,-0.5
 CameraZoom Camera3,20
 CameraProjMode Camera3,0
 
-Camera4 = CreateCamera()
+Camera4 = CreateCamera() ; objects menu camera
 CameraClsColor camera4,155,0,0
 CameraViewport Camera4,695,305,100,125
 CameraRange camera4,.1,1000
 RotateEntity Camera4,25,0,0
 PositionEntity Camera4,0,303.8,-8
-CameraZoom Camera4,8
+Global Camera4Zoom#=8.0
+CameraZoom Camera4,Camera4Zoom#
 
 Camera = CreateCamera() ; Text Screen Camera
 
@@ -3291,6 +3292,29 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	Next
+	
+	If mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
+		If MouseScroll<>0
+			Adj#=1.2
+			If Fast
+				Adj#=Adj#*4.0
+			EndIf
+			If MouseScroll>0
+				Camera4Zoom#=Camera4Zoom#*Adj
+			ElseIf MouseScroll<0
+				Camera4Zoom#=Camera4Zoom#/Adj
+			EndIf
+			;Camera4Zoom#=Camera4Zoom#+MouseScroll
+			If Camera4Zoom#<0.1
+				Camera4Zoom#=0.1
+			EndIf
+			CameraZoom Camera4,Camera4Zoom#
+		EndIf
+		If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
+			Camera4Zoom#=8
+			CameraZoom Camera4,Camera4Zoom#
+		EndIf
+	EndIf
 	
 	; *************************************
 	; Preset Objects
