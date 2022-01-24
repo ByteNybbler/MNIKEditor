@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/19/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/24/22)"
 
 Global MASTERUSER=True
 
@@ -4382,7 +4382,7 @@ Function LoadObjectPreset()
 	AddAdjuster("MovementSpeed")
 	AddAdjuster("MovementType")
 	;AddAdjuster("MovementTypeData")
-	AddAdjuster("MovementTimer")
+	;AddAdjuster("MovementTimer")
 	AddAdjuster("TileTypeCollision")
 	AddAdjuster("ObjectTypeCollision")
 	AddAdjuster("ButtonPush")
@@ -4414,16 +4414,15 @@ Function LoadObjectPreset()
 	AddAdjuster("TimerMax1")
 	AddAdjuster("TimerMax2")
 	AddAdjuster("DefensePower")
-	AddAdjuster("WaterReact")
+	;AddAdjuster("WaterReact")
+	AddAdjuster("DX")
+	AddAdjuster("DY")
 	AddAdjuster("Frozen")
 	AddAdjuster("Teleportable")
 	AddAdjuster("Linked")
 	AddAdjuster("LinkBack")
 	;AddAdjuster("Parent")
 	;AddAdjuster("Child")
-	;AddAdjuster("ObjectDX")
-	;AddAdjuster("ObjectDY")
-	;AddAdjuster("ObjectDZ")
 	AddAdjuster("MoveXGoal")
 	AddAdjuster("MoveYGoal")
 	AddAdjuster("Dead")
@@ -4606,13 +4605,22 @@ Function PlaceObject(x#,y#)
 
 
 
-		
 
 	Else
 		ObjectX#(NofObjects)=x+0.5+CurrentObjectX#
 		ObjectY#(NofObjects)=y+0.5+CurrentObjectY#
 	EndIf
 	ObjectZ#(NofObjects)=CurrentObjectZ#
+	
+	
+	If CurrentObjectType=50 ; spellball
+		CurrentObjectData(2)=ObjectTileX(NofObjects)
+		CurrentObjectData(3)=ObjectTileY(NofObjects)
+		CurrentObjectData(4)=ObjectTileX(NofObjects)
+		CurrentObjectData(5)=ObjectTileY(NofObjects)
+	EndIf
+	
+	
 	ObjectOldX#(nofobjects)=-999
 	ObjectOldY#(nofobjects)=-999
 	ObjectOldZ#(nofobjects)=-999
@@ -4704,6 +4712,7 @@ Function PlaceObject(x#,y#)
 	For i=0 To 30
 		ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
 	Next
+	
 	
 	
 	UpdateObjectEntityToCurrent(NofObjects)
@@ -7174,11 +7183,11 @@ Function DisplayObjectAdjuster(i)
 	Case "Child"
 		tex$=Str$(CurrentObjectChild)
 		
-	Case "ObjectDX"
+	Case "DX"
 		tex$=Str$(CurrentObjectDX)
-	Case "ObjectDY"
+	Case "DY"
 		tex$=Str$(CurrentObjectDY)
-	Case "ObjectDZ"
+	Case "DZ"
 		tex$=Str$(CurrentObjectDZ)
 		
 	Case "MoveXGoal"
@@ -8323,12 +8332,12 @@ Function AdjustObjectAdjuster(i)
 	Case "Child"
 		CurrentObjectChild=AdjustInt("Child: ", CurrentObjectChild, 1, 10, 150)
 		
-	Case "ObjectDX"
-		CurrentObjectDX=AdjustFloat#("ObjectDX: ", CurrentObjectDX, 0.01, 0.1, 150)
-	Case "ObjectDY"
-		CurrentObjectDY=AdjustFloat#("ObjectDY: ", CurrentObjectDY, 0.01, 0.1, 150)
-	Case "ObjectDZ"
-		CurrentObjectDZ=AdjustFloat#("ObjectDZ: ", CurrentObjectDZ, 0.01, 0.1, 150)
+	Case "DX"
+		CurrentObjectDX=AdjustFloat#("DX: ", CurrentObjectDX, 0.01, 0.1, 150)
+	Case "DY"
+		CurrentObjectDY=AdjustFloat#("DY: ", CurrentObjectDY, 0.01, 0.1, 150)
+	Case "DZ"
+		CurrentObjectDZ=AdjustFloat#("DZ: ", CurrentObjectDZ, 0.01, 0.1, 150)
 		
 	Case "MoveXGoal"
 		CurrentObjectMoveXGoal=AdjustInt("MoveXGoal: ", CurrentObjectMoveXGoal, 1, 10, 150)
