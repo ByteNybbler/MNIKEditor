@@ -637,7 +637,7 @@ PositionEntity CurrentObjectMarkerMesh,0,300,0
 
 ; ObjectPositionMarker
 Global ObjectPositionMarkerMesh=CreateCube()
-ScaleMesh ObjectPositionMarkerMesh,0.1,100,0.1
+ScaleMesh ObjectPositionMarkerMesh,0.1,90,0.1
 ;EntityAlpha ObjectPositionMarkerMesh,.3
 ;EntityColor ObjectPositionMarkerMesh,100,255,100
 HideEntity ObjectPositionMarkerMesh
