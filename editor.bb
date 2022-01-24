@@ -5509,6 +5509,29 @@ End Function
 
 
 
+Function DisplayAsBinaryString$(value)
+
+Result$=""
+
+;Str$(CurrentObjectFutureInt12)+"000 0000 0000 00"
+
+For i=0 To 14
+	If i Mod 5 = 0 And i>0
+		Result$=Result$+" "
+	EndIf
+	If (value And 2^i)<>0
+		Result$=Result$+"1"
+	Else
+		Result$=Result$+"0"
+	EndIf
+Next
+
+Return Result$
+
+End Function
+
+
+
 Function DisplayObjectAdjuster(i)
 
 	tex2$=ObjectAdjuster$(i)
@@ -7216,10 +7239,10 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectMovementSpeed)
 		
 	Case "TileTypeCollision"
-		tex$=Str$(CurrentObjectFutureInt12)
+		tex$=DisplayAsBinaryString$(CurrentObjectFutureInt12)
 		tex2$="TTC"
 	Case "ObjectTypeCollision"
-		tex$=Str$(CurrentObjectFutureInt13)
+		tex$=DisplayAsBinaryString$(CurrentObjectFutureInt13)
 		tex2$="OTC"
 						
 	Case "ScaleAdjust"
