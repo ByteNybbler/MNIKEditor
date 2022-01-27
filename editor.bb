@@ -642,6 +642,13 @@ ScaleMesh ObjectPositionMarkerMesh,0.1,90,0.1
 ;EntityColor ObjectPositionMarkerMesh,100,255,100
 HideEntity ObjectPositionMarkerMesh
 
+; CurrentGrabbedObjectMarker
+Global CurrentGrabbedObjectMarker=CreateCube()
+;ScaleMesh CurrentGrabbedObjectMarker,1,90,1
+;EntityAlpha CurrentGrabbedObjectMarker,.5
+;EntityColor CurrentGrabbedObjectMarker,100,255,100
+HideEntity CurrentGrabbedObjectMarker
+
 
 
 
@@ -1478,8 +1485,13 @@ Function EditorMainLoop()
 	EndIf
 	
 	leveltimer=leveltimer+1
+	
+	EntityAlpha CurrentGrabbedObjectMarker,0.79+0.2*Sin((Float(LevelTimer)*6.0) Mod 360)
+	
 	UpdateWorld 
 	RenderWorld
+	
+	
 	
 	
 	Text 0,5,"ADVENTURE: "+AdventureFileName$
@@ -3383,7 +3395,7 @@ Function EditorLocalControls()
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
 		If RightMouse=True And RightMouseReleased=True
-			CurrentGrabbedObject=-1
+			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory-1
 			If CurrentObjectPresetCategory=-1 Then CurrentObjectPresetCategory=NofObjectPresetCategories-1
 			RightMouseReleased=False
@@ -3414,7 +3426,7 @@ Function EditorLocalControls()
 	EndIf
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
 		If LeftMouse=True And LeftMouseReleased=True
-			CurrentGrabbedObject=-1
+			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory+1
 			If CurrentObjectPresetCategory=NofObjectPresetCategories Then CurrentObjectPresetCategory=0
 			LeftMouseReleased=False
@@ -3448,7 +3460,7 @@ Function EditorLocalControls()
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
 		If RightMouse=True And RightMouseReleased=True
-			CurrentGrabbedObject=-1
+			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetObject=CurrentObjectPresetObject-1
 			If CurrentObjectPresetObject=-1 Then CurrentObjectPresetObject=NofObjectPresetObjects-1
 			RightMouseReleased=False
@@ -3460,7 +3472,7 @@ Function EditorLocalControls()
 	EndIf
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
 		If LeftMouse=True And LeftMouseReleased=True
-			CurrentGrabbedObject=-1
+			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetObject=CurrentObjectPresetObject+1
 			If CurrentObjectPresetObject=NofObjectPresetObjects Then CurrentObjectPresetObject=0
 			LeftMouseReleased=False
@@ -3789,6 +3801,29 @@ Function EditorLocalControls()
 
 End Function
 
+
+Function SetCurrentGrabbedObject(i)
+
+	PreviousGrabbedObject=CurrentGrabbedObject
+	
+	CurrentGrabbedObject=i
+
+	If PreviousGrabbedObject<>-1
+		UpdateObjectVisibility(PreviousGrabbedObject)
+	EndIf
+	
+	If CurrentGrabbedObject=-1
+		HideEntity CurrentGrabbedObjectMarker
+	Else
+		FreeEntity CurrentGrabbedObjectMarker 
+		CurrentGrabbedObjectMarker=CopyEntity(ObjectEntity(CurrentGrabbedObject))
+		UpdateObjectVisibility(CurrentGrabbedObject)
+		
+		;ScaleEntity CurrentGrabbedObjectMarker,ObjectXScale#(i)*1.1,ObjectYScale#(i)*1.1,ObjectZScale#(i)*1.1
+		;EntityColor CurrentGrabbedObjectMarker,100,255,100
+	EndIf
+
+End Function
 
 
 Function CtrlDown()
@@ -4799,7 +4834,7 @@ Function PlaceObject(x#,y#)
 	CreateObjectPositionMarker(NofObjects)
 	
 	
-	CurrentGrabbedObject=NofObjects
+	SetCurrentGrabbedObject(NofObjects)
 
 	
 	NofObjects=NofObjects+1
@@ -4830,7 +4865,7 @@ End Function
 
 Function UpdateObjectVisibility(Dest)
 
-	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest))
+	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest)) Or Dest=CurrentGrabbedObject
 		If ObjectEntity(Dest)>0
 			HideEntity ObjectEntity(Dest)
 		EndIf
@@ -4855,9 +4890,18 @@ Function UpdateObjectVisibility(Dest)
 End Function
 
 
+Function SetEntityPositionToObjectPosition(entity, Dest)
+
+	PositionEntity entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)	
+
+End Function
+
+
 Function UpdateObjectPosition(Dest)
 
-	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+	SetEntityPositionToObjectPosition(ObjectEntity(Dest), Dest)
+
+	;PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
 	
 	If ObjectHatEntity(Dest)>0
 		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
@@ -4920,7 +4964,7 @@ End Function
 Function TryGrabObjectLoop(x#,y#)
 	For i=0 To NofObjects-1
 		If Floor(ObjectX(i))=Floor(x) And Floor(ObjectY(i))=Floor(y) And i>CurrentGrabbedObject
-			CurrentGrabbedObject=i
+			SetCurrentGrabbedObject(i)
 			Return True
 		EndIf
 	Next
@@ -4931,12 +4975,12 @@ Function GrabObject(x#,y#)
 	CachedGrabbedObject=CurrentGrabbedObject
 	Flag=TryGrabObjectLoop(x#,y#)
 	If Flag=False
-		CurrentGrabbedObject=-1 ; restart the cycle
+		SetCurrentGrabbedObject(-1) ; restart the cycle
 		Flag=TryGrabObjectLoop(x#,y#)
 	EndIf
 	If Flag=False
 		; no object found
-		CurrentGrabbedObject=CachedGrabbedObject
+		SetCurrentGrabbedObject(CachedGrabbedObject)
 		;Locate 0,0
 		;Print "No Object Here"
 		;Delay 1000
@@ -5158,9 +5202,9 @@ Function DeleteObject(i)
 	FreeObject(i)
 	
 	If i=CurrentGrabbedObject
-		CurrentGrabbedObject=-1
+		SetCurrentGrabbedObject(-1)
 	Else If i<CurrentGrabbedObject
-		CurrentGrabbedObject=CurrentGrabbedObject-1
+		SetCurrentGrabbedObject(CurrentGrabbedObject-1)
 	EndIf
 
 	For j=i+1 To NofObjects-1
@@ -7465,7 +7509,7 @@ Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, Delay
 End Function
 
 Function AdjustObjectAdjuster(i)
-	;CurrentGrabbedObject=-1 ; this object is likely no longer the same as whatever object was copied
+	;SetCurrentGrabbedObject(-1) ; this object is likely no longer the same as whatever object was copied
 
 	Fast=False
 	If KeyDown(42) Or KeyDown(54) Then Fast=True
@@ -9468,7 +9512,7 @@ End Function
 
 Function ResetLevel()
 
-	CurrentGrabbedObject=-1
+	SetCurrentGrabbedObject(-1)
 
 	For i=0 To 99
 		For j=0 To 99
