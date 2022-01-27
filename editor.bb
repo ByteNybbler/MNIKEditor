@@ -10624,11 +10624,11 @@ Function CameraControls()
 	EndIf
 	If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
 	
-		TranslateEntity Target,0,0.1,0
+		TranslateEntity Target,0,Adj,0
 	EndIf
 	If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
 	
-		TranslateEntity Target,0,-0.1,0
+		TranslateEntity Target,0,-Adj,0
 	EndIf
 	If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
 		
