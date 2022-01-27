@@ -265,7 +265,9 @@ Dim CopyWaterTileRotation(100,100)
 Dim CopyWaterTileHeight#(100,100)
 Dim CopyWaterTileTurbulence#(100,100)
 
+; some helper stuff for the editor
 Dim LevelTileVisited(100,100) ; for use in the flood fill algorithm
+Dim LevelTileObjectCount(100,100) ; for changing the marker color when there's more than one object present
 
 Global ChunkTileU#,ChunkTileV#
 
@@ -4812,13 +4814,17 @@ Function PlaceObject(x#,y#)
 	UpdateObjectEntityToCurrent(NofObjects)
 	
 	
-	CreateObjectPositionMarker(NofObjects)
-	
-	
 	SetCurrentGrabbedObject(NofObjects)
+	
+	
+	LevelTileObjectCount(floorx,floory)=LevelTileObjectCount(floorx,floory)+1
+	CreateObjectPositionMarker(NofObjects)
 
 	
 	NofObjects=NofObjects+1
+	
+	
+	UpdateObjectPositionMarkersAtTile(floorx,floory)
 	
 	
 	
@@ -5114,9 +5120,9 @@ End Function
 
 Function CreateObjectPositionMarker(i)
 
-	ObjectPositionMarker(i)=CopyMesh(ObjectPositionMarkerMesh)
+	ObjectPositionMarker(i)=CopyEntity(ObjectPositionMarkerMesh)
 	EntityAlpha ObjectPositionMarker(i),.8
-	EntityColor ObjectPositionMarker(i),255,100,100
+	;EntityColor ObjectPositionMarker(i),255,100,100
 	PositionEntity ObjectPositionMarker(i),ObjectX(i),0,-ObjectY(i)
 	
 	If ShowObjectPositions=False
@@ -5124,6 +5130,25 @@ Function CreateObjectPositionMarker(i)
 	EndIf
 	
 End Function
+
+Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
+
+	;ShowMessage("Updating object position markers...", 100)
+
+	For i=0 To NofObjects-1
+		If ObjectTileX(i)=tilex And ObjectTileY(i)=tiley
+			If LevelTileObjectCount(tilex,tiley)=1
+				EntityColor ObjectPositionMarker(i),255,100,100
+			Else
+				EntityColor ObjectPositionMarker(i),255,255,100
+			EndIf
+		EndIf
+	Next
+	
+	;ShowMessage("Update successful.", 100)
+
+End Function
+
 
 Function FreeClothes(i)
 
@@ -5180,6 +5205,14 @@ End Function
 
 Function DeleteObject(i)
 
+	;ShowMessage("Deleting object "+i, 100)
+
+	tilex=ObjectTileX(i)
+	tiley=ObjectTileY(i)
+	LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)-1
+
+	;ShowMessage("Setting current grabbed object...", 100)
+
 	FreeObject(i)
 	
 	If i=CurrentGrabbedObject
@@ -5187,10 +5220,14 @@ Function DeleteObject(i)
 	Else If i<CurrentGrabbedObject
 		SetCurrentGrabbedObject(CurrentGrabbedObject-1)
 	EndIf
+	
+	;ShowMessage("Copying object data...", 100)
 
 	For j=i+1 To NofObjects-1
 		CopyObjectData(j,j-1)
 	Next
+	
+	;ShowMessage("Copy OK.", 100)
 	
 	NofObjects=NofObjects-1
 	
@@ -5243,6 +5280,8 @@ Function DeleteObject(i)
 	Else If CurrentObjectChild>i
 		CurrentObjectChild=CurrentObjectChild-1
 	EndIf
+	
+	UpdateObjectPositionMarkersAtTile(tilex,tiley)
 	
 
 End Function
@@ -9507,6 +9546,8 @@ Function ResetLevel()
 			LevelTileRounding(i,j)=0; 0-no, 1-yes: are floors rounded if on a drop-off corner
 			LevelTileEdgeRandom(i,j)=0; 0-no, 1-yes: are edges rippled
 			LevelTileLogic(i,j)=0
+			
+			LevelTileObjectCount(i,j)=0
 		Next
 	Next
 	
@@ -10912,7 +10953,7 @@ Function LoadLevel(levelnumber)
 			LevelTileEdgeRandom(i,j)=ReadInt(file); 0-no, 1-yes: are edges rippled
 			LevelTileLogic(i,j)=ReadInt(file)
 			
-			
+			LevelTileObjectCount(i,j)=0
 			
 		Next
 	Next
@@ -10992,9 +11033,9 @@ Function LoadLevel(levelnumber)
 
 
 
-
-	NofObjects=ReadInt(file)
-	For i=0 To NofObjects-1		
+	NofObjects=0
+	ReadObjectCount=ReadInt(file)
+	For i=0 To ReadObjectCount-1
 		Dest=i
 		ObjectModelName$(i)=ReadString$(file)
 		ObjectTextureName$(i)=ReadString$(file)
@@ -11084,8 +11125,12 @@ Function LoadLevel(levelnumber)
 		ObjectTalkable(Dest)=ReadInt(file)
 		ObjectCurrentAnim(Dest)=ReadInt(file)
 		ObjectStandardAnim(Dest)=ReadInt(file)
-		ObjectTileX(Dest)=ReadInt(file)
-		ObjectTileY(Dest)=ReadInt(file)
+		;ObjectTileX(Dest)=ReadInt(file)
+		;ObjectTileY(Dest)=ReadInt(file)
+		tilex=ReadInt(file)
+		tiley=ReadInt(file)
+		ObjectTileX(Dest)=tilex
+		ObjectTileY(Dest)=tiley
 		ObjectTileX2(Dest)=ReadInt(file)
 		ObjectTileY2(Dest)=ReadInt(file)
 		ObjectMovementTimer(Dest)=ReadInt(file)
@@ -11122,28 +11167,23 @@ Function LoadLevel(levelnumber)
 		For k=0 To 30
 			ObjectAdjusterString$(Dest,k)=ReadString(file)
 		Next
-
-
-		;ShowMessage("Creating object model for object "+Dest, 50)
 		
 		CreateObjectModel(Dest)
 		
-		;ShowMessage("Done with object model for object "+Dest, 50)
-		
 		UpdateObjectVisibility(Dest)
-		
-		;ShowMessage("Done with visibility update for object "+Dest, 50)
 
 		PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
-		
-		;ShowMessage("Done with positioning for object "+Dest, 50)
 
+		LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)+1
 		CreateObjectPositionMarker(Dest)
 		
-		;ShowMessage("Done with creating position marker for object "+Dest, 50)
-		
 
+		NofObjects=NofObjects+1
+		
+		
+		UpdateObjectPositionMarkersAtTile(tilex,tiley)
 	Next
+	
 	
 	
 	; finalize object data
