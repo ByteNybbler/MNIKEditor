@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/25/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/26/22)"
 
 Global MASTERUSER=True
 
@@ -5561,15 +5561,15 @@ Function DisplayObjectAdjuster(i)
 	Case "TextureName"
 		tex2$="Texture"
 		tex$=CurrentObjectTextureName$
-		If Left$(tex$,1)="?" ; object re-texture
-			tex$=Right$(tex$,Len(tex$)-1)
+		;If Left$(tex$,1)="?" ; object re-texture
+		;	tex$=Right$(tex$,Len(tex$)-1)
 		EndIf
 	
 	Case "ModelName"
 		tex2$="Model"
 		tex$=CurrentObjectModelName$
-		If Left$(tex$,1)="?" ; object re-model
-			tex$=Right$(tex$,Len(tex$)-1)
+		;If Left$(tex$,1)="?" ; object re-model
+		;	tex$=Right$(tex$,Len(tex$)-1)
 		EndIf
 	
 	Case "XAdjust"
