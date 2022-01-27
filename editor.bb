@@ -3305,29 +3305,6 @@ Function EditorLocalControls()
 		EndIf
 	Next
 	
-	If mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
-		If MouseScroll<>0
-			Adj#=1.2
-			If Fast
-				Adj#=Adj#*4.0
-			EndIf
-			If MouseScroll>0
-				Camera4Zoom#=Camera4Zoom#*Adj
-			ElseIf MouseScroll<0
-				Camera4Zoom#=Camera4Zoom#/Adj
-			EndIf
-			;Camera4Zoom#=Camera4Zoom#+MouseScroll
-			If Camera4Zoom#<0.1
-				Camera4Zoom#=0.1
-			EndIf
-			CameraZoom Camera4,Camera4Zoom#
-		EndIf
-		If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
-			Camera4Zoom#=8
-			CameraZoom Camera4,Camera4Zoom#
-		EndIf
-	EndIf
-	
 	; *************************************
 	; Preset Objects
 	; *************************************
@@ -10538,61 +10515,11 @@ Function CameraControls()
 	MouseScroll=MouseZSpeed()
 	MouseDeltaX = MouseXSpeed()
 	MouseDeltaY = MouseYSpeed()
-
+	mx = MouseX()
+	my = MouseY()
+	
 	Adj#=0.1
 	If ShiftDown() Then Adj=0.4
-
-
-	If KeyDown(75) Or KeyDown(203) Or KeyDown(30) ; numpad 4 or left arrow or A
-		
-		TranslateEntity Camera1,-Adj,0,0
-	EndIf
-	If KeyDown(77) Or KeyDown(205) Or KeyDown(32) ; numpad 6 or right arrow or D
-		
-		TranslateEntity Camera1,Adj,0,0
-	EndIf
-	If KeyDown(72) Or KeyDown(200) Or KeyDown(17) ; numpad 8 or up arrow or W
-	
-		TranslateEntity Camera1,0,0,Adj
-	EndIf
-	If KeyDown(80) Or KeyDown(208) Or KeyDown(31) ; numpad 2 or down arrow or S
-	
-		TranslateEntity Camera1,0,0,-Adj
-	EndIf
-	If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
-	
-		TranslateEntity Camera1,0,0.1,0
-	EndIf
-	If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
-	
-		TranslateEntity Camera1,0,-0.1,0
-	EndIf
-	If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
-		
-		TurnEntity Camera1,1,0,0
-	EndIf
-	If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
-	
-		TurnEntity Camera1,-1,0,0
-	EndIf
-	If KeyDown(181) ;Or KeyDown(3) ; numpad /
-		
-		TurnEntity Camera1,0,1,0
-	EndIf
-	If KeyDown(55) ;Or KeyDown(4) ; numpad *
-		
-		TurnEntity Camera1,0,-1,0
-	EndIf
-	
-	If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
-		; reset camera rotation
-		RotateEntity Camera1,65,0,0
-	EndIf
-	
-	If MouseX() < 510
-		SpeedFactor#=3.0*Adj
-		TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
-	EndIf
 	
 	If KeyDown(57) ; space bar
 		CameraPanning=True
@@ -10602,6 +10529,89 @@ Function CameraControls()
 		EndIf
 	Else
 		CameraPanning=False
+	EndIf
+	
+	Target=-1
+	
+	If mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
+		Target=Camera4
+	Else
+		Target=Camera1 ; level camera
+	EndIf
+	
+	If Target=-1
+		Return
+	EndIf
+
+	If KeyDown(75) Or KeyDown(203) Or KeyDown(30) ; numpad 4 or left arrow or A
+			
+		TranslateEntity Target,-Adj,0,0
+	EndIf
+	If KeyDown(77) Or KeyDown(205) Or KeyDown(32) ; numpad 6 or right arrow or D
+		
+		TranslateEntity Target,Adj,0,0
+	EndIf
+	If KeyDown(72) Or KeyDown(200) Or KeyDown(17) ; numpad 8 or up arrow or W
+	
+		TranslateEntity Target,0,0,Adj
+	EndIf
+	If KeyDown(80) Or KeyDown(208) Or KeyDown(31) ; numpad 2 or down arrow or S
+	
+		TranslateEntity Target,0,0,-Adj
+	EndIf
+	If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
+	
+		TranslateEntity Target,0,0.1,0
+	EndIf
+	If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
+	
+		TranslateEntity Target,0,-0.1,0
+	EndIf
+	If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
+		
+		TurnEntity Target,1,0,0
+	EndIf
+	If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
+	
+		TurnEntity Target,-1,0,0
+	EndIf
+	If KeyDown(181) ;Or KeyDown(3) ; numpad /
+		
+		TurnEntity Target,0,1,0
+	EndIf
+	If KeyDown(55) ;Or KeyDown(4) ; numpad *
+		
+		TurnEntity Target,0,-1,0
+	EndIf
+	
+	If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
+		; reset camera rotation
+		If Target=Camera1
+			RotateEntity Camera1,65,0,0
+		ElseIf Target=Camera4
+			RotateEntity Camera4,25,0,0
+			PositionEntity Camera4,0,303.8,-8
+			Camera4Zoom#=8
+			CameraZoom Camera4,Camera4Zoom#
+		EndIf
+	EndIf
+	
+	If MouseScroll<>0
+		If Target=Camera1 And mx<510 ; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
+			SpeedFactor#=3.0*Adj
+			TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
+		ElseIf Target=Camera4
+			ZoomSpeed#=12.0*Adj
+			If MouseScroll>0
+				Camera4Zoom#=Camera4Zoom#*ZoomSpeed
+			ElseIf MouseScroll<0
+				Camera4Zoom#=Camera4Zoom#/ZoomSpeed
+			EndIf
+			If Camera4Zoom#<0.1
+				Camera4Zoom#=0.1
+			EndIf
+			CameraZoom Camera4,Camera4Zoom#
+		EndIf
 	EndIf
 
 		
