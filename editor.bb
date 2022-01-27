@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/26/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (01/27/22)"
 
 Global MASTERUSER=True
 
@@ -7476,11 +7476,11 @@ Function AdjustObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	Case "ObjectTextData0"
 		If LeftMouse=True
-			CurrentObjectTextData(0)=InputString$("Enter string: ")
+			CurrentObjectTextData(0)=InputString$("Enter TextData0: ")
 		EndIf
 	Case "ObjectTextData1"
 		If LeftMouse=True
-			CurrentObjectTextData(1)=InputString$("Enter string: ")
+			CurrentObjectTextData(1)=InputString$("Enter TextData1: ")
 		EndIf
 	Case "TextureName"
 		If LeftMouse=True
