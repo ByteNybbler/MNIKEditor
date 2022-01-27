@@ -5563,14 +5563,14 @@ Function DisplayObjectAdjuster(i)
 		tex$=CurrentObjectTextureName$
 		;If Left$(tex$,1)="?" ; object re-texture
 		;	tex$=Right$(tex$,Len(tex$)-1)
-		EndIf
+		;EndIf
 	
 	Case "ModelName"
 		tex2$="Model"
 		tex$=CurrentObjectModelName$
 		;If Left$(tex$,1)="?" ; object re-model
 		;	tex$=Right$(tex$,Len(tex$)-1)
-		EndIf
+		;EndIf
 	
 	Case "XAdjust"
 		tex$=Str$(CurrentObjectXAdjust)
@@ -5754,11 +5754,11 @@ Function DisplayObjectAdjuster(i)
 	Case "ObjectTextData0"
 		; custom model
 		tex2$=""
-		tex$=CurrentObjectTextData(0)
+		tex$=CurrentObjectTextData$(0)
 		
 	Case "ObjectTextData1"
 		tex2$=""
-		tex$=CurrentObjectTextData(1)
+		tex$=CurrentObjectTextData$(1)
 
 		
 	Case "Active"
@@ -7476,11 +7476,11 @@ Function AdjustObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	Case "ObjectTextData0"
 		If LeftMouse=True
-			CurrentObjectTextData(0)=InputString$("Enter TextData0: ")
+			CurrentObjectTextData$(0)=InputString$("Enter TextData0: ")
 		EndIf
 	Case "ObjectTextData1"
 		If LeftMouse=True
-			CurrentObjectTextData(1)=InputString$("Enter TextData1: ")
+			CurrentObjectTextData$(1)=InputString$("Enter TextData1: ")
 		EndIf
 	Case "TextureName"
 		If LeftMouse=True
@@ -7499,8 +7499,12 @@ Function AdjustObjectAdjuster(i)
 		;	CurrentObjectModelName$="?"+InputString$("ModelName: ")
 		;Else
 			CurrentObjectModelName$=InputString$("ModelName: ")
-			If Left$(CurrentObjectModelName$,1)="/"
-				CurrentObjectModelName$="?"+Right$(CurrentObjectModelName$,Len(CurrentObjectModelName$)-1)
+			If CurrentObjectModelName$="!CustomModel"
+				CurrentObjectTextData$(0)=InputString$("Enter custom model name (e.g. Default): ")
+			ElseIf Left$(CurrentObjectModelName$,1)="/" Or Left$(CurrentObjectModelName$,1)="?"
+				;CurrentObjectModelName$="?"+Right$(CurrentObjectModelName$,Len(CurrentObjectModelName$)-1)
+				CurrentObjectTextData$(0)=Right$(CurrentObjectModelName$,Len(CurrentObjectModelName$)-1)
+				CurrentObjectModelName$="!CustomModel"
 			EndIf
 		EndIf
 		
