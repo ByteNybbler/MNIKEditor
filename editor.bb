@@ -636,19 +636,20 @@ EntityOrder BlockModeMesh,-1
 CurrentObjectMarkerMesh=CreateCylinder()
 ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
 PositionEntity CurrentObjectMarkerMesh,0,300,0
+;EntityBlend CurrentObjectMarkerMesh,3
 
 ; ObjectPositionMarker
 Global ObjectPositionMarkerMesh=CreateCube()
-ScaleMesh ObjectPositionMarkerMesh,0.1,90,0.1
+ScaleMesh ObjectPositionMarkerMesh,0.08,90,0.08
 ;EntityAlpha ObjectPositionMarkerMesh,.3
 ;EntityColor ObjectPositionMarkerMesh,100,255,100
 HideEntity ObjectPositionMarkerMesh
 
 ; CurrentGrabbedObjectMarker
 Global CurrentGrabbedObjectMarker=CreateCube()
-;ScaleMesh CurrentGrabbedObjectMarker,1,90,1
+ScaleMesh CurrentGrabbedObjectMarker,0.5,90,0.5
 ;EntityAlpha CurrentGrabbedObjectMarker,.5
-;EntityColor CurrentGrabbedObjectMarker,100,255,100
+EntityColor CurrentGrabbedObjectMarker,100,255,100
 HideEntity CurrentGrabbedObjectMarker
 
 
@@ -1488,7 +1489,8 @@ Function EditorMainLoop()
 	
 	leveltimer=leveltimer+1
 	
-	EntityAlpha CurrentGrabbedObjectMarker,0.79+0.2*Sin((Float(LevelTimer)*6.0) Mod 360)
+	;EntityAlpha CurrentGrabbedObjectMarker,0.79+0.2*Sin((Float(LevelTimer)*6.0) Mod 360)
+	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
 	UpdateWorld 
 	RenderWorld
@@ -3787,24 +3789,31 @@ End Function
 
 Function SetCurrentGrabbedObject(i)
 
-	PreviousGrabbedObject=CurrentGrabbedObject
+	;PreviousGrabbedObject=CurrentGrabbedObject
 	
 	CurrentGrabbedObject=i
-
-	If PreviousGrabbedObject<>-1
-		UpdateObjectVisibility(PreviousGrabbedObject)
-	EndIf
 	
 	If CurrentGrabbedObject=-1
 		HideEntity CurrentGrabbedObjectMarker
 	Else
-		FreeEntity CurrentGrabbedObjectMarker 
-		CurrentGrabbedObjectMarker=CopyEntity(ObjectEntity(CurrentGrabbedObject))
-		UpdateObjectVisibility(CurrentGrabbedObject)
-		
-		;ScaleEntity CurrentGrabbedObjectMarker,ObjectXScale#(i)*1.1,ObjectYScale#(i)*1.1,ObjectZScale#(i)*1.1
-		;EntityColor CurrentGrabbedObjectMarker,100,255,100
+		ShowEntity CurrentGrabbedObjectMarker
+		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
 	EndIf
+
+	;If PreviousGrabbedObject<>-1
+	;	UpdateObjectVisibility(PreviousGrabbedObject)
+	;EndIf
+	
+	;If CurrentGrabbedObject=-1
+	;	HideEntity CurrentGrabbedObjectMarker
+	;Else
+	;	FreeEntity CurrentGrabbedObjectMarker 
+	;	CurrentGrabbedObjectMarker=CopyEntity(ObjectEntity(CurrentGrabbedObject))
+	;	UpdateObjectVisibility(CurrentGrabbedObject)
+	;	
+	;	;ScaleEntity CurrentGrabbedObjectMarker,ObjectXScale#(i)*1.1,ObjectYScale#(i)*1.1,ObjectZScale#(i)*1.1
+	;	;EntityColor CurrentGrabbedObjectMarker,100,255,100
+	;EndIf
 
 End Function
 
@@ -4852,7 +4861,7 @@ End Function
 
 Function UpdateObjectVisibility(Dest)
 
-	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest)) Or Dest=CurrentGrabbedObject
+	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest)) ;Or Dest=CurrentGrabbedObject
 		If ObjectEntity(Dest)>0
 			HideEntity ObjectEntity(Dest)
 		EndIf
@@ -4880,6 +4889,13 @@ End Function
 Function SetEntityPositionToObjectPosition(entity, Dest)
 
 	PositionEntity entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)	
+
+End Function
+
+
+Function SetEntityPositionToObjectPositionWithoutZ(entity, Dest, z#)
+
+	PositionEntity entity,ObjectX(Dest)+ObjectXAdjust(Dest),z#,-ObjectY(Dest)-ObjectYAdjust(Dest)	
 
 End Function
 
@@ -5211,9 +5227,9 @@ Function DeleteObject(i)
 	tiley=ObjectTileY(i)
 	LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)-1
 
-	;ShowMessage("Setting current grabbed object...", 100)
-
 	FreeObject(i)
+	
+	;ShowMessage("Setting current grabbed object...", 100)
 	
 	If i=CurrentGrabbedObject
 		SetCurrentGrabbedObject(-1)
@@ -5585,6 +5601,8 @@ Function PasteObjectData(Dest)
 	FreeModel(Dest)
 	
 	UpdateObjectEntityToCurrent(Dest)
+	
+	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
 
 	
 End Function
