@@ -1991,10 +1991,14 @@ Function EditorLocalControls()
 				If RightMouse=True And RightMouseReleased=True
 					RightMouseReleased=False
 					
-					If EditorMode=0
-						GrabLevelTile(x,y)
-					ElseIf EditorMode=3
-						GrabObject(x,y)
+					If BlockMode=2
+						BlockMode=1
+					Else				
+						If EditorMode=0
+							GrabLevelTile(x,y)
+						ElseIf EditorMode=3
+							GrabObject(x,y)
+						EndIf
 					EndIf
 					;BlockMode=0
 					;FillMode=0
