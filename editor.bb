@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (01/27/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (02/09/22)"
 
 Global MASTERUSER=True
 
@@ -647,9 +647,13 @@ HideEntity ObjectPositionMarkerMesh
 
 ; CurrentGrabbedObjectMarker
 Global CurrentGrabbedObjectMarker=CreateCube()
+;inside=CreateCube()
+;ScaleMesh inside,-1.0,1.0,1.0
+;AddMesh inside,CurrentGrabbedObjectMarker
+;FreeEntity inside
 ScaleMesh CurrentGrabbedObjectMarker,0.5,90,0.5
-;EntityAlpha CurrentGrabbedObjectMarker,.5
 EntityColor CurrentGrabbedObjectMarker,100,255,100
+EntityFX CurrentGrabbedObjectMarker,16 ; disable back-face culling
 HideEntity CurrentGrabbedObjectMarker
 
 
@@ -5229,6 +5233,12 @@ Function DeleteObject(i)
 
 	FreeObject(i)
 	
+	;ShowMessage("Copying object data...", 100)
+
+	For j=i+1 To NofObjects-1
+		CopyObjectData(j,j-1)
+	Next
+
 	;ShowMessage("Setting current grabbed object...", 100)
 	
 	If i=CurrentGrabbedObject
@@ -5236,14 +5246,6 @@ Function DeleteObject(i)
 	Else If i<CurrentGrabbedObject
 		SetCurrentGrabbedObject(CurrentGrabbedObject-1)
 	EndIf
-	
-	;ShowMessage("Copying object data...", 100)
-
-	For j=i+1 To NofObjects-1
-		CopyObjectData(j,j-1)
-	Next
-	
-	;ShowMessage("Copy OK.", 100)
 	
 	NofObjects=NofObjects-1
 	
