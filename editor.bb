@@ -1902,11 +1902,11 @@ Function EditorLocalControls()
 						Next
 						
 						SetLevelTileAsTarget(x,y)
-						If EditorMode=0
-							ChangeLevelTile(x,y,True)
-						ElseIf EditorMode=3
-							PlaceObject(x,y)
-						EndIf
+						;If EditorMode=0
+						;	ChangeLevelTile(x,y,True)
+						;ElseIf EditorMode=3
+						;	PlaceObject(x,y)
+						;EndIf
 						FloodStackX(0)=x
 						FloodStackY(0)=y
 						ElementCount=1
