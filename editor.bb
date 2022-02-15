@@ -2041,7 +2041,7 @@ Function EditorLocalControls()
 				Next
 				
 				SetLevelTileAsTarget(x,y)
-				DeleteObjectAt(x,y)
+				;DeleteObjectAt(x,y)
 				FloodStackX(0)=x
 				FloodStackY(0)=y
 				ElementCount=1
