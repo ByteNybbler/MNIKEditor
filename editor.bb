@@ -8399,9 +8399,9 @@ Function AdjustObjectAdjuster(i)
 	Case "Data8"
 		CurrentObjectData(8)=AdjustInt("Data8: ", CurrentObjectData(8), 1, 10, 150)
 
-		If CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!Button"
-			If CurrentObjectData(8)<0 Then CurrentObjectData(8)=-2
-		EndIf
+		;If CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!Button"
+		;	If CurrentObjectData(8)<0 Then CurrentObjectData(8)=-2
+		;EndIf
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(8)>10 CurrentObjectData(8)=0
 			If CurrentObjectData(8)<0 CurrentObjectData(8)=10
