@@ -15501,8 +15501,9 @@ Function DeduplicateDialogTextCommands()
 	SortDialogTextCommands()
 
 	; remove duplicates (except for rainbow)
-	LatestColor$=""
-	LatestEffect$=""
+	; start with initial states for a dialog
+	LatestColor$="CWHI" ; white color
+	LatestEffect$="ENON" ; no effect
 	For k=0 To NofTextCommands(WhichInterChange)-1
 		If DialogTextCommandIsColor(k)
 			CurrentColor$=DialogTextCommand$(WhichInterChange,k)
@@ -15512,8 +15513,7 @@ Function DeduplicateDialogTextCommands()
 			Else
 				LatestColor$=CurrentColor$
 			EndIf
-		EndIf
-		If DialogTextCommandIsEffect(k)
+		ElseIf DialogTextCommandIsEffect(k)
 			CurrentEffect$=DialogTextCommand$(WhichInterChange,k)
 			If CurrentEffect$=LatestEffect$
 				DeleteDialogTextCommand(k)
@@ -15838,20 +15838,32 @@ Function DialogMainLoop()
 				AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 			EndIf
 			; Effects and Colours
-			If MouseDown(1) And x<Len(InterChangeTextLine$(WhichInterChange,y))
-				If ColEffect>=0
+			MouseButtonUsed=0
+			If MouseDown(1)
+				MouseButtonUsed=1
+			EndIf
+			If MouseDown(2)
+				MouseButtonUsed=2
+			EndIf
+			If MouseButtonUsed<>0 And x<Len(InterChangeTextLine$(WhichInterChange,y))
+				If ColEffect>=0 Or MouseButtonUsed=2
+					If MouseButtonUsed=1
+						Effect$=CCommands(ColEffect)
+					Else
+						Effect$="CWHI"
+					EndIf
 					; check if already one there
 					flag7=False
 					For k=0 To NofTextCommands(WhichInterChange)-1
 						If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsColor(k)
 							; yes, replace
 							flag7=True
-							DialogTextCommand$(WhichInterChange,k)=CCommands(ColEffect)
+							DialogTextCommand$(WhichInterChange,k)=Effect$
 						EndIf
 					Next
 					If flag7=False
 						; add new
-						AddDialogTextCommand(x,y,CCommands(ColEffect))
+						AddDialogTextCommand(x,y,Effect$)
 					EndIf
 				EndIf
 				If TxtEffect>=0
