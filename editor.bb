@@ -3349,6 +3349,10 @@ Function EditorLocalControls()
 				DeleteObject(CurrentGrabbedObject)
 			EndIf
 		EndIf
+		If KeyDown(19) ; R
+			EditorMode=3
+			PasteObjectData(CurrentGrabbedObject)
+		EndIf
 	EndIf
 	
 	If NofObjectAdjusters>9
