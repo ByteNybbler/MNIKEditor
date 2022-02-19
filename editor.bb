@@ -1415,6 +1415,8 @@ Repeat
 		
 		If HasFocus()
 		
+			EditorGlobalControls()
+		
 			Select EditorMode
 			
 			Case 0,1,2,3
@@ -1485,8 +1487,6 @@ Function EditorMainLoop()
 
 
 	CameraControls()
-	
-	EditorGlobalControls()
 	
 	If CameraPanning=False
 		EditorLocalControls()
@@ -15866,7 +15866,7 @@ Function DialogMainLoop()
 						AddDialogTextCommand(x,y,Effect$)
 					EndIf
 				EndIf
-				If TxtEffect>=0
+				If TxtEffect>=0 And MouseButtonUsed=1
 					; check if already one there
 					flag7=False
 					For k=0 To NofTextCommands(WhichInterChange)-1
@@ -16562,23 +16562,34 @@ Function DialogMainLoop()
 			EndIf
 			
 			; Colours/Effects
-			For i=0 To 11
-				If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
-					ColEffect=i
-				EndIf
-			Next
-			For i=0 To 11
-				If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
-					TxtEffect=i
-				EndIf
-			Next
-			If MouseX()>706 And MouseY()>282 And MouseY()<302
-				;clear
-				For i=0 To NofTextCommands(WhichInterChange)-1
-					DialogTextCommand$(WhichInterChange,i)=""
-					DialogTextCommandpos(WhichInterChange,i)=-1
+			If LeftMouseReleased=True
+				LeftMouseReleased=False
+				For i=0 To 11
+					If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
+						If ColEffect=i
+							ColEffect=-1
+						Else
+							ColEffect=i
+						EndIf
+					EndIf
 				Next
-				NofTextCommands(WhichInterChange)=0
+				For i=0 To 11
+					If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
+						If TxtEffect=i
+							TxtEffect=-1
+						Else
+							TxtEffect=i
+						EndIf
+					EndIf
+				Next
+				If MouseX()>706 And MouseY()>282 And MouseY()<302
+					;clear
+					For i=0 To NofTextCommands(WhichInterChange)-1
+						DialogTextCommand$(WhichInterChange,i)=""
+						DialogTextCommandpos(WhichInterChange,i)=-1
+					Next
+					NofTextCommands(WhichInterChange)=0
+				EndIf
 			EndIf
 		
 
