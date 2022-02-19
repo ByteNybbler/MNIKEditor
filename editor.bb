@@ -157,6 +157,7 @@ Global ShowObjectMesh=True ; shows/hides objects
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 Global BlockMode,FillMode
+Global FillDensity#=1.0
 Global BlockModeMesh,BlockModeSurface,BlockCornerX,BlockCornerY
 Global LevelTextureNum, WaterTextureNum
 Dim LevelTextureName$(30),WaterTextureName$(20)
@@ -1607,7 +1608,13 @@ Function EditorMainLoop()
 	If FillMode=0
 		Text 0,580,"    FILL"
 	Else If FillMode=1
-		Text 0,580,"   >FILL<"
+		If FillDensity#<1.0
+			Color 255,155,0
+			Text 0,580,">FILL "+FillDensity#+"<"
+			Color 255,255,255
+		Else
+			Text 0,580,"   >FILL<"
+		EndIf
 	EndIf
 
 	
@@ -1926,10 +1933,12 @@ Function EditorLocalControls()
 								nextx=thisx-1
 								nexty=thisy
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If EditorMode=0
-										ChangeLevelTile(nextx,nexty,True)
-									ElseIf EditorMode=3
-										PlaceObject(nextx,nexty)
+									If Rnd(0.0,1.0)<=FillDensity#
+										If EditorMode=0
+											ChangeLevelTile(nextx,nexty,True)
+										ElseIf EditorMode=3
+											PlaceObject(nextx,nexty)
+										EndIf
 									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
@@ -1941,10 +1950,12 @@ Function EditorLocalControls()
 								nextx=thisx+1
 								nexty=thisy
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If EditorMode=0
-										ChangeLevelTile(nextx,nexty,True)
-									ElseIf EditorMode=3
-										PlaceObject(nextx,nexty)
+									If Rnd(0.0,1.0)<=FillDensity#
+										If EditorMode=0
+											ChangeLevelTile(nextx,nexty,True)
+										ElseIf EditorMode=3
+											PlaceObject(nextx,nexty)
+										EndIf
 									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
@@ -1956,10 +1967,12 @@ Function EditorLocalControls()
 								nextx=thisx
 								nexty=thisy-1
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If EditorMode=0
-										ChangeLevelTile(nextx,nexty,True)
-									ElseIf EditorMode=3
-										PlaceObject(nextx,nexty)
+									If Rnd(0.0,1.0)<=FillDensity#
+										If EditorMode=0
+											ChangeLevelTile(nextx,nexty,True)
+										ElseIf EditorMode=3
+											PlaceObject(nextx,nexty)
+										EndIf
 									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
@@ -1971,10 +1984,12 @@ Function EditorLocalControls()
 								nextx=thisx
 								nexty=thisy+1
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If EditorMode=0
-										ChangeLevelTile(nextx,nexty,True)
-									ElseIf EditorMode=3
-										PlaceObject(nextx,nexty)
+									If Rnd(0.0,1.0)<=FillDensity#
+										If EditorMode=0
+											ChangeLevelTile(nextx,nexty,True)
+										ElseIf EditorMode=3
+											PlaceObject(nextx,nexty)
+										EndIf
 									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
@@ -3496,6 +3511,7 @@ Function EditorLocalControls()
 	If MX>=00 And Mx<100
 		If my>=510 And my<540
 			If LeftMouse=True And LeftMouseReleased=True
+				LeftMouseReleased=False
 				;block
 				If blockmode=0 
 					blockmode=1
@@ -3511,6 +3527,7 @@ Function EditorLocalControls()
 	
 		If my>=540 And my<570
 			If LeftMouse=True And LeftMouseReleased=True
+				LeftMouseReleased=False
 				;wipe
 				Confirm$=InputString$("Are you sure you want to wipe? Type Y to confirm: ")
 				If Confirm="Y" Or Confirm="y"
@@ -3525,9 +3542,19 @@ Function EditorLocalControls()
 		
 		If my>=570 And my<600
 			If LeftMouse=True And LeftMouseReleased=True
+				LeftMouseReleased=False
 				;fill
-				If fillmode=0 
+				If CtrlDown()
 					fillmode=1
+					FillDensity#=InputFloat#("Enter fill density (0.0 to 1.0): ")
+					If FillDensity#<0.0
+						FillDensity#=0.0
+					ElseIf FillDensity#>1.0
+						FillDensity#=1.0
+					EndIf
+				ElseIf fillmode=0 
+					fillmode=1
+					FillDensity#=1.0
 				Else
 					fillmode=0
 				EndIf
