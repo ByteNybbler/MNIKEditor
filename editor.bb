@@ -3638,17 +3638,7 @@ Function EditorLocalControls()
 		Else If my>565 And my<595
 			If LeftMouse=True And LeftMouseReleased=True
 				ShowObjectMesh=Not ShowObjectMesh
-				;If ShowObjectMesh=True
-				;	For j=0 To NofObjects-1
-				;		ShowEntity ObjectEntity(j)
-				;	Next
-				;EndIf
-				;If ShowObjectMesh=False
-				;	For j=0 To NofObjects-1
-				;		HideEntity ObjectEntity(j)
-				;	Next
-				;EndIf
-				
+
 				For j=0 To NofObjects-1
 					UpdateObjectVisibility(j)
 				Next
@@ -3811,14 +3801,29 @@ Function EditorLocalControls()
 
 		If MX>700
 			If my>515 And my<555
-				
+				; cancel and exit
 				ResumeMaster()
+				
 				Repeat
 				Until MouseDown(1)=False	
 				
 			Else If my>560 And my<600
-				SaveLevel()
-				ResumeMaster()
+				; save and exit
+				If CurrentGrabbedObjectModified
+					Locate 0,0
+					Color 0,0,0
+					Rect 0,0,500,40,True
+					Color 255,255,255
+					Print("You have not hit the Update button on the selected object.")
+					Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
+					If Confirm="Y" Or Confirm="y"
+						SaveLevel()
+						ResumeMaster()
+					EndIf
+				Else
+					SaveLevel()
+					ResumeMaster()
+				EndIf
 				
 				Repeat
 				Until MouseDown(1)=False
