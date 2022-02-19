@@ -7813,9 +7813,11 @@ Function AdjustObjectAdjuster(i)
 	Case "Timer"
 		CurrentObjectTimer=AdjustInt("Timer: ", CurrentObjectTimer, 1, 25, 150)
 	Case "ButtonPush"
-		CurrentObjectButtonPush=1-CurrentObjectButtonPush
-		If MouseScroll=0
-			Delay 150
+		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+			CurrentObjectButtonPush=1-CurrentObjectButtonPush
+			If MouseScroll=0
+				Delay 150
+			EndIf
 		EndIf
 
 	Case "WaterReact"
@@ -7825,9 +7827,11 @@ Function AdjustObjectAdjuster(i)
 	Case "Frozen"
 		CurrentObjectFrozen=AdjustInt("Frozen: ", CurrentObjectFrozen, 1, 10, 150)		
 	Case "Teleportable"
-		CurrentObjectTeleportable=1-CurrentObjectTeleportable
-		If MouseScroll=0
-			Delay 150
+		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+			CurrentObjectTeleportable=1-CurrentObjectTeleportable
+			If MouseScroll=0
+				Delay 150
+			EndIf
 		EndIf
 		
 	Case "Data0"
