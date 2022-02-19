@@ -22,6 +22,8 @@ SeedRnd MilliSecs() ; Seed the randomizer with the current system time in millis
 Global LeftMouse,LeftMouseReleased,RightMouse,RightMouseReleased
 Global MouseScroll=0
 Global ReturnKey,ReturnKeyReleased,DeleteKey,DeleteKeyReleased
+Dim Key(50)
+Dim KeyReleased(50)
 
 Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						;4-user Select screen
@@ -1766,6 +1768,18 @@ Function EditorMainLoop()
 End Function
 
 
+Function KeyPressed(i)
+
+	If Key(i) And KeyReleased(i)
+		KeyReleased(i)=False
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
+
+
 Function EditorGlobalControls()
 
 	ShowingError=False
@@ -1799,6 +1813,15 @@ Function EditorGlobalControls()
 		DeleteKey=False
 		DeleteKeyReleased=True
 	EndIf
+	
+	For i=1 To 50
+		If KeyDown(i)
+			Key(i)=True
+		Else
+			Key(i)=False
+			KeyReleased(i)=True
+		EndIf
+	Next
 
 End Function
 
@@ -16577,7 +16600,7 @@ Function DialogMainLoop()
 	EndIf
 	
 	; Colours/Effects
-	If LeftMouseReleased=True
+	If LeftMouse=True And LeftMouseReleased=True
 		LeftMouseReleased=False
 		For i=0 To 11
 			If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
@@ -16601,30 +16624,30 @@ Function DialogMainLoop()
 		
 			
 	If CtrlDown()
-		If KeyDown(17) Then ToggleColEffect(0) ; w: white
-		If KeyDown(18) Then ToggleColEffect(1) ; e: grey
-		If KeyDown(19) Then ToggleColEffect(2) ; r: red
-		If KeyDown(24) Then ToggleColEffect(3) ; o: orange
-		If KeyDown(21) Then ToggleColEffect(4) ; y: yellow
-		If KeyDown(34) Then ToggleColEffect(5) ; g: green
-		If KeyDown(48) Then ToggleColEffect(6) ; b: blue
-		If KeyDown(23) Then ToggleColEffect(7) ; i: indigo
-		If KeyDown(47) Then ToggleColEffect(8) ; v: violet
-		If KeyDown(30) Then ToggleColEffect(9) ; a: rainbow (all)
-		If KeyDown(33) Then ToggleColEffect(10) ; f: black+white (flashy)
-		If KeyDown(32) Then ToggleColEffect(11) ; d: warning (doomy)
-		If KeyDown(49) Then ToggleTxtEffect(0) ; n: none
-		If KeyDown(31) Then ToggleTxtEffect(1) ; s: shake
-		If KeyDown(36) Then ToggleTxtEffect(2) ; j: jitter
-		If KeyDown(45) Then ToggleTxtEffect(3) ; x: wave
-		If KeyDown(44) Then ToggleTxtEffect(4) ; z: bounce
-		If KeyDown(25) Then ToggleTxtEffect(5) ; p: zoom
-		If KeyDown(16) Then ToggleTxtEffect(6) ; q: zoom shake
-		If KeyDown(46) Then ToggleTxtEffect(7) ; c: circle
-		If KeyDown(50) Then ToggleTxtEffect(8) ; m: mobius
-		If KeyDown(22) Then ToggleTxtEffect(9) ; u: up+down
-		If KeyDown(38) Then ToggleTxtEffect(10) ; l: left+right
-		If KeyDown(20) Then ToggleTxtEffect(11) ; t: rt
+		If KeyPressed(17) Then ToggleColEffect(0) ; w: white
+		If KeyPressed(18) Then ToggleColEffect(1) ; e: grey
+		If KeyPressed(19) Then ToggleColEffect(2) ; r: red
+		If KeyPressed(24) Then ToggleColEffect(3) ; o: orange
+		If KeyPressed(21) Then ToggleColEffect(4) ; y: yellow
+		If KeyPressed(34) Then ToggleColEffect(5) ; g: green
+		If KeyPressed(48) Then ToggleColEffect(6) ; b: blue
+		If KeyPressed(23) Then ToggleColEffect(7) ; i: indigo
+		If KeyPressed(47) Then ToggleColEffect(8) ; v: violet
+		If KeyPressed(30) Then ToggleColEffect(9) ; a: rainbow (all)
+		If KeyPressed(33) Then ToggleColEffect(10) ; f: black+white (flashy)
+		If KeyPressed(32) Then ToggleColEffect(11) ; d: warning (doomy)
+		If KeyPressed(49) Then ToggleTxtEffect(0) ; n: none
+		If KeyPressed(31) Then ToggleTxtEffect(1) ; s: shake
+		If KeyPressed(36) Then ToggleTxtEffect(2) ; j: jitter
+		If KeyPressed(45) Then ToggleTxtEffect(3) ; x: wave
+		If KeyPressed(44) Then ToggleTxtEffect(4) ; z: bounce
+		If KeyPressed(25) Then ToggleTxtEffect(5) ; p: zoom
+		If KeyPressed(16) Then ToggleTxtEffect(6) ; q: zoom shake
+		If KeyPressed(46) Then ToggleTxtEffect(7) ; c: circle
+		If KeyPressed(50) Then ToggleTxtEffect(8) ; m: mobius
+		If KeyPressed(22) Then ToggleTxtEffect(9) ; u: up+down
+		If KeyPressed(38) Then ToggleTxtEffect(10) ; l: left+right
+		If KeyPressed(20) Then ToggleTxtEffect(11) ; t: rt
 	EndIf
 		
 	
