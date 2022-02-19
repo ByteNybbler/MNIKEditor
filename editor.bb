@@ -17,6 +17,8 @@ Global VersionText$="WA Editor       MNIKSource v10.04 (02/19/22)"
 
 Global MASTERUSER=True
 
+SeedRnd MilliSecs() ; Seed the randomizer with the current system time in milliseconds.
+
 Global LeftMouse,LeftMouseReleased,RightMouse,RightMouseReleased
 Global MouseScroll=0
 Global ReturnKey,ReturnKeyReleased,DeleteKey,DeleteKeyReleased
