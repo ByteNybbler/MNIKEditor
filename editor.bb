@@ -172,6 +172,10 @@ Global Leveltimer
 Global CurrentGrabbedObject=-1
 Global BrushSize=1
 
+Global RandomYawAdjust=False
+Global RandomRollAdjust=False
+Global RandomPitchAdjust=False
+
 
 
 
@@ -3312,7 +3316,7 @@ Function EditorLocalControls()
 	
 	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
 		If mx>=StartX And mx<=StartX+155 And my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
-			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 				AdjustObjectAdjuster(i)
 				EditorMode=3
 
@@ -4637,6 +4641,17 @@ Function PlaceObject(x#,y#)
 	ObjectXAdjust#(NofObjects)=CurrentObjectXAdjust#
 	ObjectZAdjust#(NofObjects)=CurrentObjectZAdjust#
 	ObjectYAdjust#(NofObjects)=CurrentObjectYAdjust#
+	
+	If RandomPitchAdjust
+		CurrentObjectPitchAdjust#=Rnd(0.0,360.0)
+	EndIf
+	If RandomYawAdjust
+		CurrentObjectYawAdjust#=Rnd(0.0,360.0)
+	EndIf
+	If RandomRollAdjust
+		CurrentObjectRollAdjust#=Rnd(0.0,360.0)
+	EndIf
+	
 	ObjectPitchAdjust#(NofObjects)=CurrentObjectPitchAdjust#
 	ObjectYawAdjust#(NofObjects)=CurrentObjectYawAdjust#
 	ObjectRollAdjust#(NofObjects)=CurrentObjectRollAdjust#
@@ -4829,6 +4844,8 @@ Function PlaceObject(x#,y#)
 		ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
 	Next
 	
+	
+	BuildCurrentObjectModel()
 	
 	
 	UpdateObjectEntityToCurrent(NofObjects)
@@ -5645,6 +5662,7 @@ End Function
 Function DisplayObjectAdjuster(i)
 
 	tex2$=ObjectAdjuster$(i)
+	CrossedOut=False
 	StartX=510
 	StartY=305
 
@@ -5750,10 +5768,13 @@ Function DisplayObjectAdjuster(i)
 
 	Case "YawAdjust"
 		tex$=Str$(CurrentObjectYawAdjust)
+		CrossedOut=RandomYawAdjust
 	Case "PitchAdjust"
 		tex$=Str$(CurrentObjectPitchAdjust)
+		CrossedOut=RandomPitchAdjust
 	Case "RollAdjust"
 		tex$=Str$(CurrentObjectRollAdjust)
+		CrossedOut=RandomRollAdjust
 
 	
 	Case "ID"
@@ -7446,6 +7467,10 @@ Function DisplayObjectAdjuster(i)
 	
 	
 	Text StartX+92-4*Len(tex$),StartY+15+(i-ObjectAdjusterStart)*15,tex$
+	
+	If CrossedOut
+		Text StartX+8,StartY+15+(i-ObjectAdjusterStart)*15,"--------------------"
+	EndIf
 
 End Function
 
@@ -7556,12 +7581,11 @@ Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, Delay
 End Function
 
 Function AdjustObjectAdjuster(i)
-	;SetCurrentGrabbedObject(-1) ; this object is likely no longer the same as whatever object was copied
 
 	Fast=False
-	If KeyDown(42) Or KeyDown(54) Then Fast=True
+	If ShiftDown() Then Fast=True
 	RawInput=False
-	If KeyDown(29) Or KeyDown(157) Then RawInput=True
+	If CtrlDown() Then RawInput=True
 	
 
 	Select ObjectAdjuster$(i)
@@ -7617,16 +7641,31 @@ Function AdjustObjectAdjuster(i)
 		
 		If CurrentObjectYawAdjust>=360 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust-360
 		If CurrentObjectYawAdjust<0 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust+360
+		
+		If ReturnKey=True And ReturnKeyReleased=True
+			ReturnKeyReleased=False
+			RandomYawAdjust=Not RandomYawAdjust
+		EndIf
 	Case "PitchAdjust"
 		CurrentObjectPitchAdjust=AdjustFloat#("PitchAdjust: ", CurrentObjectPitchAdjust, 1, 45, 150)
 		
 		If CurrentObjectPitchAdjust>=360 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust-360
 		If CurrentObjectPitchAdjust<0 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust+360
+		
+		If ReturnKey=True And ReturnKeyReleased=True
+			ReturnKeyReleased=False
+			RandomPitchAdjust=Not RandomPitchAdjust
+		EndIf
 	Case "RollAdjust"
 		CurrentObjectRollAdjust=AdjustFloat#("RollAdjust: ", CurrentObjectRollAdjust, 1, 45, 150)
 		
 		If CurrentObjectRollAdjust>=360 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust-360
 		If CurrentObjectRollAdjust<0 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust+360
+		
+		If ReturnKey=True And ReturnKeyReleased=True
+			ReturnKeyReleased=False
+			RandomRollAdjust=Not RandomRollAdjust
+		EndIf
 
 
 		
