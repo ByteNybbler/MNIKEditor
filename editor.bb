@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (02/09/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (02/18/22)"
 
 Global MASTERUSER=True
 
@@ -68,6 +68,7 @@ For i=0 To 11
 	Read TCommands$(i)
 Next
 
+Const CharactersPerLine=38
 Const CharacterDeleteDelay=50
 
 
@@ -15387,6 +15388,13 @@ Function SaveMasterFIle()
 
 End Function
 
+Function SetInterChange(i)
+
+	WhichInterChange=i
+	DeduplicateDialogTextCommands() ; for old dialogs
+
+End Function
+
 Function StartDialog()
 
 	EditorMode=9
@@ -15413,7 +15421,7 @@ Function StartDialog()
 		
 	EndIf
 	
-	WhichInterChange=0
+	SetInterChange(0)
 	WhichAnswer=0
 	WhichAskAbout=0
 	
@@ -15422,6 +15430,102 @@ Function StartDialog()
 
 
 End Function
+
+
+Function DialogTextCommandIsColor(k)
+
+	Return Left$(DialogTextCommand$(WhichInterChange,k),1)="C"
+
+End Function
+
+Function DialogTextCommandIsEffect(k)
+
+	Return Left$(DialogTextCommand$(WhichInterChange,k),1)="E"
+
+End Function
+
+Function CopyDialogTextCommand(Source,Dest)
+
+	DialogTextCommandPos(WhichInterChange,Dest)=DialogTextCommandPos(WhichInterChange,Source)
+	DialogTextCommand$(WhichInterChange,Dest)=DialogTextCommand$(WhichInterChange,Source)
+
+End Function
+
+Function SwapDialogTextCommand(Source,Dest)
+
+	temp=DialogTextCommandPos(WhichInterChange,Dest)
+	DialogTextCommandPos(WhichInterChange,Dest)=DialogTextCommandPos(WhichInterChange,Source)
+	DialogTextCommandPos(WhichInterChange,Source)=temp
+	
+	temp2$=DialogTextCommand$(WhichInterChange,Dest)
+	DialogTextCommand$(WhichInterChange,Dest)=DialogTextCommand$(WhichInterChange,Source)
+	DialogTextCommand$(WhichInterChange,Source)=temp2$
+
+End Function
+
+Function DeleteDialogTextCommand(k)
+
+	For j=k+1 To NofTextCommands(WhichInterChange)-1
+		CopyDialogTextCommand(j,j-1)
+	Next
+
+	NofTextCommands(WhichInterChange)=NofTextCommands(WhichInterChange)-1
+
+End Function
+
+Function AddDialogTextCommand(x,y,command$)
+
+	DialogTextCommandPos(WhichInterChange,NofTextCommands(WhichInterChange))=x+(y*CharactersPerLine)
+	DialogTextCommand$(WhichInterChange,NofTextCommands(WhichInterChange))=command$
+	NofTextCommands(WhichInterChange)=NofTextCommands(WhichInterChange)+1
+
+End Function
+
+Function SortDialogTextCommands()
+
+	; insertion sort
+	i=1
+	While i<NofTextCommands(WhichInterChange)
+		j=i
+		While j>0 And DialogTextCommandPos(WhichInterChange,j-1)>DialogTextCommandPos(WhichInterChange,j)
+			SwapDialogTextCommand(j,j-1)
+			j=j-1
+		Wend
+		i=i+1
+	Wend
+
+End Function
+
+Function DeduplicateDialogTextCommands()
+
+	SortDialogTextCommands()
+
+	; remove duplicates (except for rainbow)
+	LatestColor$=""
+	LatestEffect$=""
+	For k=0 To NofTextCommands(WhichInterChange)-1
+		If DialogTextCommandIsColor(k)
+			CurrentColor$=DialogTextCommand$(WhichInterChange,k)
+			If CurrentColor$=LatestColor$ And DialogTextCommand$(WhichInterChange,k)<>"CRAI" ; rainbow
+				DeleteDialogTextCommand(k)
+				k=k-1
+			Else
+				LatestColor$=CurrentColor$
+			EndIf
+		EndIf
+		If DialogTextCommandIsEffect(k)
+			CurrentEffect$=DialogTextCommand$(WhichInterChange,k)
+			If CurrentEffect$=LatestEffect$
+				DeleteDialogTextCommand(k)
+				k=k-1
+			Else
+				LatestEffect$=CurrentEffect$
+			EndIf
+		EndIf
+	Next
+
+End Function
+
 
 Function DialogMainLoop()
 	
@@ -15727,7 +15831,7 @@ Function DialogMainLoop()
 		debug2=y
 		
 		; cursor
-		If x<38 And MouseY()>=84 And y<7 
+		If x<CharactersPerLine And MouseY()>=84 And y<7 
 			Entering=1
 			If x>Len(InterChangeTextLine$(WhichInterChange,y)) Then x=Len(InterChangeTextLine$(WhichInterChange,y))
 			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
@@ -15739,45 +15843,43 @@ Function DialogMainLoop()
 					; check if already one there
 					flag7=False
 					For k=0 To NofTextCommands(WhichInterChange)-1
-						If DialogTextCommandPos(WhichInterChange,k)=x+(y*38) And Left$(DialogTextCommand$(WhichInterChange,k),1)="C"
+						If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsColor(k)
 							; yes, replace
 							flag7=True
-							DialogTextCommandPos(WhichInterChange,k)=x+(y*38)
 							DialogTextCommand$(WhichInterChange,k)=CCommands(ColEffect)
 						EndIf
 					Next
 					If flag7=False
-						DialogTextCommandPos(WhichInterChange,NofTextCommands(WhichInterChange))=x+(y*38)
-						DialogTextCommand$(WhichInterChange,NofTextCommands(WhichInterChange))=CCommands(ColEffect)
-						NofTextCommands(WhichInterChange)=NofTextCommands(WhichInterChange)+1
+						; add new
+						AddDialogTextCommand(x,y,CCommands(ColEffect))
 					EndIf
 				EndIf
 				If TxtEffect>=0
 					; check if already one there
 					flag7=False
 					For k=0 To NofTextCommands(WhichInterChange)-1
-						If DialogTextCommandPos(WhichInterChange,k)=x+(y*38) And Left$(DialogTextCommand$(WhichInterChange,k),1)="E"
+						If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsEffect(k)
 							; yes, replace
 							flag7=True
-							DialogTextCommandPos(WhichInterChange,k)=x+(y*38)
 							DialogTextCommand$(WhichInterChange,k)=TCommands(TxtEffect)
 						EndIf
 					Next
 					If flag7=False
-						DialogTextCommandPos(WhichInterChange,NofTextCommands(WhichInterChange))=x+(y*38)
-						DialogTextCommand$(WhichInterChange,NofTextCommands(WhichInterChange))=TCommands(TxtEffect)
-						NofTextCommands(WhichInterChange)=NofTextCommands(WhichInterChange)+1
+						; add new
+						AddDialogTextCommand(x,y,TCommands(TxtEffect))
 					EndIf
 
 				EndIf
 				ColEffect=-1
 				TxtEffect=-1
+				
+				DeduplicateDialogTextCommands()
 
 			EndIf
 			
 						
 		EndIf
-		If x<38 And y=10
+		If x<CharactersPerLine And y=10
 			Entering=2
 			If x>Len(InterChangeReplyText$(WhichInterChange,WhichAnswer)) Then x=Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
 			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
@@ -15785,7 +15887,7 @@ Function DialogMainLoop()
 			EndIf
 		EndIf
 		
-		If x<38 And y=19
+		If x<CharactersPerLine And y=19
 			Entering=3
 			If x>Len(AskAboutText$(WhichAskAbout)) Then x=Len(AskAboutText$(WhichAskAbout))
 			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
@@ -15793,7 +15895,7 @@ Function DialogMainLoop()
 			EndIf
 		EndIf
 		
-		If x<38 And y=24
+		If x<CharactersPerLine And y=24
 			Entering=4
 			If x>Len(AskAboutTopText$) Then x=Len(AskAboutTopText$)
 			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
@@ -16288,16 +16390,16 @@ Function DialogMainLoop()
 			If MouseY()>60 And MouseY()<80 And MouseX()>100 And MouseX()<400
 				If mb=1 
 					If WhichInterChange<=MaxInterChanges-adj 
-						WhichInterChange=WhichInterChange+adj
+						SetInterChange(WhichInterChange+adj)
 					Else
-						WhichInterChange=MaxInterChanges
+						SetInterChange(MaxInterChanges)
 					EndIf
 				EndIf
 				If mb=2 
 					If WhichInterChange-adj>=0 
-						WhichInterChange=WhichInterChange-adj
+						SetInterChange(WhichInterChange-adj)
 					Else
-						WhichInterChange=0
+						SetInterChange(0)
 					EndIf
 				EndIf
 
