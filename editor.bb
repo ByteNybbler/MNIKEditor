@@ -174,6 +174,7 @@ Global LevelMusic,LevelWeather
 Global Leveltimer
 
 Global CurrentGrabbedObject=-1
+Global CurrentGrabbedObjectModified=False
 Global BrushSize=1
 
 Global RandomYawAdjust=False
@@ -3359,13 +3360,14 @@ Function EditorLocalControls()
 	Color 255,255,255
 	
 	; Placed in code before "More" to eat the click before it hits "More".
-	If CurrentGrabbedObject<>-1
+	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
 		Text StartX+50,StartY+2,"Update"
 		If mx>=StartX+44 And Mx<StartX+100 And my>=StartY And my<StartY+20
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				EditorMode=3
 				PasteObjectData(CurrentGrabbedObject)
+				CurrentGrabbedObjectModified=False
 			ElseIf DeleteKey=True And DeleteKeyReleased=True
 				DeleteKeyReleased=False
 				DeleteObject(CurrentGrabbedObject)
@@ -3374,6 +3376,7 @@ Function EditorLocalControls()
 		If KeyDown(19) ; R
 			EditorMode=3
 			PasteObjectData(CurrentGrabbedObject)
+			CurrentGrabbedObjectModified=False
 		EndIf
 	EndIf
 	
@@ -3834,9 +3837,8 @@ End Function
 
 Function SetCurrentGrabbedObject(i)
 
-	;PreviousGrabbedObject=CurrentGrabbedObject
-	
 	CurrentGrabbedObject=i
+	CurrentGrabbedObjectModified=False
 	
 	If CurrentGrabbedObject=-1
 		HideEntity CurrentGrabbedObjectMarker
@@ -3844,21 +3846,6 @@ Function SetCurrentGrabbedObject(i)
 		ShowEntity CurrentGrabbedObjectMarker
 		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
 	EndIf
-
-	;If PreviousGrabbedObject<>-1
-	;	UpdateObjectVisibility(PreviousGrabbedObject)
-	;EndIf
-	
-	;If CurrentGrabbedObject=-1
-	;	HideEntity CurrentGrabbedObjectMarker
-	;Else
-	;	FreeEntity CurrentGrabbedObjectMarker 
-	;	CurrentGrabbedObjectMarker=CopyEntity(ObjectEntity(CurrentGrabbedObject))
-	;	UpdateObjectVisibility(CurrentGrabbedObject)
-	;	
-	;	;ScaleEntity CurrentGrabbedObjectMarker,ObjectXScale#(i)*1.1,ObjectYScale#(i)*1.1,ObjectZScale#(i)*1.1
-	;	;EntityColor CurrentGrabbedObjectMarker,100,255,100
-	;EndIf
 
 End Function
 
@@ -7611,6 +7598,8 @@ Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, Delay
 End Function
 
 Function AdjustObjectAdjuster(i)
+
+	CurrentGrabbedObjectModified=True
 
 	Fast=False
 	If ShiftDown() Then Fast=True
