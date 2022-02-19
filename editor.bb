@@ -3809,7 +3809,7 @@ Function EditorLocalControls()
 				
 			Else If my>560 And my<600
 				; save and exit
-				If CurrentGrabbedObjectModified
+				If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
 					Locate 0,0
 					Color 0,0,0
 					Rect 0,0,500,40,True
@@ -7604,7 +7604,10 @@ End Function
 
 Function AdjustObjectAdjuster(i)
 
-	CurrentGrabbedObjectModified=True
+	; avoid false positives from pressing enter
+	If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+		CurrentGrabbedObjectModified=True
+	EndIf
 
 	Fast=False
 	If ShiftDown() Then Fast=True
