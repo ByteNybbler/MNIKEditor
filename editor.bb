@@ -15870,8 +15870,8 @@ Function DialogMainLoop()
 					EndIf
 
 				EndIf
-				ColEffect=-1
-				TxtEffect=-1
+				;ColEffect=-1
+				;TxtEffect=-1
 				
 				DeduplicateDialogTextCommands()
 
