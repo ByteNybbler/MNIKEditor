@@ -112,6 +112,9 @@ Const MaxDialog=999
 Const MaxLevel=999
 Dim MasterDialogList(1000),MasterLevelList(1000)
 
+Global CopyingLevel=False
+Global CopiedLevel=-1
+
 
 Global AdventureExitWonLevel, AdventureExitWonX, AdventureExitWonY ; at what hub level and x/y do you reappear if won.
 Global AdventureExitLostLevel, AdventureExitLostX, AdventureExitLostY ; at what hub level and x/y do you reappear if won.
@@ -13330,6 +13333,8 @@ End Function
 Function StartMaster()
 	EditorMode=8
 	
+	CopyingLevel=False
+	
 	CameraProjMode Camera1,0
 	CameraProjMode Camera2,0
 	CameraProjMode Camera3,0
@@ -13437,6 +13442,8 @@ Function ResumeMaster()
 
 	EditorMode=8
 	
+	CopyingLevel=False
+	
 	CameraProjMode Camera1,0
 	CameraProjMode Camera2,0
 	CameraProjMode Camera3,0
@@ -13529,7 +13536,7 @@ Function MasterMainLoop()
 				ex$=Str$(i+MasterLevelListStart)
 			EndIf
 		
-			If flag=True
+			If flag=True ; mouse over
 				r=255
 				g=255
 				b=100
@@ -13537,6 +13544,10 @@ Function MasterMainLoop()
 				r=100
 				g=100
 				b=100
+			Else If CopyingLevel And CopiedLevel=i+MasterLevelListStart
+				r=0
+				g=255
+				b=255
 			Else
 				r=210
 				g=210
@@ -14069,18 +14080,38 @@ Function MasterMainLoop()
 				For i=1 To 20
 					If MouseY()>62+i*20 And MouseY()<=82+i*20
 						SelectedLevel=i+MasterLevelListStart
-						;If MasterLevelList(SelectedLevel)=1
-						;	; already exists - load
-						;	LoadLevel(SelectedLevel)
-						;	
-						;Else
-						;	; new level
-						;	NewLevel(SelectedLevel)					
-						;EndIf
-						AccessLevel(SelectedLevel)
-						StartEditorMainLoop()
-						Repeat
-						Until MouseDown(1)=0
+						If mb=1
+							If CopyingLevel And LevelExists(SelectedLevel)=False
+								; copy from CopiedLevel
+								If AdventureCurrentArchive=1
+									ex2$="Archive\"
+								Else
+									ex2$="Current\"
+								EndIf
+
+								dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+								CopyFile(dirbase$+CopiedLevel+".wlv",dirbase$+SelectedLevel+".wlv")
+								MasterLevelList(SelectedLevel)=1
+								
+								CopyingLevel=False
+							Else
+								AccessLevel(SelectedLevel)
+								StartEditorMainLoop()
+							EndIf
+							
+							Repeat
+							Until MouseDown(1)=0
+						ElseIf mb=2 And LevelExists(SelectedLevel)=True
+							If CopyingLevel And SelectedLevel=CopiedLevel
+								CopyingLevel=False
+							Else
+								CopyingLevel=True
+								CopiedLevel=SelectedLevel
+							EndIf
+							
+							Repeat
+							Until MouseDown(2)=0
+						EndIf
 					EndIf
 				Next
 			EndIf
@@ -14095,18 +14126,7 @@ Function MasterMainLoop()
 				For i=1 To 20
 					If MouseY()>62+i*20 And MouseY()<=82+i*20
 						SelectedDialog = i+MasterDialogListStart
-						If MasterDialogList(SelectedDialog)=1
-							; already exists - load
-							currentdialog=SelectedDialog
-							;loaddialogfile()
-							
-						Else
-							; new dialog
-							;ClearDialogFile()
-							currentdialog=SelectedDialog
-		
-							
-						EndIf
+						Currentdialog=SelectedDialog
 						StartDialog()
 						Repeat
 						Until MouseDown(1)=0
