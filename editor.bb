@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (02/18/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (02/19/22)"
 
 Global MASTERUSER=True
 
@@ -15597,1048 +15597,913 @@ Function DialogMainLoop()
 
 
 	
-			
-		DisplayText2("--------------------------------------------",0,1,255,255,0)
+		
+	DisplayText2("--------------------------------------------",0,1,255,255,0)
+
+	;DisplayText2("InterChange #"+Str$(WhichInterChange),20,0,255,255,0)
+	DisplayText2("----- INTERCHANGE #"+Str$(WhichInterChange)+" -----",0,3,255,255,0)
 	
-		;DisplayText2("InterChange #"+Str$(WhichInterChange),20,0,255,255,0)
-		DisplayText2("----- INTERCHANGE #"+Str$(WhichInterChange)+" -----",0,3,255,255,0)
-		
-		DisplayText2("--------------------------------------",0,11,255,255,0)
-		
-		DisplayText2("----- ANSWER #"+Str$(WhichAnswer)+" -----",0,13,255,255,0)
-		
-		DisplayText2("FNC  Data  CMD  Dat1  Dat2  Dat3  Dat4",0,15,255,255,0)
-		DisplayText2(Str$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)),0,16,255,255,255)		;**
-		DisplayText2(Str$(InterChangeReplyData(WhichInterChange,WhichAnswer)),5,16,255,255,255)
-		DisplayText2(Str$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)),11,16,255,255,255)
-		DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)),17,16,255,255,255)
-		DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)),23,16,255,255,255)
-		DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)),29,16,255,255,255)
-		DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)),35,16,255,255,255)
-		DisplayText2("--------------------------------------",0,17,255,255,0)
-
-		DisplayText2("----- ASKABOUT #"+Str$(WhichAskAbout)+" -----",0,22,255,255,0)
-		DisplayText2("Active    InterChange   Repeat",0,24,255,255,0)
-		DisplayText2(Str$(AskAboutActive(WhichAskAbout)),0,25,255,255,255)	
-		
-		DisplayText2(Str$(AskAboutInterChange(WhichAskAbout)),12,25,255,255,255)	
-		DisplayText2(Str$(AskAboutRepeat(WhichAskAbout)),24,25,255,255,255)	
-		DisplayText2("AskAbout Title Line:",0,27,255,255,0)
-		DisplayText2(AskAboutTopText$,0,28,255,255,255)
-	;	DisplayText2("--------------------------------------",0,28,255,255,0)
-
+	DisplayText2("--------------------------------------",0,11,255,255,0)
 	
-		
-		For i=0 To 37
-		
-			For j=0 To 6
-				AddLetter(Asc("X")-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
-			Next
-			AddLetter(Asc("X")-32,-.97+i*.045,.5-10*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
-			AddLetter(Asc("X")-32,-.97+i*.045,.5-19*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
-			AddLetter(Asc("X")-32,-.97+i*.045,.5-24*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+	DisplayText2("----- ANSWER #"+Str$(WhichAnswer)+" -----",0,13,255,255,0)
+	
+	DisplayText2("FNC  Data  CMD  Dat1  Dat2  Dat3  Dat4",0,15,255,255,0)
+	DisplayText2(Str$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)),0,16,255,255,255)		;**
+	DisplayText2(Str$(InterChangeReplyData(WhichInterChange,WhichAnswer)),5,16,255,255,255)
+	DisplayText2(Str$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)),11,16,255,255,255)
+	DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)),17,16,255,255,255)
+	DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)),23,16,255,255,255)
+	DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)),29,16,255,255,255)
+	DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)),35,16,255,255,255)
+	DisplayText2("--------------------------------------",0,17,255,255,0)
 
+	DisplayText2("----- ASKABOUT #"+Str$(WhichAskAbout)+" -----",0,22,255,255,0)
+	DisplayText2("Active    InterChange   Repeat",0,24,255,255,0)
+	DisplayText2(Str$(AskAboutActive(WhichAskAbout)),0,25,255,255,255)	
+	
+	DisplayText2(Str$(AskAboutInterChange(WhichAskAbout)),12,25,255,255,255)	
+	DisplayText2(Str$(AskAboutRepeat(WhichAskAbout)),24,25,255,255,255)	
+	DisplayText2("AskAbout Title Line:",0,27,255,255,0)
+	DisplayText2(AskAboutTopText$,0,28,255,255,255)
+;	DisplayText2("--------------------------------------",0,28,255,255,0)
 
 
 	
+	For i=0 To 37
 	
-		Next
-		
-		; Display
-		DialogCurrentRed=255
-		DialogCurrentGreen=255
-		DialogCurrentBlue=255
-		DialogCurrentEffect=0
-		totalletters=0
 		For j=0 To 6
-			For i=0 To Len(InterChangeTextLine$(WhichInterChange,j))
-				; check special commands
-				For k=0 To NofTextCommands(WhichInterChange)-1
-					If DialogTextCommandPos(WhichInterChange,k)=j*38+i
-						; yup - enact
-						Select DialogTextCommand$(WhichInterChange,k)
-						Case "CWHI"
-							DialogCurrentRed=255
-							DialogCurrentGreen=255
-							DialogCurrentBlue=255
-						Case "CGRY"
-							DialogCurrentRed=195
-							DialogCurrentGreen=195
-							DialogCurrentBlue=195
-						Case "CRED"
-							DialogCurrentRed=255
-							DialogCurrentGreen=100
-							DialogCurrentBlue=100
-						Case "CORA"
-							DialogCurrentRed=255
-							DialogCurrentGreen=155
-							DialogCurrentBlue=000
-						Case "CYEL"
-							DialogCurrentRed=255
-							DialogCurrentGreen=255
-							DialogCurrentBlue=000
-						Case "CGRE"
-							DialogCurrentRed=0
-							DialogCurrentGreen=255
-							DialogCurrentBlue=0
-						Case "CCYA"
-							DialogCurrentRed=0
-							DialogCurrentGreen=255
-							DialogCurrentBlue=255
-						Case "CBLU"
-							DialogCurrentRed=130
-							DialogCurrentGreen=130
-							DialogCurrentBlue=255
-						Case "CPUR"
-							DialogCurrentRed=255
-							DialogCurrentGreen=100
-							DialogCurrentBlue=255
-						Case "CRAI"
-							DialogCurrentRed=Rand(0,255)
-							DialogCurrentGreen=Rand(0,255)
-							DialogCurrentBlue=Rand(0,255)
-						Case "CBLI"
-							DialogCurrentRed=150+105*Sin(DialogTimer*8)
-							DialogCurrentGreen=150+105*Sin(DialogTimer*8)
-							DialogCurrentBlue=150+105*Sin(DialogTimer*8)
-						Case "CWAR"
-							DialogCurrentRed=150+105*Sin(DialogTimer*8)
-							DialogCurrentGreen=60
-							DialogCurrentBlue=60
-						Case "ENON"
-							DialogCurrentEffect=0
-						Case "ESHI"
-							DialogCurrentEffect=1
-						Case "EJIT"
-							DialogCurrentEffect=2
-						Case "EWAV"
-							DialogCurrentEffect=3
-						Case "EBOU"
-							DialogCurrentEffect=4
-						Case "EZOO"
-							DialogCurrentEffect=5
-						Case "EZSH"
-							DialogCurrentEffect=6
-						Case "ECIR"
-							DialogCurrentEffect=7
-						Case "EEIG"
-							DialogCurrentEffect=8
-						Case "EUPD"
-							DialogCurrentEffect=9
-						Case "ELER"
-							DialogCurrentEffect=10
-						Case "EROT"
-							DialogCurrentEffect=11
+			AddLetter(Asc("X")-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+		Next
+		AddLetter(Asc("X")-32,-.97+i*.045,.5-10*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+		AddLetter(Asc("X")-32,-.97+i*.045,.5-19*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+		AddLetter(Asc("X")-32,-.97+i*.045,.5-24*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+
+
+
+
+
+	Next
 	
-							
-						End Select
-					EndIf
-				Next
-				
-				size#=1.0
-				spacing#=1.0
-				angle#=0.0
-				xoff#=0.0
-				yoff#=0.0
-				rot#=0.0
-				Select DialogCurrentEffect
-				Case 1
-					xoff#=Rnd(-.1,.1)
-				Case 2
-					xoff#=Rnd(-.15,.15)
-					yoff#=Rnd(-.1,.1)
-				Case 3
-					yoff#=0.2*Sin((totalletters+dialogtimer)*10)
-				Case 4
-					size=1.0+0.3*Sin((totalletters+dialogtimer)*10)
-					spacing=1.0/size
-				Case 5
-					size=1.4
-					spacing=1.0/size
+	; Display
+	DialogCurrentRed=255
+	DialogCurrentGreen=255
+	DialogCurrentBlue=255
+	DialogCurrentEffect=0
+	totalletters=0
+	For j=0 To 6
+		For i=0 To Len(InterChangeTextLine$(WhichInterChange,j))
+			; check special commands
+			For k=0 To NofTextCommands(WhichInterChange)-1
+				If DialogTextCommandPos(WhichInterChange,k)=j*38+i
+					; yup - enact
+					Select DialogTextCommand$(WhichInterChange,k)
+					Case "CWHI"
+						DialogCurrentRed=255
+						DialogCurrentGreen=255
+						DialogCurrentBlue=255
+					Case "CGRY"
+						DialogCurrentRed=195
+						DialogCurrentGreen=195
+						DialogCurrentBlue=195
+					Case "CRED"
+						DialogCurrentRed=255
+						DialogCurrentGreen=100
+						DialogCurrentBlue=100
+					Case "CORA"
+						DialogCurrentRed=255
+						DialogCurrentGreen=155
+						DialogCurrentBlue=000
+					Case "CYEL"
+						DialogCurrentRed=255
+						DialogCurrentGreen=255
+						DialogCurrentBlue=000
+					Case "CGRE"
+						DialogCurrentRed=0
+						DialogCurrentGreen=255
+						DialogCurrentBlue=0
+					Case "CCYA"
+						DialogCurrentRed=0
+						DialogCurrentGreen=255
+						DialogCurrentBlue=255
+					Case "CBLU"
+						DialogCurrentRed=130
+						DialogCurrentGreen=130
+						DialogCurrentBlue=255
+					Case "CPUR"
+						DialogCurrentRed=255
+						DialogCurrentGreen=100
+						DialogCurrentBlue=255
+					Case "CRAI"
+						DialogCurrentRed=Rand(0,255)
+						DialogCurrentGreen=Rand(0,255)
+						DialogCurrentBlue=Rand(0,255)
+					Case "CBLI"
+						DialogCurrentRed=150+105*Sin(DialogTimer*8)
+						DialogCurrentGreen=150+105*Sin(DialogTimer*8)
+						DialogCurrentBlue=150+105*Sin(DialogTimer*8)
+					Case "CWAR"
+						DialogCurrentRed=150+105*Sin(DialogTimer*8)
+						DialogCurrentGreen=60
+						DialogCurrentBlue=60
+					Case "ENON"
+						DialogCurrentEffect=0
+					Case "ESHI"
+						DialogCurrentEffect=1
+					Case "EJIT"
+						DialogCurrentEffect=2
+					Case "EWAV"
+						DialogCurrentEffect=3
+					Case "EBOU"
+						DialogCurrentEffect=4
+					Case "EZOO"
+						DialogCurrentEffect=5
+					Case "EZSH"
+						DialogCurrentEffect=6
+					Case "ECIR"
+						DialogCurrentEffect=7
+					Case "EEIG"
+						DialogCurrentEffect=8
+					Case "EUPD"
+						DialogCurrentEffect=9
+					Case "ELER"
+						DialogCurrentEffect=10
+					Case "EROT"
+						DialogCurrentEffect=11
 
-				Case 6
-					size=1.4
-					spacing=1.0/size
-
-					xoff#=Rnd(-.15,.15)
-					yoff#=Rnd(-.1,.1)
-				Case 7
-					xoff#=Cos(dialogtimer*4)
-					yoff#=Sin(dialogtimer*4)
-				Case 8
-					xoff#=Cos(dialogtimer*2)
-					yoff#=Sin(dialogtimer*4)
-				Case 9
-					yoff#=Sin(dialogtimer*8)
-				Case 10
-					xoff#=Cos(dialogtimer*8)
-				Case 11
-					If Abs((-dialogtimer*8+(i+j*75)*10)) Mod 3600 <3400
-						size=1.0
-
-
-
-					Else
-						size=1.3
-					EndIf
-					spacing=1.0/size
-				;	yoff#=0.2*Sin(dialogtimer*8+i*180)
-
-				
-					
-
-				
-	
-				End Select
-				
-				x#=(i)+xoff
-				y#=YOffset/2.0+j+yoff
-				
-				
-				AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,(-.97+x*.045*size*spacing)/1.0,(.5-y*.05*size*spacing)/1.0,1.0,rot,.04*size/1.0,0,0,0,0,0,0,0,0,0,dialogcurrentred,dialogcurrentgreen,dialogcurrentblue)
-			
- 				totalletters=totalletters+1
-			;	AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,DialogCurrentRed,DialogCurrentGreen,DialogCurrentBlue)
-			Next
-		Next
-		
-		
-		For i=0 To Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
-			AddLetter(Asc(Mid$(InterChangeReplyText$(WhichInterChange,WhichAnswer),i+1,1))-32,-.97+i*.045,.5-(10)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
-		Next
-		
-		For i=0 To Len(AskAboutText$(WhichAskAbout))
-			AddLetter(Asc(Mid$(AskAboutText$(WhichAskAbout),i+1,1))-32,-.97+i*.045,.5-(19)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
-		Next
-		For i=0 To Len(AskAboutTopText$)
-			AddLetter(Asc(Mid$(AskAboutTopText$,i+1,1))-32,-.97+i*.045,.5-(24)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
-		Next
-
-
-	
-		; Mouse
-		
-		If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
-			ShowPointer
-		EndIf
-		OldMouseX=MouseX()
-		OldMouseY=MouseY()
-		; Mouse Pos
-		Entering=0
-		
-		x=MouseX()/18
-		If MouseY()<284
-			y=(MouseY()-84)/21
-		Else If MouseY()<300
-			y=(MouseY()-76)/21
-		Else 
-			y=(MouseY()-63)/21
-
-		EndIf
-		debug1=MouseY()
-		debug2=y
-		
-		; cursor
-		If x<CharactersPerLine And MouseY()>=84 And y<7 
-			Entering=1
-			If x>Len(InterChangeTextLine$(WhichInterChange,y)) Then x=Len(InterChangeTextLine$(WhichInterChange,y))
-			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
-				AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
-			EndIf
-			; Effects and Colours
-			MouseButtonUsed=0
-			If MouseDown(1)
-				MouseButtonUsed=1
-			EndIf
-			If MouseDown(2)
-				MouseButtonUsed=2
-			EndIf
-			If MouseButtonUsed<>0 And x<Len(InterChangeTextLine$(WhichInterChange,y))
-				If ColEffect>=0 Or MouseButtonUsed=2
-					If MouseButtonUsed=1
-						Effect$=CCommands(ColEffect)
-					Else
-						Effect$="CWHI"
-					EndIf
-					; check if already one there
-					flag7=False
-					For k=0 To NofTextCommands(WhichInterChange)-1
-						If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsColor(k)
-							; yes, replace
-							flag7=True
-							DialogTextCommand$(WhichInterChange,k)=Effect$
-						EndIf
-					Next
-					If flag7=False
-						; add new
-						AddDialogTextCommand(x,y,Effect$)
-					EndIf
-				EndIf
-				If TxtEffect>=0 And MouseButtonUsed=1
-					; check if already one there
-					flag7=False
-					For k=0 To NofTextCommands(WhichInterChange)-1
-						If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsEffect(k)
-							; yes, replace
-							flag7=True
-							DialogTextCommand$(WhichInterChange,k)=TCommands(TxtEffect)
-						EndIf
-					Next
-					If flag7=False
-						; add new
-						AddDialogTextCommand(x,y,TCommands(TxtEffect))
-					EndIf
-
-				EndIf
-				;ColEffect=-1
-				;TxtEffect=-1
-				
-				DeduplicateDialogTextCommands()
-
-			EndIf
-			
 						
-		EndIf
-		If x<CharactersPerLine And y=10
-			Entering=2
-			If x>Len(InterChangeReplyText$(WhichInterChange,WhichAnswer)) Then x=Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
-			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
-				AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
-			EndIf
-		EndIf
-		
-		If x<CharactersPerLine And y=19
-			Entering=3
-			If x>Len(AskAboutText$(WhichAskAbout)) Then x=Len(AskAboutText$(WhichAskAbout))
-			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
-				AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
-			EndIf
-		EndIf
-		
-		If x<CharactersPerLine And y=24
-			Entering=4
-			If x>Len(AskAboutTopText$) Then x=Len(AskAboutTopText$)
-			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
-				AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
-			EndIf
-		EndIf
-
-
-	
-		OldX=x
-		OldY=y
-		; entering text
-		let=GetKey()
-		If Entering=1
+					End Select
+				EndIf
+			Next
 			
-			If let>=32 And let<=122
-				; place letter
-				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x)+Chr$(let)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x)
-				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),38)
-				; and advance cursor
-				If x<37
-					MoveMouse (x+1)*18,84+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(14)
-				; backspace
-				If x>0 
-					InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x-1)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x)
-					MoveMouse (x-1)*18,84+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(211)
-				; delete
-				If x<Len(InterChangeTextLine$(WhichInterChange,y)) 
-					InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x-1)
-					HidePointer
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			; cursor movement
-			If (KeyDown(200) Or KeyDown(72)) 
-				If y>0
-					MoveMouse (x+0)*18,84+(y-1)*21
-				Else
-					MoveMouse (x+0)*18,525
-				EndIf
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-		
-			EndIf
-			If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-				If y<6
-					MoveMouse (x+0)*18,84+(y+1)*21
-				Else
-					MoveMouse (x+0)*18,76+(10)*21
-				EndIf
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(203)) And x>0
-				MoveMouse (x-1)*18,84+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(205)) And x<Len(InterChangeTextLine$(WhichInterChange,y))
-				MoveMouse (x+1)*18,84+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			
-			If KeyDown(199) ; home
-				MoveMouse 0,84+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-			
-			If KeyDown(207) ; end
-				endx=Len(InterChangeTextLine$(WhichInterChange,y))
-				If endx>37
-					endx=37
-				EndIf
-				MoveMouse endx*18,84+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-	
-	
-	
-		EndIf
-		If Entering=2
-			
-			If let>=32 And let<=122
-				; place letter
-				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x)+Chr$(let)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x)
-				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),38)
-				; and advance cursor
-				If x<37
-					MoveMouse (x+1)*18,76+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(14)
-				; backspace
-				If x>0 
-					InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x-1)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x)
-					MoveMouse (x-1)*18,76+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(211)
-				; delete
-				If x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer)) 
-					InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x-1)
-					HidePointer
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			; cursor movement
-			If (KeyDown(200) Or KeyDown(72)) 
-				MoveMouse (x+0)*18,76+(7)*21
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				Entering=1
-				ColEffect=-1
-				TxtEffect=-1
-
-		
-			EndIf
-			If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-				MoveMouse (x+0)*18,465
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				Entering=1
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(203)) And x>0
-				MoveMouse (x-1)*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(205)) And x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
-				MoveMouse (x+1)*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			
-			If KeyDown(199) ; home
-				MoveMouse 0,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-			
-			If KeyDown(207) ; end
-				endx=Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
-				If endx>37
-					endx=37
-				EndIf
-				MoveMouse endx*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-	
-	
-	
-		EndIf
-		If Entering=3
-			
-			If let>=32 And let<=122
-				; place letter
-				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x)+Chr$(let)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x)
-				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),38)
-				; and advance cursor
-				If x<37
-					MoveMouse (x+1)*18,76+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(14)
-				; backspace
-				If x>0 
-					AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x-1)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x)
-					MoveMouse (x-1)*18,76+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(211)
-				; delete
-				If x<Len(AskaboutText$(WhichAskAbout)) 
-					AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x-1)
-					HidePointer
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			; cursor movement
-			If (KeyDown(200) Or KeyDown(72)) ; up arrow or numpad 8
-				MoveMouse (x+0)*18,76+(10)*21
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				Entering=1
-				ColEffect=-1
-				TxtEffect=-1
-
-		
-			EndIf
-			If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-				MoveMouse (x+0)*18,525
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				Entering=1
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(203)) And x>0
-				MoveMouse (x-1)*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(205)) And x<Len(AskaboutText$(WhichAskAbout))
-				MoveMouse (x+1)*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			
-			If KeyDown(199) ; home
-				MoveMouse 0,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-			
-			If KeyDown(207) ; end
-				endx=Len(AskaboutText$(WhichAskAbout))
-				If endx>37
-					endx=37
-				EndIf
-				MoveMouse endx*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-	
-	
-	
-		EndIf
-		If Entering=4
-			
-			If let>=32 And let<=122
-				; place letter
-				AskaboutTopText$=Left$(AskaboutTopText$,x)+Chr$(let)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x)
-				AskaboutTopText$=Left$(AskaboutTopText$,38)
-				; and advance cursor
-				If x<37
-					MoveMouse (x+1)*18,76+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(14)
-				; backspace
-				If x>0 
-					AskaboutTopText$=Left$(AskaboutTopText$,x-1)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x)
-					MoveMouse (x-1)*18,76+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(211)
-				; delete
-				If x<Len(AskaboutTopText$) 
-					AskaboutTopText$=Left$(AskaboutTopText$,x)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x-1)
-					HidePointer
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			; cursor movement
-			If (KeyDown(200) Or KeyDown(72)) 
-				MoveMouse (x+0)*18,465
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				Entering=1
-				ColEffect=-1
-				TxtEffect=-1
-
-		
-			EndIf
-			If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-				MoveMouse (x+0)*18,86;+210
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				Entering=1
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(203)) And x>0
-				MoveMouse (x-1)*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(205)) And x<Len(AskaboutTopText$)
-				MoveMouse (x+1)*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			
-			
-			If KeyDown(199) ; home
-				MoveMouse 0,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-			
-			If KeyDown(207) ; end
-				endx=Len(AskaboutTopText$)
-				If endx>37
-					endx=37
-				EndIf
-				MoveMouse endx*18,76+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-			EndIf
-			
-			
-	
-	
-	
-		EndIf
-
-
-		
-		mb=0
-		If MouseDown(1) mb=1
-		If MouseDown(2) mb=2
-		If mb>0
-			; Change Adventure
-			; Load/Save
-			
-			If MouseX()>690 And MouseY()>460 And MouseY()<505
-				ClearDialogFIle()
-				ResumeMaster()
-				Repeat
-				Until MouseDown(1)=0
-			EndIf
-		
-			If MouseX()>590 And MouseY()>540
-				SaveDialogFile()
-				ClearDialogFile()
-				ResumeMaster()
-				Repeat
-				Until MouseDown(1)=0
-	
-			EndIf
-	
-		EndIf
-	
-		RawInput=CtrlDown()
-	
-		; Change InterChange
-		If MouseY()>60 And MouseY()<80 And MouseX()>100 And MouseX()<400
-			If MouseScroll<>0
-				SetInterChange(WhichInterChange+adj*MouseScroll)
-			Else
-				If mb=1
-					SetInterChange(WhichInterChange+adj)
-					Delay 150
-				EndIf
-				If mb=2 
-					SetInterChange(WhichInterChange-adj)
-					Delay 150
-				EndIf
-			EndIf
-	
-			WhichAnswer=0
-			If WhichInterChange>=NofInterChanges NofInterChanges=WhichInterChange+1
-			
-			ColEffect=-1
-			TxtEffect=-1
-	
-		EndIf
-		
-		; Change Answer
-		If MouseY()>260 And MouseY()<280 And MouseX()>100 And MouseX()<400
-			If MouseScroll<>0
-				WhichAnswer=WhichAnswer+MouseScroll
-			Else
-				If mb=1
-					WhichAnswer=WhichAnswer+1
-					Delay 150
-				EndIf
-				If mb=2
-					WhichAnswer=WhichAnswer-1
-					Delay 150
-				EndIf
-			EndIf
-			
-			If WhichAnswer<0
-				WhichAnswer=0
-			ElseIf WhichAnswer>7
-				WhichAnswer=0
-			EndIf
-			
-			ColEffect=-1
-			TxtEffect=-1
-	
-		EndIf
-		; Change AnswerData
-		If MouseY()>305 And MouseY()<345
-			Select MouseX()/100
-			Case 0
-				If mb=1
-					If RawInput
-						InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InputInt("FNC: ")
-					Else
-						InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InterChangeReplyFunction(WhichInterChange,WhichAnswer)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InterChangeReplyFunction(WhichInterChange,WhichAnswer)-adj
-					Delay 150
-				EndIf
+			size#=1.0
+			spacing#=1.0
+			angle#=0.0
+			xoff#=0.0
+			yoff#=0.0
+			rot#=0.0
+			Select DialogCurrentEffect
 			Case 1
-				If mb=1
-					If RawInput
-						InterChangeReplyData(WhichInterChange,WhichAnswer)=InputInt("Data: ")
-					Else
-						InterChangeReplyData(WhichInterChange,WhichAnswer)=InterChangeReplyData(WhichInterChange,WhichAnswer)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					InterChangeReplyData(WhichInterChange,WhichAnswer)=InterChangeReplyData(WhichInterChange,WhichAnswer)-adj
-					Delay 150
-				EndIf
+				xoff#=Rnd(-.1,.1)
 			Case 2
-				If mb=1
-					If RawInput
-						InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InputInt("CMD: ")
-					Else
-						InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InterChangeReplyCommand(WhichInterChange,WhichAnswer)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InterChangeReplyCommand(WhichInterChange,WhichAnswer)-adj
-					Delay 150
-				EndIf
+				xoff#=Rnd(-.15,.15)
+				yoff#=Rnd(-.1,.1)
 			Case 3
-				If mb=1
-					If RawInput
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InputInt("Data1: ")
-					Else
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)-adj
-					Delay 150
-				EndIf
+				yoff#=0.2*Sin((totalletters+dialogtimer)*10)
 			Case 4
-				If mb=1
-					If RawInput
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InputInt("Data2: ")
-					Else
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)-adj
-					Delay 150
-				EndIf
+				size=1.0+0.3*Sin((totalletters+dialogtimer)*10)
+				spacing=1.0/size
 			Case 5
-				If mb=1
-					If RawInput
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InputInt("Data3: ")
-					Else
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)-adj
-					Delay 150
-				EndIf
+				size=1.4
+				spacing=1.0/size
+
 			Case 6
-				If mb=1
-					If RawInput
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InputInt("Data4: ")
-					Else
-						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)+adj
-						Delay 150
-					EndIf
+				size=1.4
+				spacing=1.0/size
+
+				xoff#=Rnd(-.15,.15)
+				yoff#=Rnd(-.1,.1)
+			Case 7
+				xoff#=Cos(dialogtimer*4)
+				yoff#=Sin(dialogtimer*4)
+			Case 8
+				xoff#=Cos(dialogtimer*2)
+				yoff#=Sin(dialogtimer*4)
+			Case 9
+				yoff#=Sin(dialogtimer*8)
+			Case 10
+				xoff#=Cos(dialogtimer*8)
+			Case 11
+				If Abs((-dialogtimer*8+(i+j*75)*10)) Mod 3600 <3400
+					size=1.0
+
+
+
+				Else
+					size=1.3
 				EndIf
-				If mb=2
-					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)-adj
-					Delay 150
-				EndIf
+				spacing=1.0/size
+			;	yoff#=0.2*Sin(dialogtimer*8+i*180)
+
+			
+				
+
+			
+
 			End Select
-			ColEffect=-1
-			TxtEffect=-1
-	
-		EndIf
 			
-	
+			x#=(i)+xoff
+			y#=YOffset/2.0+j+yoff
+			
+			
+			AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,(-.97+x*.045*size*spacing)/1.0,(.5-y*.05*size*spacing)/1.0,1.0,rot,.04*size/1.0,0,0,0,0,0,0,0,0,0,dialogcurrentred,dialogcurrentgreen,dialogcurrentblue)
 		
-		; Change Askabout
-		If MouseY()>441 And MouseY()<460 And MouseX()>100 And MouseX()<400
-			If mb=1 And WhichAskabout<99 Then WhichAskabout=WhichAskabout+1
-			If mb=2 And WhichAskabout>0 Then WhichAskabout=WhichAskabout-1
-			
-			If WhichAskAbout<0
-				WhichAskAbout=0
-			ElseIf WhichAskAbout>100
-				WhichAskAbout=100
-			EndIf
-			
-			ColEffect=-1
-			TxtEffect=-1
-		EndIf
-		; Change AskaboutData
-		If MouseY()>490 And MouseY()<520
-			If MouseX()<170
-				If mb=1
-					If RawInput
-						AskAboutActive(WhichAskAbout)=InputInt("Active: ")
-					Else
-						AskAboutActive(WhichAskAbout)=AskAboutActive(WhichAskAbout)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					AskAboutActive(WhichAskAbout)=AskAboutActive(WhichAskAbout)-adj
-					Delay 150
-				EndIf
-			Else If MouseX()<400
-				If mb=1
-					If RawInput
-						AskAboutInterChange(WhichAskAbout)=InputInt("Interchange: ")
-					Else
-						AskAboutInterChange(WhichAskAbout)=AskAboutInterChange(WhichAskAbout)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					AskAboutInterChange(WhichAskAbout)=AskAboutInterChange(WhichAskAbout)-adj
-					Delay 150
-				EndIf
-			Else
-				If mb=1
-					If RawInput
-						AskAboutRepeat(WhichAskAbout)=InputInt("Repeat: ")
-					Else
-						AskAboutRepeat(WhichAskAbout)=AskAboutRepeat(WhichAskAbout)+adj
-						Delay 150
-					EndIf
-				EndIf
-				If mb=2
-					AskAboutRepeat(WhichAskAbout)=AskAboutRepeat(WhichAskAbout)-adj
-					Delay 150
-				EndIf
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
+ 				totalletters=totalletters+1
+		;	AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,DialogCurrentRed,DialogCurrentGreen,DialogCurrentBlue)
+		Next
+	Next
 	
 	
+	For i=0 To Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
+		AddLetter(Asc(Mid$(InterChangeReplyText$(WhichInterChange,WhichAnswer),i+1,1))-32,-.97+i*.045,.5-(10)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
+	Next
+	
+	For i=0 To Len(AskAboutText$(WhichAskAbout))
+		AddLetter(Asc(Mid$(AskAboutText$(WhichAskAbout),i+1,1))-32,-.97+i*.045,.5-(19)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
+	Next
+	For i=0 To Len(AskAboutTopText$)
+		AddLetter(Asc(Mid$(AskAboutTopText$,i+1,1))-32,-.97+i*.045,.5-(24)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
+	Next
+
+
+
+	; Mouse
+	
+	If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
+		ShowPointer
+	EndIf
+	OldMouseX=MouseX()
+	OldMouseY=MouseY()
+	; Mouse Pos
+	Entering=0
+	
+	x=MouseX()/18
+	If MouseY()<284
+		y=(MouseY()-84)/21
+	Else If MouseY()<300
+		y=(MouseY()-76)/21
+	Else 
+		y=(MouseY()-63)/21
+
+	EndIf
+	debug1=MouseY()
+	debug2=y
+	
+	; cursor
+	If x<CharactersPerLine And MouseY()>=84 And y<7 
+		Entering=1
+		If x>Len(InterChangeTextLine$(WhichInterChange,y)) Then x=Len(InterChangeTextLine$(WhichInterChange,y))
+		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
+			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 		EndIf
-		
-		; Colours/Effects
-		If LeftMouseReleased=True
-			LeftMouseReleased=False
-			For i=0 To 11
-				If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
-					ToggleColEffect(i)
+		; Effects and Colours
+		MouseButtonUsed=0
+		If MouseDown(1)
+			MouseButtonUsed=1
+		EndIf
+		If MouseDown(2)
+			MouseButtonUsed=2
+		EndIf
+		If MouseButtonUsed<>0 And x<Len(InterChangeTextLine$(WhichInterChange,y))
+			If ColEffect>=0 Or MouseButtonUsed=2
+				If MouseButtonUsed=1
+					Effect$=CCommands(ColEffect)
+				Else
+					Effect$="CWHI"
 				EndIf
-			Next
-			For i=0 To 11
-				If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
-					ToggleTxtEffect(i)
-				EndIf
-			Next
-			If MouseX()>706 And MouseY()>282 And MouseY()<302
-				;clear
-				For i=0 To NofTextCommands(WhichInterChange)-1
-					DialogTextCommand$(WhichInterChange,i)=""
-					DialogTextCommandpos(WhichInterChange,i)=-1
+				; check if already one there
+				flag7=False
+				For k=0 To NofTextCommands(WhichInterChange)-1
+					If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsColor(k)
+						; yes, replace
+						flag7=True
+						DialogTextCommand$(WhichInterChange,k)=Effect$
+					EndIf
 				Next
-				NofTextCommands(WhichInterChange)=0
+				If flag7=False
+					; add new
+					AddDialogTextCommand(x,y,Effect$)
+				EndIf
 			EndIf
+			If TxtEffect>=0 And MouseButtonUsed=1
+				; check if already one there
+				flag7=False
+				For k=0 To NofTextCommands(WhichInterChange)-1
+					If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsEffect(k)
+						; yes, replace
+						flag7=True
+						DialogTextCommand$(WhichInterChange,k)=TCommands(TxtEffect)
+					EndIf
+				Next
+				If flag7=False
+					; add new
+					AddDialogTextCommand(x,y,TCommands(TxtEffect))
+				EndIf
+
+			EndIf
+			;ColEffect=-1
+			;TxtEffect=-1
+			
+			DeduplicateDialogTextCommands()
+
+		EndIf
+		
+					
+	EndIf
+	If x<CharactersPerLine And y=10
+		Entering=2
+		If x>Len(InterChangeReplyText$(WhichInterChange,WhichAnswer)) Then x=Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
+		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
+			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
+		EndIf
+	EndIf
+	
+	If x<CharactersPerLine And y=19
+		Entering=3
+		If x>Len(AskAboutText$(WhichAskAbout)) Then x=Len(AskAboutText$(WhichAskAbout))
+		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
+			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
+		EndIf
+	EndIf
+	
+	If x<CharactersPerLine And y=24
+		Entering=4
+		If x>Len(AskAboutTopText$) Then x=Len(AskAboutTopText$)
+		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
+			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
+		EndIf
+	EndIf
+
+
+
+	OldX=x
+	OldY=y
+	; entering text
+	let=GetKey()
+	If Entering=1
+		
+		If let>=32 And let<=122
+			; place letter
+			InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x)+Chr$(let)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x)
+			InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),38)
+			; and advance cursor
+			If x<37
+				MoveMouse (x+1)*18,84+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(14)
+			; backspace
+			If x>0 
+				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x-1)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x)
+				MoveMouse (x-1)*18,84+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(211)
+			; delete
+			If x<Len(InterChangeTextLine$(WhichInterChange,y)) 
+				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x-1)
+				HidePointer
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		; cursor movement
+		If (KeyDown(200) Or KeyDown(72)) 
+			If y>0
+				MoveMouse (x+0)*18,84+(y-1)*21
+			Else
+				MoveMouse (x+0)*18,525
+			EndIf
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+	
+		EndIf
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
+			If y<6
+				MoveMouse (x+0)*18,84+(y+1)*21
+			Else
+				MoveMouse (x+0)*18,76+(10)*21
+			EndIf
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(203)) And x>0
+			MoveMouse (x-1)*18,84+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(205)) And x<Len(InterChangeTextLine$(WhichInterChange,y))
+			MoveMouse (x+1)*18,84+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		
+		If KeyDown(199) ; home
+			MoveMouse 0,84+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+		
+		If KeyDown(207) ; end
+			endx=Len(InterChangeTextLine$(WhichInterChange,y))
+			If endx>37
+				endx=37
+			EndIf
+			MoveMouse endx*18,84+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
 		EndIf
 
+
+
+	EndIf
+	If Entering=2
+		
+		If let>=32 And let<=122
+			; place letter
+			InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x)+Chr$(let)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x)
+			InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),38)
+			; and advance cursor
+			If x<37
+				MoveMouse (x+1)*18,76+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(14)
+			; backspace
+			If x>0 
+				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x-1)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x)
+				MoveMouse (x-1)*18,76+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(211)
+			; delete
+			If x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer)) 
+				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x-1)
+				HidePointer
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		; cursor movement
+		If (KeyDown(200) Or KeyDown(72)) 
+			MoveMouse (x+0)*18,76+(7)*21
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			Entering=1
+			ColEffect=-1
+			TxtEffect=-1
+
+	
+		EndIf
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
+			MoveMouse (x+0)*18,465
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			Entering=1
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(203)) And x>0
+			MoveMouse (x-1)*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(205)) And x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
+			MoveMouse (x+1)*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		
+		If KeyDown(199) ; home
+			MoveMouse 0,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+		
+		If KeyDown(207) ; end
+			endx=Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
+			If endx>37
+				endx=37
+			EndIf
+			MoveMouse endx*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+
+
+
+	EndIf
+	If Entering=3
+		
+		If let>=32 And let<=122
+			; place letter
+			AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x)+Chr$(let)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x)
+			AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),38)
+			; and advance cursor
+			If x<37
+				MoveMouse (x+1)*18,76+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(14)
+			; backspace
+			If x>0 
+				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x-1)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x)
+				MoveMouse (x-1)*18,76+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(211)
+			; delete
+			If x<Len(AskaboutText$(WhichAskAbout)) 
+				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x-1)
+				HidePointer
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		; cursor movement
+		If (KeyDown(200) Or KeyDown(72)) ; up arrow or numpad 8
+			MoveMouse (x+0)*18,76+(10)*21
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			Entering=1
+			ColEffect=-1
+			TxtEffect=-1
+
+	
+		EndIf
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
+			MoveMouse (x+0)*18,525
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			Entering=1
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(203)) And x>0
+			MoveMouse (x-1)*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(205)) And x<Len(AskaboutText$(WhichAskAbout))
+			MoveMouse (x+1)*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		
+		If KeyDown(199) ; home
+			MoveMouse 0,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+		
+		If KeyDown(207) ; end
+			endx=Len(AskaboutText$(WhichAskAbout))
+			If endx>37
+				endx=37
+			EndIf
+			MoveMouse endx*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+
+
+
+	EndIf
+	If Entering=4
+		
+		If let>=32 And let<=122
+			; place letter
+			AskaboutTopText$=Left$(AskaboutTopText$,x)+Chr$(let)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x)
+			AskaboutTopText$=Left$(AskaboutTopText$,38)
+			; and advance cursor
+			If x<37
+				MoveMouse (x+1)*18,76+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(14)
+			; backspace
+			If x>0 
+				AskaboutTopText$=Left$(AskaboutTopText$,x-1)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x)
+				MoveMouse (x-1)*18,76+y*21
+				OldMouseX=MouseX()
+				HidePointer()
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		If KeyDown(211)
+			; delete
+			If x<Len(AskaboutTopText$) 
+				AskaboutTopText$=Left$(AskaboutTopText$,x)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x-1)
+				HidePointer
+				Delay CharacterDeleteDelay
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+
+		EndIf
+		; cursor movement
+		If (KeyDown(200) Or KeyDown(72)) 
+			MoveMouse (x+0)*18,465
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			Entering=1
+			ColEffect=-1
+			TxtEffect=-1
+
+	
+		EndIf
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
+			MoveMouse (x+0)*18,86;+210
+			OldMouseY=MouseY()
+			HidePointer()
+			Delay 100
+			Entering=1
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(203)) And x>0
+			MoveMouse (x-1)*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		If (KeyDown(205)) And x<Len(AskaboutTopText$)
+			MoveMouse (x+1)*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+
+
+		EndIf
+		
+		
+		If KeyDown(199) ; home
+			MoveMouse 0,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+		
+		If KeyDown(207) ; end
+			endx=Len(AskaboutTopText$)
+			If endx>37
+				endx=37
+			EndIf
+			MoveMouse endx*18,76+(y-0)*21
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay 100
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+		
+		
+
+
+
+	EndIf
+
+
+	
+	mb=0
+	If MouseDown(1) mb=1
+	If MouseDown(2) mb=2
+	If mb>0
+		; Change Adventure
+		; Load/Save
+		
+		If MouseX()>690 And MouseY()>460 And MouseY()<505
+			ClearDialogFIle()
+			ResumeMaster()
+			Repeat
+			Until MouseDown(1)=0
+		EndIf
+	
+		If MouseX()>590 And MouseY()>540
+			SaveDialogFile()
+			ClearDialogFile()
+			ResumeMaster()
+			Repeat
+			Until MouseDown(1)=0
+
+		EndIf
+
+	EndIf
+
+	RawInput=CtrlDown()
+
+	; Change InterChange
+	If MouseY()>60 And MouseY()<80 And MouseX()>100 And MouseX()<400		
+		target=AdjustInt("Interchange: ", WhichInterChange, 1, 10, 150)
+		SetInterChange(target)
+
+		WhichAnswer=0
+		If WhichInterChange>=NofInterChanges NofInterChanges=WhichInterChange+1
+		
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	
+	; Change Answer
+	If MouseY()>260 And MouseY()<280 And MouseX()>100 And MouseX()<400		
+		WhichAnswer=AdjustInt("Answer: ", WhichAnswer, 1, 10, 150)
+		
+		If WhichAnswer<0
+			WhichAnswer=0
+		ElseIf WhichAnswer>7
+			WhichAnswer=7
+		EndIf
+		
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	; Change AnswerData
+	If MouseY()>305 And MouseY()<345
+		Select MouseX()/100
+		Case 0			
+			InterChangeReplyFunction(WhichInterChange,WhichAnswer)=AdjustInt("FNC: ", InterChangeReplyFunction(WhichInterChange,WhichAnswer), 1, 10, 150)
+		Case 1			
+			InterChangeReplyData(WhichInterChange,WhichAnswer)=AdjustInt("Data: ", InterChangeReplyData(WhichInterChange,WhichAnswer), 1, 10, 150)
+		Case 2
+			InterChangeReplyCommand(WhichInterChange,WhichAnswer)=AdjustInt("CMD: ", InterChangeReplyCommand(WhichInterChange,WhichAnswer), 1, 10, 150)
+		Case 3
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=AdjustInt("Data1: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), 1, 10, 150)
+		Case 4
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, 150)
+		Case 5
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, 150)
+		Case 6
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, 150)
+		End Select
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+		
+
+	
+	; Change Askabout
+	If MouseY()>441 And MouseY()<460 And MouseX()>100 And MouseX()<400
+		WhichAskabout=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, 150)
+		
+		If WhichAskabout<0
+			WhichAskabout=0
+		ElseIf WhichAskabout>100
+			WhichAskabout=100
+		EndIf
+		
+		ColEffect=-1
+		TxtEffect=-1
+	EndIf
+	; Change AskaboutData
+	If MouseY()>490 And MouseY()<520
+		If MouseX()<170
+			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, 150)
+		Else If MouseX()<400
+			AskAboutInterChange(WhichAskAbout)=AdjustInt("Interchange: ", AskAboutInterChange(WhichAskAbout), 1, 10, 150)
+		Else
+			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, 150)
+		EndIf
+		
+		ColEffect=-1
+		TxtEffect=-1
+	EndIf
+	
+	; Colours/Effects
+	If LeftMouseReleased=True
+		LeftMouseReleased=False
+		For i=0 To 11
+			If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
+				ToggleColEffect(i)
+			EndIf
+		Next
+		For i=0 To 11
+			If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
+				ToggleTxtEffect(i)
+			EndIf
+		Next
+		If MouseX()>706 And MouseY()>282 And MouseY()<302
+			;clear
+			For i=0 To NofTextCommands(WhichInterChange)-1
+				DialogTextCommand$(WhichInterChange,i)=""
+				DialogTextCommandpos(WhichInterChange,i)=-1
+			Next
+			NofTextCommands(WhichInterChange)=0
+		EndIf
 	EndIf
 		
 			
