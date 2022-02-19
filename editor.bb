@@ -16570,20 +16570,12 @@ Function DialogMainLoop()
 				LeftMouseReleased=False
 				For i=0 To 11
 					If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
-						If ColEffect=i
-							ColEffect=-1
-						Else
-							ColEffect=i
-						EndIf
+						ToggleColEffect(i)
 					EndIf
 				Next
 				For i=0 To 11
 					If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
-						If TxtEffect=i
-							TxtEffect=-1
-						Else
-							TxtEffect=i
-						EndIf
+						ToggleTxtEffect(i)
 					EndIf
 				Next
 				If MouseX()>706 And MouseY()>282 And MouseY()<302
@@ -16603,7 +16595,32 @@ Function DialogMainLoop()
 	EndIf
 		
 			
-
+	If CtrlDown()
+		If KeyDown(17) Then ToggleColEffect(0) ; w: white
+		If KeyDown(18) Then ToggleColEffect(1) ; e: grey
+		If KeyDown(19) Then ToggleColEffect(2) ; r: red
+		If KeyDown(24) Then ToggleColEffect(3) ; o: orange
+		If KeyDown(21) Then ToggleColEffect(4) ; y: yellow
+		If KeyDown(34) Then ToggleColEffect(5) ; g: green
+		If KeyDown(48) Then ToggleColEffect(6) ; b: blue
+		If KeyDown(23) Then ToggleColEffect(7) ; i: indigo
+		If KeyDown(47) Then ToggleColEffect(8) ; v: violet
+		If KeyDown(30) Then ToggleColEffect(9) ; a: rainbow (all)
+		If KeyDown(33) Then ToggleColEffect(10) ; f: black+white (flashy)
+		If KeyDown(32) Then ToggleColEffect(11) ; d: warning (doomy)
+		If KeyDown(49) Then ToggleTxtEffect(0) ; n: none
+		If KeyDown(31) Then ToggleTxtEffect(1) ; s: shake
+		If KeyDown(36) Then ToggleTxtEffect(2) ; j: jitter
+		If KeyDown(45) Then ToggleTxtEffect(3) ; x: wave
+		If KeyDown(44) Then ToggleTxtEffect(4) ; z: bounce
+		If KeyDown(25) Then ToggleTxtEffect(5) ; p: zoom
+		If KeyDown(16) Then ToggleTxtEffect(6) ; q: zoom shake
+		If KeyDown(46) Then ToggleTxtEffect(7) ; c: circle
+		If KeyDown(50) Then ToggleTxtEffect(8) ; m: mobius
+		If KeyDown(22) Then ToggleTxtEffect(9) ; u: up+down
+		If KeyDown(38) Then ToggleTxtEffect(10) ; l: left+right
+		If KeyDown(20) Then ToggleTxtEffect(11) ; t: rt
+	EndIf
 		
 	
 	
@@ -16619,6 +16636,22 @@ Function DialogMainLoop()
 	
 
 
+End Function
+
+Function ToggleColEffect(i)
+	If ColEffect=i
+		ColEffect=-1
+	Else
+		ColEffect=i
+	EndIf
+End Function
+
+Function ToggleTxtEffect(i)
+	If TxtEffect=i
+		TxtEffect=-1
+	Else
+		TxtEffect=i
+	EndIf
 End Function
 
 Function ClearDialogFile()
