@@ -1767,6 +1767,8 @@ Function EditorGlobalControls()
 		RightMouseReleased=True
 	EndIf
 	
+	MouseScroll=MouseZSpeed()
+	
 	If KeyDown(28) Or KeyDown(156)
 		ReturnKey=True
 	Else
@@ -10581,8 +10583,6 @@ End Function
 
 
 Function CameraControls()
-	; scroll wheel
-	MouseScroll=MouseZSpeed()
 	MouseDeltaX = MouseXSpeed()
 	MouseDeltaY = MouseYSpeed()
 	mx = MouseX()
@@ -13815,7 +13815,6 @@ Function MasterMainLoop()
 	mb=0
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
-	MouseScroll=MouseZSpeed()
 	
 	; level/dialog list start
 	If MouseX()>700 And MouseX()<750
@@ -15394,6 +15393,11 @@ End Function
 
 Function SetInterChange(i)
 
+	If i<0
+		i=0
+	ElseIf i>MaxInterChanges
+		i=MaxInterChanges
+	EndIf
 	WhichInterChange=i
 	DeduplicateDialogTextCommands() ; for old dialogs
 
@@ -15536,7 +15540,7 @@ Function DialogMainLoop()
 	DialogTimer=DialogTimer+1
 	
 	adj=1
-	If KeyDown(42) Or KeyDown(54) Then adj=10
+	If ShiftDown() Then adj=10
 	
 	
 	DisplayText2("Adventure: "+Left$(AdventureFileName$,20),0,0,255,255,0)
@@ -16372,225 +16376,268 @@ Function DialogMainLoop()
 		EndIf
 
 
-	
-	mb=0
-	If MouseDown(1) mb=1
-	If MouseDown(2) mb=2
-	If mb>0
-		; Change Adventure
-		; Load/Save
 		
-		If MouseX()>690 And MouseY()>460 And MouseY()<505
-			ClearDialogFIle()
-			ResumeMaster()
-			Repeat
-			Until MouseDown(1)=0
+		mb=0
+		If MouseDown(1) mb=1
+		If MouseDown(2) mb=2
+		If mb>0
+			; Change Adventure
+			; Load/Save
+			
+			If MouseX()>690 And MouseY()>460 And MouseY()<505
+				ClearDialogFIle()
+				ResumeMaster()
+				Repeat
+				Until MouseDown(1)=0
+			EndIf
+		
+			If MouseX()>590 And MouseY()>540
+				SaveDialogFile()
+				ClearDialogFile()
+				ResumeMaster()
+				Repeat
+				Until MouseDown(1)=0
+	
+			EndIf
+	
 		EndIf
 	
-		If MouseX()>590 And MouseY()>540
-			SaveDialogFile()
-			ClearDialogFile()
-			ResumeMaster()
-			Repeat
-			Until MouseDown(1)=0
-
-		EndIf
-
-		
+		RawInput=CtrlDown()
 	
-		
-		If Modified>=0
-			RawInput=CtrlDown()
-		
-			; Change InterChange
-			If MouseY()>60 And MouseY()<80 And MouseX()>100 And MouseX()<400
-				If mb=1 
-					If WhichInterChange<=MaxInterChanges-adj 
-						SetInterChange(WhichInterChange+adj)
-					Else
-						SetInterChange(MaxInterChanges)
-					EndIf
+		; Change InterChange
+		If MouseY()>60 And MouseY()<80 And MouseX()>100 And MouseX()<400
+			If MouseScroll<>0
+				SetInterChange(WhichInterChange+adj*MouseScroll)
+			Else
+				If mb=1
+					SetInterChange(WhichInterChange+adj)
+					Delay 150
 				EndIf
 				If mb=2 
-					If WhichInterChange-adj>=0 
-						SetInterChange(WhichInterChange-adj)
-					Else
-						SetInterChange(0)
-					EndIf
-				EndIf
-
-				WhichAnswer=0
-				If WhichInterChange>=NofInterChanges NofInterChanges=WhichInterChange+1
-				
-				Delay 150
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			
-			; Change Answer
-			If MouseY()>260 And MouseY()<280 And MouseX()>100 And MouseX()<400
-				If mb=1 And WhichAnswer<7 Then WhichAnswer=WhichAnswer+1
-				If mb=2 And WhichAnswer>0 Then WhichAnswer=WhichAnswer-1
-				Delay 150
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			; Change AnswerData
-			If MouseY()>305 And MouseY()<345
-				Select MouseX()/100
-				Case 0
-					If mb=1
-						If RawInput
-							InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InputInt("FNC: ")
-						Else
-							InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InterChangeReplyFunction(WhichInterChange,WhichAnswer)+adj
-						EndIf
-					EndIf
-					If mb=2 Then InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InterChangeReplyFunction(WhichInterChange,WhichAnswer)-adj
-					Delay 150
-				Case 1
-					If mb=1
-						If RawInput
-							InterChangeReplyData(WhichInterChange,WhichAnswer)=InputInt("Data: ")
-						Else
-							InterChangeReplyData(WhichInterChange,WhichAnswer)=InterChangeReplyData(WhichInterChange,WhichAnswer)+adj
-						EndIf
-					EndIf
-					If mb=2 Then InterChangeReplyData(WhichInterChange,WhichAnswer)=InterChangeReplyData(WhichInterChange,WhichAnswer)-adj
-					Delay 150
-				Case 2
-					If mb=1
-						If RawInput
-							InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InputInt("CMD: ")
-						Else
-							InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InterChangeReplyCommand(WhichInterChange,WhichAnswer)+adj
-						EndIf
-					EndIf
-					If mb=2 Then InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InterChangeReplyCommand(WhichInterChange,WhichAnswer)-adj
-					Delay 150
-				Case 3
-					If mb=1
-						If RawInput
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InputInt("Data1: ")
-						Else
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)+adj
-						EndIf
-					EndIf
-					If mb=2 Then InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)-adj
-					Delay 150
-				Case 4
-					If mb=1
-						If RawInput
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InputInt("Data2: ")
-						Else
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)+adj
-						EndIf
-					EndIf
-					If mb=2 Then InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)-adj
-					Delay 150
-				Case 5
-					If mb=1
-						If RawInput
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InputInt("Data3: ")
-						Else
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)+adj
-						EndIf
-					EndIf
-					If mb=2 Then InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)-adj
-					Delay 150
-				Case 6
-					If mb=1
-						If RawInput
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InputInt("Data4: ")
-						Else
-							InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)+adj
-						EndIf
-					EndIf
-					If mb=2 Then InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)-adj
-					Delay 150
-				End Select
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-				
-		
-			
-			; Change Askabout
-			If MouseY()>441 And MouseY()<460 And MouseX()>100 And MouseX()<400
-				If mb=1 And WhichAskabout<99 Then WhichAskabout=WhichAskabout+1
-				If mb=2 And WhichAskabout>0 Then WhichAskabout=WhichAskabout-1
-				ColEffect=-1
-				TxtEffect=-1
-				Delay 150
-			EndIf
-			; Change AskaboutData
-			If MouseY()>490 And MouseY()<520
-				If MouseX()<170
-					If mb=1
-						If RawInput
-							AskAboutActive(WhichAskAbout)=InputInt("Active: ")
-						Else
-							AskAboutActive(WhichAskAbout)=AskAboutActive(WhichAskAbout)+adj
-						EndIf
-					EndIf
-					If mb=2 Then AskAboutActive(WhichAskAbout)=AskAboutActive(WhichAskAbout)-adj
-					Delay 150
-				Else If MouseX()<400
-					If mb=1
-						If RawInput
-							AskAboutInterChange(WhichAskAbout)=InputInt("Interchange: ")
-						Else
-							AskAboutInterChange(WhichAskAbout)=AskAboutInterChange(WhichAskAbout)+adj
-						EndIf
-					EndIf
-					If mb=2 Then AskAboutInterChange(WhichAskAbout)=AskAboutInterChange(WhichAskAbout)-adj
-					Delay 150
-				Else
-					If mb=1
-						If RawInput
-							AskAboutRepeat(WhichAskAbout)=InputInt("Repeat: ")
-						Else
-							AskAboutRepeat(WhichAskAbout)=AskAboutRepeat(WhichAskAbout)+adj
-						EndIf
-					EndIf
-					If mb=2 Then AskAboutRepeat(WhichAskAbout)=AskAboutRepeat(WhichAskAbout)-adj
+					SetInterChange(WhichInterChange-adj)
 					Delay 150
 				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-
 			EndIf
+	
+			WhichAnswer=0
+			If WhichInterChange>=NofInterChanges NofInterChanges=WhichInterChange+1
 			
-			; Colours/Effects
-			If LeftMouseReleased=True
-				LeftMouseReleased=False
-				For i=0 To 11
-					If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
-						ToggleColEffect(i)
-					EndIf
-				Next
-				For i=0 To 11
-					If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
-						ToggleTxtEffect(i)
-					EndIf
-				Next
-				If MouseX()>706 And MouseY()>282 And MouseY()<302
-					;clear
-					For i=0 To NofTextCommands(WhichInterChange)-1
-						DialogTextCommand$(WhichInterChange,i)=""
-						DialogTextCommandpos(WhichInterChange,i)=-1
-					Next
-					NofTextCommands(WhichInterChange)=0
-				EndIf
-			EndIf
-		
-
+			ColEffect=-1
+			TxtEffect=-1
+	
 		EndIf
-
+		
+		; Change Answer
+		If MouseY()>260 And MouseY()<280 And MouseX()>100 And MouseX()<400
+			If MouseScroll<>0
+				WhichAnswer=WhichAnswer+MouseScroll
+			Else
+				If mb=1
+					WhichAnswer=WhichAnswer+1
+					Delay 150
+				EndIf
+				If mb=2
+					WhichAnswer=WhichAnswer-1
+					Delay 150
+				EndIf
+			EndIf
+			
+			If WhichAnswer<0
+				WhichAnswer=0
+			ElseIf WhichAnswer>7
+				WhichAnswer=0
+			EndIf
+			
+			ColEffect=-1
+			TxtEffect=-1
+	
+		EndIf
+		; Change AnswerData
+		If MouseY()>305 And MouseY()<345
+			Select MouseX()/100
+			Case 0
+				If mb=1
+					If RawInput
+						InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InputInt("FNC: ")
+					Else
+						InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InterChangeReplyFunction(WhichInterChange,WhichAnswer)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					InterChangeReplyFunction(WhichInterChange,WhichAnswer)=InterChangeReplyFunction(WhichInterChange,WhichAnswer)-adj
+					Delay 150
+				EndIf
+			Case 1
+				If mb=1
+					If RawInput
+						InterChangeReplyData(WhichInterChange,WhichAnswer)=InputInt("Data: ")
+					Else
+						InterChangeReplyData(WhichInterChange,WhichAnswer)=InterChangeReplyData(WhichInterChange,WhichAnswer)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					InterChangeReplyData(WhichInterChange,WhichAnswer)=InterChangeReplyData(WhichInterChange,WhichAnswer)-adj
+					Delay 150
+				EndIf
+			Case 2
+				If mb=1
+					If RawInput
+						InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InputInt("CMD: ")
+					Else
+						InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InterChangeReplyCommand(WhichInterChange,WhichAnswer)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					InterChangeReplyCommand(WhichInterChange,WhichAnswer)=InterChangeReplyCommand(WhichInterChange,WhichAnswer)-adj
+					Delay 150
+				EndIf
+			Case 3
+				If mb=1
+					If RawInput
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InputInt("Data1: ")
+					Else
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)-adj
+					Delay 150
+				EndIf
+			Case 4
+				If mb=1
+					If RawInput
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InputInt("Data2: ")
+					Else
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)-adj
+					Delay 150
+				EndIf
+			Case 5
+				If mb=1
+					If RawInput
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InputInt("Data3: ")
+					Else
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)-adj
+					Delay 150
+				EndIf
+			Case 6
+				If mb=1
+					If RawInput
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InputInt("Data4: ")
+					Else
+						InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)-adj
+					Delay 150
+				EndIf
+			End Select
+			ColEffect=-1
+			TxtEffect=-1
+	
+		EndIf
+			
+	
+		
+		; Change Askabout
+		If MouseY()>441 And MouseY()<460 And MouseX()>100 And MouseX()<400
+			If mb=1 And WhichAskabout<99 Then WhichAskabout=WhichAskabout+1
+			If mb=2 And WhichAskabout>0 Then WhichAskabout=WhichAskabout-1
+			
+			If WhichAskAbout<0
+				WhichAskAbout=0
+			ElseIf WhichAskAbout>100
+				WhichAskAbout=100
+			EndIf
+			
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
+		; Change AskaboutData
+		If MouseY()>490 And MouseY()<520
+			If MouseX()<170
+				If mb=1
+					If RawInput
+						AskAboutActive(WhichAskAbout)=InputInt("Active: ")
+					Else
+						AskAboutActive(WhichAskAbout)=AskAboutActive(WhichAskAbout)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					AskAboutActive(WhichAskAbout)=AskAboutActive(WhichAskAbout)-adj
+					Delay 150
+				EndIf
+			Else If MouseX()<400
+				If mb=1
+					If RawInput
+						AskAboutInterChange(WhichAskAbout)=InputInt("Interchange: ")
+					Else
+						AskAboutInterChange(WhichAskAbout)=AskAboutInterChange(WhichAskAbout)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					AskAboutInterChange(WhichAskAbout)=AskAboutInterChange(WhichAskAbout)-adj
+					Delay 150
+				EndIf
+			Else
+				If mb=1
+					If RawInput
+						AskAboutRepeat(WhichAskAbout)=InputInt("Repeat: ")
+					Else
+						AskAboutRepeat(WhichAskAbout)=AskAboutRepeat(WhichAskAbout)+adj
+						Delay 150
+					EndIf
+				EndIf
+				If mb=2
+					AskAboutRepeat(WhichAskAbout)=AskAboutRepeat(WhichAskAbout)-adj
+					Delay 150
+				EndIf
+			EndIf
+			ColEffect=-1
+			TxtEffect=-1
+	
+	
+		EndIf
+		
+		; Colours/Effects
+		If LeftMouseReleased=True
+			LeftMouseReleased=False
+			For i=0 To 11
+				If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
+					ToggleColEffect(i)
+				EndIf
+			Next
+			For i=0 To 11
+				If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
+					ToggleTxtEffect(i)
+				EndIf
+			Next
+			If MouseX()>706 And MouseY()>282 And MouseY()<302
+				;clear
+				For i=0 To NofTextCommands(WhichInterChange)-1
+					DialogTextCommand$(WhichInterChange,i)=""
+					DialogTextCommandpos(WhichInterChange,i)=-1
+				Next
+				NofTextCommands(WhichInterChange)=0
+			EndIf
+		EndIf
 
 	EndIf
 		
