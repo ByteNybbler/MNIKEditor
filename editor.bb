@@ -3376,8 +3376,15 @@ Function EditorLocalControls()
 	StartY=435
 	
 
-	If mx>500 And my>305 And my<430 And (LeftMouse=True Or RightMouse=True)
-		EditorMode=3
+	If mx>500 And my>305 And my<455 ;my<430
+		If LeftMouse=True Or RightMouse=True
+			EditorMode=3
+		EndIf
+		If DeleteKey=True And DeleteKeyReleased=True And CurrentGrabbedObject<>-1
+			DeleteKeyReleased=False
+			DeleteObject(CurrentGrabbedObject)
+			EditorMode=3
+		EndIf
 	EndIf
 	
 	Color ObjectColor,0,0
@@ -3393,9 +3400,6 @@ Function EditorLocalControls()
 				EditorMode=3
 				PasteObjectData(CurrentGrabbedObject)
 				CurrentGrabbedObjectModified=False
-			ElseIf DeleteKey=True And DeleteKeyReleased=True
-				DeleteKeyReleased=False
-				DeleteObject(CurrentGrabbedObject)
 			EndIf
 		EndIf
 		If KeyDown(19) ; R
