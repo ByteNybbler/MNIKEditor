@@ -10826,8 +10826,8 @@ Function CameraControls()
 	
 	Target=-1
 	
-	If mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
-		Target=Camera4
+	If EditorMode=3 And mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
+		Target=Camera4 ; object camera
 	Else
 		Target=Camera1 ; level camera
 	EndIf
