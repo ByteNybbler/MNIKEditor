@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures Editor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (02/19/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (02/20/22)"
 
 Global MASTERUSER=True
 
@@ -4922,13 +4922,27 @@ Function CalculateEffectiveID(Dest)
 	;ShowMessage("Calculating effective ID for "+Dest, 50)
 
 	Select ObjectType(Dest)
-	Case 10,40,45,210,281,410,424 ; gate, stepping stone, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
+	Case 10,45,210,281,410,424 ; gate, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
 		If ObjectID(Dest)=-1
 			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 		EndIf
+	Case 40 ; stepping stone
+		Return 500+(8+ObjectData(i,0))*5+ObjectData(i,1)
 	Case 280 ; spring
 		Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 	End Select
+	
+	If ObjectModelName$(Dest)="!Cage" Or ObjectModelName$(Dest)="!FlipBridge" Or ObjectModelName$(Dest)="!Spring" Or ObjectModelName$(Dest)="!ColourGate" Or ObjectModelName$(Dest)="!Transporter" Or ObjectModelName$(Dest)="!Teleport" Or ObjectModelName$(Dest)="!Suctube"
+		If ObjectID(Dest)=-1
+			Return 500+ObjectData(Dest,0)*5+ObjectData(Dest,1)
+		EndIf
+	EndIf
+	If ObjectModelName$(Dest)="!SteppingStone"
+		If ObjectID(Dest)=-1
+			Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)
+		EndIf
+	EndIf
+	
 	Return ObjectID(Dest)
 
 End Function
@@ -8898,6 +8912,108 @@ Function CreateSpellBallMesh(subtype)
 
 End Function
 
+Function CreateFlipBridgeMesh(tex)
+	
+
+	subtype=3
+	
+	Entity=CreateMesh()
+	Surface=CreateSurface(Entity)
+	
+	; Top 
+	AddVertex (surface,-.25,.1,.49,.76,.01)
+	AddVertex (surface,.25,.1,.49,.76+.24,.01)
+	AddVertex (surface,-.25,.1,-.49,.76,.24)
+	AddVertex (surface,.25,.1,-.49,.76+.24,.24)
+	AddTriangle (surface,0,1,2)
+	AddTriangle (surface,1,3,2)
+	AddVertex (surface,-.20,.105,.45,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51)
+	AddVertex (surface,-.10,.105,.45,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51)
+	AddVertex (surface,-.20,.105,-.45,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51+.115)
+	AddVertex (surface,-.10,.105,-.45,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
+	AddTriangle (surface,4,5,6)
+	AddTriangle (surface,5,7,6)
+	AddVertex (surface,.10,.105,.45,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51)
+	AddVertex (surface,.20,.105,.45,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51)
+	AddVertex (surface,.10,.105,-.45,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51+.115)
+	AddVertex (surface,.20,.105,-.45,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
+	AddTriangle (surface,8,9,10)
+	AddTriangle (surface,9,11,10)
+
+	
+	
+	
+	; Sides
+	For i=0 To 3
+		Select i
+		Case 0
+			x1#=-.25
+			x2#=.25
+			y1#=-.49
+			y2#=-.49
+		Case 1
+			x1#=.25
+			x2#=.25
+			y1#=-.49
+			y2#=.49
+		Case 2
+			x1#=.25
+			x2#=-.25
+			y1#=.49
+			y2#=.49
+		Case 3
+			x1#=-.25
+			x2#=-.25
+			y1#=.49
+			y2#=-.49
+		End Select
+
+	
+			
+		AddVertex (surface,x1,.104,y1,subtype*0.25+.01,.01)
+		AddVertex (surface,x2,.104,y2,subtype*0.25+.24,.01)
+		AddVertex (surface,x1,-.4,y1,subtype*0.25+.01,.24)
+		AddVertex (surface,x2,-.4,y2,subtype*0.25+.24,.24)
+		AddTriangle (surface,12+i*4,13+i*4,14+i*4)
+		AddTriangle (surface,13+i*4,15+i*4,14+i*4)
+;		AddVertex (surface,x1*1.01,.8,y1*1.01,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51)
+;		AddVertex (surface,x2*1.01,.8,y2*1.01,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51)
+;		AddVertex (surface,x1*1.01,.6,y1*1.01,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51+.115)
+;		AddVertex (surface,x2*1.01,.6,y2*1.01,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
+	
+;		AddTriangle (surface,16+i*8,17+i*8,18+i*8)
+;		AddTriangle (surface,17+i*8,19+i*8,18+i*8)
+		
+		
+	Next
+	
+	
+	
+
+	
+	
+	UpdateNormals Entity
+	
+	;ScaleEntity Entity,1.0,6.6,1.0 ; reflect active state
+	
+;	Entity2=CreateCylinder()
+;	ScaleEntity Entity2,.25,.11,.25
+;	AddMesh Entity2,Entity
+;	FreeEntity Entity2
+
+	;Entity2=CreateCylinder()
+	;ScaleEntity Entity2,.35,.35,.35
+	;TranslateEntity Entity2,0.0,0.0,-.241
+	;EntityTexture Entity2,CageTexture
+	;AddMesh Entity2,Entity
+	;FreeEntity Entity2
+
+	
+	EntityTexture Entity,GateTexture
+	Return Entity
+
+End Function
+
 Function BuildCurrentTileModel()
 	
 	j=0
@@ -9396,8 +9512,12 @@ Function BuildCurrentObjectModel()
 
 		
 	Else If CurrentObjectModelName$="!FlipBridge"
-		CurrentObjectModel=CreateCube()
-		ScaleMesh CurrentObjectModel,.35,.1,.5
+		;CurrentObjectModel=CreateCube()
+		;ScaleMesh CurrentObjectModel,.35,.1,.5
+		
+		CurrentObjectModel=CreateFlipBridgeMesh(CurrentObjectData(0))
+		EntityTexture CurrentObjectModel,GateTexture
+		
 		CurrentObjectYawAdjust=(-45*CurrentObjectData(2) +3600) Mod 360
 	
 	Else If CurrentObjectModelName$="!Door"
@@ -10284,8 +10404,11 @@ Function CreateObjectModel(Dest)
 
 
 		Else If ObjectModelName$(Dest)="!FlipBridge"
-			ObjectEntity(Dest)=CreateCube()
-			ScaleMesh ObjectEntity(Dest),.35,.1,.5
+			;ObjectEntity(Dest)=CreateCube()
+			;ScaleMesh ObjectEntity(Dest),.35,.1,.5
+			
+			ObjectEntity(Dest)=CreateFlipBridgeMesh(ObjectData(Dest,0))
+			EntityTexture ObjectEntity(Dest),GateTexture
 			
 
 
