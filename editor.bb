@@ -709,7 +709,7 @@ HideEntity StinkerMesh
 ; Cage
 Global CageMesh=MyLoadMesh("data/models/cage/cage.3ds",0)
 RotateMesh CageMesh,-90,0,0
-CageTexture=MyLoadTexture("data/models/cage/cage.jpg",1)
+Global CageTexture=MyLoadTexture("data/models/cage/cage.jpg",1)
 EntityTexture CageMesh,CageTexture
 HideEntity CageMesh
 
@@ -8994,22 +8994,22 @@ Function CreateFlipBridgeMesh(tex)
 	
 	UpdateNormals Entity
 	
-	;ScaleEntity Entity,1.0,6.6,1.0 ; reflect active state
+	EntityTexture Entity,GateTexture
 	
-;	Entity2=CreateCylinder()
-;	ScaleEntity Entity2,.25,.11,.25
-;	AddMesh Entity2,Entity
-;	FreeEntity Entity2
-
+	ScaleMesh Entity,1.0,1.0,6.6 ; reflect active state
+	
 	;Entity2=CreateCylinder()
-	;ScaleEntity Entity2,.35,.35,.35
-	;TranslateEntity Entity2,0.0,0.0,-.241
-	;EntityTexture Entity2,CageTexture
+	;ScaleEntity Entity2,.25,.11,.25
 	;AddMesh Entity2,Entity
 	;FreeEntity Entity2
 
+	Entity2=CreateCylinder()
+	ScaleMesh Entity2,.35,.35,.35
+	PositionMesh Entity2,0.0,-.241,0.0
+	EntityTexture Entity2,CageTexture
+	AddMesh Entity2,Entity
+	FreeEntity Entity2
 	
-	EntityTexture Entity,GateTexture
 	Return Entity
 
 End Function
@@ -9516,7 +9516,7 @@ Function BuildCurrentObjectModel()
 		;ScaleMesh CurrentObjectModel,.35,.1,.5
 		
 		CurrentObjectModel=CreateFlipBridgeMesh(CurrentObjectData(0))
-		EntityTexture CurrentObjectModel,GateTexture
+		;EntityTexture CurrentObjectModel,GateTexture
 		
 		CurrentObjectYawAdjust=(-45*CurrentObjectData(2) +3600) Mod 360
 	
@@ -10408,7 +10408,7 @@ Function CreateObjectModel(Dest)
 			;ScaleMesh ObjectEntity(Dest),.35,.1,.5
 			
 			ObjectEntity(Dest)=CreateFlipBridgeMesh(ObjectData(Dest,0))
-			EntityTexture ObjectEntity(Dest),GateTexture
+			;EntityTexture ObjectEntity(Dest),GateTexture
 			
 
 
