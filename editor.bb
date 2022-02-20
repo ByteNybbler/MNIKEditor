@@ -9003,12 +9003,13 @@ Function CreateFlipBridgeMesh(tex)
 	;AddMesh Entity2,Entity
 	;FreeEntity Entity2
 
-	Entity2=CreateCylinder()
+	Entity2=CreateCylinder(32)
 	ScaleMesh Entity2,.35,.35,.35
 	PositionMesh Entity2,0.0,-.241,0.0
 	EntityTexture Entity2,CageTexture
-	AddMesh Entity2,Entity
-	FreeEntity Entity2
+	EntityParent Entity2,Entity
+	;AddMesh Entity2,Entity
+	;FreeEntity Entity2
 	
 	Return Entity
 
