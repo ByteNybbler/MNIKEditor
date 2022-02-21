@@ -1762,6 +1762,11 @@ Function EditorMainLoop()
 	Else
 		Text 600,535,"OFF"
 	EndIf
+	Color 255,255,255
+	
+	Text 600,565,"  XTRUDE"
+	Text 600,580,"  LOGICS"
+	
 	Color 255,255,0
 	
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
@@ -3916,6 +3921,7 @@ Function EditorLocalControls()
 					For j=0 To LevelHeight-1
 						UpdateLevelTile(i,j)
 						UpdateWaterTile(i,j)
+						UpdateLogicTile(i,j)
 					Next
 				Next
 				For i=0 To NofObjects-1
@@ -3953,6 +3959,34 @@ Function EditorLocalControls()
 				For j=0 To NofObjects-1
 					UpdateObjectVisibility(j)
 				Next
+			EndIf
+		EndIf
+		
+		; xtrude logics
+		If my>565 And my<595
+			If LeftMouse=True And LeftMouseReleased=True
+				Confirm$=InputString$("Do you want to set Xtrude logics? Type Y to confirm: ")
+				If Confirm="Y" Or Confirm="y"
+					Prompt$=InputString$("Enter logic for Xtrude < 0 (leave blank for water): ")
+					If Prompt$=""
+						LessThanZero=2
+					Else
+						LessThanZero=2
+					EndIf
+					Prompt$=InputString$("Enter logic for Xtrude == 0 (leave blank for floor): ")
+					If Prompt$=""
+						EqualToZero=0
+					Else
+						EqualToZero=0
+					EndIf
+					Prompt$=InputString$("Enter logic for Xtrude > 0 (leave blank for wall): ")
+					If Prompt$=""
+						GreaterThanZero=1
+					Else
+						GreaterThanZero=1
+					EndIf
+					SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
+				EndIf
 			EndIf
 		EndIf
 	EndIf
@@ -4381,7 +4415,10 @@ Function ChangeLevelTile(i,j,update)
 	EndIf
 	If CurrentWaterTileHeightUse=True WaterTileHeight(i,j)=CurrentWaterTileHeight
 	If CurrentWaterTileTurbulenceUse=True WaterTileTurbulence(i,j)=CurrentWaterTileTurbulence
-	If update=True UpdateWaterTile(i,j)
+	If update=True
+		UpdateWaterTile(i,j)
+		UpdateLogicTile(i,j)
+	EndIf
 
 
 End Function
@@ -4573,6 +4610,23 @@ Function LevelTileMatchesTarget(i,j)
 	EndIf
 	
 	Return True
+
+End Function
+
+Function SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
+
+	For i=0 To LevelWidth-1
+		For j=0 To LevelHeight-1
+			If LevelTileExtrusion#(i,j)<0.0
+				LevelTileLogic(i,j)=LessThanZero
+			ElseIf LevelTileExtrusion#(i,j)=0.0
+				LevelTileLogic(i,j)=EqualToZero
+			ElseIf LevelTileExtrusion#(i,j)>0.0
+				LevelTileLogic(i,j)=GreaterThanZero
+			EndIf
+			UpdateLogicTile(i,j)
+		Next
+	Next
 
 End Function
 
@@ -9337,10 +9391,11 @@ Function UpdateWaterTile(i,j)
 	Else
 		VertexColor WaterSurface(j),i*4+3,0,0,0
 	EndIf
-	
-	
-	
-	; also do logic tile here
+
+End Function
+
+Function UpdateLogicTile(i,j)
+
 	; top face
 	
 	If LevelTileLogicHasVisuals(i,j)
@@ -9361,9 +9416,6 @@ Function UpdateWaterTile(i,j)
 				
 	
 	ColorLevelTileLogic(i,j)
-
-			
-
 
 End Function
 
@@ -10423,6 +10475,7 @@ Function ReSizeLevel()
 		For i=0 To LevelWidth-1
 			UpdateLevelTile(i,j)
 			UpdateWaterTile(i,j)
+			UpdateLogicTile(i,j)
 		Next
 	Next
 	
@@ -10491,6 +10544,7 @@ Function FlipLevelX()
 		For i=0 To LevelWidth-1
 			UpdateLevelTile(i,j)
 			UpdateWaterTile(i,j)
+			UpdateLogicTile(i,j)
 		Next
 	Next
 	
@@ -10528,6 +10582,7 @@ Function FlipLevelY()
 		For i=0 To LevelWidth-1
 			UpdateLevelTile(i,j)
 			UpdateWaterTile(i,j)
+			UpdateLogicTile(i,j)
 		Next
 	Next
 	
@@ -10570,6 +10625,7 @@ Function FlipLevelXY()
 		For i=0 To LevelWidth-1
 			UpdateLevelTile(i,j)
 			UpdateWaterTile(i,j)
+			UpdateLogicTile(i,j)
 		Next
 	Next
 	
@@ -11962,6 +12018,7 @@ Function LoadLevel(levelnumber)
 		For i=0 To LevelWidth-1
 			UpdateLevelTile(i,j)
 			UpdateWaterTile(i,j)
+			UpdateLogicTile(i,j)
 		Next
 	Next
 
