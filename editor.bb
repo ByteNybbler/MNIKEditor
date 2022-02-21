@@ -180,6 +180,7 @@ Global Leveltimer
 Global CurrentGrabbedObject=-1
 Global CurrentGrabbedObjectModified=False
 Global BrushSize=1
+Global CustomBrush=False
 
 Global RandomYawAdjust=False
 Global RandomRollAdjust=False
@@ -472,6 +473,49 @@ Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
 
 Global IDFilterEnabled=False
 Global IDFilterAllow=-1
+
+Dim BrushObjectModelName$(1000)
+Dim BrushObjectTextureName$(1000)
+Dim BrushObjectXScale#(1000)
+Dim BrushObjectZScale#(1000)
+Dim BrushObjectYScale#(1000)
+Dim BrushObjectXAdjust#(1000)
+Dim BrushObjectZAdjust#(1000)
+Dim BrushObjectYAdjust#(1000)
+Dim BrushObjectPitchAdjust#(1000)
+Dim BrushObjectYawAdjust#(1000)
+Dim BrushObjectRollAdjust#(1000)
+Dim BrushObjectX#(1000),BrushObjectY#(1000),BrushObjectZ#(1000)
+Dim BrushObjectOldX#(1000),BrushObjectOldY#(1000),BrushObjectOldZ#(1000)
+Dim BrushObjectDX#(1000),BrushObjectDY#(1000),BrushObjectDZ#(1000)
+Dim BrushObjectPitch#(1000),BrushObjectYaw#(1000),BrushObjectRoll#(1000)
+Dim BrushObjectPitch2#(1000),BrushObjectYaw2#(1000),BrushObjectRoll2#(1000)
+Dim BrushObjectXGoal#(1000),BrushObjectYGoal#(1000),BrushObjectZGoal#(1000)
+Dim BrushObjectMovementType(1000),BrushObjectMovementTypeData(1000),BrushObjectSpeed#(1000)
+Dim BrushObjectRadius#(1000),BrushObjectRadiusType(1000)
+Dim BrushObjectData10(1000)
+Dim BrushObjectPushDX#(1000),BrushObjectPushDY#(1000)
+Dim BrushObjectAttackPower(1000),BrushObjectDefensePower(1000),BrushObjectDestructionType(1000)
+Dim BrushObjectID(1000),BrushObjectType(1000),BrushObjectSubType(1000)
+Dim BrushObjectActive(1000),BrushObjectLastActive(1000),BrushObjectActivationType(1000),BrushObjectActivationSpeed(1000)
+Dim BrushObjectStatus(1000),BrushObjectTimer(1000),BrushObjectTimerMax1(1000),BrushObjectTimerMax2(1000)
+Dim BrushObjectTeleportable(1000),BrushObjectButtonPush(1000),BrushObjectWaterReact(1000)
+Dim BrushObjectTelekinesisable(1000),BrushObjectFreezable(1000)
+Dim BrushObjectReactive(1000)
+Dim BrushObjectChild(1000),BrushObjectParent(1000)
+Dim BrushObjectData(1000,10),BrushObjectTextData$(1000,4)
+Dim BrushObjectTalkable(1000),BrushObjectCurrentAnim(1000),BrushObjectStandardAnim(1000),BrushObjectTileX(1000),BrushObjectTileY(1000)
+Dim BrushObjectTileX2(1000),BrushObjectTileY2(1000),BrushObjectMovementTimer(1000),BrushObjectMovementSpeed(1000),BrushObjectMoveXGoal(1000)
+Dim BrushObjectMoveYGoal(1000),BrushObjectFutureInt12(1000),BrushObjectFutureInt13(1000),BrushObjectCaged(1000),BrushObjectDead(1000)
+Dim BrushObjectDeadTimer(1000),BrushObjectExclamation(1000),BrushObjectShadow(1000),BrushObjectLinked(1000),BrushObjectLinkBack(1000)
+Dim BrushObjectFlying(1000),BrushObjectFrozen(1000),BrushObjectIndigo(1000),BrushObjectFutureInt24(1000),BrushObjectFutureInt25(1000)
+Dim BrushObjectScaleAdjust#(1000),BrushObjectFutureFloat2#(1000),BrushObjectFutureFloat3#(1000),BrushObjectFutureFloat4#(1000),BrushObjectFutureFloat5#(1000)
+Dim BrushObjectFutureFloat6#(1000),BrushObjectFutureFloat7#(1000),BrushObjectFutureFloat8#(1000),BrushObjectFutureFloat9#(1000),BrushObjectFutureFloat10#(1000)
+Dim BrushObjectFutureString1$(1000),BrushObjectFutureString2$(1000)
+
+Dim BrushObjectXOffset#(1000),BrushObjectYOffset#(1000)
+
+Global NofBrushObjects=0
 
 
 ; Object PRESETS
@@ -1417,7 +1461,7 @@ If testfile<>0 ;FileType(globaldirname$+"\custom\editing\")
 		StartHub()
 	Endif
 	StartMaster()
-	EditorMode=ReadInt(testfile)
+	SetEditorMode(ReadInt(testfile))
 	CloseFile testfile
 	DeleteFile globaldirname$+"\temp\test.dat"
 	
@@ -1474,7 +1518,7 @@ End
 
 Function StartEditorMainLoop()
 	Cls
-	EditorMode=0
+	SetEditorMode(0)
 	
 	CameraProjMode Camera1,1
 	CameraProjMode Camera2,1
@@ -1768,6 +1812,27 @@ Function EditorMainLoop()
 End Function
 
 
+Function SetEditorMode(NewMode)
+
+	EditorMode=NewMode
+	CustomBrush=False
+
+End Function
+
+
+Function SetBrushSize(NewBrushSize)
+
+	BrushSize=NewBrushSize
+	
+	If BrushSize<1
+		BrushSize=1
+	EndIf
+	
+	CustomBrush=False
+
+End Function
+
+
 Function KeyPressed(i)
 
 	If Key(i) And KeyReleased(i)
@@ -1877,9 +1942,15 @@ Function EditorLocalControls()
 					g=255
 					b=255
 				Else
-					r=255
-					g=255
-					b=255
+					If CustomBrush
+						r=255
+						g=0
+						b=255
+					Else
+						r=255
+						g=255
+						b=255
+					EndIf
 				EndIf
 				EntityColor CursorMesh,r,g,b
 				EntityColor CursorMesh2,r,g,b
@@ -2029,18 +2100,29 @@ Function EditorLocalControls()
 						Wend
 					Else 
 						; default
-						BrushOffset=BrushSize/2
-						BrushXStart=x-BrushOffset
-						BrushYStart=y-BrushOffset
-						For i=0 To BrushSize-1
-							For j=0 To BrushSize-1
-								If EditorMode=0
-									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
-								ElseIf EditorMode=3
-									PlaceObject(BrushXStart+i,BrushYStart+j)
-								EndIf
+						If CustomBrush
+							If EditorMode=0
+								; TODO
+							ElseIf EditorMode=3
+								For k=0 To NofBrushObjects-1
+									GrabObjectFromBrush(k)
+									PlaceObject(x+BrushObjectXOffset#(k),y+BrushObjectYOffset#(k))
+								Next
+							EndIf
+						Else
+							BrushOffset=BrushSize/2
+							BrushXStart=x-BrushOffset
+							BrushYStart=y-BrushOffset
+							For i=0 To BrushSize-1
+								For j=0 To BrushSize-1
+									If EditorMode=0
+										ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
+									ElseIf EditorMode=3
+										PlaceObject(BrushXStart+i,BrushYStart+j)
+									EndIf
+								Next
 							Next
-						Next
+						EndIf
 					EndIf
 					
 					If EditorMode=3
@@ -2147,6 +2229,35 @@ Function EditorLocalControls()
 					EndIf
 				Wend
 			EndIf
+			
+			If ReturnKey=True And ReturnKeyReleased=True And BlockMode=0
+				ReturnKeyReleased=False
+				If CustomBrush
+					CustomBrush=False
+				Else
+					; set custom brush
+					CustomBrush=True
+					BrushOffset=BrushSize/2
+					BrushXStart=x-BrushOffset
+					BrushYStart=y-BrushOffset
+					If EditorMode=0
+						NofBrushObjects=0
+						For i=0 To BrushSize-1
+							For j=0 To BrushSize-1
+								; TODO
+							Next
+						Next
+					ElseIf EditorMode=3
+						NofBrushObjects=0
+						For k=0 To NofObjects-1
+							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushSize And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushSize
+								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-x,ObjectY(k)-y)
+								NofBrushObjects=NofBrushObjects+1
+							EndIf
+						Next
+					EndIf
+				EndIf
+			EndIf
 		
 		Else
 			HideEntity CursorMesh
@@ -2210,7 +2321,7 @@ Function EditorLocalControls()
 					; main texture
 					CurrentTileSideTexture=Floor(mx/62.5)+Floor(my/62.5)*8
 				EndIf
-				editormode=0
+				SetEditorMode(0)
 				LeftMouseReleased=False
 				CameraProjMode Camera1,1
 				CameraProjMode Camera3,0
@@ -2241,7 +2352,7 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTileRotation=(CurrentTileRotation+1) Mod 8
 			BuildCurrentTileModel()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2251,12 +2362,12 @@ Function EditorLocalControls()
 			CameraProjMode Camera1,0
 			CameraProjMode Camera3,1
 			CameraClsColor camera2,TileColor,0,0
-			EditorMode=1
+			SetEditorMode(1)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileTextureUse=1-CurrentTileTextureUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2271,7 +2382,7 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTileSideRotation=(CurrentTileSideRotation+1) Mod 8
 			BuildCurrentTileModel()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2281,12 +2392,12 @@ Function EditorLocalControls()
 			CameraProjMode Camera1,0
 			CameraProjMode Camera3,1
 			CameraClsColor camera2,TileColor,0,0
-			EditorMode=2
+			SetEditorMode(2)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileSideTextureUse=1-CurrentTileSideTextureUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2299,7 +2410,7 @@ Function EditorLocalControls()
 			CurrentWaterTileRotation=(CurrentWaterTileRotation+1) Mod 8
 			RightMouseReleased=False
 			BuildCurrentTileModel()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2308,7 +2419,7 @@ Function EditorLocalControls()
 			CurrentWaterTileTexture=(CurrentWaterTileTexture+1) Mod 8
 			LeftMouseReleased=False
 			BuildCurrentTIleModel()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2316,7 +2427,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentWaterTileUse=1-CurrentWaterTileUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2339,7 +2450,7 @@ Function EditorLocalControls()
 				CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
 			EndIf
 			
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2350,7 +2461,7 @@ Function EditorLocalControls()
 			
 			CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
 			
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2358,7 +2469,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2380,7 +2491,7 @@ Function EditorLocalControls()
 				CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
 			EndIf
 			
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2389,7 +2500,7 @@ Function EditorLocalControls()
 			CurrentTileHeight2=CurrentTileHeight2-1
 			If Fast=True CurrentTileHeight2=CurrentTileHeight2-99 
 			CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2397,7 +2508,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileHeightUse=1-CurrentTileHeightUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileCOlor,0,0
@@ -2432,7 +2543,7 @@ Function EditorLocalControls()
 			
 			LeftMouseReleased=False
 			RightMouseReleased=False
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2456,7 +2567,7 @@ Function EditorLocalControls()
 			End Select
 			LeftMouseReleased=False
 			RightMouseReleased=False
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2464,7 +2575,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileLogicUse=1-CurrentTileLogicUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileCOlor,0,0
@@ -2485,7 +2596,7 @@ Function EditorLocalControls()
 				If Fast=True CurrentTileRandom2=CurrentTileRandom2+99 
 				CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
 			EndIf
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2494,7 +2605,7 @@ Function EditorLocalControls()
 			CurrentTileRandom2=CurrentTileRandom2-1
 			If Fast=True CurrentTileRandom2=CurrentTileRandom2-99 
 			CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2502,7 +2613,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileRandomUse=1-CurrentTileRandomUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2515,7 +2626,7 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			RigthMouseReleased=False
 			CurrentTileRounding=1-CurrentTileRounding
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2523,7 +2634,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileRoundingUse=1-CurrentTileRoundingUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,Tilecolor,0,0
@@ -2536,7 +2647,7 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			RigthMouseReleased=False
 			CurrentTileEdgeRandom=1-CurrentTileEdgeRandom
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2544,7 +2655,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileEdgeRandomUse=1-CurrentTileEdgeRandomUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2566,7 +2677,7 @@ Function EditorLocalControls()
 				CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
 			EndIf
 			
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2575,7 +2686,7 @@ Function EditorLocalControls()
 			CurrentWaterTileHeight2=CurrentWaterTileHeight2-1 
 			If Fast=True CurrentWaterTileHeight2=CurrentWaterTileHeight2-99
 			CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2583,7 +2694,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2603,7 +2714,7 @@ Function EditorLocalControls()
 				CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
 			EndIf
 			
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2611,7 +2722,7 @@ Function EditorLocalControls()
 		If RightMouse=True
 			CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence2-1
 			CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -2619,7 +2730,7 @@ Function EditorLocalControls()
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -3107,7 +3218,7 @@ Function EditorLocalControls()
 
 			Until NofTilePresetTiles>0
 			LoadTilePreset()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -3140,7 +3251,7 @@ Function EditorLocalControls()
 
 			Until NofTilePresetTiles>0
 			LoadTilePreset()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -3155,7 +3266,7 @@ Function EditorLocalControls()
 			If CurrentTilePresetTile=-1 Then CurrentTilePresetTile=NofTilePresetTiles-1
 			RightMouseReleased=False
 			LoadTilePreset()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -3168,7 +3279,7 @@ Function EditorLocalControls()
 			If CurrentTilePresetTile=NofTilePresetTiles Then CurrentTilePresetTile=0
 			LeftMouseReleased=False
 			LoadTilePreset()
-			EditorMode=0
+			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
@@ -3362,7 +3473,7 @@ Function EditorLocalControls()
 		If mx>=StartX And mx<=StartX+155 And my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
 			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 				AdjustObjectAdjuster(i)
-				EditorMode=3
+				SetEditorMode(3)
 
 			EndIf
 		EndIf
@@ -3378,12 +3489,12 @@ Function EditorLocalControls()
 
 	If mx>500 And my>305 And my<455 ;my<430
 		If LeftMouse=True Or RightMouse=True
-			EditorMode=3
+			SetEditorMode(3)
 		EndIf
 		If DeleteKey=True And DeleteKeyReleased=True And CurrentGrabbedObject<>-1
 			DeleteKeyReleased=False
 			DeleteObject(CurrentGrabbedObject)
-			EditorMode=3
+			SetEditorMode(3)
 		EndIf
 	EndIf
 	
@@ -3397,13 +3508,13 @@ Function EditorLocalControls()
 		If mx>=StartX+44 And Mx<StartX+100 And my>=StartY And my<StartY+20
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
-				EditorMode=3
+				SetEditorMode(3)
 				PasteObjectData(CurrentGrabbedObject)
 				CurrentGrabbedObjectModified=False
 			EndIf
 		EndIf
 		If KeyDown(19) ; R
-			EditorMode=3
+			SetEditorMode(3)
 			PasteObjectData(CurrentGrabbedObject)
 			CurrentGrabbedObjectModified=False
 		EndIf
@@ -3415,7 +3526,7 @@ Function EditorLocalControls()
 	If mx>=StartX And Mx<StartX+80 And my>=StartY And my<StartY+20
 		If LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
-			EditorMode=3
+			SetEditorMode(3)
 			If ObjectAdjusterStart+9<NofObjectAdjusters
 				ObjectAdjusterStart=ObjectAdjusterStart+9
 			Else 
@@ -3423,7 +3534,7 @@ Function EditorLocalControls()
 			EndIf
 		Else If RightMouse=True And RightMouseReleased=True
 			RightMouseReleased=False
-			EditorMode=3
+			SetEditorMode(3)
 			If ObjectAdjusterStart=0
 				ObjectAdjusterStart=((NofObjectAdjusters-1)/9)*9
 			Else 
@@ -3468,7 +3579,7 @@ Function EditorLocalControls()
 				If i=-1 Then i=NofObjectPresetCategories-1
 
 			Until NofObjectPresetObjects>0
-			EditorMode=3
+			SetEditorMode(3)
 			LoadObjectPreset()
 			BuildCurrentObjectModel()
 
@@ -3500,7 +3611,7 @@ Function EditorLocalControls()
 				If i=NofObjectPresetCategories Then i=0
 
 			Until NofObjectPresetObjects>0
-			EditorMode=3
+			SetEditorMode(3)
 			LoadObjectPreset()
 			BuildCurrentObjectModel()
 
@@ -3514,7 +3625,7 @@ Function EditorLocalControls()
 			CurrentObjectPresetObject=CurrentObjectPresetObject-1
 			If CurrentObjectPresetObject=-1 Then CurrentObjectPresetObject=NofObjectPresetObjects-1
 			RightMouseReleased=False
-			EditorMode=3
+			SetEditorMode(3)
 			LoadObjectPreset()
 			BuildCurrentObjectModel()
 
@@ -3526,7 +3637,7 @@ Function EditorLocalControls()
 			CurrentObjectPresetObject=CurrentObjectPresetObject+1
 			If CurrentObjectPresetObject=NofObjectPresetObjects Then CurrentObjectPresetObject=0
 			LeftMouseReleased=False
-			EditorMode=3
+			SetEditorMode(3)
 			LoadObjectPreset()
 			BuildCurrentObjectModel()
 
@@ -3756,14 +3867,11 @@ Function EditorLocalControls()
 				;	WidescreenRangeLevel=1
 				;EndIf
 				
-				BrushSize=BrushSize+2
+				SetBrushSize(BrushSize+2)
 				If MouseScroll=0 Then Delay 100
 			EndIf
 			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-				BrushSize=BrushSize-2
-				If BrushSize<1
-					BrushSize=1
-				EndIf
+				SetBrushSize(BrushSize-2)
 				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
@@ -4896,6 +5004,7 @@ Function PlaceObject(x#,y#)
 	Next
 	
 	
+	; this is only here because of randomized rotation
 	BuildCurrentObjectModel()
 	
 	
@@ -5056,10 +5165,22 @@ Function UpdateObjectEntityToCurrent(Dest)
 
 End Function
 
+Function ObjectIsAtInt(i,x,y)
+
+	Return Floor(ObjectX(i))=x And Floor(ObjectY(i))=y
+
+End Function
+
+Function ObjectIsAtFloat(i,x#,y#)
+
+	Return ObjectIsAtInt(i,Floor(x),Floor(y))
+	;Return Floor(ObjectX(i))=Floor(x) And Floor(ObjectY(i))=Floor(y)
+
+End Function
 
 Function TryGrabObjectLoop(x#,y#)
 	For i=0 To NofObjects-1
-		If Floor(ObjectX(i))=Floor(x) And Floor(ObjectY(i))=Floor(y) And i>CurrentGrabbedObject
+		If ObjectIsAtFloat(i,x#,y#) And i>CurrentGrabbedObject
 			SetCurrentGrabbedObject(i)
 			Return True
 		EndIf
@@ -5220,11 +5341,125 @@ Function GrabObject(x#,y#)
 
 
 
+
+	BuildCurrentObjectModel()
+	
+
+End Function
+
+
+
+Function GrabObjectFromBrush(i)	
+	Dest=i
+
+	CurrentObjectModelName$=BrushObjectModelName$(Dest)
+	CurrentObjectTextureName$=BrushObjectTextureName$(Dest)
+	CurrentObjectXScale#=BrushObjectXScale#(Dest)
+	CurrentObjectZScale#=BrushObjectZScale#(Dest)
+	CurrentObjectYScale#=BrushObjectYScale#(Dest)
+	CurrentObjectXAdjust#=BrushObjectXAdjust#(Dest)
+	CurrentObjectZAdjust#=BrushObjectZAdjust#(Dest)
+	CurrentObjectYAdjust#=BrushObjectYAdjust#(Dest)
+	CurrentObjectPitchAdjust#=BrushObjectPitchAdjust#(Dest)
+	CurrentObjectYawAdjust#=BrushObjectYawAdjust#(Dest)
+	CurrentObjectRollAdjust#=BrushObjectRollAdjust#(Dest)
+	CurrentObjectX#=BrushObjectX#(Dest)-x-0.5
+	CurrentObjectY#=BrushObjectY#(Dest)-y-0.5
+	CurrentObjectZ#=BrushObjectZ#(Dest)
+	; oldxyz is not grabbed
+	CurrentObjectDX#=BrushObjectDX#(Dest)
+	CurrentObjectDY#=BrushObjectDY#(Dest)
+	CurrentObjectDZ#=BrushObjectDZ#(Dest)
+	CurrentObjectPitch#=BrushObjectPitch#(Dest)
+	CurrentObjectYaw#=BrushObjectYaw#(Dest)
+	CurrentObjectRoll#=BrushObjectRoll#(Dest)
+	CurrentObjectPitch2#=BrushObjectPitch2#(Dest)
+	CurrentObjectYaw2#=BrushObjectYaw2#(Dest)
+	CurrentObjectRoll2#=BrushObjectRoll2#(Dest)
+	CurrentObjectXGoal#=BrushObjectXGoal#(Dest)
+	CurrentObjectYGoal#=BrushObjectYGoal#(Dest)
+	CurrentObjectZGoal#=BrushObjectZGoal#(Dest)
+	CurrentObjectMovementType=BrushObjectMovementType(Dest)
+	CurrentObjectMovementTypeData=BrushObjectMovementTypeData(Dest)
+	CurrentObjectSpeed#=BrushObjectSpeed#(Dest)
+	CurrentObjectRadius#=BrushObjectRadius#(Dest)
+	CurrentObjectRadiusType=BrushObjectRadiusType(Dest)
+	CurrentObjectData10=BrushObjectData10(Dest)
+	CurrentObjectPushDX#=BrushObjectPushDX#(Dest)
+	CurrentObjectPushDY#=BrushObjectPushDY#(Dest)
+	CurrentObjectAttackPower=BrushObjectAttackPower(Dest)
+	CurrentObjectDefensePower=BrushObjectDefensePower(Dest)
+	CurrentObjectDestructionType=BrushObjectDestructionType(Dest)
+	CurrentObjectID=BrushObjectID(Dest)
+	CurrentObjectType=BrushObjectType(Dest)
+	CurrentObjectSubType=BrushObjectSubType(Dest)
+	CurrentObjectActive=BrushObjectActive(Dest)
+	CurrentObjectLastActive=BrushObjectLastActive(Dest)
+	CurrentObjectActivationType=BrushObjectActivationType(Dest)
+	CurrentObjectActivationSpeed=BrushObjectActivationSpeed(Dest)
+	CurrentObjectStatus=BrushObjectStatus(Dest)
+	CurrentObjectTimer=BrushObjectTimer(Dest)
+	CurrentObjectTimerMax1=BrushObjectTimerMax1(Dest)
+	CurrentObjectTimerMax2=BrushObjectTimerMax2(Dest)
+	CurrentObjectTeleportable=BrushObjectTeleportable(Dest)
+	CurrentObjectButtonPush=BrushObjectButtonPush(Dest)
+	CurrentObjectWaterReact=BrushObjectWaterReact(Dest)
+	CurrentObjectTelekinesisable=BrushObjectTelekinesisable(Dest)
+	CurrentObjectFreezable=BrushObjectFreezable(Dest)
+	CurrentObjectReactive=BrushObjectReactive(Dest)
+	CurrentObjectChild=BrushObjectChild(Dest)
+	CurrentObjectParent=BrushObjectParent(Dest)
+	For i=0 To 9
+		CurrentObjectData(i)=BrushObjectData(Dest,i)
+	Next
+	For i=0 To 4
+		CurrentObjectTextData$(i)=BrushObjectTextData$(Dest,i)
+	Next	
+	
+	CurrentObjectTalkable=BrushObjectTalkable(Dest)
+	CurrentObjectCurrentAnim=BrushObjectCurrentAnim(Dest)
+	CurrentObjectStandardAnim=BrushObjectStandardAnim(Dest)
+	CurrentObjectTileX=BrushObjectTileX(Dest)
+	CurrentObjectTileY=BrushObjectTileY(Dest)
+	CurrentObjectTileX2=BrushObjectTileX2(Dest)
+	CurrentObjectTileY2=BrushObjectTileY2(Dest)
+	CurrentObjectMovementTimer=BrushObjectMovementTimer(Dest)
+	CurrentObjectMovementSpeed=BrushObjectMovementSpeed(Dest)
+	CurrentObjectMoveXGoal=BrushObjectMoveXGoal(Dest)
+	CurrentObjectMoveYGoal=BrushObjectMoveYGoal(Dest)
+	CurrentObjectFutureInt12=BrushObjectFutureInt12(Dest)
+	CurrentObjectFutureInt13=BrushObjectFutureInt13(Dest)
+	CurrentObjectCaged=BrushObjectCaged(Dest)
+	CurrentObjectDead=BrushObjectDead(Dest)
+	CurrentObjectDeadTimer=BrushObjectDeadTimer(Dest)
+	CurrentObjectExclamation=BrushObjectExclamation(Dest)
+	CurrentObjectShadow=BrushObjectShadow(Dest)
+	CurrentObjectLinked=BrushObjectLinked(Dest)
+	CurrentObjectLinkBack=BrushObjectLinkBack(Dest)
+	CurrentObjectFlying=BrushObjectFlying(Dest)
+	CurrentObjectFrozen=BrushObjectFrozen(Dest)
+	CurrentObjectIndigo=BrushObjectIndigo(Dest)
+	CurrentObjectFutureInt24=BrushObjectFutureInt24(Dest)
+	CurrentObjectFutureInt25=BrushObjectFutureInt25(Dest)
+
+	CurrentObjectScaleAdjust=BrushObjectScaleAdjust(Dest)
+	CurrentObjectFutureFloat2=BrushObjectFutureFloat2(Dest)
+	CurrentObjectFutureFloat3=BrushObjectFutureFloat3(Dest)
+	CurrentObjectFutureFloat4=BrushObjectFutureFloat4(Dest)
+	CurrentObjectFutureFloat5=BrushObjectFutureFloat5(Dest)
+	CurrentObjectFutureFloat6=BrushObjectFutureFloat6(Dest)
+	CurrentObjectFutureFloat7=BrushObjectFutureFloat7(Dest)
+	CurrentObjectFutureFloat8=BrushObjectFutureFloat8(Dest)
+	CurrentObjectFutureFloat9=BrushObjectFutureFloat9(Dest)
+	CurrentObjectFutureFloat10=BrushObjectFutureFloat10(Dest)
+	CurrentObjectFutureString1$=BrushObjectFutureString1$(Dest)
+	CurrentObjectFutureString2$=BrushObjectFutureString2$(Dest)
 		
 	BuildCurrentObjectModel()
 	
 
 End Function
+
 
 
 Function CreateObjectPositionMarker(i)
@@ -5399,7 +5634,7 @@ Function DeleteObjectAt(x,y)
 	For i=0 To NofObjects-1
 		If Floor(ObjectX(i))=x And Floor(ObjectY(i))=y
 			DeleteObject(i)
-			EditorMode=3
+			SetEditorMode(3)
 			i=i-1
 			DeleteCount=DeleteCount+1
 		EndIf
@@ -5554,6 +5789,135 @@ Function CopyObjectData(Source,Dest)
 	ObjectPositionMarker(Dest)=ObjectPositionMarker(Source)
 
 	
+End Function
+
+
+Function CopyObjectDataToBrush(Source,Dest,XOffset#,YOffset#)
+
+	BrushObjectXOffset#(Dest)=XOffset#-0.5
+	BrushObjectYOffset#(Dest)=YOffset#-0.5
+
+	BrushObjectModelName$(Dest)=ObjectModelName$(Source)
+	BrushObjectTextureName$(Dest)=ObjectTextureName$(Source)
+	BrushObjectXScale#(Dest)=ObjectXScale#(Source)
+	BrushObjectZScale#(Dest)=ObjectZScale#(Source)
+	BrushObjectYScale#(Dest)=ObjectYScale#(Source)
+	BrushObjectXAdjust#(Dest)=ObjectXAdjust#(Source)
+	BrushObjectZAdjust#(Dest)=ObjectZAdjust#(Source)
+	BrushObjectYAdjust#(Dest)=ObjectYAdjust#(Source)
+	BrushObjectPitchAdjust#(Dest)=ObjectPitchAdjust#(Source)
+	BrushObjectYawAdjust#(Dest)=ObjectYawAdjust#(Source)
+	BrushObjectRollAdjust#(Dest)=ObjectRollAdjust#(Source)
+		
+	BrushObjectX(Dest)=0.5 ;ObjectX(Source)
+	BrushObjectY(Dest)=0.5 ;ObjectY(Source)
+	BrushObjectZ(Dest)=ObjectZ(Source)
+	;oldxyz is not copied
+	BrushObjectDX(Dest)=ObjectDX(Source)
+	BrushObjectDY(Dest)=ObjectDY(Source)
+	BrushObjectDZ(Dest)=ObjectDZ(Source)
+	
+	BrushObjectPitch(Dest)=ObjectPitch(Source)
+	BrushObjectYaw(Dest)=ObjectYaw(Source)
+	BrushObjectRoll(Dest)=ObjectRoll(Source)
+	BrushObjectPitch2(Dest)=ObjectPitch2(Source)
+	BrushObjectYaw2(Dest)=ObjectYaw2(Source)
+	BrushObjectRoll2(Dest)=ObjectRoll2(Source)
+
+
+	BrushObjectXGoal(Dest)=ObjectXGoal(Source)
+	BrushObjectYGoal(Dest)=ObjectYGoal(Source)
+	BrushObjectZGoal(Dest)=ObjectZGoal(Source)
+	
+	BrushObjectMovementType(Dest)=ObjectMovementType(Source)
+	BrushObjectMovementTypeData(Dest)=ObjectMovementTypeData(Source)
+	BrushObjectSpeed(Dest)=ObjectSpeed(Source)
+	BrushObjectRadius(Dest)=ObjectRadius(Source)
+	BrushObjectRadiusType(Dest)=ObjectRadiusType(Source)
+	
+	BrushObjectData10(Dest)=ObjectData10(Source)
+	
+	BrushObjectPushDX(Dest)=ObjectPushDX(Source)
+	BrushObjectPushDY(Dest)=ObjectPushDY(Source)
+
+	
+	BrushObjectAttackPower(Dest)=ObjectAttackPower(Source)
+	BrushObjectDefensePower(Dest)=ObjectDefensePower(Source)
+	BrushObjectDestructionType(Dest)=ObjectDestructionType(Source)
+	
+
+	BrushObjectID(Dest)=ObjectID(Source)
+	BrushObjectType(Dest)=ObjectType(Source)
+	BrushObjectSubType(Dest)=ObjectSubType(Source)
+	
+	BrushObjectActive(Dest)=ObjectActive(Source)
+	BrushObjectLastActive(Dest)=ObjectLastActive(Source)
+	BrushObjectActivationType(Dest)=ObjectActivationType(Source)
+	BrushObjectActivationSpeed(Dest)=ObjectActivationSpeed(Source)
+	
+	BrushObjectStatus(Dest)=ObjectStatus(Source)
+	BrushObjectTimer(Dest)=ObjectTimer(Source)
+	BrushObjectTimerMax1(Dest)=ObjectTimerMax1(Source)
+	BrushObjectTimerMax2(Dest)=ObjectTimerMax2(Source)
+	
+	BrushObjectTeleportable(Dest)=ObjectTeleportable(Source)
+	BrushObjectButtonPush(Dest)=ObjectButtonPush(Source)
+	BrushObjectWaterReact(Dest)=ObjectWaterReact(Source)
+	
+	BrushObjectTelekinesisable(Dest)=ObjectTelekinesisable(Source)
+	BrushObjectFreezable(Dest)=ObjectFreezable(Source)
+	
+	BrushObjectReactive(Dest)=ObjectReactive(Source)
+	
+	BrushObjectChild(Dest)=ObjectChild(Source)
+	BrushObjectParent(Dest)=ObjectParent(Source)
+
+	
+	For k=0 To 9
+		BrushObjectData(Dest,k)=ObjectData(Source,k)
+	Next
+	For k=0 To 3
+		BrushObjectTextData$(Dest,k)=ObjectTextData$(Source,k)
+	Next
+	
+	BrushObjectTalkable(Dest)=ObjectTalkable(Source)
+	BrushObjectCurrentAnim(Dest)=ObjectCurrentAnim(Source)
+	BrushObjectStandardAnim(Dest)=ObjectStandardAnim(Source)
+	BrushObjectTileX(Dest)=ObjectTileX(Source)
+	BrushObjectTileY(Dest)=ObjectTileY(Source)
+	BrushObjectTileX2(Dest)=ObjectTileX2(Source)
+	BrushObjectTileY2(Dest)=ObjectTileY2(Source)
+	BrushObjectMovementTimer(Dest)=ObjectMovementTimer(Source)
+	BrushObjectMovementSpeed(Dest)=ObjectMovementSpeed(Source)
+	BrushObjectMoveXGoal(Dest)=ObjectMoveXGoal(Source)
+	BrushObjectMoveYGoal(Dest)=ObjectMoveYGoal(Source)
+	BrushObjectFutureInt12(Dest)=ObjectFutureInt12(Source)
+	BrushObjectFutureInt13(Dest)=ObjectFutureInt13(Source)
+	BrushObjectCaged(Dest)=ObjectCaged(Source)
+	BrushObjectDead(Dest)=ObjectDead(Source)
+	BrushObjectDeadTimer(Dest)=ObjectDeadTimer(Source)
+	BrushObjectExclamation(Dest)=ObjectExclamation(Source)
+	BrushObjectShadow(Dest)=ObjectShadow(Source)
+	BrushObjectLinked(Dest)=ObjectLinked(Source)
+	BrushObjectLinkBack(Dest)=ObjectLinkBack(Source)
+	BrushObjectFlying(Dest)=ObjectFlying(Source)
+	BrushObjectFrozen(Dest)=ObjectFrozen(Source)
+	BrushObjectIndigo(Dest)=ObjectIndigo(Source)
+	BrushObjectFutureInt24(Dest)=ObjectFutureInt24(Source)
+	BrushObjectFutureInt25(Dest)=ObjectFutureInt25(Source)
+	BrushObjectScaleAdjust(Dest)=ObjectScaleAdjust(Source)
+	BrushObjectFutureFloat2(Dest)=ObjectFutureFloat2(Source)
+	BrushObjectFutureFloat3(Dest)=ObjectFutureFloat3(Source)
+	BrushObjectFutureFloat4(Dest)=ObjectFutureFloat4(Source)
+	BrushObjectFutureFloat5(Dest)=ObjectFutureFloat5(Source)
+	BrushObjectFutureFloat6(Dest)=ObjectFutureFloat6(Source)
+	BrushObjectFutureFloat7(Dest)=ObjectFutureFloat7(Source)
+	BrushObjectFutureFloat8(Dest)=ObjectFutureFloat8(Source)
+	BrushObjectFutureFloat9(Dest)=ObjectFutureFloat9(Source)
+	BrushObjectFutureFloat10(Dest)=ObjectFutureFloat10(Source)
+	BrushObjectFutureString1$(Dest)=ObjectFutureString1$(Source)
+	BrushObjectFutureString2$(Dest)=ObjectFutureString1$(Source)
+
 End Function
 
 
@@ -12702,7 +13066,7 @@ Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 End Function
 
 Function StartUserSelectScreen()
-	EditorMode=4
+	SetEditorMode(4)
 	
 	EditorUserNameEntered$=""
 	NofEditorUserNames=0
@@ -12844,7 +13208,7 @@ End Function
 
 Function StartAdventureSelectScreen()
 
-	EditorMode=5
+	SetEditorMode(5)
 	CameraProjMode Camera1,0
 	CameraProjMode Camera2,0
 	CameraProjMode Camera3,0
@@ -13103,7 +13467,7 @@ Function AdventureSelectScreen()
 		
 			Repeat
 			Until MouseDown(1)=0
-			EditorMode=6
+			SetEditorMode(6)
 		EndIf
 
 	EndIf
@@ -13226,18 +13590,18 @@ Function AdventureSelectScreen2()
 				DeleteDir GlobalDirName$+"\Custom\Editing\Archive\"+ex$
 				GetArchiveAdventures()
 			EndIf
-			editormode=5
+			SetEditorMode(5)
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
 		If selected=2 And AdventureCurrentArchive=0
-			editormode=7
+			SetEditorMode(7)
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
 
 		If selected=3
-			editormode=5
+			SetEditorMode(5)
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
@@ -13338,10 +13702,10 @@ Function AdventureSelectScreen3()
 			
 			Repeat
 			Until MouseDown(1)=0
-			Editormode=5
+			SetEditorMode(5)
 		EndIf
 		If selected=1
-			editormode=5
+			SetEditorMode(5)
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
@@ -13485,7 +13849,7 @@ Function DialogExists(dialognumber)
 End Function
 
 Function StartMaster()
-	EditorMode=8
+	SetEditorMode(8)
 	
 	CopyingLevel=False
 	
@@ -13580,7 +13944,7 @@ Function StartMaster()
 End Function
 
 Function StartHub()
-	EditorMode=11
+	SetEditorMode(11)
 	HubAdvStart=0
 	HubSelectedAdventure=-1
 	If FileType(globaldirname$+"\Custom\editing\Hubs\"+HubFileName$+"\hub.dat")=1
@@ -13594,7 +13958,7 @@ End Function
 
 Function ResumeMaster()
 
-	EditorMode=8
+	SetEditorMode(8)
 	
 	CopyingLevel=False
 	
@@ -14080,7 +14444,7 @@ Function MasterMainLoop()
 	
 		;new advanced mode 2019
 		If MouseY()<22 And  MouseX()>430 And MouseX()<700
-			EditorMode=10
+			SetEditorMode(10)
 			Repeat
 			Until MouseDown(1)=0 And MouseDown(2)=0
 		EndIf
@@ -14299,7 +14663,7 @@ Function MasterMainLoop()
 			DisplayText2(">       <",1,28,255,255,0)
 			WaitFlag=True
 			If hubmode
-				EditorMode=11
+				SetEditorMode(11)
 			Else
 				StartAdventureSelectScreen()
 			EndIf
@@ -14311,7 +14675,7 @@ Function MasterMainLoop()
 			WaitFlag=True
 			SaveMasterFile()
 			If hubmode
-				EditorMode=11
+				SetEditorMode(11)
 			Else
 				StartAdventureSelectScreen()
 			EndIf
@@ -14510,7 +14874,7 @@ Function MasterAdvancedLoop()
 	If MouseDown(2) mb=2
 	If mb>0
 		If MouseY()<22 And  MouseX()>540
-			EditorMode=8
+			SetEditorMode(8)
 			Repeat
 			Until MouseDown(1)=0 And MouseDown(2)=0
 		EndIf
@@ -14547,7 +14911,7 @@ Function MasterAdvancedLoop()
 			DisplayText2(">       <",1,28,255,255,0)
 			WaitFlag=True
 			If hubmode
-				EditorMode=11
+				SetEditorMode(11)
 			Else
 				StartAdventureSelectScreen()
 			EndIf
@@ -14559,7 +14923,7 @@ Function MasterAdvancedLoop()
 			WaitFlag=True
 			SaveMasterFile()
 			If hubmode
-				EditorMode=11
+				SetEditorMode(11)
 			Else
 				StartAdventureSelectScreen()
 			EndIf
@@ -14844,7 +15208,7 @@ Function HubMainLoop()
 	If MouseDown(2) mb=2
 	If mb>0
 		;If MouseY()<22 And  MouseX()>540
-		;	EditorMode=8
+		;	SetEditorMode(8)
 		;	Repeat
 		;	Until MouseDown(1)=0 And MouseDown(2)=0
 		;EndIf
@@ -14869,7 +15233,7 @@ Function HubMainLoop()
 				If HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
 					GetCurrentAdventures()
 					AdventureNameEntered$=""
-					EditorMode=12
+					SetEditorMode(12)
 				EndIf
 				Repeat
 				Until MouseDown(1)=0 
@@ -14889,7 +15253,7 @@ Function HubMainLoop()
 		; replace
 		If MouseX()>607 And MouseX()<745 And MouseY()>342 And MouseY()<362 And HubSelectedAdventure>=0
 			GetCurrentAdventures()
-			EditorMode=12
+			SetEditorMode(12)
 			Repeat
 			Until MouseDown(1)=0 
 		EndIf
@@ -15279,7 +15643,7 @@ Function HubAdventureSelectScreen()
 	If MouseDown(1)
 		If mx<130 And my>560
 			; go back to hub menu
-			EditorMode=11
+			SetEditorMode(11)
 			If HubAdventuresFilenames$(HubSelectedAdventure)=""
 				HubSelectedAdventure=-1
 			EndIf
@@ -15313,7 +15677,7 @@ Function HubAdventureSelectScreen()
 		
 			Repeat
 			Until MouseDown(1)=0
-			EditorMode=11
+			SetEditorMode(11)
 			HubAdventuresFilenames$(HubSelectedAdventure)=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
 			If HubSelectedAdventure>HubTotalAdventures
 				HubTotalAdventures=HubSelectedAdventure
@@ -15649,7 +16013,7 @@ End Function
 
 Function StartDialog()
 
-	EditorMode=9
+	SetEditorMode(9)
 	
 	CameraProjMode Camera1,0
 	CameraProjMode Camera2,0
