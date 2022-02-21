@@ -183,8 +183,32 @@ Global BrushSize=1
 Global CustomBrush=False
 
 Global RandomYawAdjust=False
+Global RandomYawAdjustMin#=0.0
+Global RandomYawAdjustMax#=360.0
 Global RandomRollAdjust=False
+Global RandomRollAdjustMin#=0.0
+Global RandomRollAdjustMax#=360.0
 Global RandomPitchAdjust=False
+Global RandomPitchAdjustMin#=0.0
+Global RandomPitchAdjustMax#=360.0
+Global RandomXScale=False
+Global RandomXScaleMin#=0.5
+Global RandomXScaleMax#=1.5
+Global RandomYScale=False
+Global RandomYScaleMin#=0.5
+Global RandomYScaleMax#=1.5
+Global RandomZScale=False
+Global RandomZScaleMin#=0.5
+Global RandomZScaleMax#=1.5
+Global RandomXAdjust=False
+Global RandomXAdjustMin#=-0.5
+Global RandomXAdjustMax#=0.5
+Global RandomYAdjust=False
+Global RandomYAdjustMin#=-0.5
+Global RandomYAdjustMax#=0.5
+Global RandomZAdjust=False
+Global RandomZAdjustMin#=-0.5
+Global RandomZAdjustMax#=0.5
 
 Dim LogicName$(14)
 LogicName$(0)="Floor"
@@ -1851,6 +1875,17 @@ Function KeyPressed(i)
 	Else
 		Return False
 	EndIf
+
+End Function
+
+
+Function ReturnPressed()
+
+	If ReturnKey=True And ReturnKeyReleased=True
+		ReturnKeyReleased=False
+		Return True
+	EndIf
+	Return False
 
 End Function
 
@@ -4929,7 +4964,6 @@ Function ShowMessageOnce(message$, milliseconds)
 End Function
 
 
-
 Function PlaceObject(x#,y#)
 
 	floorx=Floor(x)
@@ -4970,21 +5004,43 @@ Function PlaceObject(x#,y#)
 
 	ObjectModelName$(NofObjects)=CurrentObjectModelName$
 	ObjectTextureName$(NofObjects)=CurrentObjectTextureName$
+	
+	If RandomXScale
+		CurrentObjectXScale#=Rnd(RandomXScaleMin#,RandomXScaleMax#)
+	EndIf
+	If RandomYScale
+		CurrentObjectYScale#=Rnd(RandomYScaleMin#,RandomYScaleMax#)
+	EndIf
+	If RandomZScale
+		CurrentObjectZScale#=Rnd(RandomZScaleMin#,RandomZScaleMax#)
+	EndIf
+	
 	ObjectXScale#(NofObjects)=CurrentObjectXScale#
 	ObjectZScale#(NofObjects)=CurrentObjectZScale#
 	ObjectYScale#(NofObjects)=CurrentObjectYScale#
+	
+	If RandomXAdjust
+		CurrentObjectXAdjust#=Rnd(RandomXAdjustMin#,RandomXAdjustMax#)
+	EndIf
+	If RandomYAdjust
+		CurrentObjectXAdjust#=Rnd(RandomYAdjustMin#,RandomYAdjustMax#)
+	EndIf
+	If RandomZAdjust
+		CurrentObjectXAdjust#=Rnd(RandomZAdjustMin#,RandomZAdjustMax#)
+	EndIf
+	
 	ObjectXAdjust#(NofObjects)=CurrentObjectXAdjust#
 	ObjectZAdjust#(NofObjects)=CurrentObjectZAdjust#
 	ObjectYAdjust#(NofObjects)=CurrentObjectYAdjust#
 	
 	If RandomPitchAdjust
-		CurrentObjectPitchAdjust#=Rnd(0.0,360.0)
+		CurrentObjectPitchAdjust#=Rnd(RandomPitchAdjustMin,RandomPitchAdjustMax)
 	EndIf
 	If RandomYawAdjust
-		CurrentObjectYawAdjust#=Rnd(0.0,360.0)
+		CurrentObjectYawAdjust#=Rnd(RandomYawAdjustMin,RandomYawAdjustMax)
 	EndIf
 	If RandomRollAdjust
-		CurrentObjectRollAdjust#=Rnd(0.0,360.0)
+		CurrentObjectRollAdjust#=Rnd(RandomRollAdjustMin,RandomRollAdjustMax)
 	EndIf
 	
 	ObjectPitchAdjust#(NofObjects)=CurrentObjectPitchAdjust#
@@ -6288,17 +6344,35 @@ Function DisplayObjectAdjuster(i)
 	
 	Case "XAdjust"
 		tex$=Str$(CurrentObjectXAdjust)
+		CrossedOut=RandomXAdjust
+		LeftAdj$=RandomXAdjustMin
+		RightAdj$=RandomXAdjustMax
 	Case "YAdjust"
 		tex$=Str$(CurrentObjectYAdjust)
+		CrossedOut=RandomYAdjust
+		LeftAdj$=RandomYAdjustMin
+		RightAdj$=RandomYAdjustMax
 	Case "ZAdjust"
 		tex$=Str$(CurrentObjectZAdjust)
+		CrossedOut=RandomZAdjust
+		LeftAdj$=RandomZAdjustMin
+		RightAdj$=RandomZAdjustMax
 	
 	Case "XScale"
 		tex$=Str$(CurrentObjectXScale)
+		CrossedOut=RandomXScale
+		LeftAdj$=RandomXScaleMin
+		RightAdj$=RandomXScaleMax
 	Case "YScale"
 		tex$=Str$(CurrentObjectYScale)
+		CrossedOut=RandomYScale
+		LeftAdj$=RandomYScaleMin
+		RightAdj$=RandomYScaleMax
 	Case "ZScale"
 		tex$=Str$(CurrentObjectZScale)
+		CrossedOut=RandomZScale
+		LeftAdj$=RandomZScaleMin
+		RightAdj$=RandomZScaleMax
 		
 	Case "DefensePower"
 		tex$=Str$(CurrentObjectDefensePower)
@@ -6374,13 +6448,18 @@ Function DisplayObjectAdjuster(i)
 	Case "YawAdjust"
 		tex$=Str$(CurrentObjectYawAdjust)
 		CrossedOut=RandomYawAdjust
+		LeftAdj$=RandomYawAdjustMin
+		RightAdj$=RandomYawAdjustMax
 	Case "PitchAdjust"
 		tex$=Str$(CurrentObjectPitchAdjust)
 		CrossedOut=RandomPitchAdjust
+		LeftAdj$=RandomPitchAdjustMin
+		RightAdj$=RandomPitchAdjustMax
 	Case "RollAdjust"
 		tex$=Str$(CurrentObjectRollAdjust)
 		CrossedOut=RandomRollAdjust
-
+		LeftAdj$=RandomRollAdjustMin
+		RightAdj$=RandomRollAdjustMax
 	
 	Case "ID"
 		tex$=Str$(CurrentObjectID)
@@ -8066,7 +8145,7 @@ Function DisplayObjectAdjuster(i)
 	End Select	
 	
 	
-	
+	TextY=StartY+15+(i-ObjectAdjusterStart)*15
 	If CrossedOut
 		;Text StartX+8,StartY+15+(i-ObjectAdjusterStart)*15,"--------------------"
 		tex$=tex2$
@@ -8074,12 +8153,16 @@ Function DisplayObjectAdjuster(i)
 		For t=1 To Len(tex2$)
 			Dashes$=Dashes$+"-"
 		Next
-		Text StartX+92-4*Len(tex$),StartY+15+(i-ObjectAdjusterStart)*15,Dashes$
+		Text StartX+92-4*Len(tex$),TextY,Dashes$
+		;Text StartX+18-4*Len(LeftAdj$),TextY,LeftAdj$
+		;Text StartX+166-4*Len(RightAdj$),TextY,RightAdj$
+		Text StartX+2,TextY,LeftAdj$
+		Text StartX+182-8*Len(RightAdj$),TextY,RightAdj$
 	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"ObjectTextData0" And ObjectAdjuster$(i)<>"ObjectTextData1"
 		tex$=tex2$+": "+tex$
 	EndIf
 	
-	Text StartX+92-4*Len(tex$),StartY+15+(i-ObjectAdjusterStart)*15,tex$
+	Text StartX+92-4*Len(tex$),TextY,tex$
 
 End Function
 
@@ -8112,12 +8195,20 @@ Function GetMagicNameAndId$(id)
 	Return Str(id) + ". " + GetMagicName(id)
 End Function
 
+Function OnLeftHalfAdjuster()
+
+	Return MouseX()<602
+
+End Function
+
 Function InputString$(title$)
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
 	Color 255,255,255
-	Return Input$(title$)
+	Result$=Input$(title$)
+	ReturnKeyReleased=False
+	Return Result$
 End Function
 
 Function InputInt(title$)
@@ -8125,7 +8216,9 @@ Function InputInt(title$)
 	Color 0,0,0
 	Rect 0,0,500,40,True
 	Color 255,255,255
-	Return Input(title$)
+	Result=Input(title$)
+	ReturnKeyReleased=False
+	Return Result
 End Function
 
 Function InputFloat#(title$)
@@ -8133,7 +8226,9 @@ Function InputFloat#(title$)
 	Color 0,0,0
 	Rect 0,0,500,40,True
 	Color 255,255,255
-	Return Input$(title$)
+	Result$=Input$(title$)
+	ReturnKeyReleased=False
+	Return Result$
 End Function
 
 
@@ -8256,8 +8351,7 @@ Function AdjustObjectAdjuster(i)
 		If CurrentObjectYawAdjust>=360 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust-360
 		If CurrentObjectYawAdjust<0 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust+360
 		
-		If ReturnKey=True And ReturnKeyReleased=True
-			ReturnKeyReleased=False
+		If ReturnPressed()
 			RandomYawAdjust=Not RandomYawAdjust
 		EndIf
 	Case "PitchAdjust"
@@ -8266,8 +8360,7 @@ Function AdjustObjectAdjuster(i)
 		If CurrentObjectPitchAdjust>=360 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust-360
 		If CurrentObjectPitchAdjust<0 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust+360
 		
-		If ReturnKey=True And ReturnKeyReleased=True
-			ReturnKeyReleased=False
+		If ReturnPressed()
 			RandomPitchAdjust=Not RandomPitchAdjust
 		EndIf
 	Case "RollAdjust"
@@ -8276,15 +8369,25 @@ Function AdjustObjectAdjuster(i)
 		If CurrentObjectRollAdjust>=360 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust-360
 		If CurrentObjectRollAdjust<0 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust+360
 		
-		If ReturnKey=True And ReturnKeyReleased=True
-			ReturnKeyReleased=False
+		If ReturnPressed()
 			RandomRollAdjust=Not RandomRollAdjust
 		EndIf
 
 
 		
 	Case "XAdjust"
-		CurrentObjectXAdjust=AdjustFloat#("XAdjust: ", CurrentObjectXAdjust, .01, .1, 150)
+		If RandomXAdjust
+			If OnLeftHalfAdjuster()
+				RandomXAdjustMin=AdjustFloat#("XAdjust Min: ", RandomXAdjustMin, .01, .1, 150)
+			Else
+				RandomXAdjustMax=AdjustFloat#("XAdjust Max: ", RandomXAdjustMax, .01, .1, 150)
+			EndIf
+		Else
+			CurrentObjectXAdjust=AdjustFloat#("XAdjust: ", CurrentObjectXAdjust, .01, .1, 150)
+		EndIf
+		If ReturnPressed()
+			RandomXAdjust=Not RandomXAdjust
+		EndIf
 	Case "YAdjust"
 		CurrentObjectYAdjust=AdjustFloat#("YAdjust: ", CurrentObjectYAdjust, .01, .1, 150)
 	Case "ZAdjust"
