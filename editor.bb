@@ -212,6 +212,15 @@ Global RandomYAdjustMax#=0.5
 Global RandomZAdjust=False
 Global RandomZAdjustMin#=-0.5
 Global RandomZAdjustMax#=0.5
+Global RandomTimer=False
+Global RandomTimerMin=1
+Global RandomTimerMax=100
+Global RandomTimerMax1=False
+Global RandomTimerMax1Min=1
+Global RandomTimerMax1Max=100
+Global RandomTimerMax2=False
+Global RandomTimerMax2Min=1
+Global RandomTimerMax2Max=100
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -5186,9 +5195,21 @@ Function PlaceObject(x#,y#)
 	ObjectActivationType(NofObjects)=CurrentObjectActivationType
 	ObjectActivationSpeed(NofObjects)=CurrentObjectActivationSpeed
 	ObjectStatus(NofObjects)=CurrentObjectStatus
+	
+	If RandomTimer
+		CurrentObjectTimer=Rand(RandomTimerMin,RandomTimerMax)
+	EndIf
+	If RandomTimerMax1
+		CurrentObjectTimerMax1=Rand(RandomTimerMax1Min,RandomTimerMax1Max)
+	EndIf
+	If RandomTimerMax2
+		CurrentObjectTimerMax2=Rand(RandomTimerMax2Min,RandomTimerMax2Max)
+	EndIf
+	
 	ObjectTimer(NofObjects)=CurrentObjectTimer
 	ObjectTimerMax1(NofObjects)=CurrentObjectTimerMax1
 	ObjectTimerMax2(NofObjects)=CurrentObjectTimerMax2
+	
 	ObjectTeleportable(NofObjects)=CurrentObjectTeleportable
 	ObjectButtonPush(NofObjects)=CurrentObjectButtonPush
 	ObjectWaterReact(NofObjects)=CurrentObjectWaterReact
@@ -6558,10 +6579,19 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "TimerMax1"
 		tex$=Str$(CurrentObjectTimerMax1)
+		CrossedOut=RandomTimerMax1
+		LeftAdj$=RandomTimerMax1Min
+		RightAdj$=RandomTimerMax1Max
 	Case "TimerMax2"
 		tex$=Str$(CurrentObjectTimerMax2)
+		CrossedOut=RandomTimerMax2
+		LeftAdj$=RandomTimerMax2Min
+		RightAdj$=RandomTimerMax2Max
 	Case "Timer"
 		tex$=Str$(CurrentObjectTimer)
+		CrossedOut=RandomTimer
+		LeftAdj$=RandomTimerMin
+		RightAdj$=RandomTimerMax
 
 
 	Case "ObjectTextData0"
@@ -8209,11 +8239,20 @@ Function DisplayObjectAdjuster(i)
 		For t=1 To Len(tex2$)
 			Dashes$=Dashes$+"-"
 		Next
-		Text StartX+92-4*Len(tex$),TextY,Dashes$
+		
+		HalfNameWidth=4*Len(tex$)
+		
+		Text StartX+92-HalfNameWidth,TextY,Dashes$
+		
 		;Text StartX+18-4*Len(LeftAdj$),TextY,LeftAdj$
 		;Text StartX+166-4*Len(RightAdj$),TextY,RightAdj$
+		
 		Text StartX+2,TextY,LeftAdj$
 		Text StartX+182-8*Len(RightAdj$),TextY,RightAdj$
+		
+		;Text StartX+80-HalfNameWidth-8*Len(LeftAdj$),TextY,LeftAdj$
+		;Text StartX+104+HalfNameWidth,TextY,RightAdj$
+		
 	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"ObjectTextData0" And ObjectAdjuster$(i)<>"ObjectTextData1"
 		tex$=tex2$+": "+tex$
 	EndIf
@@ -8375,6 +8414,7 @@ Function AdjustObjectAdjuster(i)
 	SlowInt=1
 	FastInt=10
 	FastID=50
+	FastTimer=25
 	FastRotate=45
 	SlowFloat#=0.01
 	FastFloat#=0.1
@@ -8663,11 +8703,48 @@ Function AdjustObjectAdjuster(i)
 		;	EndIf
 		
 	Case "TimerMax1"
-		CurrentObjectTimerMax1=AdjustInt("TimerMax1: ", CurrentObjectTimerMax1, SlowInt, 25, DelayTime)
+		FastInt=FastTimer
+		If RandomTimerMax1
+			If OnLeftHalfAdjuster()
+				RandomTimerMax1Min=AdjustInt("TimerMax1 Min: ", RandomTimerMax1Min, SlowInt, FastInt, DelayTime)
+			Else
+				RandomTimerMax1Max=AdjustInt("TimerMax1 Max: ", RandomTimerMax1Max, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectTimerMax1=AdjustInt("TimerMax1: ", CurrentObjectTimerMax1, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomTimerMax1=Not RandomTimerMax1
+		EndIf
 	Case "TimerMax2"
-		CurrentObjectTimerMax2=AdjustInt("TimerMax2: ", CurrentObjectTimerMax2, SlowInt, 25, DelayTime)
+		FastInt=FastTimer
+		If RandomTimerMax2
+			If OnLeftHalfAdjuster()
+				RandomTimerMax2Min=AdjustInt("TimerMax2 Min: ", RandomTimerMax2Min, SlowInt, FastInt, DelayTime)
+			Else
+				RandomTimerMax2Max=AdjustInt("TimerMax2 Max: ", RandomTimerMax2Max, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectTimerMax2=AdjustInt("TimerMax2: ", CurrentObjectTimerMax2, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomTimerMax2=Not RandomTimerMax2
+		EndIf
 	Case "Timer"
-		CurrentObjectTimer=AdjustInt("Timer: ", CurrentObjectTimer, SlowInt, 25, DelayTime)
+		FastInt=FastTimer
+		If RandomTimer
+			If OnLeftHalfAdjuster()
+				RandomTimerMin=AdjustInt("Timer Min: ", RandomTimerMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomTimerMax=AdjustInt("Timer Max: ", RandomTimerMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectTimer=AdjustInt("Timer: ", CurrentObjectTimer, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomTimer=Not RandomTimer
+		EndIf
+		
 	Case "ButtonPush"
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
 			CurrentObjectButtonPush=1-CurrentObjectButtonPush
