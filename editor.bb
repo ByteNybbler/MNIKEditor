@@ -263,6 +263,9 @@ Global RandomDeadMax=3
 Global RandomStatus=False
 Global RandomStatusMin=0
 Global RandomStatusMax=10
+Global RandomTalkable=False
+Global RandomTalkableMin=0
+Global RandomTalkableMax=0
 Global RandomTTC=False
 Global RandomOTC=False
 Global RandomButtonPush=False
@@ -5327,7 +5330,11 @@ Function PlaceObject(x#,y#)
 	Next
 	For i=0 To 4
 		ObjectTextData$(NofObjects,i)=CurrentObjectTextData$(i)
-	Next	
+	Next
+	
+	If RandomTalkable
+		CurrentObjectTalkable=Rand(RandomTalkableMin,RandomTalkableMax)
+	EndIf
 	
 	ObjectTalkable(NofObjects)=CurrentObjectTalkable
 	ObjectCurrentAnim(NofObjects)=CurrentObjectCurrentAnim
@@ -8301,6 +8308,9 @@ Function DisplayObjectAdjuster(i)
 	Case "Talkable"
 		tex$=Str$(CurrentObjectTalkable)
 		tex2$="Dialog"
+		CrossedOut=RandomTalkable
+		LeftAdj$=RandomTalkableMin
+		RightAdj$=RandomTalkableMax
 		
 	Case "MovementType"
 		tex$=Str$(CurrentObjectMovementType)
@@ -9786,7 +9796,18 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Talkable"
-		CurrentObjectTalkable=AdjustInt("Talkable: ", CurrentObjectTalkable, 1, 10, 150)
+		If RandomTalkable
+			If OnLeftHalfAdjuster()
+				RandomTalkableMin=AdjustInt("Talkable Min: ", RandomTalkableMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomTalkableMax=AdjustInt("Talkable Max: ", RandomTalkableMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectTalkable=AdjustInt("Talkable: ", CurrentObjectTalkable, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomTalkable=Not RandomTalkable
+		EndIf
 		
 		;If CurrentObjectTalkable<0 CurrentObjectTalkable=0
 		;If  CurrentObjectModelName$="!Sign" And CurrentObjectTalkable<10001 CurrentObjectTalkable=10001
