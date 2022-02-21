@@ -248,6 +248,9 @@ Global RandomActivationSpeedMax=40
 Global RandomDefensePower=False
 Global RandomDefensePowerMin=0
 Global RandomDefensePowerMax=33
+Global RandomExclamation=False
+Global RandomExclamationMin=0
+Global RandomExclamationMax=99
 Global RandomTTC=False
 Global RandomOTC=False
 Global RandomButtonPush
@@ -5347,7 +5350,13 @@ Function PlaceObject(x#,y#)
 	ObjectCaged(NofObjects)=CurrentObjectCaged
 	ObjectDead(NofObjects)=CurrentObjectDead
 	ObjectDeadTimer(NofObjects)=CurrentObjectDeadTimer
+	
+	If RandomExclamation
+		CurrentObjectExclamation=Rand(RandomExclamationMin,RandomExclamationMax)
+	EndIf
+	
 	ObjectExclamation(NofObjects)=CurrentObjectExclamation
+	
 	ObjectShadow(NofObjects)=CurrentObjectShadow
 	ObjectLinked(NofObjects)=CurrentObjectLinked
 	ObjectLinkBack(NofObjects)=CurrentObjectLinkBack
@@ -8297,6 +8306,9 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=RandomScaleAdjustMax
 	Case "Exclamation"
 		tex$=Str$(CurrentObjectExclamation)
+		CrossedOut=RandomExclamation
+		LeftAdj$=RandomExclamationMin
+		RightAdj$=RandomExclamationMax
 		
 	Case "Linked"
 		tex$=Str$(CurrentObjectLinked)
@@ -9817,7 +9829,18 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 	Case "Exclamation"
-		CurrentObjectExclamation=AdjustInt("Exclamation: ", CurrentObjectExclamation, 1, 10, 150)
+		If RandomExclamation
+			If OnLeftHalfAdjuster()
+				RandomExclamationMin=AdjustInt("Exclamation Min: ", RandomExclamationMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomExclamationMax=AdjustInt("Exclamation Max: ", RandomExclamationMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectExclamation=AdjustInt("Exclamation: ", CurrentObjectExclamation, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomExclamation=Not RandomExclamation
+		EndIf
 	
 	Case "Linked"
 		CurrentObjectLinked=AdjustInt("Linked: ", CurrentObjectLinked, 1, 10, 150)
