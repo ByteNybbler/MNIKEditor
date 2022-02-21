@@ -3957,22 +3957,25 @@ Function EditorLocalControls()
 				Confirm$=InputString$("Do you want to set Xtrude logics? Type Y to confirm: ")
 				If Confirm="Y" Or Confirm="y"
 					Prompt$=InputString$("Enter logic for Xtrude < 0 (leave blank for water): ")
-					If Prompt$=""
+					Logic=LogicNameToLogicId(Prompt$)
+					If Logic=-1
 						LessThanZero=2
 					Else
-						LessThanZero=2
+						LessThanZero=Logic
 					EndIf
 					Prompt$=InputString$("Enter logic for Xtrude == 0 (leave blank for floor): ")
-					If Prompt$=""
+					Logic=LogicNameToLogicId(Prompt$)
+					If Logic=-1
 						EqualToZero=0
 					Else
-						EqualToZero=0
+						EqualToZero=Logic
 					EndIf
 					Prompt$=InputString$("Enter logic for Xtrude > 0 (leave blank for wall): ")
-					If Prompt$=""
+					Logic=LogicNameToLogicId(Prompt$)
+					If Logic=-1
 						GreaterThanZero=1
 					Else
-						GreaterThanZero=1
+						GreaterThanZero=Logic
 					EndIf
 					SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
 				EndIf
@@ -4050,6 +4053,19 @@ Function ShiftDown()
 
 End Function
 
+
+; returns -1 if no matching name is found
+Function LogicNameToLogicId(Name$)
+
+	For i=0 To 14
+		If Upper$(LogicName$(i))=Upper$(Name$)
+			Return i
+		EndIf
+	Next
+	
+	Return -1
+
+End Function
 
 
 Function LevelTileLogicHasVisuals(i,j)
