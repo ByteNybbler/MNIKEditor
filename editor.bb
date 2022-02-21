@@ -251,6 +251,12 @@ Global RandomDefensePowerMax=33
 Global RandomExclamation=False
 Global RandomExclamationMin=0
 Global RandomExclamationMax=99
+Global RandomMoveXGoal=False
+Global RandomMoveXGoalMin=0
+Global RandomMoveXGoalMax=39
+Global RandomMoveYGoal=False
+Global RandomMoveYGoalMin=0
+Global RandomMoveYGoalMax=39
 Global RandomTTC=False
 Global RandomOTC=False
 Global RandomButtonPush
@@ -5324,6 +5330,13 @@ Function PlaceObject(x#,y#)
 	
 	ObjectMovementSpeed(NofObjects)=CurrentObjectMovementSpeed
 	
+	If RandomMoveXGoal
+		CurrentObjectMoveXGoal=Rand(RandomMoveXGoalMin,RandomMoveXGoalMax)
+	EndIf
+	If RandomMoveYGoal
+		CurrentObjectMoveYGoal=Rand(RandomMoveYGoalMin,RandomMoveYGoalMax)
+	EndIf
+	
 	ObjectMoveXGoal(NofObjects)=CurrentObjectMoveXGoal
 	ObjectMoveYGoal(NofObjects)=CurrentObjectMoveYGoal
 	
@@ -8311,9 +8324,21 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=RandomExclamationMax
 		
 	Case "Linked"
-		tex$=Str$(CurrentObjectLinked)
+		If CurrentObjectLinked=-1
+			tex$="None"
+		ElseIf CurrentObjectLinked=-2
+			tex$="Pla"
+		Else
+			tex$=Str$(CurrentObjectLinked)
+		EndIf
 	Case "LinkBack"
-		tex$=Str$(CurrentObjectLinkBack)
+		If CurrentObjectLinkBack=-1
+			tex$="None"
+		ElseIf CurrentObjectLinkBack=-2
+			tex$="Pla"
+		Else
+			tex$=Str$(CurrentObjectLinkBack)
+		EndIf
 	
 	Case "Parent"
 		tex$=Str$(CurrentObjectParent)
@@ -8329,8 +8354,14 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "MoveXGoal"
 		tex$=Str$(CurrentObjectMoveXGoal)
+		CrossedOut=RandomMoveXGoal
+		LeftAdj$=RandomMoveXGoalMin
+		RightAdj$=RandomMoveXGoalMax
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObjectMoveYGoal)
+		CrossedOut=RandomMoveYGoal
+		LeftAdj$=RandomMoveYGoalMin
+		RightAdj$=RandomMoveYGoalMax
 		
 	Case "Data10"
 		tex$=Str$(CurrentObjectData10)
@@ -9860,9 +9891,31 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectDZ=AdjustFloat#("DZ: ", CurrentObjectDZ, 0.01, 0.1, 150)
 		
 	Case "MoveXGoal"
-		CurrentObjectMoveXGoal=AdjustInt("MoveXGoal: ", CurrentObjectMoveXGoal, 1, 10, 150)
+		If RandomMoveXGoal
+			If OnLeftHalfAdjuster()
+				RandomMoveXGoalMin=AdjustInt("MoveXGoal Min: ", RandomMoveXGoalMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomMoveXGoalMax=AdjustInt("MoveXGoal Max: ", RandomMoveXGoalMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectMoveXGoal=AdjustInt("MoveXGoal: ", CurrentObjectMoveXGoal, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomMoveXGoal=Not RandomMoveXGoal
+		EndIf
 	Case "MoveYGoal"
-		CurrentObjectMoveYGoal=AdjustInt("MoveYGoal: ", CurrentObjectMoveYGoal, 1, 10, 150)
+		If RandomMoveYGoal
+			If OnLeftHalfAdjuster()
+				RandomMoveYGoalMin=AdjustInt("MoveYGoal Min: ", RandomMoveYGoalMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomMoveYGoalMax=AdjustInt("MoveYGoal Max: ", RandomMoveYGoalMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectMoveYGoal=AdjustInt("MoveYGoal: ", CurrentObjectMoveYGoal, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomMoveYGoal=Not RandomMoveYGoal
+		EndIf
 		
 	Case "Data10"
 		CurrentObjectData10=AdjustInt("Data10: ", CurrentObjectData10, 1, 10, 150)
