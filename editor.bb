@@ -257,10 +257,13 @@ Global RandomMoveXGoalMax=39
 Global RandomMoveYGoal=False
 Global RandomMoveYGoalMin=0
 Global RandomMoveYGoalMax=39
+Global RandomDead=False
+Global RandomDeadMin=0
+Global RandomDeadMax=3
 Global RandomTTC=False
 Global RandomOTC=False
-Global RandomButtonPush
-Global RandomTeleportable
+Global RandomButtonPush=False
+Global RandomTeleportable=False
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -5361,6 +5364,11 @@ Function PlaceObject(x#,y#)
 	ObjectObjectTypeCollision(NofObjects)=CurrentObjectObjectTypeCollision
 	
 	ObjectCaged(NofObjects)=CurrentObjectCaged
+	
+	If RandomDead
+		CurrentObjectDead=Rand(RandomDeadMin,RandomDeadMax)
+	EndIf
+	
 	ObjectDead(NofObjects)=CurrentObjectDead
 	ObjectDeadTimer(NofObjects)=CurrentObjectDeadTimer
 	
@@ -8377,6 +8385,9 @@ Function DisplayObjectAdjuster(i)
 			Case 3
 				tex$="Sinking"
 		End Select
+		CrossedOut=RandomDead
+		LeftAdj$=RandomDeadMin
+		RightAdj$=RandomDeadMax
 		
 	Case "DeadTimer"
 		tex$=Str$(CurrentObjectDeadTimer)
@@ -9923,7 +9934,18 @@ Function AdjustObjectAdjuster(i)
 	Case "Caged"
 		CurrentObjectCaged=AdjustInt("Caged: ", CurrentObjectCaged, 1, 10, 150)
 	Case "Dead"
-		CurrentObjectDead=AdjustInt("Dead: ", CurrentObjectDead, 1, 10, 150)
+		If RandomDead
+			If OnLeftHalfAdjuster()
+				RandomDeadMin=AdjustInt("Dead Min: ", RandomDeadMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomDeadMax=AdjustInt("Dead Max: ", RandomDeadMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectDead=AdjustInt("Dead: ", CurrentObjectDead, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomDead=Not RandomDead
+		EndIf
 	Case "DeadTimer"
 		CurrentObjectDeadTimer=AdjustInt("DeadTimer: ", CurrentObjectDeadTimer, 1, 25, 150)
 	Case "MovementTimer"
