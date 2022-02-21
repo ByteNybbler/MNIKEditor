@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (02/21/22)"
+Global VersionText$="WA Editor     MNIKSource v10.04 (02/21/22 B)"
 
 Global MASTERUSER=True
 
@@ -30,6 +30,8 @@ Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						;5,6,7-adventure select screen (6="edit/delete/move/cancel",7="delete sure?")
 						;8-master edit screen
 						;9-dialog edit screen
+						
+Global EditorModeBeforeMasterEdit=0
 						
 						
 ; EDITOR DIALOG DATA
@@ -181,6 +183,7 @@ Global CurrentGrabbedObject=-1
 Global CurrentGrabbedObjectModified=False
 Global BrushSize=1
 Global CustomBrush=False
+Global CustomBrushEditorMode=-1
 
 Global RandomYawAdjust=False
 Global RandomYawAdjustMin#=0.0
@@ -1642,7 +1645,7 @@ End
 
 Function StartEditorMainLoop()
 	Cls
-	SetEditorMode(0)
+	SetEditorMode(EditorModeBeforeMasterEdit)
 	
 	CameraProjMode Camera1,1
 	CameraProjMode Camera2,1
@@ -1914,9 +1917,16 @@ End Function
 
 
 Function SetEditorMode(NewMode)
-
+	
+	If NewMode=8 And (EditorMode=0 Or EditorMode=3)
+		EditorModeBeforeMasterEdit=EditorMode
+	EndIf
+		
+	If (NewMode=0 Or NewMode=3) And NewMode<>CustomBrushEditorMode
+		CustomBrush=False
+	EndIf
+	
 	EditorMode=NewMode
-	CustomBrush=False
 
 End Function
 
@@ -2357,6 +2367,7 @@ Function EditorLocalControls()
 				Else
 					; set custom brush
 					CustomBrush=True
+					CustomBrushEditorMode=EditorMode
 					NofBrushObjects=0
 					BrushOffset=BrushSize/2
 					BrushXStart=x-BrushOffset
