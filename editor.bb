@@ -221,6 +221,27 @@ Global RandomTimerMax1Max=100
 Global RandomTimerMax2=False
 Global RandomTimerMax2Min=1
 Global RandomTimerMax2Max=100
+Global RandomID=False
+Global RandomIDMin=100
+Global RandomIDMax=200
+Global RandomMovementSpeed=False
+Global RandomMovementSpeedMin=10
+Global RandomMovementSpeedMax=40
+Global RandomMovementType=False
+Global RandomMovementTypeMin=41
+Global RandomMovementTypeMax=48
+Global RandomType=False
+Global RandomTypeMin=170
+Global RandomTypeMax=173
+Global RandomSubType=False
+Global RandomSubTypeMin=0
+Global RandomSubTypeMax=8
+Global RandomActive=False
+Global RandomActiveMin=0
+Global RandomActiveMax=1001
+Global RandomActivationType=False
+Global RandomActivationTypeMin=12
+Global RandomActivationTypeMax=16
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -5176,8 +5197,14 @@ Function PlaceObject(x#,y#)
 	ObjectXGoal#(NofObjects)=CurrentObjectXGoal#
 	ObjectYGoal#(NofObjects)=CurrentObjectYGoal#
 	ObjectZGoal#(NofObjects)=CurrentObjectZGoal#
+	
+	If RandomMovementType
+		CurrentObjectMovementType=Rand(RandomMovementTypeMin,RandomMovementTypeMax)
+	EndIf
+	
 	ObjectMovementType(NofObjects)=CurrentObjectMovementType
 	ObjectMovementTypeData(NofObjects)=CurrentObjectMovementTypeData
+	
 	ObjectSpeed#(NofObjects)=CurrentObjectSpeed#
 	ObjectRadius#(NofObjects)=CurrentObjectRadius#
 	ObjectRadiusType(NofObjects)=CurrentObjectRadiusType
@@ -5187,11 +5214,34 @@ Function PlaceObject(x#,y#)
 	ObjectAttackPower(NofObjects)=CurrentObjectAttackPower
 	ObjectDefensePower(NofObjects)=CurrentObjectDefensePower
 	ObjectDestructionType(NofObjects)=CurrentObjectDestructionType
+	
+	If RandomID
+		CurrentObjectID=Rand(RandomIDMin,RandomIDMax)
+	EndIf
+	
 	ObjectID(NofObjects)=CurrentObjectID
+	
+	If RandomType
+		CurrentObjectType=Rand(RandomTypeMin,RandomTypeMax)
+	EndIf
+	If RandomSubType
+		CurrentObjectSubType=Rand(RandomSubTypeMin,RandomSubTypeMax)
+	EndIf
+	
 	ObjectType(NofObjects)=CurrentObjectType
 	ObjectSubType(NofObjects)=CurrentObjectSubType
+	
+	If RandomActive
+		CurrentObjectActive=Rand(RandomActiveMin,RandomActiveMax)
+	EndIf
+	
 	ObjectActive(NofObjects)=CurrentObjectActive
 	ObjectLastActive(NofObjects)=CurrentObjectLastActive
+	
+	If RandomActivationType
+		CurrentObjectActivationType=Rand(RandomActivationTypeMin,RandomActivationTypeMax)
+	EndIf
+	
 	ObjectActivationType(NofObjects)=CurrentObjectActivationType
 	ObjectActivationSpeed(NofObjects)=CurrentObjectActivationSpeed
 	ObjectStatus(NofObjects)=CurrentObjectStatus
@@ -5234,7 +5284,13 @@ Function PlaceObject(x#,y#)
 	ObjectStandardAnim(NofObjects)=CurrentObjectStandardAnim
 	
 	ObjectMovementTimer(NofObjects)=CurrentObjectMovementTimer
+	
+	If RandomMovementSpeed
+		CurrentObjectMovementSpeed=Rand(RandomMovementSpeedMin,RandomMovementSpeedMax)
+	EndIf
+	
 	ObjectMovementSpeed(NofObjects)=CurrentObjectMovementSpeed
+	
 	ObjectMoveXGoal(NofObjects)=CurrentObjectMoveXGoal
 	ObjectMoveYGoal(NofObjects)=CurrentObjectMoveYGoal
 	ObjectFutureInt12(NofObjects)=CurrentObjectFutureInt12
@@ -6501,10 +6557,20 @@ Function DisplayObjectAdjuster(i)
 	
 	Case "ID"
 		tex$=Str$(CurrentObjectID)
+		CrossedOut=RandomID
+		LeftAdj$=RandomIDMin
+		RightAdj$=RandomIDMax
 	Case "Type"
 		tex$=Str$(CurrentObjectType)
+		CrossedOut=RandomType
+		LeftAdj$=RandomTypeMin
+		RightAdj$=RandomTypeMax
 	Case "SubType"
 		tex$=Str$(CurrentObjectSubType)
+		CrossedOut=RandomSubType
+		LeftAdj$=RandomSubTypeMin
+		RightAdj$=RandomSubTypeMax
+		
 		If CurrentObjectModelName$="!CustomItem"
 			tex2$="Fn"
 			If CurrentObjectSubType>=0
@@ -6614,6 +6680,9 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$="Soon Yes ("+CurrentObjectActive+")"
 		EndIf
+		CrossedOut=RandomActive
+		LeftAdj$=RandomActiveMin
+		RightAdj$=RandomActiveMax
 		
 	Case "ActivationSpeed"
 		tex$=Str$(CurrentObjectActivationSpeed)
@@ -6653,6 +6722,9 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObjectActivationType)
 		EndIf
+		CrossedOut=RandomActivationType
+		LeftAdj$=RandomActivationTypeMin
+		RightAdj$=RandomActivationTypeMax
 
 
 
@@ -8131,10 +8203,16 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "MovementType"
 		tex$=Str$(CurrentObjectMovementType)
+		CrossedOut=RandomMovementType
+		LeftAdj$=RandomMovementTypeMin
+		RightAdj$=RandomMovementTypeMax
 	Case "MovementTypeData"
 		tex$=Str$(CurrentObjectMovementTypeData)
 	Case "MovementSpeed"
 		tex$=Str$(CurrentObjectMovementSpeed)
+		CrossedOut=RandomMovementSpeed
+		LeftAdj$=RandomMovementSpeedMin
+		RightAdj$=RandomMovementSpeedMax
 		
 	Case "TileTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObjectFutureInt12)
@@ -8613,11 +8691,46 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "ID"
-		CurrentObjectID=AdjustInt("ID: ", CurrentObjectID, SlowInt, FastID, DelayTime)
+		FastInt=FastID
+		If RandomID
+			If OnLeftHalfAdjuster()
+				RandomIDMin=AdjustInt("ID Min: ", RandomIDMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomIDMax=AdjustInt("ID Max: ", RandomIDMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectID=AdjustInt("ID: ", CurrentObjectID, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomID=Not RandomID
+		EndIf
+
 	Case "Type"
-		CurrentObjectType=AdjustInt("Type: ", CurrentObjectType, SlowInt, FastInt, DelayTime)
+		If RandomType
+			If OnLeftHalfAdjuster()
+				RandomTypeMin=AdjustInt("Type Min: ", RandomTypeMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomTypeMax=AdjustInt("Type Max: ", RandomTypeMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectType=AdjustInt("Type: ", CurrentObjectType, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomType=Not RandomType
+		EndIf
 	Case "SubType"
-		CurrentObjectSubType=AdjustInt("SubType: ", CurrentObjectSubType, SlowInt, Fast, DelayTime)
+		If RandomSubType
+			If OnLeftHalfAdjuster()
+				RandomSubTypeMin=AdjustInt("SubType Min: ", RandomSubTypeMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomSubTypeMax=AdjustInt("SubType Max: ", RandomSubTypeMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectSubType=AdjustInt("SubType: ", CurrentObjectSubType, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomSubType=Not RandomSubType
+		EndIf
 				
 		If CurrentObjectModelName$="!CustomItem"
 			If CurrentObjectSubType<-6
@@ -8646,22 +8759,44 @@ Function AdjustObjectAdjuster(i)
 		
 
 	Case "Active"
-		If RawInput=True
-			CurrentObjectActive=InputInt("Active: ")
-		Else
-			If CurrentObjectActive=0
-				CurrentObjectActive=1001
+		If RandomActive
+			If OnLeftHalfAdjuster()
+				RandomActiveMin=AdjustInt("Active Min: ", RandomActiveMin, SlowInt, FastInt, DelayTime)
 			Else
-				CurrentObjectActive=0
+				RandomActiveMax=AdjustInt("Active Max: ", RandomActiveMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		ElseIf ReturnKey=False
+			If RawInput=True
+				CurrentObjectActive=InputInt("Active: ")
+			Else
+				If CurrentObjectActive=0
+					CurrentObjectActive=1001
+				Else
+					CurrentObjectActive=0
+				EndIf
+			EndIf
+			If MouseScroll=0
+				Delay DelayTime
 			EndIf
 		EndIf
-		If MouseScroll=0
-			Delay 300
+		If ReturnPressed()
+			RandomActive=Not RandomActive
 		EndIf
 	Case "ActivationSpeed"
 		CurrentObjectActivationSpeed=AdjustInt("ActivationSpeed: ", CurrentObjectActivationSpeed, 2, 20, DelayTime)
 	Case "ActivationType"
-		CurrentObjectActivationType=AdjustInt("ActivationType: ", CurrentObjectActivationType, SlowInt, FastInt, DelayTime)
+		If RandomActivationType
+			If OnLeftHalfAdjuster()
+				RandomActivationTypeMin=AdjustInt("ActivationType Min: ", RandomActivationTypeMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomActivationTypeMax=AdjustInt("ActivationType Max: ", RandomActivationTypeMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectActivationType=AdjustInt("ActivationType: ", CurrentObjectActivationType, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomActivationType=Not RandomActivationType
+		EndIf
 			
 		;If CurrentObjectModelName$="!SteppingStone"
 		;	If LeftMouse=True Or RightMouse=True
@@ -9491,10 +9626,32 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "MovementSpeed"
-		CurrentObjectMovementSpeed=AdjustInt("MovementSpeed: ", CurrentObjectMovementSpeed, 1, 10, 150)
+		If RandomMovementSpeed
+			If OnLeftHalfAdjuster()
+				RandomMovementSpeedMin=AdjustInt("MovementSpeed Min: ", RandomMovementSpeedMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomMovementSpeedMax=AdjustInt("MovementSpeed Max: ", RandomMovementSpeedMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectMovementSpeed=AdjustInt("MovementSpeed: ", CurrentObjectMovementSpeed, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomMovementSpeed=Not RandomMovementSpeed
+		EndIf
 		
 	Case "MovementType"
-		CurrentObjectMovementType=AdjustInt("MovementType: ", CurrentObjectMovementType, 1, 10, 150)
+		If RandomMovementType
+			If OnLeftHalfAdjuster()
+				RandomMovementTypeMin=AdjustInt("MovementType Min: ", RandomMovementTypeMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomMovementTypeMax=AdjustInt("MovementType Max: ", RandomMovementTypeMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectMovementType=AdjustInt("MovementType: ", CurrentObjectMovementType, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomMovementType=Not RandomMovementType
+		EndIf
 		
 	Case "MovementTypeData"
 		CurrentObjectMovementTypeData=AdjustInt("MovementTypeData: ", CurrentObjectMovementTypeData, 1, 10, 150)
