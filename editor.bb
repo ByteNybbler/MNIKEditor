@@ -284,6 +284,22 @@ Dim CopyWaterTileTurbulence#(100,100)
 Dim LevelTileVisited(100,100) ; for use in the flood fill algorithm
 Dim LevelTileObjectCount(100,100) ; for changing the marker color when there's more than one object present
 
+Dim BrushLevelTileTexture(100,100) ; corresponding to squares in LevelTexture
+Dim BrushLevelTileRotation(100,100) ; 0-3 , and 4-7 for "flipped"
+Dim BrushLevelTileSideTexture(100,100) ; texture for extrusion walls
+Dim BrushLevelTileSideRotation(100,100) ; 0-3 , and 4-7 for "flipped"
+Dim BrushLevelTileRandom#(100,100) ; random height pertubation of tile
+Dim BrushLevelTileHeight#(100,100) ; height of "center" - e.g. to make ditches and hills
+Dim BrushLevelTileExtrusion#(100,100); extrusion with walls around it 
+Dim BrushLevelTileRounding(100,100); 0-no, 1-yes: are floors rounded if on a drop-off corner
+Dim BrushLevelTileEdgeRandom(100,100); 0-no, 1-yes: are edges rippled
+Dim BrushLevelTileLogic(100,100)
+
+Dim BrushWaterTileTexture(100,100)
+Dim BrushWaterTileRotation(100,100)
+Dim BrushWaterTileHeight#(100,100)
+Dim BrushWaterTileTurbulence#(100,100)
+
 Global ChunkTileU#,ChunkTileV#
 
 Global CurrentMesh,CurrentSurface
@@ -2102,7 +2118,15 @@ Function EditorLocalControls()
 						; default
 						If CustomBrush
 							If EditorMode=0
-								; TODO
+								BrushOffset=BrushSize/2
+								BrushXStart=x-BrushOffset
+								BrushYStart=y-BrushOffset
+								For i=0 To BrushSize-1
+									For j=0 To BrushSize-1
+										GrabLevelTileFromBrush(i,j)
+										ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
+									Next
+								Next
 							ElseIf EditorMode=3
 								For k=0 To NofBrushObjects-1
 									GrabObjectFromBrush(k)
@@ -2237,18 +2261,17 @@ Function EditorLocalControls()
 				Else
 					; set custom brush
 					CustomBrush=True
+					NofBrushObjects=0
 					BrushOffset=BrushSize/2
 					BrushXStart=x-BrushOffset
 					BrushYStart=y-BrushOffset
 					If EditorMode=0
-						NofBrushObjects=0
 						For i=0 To BrushSize-1
 							For j=0 To BrushSize-1
-								; TODO
+								CopyLevelTileToBrush(BrushXStart+i,BrushYStart+j,i,j)
 							Next
 						Next
 					ElseIf EditorMode=3
-						NofBrushObjects=0
 						For k=0 To NofObjects-1
 							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushSize And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushSize
 								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-x,ObjectY(k)-y)
@@ -4291,6 +4314,17 @@ Function BuildLevelModel()
 End Function
 
 Function ChangeLevelTile(i,j,update)
+
+	If i<0
+		Return
+	ElseIf i>LevelWidth-1
+		Return
+	EndIf
+	If j<0
+		Return
+	ElseIf j>LevelHeight-1
+		Return
+	EndIf
 	
 	
 	; The Tile
@@ -4353,6 +4387,17 @@ Function ChangeLevelTile(i,j,update)
 End Function
 
 Function GrabLevelTile(i,j)
+
+	If i<0
+		i=0
+	ElseIf i>LevelWidth-1
+		i=LevelWidth-1
+	EndIf
+	If j<0
+		j=0
+	ElseIf j>LevelHeight-1
+		j=LevelHeight-1
+	EndIf
 	
 	CurrentTileTexture=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
 	CurrentTileRotation=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
@@ -4379,6 +4424,78 @@ Function GrabLevelTile(i,j)
 
 
 	BuildCurrentTileModel()
+
+End Function
+
+Function GrabLevelTileFromBrush(i,j)
+
+	If i<0
+		i=0
+	ElseIf i>LevelWidth-1
+		i=LevelWidth-1
+	EndIf
+	If j<0
+		j=0
+	ElseIf j>LevelHeight-1
+		j=LevelHeight-1
+	EndIf
+	
+	CurrentTileTexture=BrushLevelTileTexture(i,j) ; corresponding to squares in LevelTexture
+	CurrentTileRotation=BrushLevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+	CurrentTileSideTexture=BrushLevelTileSideTexture(i,j) ; texture for extrusion walls
+	CurrentTileSideRotation=BrushLevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+	CurrentTileRandom=BrushLevelTileRandom#(i,j) ; random height pertubation of tile
+	CurrentTileHeight=BrushLevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
+	CurrentTileExtrusion=BrushLevelTileExtrusion#(i,j); extrusion with walls around it 
+	CurrentTileRounding=BrushLevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
+	CurrentTileEdgeRandom=BrushLevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
+	CurrentTileLogic=BrushLevelTileLogic(i,j)
+	
+	CurrentTileRandom2=CurrentTileRandom*1000
+	CurrentTileHeight2=CurrentTileHeight*100
+	CurrentTileExtrusion2=CurrentTileExtrusion*100
+	CurrentTileLogic2=CurrentTileLogic*10
+	
+	CurrentWaterTileTexture=BrushWaterTileTexture(i,j)
+	CurrentWaterTileRotation=BrushWaterTileRotation(i,j)
+	CurrentWaterTileHeight=BrushWaterTileHeight(i,j)
+	CurrentWaterTileTurbulence=BrushWaterTileTurbulence(i,j)
+	CurrentWaterTileHeight2=CurrentWaterTileHeight*100
+	CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
+
+
+	BuildCurrentTileModel()
+
+End Function
+
+Function CopyLevelTileToBrush(i,j,iDest,jDest)
+
+	If i<0
+		i=0
+	ElseIf i>LevelWidth-1
+		i=LevelWidth-1
+	EndIf
+	If j<0
+		j=0
+	ElseIf j>LevelHeight-1
+		j=LevelHeight-1
+	EndIf
+	
+	BrushLevelTileTexture(iDest,jDest)=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
+	BrushLevelTileRotation(iDest,jDest)=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+	BrushLevelTileSideTexture(iDest,jDest)=LevelTileSideTexture(i,j) ; texture for extrusion walls
+	BrushLevelTileSideRotation(iDest,jDest)=LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+	BrushLevelTileRandom(iDest,jDest)=LevelTileRandom#(i,j) ; random height pertubation of tile
+	BrushLevelTileHeight(iDest,jDest)=LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
+	BrushLevelTileExtrusion(iDest,jDest)=LevelTileExtrusion#(i,j); extrusion with walls around it 
+	BrushLevelTileRounding(iDest,jDest)=LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
+	BrushLevelTileEdgeRandom(iDest,jDest)=LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
+	BrushLevelTileLogic(iDest,jDest)=LevelTileLogic(i,j)
+	
+	BrushWaterTileTexture(iDest,jDest)=WaterTileTexture(i,j)
+	BrushWaterTileRotation(iDest,jDest)=WaterTileRotation(i,j)
+	BrushWaterTileHeight(iDest,jDest)=WaterTileHeight(i,j)
+	BrushWaterTileTurbulence(iDest,jDest)=WaterTileTurbulence(i,j)
 
 End Function
 
