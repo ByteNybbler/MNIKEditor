@@ -242,6 +242,9 @@ Global RandomActiveMax=1001
 Global RandomActivationType=False
 Global RandomActivationTypeMin=12
 Global RandomActivationTypeMax=16
+Global RandomActivationSpeed=False
+Global RandomActivationSpeedMin=2
+Global RandomActivationSpeedMax=40
 Global RandomTTC=False
 Global RandomOTC=False
 Global RandomButtonPush
@@ -5245,6 +5248,13 @@ Function PlaceObject(x#,y#)
 	If RandomActivationType
 		CurrentObjectActivationType=Rand(RandomActivationTypeMin,RandomActivationTypeMax)
 	EndIf
+	If RandomActivationSpeed
+		CurrentObjectActivationSpeed=Rand(RandomActivationSpeedMin,RandomActivationSpeedMax)
+		; enforce even numbers
+		If CurrentObjectActivationSpeed Mod 2=1
+			CurrentObjectActivationSpeed=CurrentObjectActivationSpeed+1
+		EndIf
+	EndIf
 	
 	ObjectActivationType(NofObjects)=CurrentObjectActivationType
 	ObjectActivationSpeed(NofObjects)=CurrentObjectActivationSpeed
@@ -6717,6 +6727,10 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "ActivationSpeed"
 		tex$=Str$(CurrentObjectActivationSpeed)
+		CrossedOut=RandomActivationSpeed
+		LeftAdj$=RandomActivationSpeedMin
+		RightAdj$=RandomActivationSpeedMax
+		
 	Case "ActivationType"
 		If CurrentObjectActivationType=1
 			tex$="GrowZ"
@@ -8826,7 +8840,20 @@ Function AdjustObjectAdjuster(i)
 			RandomActive=Not RandomActive
 		EndIf
 	Case "ActivationSpeed"
-		CurrentObjectActivationSpeed=AdjustInt("ActivationSpeed: ", CurrentObjectActivationSpeed, 2, 20, DelayTime)
+		SlowInt=SlowInt*2
+		FastInt=FastInt*2
+		If RandomActivationSpeed
+			If OnLeftHalfAdjuster()
+				RandomActivationSpeedMin=AdjustInt("ActivationSpeed Min: ", RandomActivationSpeedMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomActivationSpeedMax=AdjustInt("ActivationSpeed Max: ", RandomActivationSpeedMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectActivationSpeed=AdjustInt("ActivationSpeed: ", CurrentObjectActivationSpeed, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomActivationSpeed=Not RandomActivationSpeed
+		EndIf
 	Case "ActivationType"
 		If RandomActivationType
 			If OnLeftHalfAdjuster()
