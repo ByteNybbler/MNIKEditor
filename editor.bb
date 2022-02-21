@@ -8049,17 +8049,21 @@ Function DisplayObjectAdjuster(i)
 	
 	End Select	
 	
-	If tex2$<>"" And ObjectAdjuster$(i)<>"ObjectTextData0" And ObjectAdjuster$(i)<>"ObjectTextData1"
-
+	
+	
+	If CrossedOut
+		;Text StartX+8,StartY+15+(i-ObjectAdjusterStart)*15,"--------------------"
+		tex$=tex2$
+		Dashes$=""
+		For t=1 To Len(tex2$)
+			Dashes$=Dashes$+"-"
+		Next
+		Text StartX+92-4*Len(tex$),StartY+15+(i-ObjectAdjusterStart)*15,Dashes$
+	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"ObjectTextData0" And ObjectAdjuster$(i)<>"ObjectTextData1"
 		tex$=tex2$+": "+tex$
 	EndIf
 	
-	
 	Text StartX+92-4*Len(tex$),StartY+15+(i-ObjectAdjusterStart)*15,tex$
-	
-	If CrossedOut
-		Text StartX+8,StartY+15+(i-ObjectAdjusterStart)*15,"--------------------"
-	EndIf
 
 End Function
 
