@@ -245,6 +245,9 @@ Global RandomActivationTypeMax=16
 Global RandomActivationSpeed=False
 Global RandomActivationSpeedMin=2
 Global RandomActivationSpeedMax=40
+Global RandomDefensePower=False
+Global RandomDefensePowerMin=0
+Global RandomDefensePowerMax=33
 Global RandomTTC=False
 Global RandomOTC=False
 Global RandomButtonPush
@@ -5219,6 +5222,11 @@ Function PlaceObject(x#,y#)
 	ObjectPushDX#(NofObjects)=CurrentObjectPushDX#
 	ObjectPushDY#(NofObjects)=CurrentObjectPushDY#
 	ObjectAttackPower(NofObjects)=CurrentObjectAttackPower
+	
+	If RandomDefensePower
+		CurrentObjectDefensePower=Rand(RandomDefensePowerMin,RandomDefensePowerMax)
+	EndIf
+	
 	ObjectDefensePower(NofObjects)=CurrentObjectDefensePower
 	ObjectDestructionType(NofObjects)=CurrentObjectDestructionType
 	
@@ -6562,6 +6570,10 @@ Function DisplayObjectAdjuster(i)
 			tex$="Stinky 5"
 
 		End Select
+		
+		CrossedOut=RandomDefensePower
+		LeftAdj$=RandomDefensePowerMin
+		RightAdj$=RandomDefensePowerMax
 		
 		
 		
@@ -8591,7 +8603,18 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "DefensePower"
-		CurrentObjectDefensePower=AdjustInt("DefensePower: ", CurrentObjectDefensePower, SlowInt, FastInt, DelayTime)
+		If RandomDefensePower
+			If OnLeftHalfAdjuster()
+				RandomDefensePowerMin=AdjustInt("DefensePower Min: ", RandomDefensePowerMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomDefensePowerMax=AdjustInt("DefensePower Max: ", RandomDefensePowerMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectDefensePower=AdjustInt("DefensePower: ", CurrentObjectDefensePower, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomDefensePower=Not RandomDefensePower
+		EndIf
 		
 		If CurrentObjectDefensePower>=34 Then CurrentObjectDefensePower=0
 		If CurrentObjectDefensePower<0 Then CurrentObjectDefensePower=33
