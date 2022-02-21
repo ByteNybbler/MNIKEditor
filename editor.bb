@@ -244,6 +244,8 @@ Global RandomActivationTypeMin=12
 Global RandomActivationTypeMax=16
 Global RandomTTC=False
 Global RandomOTC=False
+Global RandomButtonPush
+Global RandomTeleportable
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -519,7 +521,7 @@ Dim ObjectChild(1000),ObjectParent(1000)
 Dim ObjectData(1000,10),ObjectTextData$(1000,4)
 Dim ObjectTalkable(1000),ObjectCurrentAnim(1000),ObjectStandardAnim(1000),ObjectTileX(1000),ObjectTileY(1000)
 Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectMovementTimer(1000),ObjectMovementSpeed(1000),ObjectMoveXGoal(1000)
-Dim ObjectMoveYGoal(1000),ObjectFutureInt12(1000),ObjectFutureInt13(1000),ObjectCaged(1000),ObjectDead(1000)
+Dim ObjectMoveYGoal(1000),ObjectTileTypeCollision(1000),ObjectObjectTypeCollision(1000),ObjectCaged(1000),ObjectDead(1000)
 Dim ObjectDeadTimer(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
 Dim ObjectFlying(1000),ObjectFrozen(1000),ObjectIndigo(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
 Dim ObjectScaleAdjust#(1000),ObjectFutureFloat2#(1000),ObjectFutureFloat3#(1000),ObjectFutureFloat4#(1000),ObjectFutureFloat5#(1000)
@@ -562,7 +564,7 @@ Global CurrentObjectChild, CurrentObjectParent
 Dim CurrentObjectData(10), CurrentObjectTextData$(4)
 Global CurrentObjectTalkable,CurrentObjectCurrentAnim,CurrentObjectStandardAnim,CurrentObjectTileX,CurrentObjectTileY
 Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectMovementTimer,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
-Global CurrentObjectMoveYGoal,CurrentObjectFutureInt12,CurrentObjectFutureInt13,CurrentObjectCaged,CurrentObjectDead
+Global CurrentObjectMoveYGoal,CurrentObjectTileTypeCollision,CurrentObjectObjectTypeCollision,CurrentObjectCaged,CurrentObjectDead
 Global CurrentObjectDeadTimer,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
 Global CurrentObjectFlying,CurrentObjectFrozen,CurrentObjectIndigo,CurrentObjectFutureInt24,CurrentObjectFutureInt25
 Global CurrentObjectScaleAdjust#,CurrentObjectFutureFloat2#,CurrentObjectFutureFloat3#,CurrentObjectFutureFloat4#,CurrentObjectFutureFloat5#
@@ -604,7 +606,7 @@ Dim BrushObjectChild(1000),BrushObjectParent(1000)
 Dim BrushObjectData(1000,10),BrushObjectTextData$(1000,4)
 Dim BrushObjectTalkable(1000),BrushObjectCurrentAnim(1000),BrushObjectStandardAnim(1000),BrushObjectTileX(1000),BrushObjectTileY(1000)
 Dim BrushObjectTileX2(1000),BrushObjectTileY2(1000),BrushObjectMovementTimer(1000),BrushObjectMovementSpeed(1000),BrushObjectMoveXGoal(1000)
-Dim BrushObjectMoveYGoal(1000),BrushObjectFutureInt12(1000),BrushObjectFutureInt13(1000),BrushObjectCaged(1000),BrushObjectDead(1000)
+Dim BrushObjectMoveYGoal(1000),BrushObjectTileTypeCollision(1000),BrushObjectObjectTypeCollision(1000),BrushObjectCaged(1000),BrushObjectDead(1000)
 Dim BrushObjectDeadTimer(1000),BrushObjectExclamation(1000),BrushObjectShadow(1000),BrushObjectLinked(1000),BrushObjectLinkBack(1000)
 Dim BrushObjectFlying(1000),BrushObjectFrozen(1000),BrushObjectIndigo(1000),BrushObjectFutureInt24(1000),BrushObjectFutureInt25(1000)
 Dim BrushObjectScaleAdjust#(1000),BrushObjectFutureFloat2#(1000),BrushObjectFutureFloat3#(1000),BrushObjectFutureFloat4#(1000),BrushObjectFutureFloat5#(1000)
@@ -4855,8 +4857,8 @@ Function LoadObjectPreset()
 	CurrentObjectMovementSpeed=ReadInt(file)
 	CurrentObjectMoveXGoal=ReadInt(file)
 	CurrentObjectMoveYGoal=ReadInt(file)
-	CurrentObjectFutureInt12=ReadInt(file)
-	CurrentObjectFutureInt13=ReadInt(file)
+	CurrentObjectTileTypeCollision=ReadInt(file)
+	CurrentObjectObjectTypeCollision=ReadInt(file)
 	CurrentObjectCaged=ReadInt(file)
 	CurrentObjectDead=ReadInt(file)
 	CurrentObjectDeadTimer=ReadInt(file)
@@ -5262,8 +5264,16 @@ Function PlaceObject(x#,y#)
 	ObjectTimerMax1(NofObjects)=CurrentObjectTimerMax1
 	ObjectTimerMax2(NofObjects)=CurrentObjectTimerMax2
 	
+	If RandomTeleportable
+		CurrentObjectTeleportable=Rand(0,1)
+	EndIf
+	If RandomButtonPush
+		CurrentObjectButtonPush=Rand(0,1)
+	EndIf
+	
 	ObjectTeleportable(NofObjects)=CurrentObjectTeleportable
 	ObjectButtonPush(NofObjects)=CurrentObjectButtonPush
+	
 	ObjectWaterReact(NofObjects)=CurrentObjectWaterReact
 	ObjectTelekinesisable(NofObjects)=CurrentObjectTelekinesisable
 	ObjectFreezable(NofObjects)=CurrentObjectFreezable
@@ -5295,8 +5305,27 @@ Function PlaceObject(x#,y#)
 	
 	ObjectMoveXGoal(NofObjects)=CurrentObjectMoveXGoal
 	ObjectMoveYGoal(NofObjects)=CurrentObjectMoveYGoal
-	ObjectFutureInt12(NofObjects)=CurrentObjectFutureInt12
-	ObjectFutureInt13(NofObjects)=CurrentObjectFutureInt13
+	
+	If RandomTTC
+		CurrentObjectTileTypeCollision=0
+		For i=0 To 14
+			If Rand(0,1)=0
+				CurrentObjectTileTypeCollision=CurrentObjectTileTypeCollision+2^i
+			EndIf
+		Next
+	EndIf
+	If RandomOTC
+		CurrentObjectObjectTypeCollision=0
+		For i=1 To 10
+			If Rand(0,1)=0
+				CurrentObjectObjectTypeCollision=CurrentObjectObjectTypeCollision+2^i
+			EndIf
+		Next
+	EndIf
+	
+	ObjectTileTypeCollision(NofObjects)=CurrentObjectTileTypeCollision
+	ObjectObjectTypeCollision(NofObjects)=CurrentObjectObjectTypeCollision
+	
 	ObjectCaged(NofObjects)=CurrentObjectCaged
 	ObjectDead(NofObjects)=CurrentObjectDead
 	ObjectDeadTimer(NofObjects)=CurrentObjectDeadTimer
@@ -5609,8 +5638,8 @@ Function GrabObject(x#,y#)
 	CurrentObjectMovementSpeed=ObjectMovementSpeed(Dest)
 	CurrentObjectMoveXGoal=ObjectMoveXGoal(Dest)
 	CurrentObjectMoveYGoal=ObjectMoveYGoal(Dest)
-	CurrentObjectFutureInt12=ObjectFutureInt12(Dest)
-	CurrentObjectFutureInt13=ObjectFutureInt13(Dest)
+	CurrentObjectTileTypeCollision=ObjectTileTypeCollision(Dest)
+	CurrentObjectObjectTypeCollision=ObjectObjectTypeCollision(Dest)
 	CurrentObjectCaged=ObjectCaged(Dest)
 	CurrentObjectDead=ObjectDead(Dest)
 	CurrentObjectDeadTimer=ObjectDeadTimer(Dest)
@@ -5755,8 +5784,8 @@ Function GrabObjectFromBrush(i)
 	CurrentObjectMovementSpeed=BrushObjectMovementSpeed(Dest)
 	CurrentObjectMoveXGoal=BrushObjectMoveXGoal(Dest)
 	CurrentObjectMoveYGoal=BrushObjectMoveYGoal(Dest)
-	CurrentObjectFutureInt12=BrushObjectFutureInt12(Dest)
-	CurrentObjectFutureInt13=BrushObjectFutureInt13(Dest)
+	CurrentObjectTileTypeCollision=BrushObjectTileTypeCollision(Dest)
+	CurrentObjectObjectTypeCollision=BrushObjectObjectTypeCollision(Dest)
 	CurrentObjectCaged=BrushObjectCaged(Dest)
 	CurrentObjectDead=BrushObjectDead(Dest)
 	CurrentObjectDeadTimer=BrushObjectDeadTimer(Dest)
@@ -6083,8 +6112,8 @@ Function CopyObjectData(Source,Dest)
 	ObjectMovementSpeed(Dest)=ObjectMovementSpeed(Source)
 	ObjectMoveXGoal(Dest)=ObjectMoveXGoal(Source)
 	ObjectMoveYGoal(Dest)=ObjectMoveYGoal(Source)
-	ObjectFutureInt12(Dest)=ObjectFutureInt12(Source)
-	ObjectFutureInt13(Dest)=ObjectFutureInt13(Source)
+	ObjectTileTypeCollision(Dest)=ObjectTileTypeCollision(Source)
+	ObjectObjectTypeCollision(Dest)=ObjectObjectTypeCollision(Source)
 	ObjectCaged(Dest)=ObjectCaged(Source)
 	ObjectDead(Dest)=ObjectDead(Source)
 	ObjectDeadTimer(Dest)=ObjectDeadTimer(Source)
@@ -6219,8 +6248,8 @@ Function CopyObjectDataToBrush(Source,Dest,XOffset#,YOffset#)
 	BrushObjectMovementSpeed(Dest)=ObjectMovementSpeed(Source)
 	BrushObjectMoveXGoal(Dest)=ObjectMoveXGoal(Source)
 	BrushObjectMoveYGoal(Dest)=ObjectMoveYGoal(Source)
-	BrushObjectFutureInt12(Dest)=ObjectFutureInt12(Source)
-	BrushObjectFutureInt13(Dest)=ObjectFutureInt13(Source)
+	BrushObjectTileTypeCollision(Dest)=ObjectTileTypeCollision(Source)
+	BrushObjectObjectTypeCollision(Dest)=ObjectObjectTypeCollision(Source)
 	BrushObjectCaged(Dest)=ObjectCaged(Source)
 	BrushObjectDead(Dest)=ObjectDead(Source)
 	BrushObjectDeadTimer(Dest)=ObjectDeadTimer(Source)
@@ -6350,8 +6379,8 @@ Function PasteObjectData(Dest)
 	ObjectMovementSpeed(Dest)=CurrentObjectMovementSpeed
 	ObjectMoveXGoal(Dest)=CurrentObjectMoveXGoal
 	ObjectMoveYGoal(Dest)=CurrentObjectMoveYGoal
-	ObjectFutureInt12(Dest)=CurrentObjectFutureInt12
-	ObjectFutureInt13(Dest)=CurrentObjectFutureInt13
+	ObjectTileTypeCollision(Dest)=CurrentObjectTileTypeCollision
+	ObjectObjectTypeCollision(Dest)=CurrentObjectObjectTypeCollision
 	ObjectCaged(Dest)=CurrentObjectCaged
 	ObjectDead(Dest)=CurrentObjectDead
 	ObjectDeadTimer(Dest)=CurrentObjectDeadTimer
@@ -6397,7 +6426,7 @@ Function DisplayAsBinaryString$(value)
 
 Result$=""
 
-;Str$(CurrentObjectFutureInt12)+"000 0000 0000 00"
+;Str$(CurrentObjectTileTypeCollision)+"000 0000 0000 00"
 
 For i=0 To 14
 	If i Mod 5 = 0 And i>0
@@ -6732,6 +6761,9 @@ Function DisplayObjectAdjuster(i)
 
 	Case "ButtonPush"
 		tex$=Str$(CurrentObjectButtonPush)
+		CrossedOut=RandomButtonPush
+		LeftAdj$=""
+		RightAdj$=""
 		
 	Case "WaterReact"
 		tex$=Str$(CurrentObjectWaterReact)
@@ -6744,6 +6776,9 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Teleportable"
 		tex$=Str$(CurrentObjectTeleportable)
+		CrossedOut=RandomTeleportable
+		LeftAdj$=""
+		RightAdj$=""
 	
 	Case "Data0"
 		tex$=Str$(CurrentObjectData(0))
@@ -8217,13 +8252,13 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=RandomMovementSpeedMax
 		
 	Case "TileTypeCollision"
-		tex$=DisplayAsBinaryString$(CurrentObjectFutureInt12)
+		tex$=DisplayAsBinaryString$(CurrentObjectTileTypeCollision)
 		tex2$="TTC"
 		CrossedOut=RandomTTC
 		LeftAdj$=""
 		RightAdj$=""
 	Case "ObjectTypeCollision"
-		tex$=DisplayAsBinaryString$(CurrentObjectFutureInt13)
+		tex$=DisplayAsBinaryString$(CurrentObjectObjectTypeCollision)
 		tex2$="OTC"
 		CrossedOut=RandomOTC
 		LeftAdj$=""
@@ -8889,11 +8924,16 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "ButtonPush"
-		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
-			CurrentObjectButtonPush=1-CurrentObjectButtonPush
-			If MouseScroll=0
-				Delay 150
+		If Not RandomButtonPush And ReturnKey=False
+			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+				CurrentObjectButtonPush=1-CurrentObjectButtonPush
+				If MouseScroll=0
+					Delay 150
+				EndIf
 			EndIf
+		EndIf
+		If ReturnPressed()
+			RandomButtonPush=Not RandomButtonPush
 		EndIf
 
 	Case "WaterReact"
@@ -8903,11 +8943,16 @@ Function AdjustObjectAdjuster(i)
 	Case "Frozen"
 		CurrentObjectFrozen=AdjustInt("Frozen: ", CurrentObjectFrozen, SlowInt, FastInt, DelayTime)		
 	Case "Teleportable"
-		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
-			CurrentObjectTeleportable=1-CurrentObjectTeleportable
-			If MouseScroll=0
-				Delay 150
+		If Not RandomTeleportable And ReturnKey=False
+			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+				CurrentObjectTeleportable=1-CurrentObjectTeleportable
+				If MouseScroll=0
+					Delay 150
+				EndIf
 			EndIf
+		EndIf
+		If ReturnPressed()
+			RandomTeleportable=Not RandomTeleportable
 		EndIf
 		
 	Case "Data0"
@@ -9665,7 +9710,7 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectMovementTypeData=AdjustInt("MovementTypeData: ", CurrentObjectMovementTypeData, 1, 10, 150)
 		
 	Case "TileTypeCollision"
-		If Not RandomTTC
+		If Not RandomTTC And ReturnKey=False
 			Adj=0
 			If KeyDown(11) Adj=2^0
 			If KeyDown(2) Adj=2^1
@@ -9678,15 +9723,15 @@ Function AdjustObjectAdjuster(i)
 			If KeyDown(9) Adj=2^8
 			If KeyDown(10) Adj=2^9
 			If Fast Adj=Adj*2^10
-			If LeftMouse=True Or RightMouse=True Then CurrentObjectFutureInt12=CurrentObjectFutureInt12 Xor Adj
-			Delay 150
+			If LeftMouse=True Or RightMouse=True Then CurrentObjectTileTypeCollision=CurrentObjectTileTypeCollision Xor Adj
+			Delay DelayTime
 		EndIf
 		If ReturnPressed()
 			RandomTTC=Not RandomTTC
 		EndIf
 		
 	Case "ObjectTypeCollision"
-		If Not RandomOTC
+		If Not RandomOTC And ReturnKey=False
 			Adj=0
 			If KeyDown(11) Adj=2^0
 			If KeyDown(2) Adj=2^1
@@ -9699,8 +9744,8 @@ Function AdjustObjectAdjuster(i)
 			If KeyDown(9) Adj=2^8
 			If KeyDown(10) Adj=2^9
 			If Fast Adj=Adj*2^10
-			If LeftMouse=True Or RightMouse=True Then CurrentObjectFutureInt13=CurrentObjectFutureInt13 Xor Adj
-			Delay 150
+			If LeftMouse=True Or RightMouse=True Then CurrentObjectObjectTypeCollision=CurrentObjectObjectTypeCollision Xor Adj
+			Delay DelayTime
 		EndIf
 		If ReturnPressed()
 			RandomOTC=Not RandomOTC
@@ -12189,8 +12234,8 @@ Function SaveLevel()
 		WriteInt file,ObjectMovementSpeed(Dest)
 		WriteInt file,ObjectMoveXGoal(Dest)
 		WriteInt file,ObjectMoveYGoal(Dest)
-		WriteInt file,ObjectFutureInt12(Dest)
-		WriteInt file,ObjectFutureInt13(Dest)
+		WriteInt file,ObjectTileTypeCollision(Dest)
+		WriteInt file,ObjectObjectTypeCollision(Dest)
 		WriteInt file,ObjectCaged(Dest)
 		WriteInt file,ObjectDead(Dest)
 		WriteInt file,ObjectDeadTimer(Dest)
@@ -12485,8 +12530,8 @@ Function LoadLevel(levelnumber)
 		ObjectMovementSpeed(Dest)=ReadInt(file)
 		ObjectMoveXGoal(Dest)=ReadInt(file)
 		ObjectMoveYGoal(Dest)=ReadInt(file)
-		ObjectFutureInt12(Dest)=ReadInt(file)
-		ObjectFutureInt13(Dest)=ReadInt(file)
+		ObjectTileTypeCollision(Dest)=ReadInt(file)
+		ObjectObjectTypeCollision(Dest)=ReadInt(file)
 		ObjectCaged(Dest)=ReadInt(file)
 		ObjectDead(Dest)=ReadInt(file)
 		ObjectDeadTimer(Dest)=ReadInt(file)
