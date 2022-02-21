@@ -242,6 +242,8 @@ Global RandomActiveMax=1001
 Global RandomActivationType=False
 Global RandomActivationTypeMin=12
 Global RandomActivationTypeMax=16
+Global RandomTTC=False
+Global RandomOTC=False
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -8217,9 +8219,15 @@ Function DisplayObjectAdjuster(i)
 	Case "TileTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObjectFutureInt12)
 		tex2$="TTC"
+		CrossedOut=RandomTTC
+		LeftAdj$=""
+		RightAdj$=""
 	Case "ObjectTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObjectFutureInt13)
 		tex2$="OTC"
+		CrossedOut=RandomOTC
+		LeftAdj$=""
+		RightAdj$=""
 						
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObjectScaleAdjust)
@@ -9657,36 +9665,46 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectMovementTypeData=AdjustInt("MovementTypeData: ", CurrentObjectMovementTypeData, 1, 10, 150)
 		
 	Case "TileTypeCollision"
-		Adj=0
-		If KeyDown(11) Adj=2^0
-		If KeyDown(2) Adj=2^1
-		If KeyDown(3) Adj=2^2
-		If KeyDown(4) Adj=2^3
-		If KeyDown(5) Adj=2^4
-		If KeyDown(6) Adj=2^5
-		If KeyDown(7) Adj=2^6
-		If KeyDown(8) Adj=2^7
-		If KeyDown(9) Adj=2^8
-		If KeyDown(10) Adj=2^9
-		If Fast Adj=Adj*2^10
-		If LeftMouse=True Or RightMouse=True Then CurrentObjectFutureInt12=CurrentObjectFutureInt12 Xor Adj
-		Delay 150
+		If Not RandomTTC
+			Adj=0
+			If KeyDown(11) Adj=2^0
+			If KeyDown(2) Adj=2^1
+			If KeyDown(3) Adj=2^2
+			If KeyDown(4) Adj=2^3
+			If KeyDown(5) Adj=2^4
+			If KeyDown(6) Adj=2^5
+			If KeyDown(7) Adj=2^6
+			If KeyDown(8) Adj=2^7
+			If KeyDown(9) Adj=2^8
+			If KeyDown(10) Adj=2^9
+			If Fast Adj=Adj*2^10
+			If LeftMouse=True Or RightMouse=True Then CurrentObjectFutureInt12=CurrentObjectFutureInt12 Xor Adj
+			Delay 150
+		EndIf
+		If ReturnPressed()
+			RandomTTC=Not RandomTTC
+		EndIf
 		
 	Case "ObjectTypeCollision"
-		Adj=0
-		If KeyDown(11) Adj=2^0
-		If KeyDown(2) Adj=2^1
-		If KeyDown(3) Adj=2^2
-		If KeyDown(4) Adj=2^3
-		If KeyDown(5) Adj=2^4
-		If KeyDown(6) Adj=2^5
-		If KeyDown(7) Adj=2^6
-		If KeyDown(8) Adj=2^7
-		If KeyDown(9) Adj=2^8
-		If KeyDown(10) Adj=2^9
-		If Fast Adj=Adj*2^10
-		If LeftMouse=True Or RightMouse=True Then CurrentObjectFutureInt13=CurrentObjectFutureInt13 Xor Adj
-		Delay 150
+		If Not RandomOTC
+			Adj=0
+			If KeyDown(11) Adj=2^0
+			If KeyDown(2) Adj=2^1
+			If KeyDown(3) Adj=2^2
+			If KeyDown(4) Adj=2^3
+			If KeyDown(5) Adj=2^4
+			If KeyDown(6) Adj=2^5
+			If KeyDown(7) Adj=2^6
+			If KeyDown(8) Adj=2^7
+			If KeyDown(9) Adj=2^8
+			If KeyDown(10) Adj=2^9
+			If Fast Adj=Adj*2^10
+			If LeftMouse=True Or RightMouse=True Then CurrentObjectFutureInt13=CurrentObjectFutureInt13 Xor Adj
+			Delay 150
+		EndIf
+		If ReturnPressed()
+			RandomOTC=Not RandomOTC
+		EndIf
 
 		
 	Case "ScaleAdjust"
