@@ -8,12 +8,12 @@
 ;								msfolder.dll and .decls in Blitz3D/userlibs
 ;
 ;
-								
-AppTitle "Wonderland Adventures Editor"
+
+AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (02/20/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (02/21/22)"
 
 Global MASTERUSER=True
 
@@ -191,6 +191,9 @@ Global RandomRollAdjustMax#=360.0
 Global RandomPitchAdjust=False
 Global RandomPitchAdjustMin#=0.0
 Global RandomPitchAdjustMax#=360.0
+Global RandomScaleAdjust=False
+Global RandomScaleAdjustMin#=0.5
+Global RandomScaleAdjustMax#=1.5
 Global RandomXScale=False
 Global RandomXScaleMin#=0.5
 Global RandomXScaleMax#=1.5
@@ -209,6 +212,12 @@ Global RandomYAdjustMax#=0.5
 Global RandomZAdjust=False
 Global RandomZAdjustMin#=-0.5
 Global RandomZAdjustMax#=0.5
+Dim RandomData(9)
+Dim RandomDataMin(9)
+Dim RandomDataMax(9)
+For i=0 To 9
+	RandomDataMax(i)=10
+Next
 
 Dim LogicName$(14)
 LogicName$(0)="Floor"
@@ -5023,10 +5032,10 @@ Function PlaceObject(x#,y#)
 		CurrentObjectXAdjust#=Rnd(RandomXAdjustMin#,RandomXAdjustMax#)
 	EndIf
 	If RandomYAdjust
-		CurrentObjectXAdjust#=Rnd(RandomYAdjustMin#,RandomYAdjustMax#)
+		CurrentObjectYAdjust#=Rnd(RandomYAdjustMin#,RandomYAdjustMax#)
 	EndIf
 	If RandomZAdjust
-		CurrentObjectXAdjust#=Rnd(RandomZAdjustMin#,RandomZAdjustMax#)
+		CurrentObjectZAdjust#=Rnd(RandomZAdjustMin#,RandomZAdjustMax#)
 	EndIf
 	
 	ObjectXAdjust#(NofObjects)=CurrentObjectXAdjust#
@@ -5189,6 +5198,10 @@ Function PlaceObject(x#,y#)
 	ObjectChild(NofObjects)=CurrentObjectChild
 	ObjectParent(NofObjects)=CurrentObjectParent
 	For i=0 To 9
+		If RandomData(i)
+			CurrentObjectData(i)=Rand(RandomDataMin(i),RandomDataMax(i))
+		EndIf
+	
 		ObjectData(NofObjects,i)=CurrentObjectData(i)
 	Next
 	For i=0 To 4
@@ -5217,6 +5230,10 @@ Function PlaceObject(x#,y#)
 	ObjectIndigo(NofObjects)=CurrentObjectIndigo
 	ObjectFutureInt24(NofObjects)=CurrentObjectFutureInt24
 	ObjectFutureInt25(NofObjects)=CurrentObjectFutureInt25
+	
+	If RandomScaleAdjust
+		CurrentObjectScaleAdjust#=Rnd(RandomScaleAdjustMin#,RandomScaleAdjustMax#)
+	EndIf
 
 	ObjectScaleAdjust(NofObjects)=CurrentObjectScaleAdjust
 	ObjectFutureFloat2(NofObjects)=CurrentObjectFutureFloat2
@@ -6626,6 +6643,9 @@ Function DisplayObjectAdjuster(i)
 	
 	Case "Data0"
 		tex$=Str$(CurrentObjectData(0))
+		CrossedOut=RandomData(0)
+		LeftAdj$=RandomDataMin(0)
+		RightAdj$=RandomDataMax(0)
 		
 		If CurrentObjectModelName$="!CustomModel"
 			tex2$="YawAnim"
@@ -6862,6 +6882,10 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data1"
 		tex$=Str$(CurrentObjectData(1))
+		CrossedOut=RandomData(1)
+		LeftAdj$=RandomDataMin(1)
+		RightAdj$=RandomDataMax(1)
+		
 		If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key"  Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!Retrolasergate" Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelname$="!Autodoor" Or CurrentObjectModelname$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
 			tex2$="SubColour"
 		EndIf
@@ -7052,6 +7076,10 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data2" 
 		tex$=Str$(CurrentObjectData(2))
+		CrossedOut=RandomData(2)
+		LeftAdj$=RandomDataMin(2)
+		RightAdj$=RandomDataMax(2)
+		
 		If CurrentObjectModelName$="!Spring"  Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!FlipBridge"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX" Or CurrentObjectModelName$="!Conveyor"
 
 			tex2$="Direction"
@@ -7331,6 +7359,10 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data3"
 		tex$=Str$(CurrentObjectData(3))
+		CrossedOut=RandomData(3)
+		LeftAdj$=RandomDataMin(3)
+		RightAdj$=RandomDataMax(3)
+		
 		If CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX"
 			tex2$="Style"
 			
@@ -7573,6 +7605,9 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data4"
 		tex$=Str$(CurrentObjectData(4))
+		CrossedOut=RandomData(4)
+		LeftAdj$=RandomDataMin(4)
+		RightAdj$=RandomDataMax(4)
 		
 		If CurrentObjectModelName$="!CustomModel"
 			tex2$="YAnim"
@@ -7690,6 +7725,10 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data5"
 		tex$=Str$(CurrentObjectData(5))
+		CrossedOut=RandomData(5)
+		LeftAdj$=RandomDataMin(5)
+		RightAdj$=RandomDataMax(5)
+		
 		If CurrentObjectModelName$="!Suctube"
 			tex2$="Particles"
 			If CurrentObjectData(5)=0
@@ -7791,6 +7830,9 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data6"
 		tex$=Str$(CurrentObjectData(6))
+		CrossedOut=RandomData(6)
+		LeftAdj$=RandomDataMin(6)
+		RightAdj$=RandomDataMax(6)
 		
 		If CurrentObjectModelName$="!CustomModel"
 			tex2$="XSpeed"
@@ -7865,6 +7907,10 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data7"
 		tex$=Str$(CurrentObjectData(7))
+		CrossedOut=RandomData(7)
+		LeftAdj$=RandomDataMin(7)
+		RightAdj$=RandomDataMax(7)
+		
 		If CurrentObjectModelName$="!CustomModel"
 			tex2$="YSpeed"
 		EndIf
@@ -7921,6 +7967,10 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data8"
 		tex$=Str$(CurrentObjectData(8))
+		CrossedOut=RandomData(8)
+		LeftAdj$=RandomDataMin(8)
+		RightAdj$=RandomDataMax(8)
+		
 		If CurrentObjectModelName$="!CustomModel"
 			tex2$="ZSpeed"
 		EndIf
@@ -8004,6 +8054,9 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data9"
 		tex$=Str$(CurrentObjectData(9))
+		CrossedOut=RandomData(9)
+		LeftAdj$=RandomDataMin(9)
+		RightAdj$=RandomDataMax(9)
 		
 		If CurrentObjectModelName$="!CustomModel"
 			tex2$="Deadly"
@@ -8062,6 +8115,9 @@ Function DisplayObjectAdjuster(i)
 						
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObjectScaleAdjust)
+		CrossedOut=RandomScaleAdjust
+		LeftAdj$=RandomScaleAdjustMin
+		RightAdj$=RandomScaleAdjustMax
 	Case "Exclamation"
 		tex$=Str$(CurrentObjectExclamation)
 		
@@ -8284,6 +8340,25 @@ Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, Delay
 
 End Function
 
+
+Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
+
+	If RandomData(i)
+		If OnLeftHalfAdjuster()
+			RandomDataMin(i)=AdjustInt("Data"+i+" Min: ", RandomDataMin(i), NormalSpeed, FastSpeed, DelayTime)
+		Else
+			RandomDataMax(i)=AdjustInt("Data"+i+" Max: ", RandomDataMax(i), NormalSpeed, FastSpeed, DelayTime)
+		EndIf
+	Else
+		CurrentObjectData(i)=AdjustInt("Data"+i+": ", CurrentObjectData(i), NormalSpeed, FastSpeed, DelayTime)
+	EndIf
+	If ReturnPressed()
+		RandomData(i)=Not RandomData(i)
+	EndIf
+
+End Function
+
+
 Function AdjustObjectAdjuster(i)
 
 	; avoid false positives from pressing enter
@@ -8296,6 +8371,14 @@ Function AdjustObjectAdjuster(i)
 	RawInput=False
 	If CtrlDown() Then RawInput=True
 	
+	DelayTime=150
+	SlowInt=1
+	FastInt=10
+	FastID=50
+	FastRotate=45
+	SlowFloat#=0.01
+	FastFloat#=0.1
+	SlowScale#=0.001
 
 	Select ObjectAdjuster$(i)
 	Case "ObjectTextData0"
@@ -8333,81 +8416,168 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "DefensePower"
-		CurrentObjectDefensePower=AdjustInt("DefensePower: ", CurrentObjectDefensePower, 1, 10, 150)
+		CurrentObjectDefensePower=AdjustInt("DefensePower: ", CurrentObjectDefensePower, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectDefensePower>=34 Then CurrentObjectDefensePower=0
 		If CurrentObjectDefensePower<0 Then CurrentObjectDefensePower=33
 		
 	Case "AttackPower"
-		CurrentObjectAttackPower=AdjustInt("AttackPower: ", CurrentObjectAttackPower, 1, 10, 150)
+		CurrentObjectAttackPower=AdjustInt("AttackPower: ", CurrentObjectAttackPower, SlowInt, FastInt, DelayTime)
 		
 	Case "DestructionType"
-		CurrentObjectDestructionType=AdjustInt("DestructionType: ", CurrentObjectDestructionType, 1, 10, 150)
+		CurrentObjectDestructionType=AdjustInt("DestructionType: ", CurrentObjectDestructionType, SlowInt, FastInt, DelayTime)
 		
 	
-	Case "YawAdjust"		
-		CurrentObjectYawAdjust=AdjustFloat#("YawAdjust: ", CurrentObjectYawAdjust, 1, 45, 150)
+	Case "YawAdjust"
+		SlowFloat#=SlowInt
+		FastFloat#=FastRotate
+		If RandomYawAdjust
+			If OnLeftHalfAdjuster()
+				RandomYawAdjustMin=AdjustFloat#("YawAdjust Min: ", RandomYawAdjustMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomYawAdjustMax=AdjustFloat#("YawAdjust Max: ", RandomYawAdjustMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectYawAdjust=AdjustFloat#("YawAdjust: ", CurrentObjectYawAdjust, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomYawAdjust=Not RandomYawAdjust
+		EndIf
 		
 		If CurrentObjectYawAdjust>=360 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust-360
 		If CurrentObjectYawAdjust<0 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust+360
 		
-		If ReturnPressed()
-			RandomYawAdjust=Not RandomYawAdjust
-		EndIf
 	Case "PitchAdjust"
-		CurrentObjectPitchAdjust=AdjustFloat#("PitchAdjust: ", CurrentObjectPitchAdjust, 1, 45, 150)
+		SlowFloat#=SlowInt
+		FastFloat#=FastRotate
+		If RandomPitchAdjust
+			If OnLeftHalfAdjuster()
+				RandomPitchAdjustMin=AdjustFloat#("PitchAdjust Min: ", RandomPitchAdjustMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomPitchAdjustMax=AdjustFloat#("PitchAdjust Max: ", RandomPitchAdjustMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectPitchAdjust=AdjustFloat#("PitchAdjust: ", CurrentObjectPitchAdjust, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomPitchAdjust=Not RandomPitchAdjust
+		EndIf
 		
 		If CurrentObjectPitchAdjust>=360 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust-360
 		If CurrentObjectPitchAdjust<0 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust+360
 		
-		If ReturnPressed()
-			RandomPitchAdjust=Not RandomPitchAdjust
-		EndIf
 	Case "RollAdjust"
-		CurrentObjectRollAdjust=AdjustFloat#("RollAdjust: ", CurrentObjectRollAdjust, 1, 45, 150)
-		
-		If CurrentObjectRollAdjust>=360 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust-360
-		If CurrentObjectRollAdjust<0 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust+360
-		
+		SlowFloat#=SlowInt
+		FastFloat#=FastRotate
+		If RandomRollAdjust
+			If OnLeftHalfAdjuster()
+				RandomRollAdjustMin=AdjustFloat#("RollAdjust Min: ", RandomRollAdjustMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomRollAdjustMax=AdjustFloat#("RollAdjust Max: ", RandomRollAdjustMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectRollAdjust=AdjustFloat#("RollAdjust: ", CurrentObjectRollAdjust, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
 		If ReturnPressed()
 			RandomRollAdjust=Not RandomRollAdjust
 		EndIf
+		
+		If CurrentObjectRollAdjust>=360 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust-360
+		If CurrentObjectRollAdjust<0 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust+360
 
 
 		
 	Case "XAdjust"
 		If RandomXAdjust
 			If OnLeftHalfAdjuster()
-				RandomXAdjustMin=AdjustFloat#("XAdjust Min: ", RandomXAdjustMin, .01, .1, 150)
+				RandomXAdjustMin=AdjustFloat#("XAdjust Min: ", RandomXAdjustMin, SlowFloat#, FastFloat#, DelayTime)
 			Else
-				RandomXAdjustMax=AdjustFloat#("XAdjust Max: ", RandomXAdjustMax, .01, .1, 150)
+				RandomXAdjustMax=AdjustFloat#("XAdjust Max: ", RandomXAdjustMax, SlowFloat#, FastFloat#, DelayTime)
 			EndIf
 		Else
-			CurrentObjectXAdjust=AdjustFloat#("XAdjust: ", CurrentObjectXAdjust, .01, .1, 150)
+			CurrentObjectXAdjust=AdjustFloat#("XAdjust: ", CurrentObjectXAdjust, SlowFloat#, FastFloat#, DelayTime)
 		EndIf
 		If ReturnPressed()
 			RandomXAdjust=Not RandomXAdjust
 		EndIf
 	Case "YAdjust"
-		CurrentObjectYAdjust=AdjustFloat#("YAdjust: ", CurrentObjectYAdjust, .01, .1, 150)
+		If RandomYAdjust
+			If OnLeftHalfAdjuster()
+				RandomYAdjustMin=AdjustFloat#("YAdjust Min: ", RandomYAdjustMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomYAdjustMax=AdjustFloat#("YAdjust Max: ", RandomYAdjustMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectYAdjust=AdjustFloat#("YAdjust: ", CurrentObjectYAdjust, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomYAdjust=Not RandomYAdjust
+		EndIf
 	Case "ZAdjust"
-		CurrentObjectZAdjust=AdjustFloat#("ZAdjust: ", CurrentObjectZAdjust, .01, .1, 150)
+		If RandomZAdjust
+			If OnLeftHalfAdjuster()
+				RandomZAdjustMin=AdjustFloat#("ZAdjust Min: ", RandomZAdjustMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomZAdjustMax=AdjustFloat#("ZAdjust Max: ", RandomZAdjustMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectZAdjust=AdjustFloat#("ZAdjust: ", CurrentObjectZAdjust, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomZAdjust=Not RandomZAdjust
+		EndIf
 		
 		
 	Case "XScale"
-		CurrentObjectXScale=AdjustFloat#("XScale: ", CurrentObjectXScale, .001, .1, 150)
+		SlowFloat#=SlowScale#
+		If RandomXScale
+			If OnLeftHalfAdjuster()
+				RandomXScaleMin=AdjustFloat#("XScale Min: ", RandomXScaleMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomXScaleMax=AdjustFloat#("XScale Max: ", RandomXScaleMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectXScale=AdjustFloat#("XScale: ", CurrentObjectXScale, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomXScale=Not RandomXScale
+		EndIf
 	Case "YScale"
-		CurrentObjectYScale=AdjustFloat#("YScale: ", CurrentObjectYScale, .001, .1, 150)
+		SlowFloat#=SlowScale#
+		If RandomYScale
+			If OnLeftHalfAdjuster()
+				RandomYScaleMin=AdjustFloat#("YScale Min: ", RandomYScaleMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomYScaleMax=AdjustFloat#("YScale Max: ", RandomYScaleMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectYScale=AdjustFloat#("YScale: ", CurrentObjectYScale, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomYScale=Not RandomYScale
+		EndIf
 	Case "ZScale"
-		CurrentObjectZScale=AdjustFloat#("ZScale: ", CurrentObjectZScale, .001, .1, 150)		
+		SlowFloat#=SlowScale#
+		If RandomZScale
+			If OnLeftHalfAdjuster()
+				RandomZScaleMin=AdjustFloat#("ZScale Min: ", RandomZScaleMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomZScaleMax=AdjustFloat#("ZScale Max: ", RandomZScaleMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectZScale=AdjustFloat#("ZScale: ", CurrentObjectZScale, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomZScale=Not RandomZScale
+		EndIf
 
 
 	Case "ID"
-		CurrentObjectID=AdjustInt("ID: ", CurrentObjectID, 1, 50, 150)
+		CurrentObjectID=AdjustInt("ID: ", CurrentObjectID, SlowInt, FastID, DelayTime)
 	Case "Type"
-		CurrentObjectType=AdjustInt("Type: ", CurrentObjectType, 1, 10, 150)
+		CurrentObjectType=AdjustInt("Type: ", CurrentObjectType, SlowInt, FastInt, DelayTime)
 	Case "SubType"
-		CurrentObjectSubType=AdjustInt("SubType: ", CurrentObjectSubType, 1, 10, 150)
+		CurrentObjectSubType=AdjustInt("SubType: ", CurrentObjectSubType, SlowInt, Fast, DelayTime)
 				
 		If CurrentObjectModelName$="!CustomItem"
 			If CurrentObjectSubType<-6
@@ -8444,15 +8614,14 @@ Function AdjustObjectAdjuster(i)
 			Else
 				CurrentObjectActive=0
 			EndIf
-			;CurrentObjectActive=1001-CurrentObjectActive
 		EndIf
 		If MouseScroll=0
 			Delay 300
 		EndIf
 	Case "ActivationSpeed"
-		CurrentObjectActivationSpeed=AdjustInt("ActivationSpeed: ", CurrentObjectActivationSpeed, 2, 20, 150)
+		CurrentObjectActivationSpeed=AdjustInt("ActivationSpeed: ", CurrentObjectActivationSpeed, 2, 20, DelayTime)
 	Case "ActivationType"
-		CurrentObjectActivationType=AdjustInt("ActivationType: ", CurrentObjectActivationType, 1, 10, 150)
+		CurrentObjectActivationType=AdjustInt("ActivationType: ", CurrentObjectActivationType, SlowInt, FastInt, DelayTime)
 			
 		;If CurrentObjectModelName$="!SteppingStone"
 		;	If LeftMouse=True Or RightMouse=True
@@ -8494,11 +8663,11 @@ Function AdjustObjectAdjuster(i)
 		;	EndIf
 		
 	Case "TimerMax1"
-		CurrentObjectTimerMax1=AdjustInt("TimerMax1: ", CurrentObjectTimerMax1, 1, 25, 150)
+		CurrentObjectTimerMax1=AdjustInt("TimerMax1: ", CurrentObjectTimerMax1, SlowInt, 25, DelayTime)
 	Case "TimerMax2"
-		CurrentObjectTimerMax2=AdjustInt("TimerMax2: ", CurrentObjectTimerMax2, 1, 25, 150)
+		CurrentObjectTimerMax2=AdjustInt("TimerMax2: ", CurrentObjectTimerMax2, SlowInt, 25, DelayTime)
 	Case "Timer"
-		CurrentObjectTimer=AdjustInt("Timer: ", CurrentObjectTimer, 1, 25, 150)
+		CurrentObjectTimer=AdjustInt("Timer: ", CurrentObjectTimer, SlowInt, 25, DelayTime)
 	Case "ButtonPush"
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
 			CurrentObjectButtonPush=1-CurrentObjectButtonPush
@@ -8508,11 +8677,11 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 	Case "WaterReact"
-		CurrentObjectWaterReact=AdjustInt("WaterReact: ", CurrentObjectWaterReact, 1, 10, 150)
+		CurrentObjectWaterReact=AdjustInt("WaterReact: ", CurrentObjectWaterReact, SlowInt, FastInt, DelayTime)
 	Case "Freezable"
-		CurrentObjectFreezable=AdjustInt("Freezable: ", CurrentObjectFreezable, 1, 10, 150)
+		CurrentObjectFreezable=AdjustInt("Freezable: ", CurrentObjectFreezable, SlowInt, FastInt, DelayTime)
 	Case "Frozen"
-		CurrentObjectFrozen=AdjustInt("Frozen: ", CurrentObjectFrozen, 1, 10, 150)		
+		CurrentObjectFrozen=AdjustInt("Frozen: ", CurrentObjectFrozen, SlowInt, FastInt, DelayTime)		
 	Case "Teleportable"
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
 			CurrentObjectTeleportable=1-CurrentObjectTeleportable
@@ -8522,7 +8691,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "Data0"
-		CurrentObjectData(0)=AdjustInt("Data0: ", CurrentObjectData(0), 1, 10, 150)
+		;CurrentObjectData(0)=AdjustInt("Data0: ", CurrentObjectData(0), SlowInt, FastInt, DelayTime)
+		AdjustObjectData(0, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectModelName$="!Scritter" ;Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectType=424
 			; colours 0-6
@@ -8649,7 +8819,9 @@ Function AdjustObjectAdjuster(i)
 			
 
 	Case "Data1"
-		CurrentObjectData(1)=AdjustInt("Data1: ", CurrentObjectData(1), 1, 10, 150)
+		;CurrentObjectData(1)=AdjustInt("Data1: ", CurrentObjectData(1), SlowInt, FastInt, DelayTime)
+		AdjustObjectData(1, SlowInt, FastInt, DelayTime)
+		
 		;If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter"  Or (CurrentObjectModelName$="!Button" And ((CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17)) Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!Retrolasergate"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
 
 
@@ -8755,7 +8927,9 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data2"
-		CurrentObjectData(2)=AdjustInt("Data2: ", CurrentObjectData(2), 1, 10, 150)
+		;CurrentObjectData(2)=AdjustInt("Data2: ", CurrentObjectData(2), SlowInt, FastInt, DelayTime)
+		AdjustObjectData(2, SlowInt, FastInt, DelayTime)
+		
 		If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!FlipBridge"
 			; direction 0-7
 			If CurrentObjectData(2)>7 CurrentObjectData(2)=0
@@ -8852,7 +9026,8 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data3"
-		CurrentObjectData(3)=AdjustInt("Data3: ", CurrentObjectData(3), 1, 10, 150)
+		;CurrentObjectData(3)=AdjustInt("Data3: ", CurrentObjectData(3), SlowInt, FastInt, DelayTime)
+		AdjustObjectData(3, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectType=190
 			If CurrentObjectData(3)<0 Then CurrentObjectData(3)=0
@@ -8970,7 +9145,8 @@ Function AdjustObjectAdjuster(i)
 			AdjFast=45
 		EndIf
 		
-		CurrentObjectData(4)=AdjustInt("Data4: ", CurrentObjectData(4), Adj, AdjFast, 150)
+		;CurrentObjectData(4)=AdjustInt("Data4: ", CurrentObjectData(4), Adj, AdjFast, DelayTime)
+		AdjustObjectData(4, Adj, AdjFast, DelayTime)
 
 		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
 			; subcolours 0-4
@@ -9032,7 +9208,9 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data5"
-		CurrentObjectData(5)=AdjustInt("Data5: ", CurrentObjectData(5), 1, 10, 150)
+		;CurrentObjectData(5)=AdjustInt("Data5: ", CurrentObjectData(5), SlowInt, FastInt, DelayTime)
+		AdjustObjectData(5, SlowInt, FastInt, DelayTime)
+		
 		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
 		;	; subcolours 0-4
 		;	If CurrentObjectData(5)>4 CurrentObjectData(5)=0
@@ -9088,7 +9266,9 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data6"
-		CurrentObjectData(6)=AdjustInt("Data6: ", CurrentObjectData(6), 1, 10, 150)
+		;CurrentObjectData(6)=AdjustInt("Data6: ", CurrentObjectData(6), 1, 10, 150)
+		AdjustObjectData(6, SlowInt, FastInt, DelayTime)
+		
 		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
 		;	; subcolours 0-4
 		;	If CurrentObjectData(6)>4 CurrentObjectData(6)=0
@@ -9127,7 +9307,9 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data7"
-		CurrentObjectData(7)=AdjustInt("Data7: ", CurrentObjectData(7), 1, 10, 150)
+		;CurrentObjectData(7)=AdjustInt("Data7: ", CurrentObjectData(7), 1, 10, 150)
+		AdjustObjectData(7, SlowInt, FastInt, DelayTime)
+		
 		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
 		;	; subcolours 0-4
 		;	If CurrentObjectData(7)>4 CurrentObjectData(7)=0
@@ -9164,7 +9346,8 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data8"
-		CurrentObjectData(8)=AdjustInt("Data8: ", CurrentObjectData(8), 1, 10, 150)
+		;CurrentObjectData(8)=AdjustInt("Data8: ", CurrentObjectData(8), 1, 10, 150)
+		AdjustObjectData(8, SlowInt, FastInt, DelayTime)
 
 		If CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!Button"
 			If LeftMouse=True
@@ -9202,7 +9385,8 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data9"
-		CurrentObjectData(9)=AdjustInt("Data9: ", CurrentObjectData(9), 1, 10, 150)
+		;CurrentObjectData(9)=AdjustInt("Data9: ", CurrentObjectData(9), 1, 10, 150)
+		AdjustObjectData(9, SlowInt, FastInt, DelayTime)
 		
 		If  CurrentObjectModelName$="!CustomModel"
 			If CurrentobjectData(9)>1 CurrentObjectData(9)=1
@@ -9272,7 +9456,18 @@ Function AdjustObjectAdjuster(i)
 
 		
 	Case "ScaleAdjust"
-		CurrentObjectScaleAdjust=AdjustFloat#("ScaleAdjust: ", CurrentObjectScaleAdjust, .01, .1, 150)
+		If RandomScaleAdjust
+			If OnLeftHalfAdjuster()
+				RandomScaleAdjustMin=AdjustFloat#("ScaleAdjust Min: ", RandomScaleAdjustMin, SlowFloat#, FastFloat#, DelayTime)
+			Else
+				RandomScaleAdjustMax=AdjustFloat#("ScaleAdjust Max: ", RandomScaleAdjustMax, SlowFloat#, FastFloat#, DelayTime)
+			EndIf
+		Else
+			CurrentObjectScaleAdjust=AdjustFloat#("ScaleAdjust: ", CurrentObjectScaleAdjust, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomScaleAdjust=Not RandomScaleAdjust
+		EndIf
 
 	Case "Exclamation"
 		CurrentObjectExclamation=AdjustInt("Exclamation: ", CurrentObjectExclamation, 1, 10, 150)
