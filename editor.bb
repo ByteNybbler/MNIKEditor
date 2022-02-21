@@ -3522,7 +3522,7 @@ Function EditorLocalControls()
 	Next
 	
 	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
-		If mx>=StartX And mx<=StartX+155 And my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
+		If mx>=StartX And mx<=StartX+185 And my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
 			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 				AdjustObjectAdjuster(i)
 				SetEditorMode(3)
