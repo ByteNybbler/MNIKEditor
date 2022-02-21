@@ -186,6 +186,23 @@ Global RandomYawAdjust=False
 Global RandomRollAdjust=False
 Global RandomPitchAdjust=False
 
+Dim LogicName$(14)
+LogicName$(0)="Floor"
+LogicName$(1)="Wall"
+LogicName$(2)="Water"
+LogicName$(3)="Teleporter"
+LogicName$(4)="Bridge"
+LogicName$(5)="Lava"
+LogicName$(6)="06"
+LogicName$(7)="07"
+LogicName$(8)="08"
+LogicName$(9)="Button"
+LogicName$(10)="Stinker Exit"
+LogicName$(11)="Ice"
+LogicName$(12)="Ice Corner"
+LogicName$(13)="Ice Wall"
+LogicName$(14)="Ice Float"
+
 
 
 
@@ -1596,40 +1613,12 @@ Function EditorMainLoop()
 	Text StartX+48,StartY,"       Height: "+CurrentTileHeight
 	If CurrentTileHeightUse=False Text StartX+48,StartY,"       ------------"
 	
-	Select CurrentTileLogic
-	Case 0
-		Text StartX+50,StartY+15,"Logic: Floor"
-	Case 1
-		Text StartX+50,StartY+15,"Logic: Wall"
-	Case 2
-		Text StartX+50,StartY+15,"Logic: Water"
-	Case 3
-		Text StartX+50,StartY+15,"Logic: Teleporter"
-	Case 4
-		Text StartX+50,StartY+15,"Logic: Bridge"
-	Case 5
-		Text StartX+50,StartY+15,"Logic: Lava"
-	Case 6
-		Text StartX+50,StartY+15,"Logic: 06"
-	Case 7
-		Text StartX+50,StartY+15,"Logic: 07"
-	Case 8
-		Text StartX+50,StartY+15,"Logic: 08"
-	Case 9
-		Text StartX+50,StartY+15,"Logic: Button"
-	Case 10
-		Text StartX+50,StartY+15,"Logic: Stinker Exit"
-	Case 11
-		Text StartX+50,StartY+15,"Logic: Ice"
-	Case 12
-		Text StartX+50,StartY+15,"Logic: Ice Corner"
-	Case 13
-		Text StartX+50,StartY+15,"Logic: Ice Wall"
-	Case 14
-		Text StartX+50,StartY+15,"Logic: Ice Float"
-	Default
-		Text StartX+50,StartY+15,"Logic: Other"
-	End Select
+	If CurrentTileLogic>=0 And CurrentTileLogic<=14
+		CurrentLogicName$=LogicName$(CurrentTileLogic)
+	Else
+		CurrentLogicName$="Other"
+	EndIf
+	Text StartX+50,StartY+15,"Logic: "+CurrentLogicName$
 
 
 	If CurrentTileLogicUse=False Text StartX+50,StartY+15,"  ---------"
