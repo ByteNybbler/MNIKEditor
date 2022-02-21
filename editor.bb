@@ -260,6 +260,9 @@ Global RandomMoveYGoalMax=39
 Global RandomDead=False
 Global RandomDeadMin=0
 Global RandomDeadMax=3
+Global RandomStatus=False
+Global RandomStatusMin=0
+Global RandomStatusMax=10
 Global RandomTTC=False
 Global RandomOTC=False
 Global RandomButtonPush=False
@@ -5278,6 +5281,11 @@ Function PlaceObject(x#,y#)
 	
 	ObjectActivationType(NofObjects)=CurrentObjectActivationType
 	ObjectActivationSpeed(NofObjects)=CurrentObjectActivationSpeed
+	
+	If RandomStatus
+		CurrentObjectStatus=Rand(RandomStatusMin,RandomStatusMax)
+	EndIf
+	
 	ObjectStatus(NofObjects)=CurrentObjectStatus
 	
 	If RandomTimer
@@ -8422,7 +8430,9 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Status"
 		tex$=Str$(CurrentObjectStatus)
-
+		CrossedOut=RandomStatus
+		LeftAdj$=RandomStatusMin
+		RightAdj$=RandomStatusMax
 
 
 
@@ -9963,7 +9973,18 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectRadius=AdjustFloat#("Radius: ", CurrentObjectRadius, 0.01, 0.1, 150)
 		
 	Case "Status"
-		CurrentObjectStatus=AdjustInt("Status: ", CurrentObjectStatus, 1, 10, 150)
+		If RandomStatus
+			If OnLeftHalfAdjuster()
+				RandomStatusMin=AdjustInt("Status Min: ", RandomStatusMin, SlowInt, FastInt, DelayTime)
+			Else
+				RandomStatusMax=AdjustInt("Status Max: ", RandomStatusMax, SlowInt, FastInt, DelayTime)
+			EndIf
+		Else
+			CurrentObjectStatus=AdjustInt("Status: ", CurrentObjectStatus, SlowInt, FastInt, DelayTime)
+		EndIf
+		If ReturnPressed()
+			RandomStatus=Not RandomStatus
+		EndIf
 
 
 
