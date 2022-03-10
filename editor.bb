@@ -6682,7 +6682,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!CustomItem"
 			tex2$="Fn"
-			If CurrentObjectSubType>=0
+			If CurrentObjectSubType>=0 And CurrentObjectSubType<30
 				If CurrentObjectSubType Mod 10=0
 					tex$="None"
 				Else If CurrentObjectSubType Mod 10=1
@@ -6720,6 +6720,10 @@ Function DisplayObjectAdjuster(i)
 				tex$="MapPiece"
 			Else If CurrentObjectSubType=-99
 				tex$="Whistle"
+			Else If CurrentObjectSubType=-100
+				tex$="Key"
+			Else If CurrentObjectSubType=509
+				tex$="Empty"
 
 			EndIf
 			
@@ -8901,15 +8905,19 @@ Function AdjustObjectAdjuster(i)
 				
 		If CurrentObjectModelName$="!CustomItem"
 		
-			If CurrentObjectSubType<-99
-				CurrentObjectSubType=27
-			Else If CurrentObjectSubType>-99 And CurrentObjectSubType<-7
+			If CurrentObjectSubType<-100
+				CurrentObjectSubType=509
+			Else If CurrentObjectSubType>-99 And CurrentObjectSubType<-20
 				CurrentObjectSubType=-6
+			Else If CurrentObjectSubType>-21 And CurrentObjectSubType<-6
+				CurrentObjectSubType=-99
 				
-			Else If CurrentObjectSubType<-6
-				CurrentObjectSubType=-99
-			Else If CurrentObjectSubType>27
-				CurrentObjectSubType=-99
+			Else If CurrentObjectSubType>27 And CurrentObjectSubType<490
+				CurrentObjectSubType=509
+			Else If CurrentObjectSubType>489 And CurrentObjectSubType<509
+				CurrentObjectSubType=27
+			Else If CurrentObjectSubType>509
+				CurrentObjectSubType=-100
 
 				
 				
