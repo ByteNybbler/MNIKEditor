@@ -6724,6 +6724,18 @@ Function DisplayObjectAdjuster(i)
 				tex$="RawKey"
 			Else If CurrentObjectSubType=-300
 				tex$="RawGloves"
+			Else If CurrentObjectSubType=-200
+				tex$="RawLamp"
+			Else If CurrentObjectSubType=-199
+				tex$="RawGlowGem"
+			Else If CurrentObjectSubType=-198
+				tex$="RawSpyEye"
+			Else If CurrentObjectSubType=-197
+				tex$="RawToken"
+			Else If CurrentObjectSubType=-196
+				tex$="RawGlyph"
+			Else If CurrentObjectSubType=-195
+				tex$="RawMapPiece"
 			Else If CurrentObjectSubType=-400
 				tex$="Rucksack"
 			Else If CurrentObjectSubType=509
@@ -8532,6 +8544,17 @@ Function GetMagicNameAndId$(id)
 	Return Str(id) + ". " + GetMagicName(id)
 End Function
 
+
+Function GapSubType(SmallerExclusive,LargerExclusive)
+
+	If CurrentObjectSubType>SmallerExclusive And CurrentObjectSubType<LargerExclusive-20
+		CurrentObjectSubType=LargerExclusive
+	Else If CurrentObjectSubType>LargerExclusive-19 And CurrentObjectSubType<LargerExclusive
+		CurrentObjectSubType=SmallerExclusive
+	EndIf
+
+End Function
+
 Function OnLeftHalfAdjuster()
 
 	Return MouseX()<602
@@ -8914,18 +8937,13 @@ Function AdjustObjectAdjuster(i)
 		
 			If CurrentObjectSubType<Min
 				CurrentObjectSubType=Max
+			EndIf
 				
-			Else If CurrentObjectSubType>-400 And CurrentObjectSubType<-320
-				CurrentObjectSubType=-300
-			Else If CurrentObjectSubType>-319 And CurrentObjectSubType<-300
-				CurrentObjectSubType=-400
-			
-			Else If CurrentObjectSubType>-300 And CurrentObjectSubType<-120
-				CurrentObjectSubType=-100
-			Else If CurrentObjectSubType>-119 And CurrentObjectSubType<-100
-				CurrentObjectSubType=-300
+			GapSubType(-400,-300)
+			GapSubType(-300,-200)
+			GapSubType(-195,-100)
 				
-			Else If CurrentObjectSubType>-99 And CurrentObjectSubType<-20
+			If CurrentObjectSubType>-99 And CurrentObjectSubType<-20
 				CurrentObjectSubType=-6
 			Else If CurrentObjectSubType>-21 And CurrentObjectSubType<-6
 				CurrentObjectSubType=-99
