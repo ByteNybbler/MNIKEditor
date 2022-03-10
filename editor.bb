@@ -2567,35 +2567,42 @@ Function EditorLocalControls()
 
 	; CurrentTileExtrusion
 	If MX>=StartX And MX<StartX+100 And MY>=StartY And MY<StartY+15
-		If LeftMouse=True
-			If KeyDown(29) Or KeyDown(157) ; ctrl
-				CurrentTileExtrusion=InputInt("Enter Xtrude: ")
-				CurrentTileExtrusion2=CurrentTileExtrusion*100
-				ReturnKey=False
-				ReturnKeyReleased=False
-			Else
-				CurrentTileExtrusion2=CurrentTileExtrusion2+1
-				If Fast=True CurrentTileExtrusion2=CurrentTileExtrusion2+99
-				
-				CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
-			EndIf
-			
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
-		If RightMouse=True
-			CurrentTileExtrusion2=CurrentTileExtrusion2-1
-			If Fast=True CurrentTileExtrusion2=CurrentTileExtrusion2-99
-			
+		;CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
+		CurrentTileExtrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTileExtrusion#, 0.1, 1.0, 150)
+		CurrentTileExtrusion2=CurrentTileExtrusion*100
+		;If CurrentTileExtrusion#<Infinity
 			CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
-			
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
+		;EndIf
+		
+;		If LeftMouse=True
+;			If KeyDown(29) Or KeyDown(157) ; ctrl
+;				CurrentTileExtrusion=InputInt("Enter Xtrude: ")
+;				CurrentTileExtrusion2=CurrentTileExtrusion*100
+;				ReturnKey=False
+;				ReturnKeyReleased=False
+;			Else
+;				CurrentTileExtrusion2=CurrentTileExtrusion2+1
+;				If Fast=True CurrentTileExtrusion2=CurrentTileExtrusion2+99
+;				
+;				CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
+;			EndIf
+;			
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
+;		If RightMouse=True
+;			CurrentTileExtrusion2=CurrentTileExtrusion2-1
+;			If Fast=True CurrentTileExtrusion2=CurrentTileExtrusion2-99
+;			
+;			CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
+;			
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
@@ -2608,33 +2615,36 @@ Function EditorLocalControls()
  	EndIf
 	; CurrentTileHeight
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY And MY<StartY+15
-		If LeftMouse=True
-			If KeyDown(29) Or KeyDown(157) ; ctrl
-				CurrentTileHeight=InputInt("Enter Height: ")
-				CurrentTileHeight2=CurrentTileHeight*100
-				ReturnKey=False
-				ReturnKeyReleased=False
-			Else
-				CurrentTileHeight2=CurrentTileHeight2+1 
-				If Fast=True CurrentTileHeight2=CurrentTileHeight2+99
-
-				CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
-			EndIf
-			
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
-		If RightMouse=True
-			CurrentTileHeight2=CurrentTileHeight2-1
-			If Fast=True CurrentTileHeight2=CurrentTileHeight2-99 
-			CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
+		CurrentTileHeight#=AdjustFloat#("Enter Height: ", CurrentTileHeight#, 0.1, 1.0, 150)
+		CurrentTileHeight2=CurrentTileHeight*100
+		CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
+;		If LeftMouse=True
+;			If KeyDown(29) Or KeyDown(157) ; ctrl
+;				CurrentTileHeight=InputInt("Enter Height: ")
+;				CurrentTileHeight2=CurrentTileHeight*100
+;				ReturnKey=False
+;				ReturnKeyReleased=False
+;			Else
+;				CurrentTileHeight2=CurrentTileHeight2+1 
+;				If Fast=True CurrentTileHeight2=CurrentTileHeight2+99
+;
+;				CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
+;			EndIf
+;			
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
+;		If RightMouse=True
+;			CurrentTileHeight2=CurrentTileHeight2-1
+;			If Fast=True CurrentTileHeight2=CurrentTileHeight2-99 
+;			CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileHeightUse=1-CurrentTileHeightUse
@@ -2647,7 +2657,7 @@ Function EditorLocalControls()
  	EndIf
 	; CurrentTileLogic
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+15 And MY<StartY+30
-		If LeftMouse=True And LeftMouseReleased=True
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				CurrentTileLogic=InputInt("Enter Logic: ")
 				ReturnKey=False
@@ -2678,7 +2688,7 @@ Function EditorLocalControls()
 			CameraProjMode Camera3,0
 			CameraClsColor camera2,TileColor,0,0
 		EndIf
-		If RightMouse=True And RightMouseReleased=True
+		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			Select CurrentTileLogic
 				Case 2
 					CurrentTileLogic=1
@@ -2715,31 +2725,34 @@ Function EditorLocalControls()
 
 	; CurrentTileRandom
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+170 And MY<StartY+185
-		If LeftMouse=True
-			If KeyDown(29) Or KeyDown(157) ; ctrl
-				CurrentTileRandom=InputInt("Enter Random: ")
-				CurrentTileRandom2=CurrentTileRandom*1000
-				ReturnKey=False
-				ReturnKeyReleased=False
-			Else
-				CurrentTileRandom2=CurrentTileRandom2+1 
-				If Fast=True CurrentTileRandom2=CurrentTileRandom2+99 
-				CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
-			EndIf
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
-		If RightMouse=True
-			CurrentTileRandom2=CurrentTileRandom2-1
-			If Fast=True CurrentTileRandom2=CurrentTileRandom2-99 
-			CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
+		CurrentTileRandom#=AdjustFloat#("Enter Random: ", CurrentTileRandom#, 0.01, 0.1, 150)
+		CurrentTileRandom2=CurrentTileRandom*1000
+		CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
+;		If LeftMouse=True
+;			If KeyDown(29) Or KeyDown(157) ; ctrl
+;				CurrentTileRandom=InputInt("Enter Random: ")
+;				CurrentTileRandom2=CurrentTileRandom*1000
+;				ReturnKey=False
+;				ReturnKeyReleased=False
+;			Else
+;				CurrentTileRandom2=CurrentTileRandom2+1 
+;				If Fast=True CurrentTileRandom2=CurrentTileRandom2+99 
+;				CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
+;			EndIf
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
+;		If RightMouse=True
+;			CurrentTileRandom2=CurrentTileRandom2-1
+;			If Fast=True CurrentTileRandom2=CurrentTileRandom2-99 
+;			CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileRandomUse=1-CurrentTileRandomUse
@@ -2752,7 +2765,7 @@ Function EditorLocalControls()
  	EndIf
 	; CurrentTileRounding
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+185 And MY<StartY+200
-		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True)
+		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			LeftMouseReleased=False
 			RigthMouseReleased=False
 			CurrentTileRounding=1-CurrentTileRounding
@@ -2773,7 +2786,7 @@ Function EditorLocalControls()
 	EndIf
 	; CurrentTileEdgeRandom
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+185 And MY<StartY+200
-		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True)
+		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			LeftMouseReleased=False
 			RigthMouseReleased=False
 			CurrentTileEdgeRandom=1-CurrentTileEdgeRandom
@@ -2795,32 +2808,35 @@ Function EditorLocalControls()
 	
 	; CurrentWaterTileHeight
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+200 And MY<StartY+215
-		If LeftMouse=True
-			If KeyDown(29) Or KeyDown(157) ; ctrl
-				CurrentWaterTileHeight=InputInt("Enter WHeight: ")
-				CurrentWaterTileHeight2=CurrentWaterTileHeight*100
-				ReturnKey=False
-				ReturnKeyReleased=False
-			Else
-				CurrentWaterTileHeight2=CurrentWaterTileHeight2+1
-				If Fast=True CurrentWaterTileHeight2=CurrentWaterTileHeight2+99 
-				CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
-			EndIf
-			
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
-		If RightMouse=True
-			CurrentWaterTileHeight2=CurrentWaterTileHeight2-1 
-			If Fast=True CurrentWaterTileHeight2=CurrentWaterTileHeight2-99
-			CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
+		CurrentWaterTileHeight#=AdjustFloat#("Enter WHeight: ", CurrentWaterTileHeight#, 0.1, 1.0, 150)
+		CurrentWaterTileHeight2=CurrentWaterTileHeight*100
+		CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
+;		If LeftMouse=True
+;			If KeyDown(29) Or KeyDown(157) ; ctrl
+;				CurrentWaterTileHeight=InputInt("Enter WHeight: ")
+;				CurrentWaterTileHeight2=CurrentWaterTileHeight*100
+;				ReturnKey=False
+;				ReturnKeyReleased=False
+;			Else
+;				CurrentWaterTileHeight2=CurrentWaterTileHeight2+1
+;				If Fast=True CurrentWaterTileHeight2=CurrentWaterTileHeight2+99 
+;				CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
+;			EndIf
+;			
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
+;		If RightMouse=True
+;			CurrentWaterTileHeight2=CurrentWaterTileHeight2-1 
+;			If Fast=True CurrentWaterTileHeight2=CurrentWaterTileHeight2-99
+;			CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
@@ -2833,30 +2849,33 @@ Function EditorLocalControls()
  	EndIf
 	; CurrentWaterTileTurbulence
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+200 And MY<StartY+215
-		If LeftMouse=True
-			If KeyDown(29) Or KeyDown(157) ; ctrl
-				CurrentWaterTileTurbulence=InputInt("Enter WTurb: ")
-				CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
-				ReturnKey=False
-				ReturnKeyReleased=False
-			Else
-				CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence2+1 
-				CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
-			EndIf
-			
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
-		If RightMouse=True
-			CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence2-1
-			CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
-			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
-		EndIf
+		CurrentWaterTileTurbulence#=AdjustFloat#("Enter WTurb: ", CurrentWaterTileTurbulence#, 0.1, 1.0, 150)
+		CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
+		CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
+;		If LeftMouse=True
+;			If KeyDown(29) Or KeyDown(157) ; ctrl
+;				CurrentWaterTileTurbulence=InputInt("Enter WTurb: ")
+;				CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
+;				ReturnKey=False
+;				ReturnKeyReleased=False
+;			Else
+;				CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence2+1 
+;				CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
+;			EndIf
+;			
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
+;		If RightMouse=True
+;			CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence2-1
+;			CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
+;			SetEditorMode(0)
+;			CameraProjMode Camera1,1
+;			CameraProjMode Camera3,0
+;			CameraClsColor camera2,TileColor,0,0
+;		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
