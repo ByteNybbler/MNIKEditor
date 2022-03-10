@@ -17055,6 +17055,40 @@ Function SetInterChange(i)
 
 End Function
 
+Function SetAnswer(i)
+
+	If i<0
+		i=0
+	ElseIf i>7
+		i=7
+	EndIf
+	
+	If i<>WhichAnswer
+		ColEffect=-1
+		TxtEffect=-1
+	EndIf
+	
+	WhichAnswer=i
+
+End Function
+
+Function SetAskabout(i)
+
+	If i<0
+		i=0
+	ElseIf i>100
+		i=100
+	EndIf
+	
+	If i<>WhichAskabout
+		ColEffect=-1
+		TxtEffect=-1
+	EndIf
+	
+	WhichAskabout=i
+
+End Function
+
 Function StartDialog()
 
 	SetEditorMode(9)
@@ -18032,6 +18066,7 @@ Function DialogMainLoop()
 	mb=0
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
+	Modified=mb<>0 Or MouseScroll<>0
 	If mb>0
 		; Change Adventure
 		; Load/Save
@@ -18064,17 +18099,8 @@ Function DialogMainLoop()
 	
 	; Change Answer
 	If MouseY()>260 And MouseY()<280 And MouseX()>100 And MouseX()<400		
-		WhichAnswer=AdjustInt("Answer: ", WhichAnswer, 1, 10, 150)
-		
-		If WhichAnswer<0
-			WhichAnswer=0
-		ElseIf WhichAnswer>7
-			WhichAnswer=7
-		EndIf
-		
-		ColEffect=-1
-		TxtEffect=-1
-
+		target=AdjustInt("Answer: ", WhichAnswer, 1, 10, 150)
+		SetAnswer(target)
 	EndIf
 	; Change AnswerData
 	If MouseY()>305 And MouseY()<345
@@ -18094,25 +18120,19 @@ Function DialogMainLoop()
 		Case 6
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, 150)
 		End Select
-		ColEffect=-1
-		TxtEffect=-1
-
+		
+		If Modified
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
 	EndIf
 		
 
 	
 	; Change Askabout
 	If MouseY()>441 And MouseY()<460 And MouseX()>100 And MouseX()<400
-		WhichAskabout=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, 150)
-		
-		If WhichAskabout<0
-			WhichAskabout=0
-		ElseIf WhichAskabout>100
-			WhichAskabout=100
-		EndIf
-		
-		ColEffect=-1
-		TxtEffect=-1
+		target=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, 150)
+		SetAskabout(target)
 	EndIf
 	; Change AskaboutData
 	If MouseY()>490 And MouseY()<520
@@ -18124,8 +18144,10 @@ Function DialogMainLoop()
 			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, 150)
 		EndIf
 		
-		ColEffect=-1
-		TxtEffect=-1
+		If Modified
+			ColEffect=-1
+			TxtEffect=-1
+		EndIf
 	EndIf
 	
 	; Colours/Effects
