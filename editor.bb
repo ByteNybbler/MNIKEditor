@@ -6721,7 +6721,11 @@ Function DisplayObjectAdjuster(i)
 			Else If CurrentObjectSubType=-99
 				tex$="Whistle"
 			Else If CurrentObjectSubType=-100
-				tex$="Key"
+				tex$="RawKey"
+			Else If CurrentObjectSubType=-300
+				tex$="RawGloves"
+			Else If CurrentObjectSubType=-400
+				tex$="Rucksack"
 			Else If CurrentObjectSubType=509
 				tex$="Empty"
 
@@ -8905,8 +8909,27 @@ Function AdjustObjectAdjuster(i)
 				
 		If CurrentObjectModelName$="!CustomItem"
 		
-			If CurrentObjectSubType<-100
-				CurrentObjectSubType=509
+			Min=-400
+			Max=509
+		
+			If CurrentObjectSubType<Min
+				CurrentObjectSubType=Max
+				
+			Else If CurrentObjectSubType>-400 And CurrentObjectSubType<-320
+				CurrentObjectSubType=-300
+			Else If CurrentObjectSubType>-319 And CurrentObjectSubType<-300
+				CurrentObjectSubType=-400
+			
+			Else If CurrentObjectSubType>-300 And CurrentObjectSubType<-120
+				CurrentObjectSubType=-100
+			Else If CurrentObjectSubType>-119 And CurrentObjectSubType<-100
+				CurrentObjectSubType=-300
+				
+			Else If CurrentObjectSubType>-99 And CurrentObjectSubType<-20
+				CurrentObjectSubType=-6
+			Else If CurrentObjectSubType>-21 And CurrentObjectSubType<-6
+				CurrentObjectSubType=-99
+				
 			Else If CurrentObjectSubType>-99 And CurrentObjectSubType<-20
 				CurrentObjectSubType=-6
 			Else If CurrentObjectSubType>-21 And CurrentObjectSubType<-6
@@ -8916,8 +8939,9 @@ Function AdjustObjectAdjuster(i)
 				CurrentObjectSubType=509
 			Else If CurrentObjectSubType>489 And CurrentObjectSubType<509
 				CurrentObjectSubType=27
-			Else If CurrentObjectSubType>509
-				CurrentObjectSubType=-100
+				
+			Else If CurrentObjectSubType>Max
+				CurrentObjectSubType=Min
 
 				
 				
