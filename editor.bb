@@ -6718,10 +6718,12 @@ Function DisplayObjectAdjuster(i)
 				tex$="Glyph"
 			Else If CurrentObjectSubType=-6
 				tex$="MapPiece"
-			Else If CurrentObjectSubType=-99
-				tex$="Whistle"
 			Else If CurrentObjectSubType=-100
 				tex$="RawKey"
+			Else If CurrentObjectSubType=-99
+				tex$="Whistle"
+			Else If CurrentObjectSubType=-98
+				tex$="RawShard"
 			Else If CurrentObjectSubType=-300
 				tex$="RawGloves"
 			Else If CurrentObjectSubType=-200
@@ -8942,18 +8944,9 @@ Function AdjustObjectAdjuster(i)
 			GapSubType(-400,-300)
 			GapSubType(-300,-200)
 			GapSubType(-195,-100)
+			GapSubType(-98,-6)
 				
-			If CurrentObjectSubType>-99 And CurrentObjectSubType<-20
-				CurrentObjectSubType=-6
-			Else If CurrentObjectSubType>-21 And CurrentObjectSubType<-6
-				CurrentObjectSubType=-99
-				
-			Else If CurrentObjectSubType>-99 And CurrentObjectSubType<-20
-				CurrentObjectSubType=-6
-			Else If CurrentObjectSubType>-21 And CurrentObjectSubType<-6
-				CurrentObjectSubType=-99
-				
-			Else If CurrentObjectSubType>27 And CurrentObjectSubType<490
+			If CurrentObjectSubType>27 And CurrentObjectSubType<490
 				CurrentObjectSubType=509
 			Else If CurrentObjectSubType>489 And CurrentObjectSubType<509
 				CurrentObjectSubType=27
@@ -8961,13 +8954,6 @@ Function AdjustObjectAdjuster(i)
 			Else If CurrentObjectSubType>Max
 				CurrentObjectSubType=Min
 
-				
-				
-;			If CurrentObjectSubType<-6
-;				CurrentObjectSubType=27
-;			Else If CurrentObjectSubType=28
-;				CurrentObjectSubType=-6
-;				
 			Else If CurrentObjectSubType=8
 				CurrentObjectSubType=10
 			Else If CurrentObjectSubType=9
