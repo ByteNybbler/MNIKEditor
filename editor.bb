@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor     MNIKSource v10.04 (02/21/22 B)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/10/22)"
 
 Global MASTERUSER=True
 
@@ -6718,6 +6718,8 @@ Function DisplayObjectAdjuster(i)
 				tex$="Glyph"
 			Else If CurrentObjectSubType=-6
 				tex$="MapPiece"
+			Else If CurrentObjectSubType=-99
+				tex$="Whistle"
 
 			EndIf
 			
@@ -8898,18 +8900,34 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 				
 		If CurrentObjectModelName$="!CustomItem"
-			If CurrentObjectSubType<-6
+		
+			If CurrentObjectSubType<-99
 				CurrentObjectSubType=27
-			Else If CurrentObjectSubType=28
-				CurrentObjectSubType=-4
+			Else If CurrentObjectSubType>-99 And CurrentObjectSubType<-7
+				CurrentObjectSubType=-6
+				
+			Else If CurrentObjectSubType<-6
+				CurrentObjectSubType=-99
+			Else If CurrentObjectSubType>27
+				CurrentObjectSubType=-99
+
+				
+				
+;			If CurrentObjectSubType<-6
+;				CurrentObjectSubType=27
+;			Else If CurrentObjectSubType=28
+;				CurrentObjectSubType=-6
+;				
 			Else If CurrentObjectSubType=8
 				CurrentObjectSubType=10
 			Else If CurrentObjectSubType=9
 				CurrentObjectSubType=7
+				
 			Else If CurrentObjectSubType=18
 				CurrentObjectSubType=20
 			Else If CurrentObjectSubType=19
 				CurrentObjectSubType=17
+				
 			EndIf
 		
 		EndIf
@@ -11223,6 +11241,7 @@ Function ReSizeLevel()
 			EndIf
 		Next
 	Next
+	
 	; and edge
 	If BorderExpandOption=0
 		; use current
