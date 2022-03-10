@@ -17040,7 +17040,17 @@ Function SetInterChange(i)
 	ElseIf i>MaxInterChanges
 		i=MaxInterChanges
 	EndIf
+	
+	If i<>WhichInterChange
+		WhichAnswer=0
+		ColEffect=-1
+		TxtEffect=-1
+	EndIf
+	
 	WhichInterChange=i
+	
+	If WhichInterChange>=NofInterChanges NofInterChanges=WhichInterChange+1
+	
 	DeduplicateDialogTextCommands() ; for old dialogs
 
 End Function
@@ -18050,13 +18060,6 @@ Function DialogMainLoop()
 	If MouseY()>60 And MouseY()<80 And MouseX()>100 And MouseX()<400		
 		target=AdjustInt("Interchange: ", WhichInterChange, 1, 10, 150)
 		SetInterChange(target)
-
-		WhichAnswer=0
-		If WhichInterChange>=NofInterChanges NofInterChanges=WhichInterChange+1
-		
-		ColEffect=-1
-		TxtEffect=-1
-
 	EndIf
 	
 	; Change Answer
