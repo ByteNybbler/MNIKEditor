@@ -1518,6 +1518,8 @@ Global GloveTex=MyLoadTexture("data\models\squares\glove.bmp",4)
 
 Global FireTrapTexture=MyLoadTexture("data\models\squares\firetrap.bmp",4)
 
+Global VoidTexture=myLoadTexture("Data\models\void\void.jpg",1)
+
 Global hubmode
 Global HubFileName$, HubTitle$, HubDescription$, HubTotalAdventures, HubAdvStart, HubSelectedAdventure
 Dim HubAdventuresFilenames$(500)
@@ -10436,6 +10438,56 @@ Function CreateFlipBridgeMesh(tex)
 
 End Function
 
+Function CreateVoidMesh()
+
+	LevelExitEntity=CreateMesh()
+	surface=CreateSurface(LevelExitEntity)
+	For i=0 To 17
+		AddVertex surface,.5*Sin(i*20),1,.5*Cos(i*20),i*.0555,0
+		AddVertex surface,.1*Sin(i*20),0,.1*Cos(i*20),i*.0555,1
+	Next
+	For i=0 To 16
+		AddTriangle surface,i*2,i*2+2,i*2+1
+		AddTriangle surface,i*2+2,i*2+3,i*2+1
+		AddTriangle surface,i*2+1,i*2+2,i*2
+		AddTriangle surface,i*2+1,i*2+3,i*2+2
+
+	Next
+	AddTriangle surface,34,0,35
+	AddTriangle surface,0,1,35
+	AddTriangle surface,35,0,34
+	AddTriangle surface,35,1,1
+	For i=0 To 17
+		AddVertex surface,.7*Sin(i*20),.5,.7*Cos(i*20),i*.0555,0
+		AddVertex surface,.15*Sin(i*20),0,.15*Cos(i*20),i*.0555,1
+	Next
+	For i=18 To 34
+		AddTriangle surface,i*2,i*2+2,i*2+1
+		AddTriangle surface,i*2+2,i*2+3,i*2+1
+		AddTriangle surface,i*2+1,i*2+2,i*2
+		AddTriangle surface,i*2+1,i*2+3,i*2+2
+
+	Next
+	AddTriangle surface,70,36,71
+	AddTriangle surface,36,37,71
+	AddTriangle surface,71,36,70
+	AddTriangle surface,71,37,36
+
+
+	UpdateNormals LevelExitEntity
+	EntityBlend LevelExitEntity,3
+;	EntityAlpha LevelExitEntity,.5
+	
+	EntityTexture LevelExitEntity,VoidTexture
+	
+;	PositionEntity LevelExitEntity,x+.5,0,-y-.5
+
+
+
+	Return LevelExitEntity
+End Function
+
+
 Function BuildCurrentTileModel()
 	
 	j=0
@@ -10809,8 +10861,9 @@ Function BuildCurrentObjectModel()
 		ScaleMesh CurrentObjectModel,.1,.1,.1
 		EntityColor CurrentObjectModel,CurrentObjectData(5),CurrentObjectData(6),CurrentObjectData(7)
 	Else If CurrentObjectModelName$="!Void"
-		CurrentObjectModel=CreateSphere(12)
-		ScaleMesh CurrentObjectModel,.4,.15,.4
+		;CurrentObjectModel=CreateSphere(12)
+		;ScaleMesh CurrentObjectModel,.4,.15,.4
+		CurrentObjectModel=CreateVoidMesh()
 	Else If CurrentObjectModelName$="!Rubberducky"
 		CurrentObjectModel=CopyEntity(RubberduckyMesh)
 
@@ -11813,8 +11866,9 @@ Function CreateObjectModel(Dest)
 			ScaleMesh ObjectEntity(Dest),.1,.1,.1
 			EntityColor ObjectEntity(Dest),ObjectData(Dest,5),ObjectData(Dest,6),ObjectData(Dest,7)
 		Else If ObjectModelName$(Dest)="!Void"
-			ObjectEntity(Dest)=CreateSphere(12)
-			ScaleMesh ObjectEntity(Dest),.4,.15,.4
+			;ObjectEntity(Dest)=CreateSphere(12)
+			;ScaleMesh ObjectEntity(Dest),.4,.15,.4
+			ObjectEntity(Dest)=CreateVoidMesh()
 
 
 		Else If ObjectModelName$(Dest)="!Spring"
