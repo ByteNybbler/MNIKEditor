@@ -5677,9 +5677,9 @@ Function ObjectIsAtFloat(i,x#,y#)
 
 End Function
 
-Function TryGrabObjectLoop(x#,y#)
+Function TryGrabObjectLoop(x#,y#,Target)
 	For i=0 To NofObjects-1
-		If ObjectIsAtFloat(i,x#,y#) And i>CurrentGrabbedObject
+		If ObjectIsAtFloat(i,x#,y#) And i>Target
 			SetCurrentGrabbedObject(i)
 			Return True
 		EndIf
@@ -5688,18 +5688,15 @@ Function TryGrabObjectLoop(x#,y#)
 End Function
 
 Function GrabObject(x#,y#)
-	CachedGrabbedObject=CurrentGrabbedObject
-	Flag=TryGrabObjectLoop(x#,y#)
+	;CachedGrabbedObject=CurrentGrabbedObject
+	Flag=TryGrabObjectLoop(x#,y#,CurrentGrabbedObject)
 	If Flag=False
-		SetCurrentGrabbedObject(-1) ; restart the cycle
-		Flag=TryGrabObjectLoop(x#,y#)
+		; restart the cycle
+		Flag=TryGrabObjectLoop(x#,y#,-1)
 	EndIf
 	If Flag=False
 		; no object found
-		SetCurrentGrabbedObject(CachedGrabbedObject)
-		;Locate 0,0
-		;Print "No Object Here"
-		;Delay 1000
+		;SetCurrentGrabbedObject(CachedGrabbedObject)
 		Return
 	EndIf
 	
