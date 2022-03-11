@@ -14507,21 +14507,6 @@ Function AdventureSelectScreen()
 			Until MouseDown(1)=0
 		EndIf
 		
-		If (mx<50 Or mx>748) And my>175 And my<235
-			; Page Up
-			AdventureFileNamesListedStart=AdventureFileNamesListedStart-19
-			If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-		If (mx<50 Or mx>748) And my>475 And my<535
-			; Page Down
-			AdventureFileNamesListedStart=AdventureFileNamesListedStart+19
-			If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-		
 		If AdventureNameSelected>=0
 		
 			Repeat
@@ -14529,6 +14514,31 @@ Function AdventureSelectScreen()
 			SetEditorMode(6)
 		EndIf
 
+	EndIf
+
+	If my>165 And my<545
+		If MouseScroll<>0
+			Speed=1
+			If ShiftDown()
+				Speed=10
+			EndIf
+			AdventureFileNamesListedStart=AdventureFileNamesListedStart-MouseScroll*Speed
+		EndIf
+		If (mx<50 Or mx>748) And MouseDown(1)
+			If my>175 And my<235
+				; Page Up
+				AdventureFileNamesListedStart=AdventureFileNamesListedStart-19
+				Repeat
+				Until MouseDown(1)=0
+			ElseIf my>475 And my<535
+				; Page Down
+				AdventureFileNamesListedStart=AdventureFileNamesListedStart+19
+				Repeat
+				Until MouseDown(1)=0
+			EndIf
+		EndIf
+		If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
+		If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
 	EndIf
 		
 	
