@@ -8788,11 +8788,37 @@ Function AdjustObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	Case "ObjectTextData0"
 		If LeftMouse=True
-			CurrentObjectTextData$(0)=InputString$("Enter TextData0: ")
+			If AltDown()
+				If ConfirmFindAndReplace()
+					Target$=CurrentObjectTextData$(0)
+					CurrentObjectTextData$(0)=InputString$("Replacement TextData0: ")
+					For j=0 To NofObjects-1
+						If ObjectTextData$(j,0)=Target$
+							ObjectTextData$(j,0)=CurrentObjectTextData$(0)
+							UpdateObjectModel(j)
+						EndIf
+					Next
+				EndIf
+			Else
+				CurrentObjectTextData$(0)=InputString$("TextData0: ")
+			EndIf
 		EndIf
 	Case "ObjectTextData1"
 		If LeftMouse=True
-			CurrentObjectTextData$(1)=InputString$("Enter TextData1: ")
+			If AltDown()
+				If ConfirmFindAndReplace()
+					Target$=CurrentObjectTextData$(1)
+					CurrentObjectTextData$(1)=InputString$("Replacement TextData1: ")
+					For j=0 To NofObjects-1
+						If ObjectTextData$(j,1)=Target$
+							ObjectTextData$(j,1)=CurrentObjectTextData$(1)
+							UpdateObjectModel(j)
+						EndIf
+					Next
+				EndIf
+			Else
+				CurrentObjectTextData$(1)=InputString$("TextData1: ")
+			EndIf
 		EndIf
 	Case "TextureName"
 		If LeftMouse=True
@@ -12227,6 +12253,8 @@ Function CreateObjectModel(Dest)
 			
 			
 		Else If ObjectTextureName$(Dest)="!Door"
+			If ObjectData(Dest,5)<0 Then ObjectData(Dest,5)=0
+			If ObjectData(Dest,5)>2 Then ObjectData(Dest,5)=2
 			If DoorTexture(ObjectData(Dest,5))=0 Then ObjectData(Dest,5)=0
 			EntityTexture ObjectEntity(Dest),DoorTexture(ObjectData(Dest,5))
 		Else If ObjectTextureName$(Dest)="!Cottage"
