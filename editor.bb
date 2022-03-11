@@ -413,7 +413,7 @@ Dim BrushWaterTileTurbulence#(100,100)
 
 Global ChunkTileU#,ChunkTileV#
 
-Global CurrentMesh,CurrentSurface
+Global CurrentMesh,CurrentSurface ; for tile rendering
 
 Global CurrentTileTexture=8
 Global CurrentTileRotation
@@ -2484,11 +2484,20 @@ Function EditorLocalControls()
 	StartX=510
 	StartY=20
 	
-	If MX>=StartX And MX<StartX+200 And MY>=StartY And MY<StartY+220 And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True)
-		SetEditorMode(0)
-		CameraProjMode Camera1,1
-		CameraProjMode Camera3,0
-		CameraClsColor camera2,TileColor,0,0
+	If MX>=StartX And MX<StartX+200 And MY>=StartY And MY<StartY+220
+		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
+			SetEditorMode(0)
+			CameraProjMode Camera1,1
+			CameraProjMode Camera3,0
+			CameraClsColor camera2,TileColor,0,0
+		EndIf
+		RotationSpeed=4
+		If KeyDown(30) ; A
+			TurnEntity CurrentMesh,0,RotationSpeed,0
+		EndIf
+		If KeyDown(32) ; D
+			TurnEntity CurrentMesh,0,-RotationSpeed,0
+		EndIf
 	EndIf
 	
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+35 And MY<StartY+100
@@ -12314,6 +12323,8 @@ Function CameraControls()
 	
 	If EditorMode=3 And mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
 		Target=Camera4 ; object camera
+	ElseIf EditorMode=0 And mx>=510 And mx<710 And my>=20 And my<240
+		Target=-1 ; tile camera
 	Else
 		Target=Camera1 ; level camera
 	EndIf
