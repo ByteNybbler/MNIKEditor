@@ -2476,6 +2476,13 @@ Function EditorLocalControls()
 	StartX=510
 	StartY=20
 	
+	If MX>=StartX And MX<StartX+200 And MY>=StartY And MY<StartY+220 And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True)
+		SetEditorMode(0)
+		CameraProjMode Camera1,1
+		CameraProjMode Camera3,0
+		CameraClsColor camera2,TileColor,0,0
+	EndIf
+	
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+35 And MY<StartY+100
 		If RightMouse=True And RightMouseReleased=True 
 			; CurrentTileRotation
