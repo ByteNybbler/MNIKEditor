@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/10/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/11/22)"
 
 Global MASTERUSER=True
 
@@ -14781,8 +14781,10 @@ Function AdventureSelectScreen2()
 	DisplayText2(AdventureFileName$,22-Len(AdventureFileName$)/2,4,255,255,255)
 	
 	If Not hubmode
-		LoadMasterFile()
-		DisplayText2(AdventureTitle$,22-Len(AdventureTitle$)/2,5,255,255,255)
+		If MasterFileExists()
+			LoadMasterFile()
+			DisplayText2(AdventureTitle$,22-Len(AdventureTitle$)/2,5,255,255,255)
+		EndIf
 	EndIf
 	
 		
@@ -16996,7 +16998,23 @@ Function StartTestMode()
 	CloseFile file
 	ExecFile ("wg.exe")
 	End
-End function
+End Function
+
+Function MasterFileExists()
+
+	If AdventureCurrentArchive=1
+		ex2$="Archive\"
+	Else
+		ex2$="Current\"
+	EndIf
+
+	If FileType(globaldirname$+"\Custom\editing\"+ex2$+AdventureFileName$+"\master.dat")=1
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
 
 Function LoadMasterFile()
 
