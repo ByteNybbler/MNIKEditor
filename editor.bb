@@ -3029,17 +3029,17 @@ Function EditorLocalControls()
 
 	If mx>=715 
 				
-		If my>=100 And my<115 And leftmouse=True And leftmousereleased=True
+		If my>=100 And my<115 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
 			leftmousereleased=False
 			LevelWeather=LevelWeather+1
 			If levelweather=18 Then levelweather=0
 		EndIf
-		If my>=100 And my<115 And rightmouse=True And rightmousereleased=True
+		If my>=100 And my<115 And ((rightmouse=True And rightmousereleased=True) Or MouseScroll<0)
 			rightmousereleased=False
 			LevelWeather=LevelWeather-1
 			If levelweather=-1 Then levelweather=17
 		EndIf
-		If my>=115 And my<130 And leftmouse=True And leftmousereleased=True
+		If my>=115 And my<130 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
 			leftmousereleased=False
 			If KeyDown(42) Or KeyDown(54) Or KeyDown(29) Or KeyDown(157) ; shift or ctrl
 				LevelMusic=InputInt("Enter music ID: ")
@@ -3048,7 +3048,7 @@ Function EditorLocalControls()
 				If levelmusic=22 Then levelmusic=-1
 			EndIf
 		EndIf
-		If my>=115 And my<130 And rightmouse=True And rightmousereleased=True
+		If my>=115 And my<130 And ((rightmouse=True And rightmousereleased=True) Or MouseScroll<0)
 			rightmousereleased=False
 			levelmusic=levelmusic-1
 			If levelmusic=-2 Then levelmusic=20
@@ -3200,28 +3200,27 @@ Function EditorLocalControls()
 		EndIf
 
 		
-		If my>165 And my<185 
+		If my>165 And my<195 ;my<185 
 			If mx>723 And mx<739
-				If leftmouse=True And leftmousereleased=True
-					Waterflow=WaterFlow+1
-					If WaterFlow=11 Then WaterFlow=-10
-					leftmousereleased=False
-				EndIf
-				If rightmouse=True And rightmousereleased=True
-					Waterflow=Waterflow-1
-					If Waterflow=-11 Then Waterflow=10
-					rightmousereleased=False
-				EndIf
+				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, 150)
+;				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
+;					Waterflow=WaterFlow+1
+;					leftmousereleased=False
+;				EndIf
+;				If (rightmouse=True And rightmousereleased=True) Or MouseScroll<0
+;					Waterflow=Waterflow-1
+;					rightmousereleased=False
+;				EndIf
 			EndIf
 			If mx>747 And mx<763
-				If leftmouse=True And leftmousereleased=True
+				If (leftmouse=True And leftmousereleased=True) Or MouseScroll<>0
 					WaterTransparent=1-WaterTransparent
 					leftmousereleased=False
 				EndIf
 				
 			EndIf
 			If mx>771 And mx<787
-				If leftmouse=True And leftmousereleased=True
+				If (leftmouse=True And leftmousereleased=True) Or MouseScroll<>0
 					WaterGlow=1-WaterGlow
 					leftmousereleased=False
 				EndIf
@@ -3238,7 +3237,7 @@ Function EditorLocalControls()
 	EndIf
 	
 	If mx>712 And my>215 And mx<736 And my<228
-		If leftmouse=True
+		If leftmouse=True Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				LightRed=InputInt("Enter LightRed: ")
 			Else
@@ -3246,13 +3245,13 @@ Function EditorLocalControls()
 				If lightred=256 Then lightred=0
 			EndIf
 		EndIf
-		If rightmouse=True 
+		If rightmouse=True Or MouseScroll<0
 			LightRed=LightRed-1
 			If lightred=-1 Then lightred=255
 		EndIf
 	EndIf
 	If mx>712+29 And my>215 And mx<736+29 And my<228
-		If leftmouse=True 
+		If leftmouse=True Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				LightGreen=InputInt("Enter LightGreen: ")
 			Else
@@ -3260,13 +3259,13 @@ Function EditorLocalControls()
 				If LightGreen=256 Then LightGreen=0
 			EndIf
 		EndIf
-		If rightmouse=True 
+		If rightmouse=True Or MouseScroll<0
 			LightGreen=LightGreen-1
 			If LightGreen=-1 Then LightGreen=255
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215 And mx<736+29+29 And my<228
-		If leftmouse=True 
+		If leftmouse=True  Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				LightBlue=InputInt("Enter LightBlue: ")
 			Else
@@ -3274,14 +3273,14 @@ Function EditorLocalControls()
 				If LightBlue=256 Then LightBlue=0
 			EndIf
 		EndIf
-		If rightmouse=True 
+		If rightmouse=True Or MouseScroll<0
 			LightBlue=LightBlue-1
 			If LightBlue=-1 Then LightBlue=255
 		EndIf
 	EndIf
 	
 		If mx>712 And my>215+13 And mx<736 And my<228+13
-		If leftmouse=True 
+		If leftmouse=True Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				AmbientRed=InputInt("Enter AmbientRed: ")
 			Else
@@ -3289,13 +3288,13 @@ Function EditorLocalControls()
 				If Ambientred=256 Then ambientred=0
 			EndIf
 		EndIf
-		If rightmouse=True 
+		If rightmouse=True Or MouseScroll<0
 			AmbientRed=AmbientRed-1
 			If Ambientred=-1 Then ambientred=255
 		EndIf
 	EndIf
 	If mx>712+29 And my>215+13 And mx<736+29 And my<228+13
-		If leftmouse=True 
+		If leftmouse=True Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				AmbientGreen=InputInt("Enter AmbientGreen: ")
 			Else
@@ -3303,13 +3302,13 @@ Function EditorLocalControls()
 				If AmbientGreen=256 Then AmbientGreen=0
 			EndIf
 		EndIf
-		If rightmouse=True 
+		If rightmouse=True Or MouseScroll<0
 			AmbientGreen=AmbientGreen-1
 			If AmbientGreen=-1 Then AmbientGreen=255
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215+13 And mx<736+29+29 And my<228+13
-		If leftmouse=True 
+		If leftmouse=True Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				AmbientBlue=InputInt("Enter AmbientBlue: ")
 			Else
@@ -3317,7 +3316,7 @@ Function EditorLocalControls()
 				If AmbientBlue=256 Then AmbientBlue=0
 			EndIf
 		EndIf
-		If rightmouse=True 
+		If rightmouse=True Or MouseScroll<0
 			AmbientBlue=AmbientBlue-1
 			If AmbientBlue=-1 Then AmbientBlue=255
 		EndIf
