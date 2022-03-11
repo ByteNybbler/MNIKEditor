@@ -11384,22 +11384,30 @@ Function ReSizeLevel()
 		; use current
 		If WidthLeftChange>0
 			For j=0 To LevelHeightOld-1
-				ChangeLevelTile(0,j,False)
+				For k=0 To WidthLeftChange-1
+					ChangeLevelTile(k,j,False)
+				Next
 			Next
 		EndIf
 		If WidthRightChange>0
 			For j=0 To LevelHeightOld-1
-				ChangeLevelTile(LevelWidthOld,j,False)
+				For k=0 To WidthRightChange-1
+					ChangeLevelTile(LevelWidthOld+k,j,False)
+				Next
 			Next
 		EndIf
 		If HeightTopChange>0
 			For i=0 To LevelWidthOld-1
-				ChangeLevelTile(i,0,False)
+				For k=0 To HeightTopChange-1
+					ChangeLevelTile(i,k,False)
+				Next
 			Next
 		EndIf
 		If HeightBottomChange>0
 			For i=0 To LevelWidthOld-1
-				ChangeLevelTile(i,LevelHeightOld,False)
+				For k=0 To HeightBottomChange-1
+					ChangeLevelTile(i,LevelHeightOld+k,False)
+				Next
 			Next
 		EndIf
 	EndIf
@@ -11408,22 +11416,30 @@ Function ReSizeLevel()
 		; use duplicate
 		If WidthLeftChange>0
 			For j=0 To LevelHeightOld-1
-				CopyTile(0,j,0,j)
+				For k=0 To WidthLeftChange-1
+					CopyTile(0,j,k,j)
+				Next
 			Next
 		EndIf
 		If WidthRightChange>0
 			For j=0 To LevelHeightOld-1
-				CopyTile(LevelWidthOld-1,j,LevelWidthOld,j)
+				For k=0 To WidthRightChange-1
+					CopyTile(LevelWidthOld-1,j,LevelWidthOld+k,j)
+				Next
 			Next
 		EndIf
 		If HeightTopChange>0
 			For i=0 To LevelWidthOld-1
-				CopyTile(i,0,i,0)
+				For k=0 To HeightTopChange-1
+					CopyTile(i,0,i,k)
+				Next
 			Next
 		EndIf
 		If HeightBottomChange>0
 			For i=0 To LevelWidthOld-1
-				CopyTile(i,LevelHeightOld-1,i,LevelHeightOld)
+				For k=0 To HeightBottomChange-1
+					CopyTile(i,LevelHeightOld-1,i,LevelHeightOld+k)
+				Next
 			Next
 		EndIf
 	EndIf
