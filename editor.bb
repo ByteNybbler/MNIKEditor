@@ -14537,8 +14537,8 @@ Function AdventureSelectScreen()
 				Until MouseDown(1)=0
 			EndIf
 		EndIf
-		If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
 		If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
+		If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
 	EndIf
 		
 	
