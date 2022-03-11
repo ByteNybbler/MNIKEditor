@@ -2492,10 +2492,10 @@ Function EditorLocalControls()
 			CameraClsColor camera2,TileColor,0,0
 		EndIf
 		RotationSpeed=4
-		If KeyDown(30) ; A
+		If KeyDown(23) ; I, formerly A (30)
 			TurnEntity CurrentMesh,0,RotationSpeed,0
 		EndIf
-		If KeyDown(32) ; D
+		If KeyDown(24) ; O, formerly D (32)
 			TurnEntity CurrentMesh,0,-RotationSpeed,0
 		EndIf
 	EndIf
@@ -12323,8 +12323,8 @@ Function CameraControls()
 	
 	If EditorMode=3 And mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
 		Target=Camera4 ; object camera
-	ElseIf EditorMode=0 And mx>=510 And mx<710 And my>=20 And my<240
-		Target=-1 ; tile camera
+	;ElseIf EditorMode=0 And mx>=510 And mx<710 And my>=20 And my<240
+	;	Target=-1 ; tile camera
 	Else
 		Target=Camera1 ; level camera
 	EndIf
