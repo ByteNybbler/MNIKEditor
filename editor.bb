@@ -1545,7 +1545,8 @@ Dim CustomGlyphCMD(NoOfGlyphs,5)
 Global SelectedShard
 Global SelectedGlyph
 
-;ResetParticles("data/graphics/particles.bmp")
+ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
+ResetParticles("data/graphics/particles.bmp")
 ResetText("data/graphics/font.bmp")
 
 
@@ -1685,10 +1686,10 @@ Function EditorMainLoop()
 	
 	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
-	;ControlObjects()
-	;ControlParticles()
+	ControlObjects()
+	ControlParticles()
 	
-	;RenderParticles()
+	RenderParticles()
 	UpdateWorld 
 	RenderWorld
 	
@@ -11295,6 +11296,8 @@ Function ResetLevel()
 			WaterTileTurbulence#(i,j)=0.1
 		Next
 	Next
+	
+	ResetParticles("data/graphics/particles.bmp")
 
 End Function
 
