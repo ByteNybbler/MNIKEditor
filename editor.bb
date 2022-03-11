@@ -1605,6 +1605,9 @@ Repeat
 		
 		If HasFocus()
 		
+			;Color 0,0,0
+			;Rect 0,0,800,600,True
+		
 			EditorGlobalControls()
 		
 			Select EditorMode
@@ -1630,8 +1633,6 @@ Repeat
 			Case 12
 				HubAdventureSelectScreen()
 			End Select
-			
-			
 			
 		
 		Else
@@ -1674,6 +1675,16 @@ End Function
 Function EditorMainLoop()
 
 	If displayfullscreen=True Cls
+	
+	; full window size is 800x600, whereas the level camera viewport is 500x500
+	; draw black regions so stray text doesn’t linger there
+	;Color 0,0,200
+	Color 0,0,0
+	Rect 500,0,10,500,True ; between level camera and object/tile editors
+	Rect 510,0,290,20,True ; backdrop for the labels of TILES and GLOBALS
+	Rect 710,20,5,220,True ; between TILES and GLOBALS
+	Rect 795,20,5,580,True ; to the right of GLOBALS
+	Rect 695,430,100,5,True ; between object camera and More button
 
 
 	CameraControls()
@@ -2480,6 +2491,7 @@ Function EditorLocalControls()
 	; Change the CurrentTile
 	; *************************************
 	
+	Color 255,255,255
 	Text 590,5,"TILES"
 		
 	StartX=510
@@ -4209,6 +4221,23 @@ Function ShiftDown()
 
 End Function
 
+Function AltDown()
+
+	Return KeyDown(56) Or KeyDown(184) ; left alt or right alt
+
+End Function
+
+Function GetConfirmation(Message$)
+
+	Locate 0,0
+	Color 0,0,0
+	Rect 0,0,500,40,True
+	Color 255,255,255
+	Confirm$=Input$(Message$)
+	Return Confirm="Y" Or Confirm="y"
+
+End Function
+
 
 ; returns -1 if no matching name is found
 Function LogicNameToLogicId(Name$)
@@ -5594,10 +5623,6 @@ End Function
 
 
 Function UpdateObjectEntityToCurrent(Dest)
-
-	;FreeModel(Dest)
-	
-	;CreateObjectModel(Dest)
 	
 	ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
 	
@@ -8708,6 +8733,13 @@ Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
 End Function
 
 
+Function ConfirmFindAndReplace()
+
+	Return GetConfirmation("Find and replace? Type Y to confirm: ")
+
+End Function
+
+
 Function AdjustObjectAdjuster(i)
 
 	; avoid false positives from pressing enter
@@ -8741,12 +8773,22 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 	Case "TextureName"
 		If LeftMouse=True
-		;If Left(CurrentObjectTextureName$,1)="?"
-		;	CurrentObjectTextureName$="?"+InputString$("TextureName: ")
-		;Else
-			CurrentObjectTextureName$=InputString$("TextureName: ")
-			If Left$(CurrentObjectTextureName$,1)="/"
-				CurrentObjectTextureName$="userdata/custom/models/"+Right$(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)
+			If AltDown()
+				If ConfirmFindAndReplace()
+					Target$=CurrentObjectTextureName$
+					CurrentObjectTextureName$=InputString$("Replacement TextureName: ")
+					For i=0 To NofObjects-1
+						If ObjectTextureName$(i)=Target$
+							ObjectTextureName$(i)=CurrentObjectTextureName$
+							UpdateObjectModel(i)
+						EndIf
+					Next
+				EndIf
+			Else
+				CurrentObjectTextureName$=InputString$("TextureName: ")
+				If Left$(CurrentObjectTextureName$,1)="/"
+					CurrentObjectTextureName$="userdata/custom/models/"+Right$(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)
+				EndIf
 			EndIf
 		EndIf
 		
@@ -12319,7 +12361,20 @@ Function CreateObjectModel(Dest)
 
 
 		EndIf
+		
+		
+		UpdateObjectVisibility(Dest)
 
+		PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+
+
+End Function
+
+
+Function UpdateObjectModel(Dest)
+
+	FreeModel(Dest)
+	CreateObjectModel(Dest)
 
 End Function
 
@@ -12938,10 +12993,6 @@ Function LoadLevel(levelnumber)
 		Next
 		
 		CreateObjectModel(Dest)
-		
-		UpdateObjectVisibility(Dest)
-
-		PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
 
 		LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)+1
 		CreateObjectPositionMarker(Dest)
