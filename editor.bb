@@ -8733,6 +8733,29 @@ Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
 End Function
 
 
+Function InputTextureName(Prompt$)
+
+	CurrentObjectTextureName$=InputString$(Prompt$)
+	If Left$(CurrentObjectTextureName$,1)="/"
+		CurrentObjectTextureName$="userdata/custom/models/"+Right$(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)
+	EndIf
+
+End Function
+
+
+Function InputModelName(Prompt$)
+
+	CurrentObjectModelName$=InputString$(Prompt$)
+	If CurrentObjectModelName$="!CustomModel"
+		CurrentObjectTextData$(0)=InputString$("Enter custom model name (e.g. Default): ")
+	ElseIf Left$(CurrentObjectModelName$,1)="/" Or Left$(CurrentObjectModelName$,1)="?"
+		CurrentObjectTextData$(0)=Right$(CurrentObjectModelName$,Len(CurrentObjectModelName$)-1)
+		CurrentObjectModelName$="!CustomModel"
+	EndIf
+
+End Function
+
+
 Function ConfirmFindAndReplace()
 
 	Return GetConfirmation("Find and replace? Type Y to confirm: ")
@@ -8776,34 +8799,37 @@ Function AdjustObjectAdjuster(i)
 			If AltDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObjectTextureName$
-					CurrentObjectTextureName$=InputString$("Replacement TextureName: ")
-					For i=0 To NofObjects-1
-						If ObjectTextureName$(i)=Target$
-							ObjectTextureName$(i)=CurrentObjectTextureName$
-							UpdateObjectModel(i)
+					InputTextureName("Replacement TextureName: ")
+					For j=0 To NofObjects-1
+						If ObjectTextureName$(j)=Target$
+							ObjectTextureName$(j)=CurrentObjectTextureName$
+							UpdateObjectModel(j)
 						EndIf
 					Next
 				EndIf
 			Else
-				CurrentObjectTextureName$=InputString$("TextureName: ")
-				If Left$(CurrentObjectTextureName$,1)="/"
-					CurrentObjectTextureName$="userdata/custom/models/"+Right$(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)
-				EndIf
+				InputTextureName("TextureName: ")
 			EndIf
 		EndIf
 		
 	Case "ModelName"
 		If LeftMouse=True
-		;If Left(CurrentObjectModelName$,1)="?"
-		;	CurrentObjectModelName$="?"+InputString$("ModelName: ")
-		;Else
-			CurrentObjectModelName$=InputString$("ModelName: ")
-			If CurrentObjectModelName$="!CustomModel"
-				CurrentObjectTextData$(0)=InputString$("Enter custom model name (e.g. Default): ")
-			ElseIf Left$(CurrentObjectModelName$,1)="/" Or Left$(CurrentObjectModelName$,1)="?"
-				;CurrentObjectModelName$="?"+Right$(CurrentObjectModelName$,Len(CurrentObjectModelName$)-1)
-				CurrentObjectTextData$(0)=Right$(CurrentObjectModelName$,Len(CurrentObjectModelName$)-1)
-				CurrentObjectModelName$="!CustomModel"
+			If AltDown()
+				If ConfirmFindAndReplace()
+					Target$=CurrentObjectModelName$
+					InputModelName("Replacement ModelName: ")
+					For j=0 To NofObjects-1
+						If ObjectModelName$(j)=Target$
+							ObjectModelName$(j)=CurrentObjectModelName$
+							If CurrentObjectModelName$="!CustomModel"
+								ObjectTextData$(j,0)=CurrentObjectTextData$(0)
+							EndIf
+							UpdateObjectModel(j)
+						EndIf
+					Next
+				EndIf
+			Else
+				InputModelName("ModelName: ")
 			EndIf
 		EndIf
 		
@@ -11146,6 +11172,7 @@ Function BuildCurrentObjectModel()
 		CurrentObjectTexture=0
 	Else If CurrentObjectTextureName$="!Door"
 		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
+		If CurrentObjectData(5)>2 Then CurrentObjectData(5)=2
 		If DoorTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
 		EntityTexture CurrentObjectModel,DoorTexture(CurrentObjectData(5))
 	Else If CurrentObjectTextureName$="!Cottage"
@@ -12373,7 +12400,12 @@ End Function
 
 Function UpdateObjectModel(Dest)
 
+	;ShowMessage("Freeing object model "+Dest+": "+ObjectModelName$(Dest),100)
+
 	FreeModel(Dest)
+	
+	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),100)
+	
 	CreateObjectModel(Dest)
 
 End Function
