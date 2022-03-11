@@ -14573,8 +14573,16 @@ Function AdventureSelectScreen2()
 	Else
 		DisplayText2("             Adventure Selected:",0,3,255,255,0)
 	EndIf
-	DisplayText2(AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart),22-Len(AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart))/2,4,255,255,255)
 	
+	AdventureFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+	DisplayText2(AdventureFileName$,22-Len(AdventureFileName$)/2,4,255,255,255)
+	
+	If Not hubmode
+		LoadMasterFile()
+		DisplayText2(AdventureTitle$,22-Len(AdventureTitle$)/2,5,255,255,255)
+	EndIf
+	
+		
 	DisplayText2("               Choose Option:",0,6,255,255,0)
 	DisplayText2("============================================",0,7,255,255,0)
 
