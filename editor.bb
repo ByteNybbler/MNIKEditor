@@ -615,6 +615,8 @@ Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
 Global IDFilterEnabled=False
 Global IDFilterAllow=-1
 
+Global TexturePrefix$=""
+
 Dim BrushObjectModelName$(1000)
 Dim BrushObjectTextureName$(1000)
 Dim BrushObjectXScale#(1000)
@@ -1806,9 +1808,17 @@ Function EditorMainLoop()
 	EndIf
 
 	
-	Text 100,520,"   FLIP X"
-	Text 100,550,"   FLIP Y"
-	Text 100+4,580,"  FLIP XY"
+	Text 100,520,"   FLIP"
+	;Text 100,520,"   FLIP X"
+	;Text 100,550,"   FLIP Y"
+	;Text 100+4,580,"  FLIP XY"
+	
+	If TexturePrefix<>""
+		Color 255,155,0
+	EndIf
+	Text 90,565,"TEXTURE PREFIX"
+	Text 100,580,TexturePrefix$
+	Color 255,255,255
 	
 	If ShowObjectPositions=True
 		Text 200,520,"    SHOW"
@@ -3918,39 +3928,65 @@ Function EditorLocalControls()
 	If MX>=100 And Mx<200
 		If my>=510 And my<540
 			If LeftMouse=True And LeftMouseReleased=True
-				;flipx
-				FlipLevelX()
-				Locate 0,0
-				Color 0,0,0
-				Rect 0,0,500,40,True
-				Color 255,255,255
-				Print "Flipped"
-				Delay 1000
+				;flip
+				Flipped=False
+				DesiredFlip$=Upper$(InputString$("Enter desired flip (X, Y, or XY): "))
+				If DesiredFlip$="X"
+					FlipLevelX()
+					Flipped=True
+				ElseIf DesiredFlip$="Y"
+					FlipLevelY()
+					Flipped=True
+				ElseIf DesiredFlip$="XY"
+					FlipLevelXY()
+					Flipped=True
+				EndIf
+				
+				If Flipped
+					Locate 0,0
+					Color 0,0,0
+					Rect 0,0,500,40,True
+					Color 255,255,255
+					Print "Flipped"
+					Delay 1000
+				EndIf
 			EndIf
 		EndIf
-		If my>=540 And my<570
-			If LeftMouse=True And LeftMouseReleased=True
-				;flipy
-				FlipLevelY()
-				Locate 0,0
-				Color 0,0,0
-				Rect 0,0,500,40,True
-				Color 255,255,255
-				Print "Flipped"
-				Delay 1000
-			EndIf
-		EndIf
-		If my>=570 And my<600
-			If LeftMouse=True And LeftMouseReleased=True
-				;flipxy
-				FlipLevelXY()
-				Locate 0,0
-				Color 0,0,0
-				Rect 0,0,500,40,True
-				Color 255,255,255
-				Print "Flipped"
-				Delay 1000
+;		If my>=540 And my<570
+;			If LeftMouse=True And LeftMouseReleased=True
+;				;flipy
+;				FlipLevelY()
+;				Locate 0,0
+;				Color 0,0,0
+;				Rect 0,0,500,40,True
+;				Color 255,255,255
+;				Print "Flipped"
+;				Delay 1000
+;			EndIf
+;		EndIf
+;		If my>=570 And my<600
+;			If LeftMouse=True And LeftMouseReleased=True
+;				;flipxy
+;				FlipLevelXY()
+;				Locate 0,0
+;				Color 0,0,0
+;				Rect 0,0,500,40,True
+;				Color 255,255,255
+;				Print "Flipped"
+;				Delay 1000
+;
+;			EndIf
+;		EndIf
 
+		If my>=565 And my<595
+			If LeftMouse=True And LeftMouseReleased=True
+				;texture prefix
+				Locate 0,0
+				Color 0,0,0
+				Rect 0,0,500,40,True
+				Color 255,255,255
+				Print "Enter texture prefix (leave blank to disable texture prefix): "
+				TexturePrefix$=Input$("")
 			EndIf
 		EndIf
 
@@ -8883,6 +8919,8 @@ Function InputTextureName(Prompt$)
 	CurrentObjectTextureName$=InputString$(Prompt$)
 	If Left$(CurrentObjectTextureName$,1)="/"
 		CurrentObjectTextureName$="userdata/custom/models/"+Right$(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)
+	Else
+		CurrentObjectTextureName$=TexturePrefix$+CurrentObjectTextureName$
 	EndIf
 
 End Function
@@ -11784,6 +11822,8 @@ Function FlipLevelX()
 		
 	Next
 	
+	SomeObjectWasChanged()
+	
 	
 End Function
 
@@ -11821,6 +11861,8 @@ Function FlipLevelY()
 		PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
 		
 	Next
+	
+	SomeObjectWasChanged()
 	
 	
 End Function
@@ -11866,6 +11908,8 @@ Function FlipLevelXY()
 		PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
 		
 	Next
+	
+	SomeObjectWasChanged()
 	
 	
 End Function
