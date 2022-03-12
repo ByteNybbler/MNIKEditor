@@ -20200,7 +20200,8 @@ End Function
 
 Function ControlTentacle(i)
 
-	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(Rand(-10,10))/10.0
+	If SimulatedObjectStatus(i)=0 Then SimulatedObjectStatus(i)=Rand(-10,10)
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectStatus(i))/10.0
 	
 	SimulateObjectRotationAdjust(i)
 	
