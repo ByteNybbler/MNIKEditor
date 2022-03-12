@@ -572,6 +572,7 @@ Dim SimulatedObjectRoll#(1000)
 Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2#(1000)
 Dim SimulatedObjectStatus(1000)
 Dim SimulatedObjectData(1000,10)
+Dim SimulatedObjectTileTypeCollision(1000)
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
@@ -5612,10 +5613,14 @@ Function CalculateEffectiveID(Dest)
 		If ObjectID(Dest)=-1
 			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 		EndIf
-	Case 40 ; stepping stone
-		Return 500+(8+ObjectData(i,0))*5+ObjectData(i,1)
+	Case 40,301 ; stepping stone
+		Return 500+(8+ObjectData(i,0))*5+ObjectData(i,1)	   
 	Case 280 ; spring
 		Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
+	Case 301 ; rainbow float
+		If ObjectID(Dest)=-1
+			Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)
+		EndIf
 	End Select
 	
 	If ObjectModelName$(Dest)="!Cage" Or ObjectModelName$(Dest)="!FlipBridge" Or ObjectModelName$(Dest)="!Spring" Or ObjectModelName$(Dest)="!ColourGate" Or ObjectModelName$(Dest)="!Transporter" Or ObjectModelName$(Dest)="!Teleport" Or ObjectModelName$(Dest)="!Suctube"
@@ -5764,10 +5769,11 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectXScale(i)=1.0
 		SimulatedObjectYScale(i)=1.0
 		SimulatedObjectZScale(i)=1.0
-		SimulatedObjectStatus(i)=0
+		SimulatedObjectStatus(i)=ObjectStatus(i)
 		For j=0 To 10
-			SimulatedObjectData(i,j)=0
+			SimulatedObjectData(i,j)=ObjectData(i,j)
 		Next
+		SimulatedObjectTileTypeCollision(i)=ObjectTileTypeCollision(i)
 	Next
 
 End Function
@@ -20275,8 +20281,8 @@ End Function
 
 Function ControlTentacle(i)
 
-	If SimulatedObjectStatus(i)=0 Then SimulatedObjectStatus(i)=Rand(-10,10)
-	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectStatus(i))/10.0
+	If SimulatedObjectData(i,0)=0 Then SimulatedObjectData(i,0)=Rand(-10,10)
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectData(i,0))/10.0
 	
 	SimulateObjectRotationAdjust(i)
 	
@@ -20338,8 +20344,8 @@ End Function
 
 Function ControlRubberducky(i)
 
-	If SimulatedObjectStatus(i)=0
-		SimulatedObjectStatus(i)=-1
+	If SimulatedObjectTileTypeCollision(i)=0
+		SimulatedObjectTileTypeCollision(i)=-1
 		SimulatedObjectData(i,1)=Rand(1,3)
 		SimulatedObjectData(i,2)=Rand(0,360)
 	EndIf	
@@ -20385,6 +20391,31 @@ Function ControlWindmillRotor(i)
 	ObjectZAdjust(i)=5.65
 	
 	SimulateObjectXYZAdjust(i)
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
+Function ControlIceFloat(i)	
+	SimulatedObjectPitch(i)=2*ObjectData(i,2)*Sin((LevelTimer + ObjectData(i,1)) Mod 360)
+	SimulatedObjectRoll(i)=3*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
+	
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
+Function ControlPlantFloat(i)
+
+	If SimulatedObjectData(i,2)=0 Then SimulatedObjectData(i,2)=Rand(1,360)
+
+	l=leveltimer+SimulatedObjectData(i,2)
+	EntityColor ObjectEntity(i),128+120*Cos(l Mod 360),128+120*Sin(l Mod 360),200+50*Cos(l Mod 360)
+	
+	;ObjectPitch(i)=4*ObjectData(i,2)*Sin((LevelTimer + ObjectData(i,1)) Mod 360)
+	;Objectroll(i)=6*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
+	SimulatedObjectYaw(i)=leveltimer Mod 360
+	
 	SimulateObjectRotationAdjust(i)
 
 End Function
@@ -20515,6 +20546,10 @@ Function ControlObjects()
 				ControlGloveCharge(i)
 			Case 260
 				ControlBowler(i)
+			Case 300
+				ControlIceFloat(i)
+			Case 301
+				ControlPlantFloat(i)
 			Case 310
 				ControlRubberducky(i)
 			Case 320
