@@ -1424,6 +1424,7 @@ ObstacleMesh(41)=myLoadMesh("data\models\houses\windmill_main.b3d",0)
 HideEntity ObstacleMesh(41)
 
 ObstacleMesh(42)=myLoadMesh("data\models\houses\windmill_rotor.b3d",0)
+	PositionMesh ObstacleMesh(42),0,-5.65/.037,1.25/.037
 	HideEntity ObstacleMesh(42)
 	
 ObstacleMesh(43)=myLoadMesh("data\models\houses\hut01.b3d",0)
@@ -20367,6 +20368,22 @@ Function ControlGloveCharge(i)
 End Function
 
 
+Function ControlWindmillRotor(i)
+
+	If ObjectYawAdjust(i)=0 Or ObjectYawAdjust(i)=180
+		SimulatedObjectRoll(i)=SimulatedObjectRoll(i)+1
+	Else 
+		SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+1
+	EndIf
+	;SimulatedObjectZ(i)=5.65
+	ObjectZAdjust(i)=5.65
+	
+	SimulateObjectXYZAdjust(i)
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -20383,6 +20400,8 @@ Function ControlObjects()
 				ControlObstacle(i)
 			Case 161
 				ControlWaterfall(i)
+			Case 163
+				ControlWindmillRotor(i)
 			Case 170
 				ControlGoldStar(i)
 			Case 171,174
