@@ -559,7 +559,16 @@ Dim ObjectAdjusterString$(1000,30)
 
 Dim ObjectPositionMarker(1000)
 
-Dim ObjectSimulatedStatus(1000)
+Dim SimulatedObjectStatus(1000)
+Dim SimulatedObjectXScale#(1000)
+Dim SimulatedObjectZScale#(1000)
+Dim SimulatedObjectYScale#(1000)
+Dim SimulatedObjectXAdjust#(1000)
+Dim SimulatedObjectZAdjust#(1000)
+Dim SimulatedObjectYAdjust#(1000)
+Dim SimulatedObjectPitch#(1000)
+Dim SimulatedObjectYaw#(1000)
+Dim SimulatedObjectRoll#(1000)
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
@@ -1173,6 +1182,7 @@ Global PortalWarpMesh=CreateCylinder()
 
 Global StarTexture=myloadTexture("data\graphics\stars.jpg",1)
 Global RainbowTexture=myloadTexture("data\graphics\rainbow.jpg",1)
+Global RainbowTexture2=myloadTexture("data\graphics\rainbow.jpg",1)
 
 ; Lurker
 Global LurkerMesh=MyLoadMesh ("data\models\lurker\lurker.3ds",0)
@@ -5527,6 +5537,7 @@ Function PlaceObject(x#,y#)
 	UpdateObjectPositionMarkersAtTile(floorx,floory)
 	
 	
+	SomeObjectWasChanged()
 	
 	
 
@@ -5663,6 +5674,52 @@ Function UpdateObjectEntityToCurrent(Dest)
 	UpdateObjectPosition(Dest)
 
 End Function
+
+
+Function SomeObjectWasChanged()
+
+	ResetSimulatedQuantities()
+
+End Function
+
+
+Function ResetSimulatedQuantities()
+
+	For i=0 To NofObjects-1
+		SimulatedObjectXAdjust(i)=0.0
+		SimulatedObjectYAdjust(i)=0.0
+		SimulatedObjectZAdjust(i)=0.0
+		SimulatedObjectYaw(i)=0.0
+		SimulatedObjectPitch(i)=0.0
+		SimulatedObjectRoll(i)=0.0
+		SimulatedObjectXScale(i)=1.0
+		SimulatedObjectYScale(i)=1.0
+		SimulatedObjectZScale(i)=1.0
+	Next
+
+End Function
+
+
+Function SimulateObjectPosition(Dest)
+
+	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+SimulatedObjectXAdjust(Dest),ObjectZ(Dest)+SimulatedObjectZAdjust(Dest),-ObjectY(Dest)-SimulatedObjectYAdjust(Dest)
+
+End Function
+
+
+Function SimulateObjectRotation(Dest)
+
+	RotateEntity ObjectEntity(Dest),ObjectPitchAdjust(Dest)+SimulatedObjectPitch(Dest),ObjectYawAdjust(Dest)+SimulatedObjectYaw(Dest),ObjectRollAdjust(Dest)+SimulatedObjectRoll(Dest)
+
+End Function
+
+
+Function SimulateObjectScaleXYZ(Dest)
+
+	ScaleEntity ObjectEntity(Dest),SimulatedObjectYScale(Dest)*CurrentObjectScaleAdjust,SimulatedObjectZScale(Dest)*CurrentObjectScaleAdjust,SimulatedObjectXScale(Dest)*CurrentObjectScaleAdjust
+
+End Function
+
 
 Function ObjectIsAtInt(i,x,y)
 
@@ -6121,6 +6178,8 @@ Function DeleteObject(i)
 	
 	UpdateObjectPositionMarkersAtTile(tilex,tiley)
 	
+	SomeObjectWasChanged()
+	
 
 End Function
 
@@ -6554,6 +6613,8 @@ Function PasteObjectData(Dest)
 	UpdateObjectEntityToCurrent(Dest)
 	
 	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
+	
+	SomeObjectWasChanged()
 
 	
 End Function
@@ -10815,9 +10876,9 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CopyEntity(StinkerMesh)
 		
 		If CurrentObjectData(0)=5
-			CurrentObjectTexture=MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
+			CurrentObjectTexture=Waterfalltexture(0) ;MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
 		Else If CurrentObjectData(0)=6
-			CurrentObjectTexture=MyLoadTexture("Data\leveltextures\waterfalllava.jpg",1)
+			CurrentObjectTexture=Waterfalltexture(1) ;MyLoadTexture("Data\leveltextures\waterfalllava.jpg",1)
 
 		Else
 			CurrentObjectTexture=MyLoadTexture("data/models/stinker/body00"+Str$(CurrentObjectData(0))+Chr$(65+CurrentObjectData(1))+".jpg",1)
@@ -10887,7 +10948,7 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CreateSphere()
 		ScaleMesh CurrentObjectModel,.4,.4,.4
 		PositionMesh CurrentObjectModel,0,1,0
-		EntityTexture CurrentObjectModel,Rainbowtexture
+		EntityTexture CurrentObjectModel,Rainbowtexture2
 	Else If CurrentObjectModelName$="!PlantFloat"
 		CurrentObjectModel=CreateSphere()
 		ScaleMesh CurrentObjectModel,.4,.1,.4
@@ -11389,6 +11450,8 @@ Function ResetLevel()
 		Next
 	Next
 	
+	SomeObjectWasChanged()
+	
 	ResetParticles("data/graphics/particles.bmp")
 
 End Function
@@ -11810,9 +11873,9 @@ Function CreateObjectModel(Dest)
 			
 		
 			If ObjectData(Dest,0)=5
-				ObjectTexture(Dest)=MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
+				ObjectTexture(Dest)=Waterfalltexture(0) ;MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
 			Else If ObjectData(Dest,0)=6
-				ObjectTexture(Dest)=MyLoadTexture("Data\leveltextures\waterfalllava.jpg",1)
+				ObjectTexture(Dest)=Waterfalltexture(1) ;MyLoadTexture("Data\leveltextures\waterfalllava.jpg",1)
 	
 			Else
 				ObjectTexture(Dest)=MyLoadTexture("data/models/stinker/body00"+Str$(ObjectData(Dest,0))+Chr$(65+ObjectData(Dest,1))+".jpg",1)
@@ -13071,6 +13134,8 @@ Function LoadLevel(levelnumber)
 		ObjectParent(j)=ObjectIndexGameToEditor(ObjectParent(j), PlayerIndex)
 		ObjectChild(j)=ObjectIndexGameToEditor(ObjectChild(j), PlayerIndex)
 	Next
+	
+	SomeObjectWasChanged()
 	
 	
 	LevelEdgeStyle=ReadInt(file)
@@ -19391,29 +19456,6 @@ Function CodeCountAccessories(code$)
 End Function
 
 
-Function ControlObjects()
-
-	For i=0 To NofObjects-1
-	
-		If ObjectReactive(i)=True
-			
-			Select ObjectType(i)
-				
-			Case 190
-				ControlParticleEmitters(i)
-				
-			End Select
-			
-		;Else
-		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
-			
-		EndIf
-	
-	Next
-
-End Function
-
-
 Function ControlParticleEmitters(i)
 	
 	;If ObjectActive(i)=0 Then Return
@@ -19421,15 +19463,15 @@ Function ControlParticleEmitters(i)
 	Select ObjectSubType(i)
 	Case 1
 		; steam
-		If ObjectSimulatedStatus(i)=0
+		If SimulatedObjectStatus(i)=0
 			; not steaming - check if start
 			If Rand(0,400)<=ObjectData(i,1)*2
-				ObjectSimulatedStatus(i)=1
+				SimulatedObjectStatus(i)=1
 			EndIf
 		Else
 			If Rand(0,200*ObjectData(i,1))<2
 				
-				ObjectSimulatedStatus(i)=0
+				SimulatedObjectStatus(i)=0
 				
 			EndIf
 			Select ObjectData(i,2)
@@ -19550,6 +19592,252 @@ Function ControlParticleEmitters(i)
 
 	
 	End Select
+
+End Function
+
+
+Function ControlWaterfall(i)
+
+	If ObjectYawAdjust(i)=0
+		k1=1
+		k2=0
+	EndIf
+	If ObjectYawAdjust(i)=90
+		k1=0
+		k2=1
+	EndIf
+	If ObjectYawAdjust(i)=-90 Or ObjectYawAdjust(i)=270
+		k1=0
+		k2=-1
+	EndIf
+
+	If Rand(0,100)<10  	
+		If ObjectData(i,0)=1
+			AddParticle(1,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.55,0.6),ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
+		Else 
+			AddParticle(5,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.55,0.6),ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
+		EndIf
+	EndIf
+
+	If Rand(0,100)<3 
+		If ObjectData(i,0)=0
+			AddParticle(6,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(ObjectZAdjust(i),ObjectZAdjust(i)+ObjectZScale(i)/2.0),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
+		Else If ObjectData(i,0)=1
+			AddParticle(24,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(ObjectZAdjust(i),ObjectZAdjust(i)+ObjectZScale(i)/2.0),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
+		Else
+			AddParticle(27,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(ObjectZAdjust(i),ObjectZAdjust(i)+ObjectZScale(i)/2.0),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
+		EndIf
+	EndIf
+	If Rand(0,100)<10 
+		If ObjectData(i,0)=1
+			AddParticle(32,ObjectX(i)+k1*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))+k2*0.5,(-.2*ObjectZScale(i))+ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))-k1*0.5,0,.1,0,0,0,0,.012,0,0,0,100,4)
+		Else 
+			AddParticle(4,ObjectX(i)+k1*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))+k2*0.5,(-.2*ObjectZScale(i))+ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))-k1*0.5,0,.2,0,0,0,0,.012,0,0,0,100,4)
+		EndIf
+	EndIf
+
+
+End Function
+
+
+Function ControlVoidTexture(i)
+	
+	PositionTexture voidtexture,((leveltimer/10) Mod 100)/100.0,((leveltimer/10) Mod 100)/100.0
+	
+End Function
+
+
+Function ControlTeleporter(i)
+
+	If Rand(0,100)<5 ;And ObjectActive(i)>0
+		a=Rand(0,360)
+		b#=Rnd(0.002,0.006)
+		AddParticle(23,ObjectX(i)+0.5*Sin(a),0,-ObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
+	EndIf
+	
+	MyId=CalculateEffectiveID(i)
+	
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+.5
+	If MyId Mod 5<3
+		; standard effect
+		;ScaleEntity ObjectEntity(i),1,ObjectActive(i)/1001.0,1
+	Else If MyId Mod 5=3
+		; unstable effect
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+4.5
+		SimulatedObjectXScale(i)=0.6+0.4*Sin ((LevelTimer/7) Mod 360)
+		;SimulatedObjectZScale(i)=ObjectActive(i)/1001.0
+		SimulatedObjectYScale(i)=0.6+0.4*Cos ((LevelTimer/2) Mod 360)
+		;ScaleEntity ObjectEntity(i),0.6+0.4*Sin ((LevelTimer/7) Mod 360),,
+	Else
+		; pulsating effect
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+9.5
+		SimulatedObjectXScale(i)=0.6+0.4*Sin ((LevelTimer) Mod 360)
+		;SimulatedObjectZScale(i)=ObjectActive(i)/1001.0
+		SimulatedObjectYScale(i)=0.6+0.4*Sin ((LevelTimer) Mod 360)
+
+		;ScaleEntity ObjectEntity(i),,ObjectActive(i)/1001.0,)
+	EndIf
+
+	SimulateObjectRotation(i)
+	SimulateObjectScaleXYZ(i)
+
+End Function
+
+
+Function ControlObstacle(i)
+
+	; (no control, but used to adjust leveltilelogic)
+	If ObjectModelName$(i)="!Obstacle03" ; volcano
+		If Rand(0,40)=0
+			AddParticle(Rand(24,26),ObjectX(i)+Rnd(-.7,.7),1.8+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.9,.7),0,.2,0,Rnd(0.01,0.03),0,0,.03,0,0,0,100,3)
+		EndIf
+		If Rand(0,10)=0
+			If Rand(0,5)=0
+				part22=1
+			Else
+				part22=0
+			EndIf
+			AddParticle(part22,ObjectX(i)+Rnd(-.3,.3),1.5+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.5,.3),0,.6,0,Rnd(0.01,0.03),0,0,.01,0,0,0,100,3)
+		EndIf
+	Else If ObjectModelName$(i)="!Obstacle04" ; acid pool
+		If Rand(0,100)=0
+			AddParticle(27,ObjectX(i)+Rnd(-.5,.5),1+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.7,.5),0,.11,0,Rnd(0.01,0.03),0,0,.01,0,0,0,100,3)
+		EndIf
+		If Rand(0,100)=0
+			AddParticle(35,ObjectX(i)+Rnd(-.3,.6),2.0+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.6,.3),0,.04,0,0,0,0,.001,0,0,0,100,4)
+		EndIf
+		
+	Else If ObjectModelName$(i)="!Obstacle45" ; waterwheel
+		If ObjectYawAdjust(i)=0
+			SimulatedObjectRoll(i)=SimulatedObjectRoll(i)+2
+		EndIf
+		If ObjectYawAdjust(i)=180
+			SimulatedObjectRoll(i)=SimulatedObjectRoll(i)-2
+		EndIf
+		If ObjectYawAdjust(i)=90
+			SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+2
+		EndIf
+		If ObjectYawAdjust(i)=270
+			SimulatedObjectPitch(i)=SimulatedObjectPitch(i)-2
+		EndIf
+	
+	Else If ObjectModelName$(i)="!Obstacle48" ; UFO - by mistake in here
+		If ObjectData(i,0)=0
+			SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
+		EndIf
+	Else If ObjectModelName$(i)="!Crystal" ; UFO - by mistake in here
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
+
+					
+	
+
+	EndIf
+	If ObjectModelName$(i)="!CustomModel"	; Custom Model 
+		ControlCustomModel(i)
+	EndIf
+
+	SimulateObjectRotation(i)
+
+End Function
+
+
+Function ControlCustomModel(i)
+
+;	If ObjectOldX(i)=-999;0 And ObjectOldY(i)=0 And ObjectOldZ(i)=0
+;		ObjectOldX(i)=ObjectXAdjust(i)
+;		ObjectOldY(i)=ObjectYAdjust(i)
+;		ObjectOldZ(i)=ObjectZAdjust(i)
+;	EndIf
+	
+
+
+	;ObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+ObjectData(i,7)+30) Mod 360))
+	
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+ObjectData(i,0)
+	If SimulatedObjectYaw(i)>360 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)-360
+	If SimulatedObjectYaw(i)<0 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+360
+	
+	SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+ObjectData(i,1)
+	If SimulatedObjectPitch(i)>360 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)-360
+	If SimulatedObjectPitch(i)<0 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+360
+	
+	SimulatedObjectroll(i)=SimulatedObjectroll(i)+ObjectData(i,2)
+	If SimulatedObjectroll(i)>360 Then SimulatedObjectroll(i)=SimulatedObjectroll(i)-360
+	If SimulatedObjectroll(i)<0 Then SimulatedObjectroll(i)=SimulatedObjectroll(i)+360
+	
+	If ObjectData(i,3)>0
+		; Technically these ObjectX/Y/ZAdjust instances should be OldX/Y/Z. But no one’s crazy enough to edit OldX/Y/Z directly, right?
+		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)+Float(ObjectData(i,3))*Sin((leveltimer Mod 36000)*Float(ObjectData(i,6)/100.0))
+	Else
+		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)+Float(ObjectData(i,3))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,6)/100.0))
+	EndIf
+	If ObjectData(i,4)>0
+		SimulatedObjectYAdjust(i)=ObjectYAdjust(i)+Float(ObjectData(i,4))*Sin((leveltimer Mod 36000)*Float(ObjectData(i,7)/100.0))
+	Else
+		SimulatedObjectYAdjust(i)=ObjectYAdjust(i)+Float(ObjectData(i,4))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,7)/100.0))
+	EndIf
+	If ObjectData(i,5)>0
+		SimulatedObjectZAdjust(i)=ObjectZAdjust(i)+Float(ObjectData(i,5))*Sin((leveltimer Mod 36000)*Float(ObjectData(i,8)/100.0))
+	Else
+		SimulatedObjectZAdjust(i)=ObjectZAdjust(i)+Float(ObjectData(i,5))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,8)/100.0))
+	EndIf
+	
+	SimulateObjectPosition(i)
+	; object rotation is simulated by ControlObstacle
+
+End Function
+
+
+
+Function ControlObjects()
+
+	For i=0 To NofObjects-1
+	
+		If ObjectReactive(i)=True
+			
+			Select ObjectType(i)
+			
+			Case 30
+				ControlTeleporter(i)
+			Case 160
+				ControlObstacle(i)
+			Case 161
+				ControlWaterfall(i)
+			Case 190
+				ControlParticleEmitters(i)
+			Case 320
+				ControlVoidTexture(i)
+				
+			End Select
+			
+		;Else
+		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
+			
+		EndIf
+	
+	Next
+	
+	; Scroll Teleporters
+	For i=0 To 9
+		If TeleporterTexture(i)>0
+			PositionTexture TeleporterTexture(i),0,-Float((LevelTimer/3) Mod 100)/100.0
+		EndIf
+	Next
+	
+	PositionTexture StarTexture,0,Float(leveltimer Mod 1000) / 1000.0
+	PositionTexture RainbowTexture,0,Float(leveltimer Mod 1000) / 1000.0
+	PositionTexture GhostTexture,0,Float(leveltimer Mod 1000) / 1000.0
+	For i=0 To 2
+		PositionTexture WraithTexture(i),Float(leveltimer Mod 100) / 100.0,0
+	Next
+	
+	For i=0 To 2
+		PositionTexture WaterFallTexture(i),0,((LevelTimer) Mod 50)/50.0
+	Next
+	;PositionTexture FloingTexture,(leveltimer Mod 700)/700.0,(leveltimer Mod 100)/100.0
+	;PositionTexture PlasmaTexture,3*Sin((LevelTimer/20.0) Mod 360),4*Cos((LevelTimer/20.0) Mod 360)
+	;ScaleTexture Plasmatexture,1.1+Sin((LevelTimer/2) Mod 360),1.1+Sin((LevelTimer/2) Mod 360)
+	PositionTexture RainbowTexture2,(leveltimer Mod 7000)/7000.0,(leveltimer Mod 1000)/1000.0
 
 End Function
 
