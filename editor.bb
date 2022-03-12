@@ -4373,7 +4373,7 @@ Function BuildLevelModel()
 		EntityAlpha WaterMesh(i),.5
 		EntityFX WaterMesh(i),2
 
-		; For some reason, this does not work???
+		; For some reason, this appears to do nothing???
 		;If WaterGlow=True 
 		;	EntityBlend WaterMesh(i),3
 		;Else 
