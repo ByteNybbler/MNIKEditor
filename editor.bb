@@ -570,6 +570,7 @@ Dim SimulatedObjectX#(1000),SimulatedObjectY#(1000),SimulatedObjectZ#(1000)
 Dim SimulatedObjectPitch#(1000)
 Dim SimulatedObjectYaw#(1000)
 Dim SimulatedObjectRoll#(1000)
+Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2#(1000)
 Dim SimulatedObjectStatus(1000)
 
 Global CurrentObjectModelName$
@@ -5697,6 +5698,9 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectYaw(i)=0.0
 		SimulatedObjectPitch(i)=0.0
 		SimulatedObjectRoll(i)=0.0
+		SimulatedObjectYaw2(i)=0.0
+		SimulatedObjectPitch2(i)=0.0
+		SimulatedObjectRoll2(i)=0.0
 		SimulatedObjectXScale(i)=1.0
 		SimulatedObjectYScale(i)=1.0
 		SimulatedObjectZScale(i)=1.0
@@ -5734,6 +5738,7 @@ Function SimulateObjectRotation(Dest)
 	RotateEntity ObjectEntity(Dest),0,0,0
 	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
 	TurnEntity ObjectEntity(Dest),0,Yaw#,0
+	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
 
 End Function
 
@@ -5747,6 +5752,7 @@ Function SimulateObjectRotationAdjust(Dest)
 	RotateEntity ObjectEntity(Dest),0,0,0
 	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
 	TurnEntity ObjectEntity(Dest),0,Yaw#,0
+	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
 
 End Function
 
@@ -13883,8 +13889,9 @@ Function CreateCustomItemMesh(tex)
 	UpdateNormals Entity
 	EntityTexture Entity,IconTextureCustom
 	
-	RotateMesh Entity,90,0,0
-	PositionMesh Entity,0,.3,0
+	; new to editor to make custom item face upwards
+	;RotateMesh Entity,90,0,0
+	;PositionMesh Entity,0,.3,0
 	
 	Return Entity
 
@@ -19840,6 +19847,8 @@ End Function
 
 Function ControlGoldStar(i)
 
+	SimulatedObjectZ(i)=.8
+
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
 
 	a=Rand(0,300)
@@ -19848,6 +19857,7 @@ Function ControlGoldStar(i)
 		AddParticle(19,ObjectTileX(i)+0.5,.7+ObjectZAdjust(i),-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
 	EndIf
 	
+	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
 
 End Function
@@ -19875,11 +19885,11 @@ Function ControlGem(i)
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
 
-;		If ObjectActive(i)>600
-;			ObjectZ(i)=.6+Float(1000-ObjectActive(i))/400.0
-;		Else
-;			ObjectZ(i)=1.6
-;		EndIf
+		If ObjectActive(i)>600
+			SimulatedObjectZ(i)=.6+Float(1000-ObjectActive(i))/400.0
+		Else
+			SimulatedObjectZ(i)=1.6
+		EndIf
 		If ObjectActive(i)=400
 			
 			; Little Spark
@@ -19920,6 +19930,7 @@ Function ControlGem(i)
 		If ObjectData(i,0)=1 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+Rnd(2,3)+(i Mod 3)/3.0
 	EndIf
 	
+	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
 	
 End Function
@@ -19933,11 +19944,11 @@ Function ControlKey(i)
 		
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
 
-;		If ObjectActive(i)>600
-;			ObjectZ(i)=.6+2*Float(1000-ObjectActive(i))/400.0
-;		Else
-;			ObjectZ(i)=2.6
-;		EndIf
+		If ObjectActive(i)>600
+			SimulatedObjectZ(i)=.6+2*Float(1000-ObjectActive(i))/400.0
+		Else
+			SimulatedObjectZ(i)=2.6
+		EndIf
 		If ObjectActive(i)=400
 			; Little Spark
 			For j=1 To 60
@@ -19962,6 +19973,7 @@ Function ControlKey(i)
 		EndIf
 	EndIf
 	
+	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
 
 End Function
@@ -19975,11 +19987,11 @@ Function ControlCustomItem(i)
 		
 
 
-;		If ObjectActive(i)>600
-;			ObjectZ(i)=.6+2*Float(1000-ObjectActive(i))/400.0
-;		Else
-;			ObjectZ(i)=2.6
-;		EndIf
+		If ObjectActive(i)>600
+			SimulatedObjectZ(i)=.6+2*Float(1000-ObjectActive(i))/400.0
+		Else
+			SimulatedObjectZ(i)=2.6
+		EndIf
 		If ObjectActive(i)=400
 			; Little Spark
 			For j=1 To 60
@@ -20000,9 +20012,12 @@ Function ControlCustomItem(i)
 	Else
 		
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Cos(Leveltimer Mod 360)
+		
+		SimulatedObjectZ(i)=.5
 
 	EndIf
 	
+	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
 	
 End Function
@@ -20045,11 +20060,11 @@ Function ControlRetroRainbowCoin(i)
 		
 
 
-;		If ObjectActive(i)>600
-;			ObjectZ(i)=1.2+Float(1000-ObjectActive(i))/400.0
-;		Else
-;			ObjectZ(i)=2.2
-;		EndIf
+		If ObjectActive(i)>600
+			SimulatedObjectZ(i)=1.2+Float(1000-ObjectActive(i))/400.0
+		Else
+			SimulatedObjectZ(i)=2.2
+		EndIf
 		If ObjectActive(i)=400
 			; Little Spark
 			For j=1 To 20
@@ -20069,6 +20084,7 @@ Function ControlRetroRainbowCoin(i)
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
 	EndIf
 	
+	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
 
 End Function
@@ -20178,11 +20194,23 @@ Function ControlRainbowBubble(i)
 	
 	SimulatedObjectZ(i)=0.5+0.3*Abs(Sin((leveltimer + objectData(i,2)) Mod 360))
 	
+	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
-	SimulateObjectScaleXYZAdjust(i)
+	SimulateObjectScaleXYZ(i)
 
 End Function
 
+
+Function ControlBowler(i)
+
+	;SimulatedObjectYaw(i)=(-45*ObjectData(i,0) +3600) Mod 360
+	SimulatedObjectPitch2(i)=(SimulatedObjectPitch2(i)+Rnd(3,5)) Mod 360
+	SimulatedObjectZ(i)=.4+.4*Sin((Leveltimer*4) Mod 180)
+	
+	SimulateObjectXYZAdjust(i)
+	SimulateObjectRotationAdjust(i)
+
+End Function
 
 
 Function ControlObjects()
@@ -20215,6 +20243,8 @@ Function ControlObjects()
 				ControlSigns(i)
 			Case 190
 				ControlParticleEmitters(i)
+			Case 260
+				ControlBowler(i)
 			Case 320
 				ControlVoidTexture(i)
 			Case 330
