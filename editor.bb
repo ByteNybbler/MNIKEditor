@@ -559,7 +559,6 @@ Dim ObjectAdjusterString$(1000,30)
 
 Dim ObjectPositionMarker(1000)
 
-Dim SimulatedObjectStatus(1000)
 Dim SimulatedObjectXScale#(1000)
 Dim SimulatedObjectZScale#(1000)
 Dim SimulatedObjectYScale#(1000)
@@ -572,6 +571,7 @@ Dim SimulatedObjectYaw#(1000)
 Dim SimulatedObjectRoll#(1000)
 Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2#(1000)
 Dim SimulatedObjectStatus(1000)
+Dim SimulatedObjectData(1000,10)
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
@@ -5713,6 +5713,9 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectYScale(i)=1.0
 		SimulatedObjectZScale(i)=1.0
 		SimulatedObjectStatus(i)=0
+		For j=0 To 10
+			SimulatedObjectData(i,j)=0
+		Next
 	Next
 
 End Function
@@ -11306,6 +11309,7 @@ Function BuildCurrentObjectModel()
 	Else If CurrentObjectModelName$="!None" Or CurrentObjectModelName$="!SkyMachineMap"
 		CurrentObjectModel=CreateSphere()
 		ScaleEntity CurrentObjectModel,.2,.2,.2
+		;EntityAlpha CurrentObjectModel,.5
 		
 	Else ;unknown model
 		CurrentObjectModel=CreateSphere()
@@ -12364,6 +12368,7 @@ Function CreateObjectModel(Dest)
  		Else If ObjectModelName$(Dest)="!None" Or ObjectModelName$(Dest)="!SkyMachineMap"
 			ObjectEntity(Dest)=CreateSphere()
 			ScaleEntity ObjectEntity(Dest),.3,.3,.3
+			;EntityAlpha ObjectEntity(Dest),.5
 			
 		Else ; Unknown model
 			ObjectEntity(Dest)=CreateSphere()
@@ -20256,6 +20261,22 @@ Function ControlMothership(i)
 End Function
 
 
+Function ControlRubberducky(i)
+
+	If SimulatedObjectStatus(i)=0
+		SimulatedObjectStatus(i)=-1
+		SimulatedObjectData(i,1)=Rand(1,3)
+		SimulatedObjectData(i,2)=Rand(0,360)
+	EndIf	
+		
+	SimulatedObjectroll(i)=1*SimulatedObjectData(i,1)*Sin((LevelTimer+SimulatedObjectData(i,2)) Mod 360)
+	SimulatedObjectpitch(i)=2*SimulatedObjectData(i,1)*Cos((LevelTimer*3+SimulatedObjectData(i,2))  Mod 360)
+	
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -20288,6 +20309,8 @@ Function ControlObjects()
 				ControlParticleEmitters(i)
 			Case 260
 				ControlBowler(i)
+			Case 310
+				ControlRubberducky(i)
 			Case 320
 				ControlVoidTexture(i)
 			Case 330
