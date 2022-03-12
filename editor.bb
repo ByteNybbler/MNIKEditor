@@ -870,6 +870,12 @@ Global ButtonTexture=MyLoadTexture("data\graphics\buttons1.bmp",4)
 Global GateTexture=MyLoadTexture("data\graphics\gates1.bmp",1)
 Global CloudTexture=myLoadTexture("Data\graphics\cloud.jpg",4)
 
+Global PlasmaTexture=myLoadTexture("data\models\other\growflower.jpg",1)
+
+Global FloingTexture=myLoadTexture("data\models\other\floingbubble.jpg",1)
+
+Global SkyMachineMapTexture=myLoadTexture("data\models\other\projected.jpg",1)
+
 ; Teleport
 Dim TeleporterTexture(16)
 For i=0 To 8
@@ -11368,18 +11374,23 @@ Function BuildCurrentObjectModel()
 		EntityAlpha CurrentObjectModel,.5
 
 	
-
-
+	
+	Else If CurrentObjectModelName$="!SkyMachineMap"
+		CurrentObjectModel=CreateCube()
+		ScaleMesh CurrentObjectModel,2.5,.01,2.5
+		PositionMesh CurrentObjectModel,0,0,-1
+		EntityTexture CurrentObjectModel,SkyMachineMapTexture
+		EntityBlend CurrentObjectModel,3
 
 		
-	Else If CurrentObjectModelName$="!None" Or CurrentObjectModelName$="!SkyMachineMap"
+	Else If CurrentObjectModelName$="!None"
 		CurrentObjectModel=CreateSphere()
-		ScaleEntity CurrentObjectModel,.2,.2,.2
+		ScaleMesh CurrentObjectModel,.2,.2,.2
 		;EntityAlpha CurrentObjectModel,.5
 		
 	Else ;unknown model
 		CurrentObjectModel=CreateSphere()
-		ScaleEntity CurrentObjectModel,.3,.3,.3
+		ScaleMesh CurrentObjectModel,.3,.3,.3
 		EntityColor CurrentObjectModel,255,0,255
 	
 
@@ -12436,12 +12447,19 @@ Function CreateObjectModel(Dest)
 
 		Else If ObjectModelName$(Dest)="!Mothership"
 			ObjectEntity(Dest)=CopyEntity(MothershipMesh)
-
-
 			
- 		Else If ObjectModelName$(Dest)="!None" Or ObjectModelName$(Dest)="!SkyMachineMap"
+
+		Else If ObjectModelName$(Dest)="!SkyMachineMap"
+			ObjectEntity(Dest)=CreateCube()
+			ScaleMesh ObjectEntity(Dest),2.5,.01,2.5
+			PositionMesh ObjectEntity(Dest),0,0,-1
+			EntityTexture ObjectEntity(Dest),SkyMachineMapTexture
+			EntityBlend ObjectEntity(Dest),3
+			
+			
+ 		Else If ObjectModelName$(Dest)="!None"
 			ObjectEntity(Dest)=CreateSphere()
-			ScaleEntity ObjectEntity(Dest),.3,.3,.3
+			ScaleMesh ObjectEntity(Dest),.2,.2,.2
 			;EntityAlpha ObjectEntity(Dest),.5
 			
 		Else ; Unknown model
@@ -20598,9 +20616,9 @@ Function ControlObjects()
 	For i=0 To 2
 		PositionTexture WaterFallTexture(i),0,((LevelTimer) Mod 50)/50.0
 	Next
-	;PositionTexture FloingTexture,(leveltimer Mod 700)/700.0,(leveltimer Mod 100)/100.0
-	;PositionTexture PlasmaTexture,3*Sin((LevelTimer/20.0) Mod 360),4*Cos((LevelTimer/20.0) Mod 360)
-	;ScaleTexture Plasmatexture,1.1+Sin((LevelTimer/2) Mod 360),1.1+Sin((LevelTimer/2) Mod 360)
+	PositionTexture FloingTexture,(leveltimer Mod 700)/700.0,(leveltimer Mod 100)/100.0
+	PositionTexture PlasmaTexture,3*Sin((LevelTimer/20.0) Mod 360),4*Cos((LevelTimer/20.0) Mod 360)
+	ScaleTexture Plasmatexture,1.1+Sin((LevelTimer/2) Mod 360),1.1+Sin((LevelTimer/2) Mod 360)
 	PositionTexture RainbowTexture2,(leveltimer Mod 7000)/7000.0,(leveltimer Mod 1000)/1000.0
 
 End Function
