@@ -4372,6 +4372,18 @@ Function BuildLevelModel()
 		Watersurface(i)=CreateSurface(Watermesh(i))
 		EntityAlpha WaterMesh(i),.5
 		EntityFX WaterMesh(i),2
+
+		; For some reason, this does not work???
+		;If WaterGlow=True 
+		;	EntityBlend WaterMesh(i),3
+		;Else 
+		;	EntityBlend WaterMesh(i),1
+		;EndIf
+		;If WaterTransparent=True 
+		;	EntityAlpha WaterMesh(i),.5
+		;Else
+		;	EntityAlpha WaterMesh(i),1
+		;EndIf
 		
 		
 		Logicmesh(i)=CreateMesh()
