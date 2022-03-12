@@ -1696,7 +1696,7 @@ Function EditorMainLoop()
 	If displayfullscreen=True Cls
 	
 	; full window size is 800x600, whereas the level camera viewport is 500x500
-	; draw black regions so stray text doesn’t linger there
+	; draw black regions so stray text doesn't linger there
 	;Color 0,0,200
 	Color 0,0,0
 	Rect 500,0,10,500,True ; between level camera and object/tile editors
@@ -6166,11 +6166,6 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 	Next
 	
 	;ShowMessage("Update successful.", 100)
-
-End Function
-
-
-Function FreeClothes(i)
 
 End Function
 
@@ -11411,7 +11406,8 @@ Function BuildCurrentObjectModel()
 		EntityTexture CurrentObjectModel,StinkerTexture
 
 		For i=1 To CountChildren(CurrentObjectModel)
-			EntityTexture GetChild(CurrentObjectModel,i),StinkerTexture
+			child=GetChild(CurrentObjectModel,i)
+			EntityTexture child,StinkerTexture
 		Next
 	Else If CurrentObjectType=200 ; magic glove
 		EntityTexture CurrentObjectModel,GloveTex
@@ -12472,69 +12468,68 @@ Function CreateObjectModel(Dest)
 			
 		
 		Else If Left(ObjectTextureName$(Dest),1)="?"
-		; custom texture for existing objects
+			; custom texture for existing objects
 		
-		If Lower(Right(ObjectTextureName$(Dest),4))=".jpg" Or Lower(Right(ObjectTextureName$(Dest),4))=".bmp" Or Lower(Right(ObjectTextureName$(Dest),4))=".png"
-			tname$="UserData\Custom\Objecttextures\"+Right(ObjectTextureName$(Dest),Len(ObjectTextureName$(Dest))-1)
-		Else
-			tname$="UserData\Custom\Objecttextures\"+Right(ObjectTextureName$(Dest),Len(ObjectTextureName$(Dest))-1)+".jpg"
-		EndIf
+			If Lower(Right(ObjectTextureName$(Dest),4))=".jpg" Or Lower(Right(ObjectTextureName$(Dest),4))=".bmp" Or Lower(Right(ObjectTextureName$(Dest),4))=".png"
+				tname$="UserData\Custom\Objecttextures\"+Right(ObjectTextureName$(Dest),Len(ObjectTextureName$(Dest))-1)
+			Else
+				tname$="UserData\Custom\Objecttextures\"+Right(ObjectTextureName$(Dest),Len(ObjectTextureName$(Dest))-1)+".jpg"
+			EndIf
 	
-		If FileType(tname$)<>1 
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color 255,255,255
-			Print "Couldn't load texture: " + tname$
-			Print "Reverting to default..."
-			Delay 2000
-			tname$="UserData\Custom\Objecttextures\default.jpg"		
-			ObjectTextureName$(Dest)="?Default"
-		EndIf
-		
-		If Lower(Right(tname$,4))=".png"
-			; if png load with alpha map
-			ObjectTexture(Dest)=LoadTexture(tname$,6)
-		Else
-			ObjectTexture(Dest)=LoadTexture(tname$,4)
-		EndIf
-		
-		EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
+			If FileType(tname$)<>1 
+				Locate 0,0
+				Color 0,0,0
+				Rect 0,0,500,40,True
+				Color 255,255,255
+				Print "Couldn't load texture: " + tname$
+				Print "Reverting to default..."
+				Delay 2000
+				tname$="UserData\Custom\Objecttextures\default.jpg"		
+				ObjectTextureName$(Dest)="?Default"
+			EndIf
+			
+			If Lower(Right(tname$,4))=".png"
+				; if png load with alpha map
+				ObjectTexture(Dest)=LoadTexture(tname$,6)
+			Else
+				ObjectTexture(Dest)=LoadTexture(tname$,4)
+			EndIf
+			
+			EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
 		
 		Else If ObjectTextureName$(Dest)<>"" And ObjectTextureName$(Dest)<>""<>"!None" And Left$(ObjectTextureName$(Dest),1)<>"!"  And Objectmodelname$(Dest)<>"!Button"
+			; this entire block has been annoyingly problematic
 
-		If myFileType(ObjectTextureName$(Dest))=1 Or FileType(ObjectTextureName$(Dest))=1
-			ObjectTexture(Dest)=myLoadTexture(ObjectTextureName$(Dest),4)
-			EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
-			For j=1 To CountChildren (ObjectEntity(Dest))
-					EntityTexture GetChild(ObjectEntity(Dest),i),ObjectTexture(Dest)
-			Next
-		Else
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color 255,255,255
-			Print "Texture doesn't exist: " + ObjectTextureName$(Dest)
-			Print "Reverting..."
-			Delay 2000
-			ObjectTexture(Dest)=myLoadTexture("UserData\Custom\Objecttextures\default.jpg",4)
-			EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
-			For j=1 To CountChildren (ObjectEntity(Dest))
-				EntityTexture GetChild(ObjectEntity(Dest),i),ObjectTexture(Dest)
-			Next
-		EndIf
-
-
-
-
-
+			If myFileType(ObjectTextureName$(Dest))=1 Or FileType(ObjectTextureName$(Dest))=1
+				ObjectTexture(Dest)=myLoadTexture(ObjectTextureName$(Dest),4)
+				EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
+				For j=1 To CountChildren (ObjectEntity(Dest))
+					child=GetChild(ObjectEntity(Dest),j)
+					EntityTexture child,ObjectTexture(Dest)
+				Next
+			Else
+				Locate 0,0
+				Color 0,0,0
+				Rect 0,0,500,40,True
+				Color 255,255,255
+				Print "Texture doesn't exist: " + ObjectTextureName$(Dest)
+				Print "Reverting..."
+				Delay 2000
+				ObjectTexture(Dest)=myLoadTexture("UserData\Custom\Objecttextures\default.jpg",4)
+				EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
+				For j=1 To CountChildren (ObjectEntity(Dest))
+					child=GetChild(ObjectEntity(Dest),j)
+					EntityTexture child,ObjectTexture(Dest)
+				Next
+			EndIf
 
 
 		Else If Left$(ObjectTextureName$(Dest),2)="!T"
 			;ObjectTexture(Dest)=LoadTexture("data2/models/stinker/body001a.jpg")
 			EntityTexture ObjectEntity(Dest),StinkerTexture
 			For k=1 To CountChildren(ObjectEntity(Dest))
-				EntityTexture GetChild(ObjectEntity(Dest),k),StinkerTexture
+				child=GetChild(ObjectEntity(Dest),k)
+				EntityTexture child,StinkerTexture
 			Next
 
 		Else
@@ -12623,11 +12618,11 @@ End Function
 
 Function UpdateObjectModel(Dest)
 
-	;ShowMessage("Freeing object model "+Dest+": "+ObjectModelName$(Dest),100)
+	;ShowMessage("Freeing object model "+Dest+": "+ObjectModelName$(Dest),10)
 
 	FreeModel(Dest)
 	
-	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),100)
+	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),10)
 	
 	CreateObjectModel(Dest)
 
@@ -19903,7 +19898,7 @@ Function ControlCustomModel(i)
 	If SimulatedObjectroll(i)<0 Then SimulatedObjectroll(i)=SimulatedObjectroll(i)+360
 	
 	If ObjectData(i,3)>0
-		; Technically these ObjectX/Y/ZAdjust instances should be OldX/Y/Z. But no one’s crazy enough to edit OldX/Y/Z directly, right?
+		; Technically these ObjectX/Y/ZAdjust instances should be OldX/Y/Z. But no one's crazy enough to edit OldX/Y/Z directly, right?
 		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)+Float(ObjectData(i,3))*Sin((leveltimer Mod 36000)*Float(ObjectData(i,6)/100.0))
 	Else
 		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)+Float(ObjectData(i,3))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,6)/100.0))
