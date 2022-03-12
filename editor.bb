@@ -5780,6 +5780,15 @@ Function SimulateObjectRotationAdjust(Dest)
 End Function
 
 
+Function SimulateObjectScaleXYZNoScaleAdjust(Dest)
+
+	XS#=SimulatedObjectXScale(Dest)
+	YS#=SimulatedObjectYScale(Dest)
+	ZS#=SimulatedObjectZScale(Dest)
+	ScaleEntity ObjectEntity(Dest),XS#,YS#,ZS#
+
+End Function
+
 Function SimulateObjectScaleXYZ(Dest)
 
 	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
@@ -20227,27 +20236,32 @@ End Function
 
 Function ControlRainbowBubble(i)
 
+	If SimulatedObjectStatus(i)=0
+		SimulatedObjectStatus(i)=1
+		SimulatedObjectData(i,2)=Rand(0,360)
+	EndIf
+
 	EntityAlpha ObjectEntity(i),.8
 	EntityBlend ObjectEntity(i),3
 	
-	l=leveltimer/4+objectData(i,2)
+	l=leveltimer/4+SimulatedObjectData(i,2)
 	
-	SimulatedObjectXScale(i)=0.5-0.1*Sin((leveltimer + objectData(i,2)) Mod 360)
+	SimulatedObjectXScale(i)=0.5-0.1*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
 
-	SimulatedObjectYScale(i)=0.5-0.1*Sin((leveltimer + objectData(i,2)) Mod 360)
+	SimulatedObjectYScale(i)=0.5-0.1*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
 
-	SimulatedObjectZScale(i)=0.6+0.2*Sin((leveltimer + objectData(i,2)) Mod 360)
+	SimulatedObjectZScale(i)=0.6+0.2*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
 
 	
-	SimulatedObjectPitch(i)=(ObjectPitch(i)+1) Mod 360
+	SimulatedObjectPitch(i)=(SimulatedObjectPitch(i)+1) Mod 360
 	SimulatedObjectYaw(i)=360*Sin(l Mod 360)
 	SimulatedObjectRoll(i)=180*Cos(l Mod 360)
 	
-	SimulatedObjectZ(i)=0.5+0.3*Abs(Sin((leveltimer + objectData(i,2)) Mod 360))
+	SimulatedObjectZ(i)=0.5+0.3*Abs(Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360))
 	
 	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
-	SimulateObjectScaleXYZ(i)
+	SimulateObjectScaleXYZNoScaleAdjust(i)
 
 End Function
 
