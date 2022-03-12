@@ -12497,7 +12497,7 @@ Function CreateObjectModel(Dest)
 			
 			EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
 		
-		Else If ObjectTextureName$(Dest)<>"" And ObjectTextureName$(Dest)<>""<>"!None" And Left$(ObjectTextureName$(Dest),1)<>"!"  And Objectmodelname$(Dest)<>"!Button" And ObjectModelName$(Dest)<>"!NPC" And ObjectModelName$(Dest)<>"!Stinker"
+		Else If ObjectTextureName$(Dest)<>"" And ObjectTextureName$(Dest)<>""<>"!None" And Left$(ObjectTextureName$(Dest),1)<>"!"  And Objectmodelname$(Dest)<>"!Button"
 			; this entire block has been annoyingly problematic
 
 			If myFileType(ObjectTextureName$(Dest))=1 Or FileType(ObjectTextureName$(Dest))=1
