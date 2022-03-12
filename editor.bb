@@ -11067,8 +11067,9 @@ Function BuildCurrentObjectModel()
 		EntityTexture CurrentObjectModel,ScritterTexture(CurrentObjectData(0))
 	Else If CurrentObjectModelName$="!RainbowBubble"
 		CurrentObjectModel=CreateSphere()
-		ScaleMesh CurrentObjectModel,.4,.4,.4
-		PositionMesh CurrentObjectModel,0,1,0
+		;ScaleMesh CurrentObjectModel,.4,.4,.4
+		;PositionMesh CurrentObjectModel,0,1,0
+		ScaleMesh CurrentObjectModel,.5,.5,.5
 		EntityTexture CurrentObjectModel,Rainbowtexture2
 	Else If CurrentObjectModelName$="!PlantFloat"
 		CurrentObjectModel=CreateSphere()
@@ -12108,8 +12109,9 @@ Function CreateObjectModel(Dest)
 			
 		Else If ObjectModelName$(Dest)="!RainbowBubble"
 			ObjectEntity(Dest)=CreateSphere()
-			ScaleMesh ObjectEntity(Dest),.4,.4,.4
-			PositionMesh ObjectEntity(Dest),0,1,0
+			;ScaleMesh ObjectEntity(Dest),.4,.4,.4
+			;PositionMesh ObjectEntity(Dest),0,1,0
+			ScaleMesh ObjectEntity(Dest),.5,.5,.5
 			EntityTexture ObjectEntity(Dest),Rainbowtexture
 			
 		Else If ObjectModelName$(Dest)="!PlantFloat"
