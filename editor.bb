@@ -1643,7 +1643,7 @@ Repeat
 			
 		EndIf
 	
-Until KeyDown(1)
+Until False ;KeyDown(1) ; escape
 
 
 
