@@ -566,9 +566,11 @@ Dim SimulatedObjectYScale#(1000)
 Dim SimulatedObjectXAdjust#(1000)
 Dim SimulatedObjectZAdjust#(1000)
 Dim SimulatedObjectYAdjust#(1000)
+Dim SimulatedObjectX#(1000),SimulatedObjectY#(1000),SimulatedObjectZ#(1000)
 Dim SimulatedObjectPitch#(1000)
 Dim SimulatedObjectYaw#(1000)
 Dim SimulatedObjectRoll#(1000)
+Dim SimulatedObjectStatus(1000)
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
@@ -5689,12 +5691,16 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectXAdjust(i)=0.0
 		SimulatedObjectYAdjust(i)=0.0
 		SimulatedObjectZAdjust(i)=0.0
+		SimulatedObjectX(i)=ObjectX(i)
+		SimulatedObjectY(i)=ObjectY(i)
+		SimulatedObjectZ(i)=ObjectZ(i)
 		SimulatedObjectYaw(i)=0.0
 		SimulatedObjectPitch(i)=0.0
 		SimulatedObjectRoll(i)=0.0
 		SimulatedObjectXScale(i)=1.0
 		SimulatedObjectYScale(i)=1.0
 		SimulatedObjectZScale(i)=1.0
+		SimulatedObjectStatus(i)=0
 	Next
 
 End Function
@@ -5702,26 +5708,65 @@ End Function
 
 Function SimulateObjectPosition(Dest)
 
-	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+SimulatedObjectXAdjust(Dest),ObjectZ(Dest)+SimulatedObjectZAdjust(Dest),-ObjectY(Dest)-SimulatedObjectYAdjust(Dest)
+	XP#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)
+	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
+	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
+	PositionEntity ObjectEntity(Dest),XP#,ZP#,-YP#
+
+End Function
+
+Function SimulateObjectXYZAdjust(Dest)
+
+	XP#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)+ObjectXAdjust(Dest)
+	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)+ObjectYAdjust(Dest)
+	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)+ObjectZAdjust(Dest)
+	PositionEntity ObjectEntity(Dest),XP#,ZP#,-YP#
 
 End Function
 
 
 Function SimulateObjectRotation(Dest)
 
-	;RotateEntity ObjectEntity(Dest),ObjectPitchAdjust(Dest)+SimulatedObjectPitch(Dest),ObjectYawAdjust(Dest)+SimulatedObjectYaw(Dest),ObjectRollAdjust(Dest)+SimulatedObjectRoll(Dest)
+	Pitch#=SimulatedObjectPitch(Dest)
+	Roll#=SimulatedObjectRoll(Dest)
+	Yaw#=SimulatedObjectYaw(Dest)
+	
+	RotateEntity ObjectEntity(Dest),0,0,0
+	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
+	TurnEntity ObjectEntity(Dest),0,Yaw#,0
+
+End Function
+
+
+Function SimulateObjectRotationAdjust(Dest)
+
+	Pitch#=SimulatedObjectPitch(Dest)+ObjectPitchAdjust(Dest)
+	Roll#=SimulatedObjectRoll(Dest)+ObjectRollAdjust(Dest)
+	Yaw#=SimulatedObjectYaw(Dest)+ObjectYawAdjust(Dest)
 
 	RotateEntity ObjectEntity(Dest),0,0,0
-	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch(Dest)+ObjectPitchAdjust(Dest),0,SimulatedObjectRoll(Dest)+ObjectRollAdjust(Dest)
-	TurnEntity ObjectEntity(Dest),0,SimulatedObjectYaw(Dest)+ObjectYawAdjust(Dest),0
+	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
+	TurnEntity ObjectEntity(Dest),0,Yaw#,0
 
 End Function
 
 
 Function SimulateObjectScaleXYZ(Dest)
 
-	ScaleEntity ObjectEntity(Dest),SimulatedObjectYScale(Dest)*CurrentObjectScaleAdjust,SimulatedObjectZScale(Dest)*CurrentObjectScaleAdjust,SimulatedObjectXScale(Dest)*CurrentObjectScaleAdjust
+	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
+	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
+	ScaleEntity ObjectEntity(Dest),XS#,YS#,ZS#
 
+End Function
+
+Function SimulateObjectScaleXYZAdjust(Dest)
+
+	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)*ObjectXScale(Dest)
+	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)*ObjectYScale(Dest)
+	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)*ObjectZScale(Dest)
+	ScaleEntity ObjectEntity(Dest),XS#,YS#,ZS#
+	
 End Function
 
 
@@ -12013,6 +12058,7 @@ Function CreateObjectModel(Dest)
 			ObjectEntity(Dest)=CopyEntity(BowlerMesh)
 		Else If ObjectModelName$(Dest)="!Tentacle"
 			ObjectEntity(Dest)=CopyEntity(TentacleMesh)
+			Animate GetChild(ObjectEntity(Dest),3),1,.1,1,0
 
 
 		Else If ObjectModelName$(Dest)="!Turtle"
@@ -19682,7 +19728,7 @@ Function ControlTeleporter(i)
 		;ScaleEntity ObjectEntity(i),,ObjectActive(i)/1001.0,)
 	EndIf
 
-	SimulateObjectRotation(i)
+	SimulateObjectRotationAdjust(i)
 	SimulateObjectScaleXYZ(i)
 
 End Function
@@ -19740,7 +19786,7 @@ Function ControlObstacle(i)
 		ControlCustomModel(i)
 	EndIf
 
-	SimulateObjectRotation(i)
+	SimulateObjectRotationAdjust(i)
 
 End Function
 
@@ -19792,6 +19838,352 @@ Function ControlCustomModel(i)
 End Function
 
 
+Function ControlGoldStar(i)
+
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
+
+	a=Rand(0,300)
+
+	If a<50
+		AddParticle(19,ObjectTileX(i)+0.5,.7+ObjectZAdjust(i),-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
+	EndIf
+	
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
+Function ControlGoldCoin(i)
+
+	If ObjectActive(i)<1001 And ObjectActive(i)>0
+		; picked up animation
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
+	Else
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
+	EndIf
+	
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
+Function ControlGem(i)
+
+	If ObjectActive(i) Mod 2=1 Then ShowEntity ObjectEntity(i)
+	
+	If ObjectActive(i)<1001 And ObjectActive(i)>0
+		; picked up animation
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
+
+;		If ObjectActive(i)>600
+;			ObjectZ(i)=.6+Float(1000-ObjectActive(i))/400.0
+;		Else
+;			ObjectZ(i)=1.6
+;		EndIf
+		If ObjectActive(i)=400
+			
+			; Little Spark
+			For j=1 To 20
+				AddParticle(19,ObjectTileX(i)+0.5,1.6,-ObjectTileY(i)-0.5,Rand(0,360),0.15,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
+			Next
+			If WaEpisode=1 And (adventurecurrentnumber>=200 And adventurecurrentnumber<=203) 
+				; not in pacman level or WA1
+			
+			Else If ObjectID(i)=-1
+				If ObjectData(i,0)=0 Then AddParticle(14,ObjectTileX(i)+0.5,1.6,-ObjectTileY(i)-0.5,0,1,0,0.01,0,0,.01,0,0,0,50,3)
+				If ObjectData(i,0)=1 Then AddParticle(15,ObjectTileX(i)+0.5,1.6,-ObjectTileY(i)-0.5,0,1,0,0.01,0,0,.01,0,0,0,50,3)
+			EndIf
+		EndIf
+;		If ObjectActive(i)<600
+;			ObjectScaleXAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleYAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleZAdjust(i)=Float(ObjectActive(i))/600.0
+;
+;		EndIf
+		
+		
+		
+	Else
+		If ObjectData(i,0)=2
+			If Rand(0,10)<3
+				
+				AddParticle(16+ObjectData(i,1)+Rand(0,1)*8,ObjectTileX(i)+.5,Rnd(0,1),-ObjectTileY(i)-.5,0,.01,Rnd(-.01,.01),Rnd(-.01,.01),Rnd(0,.02),Rnd(-4,4),.01,0,0,0,70,3)
+			EndIf
+		EndIf
+	
+		If ObjectYaw(i)=0 And ObjectData(i,0)<>1
+			ObjectRoll(i)=Rand(-10,10)
+			ObjectYaw(i)=Rand(1,180)
+	
+		EndIf
+		If ObjectData(i,0)=0 Or ObjectData(i,0)=2 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Rnd(1.8,2.2)
+		If ObjectData(i,0)=1 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+Rnd(2,3)+(i Mod 3)/3.0
+	EndIf
+	
+	SimulateObjectRotationAdjust(i)
+	
+End Function
+
+
+Function ControlKey(i)
+
+	If ObjectActive(i)<1001 And ObjectActive(i)>0
+	
+		; picked up animation
+		
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
+
+;		If ObjectActive(i)>600
+;			ObjectZ(i)=.6+2*Float(1000-ObjectActive(i))/400.0
+;		Else
+;			ObjectZ(i)=2.6
+;		EndIf
+		If ObjectActive(i)=400
+			; Little Spark
+			For j=1 To 60
+				AddParticle(Rnd(16,23),ObjectTileX(i)+0.5,2.6,-ObjectTileY(i)-0.5,Rand(0,360),0.2,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
+			Next
+		EndIf
+;		If ObjectActive(i)<600
+;			ObjectScaleXAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleYAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleZAdjust(i)=Float(ObjectActive(i))/600.0
+;
+;		EndIf
+		
+		
+		
+	Else
+	;	ObjectYaw(i)=ObjectYaw(i)+2
+		If ObjectModelName$(i)="!KeyCard"
+			SimulatedObjectYaw(i)=((leveltimer) Mod 90)*4
+		Else
+			SimulatedObjectRoll(i)=30*Sin((leveltimer) Mod 360)
+		EndIf
+	EndIf
+	
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
+Function ControlCustomItem(i)
+	
+	If ObjectActive(i)<1001 And ObjectActive(i)>0
+		; picked up animation
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
+		
+
+
+;		If ObjectActive(i)>600
+;			ObjectZ(i)=.6+2*Float(1000-ObjectActive(i))/400.0
+;		Else
+;			ObjectZ(i)=2.6
+;		EndIf
+		If ObjectActive(i)=400
+			; Little Spark
+			For j=1 To 60
+				AddParticle(Rnd(16,23),ObjectTileX(i)+0.5,2.6,-ObjectTileY(i)-0.5,Rand(0,360),0.2,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
+			Next
+		EndIf
+;		If ObjectActive(i)<600
+;			ObjectScaleXAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleYAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleZAdjust(i)=Float(ObjectActive(i))/600.0
+;
+;
+;		EndIf
+		
+		
+		
+		
+	Else
+		
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Cos(Leveltimer Mod 360)
+
+	EndIf
+	
+	SimulateObjectRotationAdjust(i)
+	
+End Function
+
+
+Function ControlSigns(i)
+	
+	
+	Select ObjectData(i,2)
+	
+	Case 0
+		; nuthin'
+	Case 1
+		; Sway
+		SimulatedObjectPitch(i)=5*Sin((leveltimer*1.5) Mod 360)
+		SimulatedObjectYaw(i)=5*Sin((leveltimer/2) Mod 360)
+		SimulatedObjectRoll(i)=5*Sin(leveltimer Mod 360)
+
+	Case 2
+		; Bounce
+		SimulatedObjectZScale(i)=1.0+0.15*Sin((Leveltimer*4) Mod 360)
+		SimulatedObjectRoll(i)=5*Sin((leveltimer*2) Mod 360)
+	Case 3
+		; turn
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
+	End Select
+
+	SimulateObjectRotationAdjust(i)
+	SimulateObjectScaleXYZAdjust(i)
+		
+
+End Function
+
+
+Function ControlRetroRainbowCoin(i)
+	
+	If ObjectActive(i)<1001 And ObjectActive(i)>0
+		; picked up animation
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
+		
+
+
+;		If ObjectActive(i)>600
+;			ObjectZ(i)=1.2+Float(1000-ObjectActive(i))/400.0
+;		Else
+;			ObjectZ(i)=2.2
+;		EndIf
+		If ObjectActive(i)=400
+			; Little Spark
+			For j=1 To 20
+				AddParticle(19,ObjectTileX(i)+0.5,2.6,-ObjectTileY(i)-0.5,Rand(0,360),0.15,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
+			Next
+		EndIf
+;		If ObjectActive(i)<600
+;			ObjectScaleXAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleYAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleZAdjust(i)=Float(ObjectActive(i))/600.0
+;
+;		EndIf
+		
+		
+		
+	Else
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
+	EndIf
+	
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
+Function ControlWisp(i)
+
+	EntityFX ObjectEntity(i),1
+	
+	If Leveltimer Mod 360 =0
+		a=Rand(0,100)
+		If a<60
+			SimulatedObjectStatus(i)=0
+		Else If a<80
+			
+			SimulatedObjectStatus(i)=1
+		Else If a<90
+		
+
+			Simulatedobjectstatus(i)=2
+		Else
+		
+
+			Simulatedobjectstatus(i)=3
+		EndIf
+		
+	EndIf
+	If SimulatedObjectStatus(i)=0
+		SimulatedObjectZ(i)=0.6+.1*Sin(leveltimer Mod 360)
+		SimulatedObjectYaw(i)=30*Sin((leveltimer*4) Mod 360)
+		SimulatedObjectRoll(i)=20*Sin((leveltimer*2) Mod 360)
+	Else If SimulatedObjectStatus(i)=1
+
+		SimulatedObjectZ(i)=0.6+.1*Sin(leveltimer Mod 360)
+		SimulatedObjectYaw(i)=180*Sin((leveltimer) Mod 360)
+		SimulatedObjectRoll(i)=20*Sin((leveltimer*2) Mod 360)
+	Else If SimulatedObjectStatus(i)=2
+
+		SimulatedObjectZ(i)=0.6+.1*Sin(leveltimer Mod 360)
+		SimulatedObjectYaw(i)=360*Sin((leveltimer/2) Mod 360)
+		SimulatedObjectRoll(i)=180*Sin((leveltimer*2) Mod 360)
+	Else If SimulatedObjectStatus(i)=3
+		SimulatedObjectZ(i)=0.6+.4*Sin(leveltimer Mod 180)
+		SimulatedObjectYaw(i)=60*Sin((leveltimer*4) Mod 360)
+		SimulatedObjectRoll(i)=20*Sin((leveltimer*2) Mod 360)
+
+
+	EndIf
+	If Rand(0,100)<3 And ObjectActive(i)=1001	AddParticle(Rand(16,23),ObjectTileX(i)+0.5,.7,-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
+
+	SimulateObjectXYZAdjust(i)
+	SimulateObjectRotation(i)
+
+End Function
+
+
+Function ControlRetroZbotUfo(i)
+
+	If ObjectType(i)<>423 And ObjectType(i)<>430
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
+	EndIf
+
+	SimulateObjectRotationAdjust(i)
+
+End Function
+
+
+Function ControlRetroLaserGate(i)
+	
+	If ObjectYawAdjust(i)=0 Or ObjectYawAdjust(i)=180
+		SimulatedObjectPitch(i)=(SimulatedObjectPitch(i)+2) Mod 360
+	Else
+		SimulatedObjectRoll(i)=(SimulatedObjectRoll(i)+2) Mod 360
+	EndIf
+	
+	SimulateObjectRotationAdjust(i)
+			
+End Function
+
+
+Function ControlTentacle(i)
+
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(Rand(-10,10))/10.0
+	
+	SimulateObjectRotationAdjust(i)
+	
+End Function
+
+
+Function ControlRainbowBubble(i)
+
+	EntityAlpha ObjectEntity(i),.8
+	EntityBlend ObjectEntity(i),3
+	
+	l=leveltimer/4+objectData(i,2)
+	
+	SimulatedObjectXScale(i)=0.5-0.1*Sin((leveltimer + objectData(i,2)) Mod 360)
+
+	SimulatedObjectYScale(i)=0.5-0.1*Sin((leveltimer + objectData(i,2)) Mod 360)
+
+	SimulatedObjectZScale(i)=0.6+0.2*Sin((leveltimer + objectData(i,2)) Mod 360)
+
+	
+	SimulatedObjectPitch(i)=(ObjectPitch(i)+1) Mod 360
+	SimulatedObjectYaw(i)=360*Sin(l Mod 360)
+	SimulatedObjectRoll(i)=180*Cos(l Mod 360)
+	
+	SimulatedObjectZ(i)=0.5+0.3*Abs(Sin((leveltimer + objectData(i,2)) Mod 360))
+	
+	SimulateObjectRotationAdjust(i)
+	SimulateObjectScaleXYZAdjust(i)
+
+End Function
+
+
 
 Function ControlObjects()
 
@@ -19803,14 +20195,38 @@ Function ControlObjects()
 			
 			Case 30
 				ControlTeleporter(i)
+			Case 151
+				ControlRainbowBubble(i)
 			Case 160
 				ControlObstacle(i)
 			Case 161
 				ControlWaterfall(i)
+			Case 170
+				ControlGoldStar(i)
+			Case 171,174
+				ControlGoldCoin(i)
+			Case 172
+				ControlKey(i)
+			Case 173
+				ControlGem(i)
+			Case 179
+				ControlCustomItem(i)
+			Case 180
+				ControlSigns(i)
 			Case 190
 				ControlParticleEmitters(i)
 			Case 320
 				ControlVoidTexture(i)
+			Case 330
+				ControlWisp(i)
+			Case 340
+				ControlTentacle(i)
+			Case 422,423,430,431
+				ControlRetroZbotUfo(i)
+			Case 424
+				ControlRetroLaserGate(i)
+			Case 425
+				ControlRetroRainbowCoin(i)
 				
 			End Select
 			
