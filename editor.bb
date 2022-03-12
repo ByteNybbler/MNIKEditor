@@ -5821,7 +5821,7 @@ Function SimulateObjectScaleXYZNoScaleAdjust(Dest)
 	XS#=SimulatedObjectXScale(Dest)
 	YS#=SimulatedObjectYScale(Dest)
 	ZS#=SimulatedObjectZScale(Dest)
-	ScaleEntity ObjectEntity(Dest),XS#,YS#,ZS#
+	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
 
 End Function
 
@@ -5830,7 +5830,7 @@ Function SimulateObjectScaleXYZ(Dest)
 	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
 	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
-	ScaleEntity ObjectEntity(Dest),XS#,YS#,ZS#
+	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
 
 End Function
 
@@ -5839,7 +5839,8 @@ Function SimulateObjectScaleXYZAdjust(Dest)
 	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)*ObjectXScale(Dest)
 	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)*ObjectYScale(Dest)
 	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)*ObjectZScale(Dest)
-	ScaleEntity ObjectEntity(Dest),XS#,YS#,ZS#
+	
+	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
 	
 End Function
 
