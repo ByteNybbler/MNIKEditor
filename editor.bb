@@ -20446,8 +20446,13 @@ Function ControlActivation(i)
 	
 	
 	Case 21
+		If ObjectModelName$(i)="!NPC" Or ObjectModelName$(i)="!Tentacle"
+			Entity=GetChild(ObjectEntity(i),3)
+		Else
+			Entity=ObjectEntity(i)
+		EndIf
 		; Fade in
-		EntityAlpha ObjectEntity(i),Float(ObjectActive(i))/1001.0
+		EntityAlpha Entity,Float(ObjectActive(i))/1001.0
 								
 	Case 31
 		; push down from 1.01 to 0.01
