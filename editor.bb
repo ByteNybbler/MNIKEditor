@@ -1087,10 +1087,14 @@ EntityTexture ThwartMesh,ThwartTexture(0)
 HideEntity ThwartMesh
 
 ; Tentacle
-Global TentacleMesh=myLoadMesh("data\models\trees\tentacle.b3d",0)
+Global TentacleMesh=myLoadAnimMesh("data\models\trees\tentacle.b3d",0)
+ExtractAnimSeq GetChild(Tentaclemesh,3),41,60
 Global TentacleTexture = myLoadTexture ("data\models\trees\tentacle.jpg",1)
 
-EntityTexture tentaclemesh,tentacletexture
+For i=1 To CountChildren(tentaclemesh)
+	EntityTexture GetChild(tentaclemesh,i),tentacletexture
+Next
+;EntityTexture tentaclemesh,tentacletexture
 HideEntity TentacleMesh
 
 ; Crabs
@@ -5672,6 +5676,10 @@ Function UpdateObjectEntityToCurrent(Dest)
 		TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
 	
 		EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+	EndIf
+	
+	If ObjectModelName$(Dest)="!Tentacle"
+		Animate GetChild(ObjectEntity(Dest),3),1,.1,1,0
 	EndIf
 	
 	UpdateObjectPosition(Dest)
@@ -11038,6 +11046,7 @@ Function BuildCurrentObjectModel()
 		EntityTexture CurrentObjectModel,ThwartTexture(CurrentObjectData(2))
 	Else If CurrentObjectModelName$="!Tentacle"
 		CurrentObjectModel=CopyEntity(TentacleMesh)
+		Animate GetChild(CurrentObjectModel,3),1,.1,1,0
 	Else If CurrentObjectModelName$="!Lurker"
 		CurrentObjectModel=CopyEntity(LurkerMesh)
 	Else If CurrentObjectModelName$="!Ghost"
@@ -13808,8 +13817,9 @@ Function CreateKeyCardMesh(col)
 	AddTriangle(surface,5,4,6)
 	AddTriangle(surface,5,6,7)
 	
-	RotateMesh Entity,90,0,0
-	PositionMesh Entity,0,.3,0
+	; editor rotation only
+	;RotateMesh Entity,90,0,0
+	;PositionMesh Entity,0,.3,0
 
 	
 	
@@ -19868,10 +19878,30 @@ Function ControlGoldCoin(i)
 	If ObjectActive(i)<1001 And ObjectActive(i)>0
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
+		
+		If ObjectActive(i)>600
+			SimulatedObjectZ(i)=.2+Float(1000-ObjectActive(i))/400.0
+		Else
+			SimulatedObjectZ(i)=1.2
+		EndIf
+		If ObjectActive(i)=400
+			; Little Spark
+			For j=1 To 20
+				AddParticle(19,ObjectTileX(i)+0.5,1.6,-ObjectTileY(i)-0.5,Rand(0,360),0.15,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
+			Next
+		EndIf
+;		If ObjectActive(i)<600
+;			ObjectScaleXAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleYAdjust(i)=Float(ObjectActive(i))/600.0
+;			ObjectScaleZAdjust(i)=Float(ObjectActive(i))/600.0
+;
+;		EndIf
 	Else
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
+		SimulatedObjectZ(i)=0
 	EndIf
 	
+	SimulateObjectXYZAdjust(i)
 	SimulateObjectRotationAdjust(i)
 
 End Function
@@ -19928,6 +19958,7 @@ Function ControlGem(i)
 		EndIf
 		If ObjectData(i,0)=0 Or ObjectData(i,0)=2 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Rnd(1.8,2.2)
 		If ObjectData(i,0)=1 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+Rnd(2,3)+(i Mod 3)/3.0
+		SimulatedObjectZ(i)=.4
 	EndIf
 	
 	SimulateObjectXYZAdjust(i)
@@ -19971,6 +20002,7 @@ Function ControlKey(i)
 		Else
 			SimulatedObjectRoll(i)=30*Sin((leveltimer) Mod 360)
 		EndIf
+		SimulatedObjectZ(i)=.4
 	EndIf
 	
 	SimulateObjectXYZAdjust(i)
@@ -20082,6 +20114,7 @@ Function ControlRetroRainbowCoin(i)
 		
 	Else
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
+		SimulatedObjectZ(i)=0
 	EndIf
 	
 	SimulateObjectXYZAdjust(i)
@@ -20213,6 +20246,15 @@ Function ControlBowler(i)
 End Function
 
 
+Function ControlMothership(i)
+
+	SimulatedObjectYaw(i)=((SimulatedObjectYaw(i)+.3) Mod 360)
+	
+	SimulateObjectRotationAdjust(i)
+	
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -20257,6 +20299,8 @@ Function ControlObjects()
 				ControlRetroLaserGate(i)
 			Case 425
 				ControlRetroRainbowCoin(i)
+			Case 434
+				ControlMothership(i)
 				
 			End Select
 			
