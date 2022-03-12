@@ -6510,10 +6510,10 @@ Function PasteObjectData(Dest)
 	ObjectTalkable(Dest)=CurrentObjectTalkable
 	ObjectCurrentAnim(Dest)=CurrentObjectCurrentAnim
 	ObjectStandardAnim(Dest)=CurrentObjectStandardAnim
-	ObjectTileX(Dest)=CurrentObjectTileX
-	ObjectTileY(Dest)=CurrentObjectTileY
-	ObjectTileX2(Dest)=CurrentObjectTileX2
-	ObjectTileY2(Dest)=CurrentObjectTileY2
+	;ObjectTileX(Dest)=CurrentObjectTileX
+	;ObjectTileY(Dest)=CurrentObjectTileY
+	;ObjectTileX2(Dest)=CurrentObjectTileX2
+	;ObjectTileY2(Dest)=CurrentObjectTileY2
 	ObjectMovementTimer(Dest)=CurrentObjectMovementTimer
 	ObjectMovementSpeed(Dest)=CurrentObjectMovementSpeed
 	ObjectMoveXGoal(Dest)=CurrentObjectMoveXGoal
@@ -19403,6 +19403,9 @@ Function ControlObjects()
 				ControlParticleEmitters(i)
 				
 			End Select
+			
+		;Else
+		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
 			
 		EndIf
 	
