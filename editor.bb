@@ -5709,7 +5709,11 @@ End Function
 
 Function SimulateObjectRotation(Dest)
 
-	RotateEntity ObjectEntity(Dest),ObjectPitchAdjust(Dest)+SimulatedObjectPitch(Dest),ObjectYawAdjust(Dest)+SimulatedObjectYaw(Dest),ObjectRollAdjust(Dest)+SimulatedObjectRoll(Dest)
+	;RotateEntity ObjectEntity(Dest),ObjectPitchAdjust(Dest)+SimulatedObjectPitch(Dest),ObjectYawAdjust(Dest)+SimulatedObjectYaw(Dest),ObjectRollAdjust(Dest)+SimulatedObjectRoll(Dest)
+
+	RotateEntity ObjectEntity(Dest),0,0,0
+	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch(Dest)+ObjectPitchAdjust(Dest),0,SimulatedObjectRoll(Dest)+ObjectRollAdjust(Dest)
+	TurnEntity ObjectEntity(Dest),0,SimulatedObjectYaw(Dest)+ObjectYawAdjust(Dest),0
 
 End Function
 
