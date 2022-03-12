@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/11/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/12/22)"
 
 Global MASTERUSER=True
 
@@ -551,7 +551,7 @@ Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectMovementTimer(1000),ObjectMoveme
 Dim ObjectMoveYGoal(1000),ObjectTileTypeCollision(1000),ObjectObjectTypeCollision(1000),ObjectCaged(1000),ObjectDead(1000)
 Dim ObjectDeadTimer(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
 Dim ObjectFlying(1000),ObjectFrozen(1000),ObjectIndigo(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
-Dim ObjectScaleAdjust#(1000),ObjectFutureFloat2#(1000),ObjectFutureFloat3#(1000),ObjectFutureFloat4#(1000),ObjectFutureFloat5#(1000)
+Dim ObjectScaleAdjust#(1000),ObjectScaleXAdjust#(1000),ObjectScaleYAdjust#(1000),ObjectScaleZAdjust#(1000),ObjectFutureFloat5#(1000)
 Dim ObjectFutureFloat6#(1000),ObjectFutureFloat7#(1000),ObjectFutureFloat8#(1000),ObjectFutureFloat9#(1000),ObjectFutureFloat10#(1000)
 Dim ObjectFutureString1$(1000),ObjectFutureString2$(1000)
 
@@ -608,7 +608,7 @@ Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectMovementTimer,Curren
 Global CurrentObjectMoveYGoal,CurrentObjectTileTypeCollision,CurrentObjectObjectTypeCollision,CurrentObjectCaged,CurrentObjectDead
 Global CurrentObjectDeadTimer,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
 Global CurrentObjectFlying,CurrentObjectFrozen,CurrentObjectIndigo,CurrentObjectFutureInt24,CurrentObjectFutureInt25
-Global CurrentObjectScaleAdjust#,CurrentObjectFutureFloat2#,CurrentObjectFutureFloat3#,CurrentObjectFutureFloat4#,CurrentObjectFutureFloat5#
+Global CurrentObjectScaleAdjust#,CurrentObjectScaleXAdjust#,CurrentObjectScaleYAdjust#,CurrentObjectScaleZAdjust#,CurrentObjectFutureFloat5#
 Global CurrentObjectFutureFloat6#,CurrentObjectFutureFloat7#,CurrentObjectFutureFloat8#,CurrentObjectFutureFloat9#,CurrentObjectFutureFloat10#
 Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
 
@@ -652,7 +652,7 @@ Dim BrushObjectTileX2(1000),BrushObjectTileY2(1000),BrushObjectMovementTimer(100
 Dim BrushObjectMoveYGoal(1000),BrushObjectTileTypeCollision(1000),BrushObjectObjectTypeCollision(1000),BrushObjectCaged(1000),BrushObjectDead(1000)
 Dim BrushObjectDeadTimer(1000),BrushObjectExclamation(1000),BrushObjectShadow(1000),BrushObjectLinked(1000),BrushObjectLinkBack(1000)
 Dim BrushObjectFlying(1000),BrushObjectFrozen(1000),BrushObjectIndigo(1000),BrushObjectFutureInt24(1000),BrushObjectFutureInt25(1000)
-Dim BrushObjectScaleAdjust#(1000),BrushObjectFutureFloat2#(1000),BrushObjectFutureFloat3#(1000),BrushObjectFutureFloat4#(1000),BrushObjectFutureFloat5#(1000)
+Dim BrushObjectScaleAdjust#(1000),BrushObjectScaleXAdjust#(1000),BrushObjectScaleYAdjust#(1000),BrushObjectScaleZAdjust#(1000),BrushObjectFutureFloat5#(1000)
 Dim BrushObjectFutureFloat6#(1000),BrushObjectFutureFloat7#(1000),BrushObjectFutureFloat8#(1000),BrushObjectFutureFloat9#(1000),BrushObjectFutureFloat10#(1000)
 Dim BrushObjectFutureString1$(1000),BrushObjectFutureString2$(1000)
 
@@ -5050,9 +5050,12 @@ Function LoadObjectPreset()
 	CurrentObjectFutureInt25=ReadInt(file)
 
 	CurrentObjectScaleAdjust=ReadFloat(file)
-	CurrentObjectFutureFloat2=ReadFloat(file)
-	CurrentObjectFutureFloat3=ReadFloat(file)
-	CurrentObjectFutureFloat4=ReadFloat(file)
+	CurrentObjectScaleXAdjust=ReadFloat(file)
+	CurrentObjectScaleYAdjust=ReadFloat(file)
+	CurrentObjectScaleZAdjust=ReadFloat(file)
+	CurrentObjectScaleXAdjust=1.0
+	CurrentObjectScaleYAdjust=1.0
+	CurrentObjectScaleZAdjust=1.0
 	CurrentObjectFutureFloat5=ReadFloat(file)
 	CurrentObjectFutureFloat6=ReadFloat(file)
 	CurrentObjectFutureFloat7=ReadFloat(file)
@@ -5556,9 +5559,9 @@ Function PlaceObject(x#,y#)
 	EndIf
 
 	ObjectScaleAdjust(NofObjects)=CurrentObjectScaleAdjust
-	ObjectFutureFloat2(NofObjects)=CurrentObjectFutureFloat2
-	ObjectFutureFloat3(NofObjects)=CurrentObjectFutureFloat3
-	ObjectFutureFloat4(NofObjects)=CurrentObjectFutureFloat4
+	ObjectScaleXAdjust(NofObjects)=CurrentObjectScaleXAdjust
+	ObjectScaleYAdjust(NofObjects)=CurrentObjectScaleYAdjust
+	ObjectScaleZAdjust(NofObjects)=CurrentObjectScaleZAdjust
 	ObjectFutureFloat5(NofObjects)=CurrentObjectFutureFloat5
 	ObjectFutureFloat6(NofObjects)=CurrentObjectFutureFloat6
 	ObjectFutureFloat7(NofObjects)=CurrentObjectFutureFloat7
@@ -5975,9 +5978,9 @@ Function GrabObject(x#,y#)
 	CurrentObjectFutureInt25=ObjectFutureInt25(Dest)
 
 	CurrentObjectScaleAdjust=ObjectScaleAdjust(Dest)
-	CurrentObjectFutureFloat2=ObjectFutureFloat2(Dest)
-	CurrentObjectFutureFloat3=ObjectFutureFloat3(Dest)
-	CurrentObjectFutureFloat4=ObjectFutureFloat4(Dest)
+	CurrentObjectScaleXAdjust=ObjectScaleXAdjust(Dest)
+	CurrentObjectScaleYAdjust=ObjectScaleYAdjust(Dest)
+	CurrentObjectScaleZAdjust=ObjectScaleZAdjust(Dest)
 	CurrentObjectFutureFloat5=ObjectFutureFloat5(Dest)
 	CurrentObjectFutureFloat6=ObjectFutureFloat6(Dest)
 	CurrentObjectFutureFloat7=ObjectFutureFloat7(Dest)
@@ -6121,9 +6124,9 @@ Function GrabObjectFromBrush(i)
 	CurrentObjectFutureInt25=BrushObjectFutureInt25(Dest)
 
 	CurrentObjectScaleAdjust=BrushObjectScaleAdjust(Dest)
-	CurrentObjectFutureFloat2=BrushObjectFutureFloat2(Dest)
-	CurrentObjectFutureFloat3=BrushObjectFutureFloat3(Dest)
-	CurrentObjectFutureFloat4=BrushObjectFutureFloat4(Dest)
+	CurrentObjectScaleXAdjust=BrushObjectScaleXAdjust(Dest)
+	CurrentObjectScaleYAdjust=BrushObjectScaleYAdjust(Dest)
+	CurrentObjectScaleZAdjust=BrushObjectScaleZAdjust(Dest)
 	CurrentObjectFutureFloat5=BrushObjectFutureFloat5(Dest)
 	CurrentObjectFutureFloat6=BrushObjectFutureFloat6(Dest)
 	CurrentObjectFutureFloat7=BrushObjectFutureFloat7(Dest)
@@ -6445,9 +6448,9 @@ Function CopyObjectData(Source,Dest)
 	ObjectFutureInt24(Dest)=ObjectFutureInt24(Source)
 	ObjectFutureInt25(Dest)=ObjectFutureInt25(Source)
 	ObjectScaleAdjust(Dest)=ObjectScaleAdjust(Source)
-	ObjectFutureFloat2(Dest)=ObjectFutureFloat2(Source)
-	ObjectFutureFloat3(Dest)=ObjectFutureFloat3(Source)
-	ObjectFutureFloat4(Dest)=ObjectFutureFloat4(Source)
+	ObjectScaleXAdjust(Dest)=ObjectScaleXAdjust(Source)
+	ObjectScaleYAdjust(Dest)=ObjectScaleYAdjust(Source)
+	ObjectScaleZAdjust(Dest)=ObjectScaleZAdjust(Source)
 	ObjectFutureFloat5(Dest)=ObjectFutureFloat5(Source)
 	ObjectFutureFloat6(Dest)=ObjectFutureFloat6(Source)
 	ObjectFutureFloat7(Dest)=ObjectFutureFloat7(Source)
@@ -6581,9 +6584,9 @@ Function CopyObjectDataToBrush(Source,Dest,XOffset#,YOffset#)
 	BrushObjectFutureInt24(Dest)=ObjectFutureInt24(Source)
 	BrushObjectFutureInt25(Dest)=ObjectFutureInt25(Source)
 	BrushObjectScaleAdjust(Dest)=ObjectScaleAdjust(Source)
-	BrushObjectFutureFloat2(Dest)=ObjectFutureFloat2(Source)
-	BrushObjectFutureFloat3(Dest)=ObjectFutureFloat3(Source)
-	BrushObjectFutureFloat4(Dest)=ObjectFutureFloat4(Source)
+	BrushObjectScaleXAdjust(Dest)=ObjectScaleXAdjust(Source)
+	BrushObjectScaleYAdjust(Dest)=ObjectScaleYAdjust(Source)
+	BrushObjectScaleZAdjust(Dest)=ObjectScaleZAdjust(Source)
 	BrushObjectFutureFloat5(Dest)=ObjectFutureFloat5(Source)
 	BrushObjectFutureFloat6(Dest)=ObjectFutureFloat6(Source)
 	BrushObjectFutureFloat7(Dest)=ObjectFutureFloat7(Source)
@@ -6712,9 +6715,9 @@ Function PasteObjectData(Dest)
 	ObjectFutureInt24(Dest)=CurrentObjectFutureInt24
 	ObjectFutureInt25(Dest)=CurrentObjectFutureInt25
 	ObjectScaleAdjust(Dest)=CurrentObjectScaleAdjust
-	ObjectFutureFloat2(Dest)=CurrentObjectFutureFloat2
-	ObjectFutureFloat3(Dest)=CurrentObjectFutureFloat3
-	ObjectFutureFloat4(Dest)=CurrentObjectFutureFloat4
+	ObjectScaleXAdjust(Dest)=CurrentObjectScaleXAdjust
+	ObjectScaleYAdjust(Dest)=CurrentObjectScaleYAdjust
+	ObjectScaleZAdjust(Dest)=CurrentObjectScaleZAdjust
 	ObjectFutureFloat5(Dest)=CurrentObjectFutureFloat5
 	ObjectFutureFloat6(Dest)=CurrentObjectFutureFloat6
 	ObjectFutureFloat7(Dest)=CurrentObjectFutureFloat7
@@ -12936,9 +12939,9 @@ Function SaveLevel()
 		WriteInt file,ObjectFutureInt24(Dest)
 		WriteInt file,ObjectFutureInt25(Dest)
 		WriteFloat file,ObjectScaleAdjust(Dest)
-		WriteFloat file,ObjectFutureFloat2(Dest)
-		WriteFloat file,ObjectFutureFloat3(Dest)
-		WriteFloat file,ObjectFutureFloat4(Dest)
+		WriteFloat file,ObjectScaleXAdjust(Dest)
+		WriteFloat file,ObjectScaleYAdjust(Dest)
+		WriteFloat file,ObjectScaleZAdjust(Dest)
 		WriteFloat file,ObjectFutureFloat5(Dest)
 		WriteFloat file,ObjectFutureFloat6(Dest)
 		WriteFloat file,ObjectFutureFloat7(Dest)
@@ -13230,9 +13233,12 @@ Function LoadLevel(levelnumber)
 		ObjectFutureInt24(Dest)=ReadInt(file)
 		ObjectFutureInt25(Dest)=ReadInt(file)
 		ObjectScaleAdjust(Dest)=ReadFloat(file)
-		ObjectFutureFloat2(Dest)=ReadFloat(file)	
-		ObjectFutureFloat3(Dest)=ReadFloat(file)
-		ObjectFutureFloat4(Dest)=ReadFloat(file)
+		ObjectScaleXAdjust(Dest)=ReadFloat(file)	
+		ObjectScaleYAdjust(Dest)=ReadFloat(file)
+		ObjectScaleZAdjust(Dest)=ReadFloat(file)
+		ObjectScaleXAdjust(Dest)=1.0
+		ObjectScaleYAdjust(Dest)=1.0
+		ObjectScaleZAdjust(Dest)=1.0
 		ObjectFutureFloat5(Dest)=ReadFloat(file)
 		ObjectFutureFloat6(Dest)=ReadFloat(file)
 		ObjectFutureFloat7(Dest)=ReadFloat(file)	
@@ -20384,6 +20390,90 @@ Function ControlWindmillRotor(i)
 End Function
 
 
+Function ControlActivation(i)
+
+	; Get Scale
+	ObjXScale#=ObjectXScale(i)*ObjectScaleXAdjust(i)
+	ObjYScale#=ObjectYScale(i)*ObjectScaleYAdjust(i)
+	ObjZScale#=ObjectZScale(i)*ObjectScaleZAdjust(i)
+
+	
+	; Select Visual Animation	
+	Select ObjectActivationType(i)
+	Case 0
+		; nothing
+	Case 1
+		; Scale Vertical 0-1
+		ObjZScale=ObjZScale*Float(ObjectActive(i))/1001.0
+	
+	
+	Case 2
+		; scale all directions 0-1
+		ObjXScale=ObjXScale*Float(ObjectActive(i))/1001.0
+		ObjYScale=ObjYScale*Float(ObjectActive(i))/1001.0
+		ObjZScale=ObjZScale*Float(ObjectActive(i))/1001.0
+	Case 3
+		; scale planar only
+		ObjXScale=ObjXScale*Float(ObjectActive(i))/1001.0
+		ObjYScale=ObjYScale*Float(ObjectActive(i))/1001.0
+
+
+	Case 11
+		; push up from -1.01 to -0.01
+		SimulatedObjectZ#(i)=-0.99+Float(ObjectActive(i))/1001.0
+		
+	Case 12,13,14,15,16
+		; push up from -x.01 to -5.01 (used for stepping stones)
+		SimulatedObjectZ#(i)=-(ObjectActivationType(i)-6)-.01+(ObjectActivationType(i)-11)*Float(ObjectActive(i))/1001.0
+		
+	Case 17 ; *** THESE ONLY WORK FOR AUTODOORS - OBJECTTILEX MUST BE PRE_SET
+		; push north
+		SimulatedObjectY#(i)=ObjectTileY(i)+0.5-ObjectYScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+	Case 18
+		; push East
+		SimulatedObjectX#(i)=ObjectTileX(i)+0.5+ObjectXScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+
+	Case 19
+		; push south
+		SimulatedObjectY#(i)=ObjectTileY(i)+0.5+ObjectYScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+
+	Case 20
+		; push west
+		SimulatedObjectX#(i)=ObjectTileX(i)+0.5-ObjectXScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+
+
+
+	
+	
+	Case 21
+		; Fade in
+		EntityAlpha ObjectEntity(i),Float(ObjectActive(i))/1001.0
+								
+	Case 31
+		; push down from 1.01 to 0.01
+		SimulatedObjectZ#(i)=1.01-Float(ObjectActive(i))/1001.0
+		
+	Case 41
+		; rotate out (doors)
+		SimulatedObjectYaw#(i)=-160+160*Float(ObjectActive(i))/1001.0
+
+	
+			
+	End Select
+	
+	
+	SimulatedObjectXScale(i)=ObjXScale
+	SimulatedObjectYScale(i)=ObjYScale
+	SimulatedObjectZScale(i)=ObjZScale
+	
+	SimulateObjectXYZAdjust(i)
+	SimulateObjectRotationAdjust(i)
+	SimulateObjectScaleXYZ(i)
+
+
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -20438,6 +20528,11 @@ Function ControlObjects()
 				ControlMothership(i)
 				
 			End Select
+			
+			
+			If ObjectActive(i)<>0 And ObjectActive(i)<>1001
+				ControlActivation(i)
+			EndIf
 			
 		;Else
 		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
