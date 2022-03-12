@@ -20343,6 +20343,28 @@ Function ControlRubberducky(i)
 End Function
 
 
+Function ControlGloveCharge(i)
+
+	SimulatedObjectZ(i)=0.04
+	
+	myparticle=16+ObjectData(i,0)
+	
+	j2=Rand(0,359)
+	If objectsubtype(i)=1 ; one time charge
+		If leveltimer Mod 5 = 0
+			AddParticle(myparticle,ObjectTileX(i)+.5+.1*Sin(j2*3),0,-ObjectTileY(i)-.5-.1*Cos(j2*3),0,.2,0,.03,0,4,0,0,0,0,50,3)
+		EndIf
+	Else If objectsubtype(i)=0; multi-charge
+		If leveltimer Mod 2 = 0
+			AddParticle(myparticle,ObjectTileX(i)+.5+.3*Sin(j2*3),0,-ObjectTileY(i)-.5-.3*Cos(j2*3),0,.3,0,.04,0,4,0,0,0,0,50,3)
+		EndIf
+	EndIf
+	
+	SimulateObjectXYZAdjust(i)
+	
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -20373,6 +20395,8 @@ Function ControlObjects()
 				ControlSigns(i)
 			Case 190
 				ControlParticleEmitters(i)
+			Case 200
+				ControlGloveCharge(i)
 			Case 260
 				ControlBowler(i)
 			Case 310
