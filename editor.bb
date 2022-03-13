@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/12/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/13/22)"
 
 Global MASTERUSER=True
 
@@ -1736,11 +1736,13 @@ Function EditorMainLoop()
 	
 	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
-	ControlObjects()
+	If SimulationLevel<>0
+		ControlObjects()
+	EndIf
 	ControlParticles()
-	
 	RenderParticles()
-	UpdateWorld 
+	
+	UpdateWorld
 	RenderWorld
 	
 	
@@ -1886,7 +1888,7 @@ Function EditorMainLoop()
 	;EndIf
 	
 	Text 400,565," SIMULATION"
-	Text 400+4,580," LEVEL "+SimulationLevel
+	Text 400+4,580,"  LEVEL "+SimulationLevel
 	
 	;Text 500,520,"   WIDESCREEN"
 	;If WidescreenRangeLevel=0
@@ -4122,17 +4124,35 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 		
-		; level border
+		; simulation level
 		If my>565 And my<595
-			If LeftMouse=True And LeftMouseReleased=True
-				LevelEdgeStyle = LevelEdgeStyle+1				
-				Delay 100
+			NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, 150)
+			If NewValue>2
+				NewValue=0
+			ElseIf NewValue<0
+				NewValue=2
 			EndIf
-			If RightMouse=True And RightMouseReleased=True
-				LevelEdgeStyle = LevelEdgeStyle-1				
-				Delay 100
+			If NewValue=0 And SimulationLevel<>NewLevel
+				; move objects back to their default positions
+				ResetSimulatedQuantities()
+				For i=0 To NofObjects-1
+					SimulateObjectPosition(i)
+					SimulateObjectRotation(i)
+					SimulateObjectScale(i)
+				Next
 			EndIf
+			SimulationLevel=NewValue
+			
+;			If LeftMouse=True And LeftMouseReleased=True
+;				LevelEdgeStyle = LevelEdgeStyle+1				
+;				Delay 100
+;			EndIf
+;			If RightMouse=True And RightMouseReleased=True
+;				LevelEdgeStyle = LevelEdgeStyle-1				
+;				Delay 100
+;			EndIf
 		EndIf
+
 	EndIf
 	
 	If MX>=500 And MX<600
@@ -20740,35 +20760,42 @@ Function ControlTrap(i)
 
 	SimulatedObjectZ(i)=0.04
 
-	If SimulatedObjectStatus(i)=0
-		; currently off
-		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
-		If SimulatedObjectTimer(i)<=0
-			; turn on
-			SimulatedObjectTimer(i)=ObjectTimerMax1(i)
-			SimulatedObjectStatus(i)=1
+	If ObjectActive(i)=1001 Or SimulationLevel<2
+		If SimulatedObjectStatus(i)=0
+			; currently off
+			SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+			If SimulatedObjectTimer(i)<=0
+				; turn on
+				SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+				SimulatedObjectStatus(i)=1
+			EndIf
+		Else
+			; currently on
+			SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+			If SimulatedObjectTimer(i)<=0
+				; turn off
+				SimulatedObjectTimer(i)=ObjectTimerMax2(i)
+				SimulatedObjectStatus(i)=0
+			EndIf
 		EndIf
-	Else
-		; currently on
-		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
-		If SimulatedObjectTimer(i)<=0
-			; turn off
-			SimulatedObjectTimer(i)=ObjectTimerMax2(i)
-			SimulatedObjectStatus(i)=0
-		EndIf
-	EndIf
-
 	
-	Select ObjectSubType(i)
-		Case 0
-			; fire - create particle when on
-			
-		If SimulatedObjectStatus(i)=1
-			;If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
-			If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
-		EndIf
 		
-	End Select
+		Select ObjectSubType(i)
+			Case 0
+				; fire - create particle when on
+				
+			If SimulatedObjectStatus(i)=1
+				;If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
+				If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
+			EndIf
+			
+		End Select
+	Else
+		
+		;If Rand(0,100)<2 AddParticle(0,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
+		If Rand(0,100)<2 AddParticle(0,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
+		
+	EndIf
 	
 	SimulateObjectPosition(i)
 
@@ -20979,7 +21006,7 @@ Function ControlObjects()
 			End Select
 			
 			
-			If ObjectActive(i)<>0 And ObjectActive(i)<>1001
+			If (ObjectActive(i)<>0 And ObjectActive(i)<>1001) Or SimulationLevel>=2
 				ControlActivation(i)
 			EndIf
 			
