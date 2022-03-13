@@ -575,6 +575,7 @@ Dim SimulatedObjectRoll#(1000)
 Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2#(1000)
 Dim SimulatedObjectStatus(1000)
 Dim SimulatedObjectData(1000,10)
+Dim SimulatedObjectMovementSpeed(1000)
 Dim SimulatedObjectTileTypeCollision(1000)
 Dim SimulatedObjectScaleAdjust#(1000)
 
@@ -5789,11 +5790,12 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectYScale(i)=ObjectYScale(i)
 		SimulatedObjectZScale(i)=ObjectZScale(i)
 		SimulatedObjectStatus(i)=ObjectStatus(i)
-		SimulatedObjectScaleAdjust(i)=ObjectScaleAdjust(i)
 		For j=0 To 10
 			SimulatedObjectData(i,j)=ObjectData(i,j)
 		Next
+		SimulatedObjectMovementSpeed(i)=ObjectMovementSpeed(i)
 		SimulatedObjectTileTypeCollision(i)=ObjectTileTypeCollision(i)
+		SimulatedObjectScaleAdjust(i)=ObjectScaleAdjust(i)
 	Next
 
 End Function
@@ -20382,6 +20384,18 @@ End Function
 Function ControlMothership(i)
 
 	SimulatedObjectYaw(i)=((SimulatedObjectYaw(i)+.3) Mod 360)
+	
+	If SimulatedObjectMovementSpeed(i)<>10 ; first time
+		SimulatedObjectData(i,1)=-1
+		SimulatedObjectYawAdjust(i)=0
+		SimulatedObjectMovementSpeed(i)=10
+		SimulatedObjectTileTypeCollision(i)=0
+		SimulatedObjectZ(i)=4
+		
+		SimulateObjectPosition(i)
+		
+		;CreateShadow(i,ObjectScaleAdjust(i)*5)
+	EndIf
 	
 	SimulateObjectRotation(i)
 	
