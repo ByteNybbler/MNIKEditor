@@ -20068,8 +20068,8 @@ Function ControlTeleporter(i)
 		;ScaleEntity ObjectEntity(i),,ObjectActive(i)/1001.0,)
 	EndIf
 
-	SimulateObjectRotation(i)
-	SimulateObjectScale(i)
+	;SimulateObjectRotation(i)
+	;SimulateObjectScale(i)
 
 End Function
 
@@ -20126,7 +20126,7 @@ Function ControlObstacle(i)
 		ControlCustomModel(i)
 	EndIf
 
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20172,7 +20172,7 @@ Function ControlCustomModel(i)
 		SimulatedObjectZAdjust(i)=ObjectZAdjust(i)+Float(ObjectData(i,5))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,8)/100.0))
 	EndIf
 	
-	SimulateObjectPosition(i)
+	;SimulateObjectPosition(i)
 	; object rotation is simulated by ControlObstacle
 
 End Function
@@ -20190,8 +20190,8 @@ Function ControlGoldStar(i)
 		AddParticle(19,ObjectTileX(i)+0.5,.7+ObjectZAdjust(i),-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
 	EndIf
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20224,8 +20224,8 @@ Function ControlGoldCoin(i)
 		SimulatedObjectZ(i)=0
 	EndIf
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20284,8 +20284,8 @@ Function ControlGem(i)
 		SimulatedObjectZ(i)=.4
 	EndIf
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 	
 End Function
 
@@ -20328,8 +20328,8 @@ Function ControlKey(i)
 		SimulatedObjectZ(i)=.4
 	EndIf
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20372,8 +20372,8 @@ Function ControlCustomItem(i)
 
 	EndIf
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 	
 End Function
 
@@ -20400,8 +20400,8 @@ Function ControlSigns(i)
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
 	End Select
 
-	SimulateObjectRotation(i)
-	SimulateObjectScale(i)
+	;SimulateObjectRotation(i)
+	;SimulateObjectScale(i)
 		
 
 End Function
@@ -20439,8 +20439,8 @@ Function ControlRetroRainbowCoin(i)
 		SimulatedObjectZ(i)=0
 	EndIf
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20490,8 +20490,8 @@ Function ControlWisp(i)
 	EndIf
 	If Rand(0,100)<3 And ObjectActive(i)=1001	AddParticle(Rand(16,23),ObjectTileX(i)+0.5,.7,-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
 
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20502,7 +20502,7 @@ Function ControlRetroZbotUfo(i)
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
 	EndIf
 
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20515,7 +20515,7 @@ Function ControlRetroLaserGate(i)
 		SimulatedObjectRoll(i)=(SimulatedObjectRoll(i)+2) Mod 360
 	EndIf
 	
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 			
 End Function
 
@@ -20525,7 +20525,7 @@ Function ControlTentacle(i)
 	If SimulatedObjectData(i,0)=0 Then SimulatedObjectData(i,0)=Rand(-10,10)
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectData(i,0))/10.0
 	
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 	
 End Function
 
@@ -20554,9 +20554,9 @@ Function ControlRainbowBubble(i)
 	
 	SimulatedObjectZ(i)=0.5+0.3*Abs(Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360))
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
-	SimulateObjectScale(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
+	;SimulateObjectScale(i)
 
 End Function
 
@@ -20572,8 +20572,8 @@ Function ControlBowler(i)
 	SimulatedObjectPitch2(i)=(SimulatedObjectPitch2(i)+Rnd(3,5)) Mod 360
 	SimulatedObjectZ(i)=.4+.4*Sin((Leveltimer*4) Mod 180)
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20594,7 +20594,7 @@ Function ControlMothership(i)
 		;CreateShadow(i,ObjectScaleAdjust(i)*5)
 	EndIf
 	
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 	
 End Function
 
@@ -20610,7 +20610,7 @@ Function ControlRubberducky(i)
 	SimulatedObjectroll(i)=1*SimulatedObjectData(i,1)*Sin((LevelTimer+SimulatedObjectData(i,2)) Mod 360)
 	SimulatedObjectpitch(i)=2*SimulatedObjectData(i,1)*Cos((LevelTimer*3+SimulatedObjectData(i,2))  Mod 360)
 	
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20632,7 +20632,7 @@ Function ControlGloveCharge(i)
 		EndIf
 	EndIf
 	
-	SimulateObjectPosition(i)
+	;SimulateObjectPosition(i)
 	
 End Function
 
@@ -20647,8 +20647,8 @@ Function ControlWindmillRotor(i)
 	;SimulatedObjectZ(i)=5.65
 	ObjectZAdjust(i)=5.65
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20657,7 +20657,7 @@ Function ControlIceFloat(i)
 	SimulatedObjectPitch(i)=2*ObjectData(i,2)*Sin((LevelTimer + ObjectData(i,1)) Mod 360)
 	SimulatedObjectRoll(i)=3*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
 	
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20673,7 +20673,7 @@ Function ControlPlantFloat(i)
 	;Objectroll(i)=6*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
 	SimulatedObjectYaw(i)=leveltimer Mod 360
 	
-	SimulateObjectRotation(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20694,8 +20694,8 @@ Function ControlBurstFlower(i)
 
 	If SimulatedObjectData(i,1)<0 Then ObjectData(i,1)=ObjectData(i,1)+1
 	
-	SimulateObjectRotation(i)
-	SimulateObjectScale(i)
+	;SimulateObjectRotation(i)
+	;SimulateObjectScale(i)
 
 End Function
 
@@ -20713,8 +20713,8 @@ Function ControlLurker(i)
 		SimulatedObjectData(i,2)=-1
 	EndIf
 	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectRotation(i)
 
 End Function
 
@@ -20732,7 +20732,7 @@ Function ControlSunSphere1(i)
 	; in-game this uses ScaleAdjust as a multiplier, but this is pointless since it always gets set to 1.0 when nonzero
 	SimulatedObjectZ(i)=1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)+30) Mod 360)
 	
-	SimulateObjectPosition(i)
+	;SimulateObjectPosition(i)
 	
 
 End Function
@@ -20747,8 +20747,8 @@ Function ControlSunSphere2(i)
 	
 	If Rand(0,100)<3 AddParticle(Rand(16,23),SimulatedObjectX(i),SimulatedObjectZ(i),-SimulatedObjectY(i),Rand(0,360),0.16,Rnd(-.025,.025),Rnd(-.025,.025),Rnd(-.025,.025),0,0.001,0,0,0,100,3)
 
-	SimulateObjectPosition(i)
-	SimulateObjectScale(i)
+	;SimulateObjectPosition(i)
+	;SimulateObjectScale(i)
 
 End Function
 
@@ -20765,7 +20765,7 @@ Function ControlStinkerWee(i)
 		SimulatedObjectYScale(i)=0.025
 		SimulatedObjectZScale(i)=0.025
 		
-		SimulateObjectScale(i)
+		;SimulateObjectScale(i)
 		
 	EndIf
 
@@ -20805,7 +20805,7 @@ Function ControlCrab(i)
 			SimulatedObjectYScale(i)=0.006
 			SimulatedObjectZScale(i)=0.006
 			
-			SimulateObjectScale(i)
+			;SimulateObjectScale(i)
 		Else
 			;female
 			SimulatedObjectTileTypeCollision(i)=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
@@ -20869,7 +20869,7 @@ Function ControlTrap(i)
 		
 	EndIf
 	
-	SimulateObjectPosition(i)
+	;SimulateObjectPosition(i)
 
 End Function
 
@@ -21008,7 +21008,7 @@ Function ControlFlipBridge(i)
 		ScaleEntity GetChild(ObjectEntity(i),1),1.0,1.0,YScale#
 	Else
 		SimulatedObjectScaleYAdjust(i)=YScale#
-		SimulateObjectScale(i)
+		;SimulateObjectScale(i)
 	EndIf
 
 End Function
@@ -21018,92 +21018,7 @@ Function ControlSpring(i)
 
 	SimulatedObjectZ(i)=.5
 	
-	SimulateObjectPosition(i)
-
-End Function
-
-
-Function ControlActivation(i)
-
-	; Get Scale
-	ObjXScale#=SimulatedObjectXScale(i)*SimulatedObjectScaleXAdjust(i)
-	ObjYScale#=SimulatedObjectYScale(i)*SimulatedObjectScaleYAdjust(i)
-	ObjZScale#=SimulatedObjectZScale(i)*SimulatedObjectScaleZAdjust(i)
-
-	
-	; Select Visual Animation	
-	Select ObjectActivationType(i)
-	Case 0
-		; nothing
-	Case 1
-		; Scale Vertical 0-1
-		ObjZScale=ObjZScale*Float(SimulatedObjectActive(i))/1001.0
-	
-	
-	Case 2
-		; scale all directions 0-1
-		ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
-		ObjYScale=ObjYScale*Float(SimulatedObjectActive(i))/1001.0
-		ObjZScale=ObjZScale*Float(SimulatedObjectActive(i))/1001.0
-	Case 3
-		; scale planar only
-		ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
-		ObjYScale=ObjYScale*Float(SimulatedObjectActive(i))/1001.0
-
-
-	Case 11
-		; push up from -1.01 to -0.01
-		SimulatedObjectZ#(i)=-0.99+Float(SimulatedObjectActive(i))/1001.0
-		
-	Case 12,13,14,15,16
-		; push up from -x.01 to -5.01 (used for stepping stones)
-		SimulatedObjectZ#(i)=-(ObjectActivationType(i)-6)-.01+(ObjectActivationType(i)-11)*Float(SimulatedObjectActive(i))/1001.0
-		
-	Case 17 ; *** THESE ONLY WORK FOR AUTODOORS - OBJECTTILEX MUST BE PRE_SET
-		; push north
-		SimulatedObjectY#(i)=ObjectTileY(i)+0.5-SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
-	Case 18
-		; push East
-		SimulatedObjectX#(i)=ObjectTileX(i)+0.5+SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
-
-	Case 19
-		; push south
-		SimulatedObjectY#(i)=ObjectTileY(i)+0.5+SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
-
-	Case 20
-		; push west
-		SimulatedObjectX#(i)=ObjectTileX(i)+0.5-SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
-
-
-
-	
-	
-	Case 21
-		If ObjectModelName$(i)="!NPC" Or ObjectModelName$(i)="!Tentacle"
-			Entity=GetChild(ObjectEntity(i),3)
-		Else
-			Entity=ObjectEntity(i)
-		EndIf
-		; Fade in
-		EntityAlpha Entity,Float(SimulatedObjectActive(i))/1001.0
-								
-	Case 31
-		; push down from 1.01 to 0.01
-		SimulatedObjectZ#(i)=1.01-Float(SimulatedObjectActive(i))/1001.0
-		
-	Case 41
-		; rotate out (doors)
-		SimulatedObjectYaw#(i)=-160+160*Float(SimulatedObjectActive(i))/1001.0
-
-	
-			
-	End Select
-
-	
-	SimulateObjectPosition(i)
-	SimulateObjectRotation(i)
-	ScaleEntity ObjectEntity(i),ObjXScale#,ObjZScale#,ObjYScale#
-
+	;SimulateObjectPosition(i)
 
 End Function
 
@@ -21114,9 +21029,87 @@ Function ControlObjects()
 	
 		If ObjectReactive(i)=True
 		
+			
+			; Get Scale
+			ObjXScale#=SimulatedObjectXScale(i)*SimulatedObjectScaleXAdjust(i)
+			ObjYScale#=SimulatedObjectYScale(i)*SimulatedObjectScaleYAdjust(i)
+			ObjZScale#=SimulatedObjectZScale(i)*SimulatedObjectScaleZAdjust(i)
+		
 			If (ObjectActive(i)<>0 And ObjectActive(i)<>1001) Or SimulationLevel>=2
-				ControlActivation(i)
+			
+				; Select Visual Animation	
+				Select ObjectActivationType(i)
+				Case 0
+					; nothing
+				Case 1
+					; Scale Vertical 0-1
+					ObjZScale=ObjZScale*Float(SimulatedObjectActive(i))/1001.0
+				
+				
+				Case 2
+					; scale all directions 0-1
+					ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
+					ObjYScale=ObjYScale*Float(SimulatedObjectActive(i))/1001.0
+					ObjZScale=ObjZScale*Float(SimulatedObjectActive(i))/1001.0
+				Case 3
+					; scale planar only
+					ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
+					ObjYScale=ObjYScale*Float(SimulatedObjectActive(i))/1001.0
+			
+			
+				Case 11
+					; push up from -1.01 to -0.01
+					SimulatedObjectZ#(i)=-0.99+Float(SimulatedObjectActive(i))/1001.0
+					
+				Case 12,13,14,15,16
+					; push up from -x.01 to -5.01 (used for stepping stones)
+					SimulatedObjectZ#(i)=-(ObjectActivationType(i)-6)-.01+(ObjectActivationType(i)-11)*Float(SimulatedObjectActive(i))/1001.0
+					
+				Case 17 ; *** THESE ONLY WORK FOR AUTODOORS - OBJECTTILEX MUST BE PRE_SET
+					; push north
+					SimulatedObjectY#(i)=ObjectTileY(i)+0.5-SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+				Case 18
+					; push East
+					SimulatedObjectX#(i)=ObjectTileX(i)+0.5+SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+			
+				Case 19
+					; push south
+					SimulatedObjectY#(i)=ObjectTileY(i)+0.5+SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+			
+				Case 20
+					; push west
+					SimulatedObjectX#(i)=ObjectTileX(i)+0.5-SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+			
+			
+			
+				
+				
+				Case 21
+					If ObjectModelName$(i)="!NPC" Or ObjectModelName$(i)="!Tentacle"
+						Entity=GetChild(ObjectEntity(i),3)
+					Else
+						Entity=ObjectEntity(i)
+					EndIf
+					; Fade in
+					EntityAlpha Entity,Float(SimulatedObjectActive(i))/1001.0
+											
+				Case 31
+					; push down from 1.01 to 0.01
+					SimulatedObjectZ#(i)=1.01-Float(SimulatedObjectActive(i))/1001.0
+					
+				Case 41
+					; rotate out (doors)
+					SimulatedObjectYaw#(i)=-160+160*Float(SimulatedObjectActive(i))/1001.0
+			
+				
+						
+				End Select
+				
 			EndIf
+			
+			
+			
+			
 			
 			Select ObjectType(i)
 			
@@ -21196,6 +21189,10 @@ Function ControlObjects()
 			End Select
 			
 			
+			
+			SimulateObjectPosition(i)
+			SimulateObjectRotation(i)
+			ScaleEntity ObjectEntity(i),ObjXScale#,ObjZScale#,ObjYScale#
 			
 			SimulatedObjectLastActive(i)=SimulatedObjectActive(i)
 			
