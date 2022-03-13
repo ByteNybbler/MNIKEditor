@@ -10646,6 +10646,62 @@ Function CreateGrowFlowerMesh(tilelogic)
 
 End Function
 
+Function CreateIceBlockMesh(btype)
+
+	; type- 0-ice, 1-floing
+
+	If btype=0
+		Entity=CreateCube()
+		ScaleMesh Entity,.52,.75,.52
+		PositionMesh Entity,0,.75,0
+		EntityAlpha Entity,.5
+		EntityColor Entity,100,255,255
+		EntityBlend Entity,3
+	Else If btype=1
+		Entity=CreateSphere()
+		ScaleMesh Entity,.8,.8,.8
+		PositionMesh Entity,0,.6,0
+		EntityTexture Entity,FloingTexture
+		EntityAlpha Entity,0.5
+		EntityBlend Entity,3
+	Else
+		Entity=CreateSphere()
+		;EntityColor Entity,255,0,0
+		;ShowMessageOnce("!IceBlock with a Data3 that isn’t 0 or 1 will be invisible in-game.", 2000)
+	EndIf
+	
+
+	
+	
+	Return Entity
+End Function
+
+Function CreateIceFloatMesh()
+	Entity=CreateCylinder(16,True)
+	;For i=1 To CountVertices (GetSurface(entity,1))-1
+	;	VertexCoords GetSurface(entity,1),i,VertexX(GetSurface(entity,1),i)+Rnd(-.1,.1),VertexY(GetSurface(entity,1),i),VertexZ(GetSurface(entity,1),i)+Rnd(-.1,.1)
+	;Next
+	ScaleMesh Entity,.45,.05,.45
+	PositionMesh Entity,0,-.1,0
+	EntityAlpha Entity,.8
+	;EntityBlend Entity,3
+	EntityColor Entity,255,255,255
+	Return Entity
+End Function
+
+Function CreatePlantFloatMesh()
+	Entity=CreateCylinder(9,True)
+	;For i=1 To CountVertices (GetSurface(entity,1))-1
+	;	VertexCoords GetSurface(entity,1),i,VertexX(GetSurface(entity,1),i)+Rnd(-.1,.1),VertexY(GetSurface(entity,1),i),VertexZ(GetSurface(entity,1),i)+Rnd(-.1,.1)
+	;Next
+	ScaleMesh Entity,.45,.05,.45
+	PositionMesh Entity,0,-.1,0
+	EntityAlpha Entity,.7
+	EntityBlend Entity,3
+	EntityColor Entity,0,255,0
+	Return Entity
+End Function
+
 Function CreateFlipBridgeMesh(tex)
 	
 
@@ -11093,15 +11149,21 @@ Function BuildCurrentObjectModel()
 		;PositionMesh CurrentObjectModel,0,1,0
 		ScaleMesh CurrentObjectModel,.5,.5,.5
 		EntityTexture CurrentObjectModel,Rainbowtexture2
+		
+	Else If CurrentObjectModelName$="!IceBlock"
+		CurrentObjectModel=CreateIceBlockMesh(CurrentObjectData(3))
+		
 	Else If CurrentObjectModelName$="!PlantFloat"
-		CurrentObjectModel=CreateSphere()
-		ScaleMesh CurrentObjectModel,.4,.1,.4
+		CurrentObjectModel=CreatePlantFloatMesh()
+		;CurrentObjectModel=CreateSphere()
+		;ScaleMesh CurrentObjectModel,.4,.1,.4
 ;		PositionMesh CurrentObjectModel,0,1,0
-		EntityTexture CurrentObjectModel,Rainbowtexture
+		;EntityTexture CurrentObjectModel,Rainbowtexture
 		
 	Else If CurrentObjectModelName$="!IceFloat"
-		CurrentObjectModel=CreateSphere()
-		ScaleMesh CurrentObjectModel,.4,.1,.4
+		CurrentObjectModel=CreateIceFloatMesh()
+		;CurrentObjectModel=CreateSphere()
+		;ScaleMesh CurrentObjectModel,.4,.1,.4
 ;		PositionMesh CurrentObjectModel,0,1,0
 
 
@@ -11239,6 +11301,7 @@ Function BuildCurrentObjectModel()
 	Else If CurrentObjectModelName$="!Sun Sphere1"
 		CurrentObjectModel=CreateSphere()
 		EntityColor CurrentObjectModel,CurrentObjectData(0),CurrentObjectData(1),CurrentObjectData(2)
+		EntityBlend CurrentObjectModel,3
 		
 	Else If CurrentObjectModelName$="!Sun Sphere2"
 		CurrentObjectModel=CreateSphere()
@@ -12152,15 +12215,20 @@ Function CreateObjectModel(Dest)
 			ScaleMesh ObjectEntity(Dest),.5,.5,.5
 			EntityTexture ObjectEntity(Dest),Rainbowtexture
 			
+		Else If ObjectModelName$(Dest)="!IceBlock"
+			ObjectEntity(Dest)=CreateIceBlockMesh(ObjectData(Dest,3))
+			
 		Else If ObjectModelName$(Dest)="!PlantFloat"
-			ObjectEntity(Dest)=CreateSphere()
-			ScaleMesh ObjectEntity(Dest),.4,.1,.4
+			ObjectEntity(Dest)=CreatePlantFloatMesh()
+			;ObjectEntity(Dest)=CreateSphere()
+			;ScaleMesh ObjectEntity(Dest),.4,.1,.4
 ;			PositionMesh ObjectEntity(Dest),0,1,0
-			EntityTexture ObjectEntity(Dest),Rainbowtexture
+			;EntityTexture ObjectEntity(Dest),Rainbowtexture
 			
 		Else If ObjectModelName$(Dest)="!IceFloat"
-			ObjectEntity(Dest)=CreateSphere()
-			ScaleMesh ObjectEntity(Dest),.4,.1,.4
+			ObjectEntity(Dest)=CreateIceFloatMesh()
+			;ObjectEntity(Dest)=CreateSphere()
+			;ScaleMesh ObjectEntity(Dest),.4,.1,.4
 ;			PositionMesh ObjectEntity(Dest),0,1,0
 		
 
@@ -12296,9 +12364,10 @@ Function CreateObjectModel(Dest)
 			
 		Else If ObjectModelName$(Dest)="!Sun Sphere1"
 			ObjectEntity(Dest)=CreateSphere()
-			PositionMesh ObjectEntity(Dest),0,1.5,0
-			EntityAlpha ObjectEntity(Dest),.5
+			;PositionMesh ObjectEntity(Dest),0,1.5,0
+			;EntityAlpha ObjectEntity(Dest),.5
 			EntityColor ObjectEntity(Dest),ObjectData(Dest,0),ObjectData(Dest,1),ObjectData(Dest,2)
+			EntityBlend ObjectEntity(Dest),3
 			
 		Else If ObjectModelName$(Dest)="!Sun Sphere2"
 			ObjectEntity(Dest)=CreateSphere()
@@ -20540,7 +20609,7 @@ Function ControlSunSphere1(i)
 End Function
 
 Function ControlSunSphere2(i)
-	SimulatedObjectZ(i)=SimulatedObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+ObjectData(i,7)) Mod 360))
+	SimulatedObjectZ(i)=SimulatedObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)) Mod 360))
 	SimulatedObjectXScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos(leveltimer Mod 360))
 	SimulatedObjectYScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos((leveltimer+30) Mod 360))
 	SimulatedObjectZScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos((leveltimer+60) Mod 360))
