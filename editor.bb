@@ -11471,6 +11471,8 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CreateSuctubemesh(CurrentObjectData(3),CurrentObjectData(0),True)
 		
 		CurrentObjectYawAdjust=(-90*CurrentObjectData(2) +3600) Mod 360
+		
+		Redosuctubemesh(CurrentObjectModel, CurrentObjectData(0), CurrentObjectActive, CurrentObjectData(2), CurrentObjectYawAdjust)
 
 	Else If CurrentObjectModelName$="!SuctubeX" 
 		CurrentObjectModel=CreateSuctubeXmesh(CurrentObjectData(3))
@@ -12430,6 +12432,7 @@ Function CreateObjectModel(Dest)
 		
 		Else If ObjectModelName$(Dest)="!Suctube"
 			ObjectEntity(Dest)=CreateSucTubeMesh(ObjectData(Dest,3),ObjectData(Dest,0),True)
+			Redosuctubemesh(ObjectEntity(Dest), ObjectData(Dest,0), ObjectActive(Dest), ObjectData(Dest,2), ObjectYawAdjust(Dest))
 		Else If ObjectModelName$(Dest)="!SuctubeX"
 			ObjectEntity(Dest)=CreateSucTubeXMesh(ObjectData(Dest,3))
 
@@ -20929,6 +20932,46 @@ Function ControlFireFlower(i)
 
 End Function
 
+; col is data0 and direction is data2
+Function RedoSuctubeMesh(Entity, col, objactive, direction, yawadjust)
+
+	Surface=GetSurface(Entity,1)
+	If objactive Mod 2 = 1
+		active=0
+	Else
+		active=1
+	EndIf
+	If yawadjust=(-90*direction +3600) Mod 360
+		; in original position
+		dir=0
+	Else
+		; switched from original
+		dir=1
+	EndIf
+	
+	; point arrow
+	If dir=0
+		VertexCoords surface,0,-0.3,1.71,-0.3
+		VertexCoords surface,1,+0.3,1.71,-0.3
+		VertexCoords surface,2,0,1.71,+0.3
+	Else
+		VertexCoords surface,0,-0.3,1.71,+0.3
+		VertexCoords surface,2,+0.3,1.71,+0.3
+		VertexCoords surface,1,0,1.71,-0.3
+	EndIf
+	
+	; and give colour
+	
+	VertexTexCoords surface,0,(col Mod 8)*0.125+.01,(col/8)*0.125+.51+.25*active
+	VertexTexCoords surface,1,(col Mod 8)*0.125+.115,(col/8)*0.125+.51+.25*active
+	VertexTexCoords surface,2,(col Mod 8)*0.125+.051,(col/8)*0.125+.51+.115+.25*active
+
+	UpdateNormals Entity
+	
+
+
+End Function
+
 
 Function ToggleObject(i)
 	; switches objects from activating to deactivating or vice versa
@@ -20949,9 +20992,9 @@ Function ToggleObject(i)
 		EndIf
 		If SimulatedObjectActive(i)<0 Then SimulatedObjectActive(i)=0
 	EndIf
-;	If ObjectType(i)=281
-;		Redosuctubemesh(i)
-;	EndIf
+	If ObjectType(i)=281 And ObjectModelName$(i)="!SucTube"
+		Redosuctubemesh(ObjectEntity(i), ObjectData(i,0), ObjectActive(i), ObjectData(i,2), ObjectYawAdjust(i))
+	EndIf
 	
 End Function
 
