@@ -20942,6 +20942,15 @@ Function ControlFlipBridge(i)
 End Function
 
 
+Function ControlSpring(i)
+
+	SimulatedObjectZ(i)=.5
+	
+	SimulateObjectPosition(i)
+
+End Function
+
+
 Function ControlActivation(i)
 
 	; Get Scale
@@ -20980,18 +20989,18 @@ Function ControlActivation(i)
 		
 	Case 17 ; *** THESE ONLY WORK FOR AUTODOORS - OBJECTTILEX MUST BE PRE_SET
 		; push north
-		SimulatedObjectY#(i)=ObjectTileY(i)+0.5-ObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+		SimulatedObjectY#(i)=ObjectTileY(i)+0.5-SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 	Case 18
 		; push East
-		SimulatedObjectX#(i)=ObjectTileX(i)+0.5+ObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+		SimulatedObjectX#(i)=ObjectTileX(i)+0.5+SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 
 	Case 19
 		; push south
-		SimulatedObjectY#(i)=ObjectTileY(i)+0.5+ObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+		SimulatedObjectY#(i)=ObjectTileY(i)+0.5+SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 
 	Case 20
 		; push west
-		SimulatedObjectX#(i)=ObjectTileX(i)+0.5-ObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+		SimulatedObjectX#(i)=ObjectTileX(i)+0.5-SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 
 
 
@@ -21032,6 +21041,10 @@ Function ControlObjects()
 	For i=0 To NofObjects-1
 	
 		If ObjectReactive(i)=True
+		
+			If (ObjectActive(i)<>0 And ObjectActive(i)<>1001) Or SimulationLevel>=2
+				ControlActivation(i)
+			EndIf
 			
 			Select ObjectType(i)
 			
@@ -21071,6 +21084,8 @@ Function ControlObjects()
 				ControlFireFlower(i)
 			Case 260
 				ControlBowler(i)
+			Case 280
+				ControlSpring(i)
 			Case 300
 				ControlIceFloat(i)
 			Case 301
@@ -21105,11 +21120,6 @@ Function ControlObjects()
 				ControlBurstFlower(i)
 				
 			End Select
-			
-			
-			If (ObjectActive(i)<>0 And ObjectActive(i)<>1001) Or SimulationLevel>=2
-				ControlActivation(i)
-			EndIf
 			
 		;Else
 		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
