@@ -574,6 +574,7 @@ Dim SimulatedObjectYaw#(1000)
 Dim SimulatedObjectRoll#(1000)
 Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2#(1000)
 Dim SimulatedObjectStatus(1000)
+Dim SimulatedObjectTimer(1000)
 Dim SimulatedObjectData(1000,10)
 Dim SimulatedObjectMovementSpeed(1000)
 Dim SimulatedObjectTileTypeCollision(1000)
@@ -1027,9 +1028,13 @@ EntityTexture TurtleMesh,TurtleTexture
 HideEntity TurtleMesh
 
 ; FireFlowers
+;Global FireFlowerMesh=myLoadMD2("data\models\fireflower\fireflower.wdf")
+;RotateEntity FireFlowerMesh,-90,0,0
+;RotateEntity FireFlowerMesh,0,90,0
 Global FireFlowerMesh=MyLoadMesh("data\models\fireflower\fireflower2.3ds",0)
 RotateMesh FireFlowerMesh,-90,0,0
 RotateMesh FireFlowerMesh,0,90,0
+
 Global FireFlowerTexture=MyLoadTexture("data\models\fireflower\fireflower04.png",1)
 Global FireFlowerTexture2=myLoadTexture("data\models\fireflower\fireflowerice.png",4)
 EntityTexture FireFlowerMesh,FireFlowerTexture
@@ -5790,6 +5795,7 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectYScale(i)=ObjectYScale(i)
 		SimulatedObjectZScale(i)=ObjectZScale(i)
 		SimulatedObjectStatus(i)=ObjectStatus(i)
+		SimulatedObjectTimer(i)=ObjectTimer(i)
 		For j=0 To 10
 			SimulatedObjectData(i,j)=ObjectData(i,j)
 		Next
@@ -20702,6 +20708,47 @@ Function ControlCrab(i)
 End Function
 
 
+Function ControlFireFlower(i)
+
+	If (SimulatedObjectTimer(i)>=0 And SimulatedObjectData(i,2)=0) Or (SimulatedObjectData(i,2)=2 And SimulatedObjectTimer(i)=ObjectTimerMax1(i))
+		SimulatedObjectData(i,2)=1
+		;AnimateMD2 ObjectEntity(i),1,.2,1,20,1
+	EndIf
+	
+	If ObjectActive(i)<1001
+		SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+	EndIf
+	
+	If SimulatedObjectTimer(i)<0
+
+		If SimulatedObjectData(i,2)=1
+			;AnimateMD2 ObjectEntity(i),1,.5,21,60,1
+			SimulatedObjectData(i,2)=0
+		EndIf
+	
+		If SimulatedObjectTimer(i)=-80
+			SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+		EndIf
+		
+		; and fire
+		If SimulatedObjectTimer(i)=-60
+
+			If ObjectSubType(i)=2
+				SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+1) Mod 8
+			EndIf
+			If ObjectSubType(i)=3
+				SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)-1) Mod 8
+			EndIf
+
+		EndIf
+
+		
+	EndIf
+
+
+End Function
+
+
 Function ControlActivation(i)
 
 	; Get Scale
@@ -20829,6 +20876,8 @@ Function ControlObjects()
 				ControlParticleEmitters(i)
 			Case 200
 				ControlGloveCharge(i)
+			Case 230
+				ControlFireFlower(i)
 			Case 260
 				ControlBowler(i)
 			Case 300
