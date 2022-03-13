@@ -21077,6 +21077,92 @@ Function ControlBabyBoomer(i)
 End Function
 
 
+Function ControlSuctube(i)
+
+	If SimulatedObjectActive(i)<>1001 Then Return
+
+	suck=True
+	blow=True
+
+	
+	; check if sucking/blowing active (e.g. if another tube in front of it)
+	For j=0 To NofObjects-1
+		If ObjectType(j)=281 And i<>j
+			; found another suctube
+			If ObjectData(i,2)=ObjectData(j,2) And ObjectData(i,0)=ObjectData(j,0) And ObjectData(i,1)=ObjectData(j,1)
+				; same direction
+				If ObjectData(i,2)=0 
+					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)-1
+						suck=False
+					EndIf
+					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)+1
+						blow=False
+					EndIf
+				Else If ObjectData(i,2)=1 
+					If ObjectTileX(i)=ObjectTileX(j)+1 And ObjectTileY(i)=ObjectTileY(j)
+						suck=False
+					EndIf
+					If  ObjectTileX(i)=ObjectTileX(j)-1 And ObjectTileY(i)=ObjectTileY(j)
+						blow=False
+					EndIf
+				Else If ObjectData(i,2)=2 
+					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)+1
+						suck=False
+					EndIf
+					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)-1
+						blow=False
+					EndIf
+				Else If ObjectData(i,2)=3 
+					If ObjectTileX(i)=ObjectTileX(j)-1 And ObjectTileY(i)=ObjectTileY(j)
+						suck=False
+					EndIf
+					If ObjectTileX(i)=ObjectTileX(j)+1 And ObjectTileY(i)=ObjectTileY(j)
+						blow=False
+					EndIf
+				EndIf
+			EndIf
+		EndIf
+	Next
+	
+	If ObjectData(i,5)=0
+		; particle effects
+		If Rand(0,100)<30
+			psize#=Rnd(0.1,0.2)
+			pspeed#=Rnd(1,2)
+			parttex=Rand(16,23)
+			If suck=True
+				Select ObjectData(i,2)
+				Case 0
+					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)-Rnd(1.0,1.9),0,psize,0.0,0.0,-Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+		 		Case 1
+					AddParticle(parttex,ObjectX(i)-Rnd(1.0,1.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+		 		Case 2
+				;	AddParticle(0,0,Rnd(0.5,5.5),0,0,5,0.0,0.0,Rnd(-0.01,-0.02),0,0,0,0,0,Rand(10,50),3)
+		
+					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)+Rnd(1.0,1.9),0,psize,0.0,0.0,Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+		 		Case 3
+					AddParticle(parttex,ObjectX(i)+Rnd(1.0,1.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,-Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+		 		End Select
+			EndIf
+			If blow=True
+				Select ObjectData(i,2)
+				Case 0
+					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)+Rnd(0.0,0.5),0,psize,0.0,0.0,-Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+		 		Case 1
+					AddParticle(parttex,ObjectX(i)+Rnd(0,0.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+		 		Case 2
+					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)-Rnd(0.0,0.5),0,psize,0.0,0.0,Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+		 		Case 3
+					AddParticle(parttex,ObjectX(i)-Rnd(0.0,0.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,-Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+		 		End Select
+			EndIf
+		EndIf
+	EndIf
+
+
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -21207,6 +21293,8 @@ Function ControlObjects()
 				ControlBowler(i)
 			Case 280
 				ControlSpring(i)
+			Case 281
+				ControlSucTube(i)
 			Case 300
 				ControlIceFloat(i)
 			Case 301
