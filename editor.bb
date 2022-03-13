@@ -5808,16 +5808,6 @@ Function SimulateObjectPosition(Dest)
 
 End Function
 
-;Function SimulateObjectXYZAdjust(Dest)
-;
-;	XP#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)+ObjectXAdjust(Dest)
-;	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)+ObjectYAdjust(Dest)
-;	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)+ObjectZAdjust(Dest)
-;	PositionEntity ObjectEntity(Dest),XP#,ZP#,-YP#
-;
-;End Function
-
-
 Function SimulateObjectRotation(Dest)
 
 	Pitch#=SimulatedObjectPitch(Dest)+SimulatedObjectPitchAdjust(Dest)
@@ -5840,49 +5830,6 @@ Function SimulateObjectScale(Dest)
 	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
 	
 End Function
-
-
-;Function SimulateObjectRotationAdjust(Dest)
-;
-;	Pitch#=SimulatedObjectPitch(Dest)+ObjectPitchAdjust(Dest)
-;	Roll#=SimulatedObjectRoll(Dest)+ObjectRollAdjust(Dest)
-;	Yaw#=SimulatedObjectYaw(Dest)+ObjectYawAdjust(Dest)
-;
-;	RotateEntity ObjectEntity(Dest),0,0,0
-;	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
-;	TurnEntity ObjectEntity(Dest),0,Yaw#,0
-;	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
-;
-;End Function
-
-
-;Function SimulateObjectScaleXYZNoScaleAdjust(Dest)
-;
-;	XS#=SimulatedObjectXScale(Dest)
-;	YS#=SimulatedObjectYScale(Dest)
-;	ZS#=SimulatedObjectZScale(Dest)
-;	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
-;
-;End Function
-
-;Function SimulateObjectScaleXYZ(Dest)
-;
-;	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
-;	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
-;	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
-;	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
-;
-;End Function
-
-;Function SimulateObjectScaleXYZAdjust(Dest)
-;
-;	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)*ObjectXScale(Dest)
-;	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)*ObjectYScale(Dest)
-;	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)*ObjectZScale(Dest)
-;	
-;	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
-;	
-;End Function
 
 
 Function ObjectIsAtInt(i,x,y)
