@@ -7940,8 +7940,10 @@ Function DisplayObjectAdjuster(i)
 				tex$="Water"
 			Else If CurrentObjectData(3)=1
 				tex$="Mecha"
-			Else
+			Else If CurrentObjectData(3)=2
 				tex$="Magic"
+			Else
+				tex$="Silent/Glitched"
 			EndIf
 		EndIf
 		If CurrentObjectType=190
@@ -9870,8 +9872,8 @@ Function AdjustObjectAdjuster(i)
 
 		If CurrentObjectModelName$="!SteppingStone"
 			; sound
-			If CurrentObjectData(3)>2 CurrentObjectData(3)=0
-			If CurrentObjectData(3)<0 CurrentObjectData(3)=2
+			If CurrentObjectData(3)>3 CurrentObjectData(3)=0
+			If CurrentObjectData(3)<0 CurrentObjectData(3)=3
 		EndIf
 		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
 			; colours 0-15
@@ -20904,6 +20906,8 @@ Function ControlSteppingStone(i)
 		
 		ControlChangeActive(i)
 		
+		;AddParticle(4,Floor(SimulatedObjectX(i))+0.5,WaterTileHeight(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))-0.2,-Floor(SimulatedObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
+		
 	EndIf
 		
 	
@@ -20912,7 +20916,7 @@ Function ControlSteppingStone(i)
 
 		; just submerged
 		If SimulatedObjectData(i,3)=0
-			AddParticle(4,Floor(ObjectX(i))+0.5,WaterTileHeight(Floor(ObjectX(i)),Floor(ObjectY(i)))-0.2,-Floor(ObjectY(i))-0.5,0,.6,0,0,0,0,.006,0,0,0,50,4)
+			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,WaterTileHeight(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))-0.2,-Floor(SimulatedObjectY(i))-0.5,0,.6,0,0,0,0,.006,0,0,0,50,4)
 		EndIf
 	
 	EndIf
@@ -20921,7 +20925,7 @@ Function ControlSteppingStone(i)
 		
 		; just emerged
 		If SimulatedObjectData(i,3)=0
-			AddParticle(4,Floor(ObjectX(i))+0.5,WaterTileHeight(Floor(ObjectX(i)),Floor(ObjectY(i)))-0.2,-Floor(ObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
+			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,WaterTileHeight(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))-0.2,-Floor(SimulatedObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
 		EndIf
 				
 	EndIf
