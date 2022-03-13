@@ -1772,7 +1772,7 @@ Function EditorMainLoop()
 	
 	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
-	If SimulationLevel<>0
+	If SimulationLevel>0
 		ControlObjects()
 	EndIf
 	ControlParticles()
@@ -20768,6 +20768,21 @@ Function ControlStinkerWee(i)
 		;SimulateObjectScale(i)
 		
 	EndIf
+	
+	If ObjectDead(i)=1
+		; spinning out of control
+		SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
+		;ObjectZ(i)=ObjectZ(i)+.01
+		;ObjectSubType(i)=-2
+		Return
+	EndIf
+	If ObjectDead(i)=3
+		; drowning
+		SimulatedObjectYaw(i)=90
+		;ObjectZ(i)=ObjectZ(i)-.005
+		;ObjectSubType(i)=-2
+		Return
+	EndIf
 
 End Function
 
@@ -21023,6 +21038,45 @@ Function ControlSpring(i)
 End Function
 
 
+Function ControlBabyBoomer(i)
+
+	If ObjectDead(i)=1
+		; spinning out of control
+		SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
+		;ObjectZ(i)=ObjectZ(i)+.01
+		;ObjectSubType(i)=-2
+		Return
+	EndIf
+	If ObjectDead(i)=3
+		; drowning
+		SimulatedObjectYaw(i)=90
+		;ObjectZ(i)=ObjectZ(i)-.005
+		;ObjectSubType(i)=-2
+		Return
+	EndIf
+	
+	If ObjectData(i,8)=1
+		; lit
+;		For j=1 To 5
+			If Rand(0,100)<20
+				AddParticle(23,ObjectX(i),Rnd(0.7,0.8),-ObjectY(i),0,.05,Rnd(-0.005,0.005),Rnd(0,0.005),Rnd(-0.005,0.005),0,.004,0,0,0,50,3)
+			EndIf
+;		Next
+	EndIf
+	
+	If ObjectData(i,8)>0
+		;EntityTexture ObjectEntity(i),KaboomTextureSquint
+		; lit and burning
+		For j=1 To 5
+			If Rand(0,100)<ObjectData(i,8)
+				AddParticle(Rand(16,18),ObjectX(i),Rnd(0.7,0.8),-ObjectY(i),0,.1,Rnd(-0.02,0.02),Rnd(0,0.02),Rnd(-0.02,0.02),0,.004,0,-.0001,0,50,3)
+			EndIf
+		Next
+	EndIf
+
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -21167,6 +21221,8 @@ Function ControlObjects()
 				ControlTentacle(i)
 			Case 370 
 				ControlCrab(i)
+			Case 400
+				ControlBabyBoomer(i)
 			Case 410
 				ControlFlipBridge(i)
 			Case 422,423,430,431
