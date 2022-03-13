@@ -20969,9 +20969,6 @@ Function ControlSteppingStone(i)
 		EndIf
 		
 		ControlChangeActive(i)
-		
-		;AddParticle(4,Floor(SimulatedObjectX(i))+0.5,WaterTileHeight(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))-0.2,-Floor(SimulatedObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
-		
 	EndIf
 		
 	
@@ -21127,6 +21124,8 @@ Function ControlObjects()
 				ControlTrap(i)
 			Case 30
 				ControlTeleporter(i)
+			Case 40
+				ControlSteppingStone(i)
 			Case 120
 				ControlStinkerWee(i)
 			Case 130
@@ -21195,6 +21194,10 @@ Function ControlObjects()
 				ControlBurstFlower(i)
 				
 			End Select
+			
+			
+			
+			SimulatedObjectLastActive(i)=SimulatedObjectActive(i)
 			
 		;Else
 		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
