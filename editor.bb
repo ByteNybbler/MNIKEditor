@@ -20824,15 +20824,11 @@ Function ControlActivation(i)
 	
 			
 	End Select
-	
-	
-	SimulatedObjectXScale(i)=ObjXScale
-	SimulatedObjectYScale(i)=ObjYScale
-	SimulatedObjectZScale(i)=ObjZScale
+
 	
 	SimulateObjectPosition(i)
 	SimulateObjectRotation(i)
-	SimulateObjectScale(i)
+	ScaleEntity ObjectEntity(i),ObjXScale#,ObjZScale#,ObjYScale#
 
 
 End Function
