@@ -3087,16 +3087,29 @@ Function EditorLocalControls()
 	
 
 	End Select
+	
+	
+	If LevelEdgeStyle=1
+		LevelEdgeStyleString$="-" ; DEFAULT
+	ElseIf LevelEdgeStyle=2
+		LevelEdgeStyleString$="B" ; BORDER
+	ElseIf LevelEdgeStyle=3
+		LevelEdgeStyleString$="X" ; BORDER X
+	ElseIf LevelEdgeStyle=4
+		LevelEdgeStyleString$="N" ; NONE
+	Else
+		LevelEdgeStyleString$=LevelEdgeStyle
+	EndIf
 
 
 	Text 715,133,"<LevelTex>"
 	Text 715,150,"<WaterTex>"
-	;Text 715,165," Fl Tr Gl"
-	FlStartX=715
-	Text FlStartX,165," Fl Tr Gl"
+	FlStartX=706 ; formerly 715
+	Text FlStartX,165," Fl Tr Gl B"
 	Text FlStartX+12,180,Str$(WaterFlow)
 	Text FlStartX+36,180,Str$(WaterTransparent)
 	Text FlStartX+60,180,Str$(WaterGlow)
+	Text FlStartX+80,180,LevelEdgeStyleString$
 	Text 723,200,"  Light  "
 	Text 712,215,Str$(LightRed)
 	Text 741,215,Str$(LightGreen)
@@ -3303,6 +3316,14 @@ Function EditorLocalControls()
 					leftmousereleased=False
 				EndIf
 				
+			EndIf
+			If mx>FlStartX+80 And mx<FlStartX+100
+				LevelEdgeStyle=AdjustInt("Enter LevelEdgeStyle: ", LevelEdgeStyle, 1, 10, 150)
+				If LevelEdgeStyle<1
+					LevelEdgeStyle=4
+				ElseIf LevelEdgeStyle>4
+					LevelEdgeStyle=1
+				EndIf
 			EndIf
 
 
