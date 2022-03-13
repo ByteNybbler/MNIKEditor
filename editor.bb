@@ -577,7 +577,7 @@ Dim SimulatedObjectStatus(1000)
 Dim SimulatedObjectData(1000,10)
 Dim SimulatedObjectMovementSpeed(1000)
 Dim SimulatedObjectTileTypeCollision(1000)
-Dim SimulatedObjectScaleAdjust#(1000)
+;Dim SimulatedObjectScaleAdjust#(1000) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
@@ -5795,7 +5795,11 @@ Function ResetSimulatedQuantities()
 		Next
 		SimulatedObjectMovementSpeed(i)=ObjectMovementSpeed(i)
 		SimulatedObjectTileTypeCollision(i)=ObjectTileTypeCollision(i)
-		SimulatedObjectScaleAdjust(i)=ObjectScaleAdjust(i)
+		If ObjectScaleAdjust(i)<>0.0
+			SimulatedObjectXScale(i)=SimulatedObjectXScale(i)*ObjectScaleAdjust(i)
+			SimulatedObjectYScale(i)=SimulatedObjectYScale(i)*ObjectScaleAdjust(i)
+			SimulatedObjectZScale(i)=SimulatedObjectZScale(i)*ObjectScaleAdjust(i)
+		EndIf
 	Next
 
 End Function
@@ -5825,10 +5829,10 @@ End Function
 
 Function SimulateObjectScale(Dest)
 
-	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
-	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
-	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
-		
+	XS#=SimulatedObjectXScale(Dest)
+	YS#=SimulatedObjectYScale(Dest)
+	ZS#=SimulatedObjectZScale(Dest)
+	
 	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
 	
 End Function
@@ -20417,8 +20421,6 @@ Function ControlRainbowBubble(i)
 	SimulatedObjectYScale(i)=0.5-0.1*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
 
 	SimulatedObjectZScale(i)=0.6+0.2*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
-
-	SimulatedObjectScaleAdjust(i)=1.0
 	
 	SimulatedObjectPitch(i)=(SimulatedObjectPitch(i)+1) Mod 360
 	SimulatedObjectYaw(i)=360*Sin(l Mod 360)
@@ -20601,7 +20603,8 @@ Function ControlSunSphere1(i)
 		;CreateSunSphere2(i)
 	EndIf
 	
-	SimulatedObjectZ(i)=SimulatedObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)+30) Mod 360))
+	; in-game this uses ScaleAdjust as a multiplier, but this is pointless since it always gets set to 1.0 when nonzero
+	SimulatedObjectZ(i)=1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)+30) Mod 360)
 	
 	SimulateObjectPosition(i)
 	
@@ -20609,10 +20612,10 @@ Function ControlSunSphere1(i)
 End Function
 
 Function ControlSunSphere2(i)
-	SimulatedObjectZ(i)=SimulatedObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)) Mod 360))
-	SimulatedObjectXScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos(leveltimer Mod 360))
-	SimulatedObjectYScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos((leveltimer+30) Mod 360))
-	SimulatedObjectZScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos((leveltimer+60) Mod 360))
+	SimulatedObjectZ(i)=1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)) Mod 360)
+	SimulatedObjectXScale(i)=0.5*(1+0.1*Cos(leveltimer Mod 360))
+	SimulatedObjectYScale(i)=0.5*(1+0.1*Cos((leveltimer+30) Mod 360))
+	SimulatedObjectZScale(i)=0.5*(1+0.1*Cos((leveltimer+60) Mod 360))
 
 
 	
@@ -20624,12 +20627,87 @@ Function ControlSunSphere2(i)
 End Function
 
 
+Function ControlStinkerWee(i)
+
+	If SimulatedObjectTileTypeCollision(i)=0
+		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		SimulatedObjectMovementSpeed(i)=35	
+		;SimulatedObjectSubType(i)=0  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged
+		;AnimateMD2 ObjectEntity(i),1,Rnd(.002,.008),217,219,1
+		;SimulatedObjectCurrentAnim(i)=1 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
+		SimulatedObjectXScale(i)=0.025
+		SimulatedObjectYScale(i)=0.025
+		SimulatedObjectZScale(i)=0.025
+		
+		SimulateObjectScale(i)
+		
+	EndIf
+
+End Function
+
+Function ControlStinkerWeeExit(i)
+	If LevelTimer Mod 3 = 0
+		AddParticle(Rand(16,23),ObjectTileX(i)+0.5+0.2*Sin(LevelTimer*10),0,-ObjectTileY(i)-0.5-0.2*Cos(LevelTimer*10),Rand(0,360),0.1,0,0.02,0,0,0.005,0,0,0,100,3)
+	EndIf
+End Function
+
+
+Function ControlCrab(i)
+
+	;subtype -0-male, 1-female
+	;data1 - 0-normal,1-curious, 2- asleep, 3- disabled
+	;status - 0 normal, 2 submerged
+
+	If SimulatedObjectTileTypeCollision(i)=0
+		; First time (should later be put into object creation at level editor)
+		If ObjectSubType(i)=0
+			; male
+			SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+;			Select SimulatedObjectData(i,1)
+;			Case 0
+;				; normal
+;				ObjectMovementType(i)=0
+;			Case 1
+;				; curious
+;				ObjectMovementType(i)=14
+;			Case 2,3
+;				; asleep
+;				ObjectMovementType(i)=0
+;				AnimateMD2 ObjectEntity(i),3,1,48,49
+;			End Select
+			SimulatedObjectXScale(i)=0.006
+			SimulatedObjectYScale(i)=0.006
+			SimulatedObjectZScale(i)=0.006
+			
+			SimulateObjectScale(i)
+		Else
+			;female
+			SimulatedObjectTileTypeCollision(i)=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+;			Select ObjectData(i,1)
+;			Case 0
+;				; normal
+;				ObjectMovementType(i)=32
+;			Case 1
+;				; curious
+;				ObjectMovementType(i)=14
+;			Case 2,3
+;				; asleep
+;				ObjectMovementType(i)=0
+;				AnimateMD2 ObjectEntity(i),3,1,48,49
+;			End Select
+
+		EndIf
+		
+	EndIf
+End Function
+
+
 Function ControlActivation(i)
 
 	; Get Scale
-	ObjXScale#=ObjectXScale(i)*ObjectScaleXAdjust(i)
-	ObjYScale#=ObjectYScale(i)*ObjectScaleYAdjust(i)
-	ObjZScale#=ObjectZScale(i)*ObjectScaleZAdjust(i)
+	ObjXScale#=SimulatedObjectXScale(i)*ObjectScaleXAdjust(i)
+	ObjYScale#=SimulatedObjectYScale(i)*ObjectScaleYAdjust(i)
+	ObjZScale#=SimulatedObjectZScale(i)*ObjectScaleZAdjust(i)
 
 	
 	; Select Visual Animation	
@@ -20723,6 +20801,10 @@ Function ControlObjects()
 			
 			Case 30
 				ControlTeleporter(i)
+			Case 120
+				ControlStinkerWee(i)
+			Case 130
+				ControlStinkerWeeExit(i)
 			Case 151
 				ControlRainbowBubble(i)
 			Case 160
@@ -20761,6 +20843,8 @@ Function ControlObjects()
 				ControlWisp(i)
 			Case 340
 				ControlTentacle(i)
+			Case 370 
+				ControlCrab(i)
 			Case 422,423,430,431
 				ControlRetroZbotUfo(i)
 			Case 424
