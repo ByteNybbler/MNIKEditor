@@ -624,6 +624,8 @@ Global IDFilterAllow=-1
 
 Global TexturePrefix$=""
 
+Global SimulationLevel=1
+
 Dim BrushObjectModelName$(1000)
 Dim BrushObjectTextureName$(1000)
 Dim BrushObjectXScale#(1000)
@@ -1870,18 +1872,21 @@ Function EditorMainLoop()
 		Text 400+4,535," DUPLICATE"
 	EndIf
 	
-	Text 400,565," LEVEL BORDER"
-	If LevelEdgeStyle=1
-		Text 400+4,580,"   DEFAULT"
-	ElseIf LevelEdgeStyle=2
-		Text 400+4,580,"   BORDER"
-	ElseIf LevelEdgeStyle=3
-		Text 400+4,580,"   BORDER X"
-	ElseIf LevelEdgeStyle=4
-		Text 400+4,580,"   NONE"
-	Else
-		Text 400+4,580,LevelEdgeStyle
-	EndIf
+	;Text 400,565," LEVEL BORDER"
+	;If LevelEdgeStyle=1
+	;	Text 400+4,580,"   DEFAULT"
+	;ElseIf LevelEdgeStyle=2
+	;	Text 400+4,580,"   BORDER"
+	;ElseIf LevelEdgeStyle=3
+	;	Text 400+4,580,"   BORDER X"
+	;ElseIf LevelEdgeStyle=4
+	;	Text 400+4,580,"   NONE"
+	;Else
+	;	Text 400+4,580,LevelEdgeStyle
+	;EndIf
+	
+	Text 400,565," SIMULATION"
+	Text 400+4,580," LEVEL "+SimulationLevel
 	
 	;Text 500,520,"   WIDESCREEN"
 	;If WidescreenRangeLevel=0
@@ -3086,10 +3091,12 @@ Function EditorLocalControls()
 
 	Text 715,133,"<LevelTex>"
 	Text 715,150,"<WaterTex>"
-	Text 715,165," Fl Tr Gl"
-	Text 723,180,Str$(WaterFlow)
-	Text 747+4,180,Str$(WaterTransparent)
-	Text 771+4,180,Str$(WaterGlow)
+	;Text 715,165," Fl Tr Gl"
+	FlStartX=715
+	Text FlStartX,165," Fl Tr Gl"
+	Text FlStartX+12,180,Str$(WaterFlow)
+	Text FlStartX+36,180,Str$(WaterTransparent)
+	Text FlStartX+60,180,Str$(WaterGlow)
 	Text 723,200,"  Light  "
 	Text 712,215,Str$(LightRed)
 	Text 741,215,Str$(LightGreen)
@@ -3272,7 +3279,7 @@ Function EditorLocalControls()
 
 		
 		If my>165 And my<195 ;my<185 
-			If mx>723 And mx<739
+			If mx>FlStartX+8 And mx<FlStartX+24
 				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, 150)
 ;				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
 ;					Waterflow=WaterFlow+1
@@ -3283,14 +3290,14 @@ Function EditorLocalControls()
 ;					rightmousereleased=False
 ;				EndIf
 			EndIf
-			If mx>747 And mx<763
+			If mx>FlStartX+32 And mx<FlStartX+48
 				If (leftmouse=True And leftmousereleased=True) Or MouseScroll<>0
 					WaterTransparent=1-WaterTransparent
 					leftmousereleased=False
 				EndIf
 				
 			EndIf
-			If mx>771 And mx<787
+			If mx>FlStartX+56 And mx<FlStartX+72
 				If (leftmouse=True And leftmousereleased=True) Or MouseScroll<>0
 					WaterGlow=1-WaterGlow
 					leftmousereleased=False
