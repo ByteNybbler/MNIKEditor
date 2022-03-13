@@ -5631,7 +5631,7 @@ Function CalculateEffectiveID(Dest)
 	;ShowMessage("Calculating effective ID for "+Dest, 50)
 
 	Select ObjectType(Dest)
-	Case 10,45,210,281,410,424 ; gate, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
+	Case 10,20,45,210,281,410,424 ; gate, fire trap, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
 		If ObjectID(Dest)=-1
 			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 		EndIf
@@ -20708,6 +20708,17 @@ Function ControlCrab(i)
 End Function
 
 
+Function ControlTrap(i)
+
+	SimulatedObjectZ(i)=0.04
+	
+	
+	
+	SimulateObjectPosition(i)
+
+End Function
+
+
 Function ControlFireFlower(i)
 
 	If (SimulatedObjectTimer(i)>=0 And SimulatedObjectData(i,2)=0) Or (SimulatedObjectData(i,2)=2 And SimulatedObjectTimer(i)=ObjectTimerMax1(i))
@@ -20842,6 +20853,8 @@ Function ControlObjects()
 			
 			Select ObjectType(i)
 			
+			Case 20
+				ControlTrap(i)
 			Case 30
 				ControlTeleporter(i)
 			Case 120
