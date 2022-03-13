@@ -1642,39 +1642,39 @@ If testfile<>0 ;FileType(globaldirname$+"\custom\editing\")
 	
 EndIf
 
+TweenPeriod=1000/60;85
+TweenTime=MilliSecs()-TweenPeriod
+
 Repeat
 		
 		If HasFocus()
-		
-			;Color 0,0,0
-			;Rect 0,0,800,600,True
-		
-			EditorGlobalControls()
-		
-			Select EditorMode
 			
-			Case 0,1,2,3
-				EditorMainLoop()
-			Case 4
-				UserSelectScreen()
-			Case 5
-				AdventureSelectScreen()
-			Case 6
-				AdventureSelectScreen2()
-			Case 7
-				AdventureSelectScreen3()
-			Case 8
-				MasterMainLoop()
-			Case 9
-				DialogMainLoop()
-			Case 10
-				MasterAdvancedLoop()
-			Case 11
-				HubMainLoop()
-			Case 12
-				HubAdventureSelectScreen()
-			End Select
+			Repeat
+				TweenElapsed=MilliSecs()-TweenTime
+			Until TweenElapsed>TweenPeriod
 			
+			If TweenElapsed>20*TweenPeriod 
+				TweenElapsed=20*TweenPeriod
+				TweenTime=MilliSecs()-TweenElapsed
+			EndIf
+		
+			;how many 'frames' have elapsed	
+			TweenTicks=TweenElapsed/TweenPeriod
+			;fractional remainder
+			Tween#=Float(TweenElapsed Mod TweenPeriod)/Float(TweenPeriod)
+		
+			For k=1 To TweenTicks
+			
+				Tweentime=Tweentime+Tweenperiod
+				If k=Tweenticks 
+					CaptureWorld
+				EndIf
+			
+				UpdateEditor()
+				
+			Next
+		
+
 		
 		Else
 		
@@ -1689,6 +1689,40 @@ Until False ;KeyDown(1) ; escape
 
 
 End
+
+
+Function UpdateEditor()
+
+	;Color 0,0,0
+	;Rect 0,0,800,600,True
+
+	EditorGlobalControls()
+
+	Select EditorMode
+	
+	Case 0,1,2,3
+		EditorMainLoop()
+	Case 4
+		UserSelectScreen()
+	Case 5
+		AdventureSelectScreen()
+	Case 6
+		AdventureSelectScreen2()
+	Case 7
+		AdventureSelectScreen3()
+	Case 8
+		MasterMainLoop()
+	Case 9
+		DialogMainLoop()
+	Case 10
+		MasterAdvancedLoop()
+	Case 11
+		HubMainLoop()
+	Case 12
+		HubAdventureSelectScreen()
+	End Select
+
+End Function
 
 
 Function StartEditorMainLoop()
