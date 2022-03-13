@@ -19973,7 +19973,7 @@ End Function
 
 Function ControlTeleporter(i)
 
-	If Rand(0,100)<5 ;And ObjectActive(i)>0
+	If Rand(0,100)<5 And (SimulatedObjectActive(i)>0 Or SimulationLevel<2)
 		a=Rand(0,360)
 		b#=Rnd(0.002,0.006)
 		AddParticle(23,ObjectX(i)+0.5*Sin(a),0,-ObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
