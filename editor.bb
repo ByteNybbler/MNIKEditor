@@ -4129,9 +4129,9 @@ Function EditorLocalControls()
 		; simulation level
 		If my>565 And my<595
 			NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, 150)
-			If SimulationLevel>2
+			If NewValue>2
 				NewValue=0
-			ElseIf SimulationLevel<0
+			ElseIf NewValue<0
 				NewValue=2
 			EndIf
 			If NewValue<>SimulationLevel
