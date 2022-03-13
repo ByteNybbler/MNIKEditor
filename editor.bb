@@ -565,6 +565,9 @@ Dim SimulatedObjectYScale#(1000)
 Dim SimulatedObjectXAdjust#(1000)
 Dim SimulatedObjectZAdjust#(1000)
 Dim SimulatedObjectYAdjust#(1000)
+Dim SimulatedObjectPitchAdjust#(1000)
+Dim SimulatedObjectYawAdjust#(1000)
+Dim SimulatedObjectRollAdjust#(1000)
 Dim SimulatedObjectX#(1000),SimulatedObjectY#(1000),SimulatedObjectZ#(1000)
 Dim SimulatedObjectPitch#(1000)
 Dim SimulatedObjectYaw#(1000)
@@ -573,6 +576,7 @@ Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2
 Dim SimulatedObjectStatus(1000)
 Dim SimulatedObjectData(1000,10)
 Dim SimulatedObjectTileTypeCollision(1000)
+Dim SimulatedObjectScaleAdjust#(1000)
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
@@ -1754,11 +1758,7 @@ Function EditorMainLoop()
 	Text StartX+48,StartY,"       Height: "+CurrentTileHeight
 	If CurrentTileHeightUse=False Text StartX+48,StartY,"       ------------"
 	
-	If CurrentTileLogic>=0 And CurrentTileLogic<=14
-		CurrentLogicName$=LogicName$(CurrentTileLogic)
-	Else
-		CurrentLogicName$="Other"
-	EndIf
+	CurrentLogicName$=LogicIdToLogicName$(CurrentTileLogic)
 	Text StartX+50,StartY+15,"Logic: "+CurrentLogicName$
 
 
@@ -4300,6 +4300,16 @@ Function GetConfirmation(Message$)
 End Function
 
 
+Function LogicIdToLogicName$(TileLogic)
+
+	If TileLogic>=0 And TileLogic<=14
+		Return LogicName$(TileLogic)
+	Else
+		Return TileLogic
+	EndIf
+
+End Function
+
 ; returns -1 if no matching name is found
 Function LogicNameToLogicId(Name$)
 
@@ -5760,22 +5770,26 @@ End Function
 Function ResetSimulatedQuantities()
 
 	For i=0 To NofObjects-1
-		SimulatedObjectXAdjust(i)=0.0
-		SimulatedObjectYAdjust(i)=0.0
-		SimulatedObjectZAdjust(i)=0.0
+		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)
+		SimulatedObjectYAdjust(i)=ObjectYAdjust(i)
+		SimulatedObjectZAdjust(i)=ObjectZAdjust(i)
 		SimulatedObjectX(i)=ObjectX(i)
 		SimulatedObjectY(i)=ObjectY(i)
 		SimulatedObjectZ(i)=ObjectZ(i)
-		SimulatedObjectYaw(i)=0.0
-		SimulatedObjectPitch(i)=0.0
-		SimulatedObjectRoll(i)=0.0
-		SimulatedObjectYaw2(i)=0.0
-		SimulatedObjectPitch2(i)=0.0
-		SimulatedObjectRoll2(i)=0.0
-		SimulatedObjectXScale(i)=1.0
-		SimulatedObjectYScale(i)=1.0
-		SimulatedObjectZScale(i)=1.0
+		SimulatedObjectYaw(i)=ObjectYaw(i)
+		SimulatedObjectPitch(i)=ObjectPitch(i)
+		SimulatedObjectRoll(i)=ObjectRoll(i)
+		SimulatedObjectYawAdjust(i)=ObjectYawAdjust(i)
+		SimulatedObjectPitchAdjust(i)=ObjectPitchAdjust(i)
+		SimulatedObjectRollAdjust(i)=ObjectRollAdjust(i)
+		SimulatedObjectYaw2(i)=ObjectYaw2(i)
+		SimulatedObjectPitch2(i)=ObjectPitch2(i)
+		SimulatedObjectRoll2(i)=ObjectRoll2(i)
+		SimulatedObjectXScale(i)=ObjectXScale(i)
+		SimulatedObjectYScale(i)=ObjectYScale(i)
+		SimulatedObjectZScale(i)=ObjectZScale(i)
 		SimulatedObjectStatus(i)=ObjectStatus(i)
+		SimulatedObjectScaleAdjust(i)=ObjectScaleAdjust(i)
 		For j=0 To 10
 			SimulatedObjectData(i,j)=ObjectData(i,j)
 		Next
@@ -5794,21 +5808,21 @@ Function SimulateObjectPosition(Dest)
 
 End Function
 
-Function SimulateObjectXYZAdjust(Dest)
-
-	XP#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)+ObjectXAdjust(Dest)
-	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)+ObjectYAdjust(Dest)
-	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)+ObjectZAdjust(Dest)
-	PositionEntity ObjectEntity(Dest),XP#,ZP#,-YP#
-
-End Function
+;Function SimulateObjectXYZAdjust(Dest)
+;
+;	XP#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)+ObjectXAdjust(Dest)
+;	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)+ObjectYAdjust(Dest)
+;	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)+ObjectZAdjust(Dest)
+;	PositionEntity ObjectEntity(Dest),XP#,ZP#,-YP#
+;
+;End Function
 
 
 Function SimulateObjectRotation(Dest)
 
-	Pitch#=SimulatedObjectPitch(Dest)
-	Roll#=SimulatedObjectRoll(Dest)
-	Yaw#=SimulatedObjectYaw(Dest)
+	Pitch#=SimulatedObjectPitch(Dest)+SimulatedObjectPitchAdjust(Dest)
+	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
+	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
 	
 	RotateEntity ObjectEntity(Dest),0,0,0
 	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
@@ -5817,48 +5831,58 @@ Function SimulateObjectRotation(Dest)
 
 End Function
 
-
-Function SimulateObjectRotationAdjust(Dest)
-
-	Pitch#=SimulatedObjectPitch(Dest)+ObjectPitchAdjust(Dest)
-	Roll#=SimulatedObjectRoll(Dest)+ObjectRollAdjust(Dest)
-	Yaw#=SimulatedObjectYaw(Dest)+ObjectYawAdjust(Dest)
-
-	RotateEntity ObjectEntity(Dest),0,0,0
-	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
-	TurnEntity ObjectEntity(Dest),0,Yaw#,0
-	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
-
-End Function
-
-
-Function SimulateObjectScaleXYZNoScaleAdjust(Dest)
-
-	XS#=SimulatedObjectXScale(Dest)
-	YS#=SimulatedObjectYScale(Dest)
-	ZS#=SimulatedObjectZScale(Dest)
-	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
-
-End Function
-
-Function SimulateObjectScaleXYZ(Dest)
+Function SimulateObjectScale(Dest)
 
 	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
 	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
-	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
-
-End Function
-
-Function SimulateObjectScaleXYZAdjust(Dest)
-
-	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)*ObjectXScale(Dest)
-	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)*ObjectYScale(Dest)
-	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)*ObjectZScale(Dest)
-	
+		
 	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
 	
 End Function
+
+
+;Function SimulateObjectRotationAdjust(Dest)
+;
+;	Pitch#=SimulatedObjectPitch(Dest)+ObjectPitchAdjust(Dest)
+;	Roll#=SimulatedObjectRoll(Dest)+ObjectRollAdjust(Dest)
+;	Yaw#=SimulatedObjectYaw(Dest)+ObjectYawAdjust(Dest)
+;
+;	RotateEntity ObjectEntity(Dest),0,0,0
+;	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
+;	TurnEntity ObjectEntity(Dest),0,Yaw#,0
+;	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
+;
+;End Function
+
+
+;Function SimulateObjectScaleXYZNoScaleAdjust(Dest)
+;
+;	XS#=SimulatedObjectXScale(Dest)
+;	YS#=SimulatedObjectYScale(Dest)
+;	ZS#=SimulatedObjectZScale(Dest)
+;	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
+;
+;End Function
+
+;Function SimulateObjectScaleXYZ(Dest)
+;
+;	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
+;	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+;	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
+;	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
+;
+;End Function
+
+;Function SimulateObjectScaleXYZAdjust(Dest)
+;
+;	XS#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)*ObjectXScale(Dest)
+;	YS#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)*ObjectYScale(Dest)
+;	ZS#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)*ObjectZScale(Dest)
+;	
+;	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
+;	
+;End Function
 
 
 Function ObjectIsAtInt(i,x,y)
@@ -7379,7 +7403,12 @@ Function DisplayObjectAdjuster(i)
 		EndIf	
 		If CurrentObjectModelName$="!Ghost" Or CurrentObjectModelName$="!Wraith"
 			tex2$="Radius"
-		EndIf		
+		EndIf
+		
+		If CurrentObjectModelName$="!GrowFlower"
+			tex2$="TileLogic"
+			tex$=LogicIdToLogicName$(CurrentObjectData(0))
+		EndIf
 
 
 
@@ -10640,6 +10669,34 @@ Function CreateSpellBallMesh(subtype)
 
 End Function
 
+Function CreateFloingBubbleMesh()
+
+	Entity=CreateSphere()
+	s=CreateCylinder()
+	ScaleMesh s,0.5,0.01,0.5
+	PositionMesh s,0,-0.58,0
+	AddMesh s,Entity
+	FreeEntity s
+	EntityTexture Entity,FloingTexture
+	EntityAlpha Entity,0.5
+	EntityBlend Entity,3
+	Return Entity
+
+End Function
+
+Function CreateGrowFlowerMesh(tilelogic)
+
+	If tilelogic=2
+		Return CopyEntity(ObstacleMesh(7))
+	Else If tilelogic=11 Or tilelogic=12
+		Return CopyEntity(ObstacleMesh(16))
+		;EntityTexture ObjectEntity(Dest),waterfalltexture
+	Else
+		Return CopyEntity(ObstacleMesh(10))
+	EndIf
+
+End Function
+
 Function CreateFlipBridgeMesh(tex)
 	
 
@@ -11112,7 +11169,11 @@ Function BuildCurrentObjectModel()
 		EndIf
 	Else If CurrentObjectModelName$="!Bowler"
 		CurrentObjectModel=CopyEntity(BowlerMesh)
-		CurrentObjectYawAdjust=(-45*CurrentObjectData(0) +3600) Mod 360
+		Direction=CurrentObjectData(0)
+		If CurrentObjectData(1)<>2
+			Direction=Direction*2
+		EndIf
+		CurrentObjectYawAdjust=(-45*Direction +3600) Mod 360
 	Else If CurrentObjectModelName$="!Turtle"
 		CurrentObjectModel=CopyEntity(TurtleMesh)
 		CurrentObjectYawAdjust=(-90*CurrentObjectData(0) +3600) Mod 360
@@ -11362,7 +11423,7 @@ Function BuildCurrentObjectModel()
 
 
 		
-	Else If CurrentObjectModelName="!FloingOrb"
+	Else If CurrentObjectModelName="!FloingOrb" ; not to be confused with !FloingBubble
 		CurrentObjectModel=CreateSphere()
 		ScaleMesh CurrentObjectModel,.3,.3,.3
 		EntityColor CurrentObjectModel,255,0,0
@@ -11381,6 +11442,13 @@ Function BuildCurrentObjectModel()
 		PositionMesh CurrentObjectModel,0,0,-1
 		EntityTexture CurrentObjectModel,SkyMachineMapTexture
 		EntityBlend CurrentObjectModel,3
+		
+	
+	Else If CurrentObjectModelName$="!GrowFlower"
+		CurrentObjectModel=CreateGrowFlowerMesh(CurrentObjectData(0))
+
+	Else If CurrentObjectModelName$="!FloingBubble"
+		CurrentObjectModel=CreateFloingBubbleMesh()
 
 		
 	Else If CurrentObjectModelName$="!None"
@@ -12340,7 +12408,7 @@ Function CreateObjectModel(Dest)
 		Else If ObjectModelName$(Dest)="!Square"
 			ObjectEntity(Dest)=MyLoadmesh("data\models\squares\square1.b3d",0)
 			
-		Else If ObjectModelName$(Dest)="!FloingOrb"
+		Else If ObjectModelName$(Dest)="!FloingOrb" ; not to be confused with !FloingBubble
 			ObjectEntity(Dest)=CreateSphere()
 			ScaleMesh ObjectEntity(Dest),.3,.3,.3
 			EntityColor ObjectEntity(Dest),255,0,0
@@ -12455,6 +12523,13 @@ Function CreateObjectModel(Dest)
 			PositionMesh ObjectEntity(Dest),0,0,-1
 			EntityTexture ObjectEntity(Dest),SkyMachineMapTexture
 			EntityBlend ObjectEntity(Dest),3
+			
+			
+		Else If ObjectModelName$(Dest)="!GrowFlower"
+			ObjectEntity(Dest)=CreateGrowFlowerMesh(ObjectData(Dest,0))
+	
+		Else If ObjectModelName$(Dest)="!FloingBubble"
+			ObjectEntity(Dest)=CreateFloingBubbleMesh()
 			
 			
  		Else If ObjectModelName$(Dest)="!None"
@@ -19844,8 +19919,8 @@ Function ControlTeleporter(i)
 		;ScaleEntity ObjectEntity(i),,ObjectActive(i)/1001.0,)
 	EndIf
 
-	SimulateObjectRotationAdjust(i)
-	SimulateObjectScaleXYZ(i)
+	SimulateObjectRotation(i)
+	SimulateObjectScale(i)
 
 End Function
 
@@ -19902,7 +19977,7 @@ Function ControlObstacle(i)
 		ControlCustomModel(i)
 	EndIf
 
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -19966,8 +20041,8 @@ Function ControlGoldStar(i)
 		AddParticle(19,ObjectTileX(i)+0.5,.7+ObjectZAdjust(i),-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
 	EndIf
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20000,8 +20075,8 @@ Function ControlGoldCoin(i)
 		SimulatedObjectZ(i)=0
 	EndIf
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20060,8 +20135,8 @@ Function ControlGem(i)
 		SimulatedObjectZ(i)=.4
 	EndIf
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 	
 End Function
 
@@ -20104,8 +20179,8 @@ Function ControlKey(i)
 		SimulatedObjectZ(i)=.4
 	EndIf
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20148,8 +20223,8 @@ Function ControlCustomItem(i)
 
 	EndIf
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 	
 End Function
 
@@ -20176,8 +20251,8 @@ Function ControlSigns(i)
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
 	End Select
 
-	SimulateObjectRotationAdjust(i)
-	SimulateObjectScaleXYZAdjust(i)
+	SimulateObjectRotation(i)
+	SimulateObjectScale(i)
 		
 
 End Function
@@ -20216,8 +20291,8 @@ Function ControlRetroRainbowCoin(i)
 		SimulatedObjectZ(i)=0
 	EndIf
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20267,7 +20342,7 @@ Function ControlWisp(i)
 	EndIf
 	If Rand(0,100)<3 And ObjectActive(i)=1001	AddParticle(Rand(16,23),ObjectTileX(i)+0.5,.7,-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
 
-	SimulateObjectXYZAdjust(i)
+	SimulateObjectPosition(i)
 	SimulateObjectRotation(i)
 
 End Function
@@ -20279,7 +20354,7 @@ Function ControlRetroZbotUfo(i)
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
 	EndIf
 
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20292,7 +20367,7 @@ Function ControlRetroLaserGate(i)
 		SimulatedObjectRoll(i)=(SimulatedObjectRoll(i)+2) Mod 360
 	EndIf
 	
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 			
 End Function
 
@@ -20302,7 +20377,7 @@ Function ControlTentacle(i)
 	If SimulatedObjectData(i,0)=0 Then SimulatedObjectData(i,0)=Rand(-10,10)
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectData(i,0))/10.0
 	
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 	
 End Function
 
@@ -20325,6 +20400,7 @@ Function ControlRainbowBubble(i)
 
 	SimulatedObjectZScale(i)=0.6+0.2*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
 
+	SimulatedObjectScaleAdjust(i)=1.0
 	
 	SimulatedObjectPitch(i)=(SimulatedObjectPitch(i)+1) Mod 360
 	SimulatedObjectYaw(i)=360*Sin(l Mod 360)
@@ -20332,21 +20408,26 @@ Function ControlRainbowBubble(i)
 	
 	SimulatedObjectZ(i)=0.5+0.3*Abs(Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360))
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
-	SimulateObjectScaleXYZNoScaleAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
+	SimulateObjectScale(i)
 
 End Function
 
 
 Function ControlBowler(i)
 
-	;SimulatedObjectYaw(i)=(-45*ObjectData(i,0) +3600) Mod 360
+	Direction=SimulatedObjectData(i,0)
+	If SimulatedObjectData(i,1)<>2
+		Direction=Direction*2
+	EndIf
+	SimulatedObjectYawAdjust(i)=(-45*Direction +3600) Mod 360
+	
 	SimulatedObjectPitch2(i)=(SimulatedObjectPitch2(i)+Rnd(3,5)) Mod 360
 	SimulatedObjectZ(i)=.4+.4*Sin((Leveltimer*4) Mod 180)
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20355,7 +20436,7 @@ Function ControlMothership(i)
 
 	SimulatedObjectYaw(i)=((SimulatedObjectYaw(i)+.3) Mod 360)
 	
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 	
 End Function
 
@@ -20371,7 +20452,7 @@ Function ControlRubberducky(i)
 	SimulatedObjectroll(i)=1*SimulatedObjectData(i,1)*Sin((LevelTimer+SimulatedObjectData(i,2)) Mod 360)
 	SimulatedObjectpitch(i)=2*SimulatedObjectData(i,1)*Cos((LevelTimer*3+SimulatedObjectData(i,2))  Mod 360)
 	
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20393,7 +20474,7 @@ Function ControlGloveCharge(i)
 		EndIf
 	EndIf
 	
-	SimulateObjectXYZAdjust(i)
+	SimulateObjectPosition(i)
 	
 End Function
 
@@ -20408,8 +20489,8 @@ Function ControlWindmillRotor(i)
 	;SimulatedObjectZ(i)=5.65
 	ObjectZAdjust(i)=5.65
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20418,7 +20499,7 @@ Function ControlIceFloat(i)
 	SimulatedObjectPitch(i)=2*ObjectData(i,2)*Sin((LevelTimer + ObjectData(i,1)) Mod 360)
 	SimulatedObjectRoll(i)=3*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
 	
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20434,7 +20515,7 @@ Function ControlPlantFloat(i)
 	;Objectroll(i)=6*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
 	SimulatedObjectYaw(i)=leveltimer Mod 360
 	
-	SimulateObjectRotationAdjust(i)
+	SimulateObjectRotation(i)
 
 End Function
 
@@ -20520,9 +20601,9 @@ Function ControlActivation(i)
 	SimulatedObjectYScale(i)=ObjYScale
 	SimulatedObjectZScale(i)=ObjZScale
 	
-	SimulateObjectXYZAdjust(i)
-	SimulateObjectRotationAdjust(i)
-	SimulateObjectScaleXYZ(i)
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
+	SimulateObjectScale(i)
 
 
 End Function
