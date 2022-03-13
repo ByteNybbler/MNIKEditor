@@ -573,12 +573,14 @@ Dim SimulatedObjectPitch#(1000)
 Dim SimulatedObjectYaw#(1000)
 Dim SimulatedObjectRoll#(1000)
 Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2#(1000)
+Dim SimulatedObjectActive(1000),SimulatedObjectLastActive(1000)
 Dim SimulatedObjectStatus(1000)
 Dim SimulatedObjectTimer(1000)
 Dim SimulatedObjectData(1000,10)
 Dim SimulatedObjectMovementSpeed(1000)
 Dim SimulatedObjectTileTypeCollision(1000)
 ;Dim SimulatedObjectScaleAdjust#(1000) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
+Dim SimulatedObjectScaleXAdjust#(1000),SimulatedObjectScaleYAdjust#(1000),SimulatedObjectScaleZAdjust#(1000)
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
@@ -5839,6 +5841,8 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectYaw2(i)=ObjectYaw2(i)
 		SimulatedObjectPitch2(i)=ObjectPitch2(i)
 		SimulatedObjectRoll2(i)=ObjectRoll2(i)
+		SimulatedObjectActive(i)=ObjectActive(i)
+		SimulatedObjectLastActive(i)=ObjectLastActive(i)
 		SimulatedObjectXScale(i)=ObjectXScale(i)
 		SimulatedObjectYScale(i)=ObjectYScale(i)
 		SimulatedObjectZScale(i)=ObjectZScale(i)
@@ -5854,6 +5858,9 @@ Function ResetSimulatedQuantities()
 			SimulatedObjectYScale(i)=SimulatedObjectYScale(i)*ObjectScaleAdjust(i)
 			SimulatedObjectZScale(i)=SimulatedObjectZScale(i)*ObjectScaleAdjust(i)
 		EndIf
+		SimulatedObjectScaleXAdjust(i)=ObjectScaleXAdjust(i)
+		SimulatedObjectScaleYAdjust(i)=ObjectScaleYAdjust(i)
+		SimulatedObjectScaleZAdjust(i)=ObjectScaleZAdjust(i)
 	Next
 
 End Function
@@ -20336,29 +20343,28 @@ End Function
 
 Function ControlRetroRainbowCoin(i)
 	
-	If ObjectActive(i)<1001 And ObjectActive(i)>0
+	If SimulatedObjectActive(i)<1001
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
 		
 
 
-		If ObjectActive(i)>600
+		If SimulatedObjectActive(i)>600
 			SimulatedObjectZ(i)=1.2+Float(1000-ObjectActive(i))/400.0
 		Else
 			SimulatedObjectZ(i)=2.2
 		EndIf
-		If ObjectActive(i)=400
+		If SimulatedObjectActive(i)=400
 			; Little Spark
 			For j=1 To 20
 				AddParticle(19,ObjectTileX(i)+0.5,2.6,-ObjectTileY(i)-0.5,Rand(0,360),0.15,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
 			Next
 		EndIf
-;		If ObjectActive(i)<600
-;			ObjectScaleXAdjust(i)=Float(ObjectActive(i))/600.0
-;			ObjectScaleYAdjust(i)=Float(ObjectActive(i))/600.0
-;			ObjectScaleZAdjust(i)=Float(ObjectActive(i))/600.0
-;
-;		EndIf
+		If SimulatedObjectActive(i)<600
+			SimulatedObjectScaleXAdjust(i)=Float(SimulatedObjectActive(i))/600.0
+			SimulatedObjectScaleYAdjust(i)=Float(SimulatedObjectActive(i))/600.0
+			SimulatedObjectScaleZAdjust(i)=Float(SimulatedObjectActive(i))/600.0
+		EndIf
 		
 		
 		
@@ -20843,12 +20849,105 @@ Function ControlFireFlower(i)
 End Function
 
 
+Function ToggleObject(i)
+	; switches objects from activating to deactivating or vice versa
+	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i) Mod 2 =0
+		If ObjectType(i)=410
+			;ActivateFlipBridge(i)
+		Else
+			SimulatedObjectActive(i)=SimulatedObjectActive(i)+ObjectActivationSpeed(i)+1
+			
+		EndIf
+		If SimulatedObjectActive(i)>1001 Then SimulatedObjectActive(i)=1001
+	Else If SimulatedObjectActive(i)>0 And SimulatedObjectActive(i) Mod 2 =1
+		If ObjectType(i)=410
+			;DeActivateFlipBridge(i)
+		Else
+			SimulatedObjectActive(i)=SimulatedObjectActive(i)-ObjectActivationSpeed(i)-1
+			
+		EndIf
+		If SimulatedObjectActive(i)<0 Then SimulatedObjectActive(i)=0
+	EndIf
+;	If ObjectType(i)=281
+;		Redosuctubemesh(i)
+;	EndIf
+	
+End Function
+
+
+Function ControlChangeActive(i)
+
+	If SimulatedObjectActive(i)>0 And SimulatedObjectActive(i) Mod 2 = 0
+		; deactivating
+		SimulatedObjectActive(i)=SimulatedObjectActive(i)-ObjectActivationSpeed(i)
+	Else If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i) Mod 2=1
+		; activating
+		SimulatedObjectActive(i)=SimulatedObjectActive(i)+ObjectActivationSpeed(i)
+		
+	EndIf
+	If SimulatedObjectActive(i)<0 	SimulatedObjectActive(i)=0
+	If SimulatedObjectActive(i)>1001 SimulatedObjectActive(i)=1001
+
+End Function
+
+
+Function ControlSteppingStone(i)
+
+	; Data(2) - Alternating?
+	If SimulatedObjectData(i,2)=2
+		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+		If SimulatedObjectTimer(i)<0 Then SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+		If SimulatedObjectTimer(i)=0
+			ToggleObject(i)
+			SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+		EndIf
+		
+		ControlChangeActive(i)
+		
+	EndIf
+		
+	
+	; 0-submerged, 1001-surfaced
+	If (SimulatedObjectActive(i)<1001-4*ObjectActivationSpeed(i)) And SimulatedObjectLastActive(i)>=1001-4*ObjectActivationSpeed(i)
+
+		; just submerged
+		If SimulatedObjectData(i,3)=0
+			AddParticle(4,Floor(ObjectX(i))+0.5,WaterTileHeight(Floor(ObjectX(i)),Floor(ObjectY(i)))-0.2,-Floor(ObjectY(i))-0.5,0,.6,0,0,0,0,.006,0,0,0,50,4)
+		EndIf
+	
+	EndIf
+	
+	If (SimulatedObjectActive(i)=>1001-4*ObjectActivationSpeed(i)) And SimulatedObjectLastActive(i)<1001-4*ObjectActivationSpeed(i)
+		
+		; just emerged
+		If SimulatedObjectData(i,3)=0
+			AddParticle(4,Floor(ObjectX(i))+0.5,WaterTileHeight(Floor(ObjectX(i)),Floor(ObjectY(i)))-0.2,-Floor(ObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
+		EndIf
+				
+	EndIf
+
+	
+End Function
+
+
+
+Function ControlFlipBridge(i)
+	
+	If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
+		YScale=1+5.6*Float(SimulatedObjectActive(i))/1001.0
+		;SimulatedObjectScaleYAdjust(i)=YScale
+		;SimulateObjectScale(i)
+	EndIf
+
+End Function
+
+
 Function ControlActivation(i)
 
 	; Get Scale
-	ObjXScale#=SimulatedObjectXScale(i)*ObjectScaleXAdjust(i)
-	ObjYScale#=SimulatedObjectYScale(i)*ObjectScaleYAdjust(i)
-	ObjZScale#=SimulatedObjectZScale(i)*ObjectScaleZAdjust(i)
+	ObjXScale#=SimulatedObjectXScale(i)*SimulatedObjectScaleXAdjust(i)
+	ObjYScale#=SimulatedObjectYScale(i)*SimulatedObjectScaleYAdjust(i)
+	ObjZScale#=SimulatedObjectZScale(i)*SimulatedObjectScaleZAdjust(i)
 
 	
 	; Select Visual Animation	
@@ -20857,42 +20956,42 @@ Function ControlActivation(i)
 		; nothing
 	Case 1
 		; Scale Vertical 0-1
-		ObjZScale=ObjZScale*Float(ObjectActive(i))/1001.0
+		ObjZScale=ObjZScale*Float(SimulatedObjectActive(i))/1001.0
 	
 	
 	Case 2
 		; scale all directions 0-1
-		ObjXScale=ObjXScale*Float(ObjectActive(i))/1001.0
-		ObjYScale=ObjYScale*Float(ObjectActive(i))/1001.0
-		ObjZScale=ObjZScale*Float(ObjectActive(i))/1001.0
+		ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
+		ObjYScale=ObjYScale*Float(SimulatedObjectActive(i))/1001.0
+		ObjZScale=ObjZScale*Float(SimulatedObjectActive(i))/1001.0
 	Case 3
 		; scale planar only
-		ObjXScale=ObjXScale*Float(ObjectActive(i))/1001.0
-		ObjYScale=ObjYScale*Float(ObjectActive(i))/1001.0
+		ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
+		ObjYScale=ObjYScale*Float(SimulatedObjectActive(i))/1001.0
 
 
 	Case 11
 		; push up from -1.01 to -0.01
-		SimulatedObjectZ#(i)=-0.99+Float(ObjectActive(i))/1001.0
+		SimulatedObjectZ#(i)=-0.99+Float(SimulatedObjectActive(i))/1001.0
 		
 	Case 12,13,14,15,16
 		; push up from -x.01 to -5.01 (used for stepping stones)
-		SimulatedObjectZ#(i)=-(ObjectActivationType(i)-6)-.01+(ObjectActivationType(i)-11)*Float(ObjectActive(i))/1001.0
+		SimulatedObjectZ#(i)=-(ObjectActivationType(i)-6)-.01+(ObjectActivationType(i)-11)*Float(SimulatedObjectActive(i))/1001.0
 		
 	Case 17 ; *** THESE ONLY WORK FOR AUTODOORS - OBJECTTILEX MUST BE PRE_SET
 		; push north
-		SimulatedObjectY#(i)=ObjectTileY(i)+0.5-ObjectYScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+		SimulatedObjectY#(i)=ObjectTileY(i)+0.5-ObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 	Case 18
 		; push East
-		SimulatedObjectX#(i)=ObjectTileX(i)+0.5+ObjectXScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+		SimulatedObjectX#(i)=ObjectTileX(i)+0.5+ObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 
 	Case 19
 		; push south
-		SimulatedObjectY#(i)=ObjectTileY(i)+0.5+ObjectYScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+		SimulatedObjectY#(i)=ObjectTileY(i)+0.5+ObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 
 	Case 20
 		; push west
-		SimulatedObjectX#(i)=ObjectTileX(i)+0.5-ObjectXScale(i)*(0.99-Float(ObjectActive(i))/1001.0)
+		SimulatedObjectX#(i)=ObjectTileX(i)+0.5-ObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 
 
 
@@ -20905,15 +21004,15 @@ Function ControlActivation(i)
 			Entity=ObjectEntity(i)
 		EndIf
 		; Fade in
-		EntityAlpha Entity,Float(ObjectActive(i))/1001.0
+		EntityAlpha Entity,Float(SimulatedObjectActive(i))/1001.0
 								
 	Case 31
 		; push down from 1.01 to 0.01
-		SimulatedObjectZ#(i)=1.01-Float(ObjectActive(i))/1001.0
+		SimulatedObjectZ#(i)=1.01-Float(SimulatedObjectActive(i))/1001.0
 		
 	Case 41
 		; rotate out (doors)
-		SimulatedObjectYaw#(i)=-160+160*Float(ObjectActive(i))/1001.0
+		SimulatedObjectYaw#(i)=-160+160*Float(SimulatedObjectActive(i))/1001.0
 
 	
 			
@@ -20986,6 +21085,8 @@ Function ControlObjects()
 				ControlTentacle(i)
 			Case 370 
 				ControlCrab(i)
+			Case 410
+				ControlFlipBridge(i)
 			Case 422,423,430,431
 				ControlRetroZbotUfo(i)
 			Case 424
