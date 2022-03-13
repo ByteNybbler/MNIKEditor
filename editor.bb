@@ -20711,8 +20711,36 @@ End Function
 Function ControlTrap(i)
 
 	SimulatedObjectZ(i)=0.04
+
+	If SimulatedObjectStatus(i)=0
+		; currently off
+		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+		If SimulatedObjectTimer(i)<=0
+			; turn on
+			SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+			SimulatedObjectStatus(i)=1
+		EndIf
+	Else
+		; currently on
+		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+		If SimulatedObjectTimer(i)<=0
+			; turn off
+			SimulatedObjectTimer(i)=ObjectTimerMax2(i)
+			SimulatedObjectStatus(i)=0
+		EndIf
+	EndIf
+
 	
-	
+	Select ObjectSubType(i)
+		Case 0
+			; fire - create particle when on
+			
+		If SimulatedObjectStatus(i)=1
+			;If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
+			If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
+		EndIf
+		
+	End Select
 	
 	SimulateObjectPosition(i)
 
