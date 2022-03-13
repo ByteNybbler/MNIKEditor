@@ -12898,7 +12898,7 @@ Function CameraControls()
 	EndIf
 	
 	If MouseScroll<>0
-		If Target=Camera1 And mx<510 ; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
+		If Target=Camera1 And mx<510 And my>=0 And my<500 ; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
 			SpeedFactor#=3.0*Adj
 			TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
 		ElseIf Target=Camera4
