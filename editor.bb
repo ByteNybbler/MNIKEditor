@@ -20481,6 +20481,80 @@ Function ControlPlantFloat(i)
 End Function
 
 
+Function ControlBurstFlower(i)
+
+	If SimulatedObjectTileTypeCollision(i)=0
+		SimulatedObjectTileTypeCollision(i)=1
+		SimulatedObjectData(i,0)=Rand(0,360)
+	EndIf
+	
+	SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+1) Mod 720
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+.5*Sin(SimulatedObjectData(i,0)/2)
+	SimulatedObjectXScale(i)=0.3+0.02*Cos(SimulatedObjectData(i,0)*2)
+	SimulatedObjectYScale(i)=0.3+0.02*Cos(SimulatedObjectData(i,0)*2)
+
+	If SimulatedObjectData(i,1)>=0 And Rand(0,100)<2 And ObjectIndigo(i)=0 AddParticle(7,ObjectX(i),0.5,-ObjectY(i),Rand(0,360),0.4,0,0.02,0,Rnd(0,2),.01,0,0,0,50,4)
+
+	If SimulatedObjectData(i,1)<0 Then ObjectData(i,1)=ObjectData(i,1)+1
+	
+	SimulateObjectRotation(i)
+	SimulateObjectScale(i)
+
+End Function
+
+
+Function ControlLurker(i)
+
+	If SimulatedObjectData(i,0)=0
+		; lurking
+		If SimulatedObjectYawAdjust(i)<>0
+			SimulatedObjectYaw(i)=SimulatedObjectYawAdjust(i)
+			SimulatedObjectYawAdjust(i)=0
+		EndIf
+		SimulatedObjectPitch2(i)=180
+		SimulatedObjectZ(i)=-0.1
+		SimulatedObjectData(i,2)=-1
+	EndIf
+	
+	SimulateObjectPosition(i)
+	SimulateObjectRotation(i)
+
+End Function
+
+
+Function ControlSunSphere1(i)
+
+	If SimulatedObjectData(i,9)=0
+		SimulatedObjectData(i,9)=1
+		
+		SimulatedObjectData(i,7)=Rand(0,360)
+		SimulatedObjectData(i,8)=Rand(50,100)
+		;CreateSunSphere2(i)
+	EndIf
+	
+	SimulatedObjectZ(i)=SimulatedObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)+30) Mod 360))
+	
+	SimulateObjectPosition(i)
+	
+
+End Function
+
+Function ControlSunSphere2(i)
+	SimulatedObjectZ(i)=SimulatedObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+ObjectData(i,7)) Mod 360))
+	SimulatedObjectXScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos(leveltimer Mod 360))
+	SimulatedObjectYScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos((leveltimer+30) Mod 360))
+	SimulatedObjectZScale(i)=0.5*SimulatedObjectScaleAdjust(i)*(1+0.1*Cos((leveltimer+60) Mod 360))
+
+
+	
+	If Rand(0,100)<3 AddParticle(Rand(16,23),SimulatedObjectX(i),SimulatedObjectZ(i),-SimulatedObjectY(i),Rand(0,360),0.16,Rnd(-.025,.025),Rnd(-.025,.025),Rnd(-.025,.025),0,0.001,0,0,0,100,3)
+
+	SimulateObjectPosition(i)
+	SimulateObjectScale(i)
+
+End Function
+
+
 Function ControlActivation(i)
 
 	; Get Scale
@@ -20626,6 +20700,14 @@ Function ControlObjects()
 				ControlRetroRainbowCoin(i)
 			Case 434
 				ControlMothership(i)
+			Case 441
+				ControlSunSphere1(i)
+			Case 442
+				ControlSunSphere2(i)
+			Case 450
+				ControlLurker(i)
+			Case 460
+				ControlBurstFlower(i)
 				
 			End Select
 			
