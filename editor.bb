@@ -1824,7 +1824,7 @@ Function EditorMainLoop()
 	If TexturePrefix<>""
 		Color 255,155,0
 	EndIf
-	Text 90,565,"TEXTURE PREFIX"
+	Text 90,565,"  TEX PREFIX"
 	Text 100,580,TexturePrefix$
 	Color 255,255,255
 	
