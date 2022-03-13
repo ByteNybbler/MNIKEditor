@@ -14329,6 +14329,12 @@ End Function
 
 Function CreateSuctubeMesh(tex,col,active)
 	
+	If active Mod 2 =1
+		active=0
+	Else
+		active=1
+	EndIf
+	
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
 	
@@ -14337,11 +14343,26 @@ Function CreateSuctubeMesh(tex,col,active)
 	i=0
 	angle#=-(360.0/nofsegments)/2.0+i*(360.0/nofsegments)
 	; top triangle
-	AddVertex (surface,-0.3,1.71,-0.3,(col Mod 8)*0.125+.01,(col/8)*0.125+.51)
-	AddVertex (surface,+0.3,1.71,-0.3,(col Mod 8)*0.125+.115,(col/8)*0.125+.51)
-	AddVertex (surface,0,1.71,+0.3,(col Mod 8)*0.125+.01,(col/8)*0.125+.51+.115)
-	AddTriangle (surface,0,1,2)
+	AddVertex (surface,-0.3,1.71,-0.3,(col Mod 8)*0.125+.01,(col/8)*0.125+.51+.25*active)
+	AddVertex (surface,+0.3,1.71,-0.3,(col Mod 8)*0.125+.115,(col/8)*0.125+.51+.25*active)
+	AddVertex (surface,0,1.71,+0.3,(col Mod 8)*0.125+.01,(col/8)*0.125+.51+.115+.25*active)
+	;AddTriangle (surface,0,1,2)
 	AddTriangle (surface,0,2,1)
+	
+	
+	
+	
+	; point arrow
+	If dir=0
+		VertexCoords surface,0,-0.3,1.71,-0.3
+		VertexCoords surface,1,+0.3,1.71,-0.3
+		VertexCoords surface,2,0,1.71,+0.3
+	Else
+		VertexCoords surface,0,-0.3,1.71,+0.3
+		VertexCoords surface,2,+0.3,1.71,+0.3
+		VertexCoords surface,1,0,1.71,-0.3
+	EndIf
+
 
 	
 	For i=0 To nofsegments-1
