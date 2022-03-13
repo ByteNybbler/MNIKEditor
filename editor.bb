@@ -6250,8 +6250,11 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 
 	;ShowMessage("Updating object position markers...", 100)
 
+	;LevelTileObjectCount(tilex,tiley)=0
+
 	For i=0 To NofObjects-1
 		If ObjectTileX(i)=tilex And ObjectTileY(i)=tiley
+		;If ObjectIsAtInt(i,tilex,tiley)
 			If LevelTileObjectCount(tilex,tiley)=1
 				EntityColor ObjectPositionMarker(i),255,100,100
 			Else
@@ -11587,6 +11590,11 @@ Function BuildCurrentObjectModel()
 
 	EndIf
 
+	If CurrentObjectModelName$="!FlipBridge"
+		TextureTarget=GetChild(CurrentObjectModel,1)
+	Else
+		TextureTarget=CurrentObjectModel
+	EndIf
 
 	If CurrentObjectTextureName$="!None" 
 		CurrentObjectTexture=0
@@ -11594,38 +11602,38 @@ Function BuildCurrentObjectModel()
 		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
 		If CurrentObjectData(5)>2 Then CurrentObjectData(5)=2
 		If DoorTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture CurrentObjectModel,DoorTexture(CurrentObjectData(5))
+		EntityTexture TextureTarget,DoorTexture(CurrentObjectData(5))
 	Else If CurrentObjectTextureName$="!Cottage"
 		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
 		If CottageTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture CurrentObjectModel,CottageTexture(CurrentObjectData(5))	
+		EntityTexture TextureTarget,CottageTexture(CurrentObjectData(5))	
 	Else If CurrentObjectTextureName$="!Townhouse"
 		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
 		If HouseTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture CurrentObjectModel,HouseTexture(CurrentObjectData(5))	
+		EntityTexture TextureTarget,HouseTexture(CurrentObjectData(5))	
 	Else If CurrentObjectTextureName$="!Windmill"
 		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
 		If WindmillTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture CurrentObjectModel,WindmillTexture(CurrentObjectData(5))	
+		EntityTexture TextureTarget,WindmillTexture(CurrentObjectData(5))	
 	Else If CurrentObjectTextureName$="!Fence"
 		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
 		If FenceTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture CurrentObjectModel,FenceTexture(CurrentObjectData(5))	
+		EntityTexture TextureTarget,FenceTexture(CurrentObjectData(5))	
 	Else If CurrentObjectTextureName$="!FireTrap"
-		EntityTexture CurrentObjectModel,FireTrapTexture
+		EntityTexture TextureTarget,FireTrapTexture
 
 	Else If Left$(CurrentObjectTextureName$,2)="!T"
 		
 		
-		EntityTexture CurrentObjectModel,StinkerTexture
+		EntityTexture TextureTarget,StinkerTexture
 
-		For i=1 To CountChildren(CurrentObjectModel)
-			child=GetChild(CurrentObjectModel,i)
+		For i=1 To CountChildren(TextureTarget)
+			child=GetChild(TextureTarget,i)
 			EntityTexture child,StinkerTexture
 		Next
 	Else If CurrentObjectType=200 ; magic glove
-		EntityTexture CurrentObjectModel,GloveTex
-			EntityFX CurrentObjectModel,2
+		EntityTexture TextureTarget,GloveTex
+			EntityFX TextureTarget,2
 			For i=0 To 3
 				Select CurrentObjectData(0)
 				Case 0
@@ -11662,7 +11670,7 @@ Function BuildCurrentObjectModel()
 					green=67
 				End Select
 			
-				VertexColor GetSurface(CurrentObjectmodel,1),i,red,green,blue
+				VertexColor GetSurface(TextureTarget,1),i,red,green,blue
 			Next
 
 	Else If Left(CurrentObjectTextureName$,1)="?"
@@ -11683,12 +11691,12 @@ Function BuildCurrentObjectModel()
 		Else
 			CurrentObjectTexture=LoadTexture(tname$,4)
 		EndIf
-		EntityTexture CurrentObjectModel,CurrentObjectTexture
+		EntityTexture TextureTarget,CurrentObjectTexture
 		
 	Else If CurrentObjectTextureName$<>"" And CurrentObjectTextureName$<>"!None" And Left$(CurrentObjectTextureName$,1)<>"!"  And CurrentObjectmodelname$<>"!Button"
 		If myFileType(CurrentObjectTextureName$)=1 Or FileType(CurrentObjectTextureName$)=1
 			CurrentObjectTexture=myLoadTexture(CurrentObjectTextureName$,4)
-			EntityTexture CurrentObjectModel,CurrentObjectTexture
+			EntityTexture TextureTarget,CurrentObjectTexture
 		Else
 			Print "WARNING!"
 			Print "Couldn't load texture: " + CurrentObjectTextureName$
@@ -12674,6 +12682,14 @@ Function CreateObjectModel(Dest)
 		EndIf
 		
 		
+		
+		If ObjectModelName$(Dest)="!FlipBridge"
+			TextureTarget=GetChild(ObjectEntity(Dest),1)
+		Else
+			TextureTarget=ObjectEntity(Dest)
+		EndIf
+		
+		
 		If ObjectTextureName$(Dest)="!None"
 			ObjectTexture(Dest)=0
 			
@@ -12682,24 +12698,24 @@ Function CreateObjectModel(Dest)
 			If ObjectData(Dest,5)<0 Then ObjectData(Dest,5)=0
 			If ObjectData(Dest,5)>2 Then ObjectData(Dest,5)=2
 			If DoorTexture(ObjectData(Dest,5))=0 Then ObjectData(Dest,5)=0
-			EntityTexture ObjectEntity(Dest),DoorTexture(ObjectData(Dest,5))
+			EntityTexture TextureTarget,DoorTexture(ObjectData(Dest,5))
 		Else If ObjectTextureName$(Dest)="!Cottage"
 			If CottageTexture(ObjectData(Dest,5))=0 Then ObjectData(Dest,5)=0
-			EntityTexture ObjectEntity(Dest),CottageTexture(ObjectData(Dest,5))	
+			EntityTexture TextureTarget,CottageTexture(ObjectData(Dest,5))	
 		Else If ObjectTextureName$(Dest)="!Townhouse"
 			
 			If HouseTexture(ObjectData(Dest,5))=0 Then ObjectData(Dest,5)=0
-			EntityTexture ObjectEntity(Dest),HouseTexture(ObjectData(Dest,5))	
+			EntityTexture TextureTarget,HouseTexture(ObjectData(Dest,5))	
 		Else If ObjectTextureName$(Dest)="!Windmill"
 			
 			If WindmillTexture(ObjectData(Dest,5))=0 Then ObjectData(Dest,5)=0
-			EntityTexture ObjectEntity(Dest),WindmillTexture(ObjectData(Dest,5))	
+			EntityTexture TextureTarget,WindmillTexture(ObjectData(Dest,5))	
 		Else If ObjectTextureName$(Dest)="!Fence"
 			
 			If FenceTexture(ObjectData(Dest,5))=0 Then ObjectData(Dest,5)=0
-			EntityTexture ObjectEntity(Dest),FenceTexture(ObjectData(Dest,5))	
+			EntityTexture TextureTarget,FenceTexture(ObjectData(Dest,5))	
 		Else If ObjectTextureName$(Dest)="!FireTrap"
-			EntityTexture ObjectEntity(Dest),FireTrapTexture
+			EntityTexture TextureTarget,FireTrapTexture
 			
 		
 		Else If Left(ObjectTextureName$(Dest),1)="?"
@@ -12730,16 +12746,16 @@ Function CreateObjectModel(Dest)
 				ObjectTexture(Dest)=LoadTexture(tname$,4)
 			EndIf
 			
-			EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
+			EntityTexture TextureTarget,ObjectTexture(Dest)
 		
 		Else If ObjectTextureName$(Dest)<>"" And ObjectTextureName$(Dest)<>""<>"!None" And Left$(ObjectTextureName$(Dest),1)<>"!"  And Objectmodelname$(Dest)<>"!Button"
 			; this entire block has been annoyingly problematic
 
 			If myFileType(ObjectTextureName$(Dest))=1 Or FileType(ObjectTextureName$(Dest))=1
 				ObjectTexture(Dest)=myLoadTexture(ObjectTextureName$(Dest),4)
-				EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
+				EntityTexture TextureTarget,ObjectTexture(Dest)
 				For j=1 To CountChildren (ObjectEntity(Dest))
-					child=GetChild(ObjectEntity(Dest),j)
+					child=GetChild(TextureTarget,j)
 					EntityTexture child,ObjectTexture(Dest)
 				Next
 			Else
@@ -12751,9 +12767,9 @@ Function CreateObjectModel(Dest)
 				Print "Reverting..."
 				Delay 2000
 				ObjectTexture(Dest)=myLoadTexture("UserData\Custom\Objecttextures\default.jpg",4)
-				EntityTexture ObjectEntity(Dest),ObjectTexture(Dest)
-				For j=1 To CountChildren (ObjectEntity(Dest))
-					child=GetChild(ObjectEntity(Dest),j)
+				EntityTexture TextureTarget,ObjectTexture(Dest)
+				For j=1 To CountChildren (TextureTarget)
+					child=GetChild(TextureTarget,j)
 					EntityTexture child,ObjectTexture(Dest)
 				Next
 			EndIf
@@ -12761,18 +12777,18 @@ Function CreateObjectModel(Dest)
 
 		Else If Left$(ObjectTextureName$(Dest),2)="!T"
 			;ObjectTexture(Dest)=LoadTexture("data2/models/stinker/body001a.jpg")
-			EntityTexture ObjectEntity(Dest),StinkerTexture
-			For k=1 To CountChildren(ObjectEntity(Dest))
-				child=GetChild(ObjectEntity(Dest),k)
+			EntityTexture TextureTarget,StinkerTexture
+			For k=1 To CountChildren(TextureTarget)
+				child=GetChild(TextureTarget,k)
 				EntityTexture child,StinkerTexture
 			Next
 
 		Else
 			
 			If ObjectType(Dest)=200 ; magic glove
-				EntityTexture ObjectEntity(Dest),GloveTex
+				EntityTexture TextureTarget,GloveTex
 
-				EntityFX ObjectEntity(Dest),2
+				EntityFX TextureTarget,2
 				red=0
 				green=0
 				blue=0
@@ -12810,11 +12826,15 @@ Function CreateObjectModel(Dest)
 						green=67
 					End Select
 				
-					VertexColor GetSurface(ObjectENtity(Dest),1),ii,red,green,blue
+					VertexColor GetSurface(TextureTarget,1),ii,red,green,blue
 				Next
 			EndIf
 
 		EndIf
+		
+		
+		
+		
 		If ObjectModelName$(Dest)="!StinkerWee"
 			; special case for MD2s
 			ScaleEntity ObjectEntity(Dest),ObjectXScale(Dest),ObjectZScale(Dest),ObjectYScale(Dest)
@@ -20987,9 +21007,12 @@ Function ControlFlipBridge(i)
 		YScale#=1+5.6*Float(SimulatedObjectActive(i))/1001.0
 	EndIf
 	
-	;SimulatedObjectScaleYAdjust(i)=YScale#
-	;SimulateObjectScale(i)
-	ScaleEntity GetChild(ObjectEntity(i),1),1.0,1.0,YScale#
+	If ObjectModelName$(i)="!FlipBridge"
+		ScaleEntity GetChild(ObjectEntity(i),1),1.0,1.0,YScale#
+	Else
+		SimulatedObjectScaleYAdjust(i)=YScale#
+		SimulateObjectScale(i)
+	EndIf
 
 End Function
 
