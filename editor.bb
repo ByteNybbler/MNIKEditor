@@ -4168,7 +4168,9 @@ Function EditorLocalControls()
 			ElseIf NewValue<0
 				NewValue=2
 			EndIf
-			If NewValue<>SimulationLevel
+			DoReset=NewValue<>SimulationLevel
+			SimulationLevel=NewValue
+			If DoReset
 				; move objects back to their default positions
 				ResetSimulatedQuantities()
 				For i=0 To NofObjects-1
@@ -4177,7 +4179,6 @@ Function EditorLocalControls()
 					SimulateObjectScale(i)
 				Next
 			EndIf
-			SimulationLevel=NewValue
 			
 ;			If LeftMouse=True And LeftMouseReleased=True
 ;				LevelEdgeStyle = LevelEdgeStyle+1				
@@ -5895,6 +5896,11 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectScaleXAdjust(i)=ObjectScaleXAdjust(i)
 		SimulatedObjectScaleYAdjust(i)=ObjectScaleYAdjust(i)
 		SimulatedObjectScaleZAdjust(i)=ObjectScaleZAdjust(i)
+		
+		; make sure flipbridges are scaled properly
+		If ObjectType(i)=410
+			ControlFlipbridge(i)
+		EndIf
 	Next
 
 End Function
@@ -10808,6 +10814,7 @@ Function CreateFlipBridgeMesh(tex)
 
 	subtype=3
 	
+	Pivot=CreateMesh()
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
 	
@@ -10887,7 +10894,8 @@ Function CreateFlipBridgeMesh(tex)
 	
 	EntityTexture Entity,GateTexture
 	
-	ScaleMesh Entity,1.0,1.0,6.6 ; reflect active state
+	YScale=6.6 ; to reflect active state
+	ScaleEntity Entity,1.0,1.0,YScale
 	
 	;Entity2=CreateCylinder()
 	;ScaleEntity Entity2,.25,.11,.25
@@ -10898,11 +10906,13 @@ Function CreateFlipBridgeMesh(tex)
 	ScaleMesh Entity2,.35,.35,.35
 	PositionMesh Entity2,0.0,-.241,0.0
 	EntityTexture Entity2,CageTexture
-	EntityParent Entity2,Entity
+	
+	EntityParent Entity,Pivot
+	EntityParent Entity2,Pivot
 	;AddMesh Entity2,Entity
 	;FreeEntity Entity2
 	
-	Return Entity
+	Return Pivot
 
 End Function
 
@@ -20971,11 +20981,15 @@ End Function
 
 Function ControlFlipBridge(i)
 	
+	YScale#=6.6
+	
 	If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
-		YScale=1+5.6*Float(SimulatedObjectActive(i))/1001.0
-		;SimulatedObjectScaleYAdjust(i)=YScale
-		;SimulateObjectScale(i)
+		YScale#=1+5.6*Float(SimulatedObjectActive(i))/1001.0
 	EndIf
+	
+	;SimulatedObjectScaleYAdjust(i)=YScale#
+	;SimulateObjectScale(i)
+	ScaleEntity GetChild(ObjectEntity(i),1),1.0,1.0,YScale#
 
 End Function
 
