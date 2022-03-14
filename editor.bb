@@ -3824,7 +3824,7 @@ Function EditorLocalControls()
 		Text StartX+6,StartY+2,"More"
 	EndIf
 	If mx>=StartX And Mx<StartX+80 And my>=StartY And my<StartY+20
-		If LeftMouse=True And LeftMouseReleased=True
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			LeftMouseReleased=False
 			SetEditorMode(3)
 			If ObjectAdjusterStart+9<NofObjectAdjusters
@@ -3832,7 +3832,7 @@ Function EditorLocalControls()
 			Else 
 				ObjectAdjusterStart=0
 			EndIf
-		Else If RightMouse=True And RightMouseReleased=True
+		Else If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			RightMouseReleased=False
 			SetEditorMode(3)
 			If ObjectAdjusterStart=0
