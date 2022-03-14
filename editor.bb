@@ -1825,6 +1825,7 @@ Function EditorMainLoop()
 	
 	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
+	ControlLight()
 	If SimulationLevel>=1
 		ControlObjects()
 	EndIf
@@ -4251,7 +4252,6 @@ Function EditorLocalControls()
 					
 					UpdateObjectVisibility(i)
 				Next
-				ControlLight()
 			EndIf
 			
 ;			If LeftMouse=True And LeftMouseReleased=True
@@ -4702,11 +4702,13 @@ Function BuildLevelModel()
 
 
 			
-			
-			
+			; replicating the behavior of in-game vertex normals
+			For k=0 To 19
+                VertexNormal LevelSurface(j),i*20+k,0.0,1.0,0.0
+            Next
 			
 		Next
-		UpdateNormals LevelMesh(j)
+		;UpdateNormals LevelMesh(j)
 		EntityTexture LevelMesh(j),LevelTexture
 	Next
 	
