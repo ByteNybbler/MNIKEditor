@@ -3451,7 +3451,7 @@ Function EditorLocalControls()
 				LightRed=InputInt("Enter LightRed: ")
 			Else
 				LightRed=LightRed+ChangeSpeed
-				;If lightred=256 Then lightred=0
+				;If lightred>=256 Then lightred=lightred-256
 			EndIf
 		EndIf
 		If rightmouse=True Or MouseScroll<0
