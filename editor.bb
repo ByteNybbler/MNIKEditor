@@ -4375,7 +4375,7 @@ Function SetCurrentGrabbedObject(i)
 	Else
 		ShowEntity CurrentGrabbedObjectMarker
 		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
-		NofWopAdjusters=0
+		;NofWopAdjusters=0
 	EndIf
 
 End Function
@@ -6000,6 +6000,8 @@ Function GrabObject(x#,y#)
 		;SetCurrentGrabbedObject(CachedGrabbedObject)
 		Return
 	EndIf
+	
+	NofWopAdjusters=0
 	
 	Dest=CurrentGrabbedObject
 
