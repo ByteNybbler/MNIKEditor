@@ -50,6 +50,9 @@ Global RectMarginB=0
 Global RectToolbarR=0
 Global RectToolbarG=0
 Global RectToolbarB=0
+Global TextAdjusterR=255
+Global TextAdjusterG=255
+Global TextAdjusterB=255
 Global TextAdjusterHighlightedR=255
 Global TextAdjusterHighlightedG=255
 Global TextAdjusterHighlightedB=0
@@ -57,6 +60,7 @@ Global TextAdjusterHighlightedB=0
 ColorsConfig$="colors.cfg"
 If FileType(ColorsConfig$)=1
 	colorsfile=ReadFile(ColorsConfig$)
+	
 	ReadLine(colorsfile)
 	RectOnR=ReadLine(colorsfile)
 	RectOnG=ReadLine(colorsfile)
@@ -78,11 +82,18 @@ If FileType(ColorsConfig$)=1
 	RectToolbarG=ReadLine(colorsfile)
 	RectToolbarB=ReadLine(colorsfile)
 	ReadLine(colorsfile)
+	TextAdjusterR=ReadLine(colorsfile)
+	TextAdjusterG=ReadLine(colorsfile)
+	TextAdjusterB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
 	TextAdjusterHighlightedR=ReadLine(colorsfile)
 	TextAdjusterHighlightedG=ReadLine(colorsfile)
 	TextAdjusterHighlightedB=ReadLine(colorsfile)
+	
+	CloseFile(colorsfile)
 Else
 	colorsfile=WriteFile(ColorsConfig$)
+	
 	WriteLine(colorsfile,"// RGB for currently-selected mode")
 	WriteLine(colorsfile,RectOnR)
 	WriteLine(colorsfile,RectOnG)
@@ -103,10 +114,16 @@ Else
 	WriteLine(colorsfile,RectToolbarR)
 	WriteLine(colorsfile,RectToolbarG)
 	WriteLine(colorsfile,RectToolbarB)
+	WriteLine(colorsfile,"// RGB for regular object adjusters")
+	WriteLine(colorsfile,TextAdjusterR)
+	WriteLine(colorsfile,TextAdjusterG)
+	WriteLine(colorsfile,TextAdjusterB)
 	WriteLine(colorsfile,"// RGB for highlighted object adjusters")
 	WriteLine(colorsfile,TextAdjusterHighlightedR)
 	WriteLine(colorsfile,TextAdjusterHighlightedG)
 	WriteLine(colorsfile,TextAdjusterHighlightedB)
+	
+	CloseFile(colorsfile)
 EndIf
 		
 ; EDITOR DIALOG DATA
@@ -8828,7 +8845,7 @@ Function DisplayObjectAdjuster(i)
 	If HighlightWopAdjusters And AdjusterAppearsInWop(ObjectAdjuster$(i))
 		Color TextAdjusterHighlightedR,TextAdjusterHighlightedG,TextAdjusterHighlightedB
 	Else
-		Color 255,255,255
+		Color TextAdjusterR,TextAdjusterG,TextAdjusterB
 	EndIf
 	
 	TextY=StartY+15+(i-ObjectAdjusterStart)*15
