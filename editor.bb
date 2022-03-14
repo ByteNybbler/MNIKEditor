@@ -3454,7 +3454,7 @@ Function EditorLocalControls()
 	Text StartX+2+285/2-4*(Len(TilePresetTileName$(CurrentTilePresetTile))+2),StartY+22,"Tile: "+Left$(TilePresetTileName$(CurrentTilePresetTile),Len(TilePresetTileName$(CurrentTilePresetTile))-4)
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
-		If RightMouse=True And RightMouseReleased=True
+		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			CurrentTilePresetCategory=CurrentTilePresetCategory-1
 			If CurrentTilePresetCategory=-1 Then CurrentTilePresetCategory=NofTilePresetCategories-1
 			RightMouseReleased=False
@@ -3486,7 +3486,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
-		If LeftMouse=True And LeftMouseReleased=True
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			CurrentTilePresetCategory=CurrentTilePresetCategory+1
 			If CurrentTilePresetCategory=NofTilePresetCategories Then CurrentTilePresetCategory=0
 			LeftMouseReleased=False
@@ -3521,7 +3521,7 @@ Function EditorLocalControls()
 
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
-		If RightMouse=True And RightMouseReleased=True
+		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			CurrentTilePresetTile=CurrentTilePresetTile-1
 			If CurrentTilePresetTile=-1 Then CurrentTilePresetTile=NofTilePresetTiles-1
 			RightMouseReleased=False
@@ -3534,7 +3534,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
-		If LeftMouse=True And LeftMouseReleased=True
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			CurrentTilePresetTile=CurrentTilePresetTile+1
 			If CurrentTilePresetTile=NofTilePresetTiles Then CurrentTilePresetTile=0
 			LeftMouseReleased=False
