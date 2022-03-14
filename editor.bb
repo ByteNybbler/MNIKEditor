@@ -56,6 +56,9 @@ Global TextAdjusterB=255
 Global TextAdjusterHighlightedR=255
 Global TextAdjusterHighlightedG=255
 Global TextAdjusterHighlightedB=0
+Global TextLevelR=255
+Global TextLevelG=255
+Global TextLevelB=255
 
 ColorsConfig$="colors.cfg"
 If FileType(ColorsConfig$)=1
@@ -81,6 +84,10 @@ If FileType(ColorsConfig$)=1
 	RectToolbarR=ReadLine(colorsfile)
 	RectToolbarG=ReadLine(colorsfile)
 	RectToolbarB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
+	TextLevelR=ReadLine(colorsfile)
+	TextLevelG=ReadLine(colorsfile)
+	TextLevelB=ReadLine(colorsfile)
 	ReadLine(colorsfile)
 	TextAdjusterR=ReadLine(colorsfile)
 	TextAdjusterG=ReadLine(colorsfile)
@@ -114,6 +121,10 @@ Else
 	WriteLine(colorsfile,RectToolbarR)
 	WriteLine(colorsfile,RectToolbarG)
 	WriteLine(colorsfile,RectToolbarB)
+	WriteLine(colorsfile,"// RGB for regular level editor text")
+	WriteLine(colorsfile,TextLevelR)
+	WriteLine(colorsfile,TextLevelG)
+	WriteLine(colorsfile,TextLevelB)
 	WriteLine(colorsfile,"// RGB for regular object adjusters")
 	WriteLine(colorsfile,TextAdjusterR)
 	WriteLine(colorsfile,TextAdjusterG)
@@ -1935,7 +1946,7 @@ Function EditorMainLoop()
 	;Rect 0,520,800,80,True
 	;Rect 0,500,800,100,True
 	
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 
 	If BlockMode=0
 		Text 0+4,520,"   BLOCK"
@@ -1956,7 +1967,7 @@ Function EditorMainLoop()
 		If FillDensity#<1.0
 			Color 255,155,0
 			Text 0,580,">FILL "+FillDensity#+"<"
-			Color 255,255,255
+			Color TextLevelR,TextLevelG,TextLevelB
 		Else
 			Text 0,580,"   >FILL<"
 		EndIf
@@ -1973,7 +1984,7 @@ Function EditorMainLoop()
 	EndIf
 	Text 90,565,"  TEX PREFIX"
 	Text 100,580,TexturePrefix$
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	If ShowObjectPositions=True
 		Text 200,520,"    SHOW"
@@ -2050,7 +2061,7 @@ Function EditorMainLoop()
 	Else
 		Text 600,535," OFF"
 	EndIf
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	Text 600,565,"  XTRUDE"
 	Text 600,580,"  LOGICS"
@@ -2062,7 +2073,7 @@ Function EditorMainLoop()
 		Text 704,520," > CANCEL <"
 		Text 704,535," >AND EXIT<"
 	Else
-		Color 255,255,255
+		Color TextLevelR,TextLevelG,TextLevelB
 		Text 720,520," CANCEL"
 		Text 720,535,"AND EXIT"
 	EndIf
@@ -2072,12 +2083,12 @@ Function EditorMainLoop()
 		Text 696,565," >SAVE LEVEL<"
 		Text 696,580," > AND EXIT <"
 	Else
-		Color 255,255,255
+		Color TextLevelR,TextLevelG,TextLevelB
 		Text 712,565,"SAVE LEVEL"
 		Text 712,580," AND EXIT"
 	EndIf
 
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	If WaterFlow>=0
 		PositionTexture WaterTexture,0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
@@ -2268,7 +2279,7 @@ Function EditorLocalControls()
 				ScaleEntity CursorMesh,BrushSize,1,BrushSize
 				PositionEntity CursorMesh2,x+.5,0,-y-.5
 
-				Color 255,255,255
+				Color TextLevelR,TextLevelG,TextLevelB
 				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
 				
 				If FillMode>0
@@ -2687,7 +2698,7 @@ Function EditorLocalControls()
 	; Change the CurrentTile
 	; *************************************
 	
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	Text 590,5,"TILES"
 		
 	StartX=510
@@ -3000,7 +3011,7 @@ Function EditorLocalControls()
 	
 	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
 	Rect 714,100,81,145,True
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 
 
 	Select LevelWeather
@@ -3229,7 +3240,7 @@ Function EditorLocalControls()
 			Locate 0,0
 			Color 0,0,0
 			Rect 0,0,500,40,True
-			Color 255,255,255
+			Color TextLevelR,TextLevelG,TextLevelB
 			LevelTextureCustomName$=Input$( "Custom Texture Name (e.g. 'customtemplate'):")
 			
 			If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
@@ -3271,7 +3282,7 @@ Function EditorLocalControls()
 			Locate 0,0
 			Color 0,0,0
 			Rect 0,0,500,40,True
-			Color 255,255,255
+			Color TextLevelR,TextLevelG,TextLevelB
 			WaterTextureCustomName$=Input$( "Custom WaterTexture Name (e.g. 'customtemplate'):")
 			
 			If FileType (globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg")<>1 
@@ -3464,7 +3475,7 @@ Function EditorLocalControls()
 	StartY=245
 	Color TileColorR,TileColorG,TileColorB
 	Rect StartX,StartY,285,40,True
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+2,StartY+2,"                                   "
 	Text StartX+2+285/2-4*(Len(TilePresetCategoryName$(CurrentTilePresetCategory))+10),StartY,"Category: "+TilePresetCategoryName$(CurrentTilePresetCategory)
 	Text StartX+2,StartY+22,"                                   "
@@ -3576,7 +3587,7 @@ Function EditorLocalControls()
 	StartY=20
 	Color RectOnR,RectOnG,RectOnB
 	Rect StartX,StartY,80,35,True
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+20,StartY+2,"Width"
 	Text StartX,StartY+15,"<<"
 	Text StartX+80-16,StartY+15,">>"
@@ -3651,7 +3662,7 @@ Function EditorLocalControls()
 	StartY=50
 	Color RectOnR,RectOnG,RectOnB
 	Rect StartX,StartY,80,35,True
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+16,StartY+2,"Height"
 	Text StartX,StartY+15,"<<"
 	Text StartX+80-16,StartY+15,">>"
@@ -3727,13 +3738,13 @@ Function EditorLocalControls()
 	; OBJECTS
 	; *************************************
 	
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	Text 650-7*4,290,"OBJECTS"
 	StartX=510
 	StartY=305
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,185,150
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+92-11*4,StartY,"ADJUSTMENTS"
 	
 	If CurrentGrabbedObject<>-1
@@ -3777,7 +3788,7 @@ Function EditorLocalControls()
 	
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,100,20,True
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	; Placed in code before "More" to eat the click before it hits "More".
 	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
@@ -3825,7 +3836,7 @@ Function EditorLocalControls()
 	StartY=460
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,285,40,True
-	Color 255,255,255
+	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+2,StartY+2,"                                   "
 	Text StartX+2+285/2-4*(Len(ObjectPresetCategoryName$(CurrentObjectPresetCategory))+10),StartY,"Category: "+ObjectPresetCategoryName$(CurrentObjectPresetCategory)
 	Text StartX+2,StartY+22,"                                   "
@@ -4224,6 +4235,7 @@ Function EditorLocalControls()
 				Next
 				CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
 				BuildCurrentObjectModel()
+				ResetSimulatedQuantities()
 			EndIf
 		EndIf
 	EndIf
@@ -4304,7 +4316,7 @@ Function EditorLocalControls()
 					Locate 0,0
 					Color 0,0,0
 					Rect 0,0,500,40,True
-					Color 255,255,255
+					Color TextLevelR,TextLevelG,TextLevelB
 					Print("You have not hit the Update button on the selected object.")
 					Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
 					If Confirm="Y" Or Confirm="y"
