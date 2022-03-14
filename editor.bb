@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/14/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/15/22)"
 
 Global MASTERUSER=True
 
@@ -66,98 +66,8 @@ Global TextMenuButtonR=155
 Global TextMenuButtonG=155
 Global TextMenuButtonB=0
 
-ColorsConfig$="colors.cfg"
-If FileType(ColorsConfig$)=1
-	colorsfile=ReadFile(ColorsConfig$)
-	
-	ReadLine(colorsfile)
-	RectOnR=ReadLine(colorsfile)
-	RectOnG=ReadLine(colorsfile)
-	RectOnB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	RectOffR=ReadLine(colorsfile)
-	RectOffG=ReadLine(colorsfile)
-	RectOffB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	RectGlobalsR=ReadLine(colorsfile)
-	RectGlobalsG=ReadLine(colorsfile)
-	RectGlobalsB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	RectMarginR=ReadLine(colorsfile)
-	RectMarginG=ReadLine(colorsfile)
-	RectMarginB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	RectToolbarR=ReadLine(colorsfile)
-	RectToolbarG=ReadLine(colorsfile)
-	RectToolbarB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	TextLevelR=ReadLine(colorsfile)
-	TextLevelG=ReadLine(colorsfile)
-	TextLevelB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	TextAdjusterR=ReadLine(colorsfile)
-	TextAdjusterG=ReadLine(colorsfile)
-	TextAdjusterB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	TextAdjusterHighlightedR=ReadLine(colorsfile)
-	TextAdjusterHighlightedG=ReadLine(colorsfile)
-	TextAdjusterHighlightedB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	TextMenusR=ReadLine(colorsfile)
-	TextMenusG=ReadLine(colorsfile)
-	TextMenusB=ReadLine(colorsfile)
-	ReadLine(colorsfile)
-	TextMenuButtonR=ReadLine(colorsfile)
-	TextMenuButtonG=ReadLine(colorsfile)
-	TextMenuButtonB=ReadLine(colorsfile)
-	
-	CloseFile(colorsfile)
-Else
-	colorsfile=WriteFile(ColorsConfig$)
-	
-	WriteLine(colorsfile,"// RGB for currently-selected mode")
-	WriteLine(colorsfile,RectOnR)
-	WriteLine(colorsfile,RectOnG)
-	WriteLine(colorsfile,RectOnB)
-	WriteLine(colorsfile,"// RGB for currently-deselected mode")
-	WriteLine(colorsfile,RectOffR)
-	WriteLine(colorsfile,RectOffG)
-	WriteLine(colorsfile,RectOffB)
-	WriteLine(colorsfile,"// RGB for the GLOBALS section")
-	WriteLine(colorsfile,RectGlobalsR)
-	WriteLine(colorsfile,RectGlobalsG)
-	WriteLine(colorsfile,RectGlobalsB)
-	WriteLine(colorsfile,"// RGB for the margins around the TILES and OBJECTS sections")
-	WriteLine(colorsfile,RectMarginR)
-	WriteLine(colorsfile,RectMarginG)
-	WriteLine(colorsfile,RectMarginB)
-	WriteLine(colorsfile,"// RGB for the bottom toolbar")
-	WriteLine(colorsfile,RectToolbarR)
-	WriteLine(colorsfile,RectToolbarG)
-	WriteLine(colorsfile,RectToolbarB)
-	WriteLine(colorsfile,"// RGB for regular level editor text")
-	WriteLine(colorsfile,TextLevelR)
-	WriteLine(colorsfile,TextLevelG)
-	WriteLine(colorsfile,TextLevelB)
-	WriteLine(colorsfile,"// RGB for regular object adjusters")
-	WriteLine(colorsfile,TextAdjusterR)
-	WriteLine(colorsfile,TextAdjusterG)
-	WriteLine(colorsfile,TextAdjusterB)
-	WriteLine(colorsfile,"// RGB for highlighted object adjusters")
-	WriteLine(colorsfile,TextAdjusterHighlightedR)
-	WriteLine(colorsfile,TextAdjusterHighlightedG)
-	WriteLine(colorsfile,TextAdjusterHighlightedB)
-	WriteLine(colorsfile,"// RGB for menu layout text")
-	WriteLine(colorsfile,TextMenusR)
-	WriteLine(colorsfile,TextMenusG)
-	WriteLine(colorsfile,TextMenusB)
-	WriteLine(colorsfile,"// RGB for menu buttons")
-	WriteLine(colorsfile,TextMenuButtonR)
-	WriteLine(colorsfile,TextMenuButtonG)
-	WriteLine(colorsfile,TextMenuButtonB)
-	
-	CloseFile(colorsfile)
-EndIf
+Const ColorsConfig$="colors.cfg"
+
 		
 ; EDITOR DIALOG DATA
 
@@ -1771,6 +1681,10 @@ If testfile<>0 ;FileType(globaldirname$+"\custom\editing\")
 	
 EndIf
 
+
+StartupColors()
+
+
 TweenPeriod=1000/60;85
 TweenTime=MilliSecs()-TweenPeriod
 
@@ -1810,6 +1724,8 @@ Repeat
 			Repeat
 				Delay 200
 			Until HasFocus()
+			
+			ReadColors()
 			
 		EndIf
 	
@@ -2182,6 +2098,121 @@ Function SetBrushSize(NewBrushSize)
 End Function
 
 
+Function ReadColors()
+
+	If FileType(ColorsConfig$)=1
+		colorsfile=ReadFile(ColorsConfig$)
+		ReadColorsWithHandle(colorsfile)
+		CloseFile(colorsfile)
+	EndIf
+
+End Function
+
+
+Function ReadColorsWithHandle(colorsfile)
+
+	If ReadLine(colorsfile)="" Then Return
+	RectOnR=ReadLine(colorsfile)
+	RectOnG=ReadLine(colorsfile)
+	RectOnB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	RectOffR=ReadLine(colorsfile)
+	RectOffG=ReadLine(colorsfile)
+	RectOffB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	RectGlobalsR=ReadLine(colorsfile)
+	RectGlobalsG=ReadLine(colorsfile)
+	RectGlobalsB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	RectMarginR=ReadLine(colorsfile)
+	RectMarginG=ReadLine(colorsfile)
+	RectMarginB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	RectToolbarR=ReadLine(colorsfile)
+	RectToolbarG=ReadLine(colorsfile)
+	RectToolbarB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	TextLevelR=ReadLine(colorsfile)
+	TextLevelG=ReadLine(colorsfile)
+	TextLevelB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	TextAdjusterR=ReadLine(colorsfile)
+	TextAdjusterG=ReadLine(colorsfile)
+	TextAdjusterB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	TextAdjusterHighlightedR=ReadLine(colorsfile)
+	TextAdjusterHighlightedG=ReadLine(colorsfile)
+	TextAdjusterHighlightedB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	TextMenusR=ReadLine(colorsfile)
+	TextMenusG=ReadLine(colorsfile)
+	TextMenusB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	TextMenuButtonR=ReadLine(colorsfile)
+	TextMenuButtonG=ReadLine(colorsfile)
+	TextMenuButtonB=ReadLine(colorsfile)
+
+End Function
+
+
+Function WriteColors()
+	
+	colorsfile=WriteFile(ColorsConfig$)
+	
+	WriteLine(colorsfile,"// RGB for currently-selected mode")
+	WriteLine(colorsfile,RectOnR)
+	WriteLine(colorsfile,RectOnG)
+	WriteLine(colorsfile,RectOnB)
+	WriteLine(colorsfile,"// RGB for currently-deselected mode")
+	WriteLine(colorsfile,RectOffR)
+	WriteLine(colorsfile,RectOffG)
+	WriteLine(colorsfile,RectOffB)
+	WriteLine(colorsfile,"// RGB for the GLOBALS section")
+	WriteLine(colorsfile,RectGlobalsR)
+	WriteLine(colorsfile,RectGlobalsG)
+	WriteLine(colorsfile,RectGlobalsB)
+	WriteLine(colorsfile,"// RGB for the margins around the TILES and OBJECTS sections")
+	WriteLine(colorsfile,RectMarginR)
+	WriteLine(colorsfile,RectMarginG)
+	WriteLine(colorsfile,RectMarginB)
+	WriteLine(colorsfile,"// RGB for the bottom toolbar")
+	WriteLine(colorsfile,RectToolbarR)
+	WriteLine(colorsfile,RectToolbarG)
+	WriteLine(colorsfile,RectToolbarB)
+	WriteLine(colorsfile,"// RGB for regular level editor text")
+	WriteLine(colorsfile,TextLevelR)
+	WriteLine(colorsfile,TextLevelG)
+	WriteLine(colorsfile,TextLevelB)
+	WriteLine(colorsfile,"// RGB for regular object adjusters")
+	WriteLine(colorsfile,TextAdjusterR)
+	WriteLine(colorsfile,TextAdjusterG)
+	WriteLine(colorsfile,TextAdjusterB)
+	WriteLine(colorsfile,"// RGB for highlighted object adjusters")
+	WriteLine(colorsfile,TextAdjusterHighlightedR)
+	WriteLine(colorsfile,TextAdjusterHighlightedG)
+	WriteLine(colorsfile,TextAdjusterHighlightedB)
+	WriteLine(colorsfile,"// RGB for menu layout text")
+	WriteLine(colorsfile,TextMenusR)
+	WriteLine(colorsfile,TextMenusG)
+	WriteLine(colorsfile,TextMenusB)
+	WriteLine(colorsfile,"// RGB for menu buttons")
+	WriteLine(colorsfile,TextMenuButtonR)
+	WriteLine(colorsfile,TextMenuButtonG)
+	WriteLine(colorsfile,TextMenuButtonB)
+	
+	CloseFile(colorsfile)
+
+End Function
+
+
+Function StartupColors()
+
+	ReadColors()
+	WriteColors()
+
+End Function
+
+
 Function KeyPressed(i)
 
 	If Key(i) And KeyReleased(i)
@@ -2247,6 +2278,10 @@ Function EditorGlobalControls()
 			KeyReleased(i)=True
 		EndIf
 	Next
+	
+	;If KeyPressed(25) ; P
+	;	ReadColors()
+	;EndIf
 
 End Function
 
