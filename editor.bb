@@ -49,6 +49,45 @@ Global TextAdjusterHighlightedR=255
 Global TextAdjusterHighlightedG=255
 Global TextAdjusterHighlightedB=0
 
+ColorsConfig$="colors.cfg"
+If FileType(ColorsConfig$)=1
+	colorsfile=ReadFile(ColorsConfig$)
+	ReadLine(colorsfile)
+	RectOnR=ReadLine(colorsfile)
+	RectOnG=ReadLine(colorsfile)
+	RectOnB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
+	RectOffR=ReadLine(colorsfile)
+	RectOffG=ReadLine(colorsfile)
+	RectOffB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
+	RectGlobalsR=ReadLine(colorsfile)
+	RectGlobalsG=ReadLine(colorsfile)
+	RectGlobalsB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
+	TextAdjusterHighlightedR=ReadLine(colorsfile)
+	TextAdjusterHighlightedG=ReadLine(colorsfile)
+	TextAdjusterHighlightedB=ReadLine(colorsfile)
+Else
+	colorsfile=WriteFile(ColorsConfig$)
+	WriteLine(colorsfile,"// RGB for currently-selected mode")
+	WriteLine(colorsfile,RectOnR)
+	WriteLine(colorsfile,RectOnG)
+	WriteLine(colorsfile,RectOnB)
+	WriteLine(colorsfile,"// RGB for currently-deselected mode")
+	WriteLine(colorsfile,RectOffR)
+	WriteLine(colorsfile,RectOffG)
+	WriteLine(colorsfile,RectOffB)
+	WriteLine(colorsfile,"// RGB for the GLOBALS section")
+	WriteLine(colorsfile,RectGlobalsR)
+	WriteLine(colorsfile,RectGlobalsG)
+	WriteLine(colorsfile,RectGlobalsB)
+	WriteLine(colorsfile,"// RGB for highlighted object adjusters")
+	WriteLine(colorsfile,TextAdjusterHighlightedR)
+	WriteLine(colorsfile,TextAdjusterHighlightedG)
+	WriteLine(colorsfile,TextAdjusterHighlightedB)
+EndIf
+
 ;RectOnB=RectOnR
 ;RectOffB=RectOffR
 ;RectGlobalsB=RectGlobalsR
