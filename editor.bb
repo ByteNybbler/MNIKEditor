@@ -3855,7 +3855,7 @@ Function EditorLocalControls()
 	Text StartX+2+285/2-4*(Len(ObjectPresetObjectName$(CurrentObjectPresetObject))+4),StartY+22,"Object: "+Left$(ObjectPresetObjectName$(CurrentObjectPresetObject),Len(ObjectPresetObjectName$(CurrentObjectPresetObject))-4)
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
-		If RightMouse=True And RightMouseReleased=True
+		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory-1
 			If CurrentObjectPresetCategory=-1 Then CurrentObjectPresetCategory=NofObjectPresetCategories-1
@@ -3886,7 +3886,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
-		If LeftMouse=True And LeftMouseReleased=True
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory+1
 			If CurrentObjectPresetCategory=NofObjectPresetCategories Then CurrentObjectPresetCategory=0
@@ -3920,7 +3920,7 @@ Function EditorLocalControls()
 
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
-		If RightMouse=True And RightMouseReleased=True
+		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetObject=CurrentObjectPresetObject-1
 			If CurrentObjectPresetObject=-1 Then CurrentObjectPresetObject=NofObjectPresetObjects-1
@@ -3932,7 +3932,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
-		If LeftMouse=True And LeftMouseReleased=True
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetObject=CurrentObjectPresetObject+1
 			If CurrentObjectPresetObject=NofObjectPresetObjects Then CurrentObjectPresetObject=0
