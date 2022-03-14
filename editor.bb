@@ -65,6 +65,9 @@ Global TextMenusB=0
 Global TextMenuButtonR=155
 Global TextMenuButtonG=155
 Global TextMenuButtonB=0
+Global TextMenuXR=100
+Global TextMenuXG=100
+Global TextMenuXB=0
 
 Const ColorsConfig$="colors.cfg"
 
@@ -2151,6 +2154,10 @@ Function ReadColorsWithHandle(colorsfile)
 	TextMenuButtonR=ReadLine(colorsfile)
 	TextMenuButtonG=ReadLine(colorsfile)
 	TextMenuButtonB=ReadLine(colorsfile)
+	If ReadLine(colorsfile)="" Then Return
+	TextMenuXR=ReadLine(colorsfile)
+	TextMenuXG=ReadLine(colorsfile)
+	TextMenuXB=ReadLine(colorsfile)
 
 End Function
 
@@ -2199,6 +2206,10 @@ Function WriteColors()
 	WriteLine(colorsfile,TextMenuButtonR)
 	WriteLine(colorsfile,TextMenuButtonG)
 	WriteLine(colorsfile,TextMenuButtonB)
+	WriteLine(colorsfile,"// RGB for dim menu elements such as the X's")
+	WriteLine(colorsfile,TextMenuXR)
+	WriteLine(colorsfile,TextMenuXG)
+	WriteLine(colorsfile,TextMenuXB)
 	
 	CloseFile(colorsfile)
 
@@ -15854,9 +15865,9 @@ Function MasterMainLoop()
 	
 		For i=0 To 37
 		
-			AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+			AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 			For j=0 To 4
-				AddLetter(Asc("X")-32,-.97+i*.045,.5-(3+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+				AddLetter(Asc("X")-32,-.97+i*.045,.5-(3+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 			Next
 			
 		
@@ -15874,12 +15885,12 @@ Function MasterMainLoop()
 		If MouseX()>700 And MouseX()<750 And MouseY()>62 And MouseY()<82
 			DisplayText2("-",39.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
-			DisplayText2("-",39.5,3,100,100,0)
+			DisplayText2("-",39.5,3,TextMenuXR,TextMenuXG,TextMenuXB)
 		EndIf 
 		If MouseX()>750 And MouseX()<800 And MouseY()>62 And MouseY()<82
 			DisplayText2("-",42.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
-			DisplayText2("-",42.5,3,100,100,0)
+			DisplayText2("-",42.5,3,TextMenuXR,TextMenuXG,TextMenuXB)
 		EndIf
 		
 		
@@ -15950,12 +15961,12 @@ Function MasterMainLoop()
 		If MouseX()>700 And MouseX()<750 And MouseY()>482 And MouseY()<502
 			DisplayText2("+",39.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
-			DisplayText2("+",39.5,24,100,100,0)
+			DisplayText2("+",39.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
 		EndIf 
 		If MouseX()>750 And MouseX()<800 And MouseY()>482 And MouseY()<502
 			DisplayText2("+",42.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
-			DisplayText2("+",42.5,24,100,100,0)
+			DisplayText2("+",42.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
 		EndIf
 
 		displayText2("-----",39,25,TextMenusR,TextMenusG,TextMenusB)
@@ -16886,9 +16897,9 @@ Function HubMainLoop()
 	If KeyDown(42) Or KeyDown(54) Then adj=10
 		
 	For i=0 To 43
-		AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+		AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		For j=0 To 0
-			AddLetter(Asc("X")-32,-.97+i*.045,.5-(3+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+			AddLetter(Asc("X")-32,-.97+i*.045,.5-(3+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		Next
 	Next
 	
@@ -16984,12 +16995,12 @@ Function HubMainLoop()
 	If MouseX()<82 And MouseY()>202 And MouseY()<222
 		DisplayText2(" -",0.5,10,TextMenusR,TextMenusG,TextMenusB)
 	Else
-		DisplayText2(" -",0.5,10,100,100,0)
+		DisplayText2(" -",0.5,10,TextMenuXR,TextMenuXG,TextMenuXB)
 	EndIf
 	If MouseX()<82 And MouseY()>482 And MouseY()<502
 		DisplayText2(" +",0.5,24,TextMenusR,TextMenusG,TextMenusB)
 	Else
-		DisplayText2(" +",0.5,24,100,100,0)
+		DisplayText2(" +",0.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
 	EndIf
 	;DisplayText2("Adv#:FileName                   :EDIT:REMOVE",0,9,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("----:---------------------------: -  :  -",0,10,TextMenusR,TextMenusG,TextMenusB)
@@ -18144,11 +18155,11 @@ Function DialogMainLoop()
 	For i=0 To 37
 	
 		For j=0 To 6
-			AddLetter(Asc("X")-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+			AddLetter(Asc("X")-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		Next
-		AddLetter(Asc("X")-32,-.97+i*.045,.5-10*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
-		AddLetter(Asc("X")-32,-.97+i*.045,.5-19*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
-		AddLetter(Asc("X")-32,-.97+i*.045,.5-24*.05,1,0,.04,0,0,0,0,0,0,0,0,0,100,100,0)
+		AddLetter(Asc("X")-32,-.97+i*.045,.5-10*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
+		AddLetter(Asc("X")-32,-.97+i*.045,.5-19*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
+		AddLetter(Asc("X")-32,-.97+i*.045,.5-24*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 
 
 
