@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/13/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/14/22)"
 
 Global MASTERUSER=True
 
@@ -556,6 +556,10 @@ Dim ObjectFutureFloat6#(1000),ObjectFutureFloat7#(1000),ObjectFutureFloat8#(1000
 Dim ObjectFutureString1$(1000),ObjectFutureString2$(1000)
 
 Dim ObjectAdjusterString$(1000,30)
+
+Global HighlightWopAdjusters=True
+Global NofWopAdjusters=0
+Dim ObjectAdjusterWop$(30)
 
 Dim ObjectPositionMarker(1000)
 
@@ -1766,6 +1770,10 @@ Function EditorMainLoop()
 	
 	If CameraPanning=False
 		EditorLocalControls()
+	EndIf
+	
+	If KeyPressed(35) ; h
+		HighlightWopAdjusters=Not HighlightWopAdjusters
 	EndIf
 	
 	leveltimer=leveltimer+1
@@ -4356,6 +4364,7 @@ Function SetCurrentGrabbedObject(i)
 	Else
 		ShowEntity CurrentGrabbedObjectMarker
 		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
+		NofWopAdjusters=0
 	EndIf
 
 End Function
@@ -5178,14 +5187,18 @@ Function LoadObjectPreset()
 	NofObjectAdjusters=0
 	ObjectAdjusterStart=0
 	
-	;For i=0 To 30
-	;	If Eof(file)=False
-	;		ObjectAdjuster$(i)=ReadString$(file)
-	;		NofObjectAdjusters=NofObjectAdjusters+1
-	;	Else
-	;		ObjectAdjuster$(i)=""
-	;	EndIf
-	;Next
+	NofWopAdjusters=0
+	
+	For i=0 To 30
+		If Eof(file)=False
+		;	ObjectAdjuster$(i)=ReadString$(file)
+		;	NofObjectAdjusters=NofObjectAdjusters+1
+			ObjectAdjusterWop$(i)=ReadString$(file)
+			NofWopAdjusters=NofWopAdjusters+1
+		;Else
+		;	ObjectAdjuster$(i)=""
+		EndIf
+	Next
 	
 	; Add these adjusters to every object.
 	AddAdjuster("ID")
@@ -6856,6 +6869,20 @@ For i=0 To 14
 Next
 
 Return Result$
+
+End Function
+
+
+
+Function AdjusterAppearsInWop(adjuster$)
+
+	For i=0 To NofWopAdjusters-1
+		If ObjectAdjusterWop$(i)=adjuster$
+			Return True
+		EndIf
+	Next
+	
+	Return False
 
 End Function
 
@@ -8835,6 +8862,12 @@ Function DisplayObjectAdjuster(i)
 	
 	End Select	
 	
+	
+	If HighlightWopAdjusters And AdjusterAppearsInWop(ObjectAdjuster$(i))
+		Color 255,255,0
+	Else
+		Color 255,255,255
+	EndIf
 	
 	TextY=StartY+15+(i-ObjectAdjusterStart)*15
 	If CrossedOut
