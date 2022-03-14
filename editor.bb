@@ -1825,7 +1825,6 @@ Function EditorMainLoop()
 	
 	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
-	ControlLight()
 	If SimulationLevel>=1
 		ControlObjects()
 	EndIf
@@ -3439,18 +3438,24 @@ Function EditorLocalControls()
 		
 	EndIf
 	
+	If Fast
+		ChangeSpeed=10
+	Else
+		ChangeSpeed=1
+	EndIf
+	
 	If mx>712 And my>215 And mx<736 And my<228
 		If leftmouse=True Or MouseScroll>0
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				LightRed=InputInt("Enter LightRed: ")
 			Else
-				LightRed=LightRed+1
-				If lightred=256 Then lightred=0
+				LightRed=LightRed+ChangeSpeed
+				;If lightred=256 Then lightred=0
 			EndIf
 		EndIf
 		If rightmouse=True Or MouseScroll<0
-			LightRed=LightRed-1
-			If lightred=-1 Then lightred=255
+			LightRed=LightRed-ChangeSpeed
+			;If lightred=-1 Then lightred=255
 		EndIf
 	EndIf
 	If mx>712+29 And my>215 And mx<736+29 And my<228
@@ -3458,13 +3463,13 @@ Function EditorLocalControls()
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				LightGreen=InputInt("Enter LightGreen: ")
 			Else
-				LightGreen=LightGreen+1
-				If LightGreen=256 Then LightGreen=0
+				LightGreen=LightGreen+ChangeSpeed
+				;If LightGreen=256 Then LightGreen=0
 			EndIf
 		EndIf
 		If rightmouse=True Or MouseScroll<0
-			LightGreen=LightGreen-1
-			If LightGreen=-1 Then LightGreen=255
+			LightGreen=LightGreen-ChangeSpeed
+			;If LightGreen=-1 Then LightGreen=255
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215 And mx<736+29+29 And my<228
@@ -3472,13 +3477,13 @@ Function EditorLocalControls()
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				LightBlue=InputInt("Enter LightBlue: ")
 			Else
-				LightBlue=LightBlue+1
-				If LightBlue=256 Then LightBlue=0
+				LightBlue=LightBlue+ChangeSpeed
+				;If LightBlue=256 Then LightBlue=0
 			EndIf
 		EndIf
 		If rightmouse=True Or MouseScroll<0
-			LightBlue=LightBlue-1
-			If LightBlue=-1 Then LightBlue=255
+			LightBlue=LightBlue-ChangeSpeed
+			;If LightBlue=-1 Then LightBlue=255
 		EndIf
 	EndIf
 	
@@ -3487,13 +3492,13 @@ Function EditorLocalControls()
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				AmbientRed=InputInt("Enter AmbientRed: ")
 			Else
-				AmbientRed=AmbientRed+1
-				If Ambientred=256 Then ambientred=0
+				AmbientRed=AmbientRed+ChangeSpeed
+				;If Ambientred=256 Then ambientred=0
 			EndIf
 		EndIf
 		If rightmouse=True Or MouseScroll<0
-			AmbientRed=AmbientRed-1
-			If Ambientred=-1 Then ambientred=255
+			AmbientRed=AmbientRed-ChangeSpeed
+			;If Ambientred=-1 Then ambientred=255
 		EndIf
 	EndIf
 	If mx>712+29 And my>215+13 And mx<736+29 And my<228+13
@@ -3501,13 +3506,13 @@ Function EditorLocalControls()
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				AmbientGreen=InputInt("Enter AmbientGreen: ")
 			Else
-				AmbientGreen=AmbientGreen+1
-				If AmbientGreen=256 Then AmbientGreen=0
+				AmbientGreen=AmbientGreen+ChangeSpeed
+				;If AmbientGreen=256 Then AmbientGreen=0
 			EndIf
 		EndIf
 		If rightmouse=True Or MouseScroll<0
-			AmbientGreen=AmbientGreen-1
-			If AmbientGreen=-1 Then AmbientGreen=255
+			AmbientGreen=AmbientGreen-ChangeSpeed
+			;If AmbientGreen=-1 Then AmbientGreen=255
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215+13 And mx<736+29+29 And my<228+13
@@ -3515,13 +3520,13 @@ Function EditorLocalControls()
 			If KeyDown(29) Or KeyDown(157) ; ctrl
 				AmbientBlue=InputInt("Enter AmbientBlue: ")
 			Else
-				AmbientBlue=AmbientBlue+1
-				If AmbientBlue=256 Then AmbientBlue=0
+				AmbientBlue=AmbientBlue+ChangeSpeed
+				;If AmbientBlue=256 Then AmbientBlue=0
 			EndIf
 		EndIf
 		If rightmouse=True Or MouseScroll<0
-			AmbientBlue=AmbientBlue-1
-			If AmbientBlue=-1 Then AmbientBlue=255
+			AmbientBlue=AmbientBlue-ChangeSpeed
+			;If AmbientBlue=-1 Then AmbientBlue=255
 		EndIf
 	EndIf
 
@@ -4234,16 +4239,19 @@ Function EditorLocalControls()
 			ElseIf NewValue<0
 				NewValue=SimulationLevelMax
 			EndIf
-			DoReset=NewValue<>SimulationLevel
+			WasChanged=NewValue<>SimulationLevel
 			SimulationLevel=NewValue
-			If DoReset
+			If WasChanged
 				; move objects back to their default positions
 				ResetSimulatedQuantities()
 				For i=0 To NofObjects-1
 					SimulateObjectPosition(i)
 					SimulateObjectRotation(i)
 					SimulateObjectScale(i)
+					
+					UpdateObjectVisibility(i)
 				Next
+				ControlLight()
 			EndIf
 			
 ;			If LeftMouse=True And LeftMouseReleased=True
@@ -5820,6 +5828,21 @@ Function CalculateEffectiveID(Dest)
 End Function
 
 
+Function ShouldBeInvisibleInGame(Dest)
+
+	If ObjectModelName$(Dest)="!None" Or ObjectModelName$(Dest)="!FloingOrb"
+		Return True
+	ElseIf ObjectModelName$(Dest)="!Button" And (ObjectSubType(Dest)=11 Or ObjectSubType(Dest)>=32 Or ObjectSubType(Dest)=15) ; NPC move, invisible buttons, general command
+		Return True
+	ElseIf ObjectModelName$(Dest)="!IceBlock" And ObjectData(Dest,3)<>0 And ObjectData(Dest,3)<>1
+		Return True
+	Else
+		Return False
+	EndIf
+	
+End Function
+
+
 Function UpdateObjectVisibility(Dest)
 
 	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest)) ;Or Dest=CurrentGrabbedObject
@@ -5833,14 +5856,18 @@ Function UpdateObjectVisibility(Dest)
 			HideEntity ObjectAccEntity(Dest)
 		EndIf
 	Else
-		If ObjectEntity(Dest)>0
-			ShowEntity ObjectEntity(Dest)
-		EndIf
-		If ObjectHatEntity(Dest)>0
-			ShowEntity ObjectHatEntity(Dest)
-		EndIf
-		If ObjectAccEntity(Dest)>0
-			ShowEntity ObjectAccEntity(Dest)
+		If SimulationLevel>=2 And ShouldBeInvisibleInGame(Dest)
+			HideEntity ObjectEntity(Dest)
+		Else
+			If ObjectEntity(Dest)>0
+				ShowEntity ObjectEntity(Dest)
+			EndIf
+			If ObjectHatEntity(Dest)>0
+				ShowEntity ObjectHatEntity(Dest)
+			EndIf
+			If ObjectAccEntity(Dest)>0
+				ShowEntity ObjectAccEntity(Dest)
+			EndIf
 		EndIf
 	EndIf
 
