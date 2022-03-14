@@ -108,13 +108,6 @@ Else
 	WriteLine(colorsfile,TextAdjusterHighlightedG)
 	WriteLine(colorsfile,TextAdjusterHighlightedB)
 EndIf
-
-;RectOnB=RectOnR
-;RectOffB=RectOffR
-;RectGlobalsB=RectGlobalsR
-;RectOnR=0
-;RectOffR=0
-;RectGlobalsR=0
 		
 ; EDITOR DIALOG DATA
 
@@ -1921,8 +1914,9 @@ Function EditorMainLoop()
 	Text StartX+100,StartY+200," WTurb:"+CurrentWaterTileTurbulence
 	If CurrentWaterTileTurbulenceUse=False Text StartX+100,StartY+200,"------------"
 
-	Color RectToolbarR,RectToolbarG,RectToolbarB
-	Rect 0,520,800,80,True
+	;Color RectToolbarR,RectToolbarG,RectToolbarB
+	;Rect 0,520,800,80,True
+	;Rect 0,500,800,100,True
 	
 	Color 255,255,255
 
@@ -2236,6 +2230,10 @@ Function EditorLocalControls()
 	If ShiftDown() Then Fast=True
 	
 	
+	Color RectToolbarR,RectToolbarG,RectToolbarB
+	;Rect 0,500,500,12,True
+	Rect 0,500,800,100,True
+	
 	; *************************************
 	; Placing Tiles and Objects on the Editor Field
 	; *************************************
@@ -2252,8 +2250,7 @@ Function EditorLocalControls()
 				PositionEntity CursorMesh,x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
 				ScaleEntity CursorMesh,BrushSize,1,BrushSize
 				PositionEntity CursorMesh2,x+.5,0,-y-.5
-				Color RectToolbarR,RectToolbarG,RectToolbarB
-				Rect 0,500,500,12,True
+
 				Color 255,255,255
 				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
 				
