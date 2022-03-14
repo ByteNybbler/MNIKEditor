@@ -669,6 +669,7 @@ Global IDFilterAllow=-1
 Global TexturePrefix$=""
 
 Global SimulationLevel=1
+Const SimulationLevelMax=3
 
 Dim BrushObjectModelName$(1000)
 Dim BrushObjectTextureName$(1000)
@@ -785,8 +786,8 @@ Else
 EndIf
 SetBuffer BackBuffer()
 
+Global Light=CreateLight()
 AmbientLight 155,155,155
-Light=CreateLight()
 RotateEntity Light,80,15,0
 
 Global Camera1,Camera2, camera3, camera4, camera
@@ -1824,7 +1825,8 @@ Function EditorMainLoop()
 	
 	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
-	If SimulationLevel>0
+	ControlLight()
+	If SimulationLevel>=1
 		ControlObjects()
 	EndIf
 	ControlParticles()
@@ -4227,10 +4229,10 @@ Function EditorLocalControls()
 		; simulation level
 		If my>565 And my<595
 			NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, 150)
-			If NewValue>2
+			If NewValue>SimulationLevelMax
 				NewValue=0
 			ElseIf NewValue<0
-				NewValue=2
+				NewValue=SimulationLevelMax
 			EndIf
 			DoReset=NewValue<>SimulationLevel
 			SimulationLevel=NewValue
@@ -21324,6 +21326,21 @@ End Function
 Function ControlRetroCoily(i)
 
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
+
+End Function
+
+
+Function ControlLight()
+	
+	If SimulationLevel>=3
+		LightColor Light,LightRed,LightGreen,LightBlue
+		AmbientLight AmbientRed,AmbientGreen,AmbientBlue
+		RotateEntity Light,35,-35,0
+	Else
+		LightColor Light,255,255,255
+		AmbientLight 155,155,155
+		RotateEntity Light,80,15,0
+	EndIf
 
 End Function
 
