@@ -21162,6 +21162,13 @@ Function ControlSuctube(i)
 End Function
 
 
+Function ControlRetroCoily(i)
+
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
+
+End Function
+
+
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
@@ -21312,6 +21319,8 @@ Function ControlObjects()
 				ControlBabyBoomer(i)
 			Case 410
 				ControlFlipBridge(i)
+			Case 420
+				ControlRetroCoily(i)
 			Case 422,423,430,431
 				ControlRetroZbotUfo(i)
 			Case 424
