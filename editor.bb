@@ -4235,7 +4235,7 @@ Function EditorLocalControls()
 				Next
 				CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
 				BuildCurrentObjectModel()
-				ResetSimulatedQuantities()
+				SomeObjectWasChanged()
 			EndIf
 		EndIf
 	EndIf
