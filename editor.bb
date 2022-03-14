@@ -45,6 +45,10 @@ Global RectGlobalsR=50
 Global RectGlobalsG=0
 Global RectGlobalsB=0
 
+Global TextAdjusterHighlightedR=255
+Global TextAdjusterHighlightedG=255
+Global TextAdjusterHighlightedB=0
+
 ;RectOnB=RectOnR
 ;RectOffB=RectOffR
 ;RectGlobalsB=RectGlobalsR
@@ -8765,8 +8769,7 @@ Function DisplayObjectAdjuster(i)
 	
 	
 	If HighlightWopAdjusters And AdjusterAppearsInWop(ObjectAdjuster$(i))
-		Color 255,255,0
-		;Color 0,255,255
+		Color TextAdjusterHighlightedR,TextAdjusterHighlightedG,TextAdjusterHighlightedB
 	Else
 		Color 255,255,255
 	EndIf
