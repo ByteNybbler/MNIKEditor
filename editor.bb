@@ -5185,7 +5185,9 @@ Function LoadObjectPreset()
 	
 	
 	NofObjectAdjusters=0
-	ObjectAdjusterStart=0
+	
+	; this line can be commented out now that all object adjusters are the same
+	;ObjectAdjusterStart=0
 	
 	NofWopAdjusters=0
 	
