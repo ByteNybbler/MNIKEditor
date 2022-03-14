@@ -1951,11 +1951,11 @@ Function EditorMainLoop()
 	If IDFilterEnabled
 		Color 255,155,0
 	EndIf
-	Text 600,520,"ID FILTER:"
+	Text 600,520," ID FILTER"
 	If IDFilterEnabled
-		Text 600,535,IDFilterAllow
+		Text 600,535," "+IDFilterAllow
 	Else
-		Text 600,535,"OFF"
+		Text 600,535," OFF"
 	EndIf
 	Color 255,255,255
 	
@@ -8867,6 +8867,7 @@ Function DisplayObjectAdjuster(i)
 	
 	If HighlightWopAdjusters And AdjusterAppearsInWop(ObjectAdjuster$(i))
 		Color 255,255,0
+		;Color 0,255,255
 	Else
 		Color 255,255,255
 	EndIf
