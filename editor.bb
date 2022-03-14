@@ -33,6 +33,17 @@ Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						
 Global EditorModeBeforeMasterEdit=0
 						
+; COLORS
+
+Const RectOnR=255
+Const RectOnG=0
+Const RectOnB=0
+Const RectOffR=100
+Const RectOffG=0
+Const RectOffB=0
+Const RectGlobalsR=50
+Const RectGlobalsG=0
+Const RectGlobalsB=0
 						
 ; EDITOR DIALOG DATA
 
@@ -2133,13 +2144,21 @@ Function EditorLocalControls()
 	If EditorMode=0
 		CameraClsColor camera2,255,0,0
 		CameraClsColor camera4,100,0,0
-		TileColor=255
-		ObjectColor=100
+		TileColorR=RectOnR
+		TileColorG=RectOnG
+		TileColorB=RectOnB
+		ObjectColorR=RectOffR
+		ObjectColorG=RectOffG
+		ObjectColorB=RectOffB
 	Else If EditorMode=3
 		CameraClsColor camera2,100,0,0
 		CameraClsColor camera4,255,0,0
-		TileColor=100
-		ObjectColor=255
+		TileColorR=RectOffR
+		TileColorG=RectOffG
+		TileColorB=RectOffB
+		ObjectColorR=RectOnR
+		ObjectColorG=RectOnG
+		ObjectColorB=RectOnB
 	EndIf
 	
 	Fast=False
@@ -2594,7 +2613,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		RotationSpeed=4
 		If KeyDown(23) ; I, formerly A (30)
@@ -2614,13 +2633,13 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; Texture
 			CameraProjMode Camera1,0
 			CameraProjMode Camera3,1
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 			SetEditorMode(1)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -2629,7 +2648,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 	EndIf
 		
@@ -2644,13 +2663,13 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; SideTexture
 			CameraProjMode Camera1,0
 			CameraProjMode Camera3,1
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 			SetEditorMode(2)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -2659,7 +2678,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 	EndIf
 	
@@ -2672,7 +2691,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			CurrentWaterTileTexture=(CurrentWaterTileTexture+1) Mod 8
@@ -2681,7 +2700,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -2689,7 +2708,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
 	EndIf
@@ -2738,7 +2757,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -2780,7 +2799,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileCOlor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -2815,7 +2834,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			Select CurrentTileLogic
@@ -2839,7 +2858,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -2847,7 +2866,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileCOlor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -2888,7 +2907,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -2901,7 +2920,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -2909,7 +2928,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,Tilecolor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
 	EndIf
@@ -2922,7 +2941,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -2930,7 +2949,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
 	EndIf
@@ -2972,7 +2991,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3011,7 +3030,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3021,7 +3040,7 @@ Function EditorLocalControls()
 	; Textures and global settings
 	; *************************************
 	
-	Color 50,0,0
+	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
 	Rect 714,100,81,145,True
 	Color 255,255,255
 
@@ -3485,7 +3504,7 @@ Function EditorLocalControls()
 		
 	StartX=510
 	StartY=245
-	Color TileColor,0,0
+	Color TileColorR,TileColorG,TileColorB
 	Rect StartX,StartY,285,40,True
 	Color 255,255,255
 	Text StartX+2,StartY+2,"                                   "
@@ -3521,7 +3540,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -3554,7 +3573,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -3569,7 +3588,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -3582,7 +3601,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
 			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColor,0,0
+			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -3597,7 +3616,7 @@ Function EditorLocalControls()
 	Text 719,5," GLOBALS"
 	StartX=715
 	StartY=20
-	Color 255,0,0
+	Color RectOnR,RectOnG,RectOnB
 	Rect StartX,StartY,80,35,True
 	Color 255,255,255
 	Text StartX+20,StartY+2,"Width"
@@ -3754,7 +3773,7 @@ Function EditorLocalControls()
 	Text 650-7*4,290,"OBJECTS"
 	StartX=510
 	StartY=305
-	Color ObjectColor,0,0
+	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,185,150
 	Color 255,255,255
 	Text StartX+92-11*4,StartY,"ADJUSTMENTS"
@@ -3798,7 +3817,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	Color ObjectColor,0,0
+	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,100,20,True
 	Color 255,255,255
 	
@@ -3846,7 +3865,7 @@ Function EditorLocalControls()
 	
 	StartX=510
 	StartY=460
-	Color ObjectColor,0,0
+	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,285,40,True
 	Color 255,255,255
 	Text StartX+2,StartY+2,"                                   "
