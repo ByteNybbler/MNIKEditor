@@ -50,15 +50,21 @@ Global RectMarginB=0
 Global RectToolbarR=0
 Global RectToolbarG=0
 Global RectToolbarB=0
+Global TextLevelR=255
+Global TextLevelG=255
+Global TextLevelB=255
 Global TextAdjusterR=255
 Global TextAdjusterG=255
 Global TextAdjusterB=255
 Global TextAdjusterHighlightedR=255
 Global TextAdjusterHighlightedG=255
 Global TextAdjusterHighlightedB=0
-Global TextLevelR=255
-Global TextLevelG=255
-Global TextLevelB=255
+Global TextMenusR=255
+Global TextMenusG=255
+Global TextMenusB=0
+Global TextMenuButtonR=155
+Global TextMenuButtonG=155
+Global TextMenuButtonB=0
 
 ColorsConfig$="colors.cfg"
 If FileType(ColorsConfig$)=1
@@ -96,6 +102,14 @@ If FileType(ColorsConfig$)=1
 	TextAdjusterHighlightedR=ReadLine(colorsfile)
 	TextAdjusterHighlightedG=ReadLine(colorsfile)
 	TextAdjusterHighlightedB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
+	TextMenusR=ReadLine(colorsfile)
+	TextMenusG=ReadLine(colorsfile)
+	TextMenusB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
+	TextMenuButtonR=ReadLine(colorsfile)
+	TextMenuButtonG=ReadLine(colorsfile)
+	TextMenuButtonB=ReadLine(colorsfile)
 	
 	CloseFile(colorsfile)
 Else
@@ -133,6 +147,14 @@ Else
 	WriteLine(colorsfile,TextAdjusterHighlightedR)
 	WriteLine(colorsfile,TextAdjusterHighlightedG)
 	WriteLine(colorsfile,TextAdjusterHighlightedB)
+	WriteLine(colorsfile,"// RGB for menu layout text")
+	WriteLine(colorsfile,TextMenusR)
+	WriteLine(colorsfile,TextMenusG)
+	WriteLine(colorsfile,TextMenusB)
+	WriteLine(colorsfile,"// RGB for menu buttons")
+	WriteLine(colorsfile,TextMenuButtonR)
+	WriteLine(colorsfile,TextMenuButtonG)
+	WriteLine(colorsfile,TextMenuButtonB)
 	
 	CloseFile(colorsfile)
 EndIf
@@ -14868,16 +14890,16 @@ Function UserSelectScreen()
 	EndIf
 	
 	DisplayText2("Editor Profile Name Selector",0,0,255,255,255)
-	DisplayText2("-------------------------------------------",0,1,255,255,0)
+	DisplayText2("-------------------------------------------",0,1,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("Select your Editor Profile Name. This name",0,2,155,155,155)
 	DisplayText2("is attached to all levels you create. You",0,3,155,155,155)
 	DisplayText2("should use the same name as your Wonderland",0,4,155,155,155)
 	DisplayText2("Forum login, so other players can identify",0,5,155,155,155)
 	DisplayText2("your levels easily.",0,6,155,155,155)
 	 
-	DisplayText2("-------------------------------------------",0,7,255,255,0)
+	DisplayText2("-------------------------------------------",0,7,TextMenusR,TextMenusG,TextMenusB)
 	
-	DisplayText2("Enter New Profile Name (use Keyboard):",0,10,255,255,0)
+	DisplayText2("Enter New Profile Name (use Keyboard):",0,10,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(EditorUserNameEntered$,0,11,255,255,255)
 	If leveltimer Mod 100 <50
 		DisplayText2(":",Len(EditorUserNameEntered$),11,255,255,255)
@@ -14885,7 +14907,7 @@ Function UserSelectScreen()
 	
 	
 	If NofEditorUserNames>0
-		DisplayText2("Or Select Existing Profile (use Mouse):",0,14,255,255,0)
+		DisplayText2("Or Select Existing Profile (use Mouse):",0,14,TextMenusR,TextMenusG,TextMenusB)
 		For i=0 To NofEditorUserNames-1
 			If i=EditorUserNameSelected
 				DisplayText2(EditorUserNamesListed$(i),5,15+i,255,255,255)
@@ -14898,7 +14920,7 @@ Function UserSelectScreen()
 	
 	
 	
-;	DisplayText2("---CANCEL---",16.5,27,255,255,0)
+;	DisplayText2("---CANCEL---",16.5,27,TextMenusR,TextMenusG,TextMenusB)
 	
 	; Entering New Name
 	let=GetKey()
@@ -14922,11 +14944,11 @@ Function UserSelectScreen()
 		; Enter
 		
 		If EditorUserNameEntered$=""
-			DisplayText2("INVALID PROFILE NAME - Empty Name!",0,12,255,255,0)
+			DisplayText2("INVALID PROFILE NAME - Empty Name!",0,12,TextMenusR,TextMenusG,TextMenusB)
 		Else If FileType(GlobalDirName$+"\Editor Profiles\"+EditorUserNameEntered$)=2
-			DisplayText2("INVALID PROFILE NAME - Already Exists!",0,12,255,255,0)
+			DisplayText2("INVALID PROFILE NAME - Already Exists!",0,12,TextMenusR,TextMenusG,TextMenusB)
 		Else
-			DisplayText2("SAVING PROFILE NAME - Please Wait!",0,12,255,255,0)
+			DisplayText2("SAVING PROFILE NAME - Please Wait!",0,12,TextMenusR,TextMenusG,TextMenusB)
 			CreateDir GlobalDirName$+"\custom\Editing\Profiles\"+EditorUserNameEntered$
 
 			EditorUserName$=EditorUserNameEntered$			
@@ -14946,8 +14968,8 @@ Function UserSelectScreen()
 			WriteString file,EditorUserName$
 			CloseFile file
 			StartAdventureSelectScreen()
-			DisplayText2("---->",0,15+EditorUserNameSelected,255,255,0)
-			DisplayText2("<----",39,15+EditorUserNameSelected,255,255,0)
+			DisplayText2("---->",0,15+EditorUserNameSelected,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2("<----",39,15+EditorUserNameSelected,TextMenusR,TextMenusG,TextMenusB)
 			waitflag=True
 		EndIf
 	EndIf
@@ -15006,9 +15028,9 @@ Function AdventureSelectScreen()
 	EndIf
 
 
-	DisplayText2(Versiontext$,0,0,255,255,0)
-	;DisplayText2("================================",0,1,255,255,0)
-	DisplayText2("            ====================",0,1,255,255,0)
+	DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("            ====================",0,1,TextMenusR,TextMenusG,TextMenusB)
 	If displayfullscreen=True
 		DisplayText2("                                (FullScreen)",0,1,255,255,255)
 	Else
@@ -15017,10 +15039,10 @@ Function AdventureSelectScreen()
 	;hubmode=True
 	If hubmode=True
 		DisplayText2("(   Hubs   )",0,1,255,255,255)
-		DisplayText2("Enter New Hub Filename (e.g. 'TestHub12345')",0,3,255,255,0)
+		DisplayText2("Enter New Hub Filename (e.g. 'TestHub12345')",0,3,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2("(Adventures)",0,1,255,255,255)
-		DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,255,255,0)
+		DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	
 	
@@ -15030,9 +15052,9 @@ Function AdventureSelectScreen()
 	DisplayText2(AdventureNameEntered$,0,4,255,255,255)
 
 	
-	DisplayText2("Or Select Existing To Edit:                 ",0,6,255,255,0)
+	DisplayText2("Or Select Existing To Edit:                 ",0,6,TextMenusR,TextMenusG,TextMenusB)
 	If hubmode=True
-		DisplayText2("===================================================",0,7,255,255,0)
+		DisplayText2("===================================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		If AdventureCurrentArchive=0
 			DisplayText2("Current",28,6,255,255,255)
@@ -15041,32 +15063,32 @@ Function AdventureSelectScreen()
 			DisplayText2("Current",28,6,155,155,155)
 			DisplayText2("Archive",37,6,255,255,255)
 		EndIf
-		DisplayText2("/",35.5,5.9,255,255,0)
-		DisplayText2("============================================",0,7,255,255,0)
+		DisplayText2("/",35.5,5.9,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	If NofAdventureFileNames>19
 		For i=0 To 18
-			displaytext2(":",2,8+i,255,255,0)
-			displaytext2(":",41,8+i,255,255,0)
+			displaytext2(":",2,8+i,TextMenusR,TextMenusG,TextMenusB)
+			displaytext2(":",41,8+i,TextMenusR,TextMenusG,TextMenusB)
 		Next
-		DisplayText2("--",0,8,255,255,0)
-		DisplayText2("Pg",0,9,255,255,0)
-		DisplayText2("Up",0,10,255,255,0)
-		DisplayText2("--",0,11,255,255,0)
-		DisplayText2("--",0,23,255,255,0)
-		DisplayText2("Pg",0,24,255,255,0)
-		DisplayText2("Dn",0,25,255,255,0)
-		DisplayText2("--",0,26,255,255,0)
+		DisplayText2("--",0,8,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",0,9,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Up",0,10,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",0,11,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",0,23,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",0,24,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Dn",0,25,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",0,26,TextMenusR,TextMenusG,TextMenusB)
 		
-		DisplayText2("--",42,8,255,255,0)
-		DisplayText2("Pg",42,9,255,255,0)
-		DisplayText2("Up",42,10,255,255,0)
-		DisplayText2("--",42,11,255,255,0)
+		DisplayText2("--",42,8,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",42,9,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Up",42,10,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",42,11,TextMenusR,TextMenusG,TextMenusB)
 		
-		DisplayText2("--",42,23,255,255,0)
-		DisplayText2("Pg",42,24,255,255,0)
-		DisplayText2("Dn",42,25,255,255,0)
-		DisplayText2("--",42,26,255,255,0)
+		DisplayText2("--",42,23,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",42,24,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Dn",42,25,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",42,26,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 
 	If AdventureNameSelected>=AdventureFileNamesListedStart+NofAdventureFileNames
@@ -15084,10 +15106,10 @@ Function AdventureSelectScreen()
 	Next
 
 
-	DisplayText2("============================================",0,27,255,255,0)
-	DisplayText2("User:",0,28,255,255,0)
+	DisplayText2("============================================",0,27,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("User:",0,28,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(EditorUserName$,6,28,255,255,255)
-	DisplayText2("(CHANGE)",36,28,255,255,0)
+	DisplayText2("(CHANGE)",36,28,TextMenusR,TextMenusG,TextMenusB)
 	
 	
 	; Entering New Name
@@ -15112,11 +15134,11 @@ Function AdventureSelectScreen()
 		; Enter
 		If hubmode
 			If AdventureNameEntered$=""
-				DisplayText2(" INVALID HUB NAME - Empty Name!",0,5,255,255,0)
+				DisplayText2(" INVALID HUB NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else If FileType(GlobalDirName$+"\Custom\Editing\Hubs\"+AdventureNameEntered$)=2 
-				DisplayText2(" INVALID HUB NAME - Already Exists!",0,5,255,255,0)
+				DisplayText2(" INVALID HUB NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else
-				DisplayText2("--> STARTING HUB EDITOR - Please Wait!",0,5,255,255,0)
+				DisplayText2("--> STARTING HUB EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
 				CreateDir GlobalDirName$+"\Custom\Editing\Hubs\"+AdventureNameEntered$
 	
 				HubFileName$=AdventureNameEntered$
@@ -15135,13 +15157,13 @@ Function AdventureSelectScreen()
 			EndIf
 		Else
 			If AdventureNameEntered$=""
-				DisplayText2(" INVALID ADVENTURE NAME - Empty Name!",0,5,255,255,0)
+				DisplayText2(" INVALID ADVENTURE NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else If FileType(GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$)=2 
-				DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,255,255,0)
+				DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else If FileType(GlobalDirName$+"\Custom\Editing\Archive\"+AdventureNameEntered$)=2
-				DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,255,255,0)
+				DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else
-				DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,255,255,0)
+				DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
 				CreateDir GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$
 	
 				AdventureFileName$=AdventureNameEntered$
@@ -15271,13 +15293,13 @@ Function AdventureSelectScreen2()
 		Selected=-1
 	EndIf
 
-	DisplayText2(Versiontext$,0,0,255,255,0)
-	DisplayText2("============================================",0,1,255,255,0)
+	DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("============================================",0,1,TextMenusR,TextMenusG,TextMenusB)
 
 	If hubmode
-		DisplayText2("               Hub Selected:",0.5,3,255,255,0)
+		DisplayText2("               Hub Selected:",0.5,3,TextMenusR,TextMenusG,TextMenusB)
 	Else
-		DisplayText2("             Adventure Selected:",0,3,255,255,0)
+		DisplayText2("             Adventure Selected:",0,3,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	
 	AdventureFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
@@ -15291,8 +15313,8 @@ Function AdventureSelectScreen2()
 	EndIf
 	
 		
-	DisplayText2("               Choose Option:",0,6,255,255,0)
-	DisplayText2("============================================",0,7,255,255,0)
+	DisplayText2("               Choose Option:",0,6,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 
 	If AdventureCurrentArchive=0
 
@@ -15416,23 +15438,23 @@ Function AdventureSelectScreen3()
 	EndIf
 
 
-	DisplayText2(Versiontext$,0,0,255,255,0)
-	DisplayText2("============================================",0,1,255,255,0)
+	DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("============================================",0,1,TextMenusR,TextMenusG,TextMenusB)
 
 
 	If hubmode
-		DisplayText2("               Hub Selected:",0.5,3,255,255,0)
+		DisplayText2("               Hub Selected:",0.5,3,TextMenusR,TextMenusG,TextMenusB)
 	Else
-		DisplayText2("             Adventure Selected:",0,3,255,255,0)
+		DisplayText2("             Adventure Selected:",0,3,TextMenusR,TextMenusG,TextMenusB)
 	EndIf	
 	DisplayText2(AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart),22-Len(AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart))/2,4,255,255,255)
 	
 	If hubmode
-		DisplayText2("         DELETE HUB - ARE YOU SURE?",0,6,255,255,0)
+		DisplayText2("         DELETE HUB - ARE YOU SURE?",0,6,TextMenusR,TextMenusG,TextMenusB)
 	Else
-		DisplayText2("      DELETE ADVENTURE - ARE YOU SURE?",0,6,255,255,0)
+		DisplayText2("      DELETE ADVENTURE - ARE YOU SURE?",0,6,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
-	DisplayText2("============================================",0,7,255,255,0)
+	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	
 	If Selected=0
 		DisplayText2("YES!",20,9,255,255,255)
@@ -15783,12 +15805,12 @@ Function MasterMainLoop()
 	adj=1
 	If KeyDown(42) Or KeyDown(54) Then adj=10
 	
-	DisplayText2("Adventure File Name: ",0,0,255,255,0)
+	DisplayText2("Adventure File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
 	If MouseY()<22 And  MouseX()>430 And MouseX()<700
 		DisplayText2("                        (Adv. Options)",0,0,255,255,255)
 	Else
-		DisplayText2("                        (Adv. Options)",0,0,255,255,0)
+		DisplayText2("                        (Adv. Options)",0,0,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	
 	If MOdified>=0
@@ -15806,19 +15828,19 @@ Function MasterMainLoop()
 		Next
 		
 		For i=0 To 25
-			DisplayText2(":",38,i,255,255,0)
+			DisplayText2(":",38,i,TextMenusR,TextMenusG,TextMenusB)
 		Next
-		DisplayText2("EDIT",39.5,0,255,255,0)
-		DisplayText2("LV DG",39,1,255,255,0)
-		DisplayText2("-----",39,2,255,255,0)
+		DisplayText2("EDIT",39.5,0,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("LV DG",39,1,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("-----",39,2,TextMenusR,TextMenusG,TextMenusB)
 		
 		If MouseX()>700 And MouseX()<750 And MouseY()>62 And MouseY()<82
-			DisplayText2("-",39.5,3,255,255,0)
+			DisplayText2("-",39.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("-",39.5,3,100,100,0)
 		EndIf 
 		If MouseX()>750 And MouseX()<800 And MouseY()>62 And MouseY()<82
-			DisplayText2("-",42.5,3,255,255,0)
+			DisplayText2("-",42.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("-",42.5,3,100,100,0)
 		EndIf
@@ -15889,81 +15911,81 @@ Function MasterMainLoop()
 		Next
 		
 		If MouseX()>700 And MouseX()<750 And MouseY()>482 And MouseY()<502
-			DisplayText2("+",39.5,24,255,255,0)
+			DisplayText2("+",39.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("+",39.5,24,100,100,0)
 		EndIf 
 		If MouseX()>750 And MouseX()<800 And MouseY()>482 And MouseY()<502
-			DisplayText2("+",42.5,24,255,255,0)
+			DisplayText2("+",42.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("+",42.5,24,100,100,0)
 		EndIf
 
-		displayText2("-----",39,25,255,255,0)
+		displayText2("-----",39,25,TextMenusR,TextMenusG,TextMenusB)
 		
 	
-		DisplayText2("--------------------------------------",0,2,255,255,0)
+		DisplayText2("--------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
 	
 		
-		DisplayText2("Adventure Title:",0,3,255,255,0)
+		DisplayText2("Adventure Title:",0,3,TextMenusR,TextMenusG,TextMenusB)
 		
 		DisplayText2(AdventureTitle$,0,4,255,255,255)
-		DisplayText2("--------------------------------------",0,5,255,255,0)
+		DisplayText2("--------------------------------------",0,5,TextMenusR,TextMenusG,TextMenusB)
 		
 
 		
-		DisplayText2("Introductory Text:",0,6,255,255,0)
+		DisplayText2("Introductory Text:",0,6,TextMenusR,TextMenusG,TextMenusB)
 		For i=0 To 4
 			DisplayText2(AdventureTextline$(i),0,7+i,255,255,255)
 		Next
-		DisplayText2("--------------------------------------",0,12,255,255,0)
+		DisplayText2("--------------------------------------",0,12,TextMenusR,TextMenusG,TextMenusB)
 	
-		DisplayText2("Starting Coord. (Lv 01)",0,13,255,255,0)
-		displaytext2("X:      Y:      Dir:",0,14,255,255,0)
+		DisplayText2("Starting Coord. (Lv 01)",0,13,TextMenusR,TextMenusG,TextMenusB)
+		displaytext2("X:      Y:      Dir:",0,14,TextMenusR,TextMenusG,TextMenusB)
 		displaytext2(Str$(adventurestartx),2,14,255,255,255)
 		displaytext2(Str$(adventurestarty),10,14,255,255,255)
 		displaytext2(Str$((adventurestartdir+180) Mod 360),20,14,255,255,255)
 
-		DisplayText2("--------------------------------------",0,15,255,255,0)
+		DisplayText2("--------------------------------------",0,15,TextMenusR,TextMenusG,TextMenusB)
 		
-		DisplayText2("Winning Condition:",0,16,255,255,0)
+		DisplayText2("Winning Condition:",0,16,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(WinningCondition$(AdventureGoal),0,17,255,255,255)
-		DisplayText2("--------------------------------------",0,18,255,255,0)
+		DisplayText2("--------------------------------------",0,18,TextMenusR,TextMenusG,TextMenusB)
 		
-		DisplayText2(":Gate/Keys",25,13,255,255,0)
+		DisplayText2(":Gate/Keys",25,13,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(":Version #",25,14,255,255,255)
 		DisplayText2(Str$(GateKeyVersion),35,14,255,255,255)
 
 		
-		DisplayText2(":Custom Icons",25,16,255,255,0)
-		DisplayText2(":",25,17,255,255,0)
+		DisplayText2(":Custom Icons",25,16,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2(":",25,17,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(Left$(CustomIconName$,12),26,17,255,255,255)
 	; PUT BACK IN FOR ME
 	
 		If MASTERUSER=True
-			DisplayText2("Hub Commands:",0,19,255,255,0)
-			DisplayText2("WonExit Lv    X    Y",0,20,255,255,0)
+			DisplayText2("Hub Commands:",0,19,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2("WonExit Lv    X    Y",0,20,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(Str$(adventureexitwonlevel),10,20,255,255,255)
 			DisplayText2(Str$(adventureexitwonx),15,20,255,255,255)
 			DisplayText2(Str$(adventureexitwony),20,20,255,255,255)
-			DisplayText2("LostExt Lv    X    Y",0,21,255,255,0)
+			DisplayText2("LostExt Lv    X    Y",0,21,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(Str$(adventureexitlostlevel),10,21,255,255,255)
 			DisplayText2(Str$(adventureexitlostx),15,21,255,255,255)
 			DisplayText2(Str$(adventureexitlosty),20,21,255,255,255)
 			For i=0 To 2
-				Displaytext2("WonCMD: Lv    C    D    D    D    D",0,22+i,255,255,0)
+				Displaytext2("WonCMD: Lv    C    D    D    D    D",0,22+i,TextMenusR,TextMenusG,TextMenusB)
 				For j=0 To 5
 					Displaytext2(Str$(adventurewoncommand(i,j)),10+j*5,22+i,255,255,255)
 				Next
 			Next
 		EndIf
-		DisplayText2("--------------------------------------",0,25,255,255,0)
+		DisplayText2("--------------------------------------",0,25,TextMenusR,TextMenusG,TextMenusB)
 	
 		
-		DisplayText2("========== ========== ==========",0.5,26,155,155,0)
-		DisplayText2(":        : :        : :        :",0.5,27,155,155,0)
-		DisplayText2(":        : :        : :        :",0.5,28,155,155,0)
-		DisplayText2("========== ========== ==========",0.5,29,155,155,0)
+		DisplayText2("========== ========== ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2(":        : :        : :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2(":        : :        : :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		
 		If hubmode
 			DisplayText2("                                 ==========",0.5,26,50,50,0)
@@ -15971,10 +15993,10 @@ Function MasterMainLoop()
 			DisplayText2("                                 :        :",0.5,28,50,50,0)
 			DisplayText2("                                 ==========",0.5,29,50,50,0)
 		Else
-			DisplayText2("                                 ==========",0.5,26,155,155,0)
-			DisplayText2("                                 :        :",0.5,27,155,155,0)
-			DisplayText2("                                 :        :",0.5,28,155,155,0)
-			DisplayText2("                                 ==========",0.5,29,155,155,0)
+			DisplayText2("                                 ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+			DisplayText2("                                 :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+			DisplayText2("                                 :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+			DisplayText2("                                 ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		EndIf
 		
 	
@@ -15983,16 +16005,16 @@ Function MasterMainLoop()
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
 	Else
-		DisplayText2("CANCEL",2.5,27,155,155,0)
-		DisplayText2("+EXIT",3,28,155,155,0)
+		DisplayText2("CANCEL",2.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
 	If MouseY()>550 And MouseX()>200 And MouseX()<400		
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
-		DisplayText2(" SAVE",13.5,27,155,155,0)
-		DisplayText2("+EXIT",14,28,155,155,0)
+		DisplayText2(" SAVE",13.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",14,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
 	
@@ -16000,8 +16022,8 @@ Function MasterMainLoop()
 		DisplayText2(" SAVE",24.5,27,255,255,255)
 		DisplayText2("+TEST",25,28,255,255,255)
 	Else
-		DisplayText2(" SAVE",24.5,27,155,155,0)
-		DisplayText2("+TEST",25,28,155,155,0)
+		DisplayText2(" SAVE",24.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+TEST",25,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
 	If hubmode
@@ -16012,8 +16034,8 @@ Function MasterMainLoop()
 			DisplayText2("COMPILE",35,27,255,255,255)
 			DisplayText2("+EXIT",36,28,255,255,255)
 		Else
-			DisplayText2("COMPILE",35,27,155,155,0)
-			DisplayText2("+EXIT",36,28,155,155,0)
+			DisplayText2("COMPILE",35,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+			DisplayText2("+EXIT",36,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		EndIf
 	EndIf
 
@@ -16444,8 +16466,8 @@ Function MasterMainLoop()
 		
 
 		If MouseY()>550 And MouseX()<200	
-			DisplayText2(">       <",1,27,255,255,0)
-			DisplayText2(">       <",1,28,255,255,0)
+			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
 			If hubmode
 				SetEditorMode(11)
@@ -16455,8 +16477,8 @@ Function MasterMainLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>200 And MouseX()<400
-			DisplayText2(">       <",12,27,255,255,0)
-			DisplayText2(">       <",12,28,255,255,0)
+			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
 			SaveMasterFile()
 			If hubmode
@@ -16468,8 +16490,8 @@ Function MasterMainLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>400 And MouseX()<600
-			DisplayText2(">       <",23,27,255,255,0)
-			DisplayText2(">       <",23,28,255,255,0)
+			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			StartTestMode()
 		EndIf
 		If MouseY()>550 And MouseX()>600 And hubmode=False
@@ -16478,8 +16500,8 @@ Function MasterMainLoop()
 			Else
 				PackContent=False
 			EndIf
-			DisplayText2(">       <",34,27,255,255,0)
-			DisplayText2(">       <",34,28,255,255,0)
+			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
 			SaveMasterFile()
 			If CompileAdventure(PackContent)=True
 				StartAdventureSelectScreen()
@@ -16527,22 +16549,22 @@ Function MasterAdvancedLoop()
 	adj=1
 	If KeyDown(42) Or KeyDown(54) Then adj=10
 	
-	DisplayText2("Adventure File Name: ",0,0,255,255,0)
+	DisplayText2("Adventure File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
-	DisplayText2("--------------------------------------------",0,2,255,255,0)
+	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
 	
 	If MouseY()<22 And  MouseX()>540
 		DisplayText2("                              (Main Options)",0,0,255,255,255)
 	Else
-		DisplayText2("                              (Main Options)",0,0,255,255,0)
+		DisplayText2("                              (Main Options)",0,0,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 		
-	DisplayText2("Adventure Title:",0,3,255,255,0)
+	DisplayText2("Adventure Title:",0,3,TextMenusR,TextMenusG,TextMenusB)
 	
 	DisplayText2(AdventureTitle$,0,4,255,255,255)
-	DisplayText2("--------------------------------------------",0,5,255,255,0)
-	DisplayText2("Starting items:",0,6,255,255,0)
-	DisplayText2("Gloves:         GlowGem:         Spy-eye:",0,7,255,255,0)
+	DisplayText2("--------------------------------------------",0,5,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Starting items:",0,6,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Gloves:         GlowGem:         Spy-eye:",0,7,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("Gloves:Yes                      Spy-eye:Yes",0,7,255,255,255)
 	;DisplayText2("               GlowGem:Yes",0.5,7,255,255,255)
 	;If MouseY()<22 And  MouseX()>580
@@ -16564,43 +16586,43 @@ Function MasterAdvancedLoop()
 		DisplayText2("       No",34,7,255,255,255)
 	EndIf
 	
-	DisplayText2("--------------------------------------------",0,8,255,255,0)
-	DisplayText2("Widescreen Spell Range:",0,9,255,255,0)
+	DisplayText2("--------------------------------------------",0,8,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Widescreen Spell Range:",0,9,TextMenusR,TextMenusG,TextMenusB)
 	
 	If WidescreenRange
 		DisplayText2("                       On ",0,9,255,255,255)
 	Else
 		DisplayText2("                       Off ",0,9,255,255,255)
 	EndIf
-	DisplayText2("--------------------------------------------",0,10,255,255,0)
-	Displaytext2("ShardCMD:  #    C    D    D    D    D",0,11,255,255,0)
+	DisplayText2("--------------------------------------------",0,10,TextMenusR,TextMenusG,TextMenusB)
+	Displaytext2("ShardCMD:  #    C    D    D    D    D",0,11,TextMenusR,TextMenusG,TextMenusB)
 	;Displaytext2(Str$(adventurewoncommand(i,j)),12+j*5,11,255,255,255)
 	Displaytext2(SelectedShard,12,11,255,255,255)
 	For j=0 To 4
 		Displaytext2(Str$(CustomShardCMD(SelectedShard,j)),17+j*5,11,255,255,255)
 	Next
-	DisplayText2("--------------------------------------------",0,12,255,255,0)
-	Displaytext2("GlyphCMD:  #    C    D    D    D    D",0,13,255,255,0)
+	DisplayText2("--------------------------------------------",0,12,TextMenusR,TextMenusG,TextMenusB)
+	Displaytext2("GlyphCMD:  #    C    D    D    D    D",0,13,TextMenusR,TextMenusG,TextMenusB)
 	Displaytext2(SelectedGlyph,12,13,255,255,255)
 	For j=0 To 4
 		Displaytext2(Str$(CustomGlyphCMD(SelectedGlyph,j)),17+j*5,13,255,255,255)
 	Next
-	DisplayText2("--------------------------------------------",0,14,255,255,0)
-	DisplayText2("Custom Map Name:",0,15,255,255,0)
+	DisplayText2("--------------------------------------------",0,14,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Custom Map Name:",0,15,TextMenusR,TextMenusG,TextMenusB)
 	If CustomMapName$=""
 		DisplayText2("None",16,15,150,150,150)
 	Else
 		DisplayText2(CustomMapName$,16,15,255,255,255)
 	EndIf
-	DisplayText2("--------------------------------------------",0,16,255,255,0)
+	DisplayText2("--------------------------------------------",0,16,TextMenusR,TextMenusG,TextMenusB)
 		
-	DisplayText2("--------------------------------------------",0,25,255,255,0)
+	DisplayText2("--------------------------------------------",0,25,TextMenusR,TextMenusG,TextMenusB)
 	
 		
-	DisplayText2("========== ========== ==========",0.5,26,155,155,0)
-	DisplayText2(":        : :        : :        :",0.5,27,155,155,0)
-	DisplayText2(":        : :        : :        :",0.5,28,155,155,0)
-	DisplayText2("========== ========== ==========",0.5,29,155,155,0)
+	DisplayText2("========== ========== ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+	DisplayText2(":        : :        : :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+	DisplayText2(":        : :        : :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+	DisplayText2("========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	
 	If hubmode
 		DisplayText2("                                 ==========",0.5,26,50,50,0)
@@ -16608,10 +16630,10 @@ Function MasterAdvancedLoop()
 		DisplayText2("                                 :        :",0.5,28,50,50,0)
 		DisplayText2("                                 ==========",0.5,29,50,50,0)
 	Else
-		DisplayText2("                                 ==========",0.5,26,155,155,0)
-		DisplayText2("                                 :        :",0.5,27,155,155,0)
-		DisplayText2("                                 :        :",0.5,28,155,155,0)
-		DisplayText2("                                 ==========",0.5,29,155,155,0)
+		DisplayText2("                                 ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("                                 :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("                                 :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("                                 ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 		
 	
@@ -16620,16 +16642,16 @@ Function MasterAdvancedLoop()
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
 	Else
-		DisplayText2("CANCEL",2.5,27,155,155,0)
-		DisplayText2("+EXIT",3,28,155,155,0)
+		DisplayText2("CANCEL",2.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
 	If MouseY()>550 And MouseX()>200 And MouseX()<400		
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
-		DisplayText2(" SAVE",13.5,27,155,155,0)
-		DisplayText2("+EXIT",14,28,155,155,0)
+		DisplayText2(" SAVE",13.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",14,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
 	
@@ -16637,8 +16659,8 @@ Function MasterAdvancedLoop()
 		DisplayText2(" SAVE",24.5,27,255,255,255)
 		DisplayText2("+TEST",25,28,255,255,255)
 	Else
-		DisplayText2(" SAVE",24.5,27,155,155,0)
-		DisplayText2("+TEST",25,28,155,155,0)
+		DisplayText2(" SAVE",24.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+TEST",25,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
 	If hubmode
@@ -16649,8 +16671,8 @@ Function MasterAdvancedLoop()
 			DisplayText2("COMPILE",35,27,255,255,255)
 			DisplayText2("+EXIT",36,28,255,255,255)
 		Else
-			DisplayText2("COMPILE",35,27,155,155,0)
-			DisplayText2("+EXIT",36,28,155,155,0)
+			DisplayText2("COMPILE",35,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+			DisplayText2("+EXIT",36,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		EndIf
 	EndIf
 		
@@ -16692,8 +16714,8 @@ Function MasterAdvancedLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()<200	
-			DisplayText2(">       <",1,27,255,255,0)
-			DisplayText2(">       <",1,28,255,255,0)
+			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
 			If hubmode
 				SetEditorMode(11)
@@ -16703,8 +16725,8 @@ Function MasterAdvancedLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>200 And MouseX()<400
-			DisplayText2(">       <",12,27,255,255,0)
-			DisplayText2(">       <",12,28,255,255,0)
+			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
 			SaveMasterFile()
 			If hubmode
@@ -16716,8 +16738,8 @@ Function MasterAdvancedLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>400 And MouseX()<600
-			DisplayText2(">       <",23,27,255,255,0)
-			DisplayText2(">       <",23,28,255,255,0)
+			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			StartTestMode()
 		EndIf
 		
@@ -16727,8 +16749,8 @@ Function MasterAdvancedLoop()
 			Else
 				PackContent=False
 			EndIf
-			DisplayText2(">       <",34,27,255,255,0)
-			DisplayText2(">       <",34,28,255,255,0)
+			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
 			SaveMasterFile()
 			If CompileAdventure(PackContent)=True
 				StartAdventureSelectScreen()
@@ -16819,9 +16841,9 @@ Function HubMainLoop()
 	;	End
 	;EndIf
 	dialogtimer=dialogtimer+1
-	DisplayText2("Hub File Name: ",0,0,255,255,0)
+	DisplayText2("Hub File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(HubFileName$,0,1,255,255,255)
-	DisplayText2("--------------------------------------------",0,2,255,255,0)
+	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
 	
 	adj=1
 	If KeyDown(42) Or KeyDown(54) Then adj=10
@@ -16833,22 +16855,22 @@ Function HubMainLoop()
 		Next
 	Next
 	
-	DisplayText2("Hub Title:",0,3,255,255,0)
+	DisplayText2("Hub Title:",0,3,TextMenusR,TextMenusG,TextMenusB)
 	
 	DisplayText2(HubTitle$,0,4,255,255,255)
-	DisplayText2("--------------------------------------------",0,5,255,255,0)
-	DisplayText2("Hub Description:",0,6,255,255,0)
+	DisplayText2("--------------------------------------------",0,5,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Hub Description:",0,6,TextMenusR,TextMenusG,TextMenusB)
 	
 	DisplayText2(HubDescription$,0,7,255,255,255)
-	DisplayText2("--------------------------------------------",0,8,255,255,0)
-	;DisplayText2("Starting items:",0,6,255,255,0)
-	;DisplayText2("Gloves:         GlowGem:         Spy-eye:",0,7,255,255,0)
+	DisplayText2("--------------------------------------------",0,8,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("Starting items:",0,6,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("Gloves:         GlowGem:         Spy-eye:",0,7,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("Gloves:Yes                      Spy-eye:Yes",0,7,255,255,255)
 	;DisplayText2("               GlowGem:Yes",0.5,7,255,255,255)
 	;If MouseY()<22 And  MouseX()>580
 	
 	For i=9 To 25
-		DisplayText2("    :                         :",0,i,255,255,0)
+		DisplayText2("    :                         :",0,i,TextMenusR,TextMenusG,TextMenusB)
 		
 	Next
 	
@@ -16894,7 +16916,7 @@ Function HubMainLoop()
 	Else
 		HubSelectedAdventureText$=HubSelectedAdventure
 	EndIf
-	DisplayText2("Adv# FileName                  Selected: "+HubSelectedAdventureText,0,9,255,255,0)
+	DisplayText2("Adv# FileName                  Selected: "+HubSelectedAdventureText,0,9,TextMenusR,TextMenusG,TextMenusB)
 	flag2=False
 	If HubSelectedAdventure>=0
 		If HubAdventuresFilenames$(HubSelectedAdventure)<>""
@@ -16923,51 +16945,51 @@ Function HubMainLoop()
 	DisplayText2("                                  REMOVE",0.5,21,100,100,100)
 	EndIf
 	If MouseX()<82 And MouseY()>202 And MouseY()<222
-		DisplayText2(" -",0.5,10,255,255,0)
+		DisplayText2(" -",0.5,10,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2(" -",0.5,10,100,100,0)
 	EndIf
 	If MouseX()<82 And MouseY()>482 And MouseY()<502
-		DisplayText2(" +",0.5,24,255,255,0)
+		DisplayText2(" +",0.5,24,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2(" +",0.5,24,100,100,0)
 	EndIf
-	;DisplayText2("Adv#:FileName                   :EDIT:REMOVE",0,9,255,255,0)
-	;DisplayText2("----:---------------------------: -  :  -",0,10,255,255,0)
-	;DisplayText2("Hub :myHub                      :Edit:Remove",0,11,255,255,0)
-	;DisplayText2("001 :(Click to add)             :Edit:Remove",0,12,255,255,0)
-	;DisplayText2("002 :(Click to add)             :Edit:Remove",0,13,255,255,0)
+	;DisplayText2("Adv#:FileName                   :EDIT:REMOVE",0,9,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("----:---------------------------: -  :  -",0,10,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("Hub :myHub                      :Edit:Remove",0,11,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("001 :(Click to add)             :Edit:Remove",0,12,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("002 :(Click to add)             :Edit:Remove",0,13,TextMenusR,TextMenusG,TextMenusB)
 	
-	;DisplayText2("Adv#:FileName                 :Selected: 001",0,9,255,255,0)
-	DisplayText2("     ------------------------- -------------",0,10,255,255,0)
-	;DisplayText2("Hub :myHub                    : ",0,11,255,255,0)
-	;DisplayText2("001 :(Click to add)           :Edit:Remove",0,12,255,255,0)
-	;DisplayText2("002 :(Click to add)           :Edit:Remove",0,13,255,255,0)
-	;DisplayText2("--------------------------------------------",0,10,255,255,0)
-	DisplayText2("   ",0,24,255,255,0)
-	DisplayText2("---- ------------------------- -------------",0,25,255,255,0)
+	;DisplayText2("Adv#:FileName                 :Selected: 001",0,9,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("     ------------------------- -------------",0,10,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("Hub :myHub                    : ",0,11,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("001 :(Click to add)           :Edit:Remove",0,12,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("002 :(Click to add)           :Edit:Remove",0,13,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("--------------------------------------------",0,10,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("   ",0,24,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("---- ------------------------- -------------",0,25,TextMenusR,TextMenusG,TextMenusB)
 	
 		
-	DisplayText2("========== ========== ========== ==========",0.5,26,155,155,0)
-	DisplayText2(":        : :        : :        : :        :",0.5,27,155,155,0)
-	DisplayText2(":        : :        : :        : :        :",0.5,28,155,155,0)
-	DisplayText2("========== ========== ========== ==========",0.5,29,155,155,0)
+	DisplayText2("========== ========== ========== ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+	DisplayText2(":        : :        : :        : :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+	DisplayText2(":        : :        : :        : :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+	DisplayText2("========== ========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	
 	
 	If MouseY()>550 And MouseX()<200
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
 	Else
-		DisplayText2("CANCEL",2.5,27,155,155,0)
-		DisplayText2("+EXIT",3,28,155,155,0)
+		DisplayText2("CANCEL",2.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
 	If MouseY()>550 And MouseX()>200 And MouseX()<400		
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
-		DisplayText2(" SAVE",13.5,27,155,155,0)
-		DisplayText2("+EXIT",14,28,155,155,0)
+		DisplayText2(" SAVE",13.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",14,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
 	
@@ -16975,8 +16997,8 @@ Function HubMainLoop()
 		DisplayText2("BUILD",25,27,255,255,255)
 		DisplayText2("+EXIT",25,28,255,255,255)
 	Else
-		DisplayText2("BUILD",25,27,155,155,0)
-		DisplayText2("+EXIT",25,28,155,155,0)
+		DisplayText2("BUILD",25,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",25,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
 	
@@ -16984,8 +17006,8 @@ Function HubMainLoop()
 		DisplayText2("COMPILE",35,27,255,255,255)
 		DisplayText2("+EXIT",36,28,255,255,255)
 	Else
-		DisplayText2("COMPILE",35,27,155,155,0)
-		DisplayText2("+EXIT",36,28,155,155,0)
+		DisplayText2("COMPILE",35,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
+		DisplayText2("+EXIT",36,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 		
 	mb=0
@@ -17061,16 +17083,16 @@ Function HubMainLoop()
 			Until MouseDown(1)=0
 		EndIf
 		If MouseY()>550 And MouseX()<200	
-			DisplayText2(">       <",1,27,255,255,0)
-			DisplayText2(">       <",1,28,255,255,0)
+			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
 			hubmode=False
 			StartAdventureSelectScreen()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>200 And MouseX()<400
-			DisplayText2(">       <",12,27,255,255,0)
-			DisplayText2(">       <",12,28,255,255,0)
+			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
 			SaveHubFile()
 			hubmode=False
@@ -17079,8 +17101,8 @@ Function HubMainLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>400 And MouseX()<600
-			DisplayText2(">       <",23,27,255,255,0)
-			DisplayText2(">       <",23,28,255,255,0)
+			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			;WaitFlag=True
 			If BuildHub()=True
 				SaveHubFile()
@@ -17092,8 +17114,8 @@ Function HubMainLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>600
-			DisplayText2(">       <",34,27,255,255,0)
-			DisplayText2(">       <",34,28,255,255,0)
+			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
+			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
 			If KeyDown(46)
 				PackContent=True
 			Else
@@ -17291,12 +17313,12 @@ Function HubAdventureSelectScreen()
 	EndIf
 
 
-	;DisplayText2(Versiontext$,0,0,255,255,0)
-	;DisplayText2("================================",0,1,255,255,0)
+	;DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
 	
-	DisplayText2("Hub File Name: ",0,0,255,255,0)
+	DisplayText2("Hub File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(HubFileName$,0,1,255,255,255)
-	DisplayText2("--------------------------------------------",0,2,255,255,0)
+	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
 	If HubSelectedAdventure<10
 		x=2
 	ElseIf HubSelectedAdventure<100
@@ -17305,12 +17327,12 @@ Function HubAdventureSelectScreen()
 		x=0
 	EndIf
 	If HubSelectedAdventure=0
-		DisplayText2("Hub",41,0,255,255,0)
+		DisplayText2("Hub",41,0,TextMenusR,TextMenusG,TextMenusB)
 	Else
-		DisplayText2("Adventure"+HubSelectedAdventure,32+x,0,255,255,0)
+		DisplayText2("Adventure"+HubSelectedAdventure,32+x,0,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	
-	DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,255,255,0)
+	DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,TextMenusR,TextMenusG,TextMenusB)
 
 	
 	If leveltimer Mod 100 <50
@@ -17319,32 +17341,32 @@ Function HubAdventureSelectScreen()
 	DisplayText2(AdventureNameEntered$,0,4,255,255,255)
 
 	
-	DisplayText2("Or Select Existing To Add:",0,6,255,255,0)
-	DisplayText2("===================================================",0,7,255,255,0)
+	DisplayText2("Or Select Existing To Add:",0,6,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("===================================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 
 	If NofAdventureFileNames>19
 		For i=0 To 18
-			displaytext2(":",2,8+i,255,255,0)
-			displaytext2(":",41,8+i,255,255,0)
+			displaytext2(":",2,8+i,TextMenusR,TextMenusG,TextMenusB)
+			displaytext2(":",41,8+i,TextMenusR,TextMenusG,TextMenusB)
 		Next
-		DisplayText2("--",0,8,255,255,0)
-		DisplayText2("Pg",0,9,255,255,0)
-		DisplayText2("Up",0,10,255,255,0)
-		DisplayText2("--",0,11,255,255,0)
-		DisplayText2("--",0,23,255,255,0)
-		DisplayText2("Pg",0,24,255,255,0)
-		DisplayText2("Dn",0,25,255,255,0)
-		DisplayText2("--",0,26,255,255,0)
+		DisplayText2("--",0,8,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",0,9,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Up",0,10,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",0,11,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",0,23,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",0,24,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Dn",0,25,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",0,26,TextMenusR,TextMenusG,TextMenusB)
 		
-		DisplayText2("--",42,8,255,255,0)
-		DisplayText2("Pg",42,9,255,255,0)
-		DisplayText2("Up",42,10,255,255,0)
-		DisplayText2("--",42,11,255,255,0)
+		DisplayText2("--",42,8,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",42,9,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Up",42,10,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",42,11,TextMenusR,TextMenusG,TextMenusB)
 		
-		DisplayText2("--",42,23,255,255,0)
-		DisplayText2("Pg",42,24,255,255,0)
-		DisplayText2("Dn",42,25,255,255,0)
-		DisplayText2("--",42,26,255,255,0)
+		DisplayText2("--",42,23,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Pg",42,24,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("Dn",42,25,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("--",42,26,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 
 	If AdventureNameSelected>=AdventureFileNamesListedStart+NofAdventureFileNames
@@ -17362,10 +17384,10 @@ Function HubAdventureSelectScreen()
 	Next
 
 
-	DisplayText2("============================================",0,27,255,255,0)
-	DisplayText2("(BACK)",0,28,255,255,0)
+	DisplayText2("============================================",0,27,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("(BACK)",0,28,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2(EditorUserName$,6,28,255,255,255)
-	;DisplayText2("(CHANGE)",36,28,255,255,0)
+	;DisplayText2("(CHANGE)",36,28,TextMenusR,TextMenusG,TextMenusB)
 	
 	
 	; Entering New Name
@@ -17390,13 +17412,13 @@ Function HubAdventureSelectScreen()
 		; Enter
 		
 		If AdventureNameEntered$=""
-			DisplayText2(" INVALID ADVENTURE NAME - Empty Name!",0,5,255,255,0)
+			DisplayText2(" INVALID ADVENTURE NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
 		Else If FileType(GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$)=2 
-			DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,255,255,0)
+			DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
 		Else If FileType(GlobalDirName$+"\Custom\Editing\Archive\"+AdventureNameEntered$)=2
-			DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,255,255,0)
+			DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,TextMenusR,TextMenusG,TextMenusB)
 		Else
-			DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,255,255,0)
+			DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			CreateDir GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$
 
 			AdventureFileName$=AdventureNameEntered$
@@ -17996,8 +18018,8 @@ Function DialogMainLoop()
 	If ShiftDown() Then adj=10
 	
 	
-	DisplayText2("Adventure: "+Left$(AdventureFileName$,20),0,0,255,255,0)
-	DisplayText2("Dialog #"+Str$(CurrentDialog),34,0,255,255,0)
+	DisplayText2("Adventure: "+Left$(AdventureFileName$,20),0,0,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Dialog #"+Str$(CurrentDialog),34,0,TextMenusR,TextMenusG,TextMenusB)
 	
 	
 	
@@ -18024,8 +18046,8 @@ Function DialogMainLoop()
 	
 	
 	If MouseX()>690 And MouseY()>460 And MouseY()<505
-		DisplayText2("CANCEL",38.2,23,255,255,0)
-		DisplayText2("+EXIT",38.7,24,255,255,0)
+		DisplayText2("CANCEL",38.2,23,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("+EXIT",38.7,24,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2("CANCEL",38.2,23,255,255,255)
 		DisplayText2("+EXIT",38.7,24,255,255,255)
@@ -18033,8 +18055,8 @@ Function DialogMainLoop()
 	EndIf
 	
 	If MouseX()>590 And MouseY()>540
-		DisplayText2("SAVE",39.2,27,255,255,0)
-		DisplayText2("+EXIT",38.7,28,255,255,0)
+		DisplayText2("SAVE",39.2,27,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("+EXIT",38.7,28,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2("SAVE",39.2,27,255,255,255)
 		DisplayText2("+EXIT",38.7,28,255,255,255)
@@ -18042,25 +18064,25 @@ Function DialogMainLoop()
 	EndIf
 
 	If ColEffect>-1
-		DisplayText2("_",39+2*(ColEffect Mod 3),3+(ColEffect/3),255,255,0)
+		DisplayText2("_",39+2*(ColEffect Mod 3),3+(ColEffect/3),TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	If TxtEffect>-1
-		DisplayText2("__",39+3*(TxtEffect Mod 2),7+(TxtEffect/2),255,255,0)
+		DisplayText2("__",39+3*(TxtEffect Mod 2),7+(TxtEffect/2),TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 
 
 	
 		
-	DisplayText2("--------------------------------------------",0,1,255,255,0)
+	DisplayText2("--------------------------------------------",0,1,TextMenusR,TextMenusG,TextMenusB)
 
-	;DisplayText2("InterChange #"+Str$(WhichInterChange),20,0,255,255,0)
-	DisplayText2("----- INTERCHANGE #"+Str$(WhichInterChange)+" -----",0,3,255,255,0)
+	;DisplayText2("InterChange #"+Str$(WhichInterChange),20,0,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("----- INTERCHANGE #"+Str$(WhichInterChange)+" -----",0,3,TextMenusR,TextMenusG,TextMenusB)
 	
-	DisplayText2("--------------------------------------",0,11,255,255,0)
+	DisplayText2("--------------------------------------",0,11,TextMenusR,TextMenusG,TextMenusB)
 	
-	DisplayText2("----- ANSWER #"+Str$(WhichAnswer)+" -----",0,13,255,255,0)
+	DisplayText2("----- ANSWER #"+Str$(WhichAnswer)+" -----",0,13,TextMenusR,TextMenusG,TextMenusB)
 	
-	DisplayText2("FNC  Data  CMD  Dat1  Dat2  Dat3  Dat4",0,15,255,255,0)
+	DisplayText2("FNC  Data  CMD  Dat1  Dat2  Dat3  Dat4",0,15,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(Str$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)),0,16,255,255,255)		;**
 	DisplayText2(Str$(InterChangeReplyData(WhichInterChange,WhichAnswer)),5,16,255,255,255)
 	DisplayText2(Str$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)),11,16,255,255,255)
@@ -18068,17 +18090,17 @@ Function DialogMainLoop()
 	DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)),23,16,255,255,255)
 	DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)),29,16,255,255,255)
 	DisplayText2(Str$(InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)),35,16,255,255,255)
-	DisplayText2("--------------------------------------",0,17,255,255,0)
+	DisplayText2("--------------------------------------",0,17,TextMenusR,TextMenusG,TextMenusB)
 
-	DisplayText2("----- ASKABOUT #"+Str$(WhichAskAbout)+" -----",0,22,255,255,0)
-	DisplayText2("Active    InterChange   Repeat",0,24,255,255,0)
+	DisplayText2("----- ASKABOUT #"+Str$(WhichAskAbout)+" -----",0,22,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Active    InterChange   Repeat",0,24,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(Str$(AskAboutActive(WhichAskAbout)),0,25,255,255,255)	
 	
 	DisplayText2(Str$(AskAboutInterChange(WhichAskAbout)),12,25,255,255,255)	
 	DisplayText2(Str$(AskAboutRepeat(WhichAskAbout)),24,25,255,255,255)	
-	DisplayText2("AskAbout Title Line:",0,27,255,255,0)
+	DisplayText2("AskAbout Title Line:",0,27,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AskAboutTopText$,0,28,255,255,255)
-;	DisplayText2("--------------------------------------",0,28,255,255,0)
+;	DisplayText2("--------------------------------------",0,28,TextMenusR,TextMenusG,TextMenusB)
 
 
 	
