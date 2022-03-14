@@ -44,7 +44,12 @@ Global RectOffB=0
 Global RectGlobalsR=50
 Global RectGlobalsG=0
 Global RectGlobalsB=0
-
+Global RectMarginR=0
+Global RectMarginG=0
+Global RectMarginB=0
+Global RectToolbarR=0
+Global RectToolbarG=0
+Global RectToolbarB=0
 Global TextAdjusterHighlightedR=255
 Global TextAdjusterHighlightedG=255
 Global TextAdjusterHighlightedB=0
@@ -65,6 +70,14 @@ If FileType(ColorsConfig$)=1
 	RectGlobalsG=ReadLine(colorsfile)
 	RectGlobalsB=ReadLine(colorsfile)
 	ReadLine(colorsfile)
+	RectMarginR=ReadLine(colorsfile)
+	RectMarginG=ReadLine(colorsfile)
+	RectMarginB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
+	RectToolbarR=ReadLine(colorsfile)
+	RectToolbarG=ReadLine(colorsfile)
+	RectToolbarB=ReadLine(colorsfile)
+	ReadLine(colorsfile)
 	TextAdjusterHighlightedR=ReadLine(colorsfile)
 	TextAdjusterHighlightedG=ReadLine(colorsfile)
 	TextAdjusterHighlightedB=ReadLine(colorsfile)
@@ -82,6 +95,14 @@ Else
 	WriteLine(colorsfile,RectGlobalsR)
 	WriteLine(colorsfile,RectGlobalsG)
 	WriteLine(colorsfile,RectGlobalsB)
+	WriteLine(colorsfile,"// RGB for the margins around the TILES and OBJECTS sections")
+	WriteLine(colorsfile,RectMarginR)
+	WriteLine(colorsfile,RectMarginG)
+	WriteLine(colorsfile,RectMarginB)
+	WriteLine(colorsfile,"// RGB for the bottom toolbar")
+	WriteLine(colorsfile,RectToolbarR)
+	WriteLine(colorsfile,RectToolbarG)
+	WriteLine(colorsfile,RectToolbarB)
 	WriteLine(colorsfile,"// RGB for highlighted object adjusters")
 	WriteLine(colorsfile,TextAdjusterHighlightedR)
 	WriteLine(colorsfile,TextAdjusterHighlightedG)
@@ -1758,9 +1779,6 @@ End
 
 Function UpdateEditor()
 
-	;Color 0,0,0
-	;Rect 0,0,800,600,True
-
 	EditorGlobalControls()
 
 	Select EditorMode
@@ -1818,12 +1836,15 @@ Function EditorMainLoop()
 	
 	; full window size is 800x600, whereas the level camera viewport is 500x500
 	; draw black regions so stray text doesn't linger there
-	;Color 0,0,200
-	Color 0,0,0
+	Color RectMarginR,RectMarginG,RectMarginB
 	Rect 500,0,10,500,True ; between level camera and object/tile editors
 	Rect 510,0,290,20,True ; backdrop for the labels of TILES and GLOBALS
 	Rect 710,20,5,220,True ; between TILES and GLOBALS
-	Rect 795,20,5,580,True ; to the right of GLOBALS
+	Rect 715,85,80,15 ; between level dimensions and the rest of GLOBALS
+	Rect 795,20,5,500,True ; to the right of GLOBALS
+	Rect 510,240,205,5,True ; beneath TILES and to the left of GLOBALS
+	Rect 510,285,285,20,True ; backdrop for the label of OBJECTS
+	Rect 510,455,285,5,True ; between the object adjusters and object categories
 	Rect 695,430,100,5,True ; between object camera and More button
 
 
@@ -1900,7 +1921,7 @@ Function EditorMainLoop()
 	Text StartX+100,StartY+200," WTurb:"+CurrentWaterTileTurbulence
 	If CurrentWaterTileTurbulenceUse=False Text StartX+100,StartY+200,"------------"
 
-	Color 0,0,0
+	Color RectToolbarR,RectToolbarG,RectToolbarB
 	Rect 0,520,800,80,True
 	
 	Color 255,255,255
@@ -2231,7 +2252,7 @@ Function EditorLocalControls()
 				PositionEntity CursorMesh,x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
 				ScaleEntity CursorMesh,BrushSize,1,BrushSize
 				PositionEntity CursorMesh2,x+.5,0,-y-.5
-				Color 0,0,0
+				Color RectToolbarR,RectToolbarG,RectToolbarB
 				Rect 0,500,500,12,True
 				Color 255,255,255
 				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
