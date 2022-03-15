@@ -185,6 +185,7 @@ nofwinningconditions=nofwinningconditions-1
 Global CurrentLevelNumber
 
 Global ShowingError=False
+Global UsingWireFrame=False
 
 ; END EDITOR MASTER DATA
 
@@ -2311,9 +2312,10 @@ Function EditorGlobalControls()
 		EndIf
 	Next
 	
-	;If KeyPressed(25) ; P
-	;	ReadColors()
-	;EndIf
+	If KeyPressed(65)
+		UsingWireFrame=Not UsingWireFrame
+		WireFrame UsingWireFrame
+	EndIf
 
 End Function
 
@@ -10713,6 +10715,27 @@ Function UpdateTile(i,j)
 	UpdateLevelTile(i,j)
 	UpdateWaterTile(i,j)
 	UpdateLogicTile(i,j)
+
+End Function
+
+
+Function UpdateLevelTileTopFace(i,j,faceid,z#)
+
+	VerticesPerFace=(DetailLevel+1)*(DetailLevel+1)
+	StartingVertex=VerticesPerFace*faceid
+
+	CalculateUV(LevelTileTexture(i,j),0,0,LevelTileRotation(i,j),8)
+	VertexCoords LevelSurface(j),i*20+0,i,LevelTileExtrusion(i,j)+LevelTileHeight(i,j),-j
+	VertexTexCoords LevelSurface(j),i*20+0,ChunkTileU,ChunkTileV
+	CalculateUV(LevelTileTexture(i,j),1,0,LevelTileRotation(i,j),8)
+	VertexCoords LevelSurface(j),i*20+1,i+1,LevelTileExtrusion(i,j)+LevelTileHeight(i,j),-j
+	VertexTexCoords LevelSurface(j),i*20+1,ChunkTileU,ChunkTileV
+	CalculateUV(LevelTileTexture(i,j),0,1,LevelTileRotation(i,j),8)
+	VertexCoords LevelSurface(j),i*20+2,i,LevelTileExtrusion(i,j)+LevelTileHeight(i,j),-j-1
+	VertexTexCoords LevelSurface(j),i*20+2,ChunkTileU,ChunkTileV
+	CalculateUV(LevelTileTexture(i,j),1,1,LevelTileRotation(i,j),8)
+	VertexCoords LevelSurface(j),i*20+3,i+1,LevelTileExtrusion(i,j)+LevelTileHeight(i,j),-j-1
+	VertexTexCoords LevelSurface(j),i*20+3,ChunkTileU,ChunkTileV
 
 End Function
 
