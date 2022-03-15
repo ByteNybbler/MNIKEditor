@@ -3255,16 +3255,26 @@ Function EditorLocalControls()
 		EndIf
 		If my>=115 And my<130 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
 			leftmousereleased=False
-			If CtrlDown() Or ShiftDown()
+			If CtrlDown()
 				LevelMusic=InputInt("Enter music ID: ")
 			Else
-				levelmusic=levelmusic+1
+				If Fast
+					Adj=10
+				Else
+					Adj=1
+				EndIf
+				levelmusic=levelmusic+Adj
 				If levelmusic=22 Then levelmusic=-1
 			EndIf
 		EndIf
 		If my>=115 And my<130 And ((rightmouse=True And rightmousereleased=True) Or MouseScroll<0)
 			rightmousereleased=False
-			levelmusic=levelmusic-1
+			If Fast
+				Adj=10
+			Else
+				Adj=1
+			EndIf
+			levelmusic=levelmusic-Adj
 			If levelmusic=-2 Then levelmusic=20
 		EndIf
 
@@ -11956,6 +11966,8 @@ End Function
 
 
 Function ResetLevel()
+
+	LightingWasChanged()
 
 	SetCurrentGrabbedObject(-1)
 
