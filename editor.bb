@@ -766,6 +766,9 @@ Global AmbientRed=100
 Global AmbientGreen=100
 Global AmbientBlue=100
 
+Global SimulatedLightRed,SimulatedLightGreen,SimulatedLightBlue,SimulatedLightRedGoal,SimulatedLightGreenGoal,SimulatedLightBlueGoal,SimulatedLightChangeSpeed
+Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedAmbientRedGoal,SimulatedAmbientGreenGoal,SimulatedAmbientBlueGoal,SimulatedAmbientChangeSpeed
+
 
 
 
@@ -790,7 +793,11 @@ Global Light=CreateLight()
 AmbientLight 155,155,155
 RotateEntity Light,80,15,0
 
-Global Camera1,Camera2, camera3, camera4, camera
+Global Camera1 ; level camera
+Global Camera2
+Global camera3
+Global camera4 ; object camera
+Global camera ; text screen camera
 Global CameraPanning=False
 
 Camera1 = CreateCamera()
@@ -1817,17 +1824,20 @@ Function EditorMainLoop()
 		EditorLocalControls()
 	EndIf
 	
+	leveltimer=leveltimer+1
+	
 	If KeyPressed(35) ; h
 		HighlightWopAdjusters=Not HighlightWopAdjusters
 	EndIf
-	
-	leveltimer=leveltimer+1
 	
 	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	
 	ControlLight()
 	If SimulationLevel>=1
 		ControlObjects()
+	EndIf
+	If SimulationLevel>=3
+		ControlWeather()
 	EndIf
 	ControlParticles()
 	RenderParticles()
@@ -3228,11 +3238,13 @@ Function EditorLocalControls()
 			leftmousereleased=False
 			LevelWeather=LevelWeather+1
 			If levelweather=18 Then levelweather=0
+			LightingWasChanged()
 		EndIf
 		If my>=100 And my<115 And ((rightmouse=True And rightmousereleased=True) Or MouseScroll<0)
 			rightmousereleased=False
 			LevelWeather=LevelWeather-1
 			If levelweather=-1 Then levelweather=17
+			LightingWasChanged()
 		EndIf
 		If my>=115 And my<130 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
 			leftmousereleased=False
@@ -3453,10 +3465,12 @@ Function EditorLocalControls()
 				LightRed=LightRed+ChangeSpeed
 				;If lightred>=256 Then lightred=lightred-256
 			EndIf
+			LightingWasChanged()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightRed=LightRed-ChangeSpeed
 			;If lightred=-1 Then lightred=255
+			LightingWasChanged()
 		EndIf
 	EndIf
 	If mx>712+29 And my>215 And mx<736+29 And my<228
@@ -3467,10 +3481,12 @@ Function EditorLocalControls()
 				LightGreen=LightGreen+ChangeSpeed
 				;If LightGreen=256 Then LightGreen=0
 			EndIf
+			LightingWasChanged()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightGreen=LightGreen-ChangeSpeed
 			;If LightGreen=-1 Then LightGreen=255
+			LightingWasChanged()
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215 And mx<736+29+29 And my<228
@@ -3481,10 +3497,12 @@ Function EditorLocalControls()
 				LightBlue=LightBlue+ChangeSpeed
 				;If LightBlue=256 Then LightBlue=0
 			EndIf
+			LightingWasChanged()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightBlue=LightBlue-ChangeSpeed
 			;If LightBlue=-1 Then LightBlue=255
+			LightingWasChanged()
 		EndIf
 	EndIf
 	
@@ -3496,10 +3514,12 @@ Function EditorLocalControls()
 				AmbientRed=AmbientRed+ChangeSpeed
 				;If Ambientred=256 Then ambientred=0
 			EndIf
+			LightingWasChanged()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientRed=AmbientRed-ChangeSpeed
 			;If Ambientred=-1 Then ambientred=255
+			LightingWasChanged()
 		EndIf
 	EndIf
 	If mx>712+29 And my>215+13 And mx<736+29 And my<228+13
@@ -3510,10 +3530,12 @@ Function EditorLocalControls()
 				AmbientGreen=AmbientGreen+ChangeSpeed
 				;If AmbientGreen=256 Then AmbientGreen=0
 			EndIf
+			LightingWasChanged()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientGreen=AmbientGreen-ChangeSpeed
 			;If AmbientGreen=-1 Then AmbientGreen=255
+			LightingWasChanged()
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215+13 And mx<736+29+29 And my<228+13
@@ -3524,10 +3546,12 @@ Function EditorLocalControls()
 				AmbientBlue=AmbientBlue+ChangeSpeed
 				;If AmbientBlue=256 Then AmbientBlue=0
 			EndIf
+			LightingWasChanged()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientBlue=AmbientBlue-ChangeSpeed
 			;If AmbientBlue=-1 Then AmbientBlue=255
+			LightingWasChanged()
 		EndIf
 	EndIf
 
@@ -4252,6 +4276,8 @@ Function EditorLocalControls()
 					
 					UpdateObjectVisibility(i)
 				Next
+				
+				LightingWasChanged()
 			EndIf
 			
 ;			If LeftMouse=True And LeftMouseReleased=True
@@ -5957,6 +5983,13 @@ End Function
 Function SomeObjectWasChanged()
 
 	ResetSimulatedQuantities()
+
+End Function
+
+
+Function LightingWasChanged()
+
+	SetLightNow(LightRed,LightGreen,LightBlue,AmbientRed,AmbientGreen,AmbientBlue)
 
 End Function
 
@@ -21359,17 +21392,216 @@ Function ControlRetroCoily(i)
 End Function
 
 
+Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
+	SimulatedLightRedGoal=Red
+	SimulatedLightGreenGoal=Green
+	SimulatedLightBlueGoal=Blue
+	SimulatedLightChangeSpeed=speed
+	
+	SimulatedAmbientRedGoal=aRed
+	SimulatedAmbientGreenGoal=aGreen
+	SimulatedAmbientBlueGoal=aBlue
+	SimulatedAmbientChangeSpeed=aSpeed
+End Function
+
+Function SetLightNow(red,green,blue,ared,agreen,ablue)
+	SimulatedLightRed=Red
+	SimulatedLightGreen=Green
+	SimulatedLightBlue=Blue
+	SimulatedLightRedGoal=Red
+	SimulatedLightGreenGoal=Green
+	SimulatedLightBlueGoal=Blue
+	
+	SimulatedAmbientRed=aRed
+	SimulatedAmbientBlue=aBlue
+	SimulatedAmbientGreen=aGreen
+	SimulatedAmbientRedGoal=aRed
+	SimulatedAmbientGreenGoal=aGreen
+	SimulatedAmbientBlueGoal=aBlue
+End Function
+
+
 Function ControlLight()
 	
 	If SimulationLevel>=3
-		LightColor Light,LightRed,LightGreen,LightBlue
-		AmbientLight AmbientRed,AmbientGreen,AmbientBlue
+		
+		If SimulatedLightRed>SimulatedLightRedGoal
+			SimulatedLightRed=SimulatedLightRed-SimulatedLightChangeSpeed
+			If SimulatedLightRed<SimulatedLightRedGoal Then SimulatedLightRed=SimulatedLightRedGoal
+		Else If SimulatedLightRed<SimulatedLightRedGoal
+			SimulatedLightRed=SimulatedLightRed+SimulatedLightChangeSpeed
+			If SimulatedLightRed>SimulatedLightRedGoal Then SimulatedLightRed=SimulatedLightRedGoal
+		EndIf
+		If SimulatedLightGreen>SimulatedLightGreenGoal
+			SimulatedLightGreen=SimulatedLightGreen-SimulatedLightChangeSpeed
+			If SimulatedLightGreen<SimulatedLightGreenGoal Then SimulatedLightGreen=SimulatedLightGreenGoal
+		Else If SimulatedLightGreen<SimulatedLightGreenGoal
+			SimulatedLightGreen=SimulatedLightGreen+SimulatedLightChangeSpeed
+			If SimulatedLightGreen>SimulatedLightGreenGoal Then SimulatedLightGreen=SimulatedLightGreenGoal
+		EndIf
+		If SimulatedLightBlue>SimulatedLightBlueGoal
+			SimulatedLightBlue=SimulatedLightBlue-SimulatedLightChangeSpeed
+			If SimulatedLightBlue<SimulatedLightBlueGoal Then SimulatedLightBlue=SimulatedLightBlueGoal
+		Else If SimulatedLightBlue<SimulatedLightBlueGoal
+			SimulatedLightBlue=SimulatedLightBlue+SimulatedLightChangeSpeed
+			If SimulatedLightBlue>SimulatedLightBlueGoal Then SimulatedLightBlue=SimulatedLightBlueGoal
+		EndIf
+	
+		If SimulatedAmbientRed>SimulatedAmbientRedGoal
+			
+			SimulatedAmbientRed=SimulatedAmbientRed-SimulatedAmbientChangeSpeed
+			If SimulatedAmbientRed<SimulatedAmbientRedGoal Then SimulatedAmbientRed=SimulatedAmbientRedGoal
+		Else If SimulatedAmbientRed<SimulatedAmbientRedGoal
+			
+			SimulatedAmbientRed=SimulatedAmbientRed+SimulatedAmbientChangeSpeed
+			If SimulatedAmbientRed>SimulatedAmbientRedGoal Then SimulatedAmbientRed=SimulatedAmbientRedGoal
+		EndIf
+		If SimulatedAmbientGreen>SimulatedAmbientGreenGoal
+			SimulatedAmbientGreen=SimulatedAmbientGreen-SimulatedAmbientChangeSpeed
+			If SimulatedAmbientGreen<SimulatedAmbientGreenGoal Then SimulatedAmbientGreen=SimulatedAmbientGreenGoal
+		Else If SimulatedAmbientGreen<SimulatedAmbientGreenGoal
+			SimulatedAmbientGreen=SimulatedAmbientGreen+SimulatedAmbientChangeSpeed
+			If SimulatedAmbientGreen>SimulatedAmbientGreenGoal Then SimulatedAmbientGreen=SimulatedAmbientGreenGoal
+		EndIf
+		If SimulatedAmbientBlue>SimulatedAmbientBlueGoal
+			SimulatedAmbientBlue=SimulatedAmbientBlue-SimulatedAmbientChangeSpeed
+			If SimulatedAmbientBlue<SimulatedAmbientBlueGoal Then SimulatedAmbientBlue=SimulatedAmbientBlueGoal
+		Else If SimulatedAmbientBlue<SimulatedAmbientBlueGoal
+			SimulatedAmbientBlue=SimulatedAmbientBlue+SimulatedAmbientChangeSpeed
+			If SimulatedAmbientBlue>SimulatedAmbientBlueGoal Then SimulatedAmbientBlue=SimulatedAmbientBlueGoal
+		EndIf
+	
+		LightColor Light,SimulatedLightRed,SimulatedLightGreen,SimulatedLightBlue
+		AmbientLight SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue
 		RotateEntity Light,35,-35,0
+		
 	Else
+	
 		LightColor Light,255,255,255
 		AmbientLight 155,155,155
 		RotateEntity Light,80,15,0
+		
 	EndIf
+
+End Function
+
+
+Function ControlWeather()
+
+	CentreX#=EntityX(Camera1)
+	CentreY#=EntityZ(Camera1)
+	
+	Select levelweather
+	Case 1
+		; light snow
+		If Rand(1,3)=3 	AddParticle(40,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.2,Rnd(-.01,0.01),-.03,Rnd(-.01,0.01),2,0,0,0,0,200,3)
+
+	Case 2
+		; heavy snow
+		AddParticle(40,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.3,0,-.05,0,2,0,0,0,0,120,3)
+	Case 3
+		; very heavy snow right to left
+		AddParticle(40,CentreX+Rnd(5,10),5,CentreY+Rnd(-8,4),0,.4,-0.3,-.09,0,2,0,0,0,0,80,3)
+	Case 4
+		; very heavy snow left to right
+		AddParticle(40,CentreX+Rnd(-10,-5),5,CentreY+Rnd(-8,4),0,.4,0.3,-.09,0,2,0,0,0,0,80,3)
+
+
+	Case 5
+		; rain
+		AddParticle(41,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.2,0,-.2,0,0,0,0,0,0,60,2)
+	
+		; leaves
+	;	If Rand(1,3)=1 AddParticle(42,Objectx(CameraFocusObject)+Rnd(-10,10),5,-ObjectY(CameraFocusObject)+Rnd(-10,10),0,1,Rnd(0,.2),Rnd(-.1,0),0,Rand(1,5),0,0,0,0,60,3)
+
+	Case 6
+		If leveltimer<1000000000
+			; void
+			If Rand(0,200)<2 
+				SetLight(Rand(0,255),Rand(0,255),Rand(0,255),2,Rand(0,255),Rand(0,255),Rand(0,255),2)
+			EndIf
+		EndIf
+	Case 7
+		If leveltimer<1000000000
+
+			;lightning storm
+			If lightningstorm<100 Then lightningstorm=100
+			AddParticle(41,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.2,0.05,-.2,0,0,0,0,0,0,60,2)
+			AddParticle(41,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.2,0.05,-.2,0,0,0,0,0,0,60,2)
+			If lightningstorm>100
+				If (lightningstorm-100)<7 lightningstorm=Rand(180,255)
+				lightningstorm=lightningstorm-10
+				If lightningstorm<100 Then lightningstorm=100
+			Else
+				If Rand(0,300)=10
+					lightningstorm=Rand(180,255)
+					;playsoundfx(Rand(155,157),-1,-1)
+				EndIf
+			EndIf
+			
+			SetLight(lightningstorm,lightningstorm,lightningstorm,10,70,70,70,10)
+		EndIf
+	Case 8
+		If leveltimer<1000000000
+			; red alert
+			
+
+			alarm=leveltimer Mod 240
+			;If alarm=1 Then playsoundfxnow(98)
+			If alarm <120
+			
+				SetLight(alarm*2,0,0,10,70,20,20,10)
+			Else
+				SetLight(240-alarm*2,0,0,10,70,20,20,10)
+			EndIf
+		EndIf
+		
+	Case 9
+	
+		; light rising
+		If Rand(1,8)=3 	AddParticle(1,CentreX+Rnd(-10,10),0,CentreY+Rnd(-10,10),0,.2,0,+.03,0,2,0,0,0,0,200,3)
+
+	Case 10
+	
+		; light falling
+		If Rand(1,8)=3 	AddParticle(1,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.2,0,-.03,0,2,0,0,0,0,200,3)
+
+
+	Case 11
+	
+		; stars rising
+		If Rand(1,5)=3 	AddParticle(Rand(32,38),CentreX+Rnd(-10,10),0,CentreY+Rnd(-10,10),0,.8,0,+.03,0,2,0,0,0,0,200,3)
+
+
+	Case 12
+	
+		; stars rising
+		If Rand(1,5)=3 	AddParticle(Rand(32,38),CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.8,0,-.03,0,2,0,0,0,0,200,3)
+
+	Case 13
+	
+		; foggy
+		If Rand(1,3)=3 	AddParticle(0,CentreX+Rnd(-10,10),-.8,CentreY+Rnd(-10,10),0,2,0,+.005,0,2,0,0,0,0,500,2)
+
+	Case 14
+	
+		; green foggy
+		If Rand(1,3)=3 	AddParticle(27,CentreX+Rnd(-10,10),-.8,CentreY+Rnd(-10,10),0,2,0,+.005,0,2,0,0,0,0,500,2)
+
+	Case 15
+		; leaves
+		If Rand(1,8)=3 	AddParticle(42,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,1,Rnd(-.03,0.01),-.03,Rnd(-.03,0.01),2,0,0,0,0,200,3)
+
+	Case 16
+		; sandstorm
+		AddParticle(Rand(25,26),CentreX+Rnd(5,10),5,CentreY+Rnd(-8,4),0,.2,-0.3,-.09,0,2,0,0,0,0,80,3)
+		AddParticle(Rand(24,26),CentreX+Rnd(5,10),5,CentreY+Rnd(-8,4),0,.1,-0.3,-.09,0,2,0,0,0,0,80,3)
+
+	Case 17
+		; abstract
+		If Rand(1,40)=3 	AddParticle(Rand(43,45),CentreX+Rnd(-10,10),Rnd(1,2),CentreY+Rnd(-10,10),0,Rnd(1,4),0,Rnd(.001,0.01),0,2,0,0,0,0,200,Rand(2,3))
+
+	End Select
 
 End Function
 
