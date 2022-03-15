@@ -777,7 +777,7 @@ Global LevelDetail ; 1-x how many subdivisions per tile
 Global BackGroundEntity1, BackGroundEntity2
 Dim BackGroundTexture1(30),BackGroundTexture2(30)
 
-Global CurrentLevelChunk
+Global CurrentLevelChunk=0
 ; All of these are for a given chunk
 ; maximum chunk size right now is 100x100 (but can of course be smaller)
 Global ChunkSize ; in general the x by x size of chunks
@@ -4870,6 +4870,18 @@ Function ReBuildLevelModel()
 	;	FreeEntity WaterMesh(i)
 	;	FreeEntity LogicMesh(i)
 	;Next
+	
+;	For j=0 To (LevelHeight-1)/ChunkSize
+;		For i=0 To (LevelWidth-1)/ChunkSize
+;			CreateLevelChunk(i*(ChunkSize)-1,j*(ChunkSize)-1)
+;			CurrentLevelChunk=CurrentLevelChunk+1
+;		Next
+;	Next
+
+	For i=0 To CurrentLevelChunk-1
+		FreeEntity LevelEntity(i)
+		FreeEntity WaterEntity(i)
+	Next
 
 	BuildLevelModel()
 	
@@ -5011,23 +5023,23 @@ Function ChangeLevelTile(i,j,update)
 	If CurrentTileLogicUse=True
 		LevelTileLogic(i,j)=CurrentTileLogic
 	EndIf
-	If update=True 
-		;UpdateLevelTile(i,j)
-	
-		; Possibly update surrounding tiles
-		If i>0
-			If LevelTileExtrusion(i-1,j)>=LevelTileExtrusion(i,j) UpdateLevelTile(i-1,j)
-		EndIf
-		If i<LevelWidth-1
-			If LevelTileExtrusion(i+1,j)>=LevelTileExtrusion(i,j) UpdateLevelTile(i+1,j)
-		EndIf
-		If j>0
-			If LevelTileExtrusion(i,j-1)>=LevelTileExtrusion(i,j) UpdateLevelTile(i,j-1)
-		EndIf
-		If j<LevelHeight-1
-			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) UpdateLevelTile(i,j+1)
-		EndIf
-	EndIf
+;	If update=True 
+;		UpdateLevelTile(i,j)
+;	
+;		; Possibly update surrounding tiles
+;		If i>0
+;			If LevelTileExtrusion(i-1,j)>=LevelTileExtrusion(i,j) UpdateLevelTile(i-1,j)
+;		EndIf
+;		If i<LevelWidth-1
+;			If LevelTileExtrusion(i+1,j)>=LevelTileExtrusion(i,j) UpdateLevelTile(i+1,j)
+;		EndIf
+;		If j>0
+;			If LevelTileExtrusion(i,j-1)>=LevelTileExtrusion(i,j) UpdateLevelTile(i,j-1)
+;		EndIf
+;		If j<LevelHeight-1
+;			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) UpdateLevelTile(i,j+1)
+;		EndIf
+;	EndIf
 			
 			
 	; the water
@@ -21967,82 +21979,9 @@ Function ControlObjects()
 End Function
 
 
-Function CreateLevel()
 
-	; Requires a LevelWidth*LevelHeight Field field with LevelTileTexture/Rotation/Height/etc.
+Function CreateLevelEdge()
 
-	; First divvy up and create chunks
-	
-	; chunks get their data from the main level file. Each chunk also creates a 1 tile overlap 
-	; border around it that isn't rendered, but used to calculate matching heights etc.
-	; Hence the increase in ChunkSize by 2, and rendering the chunk at position (-1,-1)
-	CurrentLevelChunk=0	
-	ChunkSize=12
-	WaterTurbulenceGlobal=False
-	For j=0 To (LevelHeight-1)/ChunkSize
-		For i=0 To (LevelWidth-1)/ChunkSize
-			; get the size of the chunk (smaller if at edge)
-			If i=(LevelWidth-1)/ChunkSize And (LevelWidth Mod ChunkSize)>0
-				ChunkWidth=(LevelWidth Mod ChunkSize)+2
-			Else
-				ChunkWidth=ChunkSize+2
-			EndIf
-			If j=(LevelHeight-1)/ChunkSize And (LevelHeight Mod ChunkSize)>0
-				ChunkHeight=(LevelHeight Mod ChunkSize)+2
-			Else
-				ChunkHeight=ChunkSize+2
-			EndIf
-			
-			; now fill up the chunkdata
-			
-			For i2=0 To ChunkWidth-1
-				For j2=0 To ChunkHeight-1
-				
-					If i2=0 And i=0
-						i3=i*ChunkSize
-					Else If i2=ChunkWidth-1 And i=(LevelWidth-1)/ChunkSize
-						i3=i*ChunkSize+ChunkWidth-3
-					Else
-						i3=i*ChunkSize+i2-1
-					EndIf
-					If j2=0 And j=0
-						j3=j*ChunkSize
-					Else If j2=ChunkHeight-1 And j=(LevelHeight-1)/ChunkSize
-						j3=j*ChunkSize+ChunkHeight-3
-					Else
-						j3=j*ChunkSize+j2-1
-					EndIf
-
-					
-					
-					
-					ChunkTileTexture(i2,j2)=LevelTileTexture(i3,j3)
-					ChunkTileRotation(i2,j2)=LevelTileRotation(i3,j3)
-					ChunkTileSideTexture(i2,j2)=LevelTileSideTexture(i3,j3)
-					ChunkTileSideRotation(i2,j2)=LevelTileSideRotation(i3,j3)
-					ChunkTileRandom(i2,j2)=LevelTileRandom(i3,j3)
-					ChunkTileExtrusion(i2,j2)=LevelTileExtrusion(i3,j3)
-					ChunkTileRounding(i2,j2)=LevelTileRounding(i3,j3)
-					ChunkTileEdgeRandom(i2,j2)=LevelTileEdgeRandom(i3,j3)
-					ChunkTileHeight(i2,j2)=LevelTileHeight(i3,j3)
-					
-					ChunkWaterTileTexture(i2,j2)=WaterTileTexture(i3,j3)
-					ChunkWaterTileRotation(i2,j2)=WaterTileRotation(i3,j3)
-					ChunkWaterTileHeight(i2,j2)=WaterTileHeight(i3,j3)
-					If WaterTileTurbulence(i3,j3)>0 WaterTurbulenceGlobal=True
-					If ChunkWaterTileTexture(i2,j2)<0 Then ChunkWaterTileHeight(i2,j2)=-10
-
-
-				Next
-			Next
-			
-			
-			
-			CreateLevelChunk(i*(ChunkSize)-1,j*(ChunkSize)-1)
-			CurrentLevelChunk=CurrentLevelChunk+1
-		Next
-	Next
-	
 	; side/wall effects
 	
 	Select LevelEdgeStyle
@@ -22145,6 +22084,86 @@ Function CreateLevel()
 
 
 	End Select
+
+End Function
+
+Function CreateLevel()
+
+	; Requires a LevelWidth*LevelHeight Field field with LevelTileTexture/Rotation/Height/etc.
+
+	; First divvy up and create chunks
+	
+	; chunks get their data from the main level file. Each chunk also creates a 1 tile overlap 
+	; border around it that isn't rendered, but used to calculate matching heights etc.
+	; Hence the increase in ChunkSize by 2, and rendering the chunk at position (-1,-1)
+	CurrentLevelChunk=0	
+	ChunkSize=12
+	WaterTurbulenceGlobal=False
+	For j=0 To (LevelHeight-1)/ChunkSize
+		For i=0 To (LevelWidth-1)/ChunkSize
+			; get the size of the chunk (smaller if at edge)
+			If i=(LevelWidth-1)/ChunkSize And (LevelWidth Mod ChunkSize)>0
+				ChunkWidth=(LevelWidth Mod ChunkSize)+2
+			Else
+				ChunkWidth=ChunkSize+2
+			EndIf
+			If j=(LevelHeight-1)/ChunkSize And (LevelHeight Mod ChunkSize)>0
+				ChunkHeight=(LevelHeight Mod ChunkSize)+2
+			Else
+				ChunkHeight=ChunkSize+2
+			EndIf
+			
+			; now fill up the chunkdata
+			
+			For i2=0 To ChunkWidth-1
+				For j2=0 To ChunkHeight-1
+				
+					If i2=0 And i=0
+						i3=i*ChunkSize
+					Else If i2=ChunkWidth-1 And i=(LevelWidth-1)/ChunkSize
+						i3=i*ChunkSize+ChunkWidth-3
+					Else
+						i3=i*ChunkSize+i2-1
+					EndIf
+					If j2=0 And j=0
+						j3=j*ChunkSize
+					Else If j2=ChunkHeight-1 And j=(LevelHeight-1)/ChunkSize
+						j3=j*ChunkSize+ChunkHeight-3
+					Else
+						j3=j*ChunkSize+j2-1
+					EndIf
+
+					
+					
+					
+					ChunkTileTexture(i2,j2)=LevelTileTexture(i3,j3)
+					ChunkTileRotation(i2,j2)=LevelTileRotation(i3,j3)
+					ChunkTileSideTexture(i2,j2)=LevelTileSideTexture(i3,j3)
+					ChunkTileSideRotation(i2,j2)=LevelTileSideRotation(i3,j3)
+					ChunkTileRandom(i2,j2)=LevelTileRandom(i3,j3)
+					ChunkTileExtrusion(i2,j2)=LevelTileExtrusion(i3,j3)
+					ChunkTileRounding(i2,j2)=LevelTileRounding(i3,j3)
+					ChunkTileEdgeRandom(i2,j2)=LevelTileEdgeRandom(i3,j3)
+					ChunkTileHeight(i2,j2)=LevelTileHeight(i3,j3)
+					
+					ChunkWaterTileTexture(i2,j2)=WaterTileTexture(i3,j3)
+					ChunkWaterTileRotation(i2,j2)=WaterTileRotation(i3,j3)
+					ChunkWaterTileHeight(i2,j2)=WaterTileHeight(i3,j3)
+					If WaterTileTurbulence(i3,j3)>0 WaterTurbulenceGlobal=True
+					If ChunkWaterTileTexture(i2,j2)<0 Then ChunkWaterTileHeight(i2,j2)=-10
+
+
+				Next
+			Next
+			
+			
+			
+			CreateLevelChunk(i*(ChunkSize)-1,j*(ChunkSize)-1)
+			CurrentLevelChunk=CurrentLevelChunk+1
+		Next
+	Next
+	
+	; CreateLevelEdgeStyle()
 	
 End Function
 
