@@ -1736,11 +1736,10 @@ Repeat
 				Delay 200
 			Until HasFocus()
 			
-			;For i=1 To KeyCount
-			;	KeyReleased(i)=False
-			;Next
-			
 			;FlushKeys ; WHY DOES THIS NOT WORK??? Apparently it doesn't get rid of currently-pressed keys.
+			
+			ForceKeyRelease(56,"left alt")
+			ForceKeyRelease(184,"right alt")
 			
 			ReadColors()
 			
@@ -4503,6 +4502,18 @@ Function GetConfirmation(Message$)
 	Print Message$
 	Confirm$=Input$("Type Y to confirm: ")
 	Return Confirm="Y" Or Confirm="y"
+
+End Function
+
+
+Function ForceKeyRelease(keycode, keyname$)
+
+	If KeyDown(keycode)
+		SetupConfirmation()
+		Print "Press "+keyname$+" to proceed."
+		Print "I am doing this to protect you and your family."
+		Repeat Until Not KeyDown(keycode)
+	EndIf
 
 End Function
 
