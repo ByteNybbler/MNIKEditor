@@ -1748,7 +1748,7 @@ Repeat
 			
 		EndIf
 	
-Until False ;Key(1) ; escape
+Until False ;KeyDown(1) ; escape
 
 
 
@@ -2292,14 +2292,14 @@ Function EditorGlobalControls()
 	
 	MouseScroll=MouseZSpeed()
 	
-	If Key(28) Or Key(156)
+	If KeyDown(28) Or KeyDown(156)
 		ReturnKey=True
 	Else
 		ReturnKey=False
 		ReturnKeyReleased=True
 	EndIf
 	
-	If Key(211)
+	If KeyDown(211)
 		DeleteKey=True
 	Else
 		DeleteKey=False
@@ -2805,10 +2805,10 @@ Function EditorLocalControls()
 			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		RotationSpeed=4
-		If Key(23) ; I, formerly A (30)
+		If KeyDown(23) ; I, formerly A (30)
 			TurnEntity CurrentMesh,0,RotationSpeed,0
 		EndIf
-		If Key(24) ; O, formerly D (32)
+		If KeyDown(24) ; O, formerly D (32)
 			TurnEntity CurrentMesh,0,-RotationSpeed,0
 		EndIf
 	EndIf
@@ -3916,7 +3916,7 @@ Function EditorLocalControls()
 				CurrentGrabbedObjectModified=False
 			EndIf
 		EndIf
-		If Key(19) ; R
+		If KeyDown(19) ; R
 			SetEditorMode(3)
 			PasteObjectData(CurrentGrabbedObject)
 			CurrentGrabbedObjectModified=False
@@ -4476,19 +4476,19 @@ End Function
 
 Function CtrlDown()
 
-	Return Key(29) Or Key(157) ; left ctrl or right ctrl
+	Return KeyDown(29) Or KeyDown(157) ; left ctrl or right ctrl
 	
 End Function
 
 Function ShiftDown()
 
-	Return Key(42) Or Key(54) ; left shift or right shift
+	Return KeyDown(42) Or KeyDown(54) ; left shift or right shift
 
 End Function
 
 Function AltDown()
 
-	Return Key(56) Or Key(184) ; left alt or right alt
+	Return KeyDown(56) Or KeyDown(184) ; left alt or right alt
 
 End Function
 
@@ -10513,16 +10513,16 @@ Function AdjustObjectAdjuster(i)
 	Case "TileTypeCollision"
 		If Not RandomTTC And ReturnKey=False
 			Adj=0
-			If Key(11) Adj=2^0
-			If Key(2) Adj=2^1
-			If Key(3) Adj=2^2
-			If Key(4) Adj=2^3
-			If Key(5) Adj=2^4
-			If Key(6) Adj=2^5
-			If Key(7) Adj=2^6
-			If Key(8) Adj=2^7
-			If Key(9) Adj=2^8
-			If Key(10) Adj=2^9
+			If KeyDown(11) Adj=2^0
+			If KeyDown(2) Adj=2^1
+			If KeyDown(3) Adj=2^2
+			If KeyDown(4) Adj=2^3
+			If KeyDown(5) Adj=2^4
+			If KeyDown(6) Adj=2^5
+			If KeyDown(7) Adj=2^6
+			If KeyDown(8) Adj=2^7
+			If KeyDown(9) Adj=2^8
+			If KeyDown(10) Adj=2^9
 			If Fast Adj=Adj*2^10
 			If LeftMouse=True Or RightMouse=True Then CurrentObjectTileTypeCollision=CurrentObjectTileTypeCollision Xor Adj
 			Delay DelayTime
@@ -10534,16 +10534,16 @@ Function AdjustObjectAdjuster(i)
 	Case "ObjectTypeCollision"
 		If Not RandomOTC And ReturnKey=False
 			Adj=0
-			If Key(11) Adj=2^0
-			If Key(2) Adj=2^1
-			If Key(3) Adj=2^2
-			If Key(4) Adj=2^3
-			If Key(5) Adj=2^4
-			If Key(6) Adj=2^5
-			If Key(7) Adj=2^6
-			If Key(8) Adj=2^7
-			If Key(9) Adj=2^8
-			If Key(10) Adj=2^9
+			If KeyDown(11) Adj=2^0
+			If KeyDown(2) Adj=2^1
+			If KeyDown(3) Adj=2^2
+			If KeyDown(4) Adj=2^3
+			If KeyDown(5) Adj=2^4
+			If KeyDown(6) Adj=2^5
+			If KeyDown(7) Adj=2^6
+			If KeyDown(8) Adj=2^7
+			If KeyDown(9) Adj=2^8
+			If KeyDown(10) Adj=2^9
 			If Fast Adj=Adj*2^10
 			If LeftMouse=True Or RightMouse=True Then CurrentObjectObjectTypeCollision=CurrentObjectObjectTypeCollision Xor Adj
 			Delay DelayTime
@@ -13080,7 +13080,7 @@ Function CameraControls()
 	Adj#=0.1
 	If ShiftDown() Then Adj=0.4
 	
-	If Key(57) ; space bar
+	If KeyDown(57) ; space bar
 		CameraPanning=True
 		If LeftMouse=True
 			SpeedFactor#=0.25*Adj
@@ -13104,48 +13104,48 @@ Function CameraControls()
 		Return
 	EndIf
 
-	If Key(75) Or Key(203) Or Key(30) ; numpad 4 or left arrow or A
+	If KeyDown(75) Or KeyDown(203) Or KeyDown(30) ; numpad 4 or left arrow or A
 			
 		TranslateEntity Target,-Adj,0,0
 	EndIf
-	If Key(77) Or Key(205) Or Key(32) ; numpad 6 or right arrow or D
+	If KeyDown(77) Or KeyDown(205) Or KeyDown(32) ; numpad 6 or right arrow or D
 		
 		TranslateEntity Target,Adj,0,0
 	EndIf
-	If Key(72) Or Key(200) Or Key(17) ; numpad 8 or up arrow or W
+	If KeyDown(72) Or KeyDown(200) Or KeyDown(17) ; numpad 8 or up arrow or W
 	
 		TranslateEntity Target,0,0,Adj
 	EndIf
-	If Key(80) Or Key(208) Or Key(31) ; numpad 2 or down arrow or S
+	If KeyDown(80) Or KeyDown(208) Or KeyDown(31) ; numpad 2 or down arrow or S
 	
 		TranslateEntity Target,0,0,-Adj
 	EndIf
-	If Key(73) Or Key(18) ; numpad 9 or E
+	If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
 	
 		TranslateEntity Target,0,Adj,0
 	EndIf
-	If Key(81) Or Key(46) ; numpad 3 or C
+	If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
 	
 		TranslateEntity Target,0,-Adj,0
 	EndIf
-	If Key(71) Or Key(16) ; numpad 7 or Q
+	If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
 		
 		TurnEntity Target,1,0,0
 	EndIf
-	If Key(79) Or Key(44) ; numpad 1 or Z
+	If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
 	
 		TurnEntity Target,-1,0,0
 	EndIf
-	If Key(181) ;Or Key(3) ; numpad /
+	If KeyDown(181) ;Or KeyDown(3) ; numpad /
 		
 		TurnEntity Target,0,1,0
 	EndIf
-	If Key(55) ;Or Key(4) ; numpad *
+	If KeyDown(55) ;Or KeyDown(4) ; numpad *
 		
 		TurnEntity Target,0,-1,0
 	EndIf
 	
-	If Key(76) Or Key(45) ; numpad 5 or X
+	If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
 		; reset camera rotation
 		If Target=Camera1
 			RotateEntity Camera1,65,0,0
@@ -15057,19 +15057,19 @@ Function UserSelectScreen()
 	If let>=32 And let<=122 And Len(editorusernameentered$)<20
 		EditorUserNameEntered$=EditorUserNameEntered$+Chr$(let)
 	EndIf
-	If Key(14)
+	If KeyDown(14)
 		; backspace
 		If Len(EditorUserNameEntered$)>0
 			EditorUserNameEntered$=Left$(EditorUserNameEntered$,Len(EditorUserNameEntered$)-1)
 			Delay CharacterDeleteDelay
 		EndIf
 	EndIf
-	If Key(211)
+	If KeyDown(211)
 		; delete
 		EditorUserNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
-	If Key(28) Or Key(156)
+	If KeyDown(28) Or KeyDown(156)
 		; Enter
 		
 		If EditorUserNameEntered$=""
@@ -15246,19 +15246,19 @@ Function AdventureSelectScreen()
 	If let>=32 And let<=122 And Len(AdventureNameEntered$)<38
 		AdventureNameEntered$=AdventureNameEntered$+Chr$(let)
 	EndIf
-	If Key(14)
+	If KeyDown(14)
 		; backspace
 		If Len(AdventureNameEntered$)>0
 			AdventureNameEntered$=Left$(AdventureNameEntered$,Len(AdventureNameEntered$)-1)
 			Delay CharacterDeleteDelay
 		EndIf
 	EndIf
-	If Key(211)
+	If KeyDown(211)
 		; delete
 		AdventureNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
-	If Key(28) Or Key(156)
+	If KeyDown(28) Or KeyDown(156)
 		; Enter
 		If hubmode
 			If AdventureNameEntered$=""
@@ -15925,13 +15925,13 @@ End Function
 
 Function MasterMainLoop()
 	
-	If (Key(157) Or Key(29)) And Key(20)
+	If (KeyDown(157) Or KeyDown(29)) And KeyDown(20)
 		StartTestMode()
 	EndIf
 	
 	dialogtimer=dialogtimer+1
 	adj=1
-	If Key(42) Or Key(54) Then adj=10
+	If KeyDown(42) Or KeyDown(54) Then adj=10
 	
 	DisplayText2("Adventure File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
@@ -16243,7 +16243,7 @@ Function MasterMainLoop()
 				TxtEffect=-1
 
 			EndIf
-			If Key(14)
+			If KeyDown(14)
 				; backspace
 				If x>0 
 					tex$=Left$(tex$,x-1)+Right$(tex$,Len(tex$)-x)
@@ -16256,7 +16256,7 @@ Function MasterMainLoop()
 				TxtEffect=-1
 
 			EndIf
-			If Key(211)
+			If KeyDown(211)
 				; delete
 				If x<Len(tex$) 
 					tex$=Left$(tex$,x)+Right$(tex$,Len(tex$)-x-1)
@@ -16279,7 +16279,7 @@ Function MasterMainLoop()
 			End Select
 			
 			; cursor movement
-			If (Key(200) Or Key(72)) 
+			If (KeyDown(200) Or KeyDown(72)) 
 				If (y>3 And y<8) Or y=11 Or y=12 
 					MoveMouse (x+0)*18,84+(y-1)*21
 				Else If y=0
@@ -16297,7 +16297,7 @@ Function MasterMainLoop()
 
 		
 			EndIf
-			If (Key(208) Or Key(28) Or Key(156)) 
+			If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
 				If (y>2 And y<7) Or y=10 Or y=11
 					MoveMouse (x+0)*18,84+(y+1)*21
 				Else If y=0
@@ -16315,7 +16315,7 @@ Function MasterMainLoop()
 
 	
 			EndIf
-			If (Key(203)) And x>0
+			If (KeyDown(203)) And x>0
 				MoveMouse (x-1)*18,84+(y-0)*21
 				OldMouseX=MouseX()
 				HidePointer()
@@ -16325,7 +16325,7 @@ Function MasterMainLoop()
 
 	
 			EndIf
-			If (Key(205)) And x<Len(tex$)
+			If (KeyDown(205)) And x<Len(tex$)
 				MoveMouse (x+1)*18,84+(y-0)*21
 				OldMouseX=MouseX()
 				HidePointer()
@@ -16624,7 +16624,7 @@ Function MasterMainLoop()
 			StartTestMode()
 		EndIf
 		If MouseY()>550 And MouseX()>600 And hubmode=False
-			If Key(46) 
+			If KeyDown(46) 
 				PackContent=True
 			Else
 				PackContent=False
@@ -16671,12 +16671,12 @@ End Function
 
 Function MasterAdvancedLoop()
 
-	If Key(157) And Key(20)
+	If KeyDown(157) And KeyDown(20)
 		StartTestMode()
 	EndIf
 	
 	adj=1
-	If Key(42) Or Key(54) Then adj=10
+	If KeyDown(42) Or KeyDown(54) Then adj=10
 	
 	DisplayText2("Adventure File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
@@ -16873,7 +16873,7 @@ Function MasterAdvancedLoop()
 		EndIf
 		
 		If MouseY()>550 And MouseX()>600 And hubmode=False
-			If Key(46)
+			If KeyDown(46)
 				PackContent=True
 			Else
 				PackContent=False
@@ -16961,7 +16961,7 @@ End Function
 
 Function HubMainLoop()
 
-	;If Key(157) And Key(20)
+	;If KeyDown(157) And KeyDown(20)
 	;	WaitFlag=True
 	;	SaveMasterFile()
 	;	file=WriteFile("test.dat")
@@ -16976,7 +16976,7 @@ Function HubMainLoop()
 	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
 	
 	adj=1
-	If Key(42) Or Key(54) Then adj=10
+	If KeyDown(42) Or KeyDown(54) Then adj=10
 		
 	For i=0 To 43
 		AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -17246,7 +17246,7 @@ Function HubMainLoop()
 		If MouseY()>550 And MouseX()>600
 			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
-			If Key(46)
+			If KeyDown(46)
 				PackContent=True
 			Else
 				PackContent=False
@@ -17318,7 +17318,7 @@ Function HubMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(14)
+		If KeyDown(14)
 			; backspace
 			If x>0 
 				tex$=Left$(tex$,x-1)+Right$(tex$,Len(tex$)-x)
@@ -17331,7 +17331,7 @@ Function HubMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(211)
+		If KeyDown(211)
 			; delete
 			If x<Len(tex$) 
 				tex$=Left$(tex$,x)+Right$(tex$,Len(tex$)-x-1)
@@ -17354,7 +17354,7 @@ Function HubMainLoop()
 		End Select
 		
 		; cursor movement
-		If (Key(200) Or Key(72)) 
+		If (KeyDown(200) Or KeyDown(72)) 
 			If (y>3 And y<8) Or y=11 Or y=12 
 				MoveMouse (x+0)*18,84+(y-1)*21
 			Else If y=0
@@ -17372,7 +17372,7 @@ Function HubMainLoop()
 
 	
 		EndIf
-		If (Key(208) Or Key(28) Or Key(156)) 
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
 			If (y>2 And y<7) Or y=10 Or y=11
 				MoveMouse (x+0)*18,84+(y+1)*21
 			Else If y=0
@@ -17390,7 +17390,7 @@ Function HubMainLoop()
 
 
 		EndIf
-		If (Key(203)) And x>0
+		If (KeyDown(203)) And x>0
 			MoveMouse (x-1)*18,84+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -17400,7 +17400,7 @@ Function HubMainLoop()
 
 
 		EndIf
-		If (Key(205)) And x<Len(tex$)
+		If (KeyDown(205)) And x<Len(tex$)
 			MoveMouse (x+1)*18,84+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -17525,19 +17525,19 @@ Function HubAdventureSelectScreen()
 	If let>=32 And let<=122 And Len(AdventureNameEntered$)<38
 		AdventureNameEntered$=AdventureNameEntered$+Chr$(let)
 	EndIf
-	If Key(14)
+	If KeyDown(14)
 		; backspace
 		If Len(AdventureNameEntered$)>0
 			AdventureNameEntered$=Left$(AdventureNameEntered$,Len(AdventureNameEntered$)-1)
 			Delay CharacterDeleteDelay
 		EndIf
 	EndIf
-	If Key(211)
+	If KeyDown(211)
 		; delete
 		AdventureNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
-	If Key(28) Or Key(156)
+	If KeyDown(28) Or KeyDown(156)
 		; Enter
 		
 		If AdventureNameEntered$=""
@@ -18549,7 +18549,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(14)
+		If KeyDown(14)
 			; backspace
 			If x>0 
 				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x-1)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x)
@@ -18562,7 +18562,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(211)
+		If KeyDown(211)
 			; delete
 			If x<Len(InterChangeTextLine$(WhichInterChange,y)) 
 				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x-1)
@@ -18574,7 +18574,7 @@ Function DialogMainLoop()
 
 		EndIf
 		; cursor movement
-		If (Key(200) Or Key(72)) 
+		If (KeyDown(200) Or KeyDown(72)) 
 			If y>0
 				MoveMouse (x+0)*18,84+(y-1)*21
 			Else
@@ -18588,7 +18588,7 @@ Function DialogMainLoop()
 
 	
 		EndIf
-		If (Key(208) Or Key(28) Or Key(156)) 
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
 			If y<6
 				MoveMouse (x+0)*18,84+(y+1)*21
 			Else
@@ -18602,7 +18602,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(203)) And x>0
+		If (KeyDown(203)) And x>0
 			MoveMouse (x-1)*18,84+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18612,7 +18612,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(205)) And x<Len(InterChangeTextLine$(WhichInterChange,y))
+		If (KeyDown(205)) And x<Len(InterChangeTextLine$(WhichInterChange,y))
 			MoveMouse (x+1)*18,84+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18623,7 +18623,7 @@ Function DialogMainLoop()
 
 		EndIf
 		
-		If Key(199) ; home
+		If KeyDown(199) ; home
 			MoveMouse 0,84+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18632,7 +18632,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 		EndIf
 		
-		If Key(207) ; end
+		If KeyDown(207) ; end
 			endx=Len(InterChangeTextLine$(WhichInterChange,y))
 			If endx>37
 				endx=37
@@ -18664,7 +18664,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(14)
+		If KeyDown(14)
 			; backspace
 			If x>0 
 				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x-1)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x)
@@ -18677,7 +18677,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(211)
+		If KeyDown(211)
 			; delete
 			If x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer)) 
 				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x-1)
@@ -18689,7 +18689,7 @@ Function DialogMainLoop()
 
 		EndIf
 		; cursor movement
-		If (Key(200) Or Key(72)) 
+		If (KeyDown(200) Or KeyDown(72)) 
 			MoveMouse (x+0)*18,76+(7)*21
 			OldMouseY=MouseY()
 			HidePointer()
@@ -18700,7 +18700,7 @@ Function DialogMainLoop()
 
 	
 		EndIf
-		If (Key(208) Or Key(28) Or Key(156)) 
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
 			MoveMouse (x+0)*18,465
 			OldMouseY=MouseY()
 			HidePointer()
@@ -18711,7 +18711,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(203)) And x>0
+		If (KeyDown(203)) And x>0
 			MoveMouse (x-1)*18,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18721,7 +18721,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(205)) And x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
+		If (KeyDown(205)) And x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
 			MoveMouse (x+1)*18,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18732,7 +18732,7 @@ Function DialogMainLoop()
 
 		EndIf
 		
-		If Key(199) ; home
+		If KeyDown(199) ; home
 			MoveMouse 0,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18741,7 +18741,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 		EndIf
 		
-		If Key(207) ; end
+		If KeyDown(207) ; end
 			endx=Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
 			If endx>37
 				endx=37
@@ -18773,7 +18773,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(14)
+		If KeyDown(14)
 			; backspace
 			If x>0 
 				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x-1)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x)
@@ -18786,7 +18786,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(211)
+		If KeyDown(211)
 			; delete
 			If x<Len(AskaboutText$(WhichAskAbout)) 
 				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x-1)
@@ -18798,7 +18798,7 @@ Function DialogMainLoop()
 
 		EndIf
 		; cursor movement
-		If (Key(200) Or Key(72)) ; up arrow or numpad 8
+		If (KeyDown(200) Or KeyDown(72)) ; up arrow or numpad 8
 			MoveMouse (x+0)*18,76+(10)*21
 			OldMouseY=MouseY()
 			HidePointer()
@@ -18809,7 +18809,7 @@ Function DialogMainLoop()
 
 	
 		EndIf
-		If (Key(208) Or Key(28) Or Key(156)) 
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
 			MoveMouse (x+0)*18,525
 			OldMouseY=MouseY()
 			HidePointer()
@@ -18820,7 +18820,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(203)) And x>0
+		If (KeyDown(203)) And x>0
 			MoveMouse (x-1)*18,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18830,7 +18830,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(205)) And x<Len(AskaboutText$(WhichAskAbout))
+		If (KeyDown(205)) And x<Len(AskaboutText$(WhichAskAbout))
 			MoveMouse (x+1)*18,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18841,7 +18841,7 @@ Function DialogMainLoop()
 
 		EndIf
 		
-		If Key(199) ; home
+		If KeyDown(199) ; home
 			MoveMouse 0,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18850,7 +18850,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 		EndIf
 		
-		If Key(207) ; end
+		If KeyDown(207) ; end
 			endx=Len(AskaboutText$(WhichAskAbout))
 			If endx>37
 				endx=37
@@ -18882,7 +18882,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(14)
+		If KeyDown(14)
 			; backspace
 			If x>0 
 				AskaboutTopText$=Left$(AskaboutTopText$,x-1)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x)
@@ -18895,7 +18895,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 		EndIf
-		If Key(211)
+		If KeyDown(211)
 			; delete
 			If x<Len(AskaboutTopText$) 
 				AskaboutTopText$=Left$(AskaboutTopText$,x)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x-1)
@@ -18907,7 +18907,7 @@ Function DialogMainLoop()
 
 		EndIf
 		; cursor movement
-		If (Key(200) Or Key(72)) 
+		If (KeyDown(200) Or KeyDown(72)) 
 			MoveMouse (x+0)*18,465
 			OldMouseY=MouseY()
 			HidePointer()
@@ -18918,7 +18918,7 @@ Function DialogMainLoop()
 
 	
 		EndIf
-		If (Key(208) Or Key(28) Or Key(156)) 
+		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
 			MoveMouse (x+0)*18,86;+210
 			OldMouseY=MouseY()
 			HidePointer()
@@ -18929,7 +18929,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(203)) And x>0
+		If (KeyDown(203)) And x>0
 			MoveMouse (x-1)*18,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18939,7 +18939,7 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (Key(205)) And x<Len(AskaboutTopText$)
+		If (KeyDown(205)) And x<Len(AskaboutTopText$)
 			MoveMouse (x+1)*18,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18951,7 +18951,7 @@ Function DialogMainLoop()
 		EndIf
 		
 		
-		If Key(199) ; home
+		If KeyDown(199) ; home
 			MoveMouse 0,76+(y-0)*21
 			OldMouseX=MouseX()
 			HidePointer()
@@ -18960,7 +18960,7 @@ Function DialogMainLoop()
 			TxtEffect=-1
 		EndIf
 		
-		If Key(207) ; end
+		If KeyDown(207) ; end
 			endx=Len(AskaboutTopText$)
 			If endx>37
 				endx=37
