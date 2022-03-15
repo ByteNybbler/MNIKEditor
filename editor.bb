@@ -1742,6 +1742,8 @@ Repeat
 				KeyReleased(i)=False
 			Next
 			
+			;FlushKeys ; WHY DOES THIS NOT WORK??? Apparently it doesn't get rid of currently-pressed keys.
+			
 			ReadColors()
 			
 		EndIf
@@ -2092,9 +2094,14 @@ End Function
 
 
 Function SetEditorMode(NewMode)
-	
-	If NewMode=8 And (EditorMode=0 Or EditorMode=3)
-		EditorModeBeforeMasterEdit=EditorMode
+
+	If NewMode=8
+		; prevent garbage input from level editor movement from appearing in adventure description text
+		FlushKeys
+		
+		If EditorMode=0 Or EditorMode=3
+			EditorModeBeforeMasterEdit=EditorMode
+		EndIf
 	EndIf
 		
 	If (NewMode=0 Or NewMode=3) And NewMode<>CustomBrushEditorMode
@@ -3325,6 +3332,7 @@ Function EditorLocalControls()
 
 		; custom level/water
 		If my>133 And my<148 And rightmouse=True And rightmousereleased=True
+			FlushKeys
 			Locate 0,0
 			Color 0,0,0
 			Rect 0,0,500,40,True
@@ -3367,6 +3375,7 @@ Function EditorLocalControls()
 
 		EndIf
 		If my>150 And my<163 And rightmouse=True And rightmousereleased=True
+			FlushKeys
 			Locate 0,0
 			Color 0,0,0
 			Rect 0,0,500,40,True
@@ -4162,6 +4171,7 @@ Function EditorLocalControls()
 		If my>=565 And my<595
 			If LeftMouse=True And LeftMouseReleased=True
 				;texture prefix
+				FlushKeys
 				Locate 0,0
 				Color 0,0,0
 				Rect 0,0,500,40,True
@@ -4484,6 +4494,7 @@ End Function
 
 Function SetupConfirmation()
 
+	FlushKeys
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
@@ -5141,6 +5152,7 @@ End Function
 
 
 Function SaveTilePreset()
+	FlushKeys
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
@@ -9079,6 +9091,7 @@ Function OnLeftHalfAdjuster()
 End Function
 
 Function InputString$(title$)
+	FlushKeys
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
@@ -9089,6 +9102,7 @@ Function InputString$(title$)
 End Function
 
 Function InputInt(title$)
+	FlushKeys
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
@@ -9099,6 +9113,7 @@ Function InputInt(title$)
 End Function
 
 Function InputFloat#(title$)
+	FlushKeys
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
@@ -16478,6 +16493,7 @@ Function MasterMainLoop()
 			FreeTexture IconTextureCustom
 			IconTextureCustom=0
 			
+			FlushKeys
 			Locate 0,0
 			Color 0,0,0
 			Rect 0,0,500,40,True
@@ -16910,6 +16926,7 @@ Function MasterAdvancedLoop()
 		Next
 		
 		If MouseY()>302 And MouseY()<323 And MouseX()>290
+			FlushKeys
 			Locate 0,0
 			Color 0,0,0
 			Rect 0,0,500,40,True
