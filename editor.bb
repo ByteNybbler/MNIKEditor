@@ -23,7 +23,6 @@ Global LeftMouse,LeftMouseReleased,RightMouse,RightMouseReleased
 Global MouseScroll=0
 Global ReturnKey,ReturnKeyReleased,DeleteKey,DeleteKeyReleased
 Const KeyCount=237
-Dim Key(KeyCount)
 Dim KeyReleased(KeyCount)
 
 Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
@@ -1737,10 +1736,9 @@ Repeat
 				Delay 200
 			Until HasFocus()
 			
-			For i=1 To KeyCount
-				Key(i)=False
-				KeyReleased(i)=False
-			Next
+			;For i=1 To KeyCount
+			;	KeyReleased(i)=False
+			;Next
 			
 			;FlushKeys ; WHY DOES THIS NOT WORK??? Apparently it doesn't get rid of currently-pressed keys.
 			
@@ -2251,7 +2249,7 @@ End Function
 
 Function KeyPressed(i)
 
-	If Key(i) And KeyReleased(i)
+	If KeyDown(i) And KeyReleased(i)
 		KeyReleased(i)=False
 		Return True
 	Else
@@ -2307,10 +2305,7 @@ Function EditorGlobalControls()
 	EndIf
 	
 	For i=1 To KeyCount
-		If KeyDown(i)
-			Key(i)=True
-		Else
-			Key(i)=False
+		If Not KeyDown(i)
 			KeyReleased(i)=True
 		EndIf
 	Next
