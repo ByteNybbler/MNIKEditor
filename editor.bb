@@ -9201,7 +9201,7 @@ End Function
 
 Function ConfirmFindAndReplace()
 
-	Return GetConfirmation("Find and replace on matching values for ALL entities?")
+	Return GetConfirmation("Find and replace on matching values for ALL objects?")
 
 End Function
 
