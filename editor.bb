@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/15/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/16/22)"
 
 Global MASTERUSER=True
 
@@ -11967,8 +11967,6 @@ End Function
 
 Function ResetLevel()
 
-	LightingWasChanged()
-
 	SetCurrentGrabbedObject(-1)
 
 	For i=0 To 99
@@ -13768,7 +13766,8 @@ Function LoadLevel(levelnumber)
 			UpdateLogicTile(i,j)
 		Next
 	Next
-
+	
+	LightingWasChanged()
 	
 End Function
 
