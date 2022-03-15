@@ -5052,6 +5052,8 @@ Function ChangeLevelTile(i,j,update)
 	If update=True
 		;UpdateWaterTile(i,j)
 		UpdateLogicTile(i,j)
+		
+		RebuildLevelModel()
 	EndIf
 
 
