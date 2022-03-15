@@ -451,7 +451,8 @@ Dim BrushWaterTileTurbulence#(100,100)
 
 Global ChunkTileU#,ChunkTileV#
 
-Global CurrentMesh,CurrentSurface ; for tile rendering
+Global CurrentMesh,CurrentSurface ; for tile rendering in tile camera
+Global LevelDetail=1
 
 Global CurrentTileTexture=8
 Global CurrentTileRotation
@@ -505,6 +506,7 @@ Global TargetWaterTileUse=True
 Global TargetWaterTileHeightUse=True
 Global TargetWaterTileTurbulenceUse=True
 
+; used for flood fill algorithm
 Dim FloodStackX(10250) ; no pun intended hahahahaha
 Dim FloodStackY(10250)
 
@@ -10717,6 +10719,7 @@ End Function
 
 Function UpdateLevelTile(i,j)
 
+	; make sure it's a tile that actually exists in the level first
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
 	
 	; top face
@@ -12362,7 +12365,7 @@ Function CalculateUV(Texture,i2,j2,Rotation,size)
 		EndIf
 	EndIf
 	
-	LevelDetail=1
+	;LevelDetail=1
 	
 	Select Rotation
 	Case 0
