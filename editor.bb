@@ -1789,6 +1789,7 @@ End Function
 Function StartEditorMainLoop()
 	Cls
 	SetEditorMode(EditorModeBeforeMasterEdit)
+	WireFrame UsingWireFrame
 	
 	CameraProjMode Camera1,1
 	CameraProjMode Camera2,1
@@ -2099,6 +2100,8 @@ Function SetEditorMode(NewMode)
 		; prevent garbage input from level editor movement from appearing in adventure description text
 		FlushKeys
 		
+		WireFrame False
+		
 		If EditorMode=0 Or EditorMode=3
 			EditorModeBeforeMasterEdit=EditorMode
 		EndIf
@@ -2311,16 +2314,16 @@ Function EditorGlobalControls()
 			KeyReleased(i)=True
 		EndIf
 	Next
-	
-	If KeyPressed(65)
-		UsingWireFrame=Not UsingWireFrame
-		WireFrame UsingWireFrame
-	EndIf
 
 End Function
 
 
 Function EditorLocalControls()
+
+	If KeyPressed(65)
+		UsingWireFrame=Not UsingWireFrame
+		WireFrame UsingWireFrame
+	EndIf
 	
 	MX=MouseX()
 	MY=MouseY()
