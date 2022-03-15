@@ -4347,9 +4347,7 @@ Function EditorLocalControls()
 				;ReBuildLevelModel()
 				For i=0 To LevelWidth-1
 					For j=0 To LevelHeight-1
-						UpdateLevelTile(i,j)
-						UpdateWaterTile(i,j)
-						UpdateLogicTile(i,j)
+						UpdateTile(i,j)
 					Next
 				Next
 				For i=0 To NofObjects-1
@@ -10708,6 +10706,15 @@ Function AdjustObjectAdjuster(i)
 End Function 
 
 
+Function UpdateTile(i,j)
+
+	UpdateLevelTile(i,j)
+	UpdateWaterTile(i,j)
+	UpdateLogicTile(i,j)
+
+End Function
+
+
 Function UpdateLevelTile(i,j)
 
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
@@ -12150,9 +12157,7 @@ Function ReSizeLevel()
 	ReBuildLevelModel()
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -12219,9 +12224,7 @@ Function FlipLevelX()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -12259,9 +12262,7 @@ Function FlipLevelY()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -12304,9 +12305,7 @@ Function FlipLevelXY()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -13761,9 +13760,7 @@ Function LoadLevel(levelnumber)
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
