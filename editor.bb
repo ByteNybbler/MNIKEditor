@@ -4489,7 +4489,7 @@ Function GetConfirmation(Message$)
 
 	SetupConfirmation()
 	Print Message$
-	Confirm$=Input$("Type Y To confirm: ")
+	Confirm$=Input$("Type Y to confirm: ")
 	Return Confirm="Y" Or Confirm="y"
 
 End Function
