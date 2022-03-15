@@ -4425,7 +4425,8 @@ Function EditorLocalControls()
 			Else If my>560 And my<600
 				; save and exit
 				If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
-					SetupConfirmation()
+					FlushKeys
+					SetupWarning()
 					Print("You have not hit the Update button on the selected object.")
 					Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
 					If Confirm="Y" Or Confirm="y"
@@ -4486,9 +4487,8 @@ Function AltDown()
 
 End Function
 
-Function SetupConfirmation()
+Function SetupWarning()
 
-	FlushKeys
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
@@ -4498,7 +4498,8 @@ End Function
 
 Function GetConfirmation(Message$)
 
-	SetupConfirmation()
+	FlushKeys
+	SetupWarning()
 	Print Message$
 	Confirm$=Input$("Type Y to confirm: ")
 	Return Confirm="Y" Or Confirm="y"
@@ -4509,7 +4510,7 @@ End Function
 Function ForceKeyRelease(keycode, keyname$)
 
 	If KeyDown(keycode)
-		SetupConfirmation()
+		SetupWarning()
 		Print "Press "+keyname$+" to proceed."
 		Print "I am doing this to protect you and your family."
 		Repeat Until Not KeyDown(keycode)
