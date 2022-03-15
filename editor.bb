@@ -769,7 +769,126 @@ Global AmbientBlue=100
 Global SimulatedLightRed,SimulatedLightGreen,SimulatedLightBlue,SimulatedLightRedGoal,SimulatedLightGreenGoal,SimulatedLightBlueGoal,SimulatedLightChangeSpeed
 Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedAmbientRedGoal,SimulatedAmbientGreenGoal,SimulatedAmbientBlueGoal,SimulatedAmbientChangeSpeed
 
+; IN-GAME-ESQUE LEVELMESH
+; =========================
 
+Global LevelDetail ; 1-x how many subdivisions per tile
+
+Global BackGroundEntity1, BackGroundEntity2
+Dim BackGroundTexture1(30),BackGroundTexture2(30)
+
+Global CurrentLevelChunk
+; All of these are for a given chunk
+; maximum chunk size right now is 100x100 (but can of course be smaller)
+Global ChunkSize ; in general the x by x size of chunks
+Global ChunkWidth, ChunkHeight ; size of the current chunk (could be smaller if at edge)
+Dim ChunkTileTexture(100,100) ; corresponding to squares in LevelTexture
+Dim ChunkTileRotation(100,100) ; 0-3 , and 4-7 for "flipped"
+Dim ChunkTileSideTexture(100,100) ; texture for extrusion walls
+Dim ChunkTileSideRotation(100,100) ; 0-3 , and 4-7 for "flipped"
+Dim ChunkTileRandom#(100,100) ; random height pertubation of tile
+Dim ChunkTileHeight#(100,100) ; height of "center" - e.g. to make ditches and hills
+Dim ChunkStoredVHeight#(0) ; used for height calculations (re-dimmed in CreateLevel()
+Dim ChunkTileExtrusion#(100,100); extrusion with walls around it 
+Dim ChunkTileRounding(100,100); 0-no, 1-yes: are floors rounded if on a drop-off corner
+Dim ChunkTileEdgeRandom(100,100); 0-no, 1-yes: are edges rippled
+
+; water control 
+Dim ChunkWaterTileTexture(100,100)	; -1: none, 0-3 water textures
+Dim ChunkWaterTileRotation(100,100) ; 0-7 
+Dim ChunkWaterTileHeight#(100,100)  ; height of water tile
+
+Dim LevelEntity(200),LevelSurface(200) ; one for each chunk
+Dim WaterEntity(200),WaterSurface(200)
+Dim LevelTextures(30),WaterTextures(10)
+
+; Setup Graphics
+; =========================
+
+If displayfullscreen=True
+	Graphics3D 800,600,16,1
+Else
+	Graphics3D 800,600,16,2
+EndIf
+SetBuffer BackBuffer()
+
+	; Preloaded Level Textures
+	LevelTextures(0)=MyLoadTexture("data\leveltextures\leveltex abstract.bmp",1)
+	LevelTextures(1)=MyLoadTexture("data\leveltextures\leveltex cave.bmp",1)
+	LevelTextures(2)=MyLoadTexture("data\leveltextures\leveltex cellar.bmp",1)
+	LevelTextures(3)=MyLoadTexture("data\leveltextures\leveltex forest.bmp",1)
+	LevelTextures(4)=MyLoadTexture("data\leveltextures\leveltex hills.bmp",1)
+	LevelTextures(5)=MyLoadTexture("data\leveltextures\leveltex snow.bmp",1)
+	LevelTextures(6)=MyLoadTexture("data\leveltextures\leveltex temple.bmp",1)
+	LevelTextures(7)=MyLoadTexture("data\leveltextures\leveltex town.bmp",1)
+	LevelTextures(8)=MyLoadTexture("data\leveltextures\leveltex lava.bmp",1)
+	LevelTextures(9)=MyLoadTexture("data\leveltextures\leveltex beach.bmp",1)
+	LevelTextures(10)=MyLoadTexture("data\leveltextures\leveltex jungle.bmp",1)
+	LevelTextures(11)=MyLoadTexture("data\leveltextures\leveltex jtemple.bmp",1)
+	LevelTextures(12)=MyLoadTexture("data\leveltextures\leveltex wonderfalls.bmp",1)
+	LevelTextures(13)=MyLoadTexture("data\leveltextures\leveltex cave2.bmp",1)
+	LevelTextures(14)=MyLoadTexture("data\leveltextures\leveltex sundog.bmp",1)
+	LevelTextures(15)=MyLoadTexture("data\leveltextures\leveltex techno.bmp",1)
+	LevelTextures(16)=MyLoadTexture("data\leveltextures\leveltex stars.bmp",1)
+	LevelTextures(17)=MyLoadTexture("data\leveltextures\leveltex desert.bmp",1)
+	LevelTextures(18)=MyLoadTexture("data\leveltextures\leveltex castle.bmp",1)
+	LevelTextures(19)=MyLoadTexture("data\leveltextures\leveltex jaava.bmp",1)
+	LevelTextures(20)=MyLoadTexture("data\leveltextures\leveltex uo.bmp",1)
+	LevelTextures(21)=MyLoadTexture("data\leveltextures\leveltex spooky.bmp",1)
+
+
+
+
+	Backgroundtexture1(0)=MyLoadTexture("data\leveltextures\backgroundtex abstract1.bmp",1)
+	Backgroundtexture2(0)=MyLoadTexture("data\leveltextures\backgroundtex abstract2.bmp",1)
+	Backgroundtexture1(1)=MyLoadTexture("Data\leveltextures\backgroundtex cave1.bmp",1)
+	Backgroundtexture2(1)=MyLoadTexture("data\leveltextures\backgroundtex cave2.bmp",1)
+	Backgroundtexture1(2)=MyLoadTexture("data\leveltextures\backgroundtex cellar1.bmp",1)
+	Backgroundtexture2(2)=MyLoadTexture("data\leveltextures\backgroundtex cellar2.bmp",1)
+	Backgroundtexture1(3)=MyLoadTexture("data\leveltextures\backgroundtex forest1.bmp",1)
+	Backgroundtexture2(3)=MyLoadTexture("data\leveltextures\backgroundtex forest2.bmp",1)
+	Backgroundtexture1(4)=MyLoadTexture("data\leveltextures\backgroundtex hills1.bmp",1)
+	Backgroundtexture2(4)=MyLoadTexture("data\leveltextures\backgroundtex hills2.bmp",1)
+	Backgroundtexture1(5)=MyLoadTexture("data\leveltextures\backgroundtex snow1.bmp",1)
+	Backgroundtexture2(5)=MyLoadTexture("data\leveltextures\backgroundtex snow2.bmp",1)
+	Backgroundtexture1(6)=MyLoadTexture("data\leveltextures\backgroundtex temple1.bmp",1)
+	Backgroundtexture2(6)=MyLoadTexture("data\leveltextures\backgroundtex temple2.bmp",1)
+	Backgroundtexture1(7)=MyLoadTexture("data\leveltextures\backgroundtex town1.bmp",1)
+	Backgroundtexture2(7)=MyLoadTexture("data\leveltextures\backgroundtex town2.bmp",1)
+	Backgroundtexture1(8)=MyLoadTexture("data\leveltextures\backgroundtex lava1.bmp",1)
+	Backgroundtexture2(8)=MyLoadTexture("data\leveltextures\backgroundtex lava2.bmp",1)
+	Backgroundtexture1(9)=MyLoadTexture("data\leveltextures\backgroundtex beach1.bmp",1)
+	Backgroundtexture2(9)=MyLoadTexture("data\leveltextures\backgroundtex beach2.bmp",1)
+	Backgroundtexture1(10)=MyLoadTexture("data\leveltextures\backgroundtex jungle1.bmp",1)
+	Backgroundtexture2(10)=MyLoadTexture("data\leveltextures\backgroundtex jungle2.bmp",1)
+	Backgroundtexture1(11)=MyLoadTexture("data\leveltextures\backgroundtex jtemple1.bmp",1)
+	Backgroundtexture2(11)=MyLoadTexture("data\leveltextures\backgroundtex jtemple2.bmp",1)
+	Backgroundtexture1(12)=MyLoadTexture("data\leveltextures\backgroundtex wonderfalls1.bmp",1)
+	Backgroundtexture2(12)=MyLoadTexture("data\leveltextures\backgroundtex wonderfalls2.bmp",1)
+	Backgroundtexture1(13)=MyLoadTexture("Data\leveltextures\backgroundtex cave21.bmp",1)
+	Backgroundtexture2(13)=MyLoadTexture("data\leveltextures\backgroundtex cave22.bmp",1)
+	Backgroundtexture1(14)=MyLoadTexture("Data\leveltextures\backgroundtex sundog1.bmp",1)
+	Backgroundtexture2(14)=MyLoadTexture("data\leveltextures\backgroundtex sundog2.bmp",1)
+	Backgroundtexture1(15)=MyLoadTexture("Data\leveltextures\backgroundtex techno1.bmp",1)
+	Backgroundtexture2(15)=MyLoadTexture("data\leveltextures\backgroundtex techno2.bmp",1)
+	Backgroundtexture1(16)=MyLoadTexture("Data\leveltextures\backgroundtex stars1.bmp",1)
+	Backgroundtexture2(16)=MyLoadTexture("data\leveltextures\backgroundtex stars2.bmp",1)
+	Backgroundtexture1(17)=MyLoadTexture("Data\leveltextures\backgroundtex desert1.bmp",1)
+	Backgroundtexture2(17)=MyLoadTexture("data\leveltextures\backgroundtex desert2.bmp",1)
+	Backgroundtexture1(18)=MyLoadTexture("Data\leveltextures\backgroundtex castle1.bmp",1)
+	Backgroundtexture2(18)=MyLoadTexture("data\leveltextures\backgroundtex castle2.bmp",1)
+	Backgroundtexture1(19)=MyLoadTexture("Data\leveltextures\backgroundtex jaava1.bmp",1)
+	Backgroundtexture2(19)=MyLoadTexture("data\leveltextures\backgroundtex jaava2.bmp",1)
+	Backgroundtexture1(20)=MyLoadTexture("Data\leveltextures\backgroundtex uo1.bmp",1)
+	Backgroundtexture2(20)=MyLoadTexture("data\leveltextures\backgroundtex uo2.bmp",1)
+	Backgroundtexture1(21)=MyLoadTexture("Data\leveltextures\backgroundtex spooky1.bmp",1)
+	Backgroundtexture2(21)=MyLoadTexture("data\leveltextures\backgroundtex spooky2.bmp",1)
+
+
+	WaterTextures(0)=MyLoadTexture("data\leveltextures\watertex 1.jpg",1)
+	WaterTextures(1)=MyLoadTexture("data\leveltextures\watertex 2.jpg",1)
+	WaterTextures(2)=MyLoadTexture("data\leveltextures\watertex 3.jpg",1)
+	WaterTextures(3)=MyLoadTexture("data\leveltextures\watertex 4.jpg",1)
 
 
 
@@ -779,15 +898,8 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 ; ******************************************************
 
 
-; Setup Graphics, Lights, Camera
+; Setup Lights, Camera
 ; ================================
-If displayfullscreen=True
-	Graphics3D 800,600,16,1
-Else
-	Graphics3D 800,600,16,2
-
-EndIf
-SetBuffer BackBuffer()
 
 Global Light=CreateLight()
 AmbientLight 155,155,155
@@ -3286,9 +3398,9 @@ Function EditorLocalControls()
 			FreeTexture LevelTexture
 			LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
 			EntityTexture TexturePlane,LevelTexture
-			For j=0 To LevelHeight-1
-				EntityTexture LevelMesh(j),LevelTexture
-			Next
+			;For j=0 To LevelHeight-1
+			;	EntityTexture LevelMesh(j),LevelTexture
+			;Next
 			leftmousereleased=False
 			buildcurrenttilemodel()
 		EndIf
@@ -3312,9 +3424,9 @@ Function EditorLocalControls()
 			FreeTexture WaterTexture
 			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
 			EntityTexture Currentwatertile,WaterTexture
-			For j=0 To LevelHeight-1
-				EntityTexture WaterMesh(j),WaterTexture
-			Next
+			;For j=0 To LevelHeight-1
+			;	EntityTexture WaterMesh(j),WaterTexture
+			;Next
 			leftmousereleased=False
 			buildcurrenttilemodel()
 
@@ -3326,9 +3438,9 @@ Function EditorLocalControls()
 			FreeTexture WaterTexture
 			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
 			EntityTexture Currentwatertile,WaterTexture
-			For j=0 To LevelHeight-1
-				EntityTexture WaterMesh(j),WaterTexture
-			Next
+			;For j=0 To LevelHeight-1
+			;	EntityTexture WaterMesh(j),WaterTexture
+			;Next
 			leftmousereleased=False
 			buildcurrenttilemodel()
 
@@ -3370,9 +3482,9 @@ Function EditorLocalControls()
 				EndIf	
 				
 				EntityTexture TexturePlane,LevelTexture
-				For j=0 To LevelHeight-1
-					EntityTexture LevelMesh(j),LevelTexture
-				Next
+				;For j=0 To LevelHeight-1
+				;	EntityTexture LevelMesh(j),LevelTexture
+				;Next
 			EndIf
 			rightmousereleased=False
 			buildcurrenttilemodel()
@@ -4340,16 +4452,12 @@ Function EditorLocalControls()
 					For j=0 To LevelHeight-1
 						LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
 						WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
-						;UpdateLevelTile(i,j)
-						;UpdateWaterTile(i,j)
 					Next
 				Next
 				;ReBuildLevelModel()
 				For i=0 To LevelWidth-1
 					For j=0 To LevelHeight-1
-						UpdateLevelTile(i,j)
-						UpdateWaterTile(i,j)
-						UpdateLogicTile(i,j)
+						UpdateTile(i,j)
 					Next
 				Next
 				For i=0 To NofObjects-1
@@ -4628,59 +4736,8 @@ Function ColorLevelTileLogic(i,j)
 End Function
 
 
+Function BlocksForLevelAndWater()
 
-Function ReBuildLevelModel()
-
-	For i=0 To 99
-		FreeEntity LevelMesh(i)
-		FreeEntity WaterMesh(i)
-		FreeEntity LogicMesh(i)
-	Next
-
-	BuildLevelModel()
-	
-End Function
-
-
-
-Function BuildLevelModel()
-
-	
-	For i=0 To 99
-		LevelMesh(i)=CreateMesh()
-		LevelSurface(i)=CreateSurface(LevelMesh(i))
-		EntityFX LevelMesh(i),2
-		
-		Watermesh(i)=CreateMesh()
-		Watersurface(i)=CreateSurface(Watermesh(i))
-		EntityAlpha WaterMesh(i),.5
-		EntityFX WaterMesh(i),2
-
-		; For some reason, this appears to do nothing???
-		;If WaterGlow=True 
-		;	EntityBlend WaterMesh(i),3
-		;Else 
-		;	EntityBlend WaterMesh(i),1
-		;EndIf
-		;If WaterTransparent=True 
-		;	EntityAlpha WaterMesh(i),.5
-		;Else
-		;	EntityAlpha WaterMesh(i),1
-		;EndIf
-		
-		
-		Logicmesh(i)=CreateMesh()
-		Logicsurface(i)=CreateSurface(Logicmesh(i))
-		EntityFX LogicMesh(i),2
-
-
-	Next
-	
-	
-	
-	
-
-	
 	For j=0 To LevelHeight-1
 		ClearSurface LevelSurface(j)
 		For i=0 To LevelWidth-1
@@ -4771,7 +4828,8 @@ Function BuildLevelModel()
 			
 		Next
 		;UpdateNormals LevelMesh(j)
-		EntityTexture LevelMesh(j),LevelTexture
+		
+		;EntityTexture LevelMesh(j),LevelTexture
 	Next
 	
 	; water
@@ -4800,6 +4858,66 @@ Function BuildLevelModel()
 		EntityTexture WaterMesh(j),WaterTexture
 	
 	Next
+
+End Function
+
+
+
+Function ReBuildLevelModel()
+
+	;For i=0 To 99
+	;	FreeEntity LevelMesh(i)
+	;	FreeEntity WaterMesh(i)
+	;	FreeEntity LogicMesh(i)
+	;Next
+
+	BuildLevelModel()
+	
+End Function
+
+
+
+Function BuildLevelModel()
+
+	CreateLevel()
+
+	
+	For i=0 To 99
+;		LevelMesh(i)=CreateMesh()
+;		LevelSurface(i)=CreateSurface(LevelMesh(i))
+;		EntityFX LevelMesh(i),2
+;		
+;		Watermesh(i)=CreateMesh()
+;		Watersurface(i)=CreateSurface(Watermesh(i))
+;		EntityAlpha WaterMesh(i),.5
+;		EntityFX WaterMesh(i),2
+
+		; For some reason, this appears to do nothing???
+		;If WaterGlow=True 
+		;	EntityBlend WaterMesh(i),3
+		;Else 
+		;	EntityBlend WaterMesh(i),1
+		;EndIf
+		;If WaterTransparent=True 
+		;	EntityAlpha WaterMesh(i),.5
+		;Else
+		;	EntityAlpha WaterMesh(i),1
+		;EndIf
+		
+		
+		Logicmesh(i)=CreateMesh()
+		Logicsurface(i)=CreateSurface(Logicmesh(i))
+		EntityFX LogicMesh(i),2
+
+
+	Next
+	
+	
+	
+	
+	;BlocksForLevelAndWater()
+	
+
 	
 	; logic
 	For j=0 To LevelHeight-1
@@ -4837,11 +4955,11 @@ Function BuildLevelModel()
 		Else
 			HideEntity LogicMesh(j)
 		EndIf
-		If ShowLevelMesh=True 
-			ShowEntity LevelMesh(j)
-		Else
-			HideEntity LevelMesh(j)
-		EndIf
+;		If ShowLevelMesh=True 
+;			ShowEntity LevelMesh(j)
+;		Else
+;			HideEntity LevelMesh(j)
+;		EndIf
 
 		
 	Next
@@ -4894,7 +5012,7 @@ Function ChangeLevelTile(i,j,update)
 		LevelTileLogic(i,j)=CurrentTileLogic
 	EndIf
 	If update=True 
-		UpdateLevelTile(i,j)
+		;UpdateLevelTile(i,j)
 	
 		; Possibly update surrounding tiles
 		If i>0
@@ -4920,7 +5038,7 @@ Function ChangeLevelTile(i,j,update)
 	If CurrentWaterTileHeightUse=True WaterTileHeight(i,j)=CurrentWaterTileHeight
 	If CurrentWaterTileTurbulenceUse=True WaterTileTurbulence(i,j)=CurrentWaterTileTurbulence
 	If update=True
-		UpdateWaterTile(i,j)
+		;UpdateWaterTile(i,j)
 		UpdateLogicTile(i,j)
 	EndIf
 
@@ -12049,6 +12167,13 @@ Function CopyTile(SourceX,SourceY,DestX,DestY)
 End Function
 
 
+Function UpdateTile(i,j)
+	;UpdateLevelTile(i,j)
+	;UpdateWaterTile(i,j)
+	UpdateLogicTile(i,j)
+End Function
+
+
 Function ReSizeLevel()
 
 	If LevelWidth+WidthLeftChange>100
@@ -12150,9 +12275,7 @@ Function ReSizeLevel()
 	ReBuildLevelModel()
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -12219,9 +12342,7 @@ Function FlipLevelX()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -12259,9 +12380,7 @@ Function FlipLevelY()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -12304,9 +12423,7 @@ Function FlipLevelXY()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -13752,18 +13869,16 @@ Function LoadLevel(levelnumber)
 	CloseFile file
 	
 	ReBuildLevelModel()
-	For j=0 To LevelHeight-1
-		EntityTexture LevelMesh(j),LevelTexture
-		EntityTexture WaterMesh(j),WaterTexture
-
-	Next
+;	For j=0 To LevelHeight-1
+;		EntityTexture LevelMesh(j),LevelTexture
+;		EntityTexture WaterMesh(j),WaterTexture
+;
+;	Next
 	BuildCurrentTileModel()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			UpdateLevelTile(i,j)
-			UpdateWaterTile(i,j)
-			UpdateLogicTile(i,j)
+			UpdateTile(i,j)
 		Next
 	Next
 	
@@ -21850,6 +21965,1077 @@ Function ControlObjects()
 	PositionTexture RainbowTexture2,(leveltimer Mod 7000)/7000.0,(leveltimer Mod 1000)/1000.0
 
 End Function
+
+
+Function CreateLevel()
+
+	; Requires a LevelWidth*LevelHeight Field field with LevelTileTexture/Rotation/Height/etc.
+
+	; First divvy up and create chunks
+	
+	; chunks get their data from the main level file. Each chunk also creates a 1 tile overlap 
+	; border around it that isn't rendered, but used to calculate matching heights etc.
+	; Hence the increase in ChunkSize by 2, and rendering the chunk at position (-1,-1)
+	CurrentLevelChunk=0	
+	ChunkSize=12
+	WaterTurbulenceGlobal=False
+	For j=0 To (LevelHeight-1)/ChunkSize
+		For i=0 To (LevelWidth-1)/ChunkSize
+			; get the size of the chunk (smaller if at edge)
+			If i=(LevelWidth-1)/ChunkSize And (LevelWidth Mod ChunkSize)>0
+				ChunkWidth=(LevelWidth Mod ChunkSize)+2
+			Else
+				ChunkWidth=ChunkSize+2
+			EndIf
+			If j=(LevelHeight-1)/ChunkSize And (LevelHeight Mod ChunkSize)>0
+				ChunkHeight=(LevelHeight Mod ChunkSize)+2
+			Else
+				ChunkHeight=ChunkSize+2
+			EndIf
+			
+			; now fill up the chunkdata
+			
+			For i2=0 To ChunkWidth-1
+				For j2=0 To ChunkHeight-1
+				
+					If i2=0 And i=0
+						i3=i*ChunkSize
+					Else If i2=ChunkWidth-1 And i=(LevelWidth-1)/ChunkSize
+						i3=i*ChunkSize+ChunkWidth-3
+					Else
+						i3=i*ChunkSize+i2-1
+					EndIf
+					If j2=0 And j=0
+						j3=j*ChunkSize
+					Else If j2=ChunkHeight-1 And j=(LevelHeight-1)/ChunkSize
+						j3=j*ChunkSize+ChunkHeight-3
+					Else
+						j3=j*ChunkSize+j2-1
+					EndIf
+
+					
+					
+					
+					ChunkTileTexture(i2,j2)=LevelTileTexture(i3,j3)
+					ChunkTileRotation(i2,j2)=LevelTileRotation(i3,j3)
+					ChunkTileSideTexture(i2,j2)=LevelTileSideTexture(i3,j3)
+					ChunkTileSideRotation(i2,j2)=LevelTileSideRotation(i3,j3)
+					ChunkTileRandom(i2,j2)=LevelTileRandom(i3,j3)
+					ChunkTileExtrusion(i2,j2)=LevelTileExtrusion(i3,j3)
+					ChunkTileRounding(i2,j2)=LevelTileRounding(i3,j3)
+					ChunkTileEdgeRandom(i2,j2)=LevelTileEdgeRandom(i3,j3)
+					ChunkTileHeight(i2,j2)=LevelTileHeight(i3,j3)
+					
+					ChunkWaterTileTexture(i2,j2)=WaterTileTexture(i3,j3)
+					ChunkWaterTileRotation(i2,j2)=WaterTileRotation(i3,j3)
+					ChunkWaterTileHeight(i2,j2)=WaterTileHeight(i3,j3)
+					If WaterTileTurbulence(i3,j3)>0 WaterTurbulenceGlobal=True
+					If ChunkWaterTileTexture(i2,j2)<0 Then ChunkWaterTileHeight(i2,j2)=-10
+
+
+				Next
+			Next
+			
+			
+			
+			CreateLevelChunk(i*(ChunkSize)-1,j*(ChunkSize)-1)
+			CurrentLevelChunk=CurrentLevelChunk+1
+		Next
+	Next
+	
+	; side/wall effects
+	
+	Select LevelEdgeStyle
+	Case 0
+		; nuthin'
+	
+	Case 1
+		; basic wall at height 1
+		
+		 
+		
+		
+	;	BackGroundTexture1=myLoadTexture("data\graphics\backgroundtex "+ex$+"1.bmp",1)
+	;	BackGroundTexture2=myLoadTexture("data\graphics\backgroundtex "+ex$+"2.bmp",1)
+		
+		;widescreen: we need all levelwidth increased by 2 so all |10| must be |12| when widescreen is enabled and 20 to 24
+		extra=0
+		extradouble=0
+		If widescreen
+			extra=2
+			extradouble=extra*2
+		EndIf
+		BackGroundEntity1=CreateMesh()
+		surface=CreateSurface(BackGroundEntity1)
+		AddVertex (surface,-10-extra,1,10,0,0)
+		AddVertex (surface,LevelWidth+10+extra,1,10,LevelWidth+20+extradouble,0)
+		AddVertex (surface,-10-extra,1,0,0,10)
+		AddVertex (surface,LevelWidth+10+extra,1,0,LevelWidth+20+extradouble,10)
+		AddTriangle (surface,0,1,2)
+		AddTriangle (surface,2,1,3)
+		
+		AddVertex (surface,-10-extra,1,-LevelHeight,0,0)
+		AddVertex (surface,LevelWidth+10+extra,1,-LevelHeight,LevelWidth+20+extradouble,0)
+		AddVertex (surface,-10-extra,1,-LevelHeight-10,0,10)
+		AddVertex (surface,LevelWidth+10+extra,1,-LevelHeight-10,LevelWidth+20+extradouble,10)
+		AddTriangle (surface,4,5,6)
+		AddTriangle (surface,6,5,7)
+		
+		AddVertex (surface,-10-extra,1,0,0,0)
+		AddVertex (surface,0,1,0,10+extra,0)
+		AddVertex (surface,-10-extra,1,-LevelHeight,0,LevelHeight)
+		AddVertex (surface,0,1,-LevelHeight,10+extra,LevelHeight)
+		AddTriangle (surface,8,9,10)
+		AddTriangle (surface,10,9,11)
+		
+		AddVertex (surface,LevelWidth,1,0,0,0)
+		AddVertex (surface,LevelWidth+10+extra,1,0,10+extra,0)
+		AddVertex (surface,LevelWidth,1,-LevelHeight,0,LevelHeight)
+		AddVertex (surface,LevelWidth+10+extra,1,-LevelHeight,10+extra,LevelHeight)
+		AddTriangle (surface,12,13,14)
+		AddTriangle (surface,14,13,15)
+		
+		UpdateNormals BackGroundEntity1
+		leveltexturen$=leveltexturename$(leveltexturenum)
+		ex$=Mid$(leveltexturen$,10,Len(leveltexturen$)-9-4)
+		
+		
+		If usecustomleveltexture=True
+			EntityTexture BackgroundEntity1,custombgtexture1
+		Else
+			EntityTexture BackGroundEntity1,BackGroundTexture1(whichleveltexture(ex$))
+		EndIf
+		
+		BackGroundEntity2=CreateMesh()
+		surface=CreateSurface(BackGroundEntity2)
+		AddVertex (surface,0,1,0,0,0)
+		AddVertex (surface,LevelWidth,1,0,LevelWidth,0)
+		AddVertex (surface,0,0,0,0,1)
+		AddVertex (surface,LevelWidth,0,0,LevelWidth,1)
+		AddTriangle (surface,0,1,2)
+		AddTriangle (surface,2,1,3)
+		
+		AddVertex (surface,LevelWidth,1,0,0,0)
+		AddVertex (surface,LevelWidth,1,-LevelHeight,LevelHeight,0)
+		AddVertex (surface,LevelWidth,0,0,0,1)
+		AddVertex (surface,LevelWidth,0,-LevelHeight,LevelHeight,1)
+		AddTriangle (surface,4,5,6)
+		AddTriangle (surface,6,5,7)
+		
+		AddVertex (surface,LevelWidth,1,-LevelHeight,0,0)
+		AddVertex (surface,0,1,-LevelHeight,LevelWidth,0)
+		AddVertex (surface,LevelWidth,0,-LevelHeight,0,1)
+		AddVertex (surface,0,0,-LevelHeight,LevelWidth,1)
+		AddTriangle (surface,8,9,10)
+		AddTriangle (surface,10,9,11)
+		
+		AddVertex (surface,0,1,-LevelHeight,0,0)
+		AddVertex (surface,0,1,0,LevelHeight,0)
+		AddVertex (surface,0,0,-LevelHeight,0,1)
+		AddVertex (surface,0,0,0,LevelHeight,1)
+		AddTriangle (surface,12,13,14)
+		AddTriangle (surface,14,13,15)
+		
+		UpdateNormals BackGroundEntity2
+		If usecustomleveltexture=True
+			EntityTexture BackgroundEntity2,custombgtexture2
+		Else
+			EntityTexture BackGroundEntity2,BackGroundTexture2(whichleveltexture(ex$))
+		EndIf
+
+
+	End Select
+	
+End Function
+
+Function CreateLevelChunk(ChunkX,ChunkZ)
+
+	; Creates a chunk of level with index "chunk"
+
+
+	LevelEntity(CurrentLevelChunk)=CreateMesh()
+	LevelSurface(CurrentLevelChunk)=CreateSurface(LevelEntity(CurrentLevelChunk))
+	mySurface=LevelSurface(CurrentLevelChunk)
+	; Create the LevelMesh
+	
+	; PART 1 - BUILD THE FLAT MESH (THE GROUND)
+	; -----------------------------------------
+	
+	; Create The Vertices
+	For j=1 To ChunkHeight-2
+		For i=1 To ChunkWidth-2
+			; do each tile with subdivision of detail level
+			; First, create the vertices
+			For j2=0 To LevelDetail
+				For i2=0 To LevelDetail
+				
+					xoverlap#=0
+					yoverlap#=0
+					zoverlap#=0
+					If j2=0 Or j2=LevelDetail Or i2=0 Or i2=LevelDetail
+						If i2=0 
+							xoverlap#=-0.005
+						;	zoverlap#=+0.005
+						EndIf
+						If j2=0
+							yoverlap#=0.005
+						;	zoverlap#=+0.005
+						EndIf
+						height=0
+					EndIf
+
+					CalculateUV(ChunkTileTexture(i,j),i2,j2,ChunkTileRotation(i,j),8)
+										
+					
+					AddVertex(mySurface,ChunkX+i+Float(i2)/Float(LevelDetail)+xoverlap,height+zoverlap,-(ChunkZ+j+Float(j2)/Float(LevelDetail))+yoverlap,ChunkTileu,ChunkTilev)
+				Next
+			Next
+			; Now create the triangles
+		;	SV=(j*ChunkWidth+i)*(LevelDetail+1)*(LevelDetail+1) ; startingvertex
+			For j2=0 To LevelDetail-1
+				For i2=0 To LevelDetail-1
+					AddTriangle (mySurface,GetLevelVertex(i,j,i2,j2),GetLevelVertex(i,j,i2+1,j2),GetLevelVertex(i,j,i2,j2+1))
+					AddTriangle (mySurface,GetLevelVertex(i,j,i2+1,j2),GetLevelVertex(i,j,i2+1,j2+1),GetLevelVertex(i,j,i2,j2+1))
+				;	AddTriangle (mySurface,SV+j2*(LevelDetail+1)+i2,SV+j2*(LevelDetail+1)+i2+1,SV+(j2+1)*(LevelDetail+1)+i2)
+				;	AddTriangle (mySurface,SV+j2*(LevelDetail+1)+i2+1,SV+(j2+1)*(LevelDetail+1)+i2+1,SV+(j2+1)*(LevelDetail+1)+i2)
+
+				Next
+			Next
+		Next
+	Next
+	
+	; add randomness
+	For j=1 To ChunkHeight-2
+		For i=1 To ChunkWidth-2
+			For i2=0 To LevelDetail
+				For j2=0 To LevelDetail
+					If i2=0 And j2=0
+						random#=Minimum4(ChunkTileRandom(i-1,j-1),ChunkTileRandom(i,j-1),ChunkTileRandom(i-1,j),ChunkTileRandom(i,j))
+					Else If j2=0 And i2=LevelDetail
+						random#=Minimum4(ChunkTileRandom(i+1,j-1),ChunkTileRandom(i,j-1),ChunkTileRandom(i+1,j),ChunkTileRandom(i,j))
+					Else If j2=LevelDetail And i2=0
+						random#=Minimum4(ChunkTileRandom(i-1,j+1),ChunkTileRandom(i-1,j),ChunkTileRandom(i,j+1),ChunkTileRandom(i,j))
+					Else If i2=LevelDetail And j2=LevelDetail
+						random#=Minimum4(ChunkTileRandom(i+1,j+1),ChunkTileRandom(i,j+1),ChunkTileRandom(i+1,j),ChunkTileRandom(i,j))
+					Else If j2=0
+						random#=Minimum2(ChunkTileRandom(i,j-1),ChunkTileRandom(i,j))
+					Else If j2=LevelDetail
+						random#=Minimum2(ChunkTileRandom(i,j+1),ChunkTileRandom(i,j))
+					Else If i2=0
+						random#=Minimum2(ChunkTileRandom(i-1,j),ChunkTileRandom(i,j))
+					Else If i2=LevelDetail
+						random#=Minimum2(ChunkTileRandom(i+1,j),ChunkTileRandom(i,j))
+					Else
+						random#=ChunkTileRandom(i,j)
+					EndIf
+					
+					vertex=GetLevelVertex(i,j,i2,j2)
+					random2#=random*LevelVertexRandom(Float(i2),Float(j2))
+
+					VertexCoords mySurface,vertex,VertexX(mysurface,vertex),VertexY(mysurface,vertex)+random2,VertexZ(mysurface,vertex)					
+				
+				Next
+			Next
+		
+		Next
+	Next
+	
+	
+	; now adjust heights - linearly increase/decrease heights based on heights of neighbouring tiles
+	
+	; general idea: go through center rows of each tile,
+	; calculate vertex heights based on two tile heights (linear interpolation) - store this height
+	; as of the second row, build a column from the previous center row to this one.
+	; This creates a grid of lines with the centres of each tile "anchored" at LevelTileHeight
+	
+	
+	If LevelDetail<2 Or Floor(LevelDetail/2)*2<>LevelDetail
+		; must be divisible by two, or disable height function
+		Goto NoLevelHeight
+	EndIf
+	
+	Dim ChunkStoredVHeight#(ChunkWidth*(LevelDetail+1))	
+	
+	For j=0 To ChunkHeight-1
+		For i=0 To ChunkWidth-1
+			For i2=0 To LevelDetail
+				If i2<LevelDetail/2
+					; first half of tile, compare with left neighbour
+					If i=0 
+						OtherHeight#=0.0
+					Else
+						OtherHeight#=ChunkTileHeight(i-1,j)
+					EndIf
+					NewHeight#=OtherHeight+(ChunkTileHeight(i,j)-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
+				Else
+					; second half of tile, compare with right neighbour
+					If i=ChunkWidth-1 
+						OtherHeight#=0.0
+					Else
+						OtherHeight#=ChunkTileHeight(i+1,j)
+					EndIf
+					NewHeight#=ChunkTileHeight(i,j)+(OtherHeight-ChunkTileHeight(i,j))*Float(i2-LevelDetail/2)/Float(LevelDetail)
+					
+				EndIf
+				
+				; but don't adjust vertices in the chunk-border
+				If i>0 And j>0 And i<ChunkWidth-1 And j<ChunkHeight-1
+					vertex=GetLevelVertex(i,j,i2,LevelDetail/2)
+					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
+				EndIf
+		
+				If j>0
+					; as of second row, build vertical bridge to first row
+					For j2=LevelDetail/2+1 To LevelDetail
+						; first half is actually 2nd half of previous row
+						; (also no need to lift first vertex of that part, that's already the center of
+						;  the row and hence lifted above)
+						OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+						ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
+						If i>0 And j>1 And i<ChunkWidth-1; And j<ChunkHeight-1
+							vertex=GetLevelVertex(i,j-1,i2,j2)
+							VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
+						EndIf
+					Next
+					For j2=0 To LevelDetail/2-1
+						; 2nd half (we're now in the top half of this row)
+						OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+						ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
+						If i>0 And j>0 And i<ChunkWidth-1 And j<ChunkHeight-1
+							vertex=GetLevelVertex(i,j,i2,j2)
+							VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
+						EndIf
+					Next
+					
+				EndIf
+				ChunkStoredVHeight(i*(LevelDetail+1)+i2)=NewHeight
+		
+			Next
+			
+			
+		Next
+	Next
+	
+	.nolevelheight
+	
+	
+	
+	
+	; finally, lift tiles by extrusion
+	; first we simply add a set height for all vertices in the entire tile
+	For j=1 To Chunkheight-2
+		For i=1 To Chunkwidth-2
+			For j2=0 To LevelDetail
+				For i2=0 To LevelDetail
+					vertex=GetLevelVertex(i,j,i2,j2)
+					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ChunkTileExtrusion(i,j),VertexZ(mySurface,vertex)
+				Next
+			Next
+		Next
+	Next
+	
+	; now, how about rounding corners, etc?
+	
+	; general idea: 
+	
+	; first, deal with rounding of corners. If there is a drop-off on two sides, then
+	; calculate a reduction of the corner pixels in x/y by a circular shape
+	; However - Disable rounding if drop-off on two sides isn't equal - otherwise sidewalls will have gaps
+	
+	
+	For j=1 To Chunkheight-2
+		For i=1 To Chunkwidth-2
+			If ChunkTileRounding(i,j)=1		
+			
+					
+				; is there a drop-off NE corner:
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i+1,j) And ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j-1) And ChunkTileExtrusion(i+1,j)=ChunkTileExtrusion(i,j-1)
+					; yep: round-off
+					For i2=(LevelDetail/2)+1 To LevelDetail
+						For j2=(LevelDetail/2)+1 To Leveldetail
+							vertex=GetLevelVertex(i,j,i2,LevelDetail-j2)
+							; convert (i2,j2) to (0...1)
+							a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+							b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+							r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+							x#=r/Sqr(1+b^2/a^2)
+							y#=Sqr(r^2-x^2)
+												
+							VertexCoords mySurface,vertex,ChunkX+i+0.5+x#/2.0,VertexY(mySurface,vertex),-(ChunkZ+j+0.5-y#/2.0)
+						Next
+					Next
+					
+				EndIf
+	
+					
+				; is there a drop-off SE corner:
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i+1,j) And ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j+1) And ChunkTileExtrusion(i+1,j)=ChunkTileExtrusion(i,j+1)
+					; yep: round-off
+					For i2=(LevelDetail/2)+1 To LevelDetail
+						For j2=(LevelDetail/2)+1 To Leveldetail
+							vertex=GetLevelVertex(i,j,i2,j2)
+							; convert (i2,j2) to (0...1)
+							a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+							b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+							r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+							x#=r/Sqr(1+b^2/a^2)
+							y#=Sqr(r^2-x^2)
+												
+							VertexCoords mySurface,vertex,ChunkX+i+0.5+x#/2.0,VertexY(mySurface,vertex),-(ChunkZ+j+0.5+y#/2.0)
+						Next
+					Next
+					
+				EndIf
+				; SW corner
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i-1,j) And ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j+1) And ChunkTileExtrusion(i-1,j)=ChunkTileExtrusion(i,j+1)
+					; yep: round-off
+					For i2=(LevelDetail/2)+1 To LevelDetail
+						For j2=(LevelDetail/2)+1 To Leveldetail
+							vertex=GetLevelVertex(i,j,LevelDetail-i2,j2)
+							; convert (i2,j2) to (0...1)
+							a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+							b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+							r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+							x#=r/Sqr(1+b^2/a^2)
+							y#=Sqr(r^2-x^2)
+												
+							VertexCoords mySurface,vertex,ChunkX+i+0.5-x#/2.0,VertexY(mySurface,vertex),-(ChunkZ+j+0.5+y#/2.0)
+						Next
+					Next
+					
+				EndIf
+				
+				; is there a drop-off NW corner:
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i-1,j) And ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j-1) And ChunkTileExtrusion(i-1,j)=ChunkTileExtrusion(i,j-1)
+					; yep: round-off
+					For i2=(LevelDetail/2)+1 To LevelDetail
+						For j2=(LevelDetail/2)+1 To Leveldetail
+							vertex=GetLevelVertex(i,j,LevelDetail-i2,LevelDetail-j2)
+							; convert (i2,j2) to (0...1)
+							a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+							b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+							r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+							x#=r/Sqr(1+b^2/a^2)
+							y#=Sqr(r^2-x^2)
+												
+							VertexCoords mySurface,vertex,ChunkX+i+0.5-x#/2.0,VertexY(mySurface,vertex),-(ChunkZ+j+0.5-y#/2.0)
+						Next
+					Next
+					
+				EndIf
+			
+			EndIf
+						
+		Next
+	Next
+	
+	
+	
+	; next, deal with randomness along edges:
+	; check e.g. the Right edge. If there is a drop-off (extrude) Then we push left the vertex along the edge by up to #randommax
+	; (but don't touch corner vertices)
+	
+	
+	
+	randommax#=0.1
+	
+	
+	For j=1 To ChunkHeight-2
+		For i=1 To ChunkWidth-2
+			If ChunkTileEdgeRandom(i,j)=1
+				; north side
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j-1)
+					
+					j2=0
+					For i2=0 To LevelDetail
+						vertex=GetLevelVertex(i,j,i2,j2)
+						If i2=0 
+							If ChunkTileExtrusion(i-1,j)=ChunkTileExtrusion(i,j-1)
+								random#=1.0
+							Else 
+								random#=0
+							EndIf
+						Else If i2=LevelDetail
+							If ChunkTIleExtrusion(i+1,j)=ChunkTileExtrusion(i,j-1)
+								random#=1.0
+							Else
+								random#=0
+							EndIf
+						Else
+							random#=Rnd(0,1)
+						EndIf
+
+						
+						VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-random*randommax
+					Next
+					
+				EndIf
+				; east side
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i+1,j)
+					
+					i2=LevelDetail
+					For j2=0 To LevelDetail
+						vertex=GetLevelVertex(i,j,i2,j2)
+						If j2=0 
+							If ChunkTileExtrusion(i+1,j)=ChunkTileExtrusion(i,j-1)
+								random#=1.0
+							Else 
+								random#=0
+							EndIf
+						Else If j2=LevelDetail
+							If ChunkTIleExtrusion(i+1,j)=ChunkTileExtrusion(i,j+1)
+								random#=1.0
+							Else
+								random#=0
+							EndIf
+						Else
+							random#=Rnd(0,1)
+						EndIf
+						VertexCoords mySurface,vertex,VertexX(mySurface,vertex)-random*randommax,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+					Next
+					
+					
+				EndIf
+				; south side
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j+1)
+					
+					j2=LevelDetail
+					For i2=0 To LevelDetail
+						vertex=GetLevelVertex(i,j,i2,j2)
+						If i2=0 
+							If ChunkTileExtrusion(i-1,j)=ChunkTileExtrusion(i,j+1)
+								random#=1.0
+							Else 
+								random#=0
+							EndIf
+						Else If i2=LevelDetail
+							If ChunkTIleExtrusion(i+1,j)=ChunkTileExtrusion(i,j+1)
+								random#=1.0
+							Else
+								random#=0
+							EndIf
+						Else
+							random#=Rnd(0,1)
+						EndIf
+						VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+random*randommax
+					Next
+					
+				EndIf
+				; west side
+				If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i-1,j)
+					
+					i2=0
+					For j2=0 To LevelDetail
+						vertex=GetLevelVertex(i,j,i2,j2)
+						If j2=0 
+							If ChunkTileExtrusion(i-1,j)=ChunkTileExtrusion(i,j-1)
+								random#=1.0
+							Else 
+								random#=0
+							EndIf
+						Else If j2=LevelDetail
+							If ChunkTIleExtrusion(i-1,j)=ChunkTileExtrusion(i,j+1)
+								random#=1.0
+							Else
+								random#=0
+							EndIf
+						Else
+							random#=Rnd(0,1)
+						EndIf
+						VertexCoords mySurface,vertex,VertexX(mySurface,vertex)+random*randommax,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+					Next
+					
+					
+				EndIf
+			EndIf
+
+		Next
+	Next
+					
+	
+	
+	; now deal with the "bottom"
+	
+	; * not yet implemented *
+	
+	
+	
+	
+	
+	
+	; PART 2 - HANDLE EXTRUSION WALLS
+	; -------------------------------
+	
+	; general idea - for each tile walk around for sides. if our extrusion is higher than theirs,
+	; create a wall connecting the two 
+	
+	; from here on new vertices won't be trackable or countable (since not all tiles will have walls)
+	; * future possibility - if absolutely necessary an idea would be to create all vertices, but not
+	;	connect them with triangles. Test if/how that affects framerates
+	
+	; get the newest one, and increment from there
+	currentvertex=GetLevelVertex(ChunkWidth-2,ChunkHeight-2,LevelDetail,LevelDetail)+1
+	
+	
+	For j=1 To Chunkheight-2
+		For i=1 To Chunkwidth-2
+		
+			; here we also calculate how much the bottom edge of the side wall should be pushed "out"
+			; the maxfactor is the maximum (corners are not pushed out)
+			If ChunkTileEdgeRandom(i,j)=1
+				randommax#=0.2
+			Else
+				randommax#=0.0
+			EndIf
+			
+			overhang#=0.0
+			
+			; north side
+			random#=0 ; this is the random for the lower edge - set to zero and only caclulate for the second pixel,
+						; that way, the first pixel of the next square will have the same random factor
+			If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j-1) 
+				; yep, add two triangles per LevelDetail connecting the two bordering coordinates
+				For i2=0 To LevelDetail-1
+					vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
+					CalculateUV(ChunkTileSideTexture(i,j),i2,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
+					
+					vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
+					CalculateUV(ChunkTileSideTexture(i,j),i2+1,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
+
+					vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
+					CalculateUV(ChunkTileSideTexture(i,j),i2,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i,j-1),-ChunkZ-j+random,ChunkTileU,ChunkTileV)
+					
+					vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
+					If i2<LevelDetail-1
+						random#=Rnd(0,randommax)
+					Else
+						random#=0
+					EndIf
+
+					CalculateUV(ChunkTileSideTexture(i,j),i2+1,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i,j-1),-ChunkZ-j+random,ChunkTileU,ChunkTileV)
+					
+					AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
+					AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
+					
+					currentvertex=currentvertex+4
+				Next
+			EndIf
+
+			; east side
+			random#=0
+			If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i+1,j) 
+				; yep, add two triangles per LevelDetail connecting the two bordering coordinates
+				For j2=0 To LevelDetail-1
+					vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
+					CalculateUV(ChunkTileSideTexture(i,j),j2,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
+
+					vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
+					CalculateUV(ChunkTileSideTexture(i,j),j2+1,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
+
+					vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
+					CalculateUV(ChunkTileSideTexture(i,j),j2,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i+1+random,VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i+1,j),-(ChunkZ+j+Float(LevelDetail-j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+
+					vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
+					If j2<LevelDetail-1
+						random#=Rnd(0,randommax)
+					Else
+						random#=0
+					EndIf
+
+					CalculateUV(ChunkTileSideTexture(i,j),j2+1,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i+1+random,VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i+1,j),-(ChunkZ+j+Float(LevelDetail-j2-1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+					
+					AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
+					AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
+					
+					currentvertex=currentvertex+4
+				Next
+			EndIf
+
+			
+
+					
+			; south side
+			random#=0
+			If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i,j+1) 
+				; yep, add two triangles per LevelDetail connecting the two bordering coordinates
+				For i2=0 To LevelDetail-1
+					vertex=GetLevelVertex(i,j,i2,LevelDetail)
+					CalculateUV(ChunkTileSideTexture(i,j),i2,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang,ChunkTileU,ChunkTileV)
+					vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
+					CalculateUV(ChunkTileSideTexture(i,j),i2+1,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang,ChunkTileU,ChunkTileV)
+
+					vertex=GetLevelVertex(i,j,i2,LevelDetail)
+					CalculateUV(ChunkTileSideTexture(i,j),i2,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i,j+1),-(ChunkZ+j+1+random),ChunkTileU,ChunkTileV)
+					
+					vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
+					If i2<LevelDetail-1
+						random#=Rnd(0,randommax)
+					Else
+						random#=0
+					EndIf
+
+					CalculateUV(ChunkTileSideTexture(i,j),i2+1,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i,j+1),-(ChunkZ+j+1+random),ChunkTileU,ChunkTileV)
+					
+					AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
+					AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
+					
+					currentvertex=currentvertex+4
+				Next
+			EndIf
+			
+			; west side
+			random#=0
+			If ChunkTileExtrusion(i,j)>ChunkTileExtrusion(i-1,j) 
+				; yep, add two triangles per LevelDetail connecting the two bordering coordinates
+				For j2=0 To LevelDetail-1
+					vertex=GetLevelVertex(i,j,0,j2)
+					CalculateUV(ChunkTileSideTexture(i,j),j2,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
+
+					vertex=GetLevelVertex(i,j,0,j2+1)
+					CalculateUV(ChunkTileSideTexture(i,j),j2+1,0,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
+
+					vertex=GetLevelVertex(i,j,0,j2)
+					CalculateUV(ChunkTileSideTexture(i,j),j2,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i-random,VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i-1,j),-(ChunkZ+j+Float(j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+					
+					vertex=GetLevelVertex(i,j,0,j2+1)
+					If j2<LevelDetail-1
+						random#=Rnd(0,randommax)
+					Else
+						random#=0
+					EndIf
+
+					CalculateUV(ChunkTileSideTexture(i,j),j2+1,LevelDetail,ChunkTileSideRotation(i,j),8)
+					AddVertex (mySurface,ChunkX+i-random,VertexY(mySurface,vertex)-ChunkTileExtrusion(i,j)+ChunkTileExtrusion(i-1,j),-(ChunkZ+j+Float(j2+1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+					
+					AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
+					AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
+					
+					currentvertex=currentvertex+4
+				Next
+			EndIf
+
+		Next
+	Next
+
+	
+	
+	
+	
+	; now, how about creating overhangs? (i.e. also pushing in upper vertices of wall)
+	; * not yet implemented *
+
+	
+
+						
+	UpdateNormals LevelEntity(CurrentLevelChunk)
+	
+	; and point all edge vertex normals "up" (to smooth lighting)
+	
+	For j=1 To Chunkheight-2
+		For i=1 To Chunkwidth-2
+			For i2=0 To LevelDetail
+				For j2=0 To LevelDetail
+					If i2=0 Or i2=LevelDetail Or j2=0 Or j2=LevelDetail
+						vertex=GetLevelVertex(i,j,i2,j2)
+						VertexNormal mySurface,vertex,0.0,1.0,0.0
+					EndIf
+
+				Next
+			Next
+			
+		
+
+		Next
+	Next
+	
+	leveltexturen$=leveltexturename$(leveltexturenum)
+	ex$=Mid$(leveltexturen$,10,Len(leveltexturen$)-9-4)
+	
+	If usecustomleveltexture=True
+		EntityTexture LevelEntity(CurrentLevelChunk),customleveltexture
+	Else
+		EntityTexture LevelEntity(CurrentLevelChunk),LevelTextures(WhichLevelTexture(ex$))	
+	EndIf
+
+	
+	; PART 3 - WATER
+	; -------------------------------
+
+	
+	
+	WaterEntity(CurrentLevelChunk)=CreateMesh()
+	WaterSurface(CurrentLevelChunk)=CreateSurface(WaterEntity(CurrentLevelChunk))
+	mySurface=WaterSurface(CurrentLevelChunk)
+	
+	For j=1 To Chunkheight-2
+		For i=1 To Chunkwidth-2
+			CalculateUV(ChunkWaterTileTexture(i,j),0,0,ChunkWaterTileRotation(i,j),4)
+			AddVertex (mySurface,ChunkX+i,ChunkWaterTileHeight(i,j),-ChunkZ-j,ChunkTileU,ChunkTileV)
+			CalculateUV(ChunkWaterTileTexture(i,j),LevelDetail,0,ChunkWaterTileRotation(i,j),4)
+			AddVertex (mySurface,ChunkX+i+1,ChunkWaterTileHeight(i,j),-ChunkZ-j,ChunkTileU,ChunkTileV)
+			CalculateUV(ChunkWaterTileTexture(i,j),0,LevelDetail,ChunkWaterTileRotation(i,j),4)
+			AddVertex (mySurface,ChunkX+i,ChunkWaterTileHeight(i,j),-ChunkZ-j-1,ChunkTileU,ChunkTileV)
+			CalculateUV(ChunkWaterTileTexture(i,j),LevelDetail,LevelDetail,ChunkWaterTileRotation(i,j),4)
+			AddVertex (mySurface,ChunkX+i+1,ChunkWaterTileHeight(i,j),-ChunkZ-j-1,ChunkTileU,ChunkTileV)
+			
+			AddTriangle (mySurface,(i-1)*4+(j-1)*4*(ChunkWidth-2)+0,(i-1)*4+(j-1)*4*(ChunkWidth-2)+1,(i-1)*4+(j-1)*4*(ChunkWidth-2)+2)
+			AddTriangle (mySurface,(i-1)*4+(j-1)*4*(ChunkWidth-2)+1,(i-1)*4+(j-1)*4*(ChunkWidth-2)+3,(i-1)*4+(j-1)*4*(ChunkWidth-2)+2)
+
+
+		Next
+	Next
+	UpdateNormals WaterEntity(CurrentLevelChunk)
+	If WaterGlow=True 
+		EntityBlend WaterEntity(CurrentLevelChunk),3
+	Else 
+		EntityBlend WaterEntity(CurrentLevelChunk),1
+	EndIf
+	If WaterTransparent=True 
+		EntityAlpha WaterEntity(CurrentLevelChunk),.5
+	Else
+		EntityAlpha WaterEntity(CurrentLevelChunk),1
+	EndIf
+	
+	waterTextureN$=waterTextureName$(waterTextureNum)
+	ex$=Mid$(waterTextureN$,10,Len(waterTextureN$)-9-4)
+	
+	If usecustomwatertexture=True
+		EntityTexture WaterEntity(CurrentLevelChunk),customwatertexture
+	Else
+		EntityTexture WaterEntity(CurrentLevelChunk),WaterTextures(WhichWaterTexture(ex$))
+	EndIf
+	
+	TranslateEntity WaterEntity(CurrentLevelChunk),0,-0.04,0
+
+			
+End Function
+
+Function GetLevelVertex(i,j,i2,j2)
+	; Gets the index number of the vertex at chunk tile (i,j) with detail subdivision (i2,j2)
+	; in the currentchunk
+	
+	; since the chunk has a border around it, we decrease i and j by 1, and reduce width by 2
+	i=i-1
+	j=j-1
+	n=(i+j*(ChunkWidth-2))*(LevelDetail+1)*(LevelDetail+1) ; get to start of tile
+	n=n+j2*(LevelDetail+1)+i2
+;	Print n
+;	Delay 10
+	Return n
+End Function
+
+Function LevelVertexRandom#(x#,y#)
+	; creates a random number between 0 and 1 based on two input numbers from 0 to LevelDetail (i.e.i2/j2)
+	; used to create random pertubations in vertices in order to ensure that neighbouring vertices
+	; (i.e. same x/y coordinates, but in neightbouring chunks) get the same perturbation
+	
+	If Floor(x)>0 And Floor(y)>0 And Floor(x)<LevelDetail And Floor(y)<LevelDetail
+		; in interior of tile - do true random
+		Return Rnd(0,1)
+	EndIf
+	
+	x#=Abs(x-LevelDetail/2) ; take the i2/j2 and rework as "distance from center"
+	y#=Abs(y-LevelDetail/2) ; so that opposing sides are treated equally 
+							; (they must, since a right side of tile i is the left side of i+1)
+	
+	random#=(x+.59)*(y+.73)*241783
+	intrandom=Int(random)
+	intrandom=(intrandom Mod 700) + (intrandom Mod 300)
+	random=Float(intrandom)/1000.0
+	Return Random#
+End Function
+
+Function UpdateWater(x,y,radius)
+	
+	For i=0 To 2
+		PositionTexture WaterFallTexture(i),0,((LevelTimer) Mod 50)/50.0
+	Next
+	PositionTexture FloingTexture,(leveltimer Mod 700)/700.0,(leveltimer Mod 100)/100.0
+	PositionTexture PlasmaTexture,3*Sin((LevelTimer/20.0) Mod 360),4*Cos((LevelTimer/20.0) Mod 360)
+	ScaleTexture Plasmatexture,1.1+Sin((LevelTimer/2) Mod 360),1.1+Sin((LevelTimer/2) Mod 360)
+	PositionTexture RainbowTexture2,(leveltimer Mod 7000)/7000.0,(leveltimer Mod 1000)/1000.0
+
+	
+	If WaterFlow>=0
+		; move
+	;	PositionTexture WaterTexture,0,((WaterFlow*(LevelTimer/10.0)) Mod 50)/50.0
+		PositionTexture WaterTextures(0),0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
+		PositionTexture WaterTextures(1),0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
+		PositionTexture WaterTextures(2),0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
+		PositionTexture WaterTextures(3),0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
+
+		If customwatertexture>0 PositionTexture customwatertexture,0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
+
+;		PositionTexture WaterTexture,0,-((LevelTimer*WaterFlow) Mod 10000)/10000.0
+	EndIf
+	If waterflow<0
+		; rock
+		PositionTexture WaterTextures(0),0,0.5+0.125*WaterFlow/4*Sin(-(4*LevelTimer*WaterFlow)/10.0)
+		If customwatertexture>0 PositionTexture customwatertexture,0,0.5+0.125*WaterFlow/4*Sin(-(4*LevelTimer*WaterFlow)/10.0)
+
+	EndIf
+	
+	If WaterTurbulenceGlobal=True And LevelTimer<1000000000
+		; turbulence
+		; find what chunk x/y is in
+		For j2=Floor(y)-radius To Floor(y)+radius
+			For i2=Floor(x)-radius To Floor(x)+radius
+				If i2>=0 And j2>=0 And i2<LevelWidth And j2<LevelHeight 
+				    If WaterTileTexture(i2,j2)>=0 And WaterTileTurbulence(i2,j2)>0
+						; find what chunk and at what position this tile is
+						ChunksPerRow=Floor((LevelWidth-1)/ChunkSize)+1
+						CurrentChunk=Floor(i2/ChunkSize)+Floor(j2/ChunkSize)*ChunksPerRow
+						; get the width of this chunk
+						If i2>=(ChunksPerRow-1)*ChunkSize
+							ThisWidth=((LevelWidth-1) Mod ChunkSize)+1
+						Else
+							ThisWidth=ChunkSize
+						EndIf
+						i=i2 Mod ChunkSize
+						j=j2 Mod ChunkSize
+						
+						mySurface=WaterSurface(CurrentChunk)
+						VertexCoords mySurface,(i+j*ThisWidth)*4+0,VertexX(mySurface,(i+j*ThisWidth)*4+0),WaterTileHeight(i2,j2)+WaterTileTurbulence(i2,j2)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180),VertexZ(mySurface,(i+j*ThisWidth)*4+0)
+						VertexCoords mySurface,(i+j*ThisWidth)*4+1,VertexX(mySurface,(i+j*ThisWidth)*4+1),WaterTileHeight(i2,j2)+WaterTileTurbulence(i2,j2)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90),VertexZ(mySurface,(i+j*ThisWidth)*4+1)
+	
+						VertexCoords mySurface,(i+j*ThisWidth)*4+2,VertexX(mySurface,(i+j*ThisWidth)*4+2),WaterTileHeight(i2,j2)+WaterTileTurbulence(i2,j2)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180-180),VertexZ(mySurface,(i+j*ThisWidth)*4+2)
+						VertexCoords mySurface,(i+j*ThisWidth)*4+3,VertexX(mySurface,(i+j*ThisWidth)*4+3),WaterTileHeight(i2,j2)+WaterTileTurbulence(i2,j2)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90-180),VertexZ(mySurface,(i+j*ThisWidth)*4+3)
+					EndIf
+				
+				
+				EndIf
+			Next
+		Next
+	
+	
+	EndIf
+	
+	
+
+
+End Function
+
+Function WhichLevelTexture(ex$)
+
+	Select Lower$(ex$)
+	Case "abstract"
+		Return 0
+	Case "cave"
+		Return 1
+	Case "cellar"
+		Return 2
+	Case "forest"
+		Return 3
+	Case "hills"
+		Return 4
+	Case "snow"
+		Return 5
+	Case "temple"
+		Return 6
+	Case "town"
+		Return 7
+	Case "lava"
+		Return 8
+	Case "beach"
+		Return 9
+	Case "jungle"
+		Return 10
+	Case "jtemple"
+		Return 11
+	Case "wonderfalls"
+		Return 12
+	Case "cave2"
+		Return 13
+	Case "sundog"
+		Return 14
+	Case "techno"
+		Return 15
+	Case "stars"
+		Return 16
+	Case "desert"
+		Return 17
+	Case "castle"
+		Return 18
+	Case "jaava"
+		Return 19
+	Case "uo"
+		Return 20
+	Case "spooky"
+		Return 21
+
+
+
+
+
+
+
+
+		
+	
+	End Select
+	Return -1
+End Function
+
+Function WhichWaterTexture(ex$)
+
+	
+	Select Lower$(ex$)
+	Case "1"
+		Return 0
+	Case "2"
+		Return 1
+	Case "3"
+		Return 2
+	Case "4"
+		Return 3
+	
+	
+	End Select
+	Return -1
+End Function
+
+Function Minimum2#(x#,y#)
+	If x<y
+		Return x
+	Else
+		Return y
+	EndIf
+End Function
+Function Minimum4#(x#,y#,z#,w#)
+	If x<=y And x<=z And x<=w
+		Return x
+	Else If y<=x And y<=z And y<=W
+		Return y
+	Else If z<=x And z<=y And z<=w
+		Return z
+	Else 
+		Return w
+	EndIf
+End Function
+Function Maximum2#(x#,y#)
+	If x>y
+		Return x
+	Else
+		Return y
+	EndIf
+End Function
+
+
 
 
 
