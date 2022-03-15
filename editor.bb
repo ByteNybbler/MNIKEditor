@@ -4063,8 +4063,7 @@ Function EditorLocalControls()
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				;wipe
-				Confirm$=InputString$("Are you sure you want to wipe? Type Y to confirm: ")
-				If Confirm="Y" Or Confirm="y"
+				If GetConfirmation("Are you sure you want to wipe?")
 					For i=0 To LevelWidth-1
 						For j=0 To LevelHeight-1
 							ChangeLevelTile(i,j,True)
@@ -4375,8 +4374,7 @@ Function EditorLocalControls()
 		; xtrude logics
 		If my>565 And my<595
 			If LeftMouse=True And LeftMouseReleased=True
-				Confirm$=InputString$("Do you want to set Xtrude logics? Type Y to confirm: ")
-				If Confirm="Y" Or Confirm="y"
+				If GetConfirmation("Do you want to set Xtrude logics?")
 					Prompt$=InputString$("Enter logic for Xtrude < 0 (leave blank for water): ")
 					Logic=LogicNameToLogicId(Prompt$)
 					If Logic=-1
@@ -4417,10 +4415,7 @@ Function EditorLocalControls()
 			Else If my>560 And my<600
 				; save and exit
 				If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
-					Locate 0,0
-					Color 0,0,0
-					Rect 0,0,500,40,True
-					Color TextLevelR,TextLevelG,TextLevelB
+					SetupConfirmation()
 					Print("You have not hit the Update button on the selected object.")
 					Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
 					If Confirm="Y" Or Confirm="y"
@@ -4481,13 +4476,20 @@ Function AltDown()
 
 End Function
 
-Function GetConfirmation(Message$)
+Function SetupConfirmation()
 
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
-	Color 255,255,255
-	Confirm$=Input$(Message$)
+	Color 255,100,100
+
+End Function
+
+Function GetConfirmation(Message$)
+
+	SetupConfirmation()
+	Print Message$
+	Confirm$=Input$("Type Y To confirm: ")
 	Return Confirm="Y" Or Confirm="y"
 
 End Function
@@ -9199,7 +9201,7 @@ End Function
 
 Function ConfirmFindAndReplace()
 
-	Return GetConfirmation("Find and replace? Type Y to confirm: ")
+	Return GetConfirmation("Find and replace on matching values for ALL entities?")
 
 End Function
 
