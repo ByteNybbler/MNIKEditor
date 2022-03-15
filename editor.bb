@@ -12920,13 +12920,16 @@ Function CreateObjectModel(Dest)
 					EntityTexture child,ObjectTexture(Dest)
 				Next
 			Else
-				Locate 0,0
-				Color 0,0,0
-				Rect 0,0,500,40,True
-				Color 255,255,255
-				Print "Texture doesn't exist: " + ObjectTextureName$(Dest)
-				Print "Reverting..."
-				Delay 2000
+				If ShowingError=False
+					ShowingError=True
+					Locate 0,0
+					Color 0,0,0
+					Rect 0,0,500,40,True
+					Color 255,255,255
+					Print "Texture doesn't exist: " + ObjectTextureName$(Dest)
+					Print "Reverting..."
+					Delay 2000
+				EndIf
 				ObjectTexture(Dest)=myLoadTexture("UserData\Custom\Objecttextures\default.jpg",4)
 				EntityTexture TextureTarget,ObjectTexture(Dest)
 				For j=1 To CountChildren (TextureTarget)
