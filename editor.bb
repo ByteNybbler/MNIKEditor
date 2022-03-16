@@ -4648,7 +4648,8 @@ End Function
 
 
 
-Function CreateLevelTileGround(mySurface,i,j)
+Function CreateLevelTileGround(i,j)
+	mySurface=LevelSurface(j)
 
 	; do each tile with subdivision of detail level
 	; First, create the vertices
@@ -4688,11 +4689,12 @@ Function CreateLevelTileGround(mySurface,i,j)
 		Next
 	Next
 	
-	ShiftLevelTileToExtrude(mySurface,i,j)
+	ShiftLevelTileToExtrude(i,j)
 
 End Function
 
-Function CreateLevelTileSides(mySurface,i,j)
+Function CreateLevelTileSides(i,j)
+	mySurface=LevelSurface(j)
 
 	; here we also calculate how much the bottom edge of the side wall should be pushed "out"
 	; the maxfactor is the maximum (corners are not pushed out)
@@ -4846,7 +4848,8 @@ Function CreateLevelTileSides(mySurface,i,j)
 
 End Function
 
-Function ShiftLevelTileByRandom(mySurface,i,j)
+Function ShiftLevelTileByRandom(i,j)
+	mySurface=LevelSurface(j)
 
 	For i2=0 To LevelDetail
 		For j2=0 To LevelDetail
@@ -4880,13 +4883,26 @@ Function ShiftLevelTileByRandom(mySurface,i,j)
 
 End Function
 
-Function ShiftLevelTileToExtrude(mySurface,i,j)
+Function ShiftLevelTileToExtrude(i,j)
+	mySurface=LevelSurface(j)
 
 	For j2=0 To LevelDetail
 		For i2=0 To LevelDetail
 			vertex=GetLevelVertex(i,j,i2,j2)
 			;VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
 			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
+		Next
+	Next
+
+End Function
+
+Function UpdateLevelTileTexture(i,j)
+
+	For j2=0 To LevelDetail
+		For i2=0 To LevelDetail
+			CalculateUV(LevelTileTexture(i,j),i2,j2,LevelTileRotation(i,j),8)
+			vertex=GetLevelVertex(i,j,i2,j2)
+			VertexTexCoords LevelSurface(j),vertex,ChunkTileU,ChunkTileV
 		Next
 	Next
 
@@ -5103,7 +5119,7 @@ Function BuildLevelModel()
 	For j=0 To LevelHeight-1
 		ClearSurface LevelSurface(j)
 		For i=0 To LevelWidth-1
-			CreateLevelTileGround(LevelSurface(j),i,j)
+			CreateLevelTileGround(i,j)
 		Next
 		;UpdateNormals LevelMesh(j)
 		EntityTexture LevelMesh(j),LevelTexture
@@ -5111,8 +5127,8 @@ Function BuildLevelModel()
 				
 	For j=1 To LevelHeight-2
 		For i=1 To LevelWidth-2
-			ShiftLevelTileByRandom(LevelSurface(j),i,j)
-			CreateLevelTileSides(LevelSurface(j),i,j)
+			ShiftLevelTileByRandom(i,j)
+			CreateLevelTileSides(i,j)
 		Next
 	Next
 	
@@ -11063,11 +11079,12 @@ Function UpdateLevelTile(i,j)
 
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
 
-	ShiftLevelTileToExtrude(LevelSurface(j),i,j)
+	UpdateLevelTileTexture(i,j)
+	ShiftLevelTileToExtrude(i,j)
 	
 	If i=0 Or j=0 Or i=levelwidth-1 Or j=levelheight-1 Then Return
 	
-	ShiftLevelTileByRandom(LevelSurface(j),i,j)
+	ShiftLevelTileByRandom(i,j)
 
 End Function
 
