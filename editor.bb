@@ -453,7 +453,7 @@ Dim BrushWaterTileTurbulence#(100,100)
 Global ChunkTileU#,ChunkTileV#
 
 Global CurrentMesh,CurrentSurface ; for tile rendering in tile camera
-Global LevelDetail=1
+Global LevelDetail=4
 
 Global CurrentTileTexture=8
 Global CurrentTileRotation
@@ -4687,6 +4687,8 @@ Function CreateLevelTileGround(mySurface,i,j)
 
 		Next
 	Next
+	
+	ShiftLevelTileToExtrude(mySurface,i,j)
 
 End Function
 
@@ -4844,6 +4846,52 @@ Function CreateLevelTileSides(mySurface,i,j)
 
 End Function
 
+Function ShiftLevelTileByRandom(mySurface,i,j)
+
+	For i2=0 To LevelDetail
+		For j2=0 To LevelDetail
+			If i2=0 And j2=0
+				random#=Minimum4(LevelTileRandom(i-1,j-1),LevelTileRandom(i,j-1),LevelTileRandom(i-1,j),LevelTileRandom(i,j))
+			Else If j2=0 And i2=LevelDetail
+				random#=Minimum4(LevelTileRandom(i+1,j-1),LevelTileRandom(i,j-1),LevelTileRandom(i+1,j),LevelTileRandom(i,j))
+			Else If j2=LevelDetail And i2=0
+				random#=Minimum4(LevelTileRandom(i-1,j+1),LevelTileRandom(i-1,j),LevelTileRandom(i,j+1),LevelTileRandom(i,j))
+			Else If i2=LevelDetail And j2=LevelDetail
+				random#=Minimum4(LevelTileRandom(i+1,j+1),LevelTileRandom(i,j+1),LevelTileRandom(i+1,j),LevelTileRandom(i,j))
+			Else If j2=0
+				random#=Minimum2(LevelTileRandom(i,j-1),LevelTileRandom(i,j))
+			Else If j2=LevelDetail
+				random#=Minimum2(LevelTileRandom(i,j+1),LevelTileRandom(i,j))
+			Else If i2=0
+				random#=Minimum2(LevelTileRandom(i-1,j),LevelTileRandom(i,j))
+			Else If i2=LevelDetail
+				random#=Minimum2(LevelTileRandom(i+1,j),LevelTileRandom(i,j))
+			Else
+				random#=LevelTileRandom(i,j)
+			EndIf
+			
+			vertex=GetLevelVertex(i,j,i2,j2)
+			random2#=random*LevelVertexRandom(Float(i2),Float(j2))
+
+			VertexCoords mySurface,vertex,VertexX(mysurface,vertex),VertexY(mysurface,vertex)+random2,VertexZ(mysurface,vertex)					
+		
+		Next
+	Next
+
+End Function
+
+Function ShiftLevelTileToExtrude(mySurface,i,j)
+
+	For j2=0 To LevelDetail
+		For i2=0 To LevelDetail
+			vertex=GetLevelVertex(i,j,i2,j2)
+			;VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
+			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
+		Next
+	Next
+
+End Function
+
 Function GetLevelVertex(i,j,i2,j2)
 	; Gets the index number of the vertex at chunk tile (i,j) with detail subdivision (i2,j2)
 	; in the currentchunk
@@ -4857,6 +4905,53 @@ Function GetLevelVertex(i,j,i2,j2)
 ;	Print n
 ;	Delay 10
 	Return n
+End Function
+
+Function LevelVertexRandom#(x#,y#)
+	; creates a random number between 0 and 1 based on two input numbers from 0 to LevelDetail (i.e.i2/j2)
+	; used to create random pertubations in vertices in order to ensure that neighbouring vertices
+	; (i.e. same x/y coordinates, but in neightbouring chunks) get the same perturbation
+	
+	If Floor(x)>0 And Floor(y)>0 And Floor(x)<LevelDetail And Floor(y)<LevelDetail
+		; in interior of tile - do true random
+		Return Rnd(0,1)
+	EndIf
+	
+	x#=Abs(x-LevelDetail/2) ; take the i2/j2 and rework as "distance from center"
+	y#=Abs(y-LevelDetail/2) ; so that opposing sides are treated equally 
+							; (they must, since a right side of tile i is the left side of i+1)
+	
+	random#=(x+.59)*(y+.73)*241783
+	intrandom=Int(random)
+	intrandom=(intrandom Mod 700) + (intrandom Mod 300)
+	random=Float(intrandom)/1000.0
+	Return Random#
+End Function
+
+Function Minimum2#(x#,y#)
+	If x<y
+		Return x
+	Else
+		Return y
+	EndIf
+End Function
+Function Minimum4#(x#,y#,z#,w#)
+	If x<=y And x<=z And x<=w
+		Return x
+	Else If y<=x And y<=z And y<=W
+		Return y
+	Else If z<=x And z<=y And z<=w
+		Return z
+	Else 
+		Return w
+	EndIf
+End Function
+Function Maximum2#(x#,y#)
+	If x>y
+		Return x
+	Else
+		Return y
+	EndIf
 End Function
 
 
@@ -5016,6 +5111,7 @@ Function BuildLevelModel()
 				
 	For j=1 To LevelHeight-2
 		For i=1 To LevelWidth-2
+			ShiftLevelTileByRandom(LevelSurface(j),i,j)
 			CreateLevelTileSides(LevelSurface(j),i,j)
 		Next
 	Next
@@ -10965,7 +11061,18 @@ End Function
 
 Function UpdateLevelTile(i,j)
 
-	Return
+	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
+
+	ShiftLevelTileToExtrude(LevelSurface(j),i,j)
+	
+	If i=0 Or j=0 Or i=levelwidth-1 Or j=levelheight-1 Then Return
+	
+	ShiftLevelTileByRandom(LevelSurface(j),i,j)
+
+End Function
+
+
+Function UpdateLevelTileClassic(i,j)
 
 	; make sure it's a tile that actually exists in the level first
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
