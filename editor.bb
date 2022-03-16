@@ -4848,27 +4848,45 @@ Function CreateLevelTileSides(i,j)
 
 End Function
 
+Function ClampInt(min,max,value)
+
+	If value<min
+		Return min
+	ElseIf value>max
+		Return max
+	Else
+		Return value
+	EndIf	
+
+End Function
+
 Function ShiftLevelTileByRandom(i,j)
 	mySurface=LevelSurface(j)
+	
+	iMinusOne=Maximum2(i-1,0)
+	iPlusOne=Minimum2(i+1,LevelWidth-1)
+	jMinusOne=Maximum2(j-1,0)
+	jPlusOne=Minimum2(j+1,LevelHeight-1)
+	
 
 	For i2=0 To LevelDetail
 		For j2=0 To LevelDetail
 			If i2=0 And j2=0
-				random#=Minimum4(LevelTileRandom(i-1,j-1),LevelTileRandom(i,j-1),LevelTileRandom(i-1,j),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTileRandom(IMinusOne,jMinusOne),LevelTileRandom(i,jMinusOne),LevelTileRandom(iMinusOne,j),LevelTileRandom(i,j))
 			Else If j2=0 And i2=LevelDetail
-				random#=Minimum4(LevelTileRandom(i+1,j-1),LevelTileRandom(i,j-1),LevelTileRandom(i+1,j),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTileRandom(IPlusOne,jMinusOne),LevelTileRandom(i,jMinusOne),LevelTileRandom(IPlusOne,j),LevelTileRandom(i,j))
 			Else If j2=LevelDetail And i2=0
-				random#=Minimum4(LevelTileRandom(i-1,j+1),LevelTileRandom(i-1,j),LevelTileRandom(i,j+1),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTileRandom(IMinusOne,jPlusOne),LevelTileRandom(iMinusOne,j),LevelTileRandom(i,jPlusOne),LevelTileRandom(i,j))
 			Else If i2=LevelDetail And j2=LevelDetail
-				random#=Minimum4(LevelTileRandom(i+1,j+1),LevelTileRandom(i,j+1),LevelTileRandom(i+1,j),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTileRandom(IPlusOne,jPlusOne),LevelTileRandom(i,jPlusOne),LevelTileRandom(IPlusOne,j),LevelTileRandom(i,j))
 			Else If j2=0
-				random#=Minimum2(LevelTileRandom(i,j-1),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTileRandom(i,jMinusOne),LevelTileRandom(i,j))
 			Else If j2=LevelDetail
-				random#=Minimum2(LevelTileRandom(i,j+1),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTileRandom(i,jPlusOne),LevelTileRandom(i,j))
 			Else If i2=0
-				random#=Minimum2(LevelTileRandom(i-1,j),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTileRandom(IMinusOne,j),LevelTileRandom(i,j))
 			Else If i2=LevelDetail
-				random#=Minimum2(LevelTileRandom(i+1,j),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTileRandom(IPlusOne,j),LevelTileRandom(i,j))
 			Else
 				random#=LevelTileRandom(i,j)
 			EndIf
@@ -11082,7 +11100,7 @@ Function UpdateLevelTile(i,j)
 	UpdateLevelTileTexture(i,j)
 	ShiftLevelTileToExtrude(i,j)
 	
-	If i=0 Or j=0 Or i=levelwidth-1 Or j=levelheight-1 Then Return
+	;If i=0 Or j=0 Or i=levelwidth-1 Or j=levelheight-1 Then Return
 	
 	ShiftLevelTileByRandom(i,j)
 
