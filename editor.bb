@@ -4849,9 +4849,10 @@ Function GetLevelVertex(i,j,i2,j2)
 	; in the currentchunk
 	
 	; since the chunk has a border around it, we decrease i and j by 1, and reduce width by 2
-	i=i-1
-	j=j-1
-	n=(i+j*(LevelWidth-2))*(LevelDetail+1)*(LevelDetail+1) ; get to start of tile
+	;i=i-1
+	;j=j-1
+	;n=(i+j*(LevelWidth))*(LevelDetail+1)*(LevelDetail+1) ; get to start of tile
+	n=i*(LevelDetail+1)*(LevelDetail+1)
 	n=n+j2*(LevelDetail+1)+i2
 ;	Print n
 ;	Delay 10
@@ -4994,30 +4995,30 @@ Function BuildLevelModel()
 	;VerticesPerTop=(LevelDetail+1)*(LevelDetail+1)
 	;VerticesPerSide=(LevelDetail+1)*2
 	
-	For j=0 To LevelHeight-1
-		ClearSurface LevelSurface(j)
-		For i=0 To LevelWidth-1
-			CreateLevelTileClassic(i,j)
-		Next
-		;UpdateNormals LevelMesh(j)
-		EntityTexture LevelMesh(j),LevelTexture
-	Next
-	
-	
 ;	For j=0 To LevelHeight-1
 ;		ClearSurface LevelSurface(j)
 ;		For i=0 To LevelWidth-1
-;			CreateLevelTileGround(LevelSurface(j),i,j)
+;			CreateLevelTileClassic(i,j)
 ;		Next
 ;		;UpdateNormals LevelMesh(j)
 ;		EntityTexture LevelMesh(j),LevelTexture
 ;	Next
-;				
-;	For j=1 To LevelHeight-2
-;		For i=1 To LevelWidth-2
-;			CreateLevelTileSides(LevelSurface(j),i,j)
-;		Next
-;	Next
+	
+	
+	For j=0 To LevelHeight-1
+		ClearSurface LevelSurface(j)
+		For i=0 To LevelWidth-1
+			CreateLevelTileGround(LevelSurface(j),i,j)
+		Next
+		;UpdateNormals LevelMesh(j)
+		EntityTexture LevelMesh(j),LevelTexture
+	Next
+				
+	For j=1 To LevelHeight-2
+		For i=1 To LevelWidth-2
+			CreateLevelTileSides(LevelSurface(j),i,j)
+		Next
+	Next
 	
 	; water
 	For j=0 To LevelHeight-1
@@ -10964,7 +10965,7 @@ End Function
 
 Function UpdateLevelTile(i,j)
 
-	;Return
+	Return
 
 	; make sure it's a tile that actually exists in the level first
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
