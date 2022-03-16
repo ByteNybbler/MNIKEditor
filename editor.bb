@@ -11555,6 +11555,9 @@ Function BuildCurrentTileModel()
 	i=0
 	ClearSurface CurrentSurface
 	
+	OldLevelDetail=LevelDetail
+	LevelDetail=1
+	
 	; add block
 	
 	; top face
@@ -11630,6 +11633,8 @@ Function BuildCurrentTileModel()
 	
 	UpdateNormals CurrentMesh
 	EntityTexture CurrentMesh,LevelTexture
+	
+	LevelDetail=OldLevelDetail
 	
 	; and the water tile
 	; top face
