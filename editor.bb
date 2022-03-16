@@ -453,7 +453,9 @@ Dim BrushWaterTileTurbulence#(100,100)
 Global ChunkTileU#,ChunkTileV#
 
 Global CurrentMesh,CurrentSurface ; for tile rendering in tile camera
+
 Global LevelDetail=4
+Dim ChunkStoredVHeight#(0) ; used for height calculations (re-dimmed in CreateLevel()
 
 Global CurrentTileTexture=8
 Global CurrentTileRotation
@@ -4678,18 +4680,15 @@ Function CreateLevelTileGround(i,j)
 		Next
 	Next
 	; Now create the triangles
-;	SV=(j*ChunkWidth+i)*(LevelDetail+1)*(LevelDetail+1) ; startingvertex
 	For j2=0 To LevelDetail-1
 		For i2=0 To LevelDetail-1
 			AddTriangle (mySurface,GetLevelVertex(i,j,i2,j2),GetLevelVertex(i,j,i2+1,j2),GetLevelVertex(i,j,i2,j2+1))
 			AddTriangle (mySurface,GetLevelVertex(i,j,i2+1,j2),GetLevelVertex(i,j,i2+1,j2+1),GetLevelVertex(i,j,i2,j2+1))
-		;	AddTriangle (mySurface,SV+j2*(LevelDetail+1)+i2,SV+j2*(LevelDetail+1)+i2+1,SV+(j2+1)*(LevelDetail+1)+i2)
-		;	AddTriangle (mySurface,SV+j2*(LevelDetail+1)+i2+1,SV+(j2+1)*(LevelDetail+1)+i2+1,SV+(j2+1)*(LevelDetail+1)+i2)
-
 		Next
 	Next
 	
 	ShiftLevelTileToExtrude(i,j)
+	ShiftLevelTileByHeight(i,j)
 
 End Function
 
@@ -4899,6 +4898,72 @@ Function ShiftLevelTileByRandom(i,j)
 		Next
 	Next
 
+End Function
+
+Function ShiftLevelTileByHeight(i,j)
+;	If LevelDetail<2 Or Floor(LevelDetail/2)*2<>LevelDetail
+;		; must be divisible by two, or disable height function
+;		Return
+;	EndIf
+
+	mySurface=LevelSurface(j)
+	
+	Dim ChunkStoredVHeight#(LevelWidth*(LevelDetail+1))	
+	
+	For i2=0 To LevelDetail
+		If i2<LevelDetail/2
+			; first half of tile, compare with left neighbour
+			If i=0 
+				OtherHeight#=0.0
+			Else
+				OtherHeight#=LevelTileHeight(i-1,j)
+			EndIf
+			NewHeight#=OtherHeight+(LevelTileHeight(i,j)-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
+		Else
+			; second half of tile, compare with right neighbour
+			If i=LevelWidth-1 
+				OtherHeight#=0.0
+			Else
+				OtherHeight#=LevelTileHeight(i+1,j)
+			EndIf
+			NewHeight#=LevelTileHeight(i,j)+(OtherHeight-LevelTileHeight(i,j))*Float(i2-LevelDetail/2)/Float(LevelDetail)
+			
+		EndIf
+		
+		; but don't adjust vertices in the chunk-border
+		If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
+			vertex=GetLevelVertex(i,j,i2,LevelDetail/2)
+			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
+		EndIf
+
+		If j>0
+			; as of second row, build vertical bridge to first row
+			For j2=LevelDetail/2+1 To LevelDetail
+				; first half is actually 2nd half of previous row
+				; (also no need to lift first vertex of that part, that's already the center of
+				;  the row and hence lifted above)
+				OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
+				If i>0 And j>1 And i<LevelWidth-1
+					vertex=GetLevelVertex(i,j-1,i2,j2)
+					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
+				EndIf
+			Next
+			For j2=0 To LevelDetail/2-1
+				; 2nd half (we're now in the top half of this row)
+				OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
+				If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
+					vertex=GetLevelVertex(i,j,i2,j2)
+					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
+				EndIf
+			Next
+			
+		EndIf
+		ChunkStoredVHeight(i*(LevelDetail+1)+i2)=NewHeight
+
+	Next
+	
 End Function
 
 Function ShiftLevelTileToExtrude(i,j)
@@ -11099,10 +11164,8 @@ Function UpdateLevelTile(i,j)
 
 	UpdateLevelTileTexture(i,j)
 	ShiftLevelTileToExtrude(i,j)
-	
-	;If i=0 Or j=0 Or i=levelwidth-1 Or j=levelheight-1 Then Return
-	
 	ShiftLevelTileByRandom(i,j)
+	ShiftLevelTileByHeight(i,j)
 
 End Function
 
