@@ -4923,6 +4923,29 @@ Function ShiftLevelTileByRandom(i,j)
 
 End Function
 
+Function HeightAtRowVertex#(i,j,i2)
+
+	If i2<LevelDetail/2
+		; first half of tile, compare with left neighbour
+		If i=0 
+			OtherHeight#=LevelTileHeight(i,j) ;0.0
+		Else
+			OtherHeight#=LevelTileHeight(i-1,j)
+		EndIf
+		Return OtherHeight+(LevelTileHeight(i,j)-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
+	Else
+		; second half of tile, compare with right neighbour
+		If i=LevelWidth-1 
+			OtherHeight#=LevelTileHeight(i,j) ;0.0
+		Else
+			OtherHeight#=LevelTileHeight(i+1,j)
+		EndIf
+		Return LevelTileHeight(i,j)+(OtherHeight-LevelTileHeight(i,j))*Float(i2-LevelDetail/2)/Float(LevelDetail)
+		
+	EndIf
+
+End Function
+
 Function ShiftLevelTileByHeight(i,j)
 ;	If LevelDetail<2 Or Floor(LevelDetail/2)*2<>LevelDetail
 ;		; must be divisible by two, or disable height function
@@ -4932,24 +4955,26 @@ Function ShiftLevelTileByHeight(i,j)
 	mySurface=LevelSurface(j)
 
 	For i2=0 To LevelDetail
-		If i2<LevelDetail/2
-			; first half of tile, compare with left neighbour
-			If i=0 
-				OtherHeight#=LevelTileHeight(i,j) ;0.0
-			Else
-				OtherHeight#=LevelTileHeight(i-1,j)
-			EndIf
-			NewHeight#=OtherHeight+(LevelTileHeight(i,j)-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
-		Else
-			; second half of tile, compare with right neighbour
-			If i=LevelWidth-1 
-				OtherHeight#=LevelTileHeight(i,j) ;0.0
-			Else
-				OtherHeight#=LevelTileHeight(i+1,j)
-			EndIf
-			NewHeight#=LevelTileHeight(i,j)+(OtherHeight-LevelTileHeight(i,j))*Float(i2-LevelDetail/2)/Float(LevelDetail)
-			
-		EndIf
+;		If i2<LevelDetail/2
+;			; first half of tile, compare with left neighbour
+;			If i=0 
+;				OtherHeight#=LevelTileHeight(i,j) ;0.0
+;			Else
+;				OtherHeight#=LevelTileHeight(i-1,j)
+;			EndIf
+;			NewHeight#=OtherHeight+(LevelTileHeight(i,j)-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
+;		Else
+;			; second half of tile, compare with right neighbour
+;			If i=LevelWidth-1 
+;				OtherHeight#=LevelTileHeight(i,j) ;0.0
+;			Else
+;				OtherHeight#=LevelTileHeight(i+1,j)
+;			EndIf
+;			NewHeight#=LevelTileHeight(i,j)+(OtherHeight-LevelTileHeight(i,j))*Float(i2-LevelDetail/2)/Float(LevelDetail)
+;			
+;		EndIf
+
+		NewHeight#=HeightAtRowVertex#(i,j,i2)
 		
 		; but don't adjust vertices in the chunk-border
 		;If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
@@ -4959,12 +4984,13 @@ Function ShiftLevelTileByHeight(i,j)
 		EndIf
 
 		If j>0
+			OtherHeight#=HeightAtRowVertex#(i,j-1,i2)
 			; as of second row, build vertical bridge to first row
 			For j2=LevelDetail/2+1 To LevelDetail
 				; first half is actually 2nd half of previous row
 				; (also no need to lift first vertex of that part, that's already the center of
 				;  the row and hence lifted above)
-				OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+				;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
 				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
 				;If i>0 And j>1 And i<LevelWidth-1
 				If i>=0 And j>=1 And i<=LevelWidth-1
@@ -4974,7 +5000,7 @@ Function ShiftLevelTileByHeight(i,j)
 			Next
 			For j2=0 To LevelDetail/2-1
 				; 2nd half (we're now in the top half of this row)
-				OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+				;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
 				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
 				;If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
 				If i>=0 And j>=0 And i<=LevelWidth-1 And j<=LevelHeight-1
@@ -4984,7 +5010,7 @@ Function ShiftLevelTileByHeight(i,j)
 			Next
 			
 		EndIf
-		ChunkStoredVHeight(i*(LevelDetail+1)+i2)=NewHeight
+		;ChunkStoredVHeight(i*(LevelDetail+1)+i2)=NewHeight
 
 	Next
 	
