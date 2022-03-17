@@ -4931,9 +4931,7 @@ Function ShiftLevelTileByHeight(i,j)
 
 	mySurface=LevelSurface(j)
 	
-	ChunkHeight=1
-	
-	Dim ChunkStoredVHeight#(LevelWidth*(LevelDetail+1))
+	ChunkHeight=LevelHeight
 	
 	For i2=0 To LevelDetail
 		If i2<LevelDetail/2
@@ -5454,7 +5452,9 @@ Function BuildLevelModel()
 ;		;UpdateNormals LevelMesh(j)
 ;		EntityTexture LevelMesh(j),LevelTexture
 ;	Next
-	
+
+
+	Dim ChunkStoredVHeight#(LevelWidth*(LevelDetail+1))
 	
 	For j=0 To LevelHeight-1
 		ClearSurface LevelSurface(j)
