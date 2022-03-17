@@ -4651,7 +4651,7 @@ End Function
 
 
 
-Function CreateLevelTileGround(i,j)
+Function CreateLevelTileTop(i,j)
 	mySurface=LevelSurface(j)
 
 	; do each tile with subdivision of detail level
@@ -4688,7 +4688,7 @@ Function CreateLevelTileGround(i,j)
 		Next
 	Next
 	
-	ShiftLevelTileToExtrude(i,j)
+	ShiftLevelTileByExtrude(i,j)
 	ShiftLevelTileByHeight(i,j)
 	ShiftLevelTileEdges(i,j)
 
@@ -4993,14 +4993,43 @@ Function ShiftLevelTileByHeight(i,j)
 	
 End Function
 
-Function ShiftLevelTileToExtrude(i,j)
+Function ShiftLevelTileByExtrude(i,j)
 	mySurface=LevelSurface(j)
 
 	For j2=0 To LevelDetail
 		For i2=0 To LevelDetail
 			vertex=GetLevelVertex(i,j,i2,j2)
-			;VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
-			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
+			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
+			;VertexCoords mySurface,vertex,VertexX(mySurface,vertex),LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
+		Next
+	Next
+
+End Function
+
+Function ResetLevelTile(i,j)
+	mySurface=LevelSurface(j)
+
+	For j2=0 To LevelDetail
+		For i2=0 To LevelDetail
+			xoverlap#=0
+			yoverlap#=0
+			zoverlap#=0
+			If j2=0 Or j2=LevelDetail Or i2=0 Or i2=LevelDetail
+				If i2=0 
+					xoverlap#=-0.005
+				;	zoverlap#=+0.005
+				EndIf
+				If j2=0
+					yoverlap#=0.005
+				;	zoverlap#=+0.005
+				EndIf
+				height=0
+			EndIf
+
+			;CalculateUV(LevelTileTexture(i,j),i2,j2,LevelTileRotation(i,j),8)
+								
+			vertex=GetLevelVertex(i,j,i2,j2)
+			VertexCoords mySurface,vertex,i+Float(i2)/Float(LevelDetail)+xoverlap,height+zoverlap,-(j+Float(j2)/Float(LevelDetail))+yoverlap
 		Next
 	Next
 
@@ -5429,7 +5458,7 @@ Function BuildLevelModel()
 	For j=0 To LevelHeight-1
 		ClearSurface LevelSurface(j)
 		For i=0 To LevelWidth-1
-			CreateLevelTileGround(i,j)
+			CreateLevelTileTop(i,j)
 		Next
 		;UpdateNormals LevelMesh(j)
 		EntityTexture LevelMesh(j),LevelTexture
@@ -11399,10 +11428,12 @@ Function UpdateLevelTile(i,j)
 
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
 
+	ResetLevelTile(i,j)
 	UpdateLevelTileTexture(i,j)
-	ShiftLevelTileToExtrude(i,j)
+	ShiftLevelTileByExtrude(i,j)
 	ShiftLevelTileByRandom(i,j)
 	ShiftLevelTileByHeight(i,j)
+	ShiftLevelTileEdges(i,j)
 
 End Function
 
