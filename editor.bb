@@ -1878,7 +1878,7 @@ Function EditorMainLoop()
 			CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
 			x#=ProjectedX#()
 			y#=ProjectedY#()
-			If x#<500 And y#<500
+			If x#<490 And y#<490 ; it's not <500 because the text would overlap with the x/y coordinate listing on the bottom bar as well as the right margin
 				If ShowObjectMesh=ShowObjectMeshIndices
 					; display object indices
 					StringOnObject$=i
