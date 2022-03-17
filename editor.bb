@@ -455,6 +455,7 @@ Global ChunkTileU#,ChunkTileV#
 Global CurrentMesh,CurrentSurface ; for tile rendering in tile camera
 
 Global LevelDetail=4
+Global CurrentVertex=0
 Dim ChunkStoredVHeight#(0) ; used for height calculations (re-dimmed in CreateLevel()
 
 Global CurrentTileTexture=8
@@ -4908,7 +4909,9 @@ Function ShiftLevelTileByHeight(i,j)
 
 	mySurface=LevelSurface(j)
 	
-	Dim ChunkStoredVHeight#(LevelWidth*(LevelDetail+1))	
+	ChunkHeight=1
+	
+	Dim ChunkStoredVHeight#(LevelWidth*(LevelDetail+1))
 	
 	For i2=0 To LevelDetail
 		If i2<LevelDetail/2
@@ -4931,7 +4934,8 @@ Function ShiftLevelTileByHeight(i,j)
 		EndIf
 		
 		; but don't adjust vertices in the chunk-border
-		If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
+		;If i>0 And j>0 And i<LevelWidth-1 And j<ChunkHeight-1
+		If i>=0 And j>=0 And i<=LevelWidth-1 And j<=ChunkHeight-1
 			vertex=GetLevelVertex(i,j,i2,LevelDetail/2)
 			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
 		EndIf
@@ -4944,7 +4948,8 @@ Function ShiftLevelTileByHeight(i,j)
 				;  the row and hence lifted above)
 				OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
 				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
-				If i>0 And j>1 And i<LevelWidth-1
+				;If i>0 And j>1 And i<LevelWidth-1
+				If i>=0 And j>=1 And i<=LevelWidth-1
 					vertex=GetLevelVertex(i,j-1,i2,j2)
 					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
 				EndIf
@@ -4953,7 +4958,8 @@ Function ShiftLevelTileByHeight(i,j)
 				; 2nd half (we're now in the top half of this row)
 				OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
 				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
-				If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
+				;If i>0 And j>0 And i<LevelWidth-1 And j<ChunkHeight-1
+				If i>=0 And j>=0 And i<=LevelWidth-1 And j<=ChunkHeight-1
 					vertex=GetLevelVertex(i,j,i2,j2)
 					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
 				EndIf
@@ -5207,13 +5213,23 @@ Function BuildLevelModel()
 		;UpdateNormals LevelMesh(j)
 		EntityTexture LevelMesh(j),LevelTexture
 	Next
-				
-	For j=1 To LevelHeight-2
+	
+	For j=1 To LevelHeight-2		
 		For i=1 To LevelWidth-2
 			ShiftLevelTileByRandom(i,j)
+		Next
+	Next
+	
+	For j=0 To LevelHeight-1
+		; get the newest one, and increment from there
+		currentvertex=GetLevelVertex(LevelWidth-1,0,LevelDetail,LevelDetail)+1
+		
+		For i=1 To LevelWidth-1
 			CreateLevelTileSides(i,j)
 		Next
 	Next
+	
+	
 	
 	; water
 	For j=0 To LevelHeight-1
