@@ -4688,8 +4688,9 @@ Function CreateLevelTileTop(i,j)
 		Next
 	Next
 	
-	ShiftLevelTileByExtrude(i,j)
+	ShiftLevelTileByRandom(i,j)
 	ShiftLevelTileByHeight(i,j)
+	ShiftLevelTileByExtrude(i,j)
 	ShiftLevelTileEdges(i,j)
 
 End Function
@@ -5457,17 +5458,12 @@ Function BuildLevelModel()
 	
 	For j=0 To LevelHeight-1
 		ClearSurface LevelSurface(j)
+		
 		For i=0 To LevelWidth-1
 			CreateLevelTileTop(i,j)
 		Next
 		;UpdateNormals LevelMesh(j)
 		EntityTexture LevelMesh(j),LevelTexture
-	Next
-	
-	For j=1 To LevelHeight-2		
-		For i=1 To LevelWidth-2
-			ShiftLevelTileByRandom(i,j)
-		Next
 	Next
 	
 	For j=0 To LevelHeight-1
@@ -5476,6 +5472,22 @@ Function BuildLevelModel()
 		
 		For i=0 To LevelWidth-1
 			CreateLevelTileSides(i,j)
+		Next
+	Next
+	
+	; and point all edge vertex normals "up" (to smooth lighting)
+	
+	For j=0 To LevelHeight-1
+		UpdateNormals LevelMesh(j)
+		For i=0 To LevelWidth-1
+			For i2=0 To LevelDetail
+				For j2=0 To LevelDetail
+					If i2=0 Or i2=LevelDetail Or j2=0 Or j2=LevelDetail
+						vertex=GetLevelVertex(i,j,i2,j2)
+						VertexNormal LevelSurface(j),vertex,0.0,1.0,0.0
+					EndIf
+				Next
+			Next
 		Next
 	Next
 	
