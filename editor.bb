@@ -4690,6 +4690,7 @@ Function CreateLevelTileGround(i,j)
 	
 	ShiftLevelTileToExtrude(i,j)
 	ShiftLevelTileByHeight(i,j)
+	ShiftLevelTileEdges(i,j)
 
 End Function
 
@@ -5002,6 +5003,206 @@ Function ShiftLevelTileToExtrude(i,j)
 			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
 		Next
 	Next
+
+End Function
+
+Function ShiftLevelTileEdges(i,j)
+	mySurface=LevelSurface(j)
+
+	iMinusOne=Maximum2(i-1,0)
+	iPlusOne=Minimum2(i+1,LevelWidth-1)
+	jMinusOne=Maximum2(j-1,0)
+	jPlusOne=Minimum2(j+1,LevelHeight-1)
+
+	If LevelTileRounding(i,j)=1		
+	
+			
+		; is there a drop-off NE corner:
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iPlusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne) And LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jMinusOne)
+			; yep: round-off
+			For i2=(LevelDetail/2)+1 To LevelDetail
+				For j2=(LevelDetail/2)+1 To Leveldetail
+					vertex=GetLevelVertex(i,j,i2,LevelDetail-j2)
+					; convert (i2,j2) to (0...1)
+					a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+					b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+					x#=r/Sqr(1+b^2/a^2)
+					y#=Sqr(r^2-x^2)
+										
+					VertexCoords mySurface,vertex,i+0.5+x#/2.0,VertexY(mySurface,vertex),-(j+0.5-y#/2.0)
+				Next
+			Next
+			
+		EndIf
+
+			
+		; is there a drop-off SE corner:
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iPlusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jPlusOne) And LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jPlusOne)
+			; yep: round-off
+			For i2=(LevelDetail/2)+1 To LevelDetail
+				For j2=(LevelDetail/2)+1 To Leveldetail
+					vertex=GetLevelVertex(i,j,i2,j2)
+					; convert (i2,j2) to (0...1)
+					a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+					b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+					x#=r/Sqr(1+b^2/a^2)
+					y#=Sqr(r^2-x^2)
+										
+					VertexCoords mySurface,vertex,i+0.5+x#/2.0,VertexY(mySurface,vertex),-(j+0.5+y#/2.0)
+				Next
+			Next
+			
+		EndIf
+		; SW corner
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jPlusOne) And LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jPlusOne)
+			; yep: round-off
+			For i2=(LevelDetail/2)+1 To LevelDetail
+				For j2=(LevelDetail/2)+1 To Leveldetail
+					vertex=GetLevelVertex(i,j,LevelDetail-i2,j2)
+					; convert (i2,j2) to (0...1)
+					a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+					b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+					x#=r/Sqr(1+b^2/a^2)
+					y#=Sqr(r^2-x^2)
+										
+					VertexCoords mySurface,vertex,i+0.5-x#/2.0,VertexY(mySurface,vertex),-(j+0.5+y#/2.0)
+				Next
+			Next
+			
+		EndIf
+		
+		; is there a drop-off NW corner:
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne) And LevelTileExtrusion(iMinueOne,j)=LevelTileExtrusion(i,jMinusOne)
+			; yep: round-off
+			For i2=(LevelDetail/2)+1 To LevelDetail
+				For j2=(LevelDetail/2)+1 To Leveldetail
+					vertex=GetLevelVertex(i,j,LevelDetail-i2,LevelDetail-j2)
+					; convert (i2,j2) to (0...1)
+					a#=Float(i2-(LevelDetail/2))/Float(LevelDetail/2)
+					b#=Float(j2-(LevelDetail/2))/Float(LevelDetail/2)
+					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
+					x#=r/Sqr(1+b^2/a^2)
+					y#=Sqr(r^2-x^2)
+										
+					VertexCoords mySurface,vertex,i+0.5-x#/2.0,VertexY(mySurface,vertex),-(j+0.5-y#/2.0)
+				Next
+			Next
+			
+		EndIf
+	
+	EndIf
+	
+	randommax#=0.1
+
+	If LevelTileEdgeRandom(i,j)=1
+		; north side
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j-1)
+			
+			j2=0
+			For i2=0 To LevelDetail
+				vertex=GetLevelVertex(i,j,i2,j2)
+				If i2=0 
+					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jMinusOne)
+						random#=1.0
+					Else 
+						random#=0
+					EndIf
+				Else If i2=LevelDetail
+					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jMinusOne)
+						random#=1.0
+					Else
+						random#=0
+					EndIf
+				Else
+					random#=Rnd(0,1)
+				EndIf
+
+				
+				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-random*randommax
+			Next
+			
+		EndIf
+		; east side
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iPlusOne,j)
+			
+			i2=LevelDetail
+			For j2=0 To LevelDetail
+				vertex=GetLevelVertex(i,j,i2,j2)
+				If j2=0 
+					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jMinusOne)
+						random#=1.0
+					Else 
+						random#=0
+					EndIf
+				Else If j2=LevelDetail
+					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jPlusOne)
+						random#=1.0
+					Else
+						random#=0
+					EndIf
+				Else
+					random#=Rnd(0,1)
+				EndIf
+				VertexCoords mySurface,vertex,VertexX(mySurface,vertex)-random*randommax,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+			Next
+			
+			
+		EndIf
+		; south side
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jPlusOne)
+			
+			j2=LevelDetail
+			For i2=0 To LevelDetail
+				vertex=GetLevelVertex(i,j,i2,j2)
+				If i2=0 
+					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jPlusOne)
+						random#=1.0
+					Else 
+						random#=0
+					EndIf
+				Else If i2=LevelDetail
+					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jPlusOne)
+						random#=1.0
+					Else
+						random#=0
+					EndIf
+				Else
+					random#=Rnd(0,1)
+				EndIf
+				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+random*randommax
+			Next
+			
+		EndIf
+		; west side
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j)
+			
+			i2=0
+			For j2=0 To LevelDetail
+				vertex=GetLevelVertex(i,j,i2,j2)
+				If j2=0 
+					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jMinusOne)
+						random#=1.0
+					Else 
+						random#=0
+					EndIf
+				Else If j2=LevelDetail
+					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jPlusOne)
+						random#=1.0
+					Else
+						random#=0
+					EndIf
+				Else
+					random#=Rnd(0,1)
+				EndIf
+				VertexCoords mySurface,vertex,VertexX(mySurface,vertex)+random*randommax,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+			Next
+			
+			
+		EndIf
+	EndIf
 
 End Function
 
