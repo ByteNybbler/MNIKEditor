@@ -4978,10 +4978,10 @@ Function ShiftLevelTileByHeight(i,j)
 		
 		; but don't adjust vertices in the chunk-border
 		;If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
-		If i>=0 And j>=0 And i<=LevelWidth-1 And j<=LevelHeight-1
-			vertex=GetLevelVertex(i,j,i2,LevelDetail/2)
-			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
-		EndIf
+		;If i>=0 And j>=0 And i<=LevelWidth-1 And j<=LevelHeight-1
+		vertex=GetLevelVertex(i,j,i2,LevelDetail/2)
+		VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
+		;EndIf
 
 		If j>0
 			OtherHeight#=HeightAtRowVertex#(i,j-1,i2)
@@ -4995,7 +4995,9 @@ Function ShiftLevelTileByHeight(i,j)
 				;If i>0 And j>1 And i<LevelWidth-1
 				If i>=0 And j>=1 And i<=LevelWidth-1
 					vertex=GetLevelVertex(i,j-1,i2,j2)
+					mySurface=LevelSurface(j-1)
 					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
+					mySurface=LevelSurface(j)
 				EndIf
 			Next
 			For j2=0 To LevelDetail/2-1
