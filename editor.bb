@@ -201,7 +201,12 @@ Dim WaterMesh(100),WaterSurface(100)
 Dim LogicMesh(100),LogicSurface(100)
 Global ShowLogicMesh=False
 Global ShowLevelMesh=True
-Global ShowObjectMesh=1 ; shows/hides objects: 0=hide objects, 1=show objects, 2=show indices
+
+Global ShowObjectMesh=1 ; shows/hides objects: 0=hide objects, 1=show objects
+Const ShowObjectMeshMax=3
+Const ShowObjectMeshIds=2
+Const ShowObjectMeshIndices=3
+
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 Global BlockMode,FillMode
@@ -1874,10 +1879,10 @@ Function EditorMainLoop()
 			x#=ProjectedX#()
 			y#=ProjectedY#()
 			If x#<500 And y#<500
-				If ShowObjectMesh=2
+				If ShowObjectMesh=ShowObjectMeshIndices
 					; display object indices
 					StringOnObject$=i
-				ElseIf ShowObjectMesh=3
+				ElseIf ShowObjectMesh=ShowObjectMeshIds
 					; display object IDs
 					StringOnObject$=CalculateEffectiveId(i)
 				EndIf
@@ -1982,9 +1987,9 @@ Function EditorMainLoop()
 	Else
 		Text 200,565,"    SHOW"
 	EndIf
-	If ShowObjectMesh=2
+	If ShowObjectMesh=ShowObjectMeshIndices
 		Text 200+4,580,"  INDICES"
-	ElseIf ShowObjectMesh=3
+	ElseIf ShowObjectMesh=ShowObjectMeshIds
 		Text 200+4,580,"    IDS"
 	Else
 		Text 200+4,580,"  OBJECTS"
@@ -4245,10 +4250,10 @@ Function EditorLocalControls()
 		; show/hide objects
 		Else If my>565 And my<595
 			NewValue=AdjustInt("Enter object mesh visibility level: ", ShowObjectMesh, 1, 10, 100)
-			If NewValue>3
+			If NewValue>ShowObjectMeshMax
 				NewValue=0
 			ElseIf NewValue<0
-				NewValue=3
+				NewValue=ShowObjectMeshMax
 			EndIf
 			WasChanged=ShowObjectMesh<>NewValue
 			If WasChanged
