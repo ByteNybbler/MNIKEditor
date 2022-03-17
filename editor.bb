@@ -5104,7 +5104,7 @@ Function ShiftLevelTileEdges(i,j)
 		EndIf
 		
 		; is there a drop-off NW corner:
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne) And LevelTileExtrusion(iMinueOne,j)=LevelTileExtrusion(i,jMinusOne)
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne) And LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jMinusOne)
 			; yep: round-off
 			For i2=(LevelDetail/2)+1 To LevelDetail
 				For j2=(LevelDetail/2)+1 To Leveldetail
