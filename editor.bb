@@ -5552,7 +5552,8 @@ Function BuildLevelModel()
 	Next
 	
 	
-	
+	OldLevelDetail=LevelDetail
+	LevelDetail=1
 	; water
 	For j=0 To LevelHeight-1
 		ClearSurface WaterSurface(j)
@@ -5579,6 +5580,7 @@ Function BuildLevelModel()
 		EntityTexture WaterMesh(j),WaterTexture
 	
 	Next
+	LevelDetail=OldLevelDetail
 	
 	; logic
 	For j=0 To LevelHeight-1
@@ -11647,7 +11649,9 @@ End Function
 Function UpdateWaterTile(i,j)
 	
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
-
+	
+	OldLevelDetail=LevelDetail
+	LevelDetail=1
 	
 	; top face
 	CalculateUV(WaterTileTexture(i,j),0,0,WaterTileRotation(i,j),4)
@@ -11685,6 +11689,8 @@ Function UpdateWaterTile(i,j)
 	Else
 		VertexColor WaterSurface(j),i*4+3,0,0,0
 	EndIf
+	
+	LevelDetail=OldLevelDetail
 
 End Function
 
