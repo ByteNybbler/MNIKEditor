@@ -456,7 +456,6 @@ Global CurrentMesh,CurrentSurface ; for tile rendering in tile camera
 
 Global LevelDetail=4
 Global CurrentVertex=0
-Dim ChunkStoredVHeight#(0) ; used for height calculations (re-dimmed in CreateLevel()
 
 Global CurrentTileTexture=8
 Global CurrentTileRotation
@@ -4983,35 +4982,38 @@ Function ShiftLevelTileByHeight(i,j)
 		VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
 		;EndIf
 
-		If j>0
+		If j=0
+			OtherHeight#=LevelTileHeight(i,j)
+		Else
 			OtherHeight#=HeightAtRowVertex#(i,j-1,i2)
-			; as of second row, build vertical bridge to first row
-			For j2=LevelDetail/2+1 To LevelDetail
-				; first half is actually 2nd half of previous row
-				; (also no need to lift first vertex of that part, that's already the center of
-				;  the row and hence lifted above)
-				;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
-				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
-				;If i>0 And j>1 And i<LevelWidth-1
-				If i>=0 And j>=1 And i<=LevelWidth-1
-					vertex=GetLevelVertex(i,j-1,i2,j2)
-					mySurface=LevelSurface(j-1)
-					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
-					mySurface=LevelSurface(j)
-				EndIf
-			Next
-			For j2=0 To LevelDetail/2-1
-				; 2nd half (we're now in the top half of this row)
-				;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
-				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
-				;If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
-				If i>=0 And j>=0 And i<=LevelWidth-1 And j<=LevelHeight-1
-					vertex=GetLevelVertex(i,j,i2,j2)
-					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
-				EndIf
-			Next
-			
 		EndIf
+			
+		; as of second row, build vertical bridge to first row
+		For j2=LevelDetail/2+1 To LevelDetail
+			; first half is actually 2nd half of previous row
+			; (also no need to lift first vertex of that part, that's already the center of
+			;  the row and hence lifted above)
+			;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+			ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
+			;If i>0 And j>1 And i<LevelWidth-1
+			If i>=0 And j>=1 And i<=LevelWidth-1
+				vertex=GetLevelVertex(i,j-1,i2,j2)
+				mySurface=LevelSurface(j-1)
+				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
+				mySurface=LevelSurface(j)
+			EndIf
+		Next
+		For j2=0 To LevelDetail/2-1
+			; 2nd half (we're now in the top half of this row)
+			;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
+			ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
+			;If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
+			If i>=0 And j>=0 And i<=LevelWidth-1 And j<=LevelHeight-1
+				vertex=GetLevelVertex(i,j,i2,j2)
+				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
+			EndIf
+		Next
+
 		;ChunkStoredVHeight(i*(LevelDetail+1)+i2)=NewHeight
 
 	Next
@@ -5479,8 +5481,6 @@ Function BuildLevelModel()
 ;		EntityTexture LevelMesh(j),LevelTexture
 ;	Next
 
-
-	Dim ChunkStoredVHeight#(LevelWidth*(LevelDetail+1))
 	
 	For j=0 To LevelHeight-1
 		ClearSurface LevelSurface(j)
