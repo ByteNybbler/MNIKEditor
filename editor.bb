@@ -4930,14 +4930,12 @@ Function ShiftLevelTileByHeight(i,j)
 ;	EndIf
 
 	mySurface=LevelSurface(j)
-	
-	ChunkHeight=LevelHeight
-	
+
 	For i2=0 To LevelDetail
 		If i2<LevelDetail/2
 			; first half of tile, compare with left neighbour
 			If i=0 
-				OtherHeight#=0.0
+				OtherHeight#=LevelTileHeight(i,j) ;0.0
 			Else
 				OtherHeight#=LevelTileHeight(i-1,j)
 			EndIf
@@ -4945,7 +4943,7 @@ Function ShiftLevelTileByHeight(i,j)
 		Else
 			; second half of tile, compare with right neighbour
 			If i=LevelWidth-1 
-				OtherHeight#=0.0
+				OtherHeight#=LevelTileHeight(i,j) ;0.0
 			Else
 				OtherHeight#=LevelTileHeight(i+1,j)
 			EndIf
@@ -4954,8 +4952,8 @@ Function ShiftLevelTileByHeight(i,j)
 		EndIf
 		
 		; but don't adjust vertices in the chunk-border
-		;If i>0 And j>0 And i<LevelWidth-1 And j<ChunkHeight-1
-		If i>=0 And j>=0 And i<=LevelWidth-1 And j<=ChunkHeight-1
+		;If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
+		If i>=0 And j>=0 And i<=LevelWidth-1 And j<=LevelHeight-1
 			vertex=GetLevelVertex(i,j,i2,LevelDetail/2)
 			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
 		EndIf
@@ -4978,8 +4976,8 @@ Function ShiftLevelTileByHeight(i,j)
 				; 2nd half (we're now in the top half of this row)
 				OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
 				ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
-				;If i>0 And j>0 And i<LevelWidth-1 And j<ChunkHeight-1
-				If i>=0 And j>=0 And i<=LevelWidth-1 And j<=ChunkHeight-1
+				;If i>0 And j>0 And i<LevelWidth-1 And j<LevelHeight-1
+				If i>=0 And j>=0 And i<=LevelWidth-1 And j<=LevelHeight-1
 					vertex=GetLevelVertex(i,j,i2,j2)
 					VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
 				EndIf
