@@ -201,7 +201,7 @@ Dim WaterMesh(100),WaterSurface(100)
 Dim LogicMesh(100),LogicSurface(100)
 Global ShowLogicMesh=False
 Global ShowLevelMesh=True
-Global ShowObjectMesh=True ; shows/hides objects
+Global ShowObjectMesh=1 ; shows/hides objects: 0=hide objects, 1=show objects, 2=show indices
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 Global BlockMode,FillMode
@@ -1850,6 +1850,7 @@ Function EditorMainLoop()
 	If SimulationLevel>=3
 		ControlWeather()
 	EndIf
+	
 	ControlParticles()
 	RenderParticles()
 	
@@ -1864,6 +1865,25 @@ Function EditorMainLoop()
 		Text 500-9*8,5,"LEVEL: 0"+CurrentLevelNumber
 	Else
 		Text 500-9*8,5,"LEVEL: "+CurrentLevelNumber
+	EndIf
+	
+	If ShowObjectMesh>=2
+		For i=0 To NofObjects-1
+			;CameraProject(Camera1,EntityX(ObjectEntity(i)),EntityY(ObjectEntity(i)),EntityZ(ObjectEntity(i)))
+			CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
+			x#=ProjectedX#()
+			y#=ProjectedY#()
+			If x#<500 And y#<500
+				If ShowObjectMesh=2
+					; display object indices
+					StringOnObject$=i
+				ElseIf ShowObjectMesh=3
+					; display object IDs
+					StringOnObject$=CalculateEffectiveId(i)
+				EndIf
+				Text x#-4*Len(StringOnObject$),y#,StringOnObject$
+			EndIf
+		Next
 	EndIf
 	
 	
@@ -1957,12 +1977,18 @@ Function EditorMainLoop()
 	EndIf
 	Text 200+4,535,"  MARKERS"
 	
-	If ShowObjectMesh=True
-		Text 200,565,"    SHOW"
-	Else
+	If ShowObjectMesh=0
 		Text 200,565,"    HIDE"
+	Else
+		Text 200,565,"    SHOW"
 	EndIf
-	Text 200+4,580,"  OBJECTS"
+	If ShowObjectMesh=2
+		Text 200+4,580,"  INDICES"
+	ElseIf ShowObjectMesh=3
+		Text 200+4,580,"    IDS"
+	Else
+		Text 200+4,580,"  OBJECTS"
+	EndIf
 
 	If ShowLogicMesh=True
 		Text 300,520,"    SHOW"
@@ -4218,15 +4244,18 @@ Function EditorLocalControls()
 			EndIf
 		; show/hide objects
 		Else If my>565 And my<595
-			If LeftMouse=True And LeftMouseReleased=True
-				ShowObjectMesh=Not ShowObjectMesh
-
+			NewValue=AdjustInt("Enter object mesh visibility level: ", ShowObjectMesh, 1, 10, 100)
+			If NewValue>3
+				NewValue=0
+			ElseIf NewValue<0
+				NewValue=3
+			EndIf
+			WasChanged=ShowObjectMesh<>NewValue
+			If WasChanged
+				ShowObjectMesh=NewValue
 				For j=0 To NofObjects-1
 					UpdateObjectVisibility(j)
 				Next
-	
-				
-				Delay 100
 			EndIf
 		EndIf
 
@@ -6655,7 +6684,7 @@ End Function
 
 Function UpdateObjectVisibility(Dest)
 
-	If ShowObjectMesh=False Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest)) ;Or Dest=CurrentGrabbedObject
+	If ShowObjectMesh=0 Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest))
 		If ObjectEntity(Dest)>0
 			HideEntity ObjectEntity(Dest)
 		EndIf
