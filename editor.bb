@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/16/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/17/22)"
 
 Global MASTERUSER=True
 
@@ -3028,7 +3028,7 @@ Function EditorLocalControls()
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+185 And MY<StartY+200
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			LeftMouseReleased=False
-			RigthMouseReleased=False
+			RightMouseReleased=False
 			CurrentTileRounding=1-CurrentTileRounding
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
@@ -3049,7 +3049,7 @@ Function EditorLocalControls()
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+185 And MY<StartY+200
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			LeftMouseReleased=False
-			RigthMouseReleased=False
+			RightMouseReleased=False
 			CurrentTileEdgeRandom=1-CurrentTileEdgeRandom
 			SetEditorMode(0)
 			CameraProjMode Camera1,1
@@ -11466,11 +11466,25 @@ Function UpdateLevelTile(i,j)
 
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
 
+	;If j>0
+	;	UpdateLevelTileVerticesExceptForHeight(i,j-1)
+	;EndIf
+
 	ResetLevelTile(i,j)
 	UpdateLevelTileTexture(i,j)
 	ShiftLevelTileByExtrude(i,j)
 	ShiftLevelTileByRandom(i,j)
 	ShiftLevelTileByHeight(i,j)
+	ShiftLevelTileEdges(i,j)
+
+End Function
+
+Function UpdateLevelTileVerticesExceptForHeight(i,j)
+
+	ResetLevelTile(i,j)
+	ShiftLevelTileByExtrude(i,j)
+	ShiftLevelTileByRandom(i,j)
+	; height would go here
 	ShiftLevelTileEdges(i,j)
 
 End Function
