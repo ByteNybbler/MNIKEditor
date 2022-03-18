@@ -482,7 +482,7 @@ Global CurrentTileRoundingUse=True
 Global CurrentTileEdgeRandomUse=True
 Global CurrentTileLogicUse=True
 
-Global CurrentWaterTile,CurrentWaterTileTexture,CurrentWaterTileRotation,CurrentWaterTileHeight#,CurrentWaterTileTurbulence#
+Global CurrentWaterTileTexture,CurrentWaterTileRotation,CurrentWaterTileHeight#,CurrentWaterTileTurbulence#
 Global CurrentWaterTileHeight2,CurrentWaterTileTurbulence2
 Global CurrentWaterTileUse=True
 Global CurrentWaterTileHeightUse=True
@@ -893,6 +893,17 @@ EntityPickMode TexturePlane,2
 ; CurrentTile
 CurrentMesh=CreateMesh()
 CurrentSurface=CreateSurface(CurrentMesh)
+; CurrentWaterTile
+Global CurrentWaterTile=CreateMesh()
+Global CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
+
+AddVertex (CurrentWaterTileSurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
+AddVertex (CurrentWaterTileSurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
+AddVertex (CurrentWaterTileSurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
+AddVertex (CurrentWaterTileSurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
+AddTriangle (CurrentWaterTileSurface,0,1,2)
+AddTriangle (CurrentWaterTileSurface,2,1,3)
+UpdateNormals CurrentWaterTile
 ; BlockMode
 BlockModeMesh=CreateMesh()
 BlockModeSurface=CreateSurface(BlockModeMesh)
@@ -935,7 +946,7 @@ HideEntity CurrentGrabbedObjectMarker
 ; =================
 LevelTexture=MyLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
 EntityTexture TexturePlane,LevelTexture
-WaterTexture=MyLoadTexture("data\Leveltextures\"+WaterTExturename$(currentwatertexture),2)
+WaterTexture=MyLoadTexture("data\Leveltextures\"+WaterTexturename$(currentwatertexture),1)
 Global ButtonTexture=MyLoadTexture("data\graphics\buttons1.bmp",4)
 Global GateTexture=MyLoadTexture("data\graphics\gates1.bmp",1)
 Global CloudTexture=myLoadTexture("Data\graphics\cloud.jpg",4)
@@ -3344,7 +3355,7 @@ Function EditorLocalControls()
 			
 			If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
 			FreeTexture WaterTexture
-			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
+			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
 			EntityTexture Currentwatertile,WaterTexture
 			For j=0 To LevelHeight-1
 				EntityTexture WaterMesh(j),WaterTexture
@@ -3358,7 +3369,7 @@ Function EditorLocalControls()
 			
 			If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
 			FreeTexture WaterTexture
-			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
+			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
 			EntityTexture Currentwatertile,WaterTexture
 			For j=0 To LevelHeight-1
 				EntityTexture WaterMesh(j),WaterTexture
@@ -3431,7 +3442,7 @@ Function EditorLocalControls()
 			Else
 				FreeTexture WaterTexture
 				WaterTexture=0
-				WaterTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg",2)
+				WaterTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg",1)
 				If WaterTexture=0
 					Locate 0,0
 					Color 0,0,0
@@ -5465,22 +5476,22 @@ Function CreateLevelTileClassic(i,j)
 End Function
 
 
-Function UpdateWaterMeshGlow(i)
+Function UpdateWaterMeshGlow(Entity)
 
 	If WaterGlow=True 
-		EntityBlend WaterMesh(i),3
+		EntityBlend Entity,3
 	Else 
-		EntityBlend WaterMesh(i),1
+		EntityBlend Entity,1
 	EndIf
 
 End Function
 
-Function UpdateWaterMeshTransparent(i)
+Function UpdateWaterMeshTransparent(Entity)
 
 	If WaterTransparent=True 
-		EntityAlpha WaterMesh(i),.5
+		EntityAlpha Entity,.5
 	Else
-		EntityAlpha WaterMesh(i),1
+		EntityAlpha Entity,1
 	EndIf
 
 End Function
@@ -5488,16 +5499,18 @@ End Function
 Function UpdateAllWaterMeshGlow()
 
 	For i=0 To 99
-		UpdateWaterMeshGlow(i)
+		UpdateWaterMeshGlow(WaterMesh(i))
 	Next
+	UpdateWaterMeshGlow(CurrentWaterTile)
 
 End Function
 
 Function UpdateAllWaterMeshTransparent()
 
 	For i=0 To 99
-		UpdateWaterMeshTransparent(i)
+		UpdateWaterMeshTransparent(WaterMesh(i))
 	Next
+	UpdateWaterMeshTransparent(CurrentWaterTile)
 
 End Function
 
@@ -5514,8 +5527,8 @@ Function BuildLevelModel()
 		Watersurface(i)=CreateSurface(Watermesh(i))
 		;EntityAlpha WaterMesh(i),.5
 		;EntityFX WaterMesh(i),2
-		UpdateWaterMeshGlow(i)
-		UpdateWaterMeshTransparent(i)
+		;UpdateWaterMeshGlow(i)
+		;UpdateWaterMeshTransparent(i)
 		
 		Logicmesh(i)=CreateMesh()
 		Logicsurface(i)=CreateSurface(Logicmesh(i))
@@ -5523,6 +5536,8 @@ Function BuildLevelModel()
 
 
 	Next
+	UpdateAllWaterMeshGlow()
+	UpdateAllWaterMeshTransparent()
 	
 	
 	
@@ -12132,70 +12147,111 @@ Function BuildCurrentTileModel()
 	; and the water tile
 	; top face
 	
-	If CurrentWaterTile>0 Then FreeEntity CurrentWaterTile
+	;If CurrentWaterTile>0 Then FreeEntity CurrentWaterTile
 	
-	CurrentWaterTile=CreateMesh()
-	mySurface=CreateSurface(CurrentWaterTile)
+	;CurrentWaterTile=CreateMesh()
+	;mySurface=CreateSurface(CurrentWaterTile)
+	mySurface=CurrentWaterTileSurface
+	div#=CurrentWaterTileTexture/4.0
 	
+	;xzx
 	If CurrentWaterTileRotation=0
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
+		VertexTexCoords mySurface,0,div,0
+		VertexTexCoords mySurface,1,div+.25,0
+		VertexTexCoords mySurface,2,div,.25
+		VertexTexCoords mySurface,3,div+.25,.25
+	
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
 		
 	EndIf
 	If CurrentWaterTileRotation=1
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,0)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
+		VertexTexCoords mySurface,0,div,.25
+		VertexTexCoords mySurface,1,div,0
+		VertexTexCoords mySurface,2,div+.25,.25
+		VertexTexCoords mySurface,3,div+.25,0
+	
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,.25)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,0)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
 		
 	EndIf
 	If CurrentWaterTileRotation=2
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,0)
+		VertexTexCoords mySurface,0,div+.25,.25
+		VertexTexCoords mySurface,1,div,.25
+		VertexTexCoords mySurface,2,div+.25,0
+		VertexTexCoords mySurface,3,div,0
+		
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,.25)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,0)
 		
 	EndIf
 	If CurrentWaterTileRotation=3
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,0)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,.25)
+		VertexTexCoords mySurface,0,div+.25,0
+		VertexTexCoords mySurface,1,div+.25,.25
+		VertexTexCoords mySurface,2,div,0
+		VertexTexCoords mySurface,3,div,.25
+		
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,0)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,.25)
 		
 	EndIf
 	If CurrentWaterTileRotation=4
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,0)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,.25)
+		VertexTexCoords mySurface,0,div+.25,0
+		VertexTexCoords mySurface,1,div,0
+		VertexTexCoords mySurface,2,div+.25,.25
+		VertexTexCoords mySurface,3,div,.25
+		
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,0)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,.25)
 		
 	EndIf
 	If CurrentWaterTileRotation=5
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
+		VertexTexCoords mySurface,0,div,0
+		VertexTexCoords mySurface,1,div,.25
+		VertexTexCoords mySurface,2,div+.25,0
+		VertexTexCoords mySurface,3,div+.25,.25
+		
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,.25)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
 		
 	EndIf
 	If CurrentWaterTileRotation=6
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,0)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
+		VertexTexCoords mySurface,0,div,.25
+		VertexTexCoords mySurface,1,div+.25,.25
+		VertexTexCoords mySurface,2,div,0
+		VertexTexCoords mySurface,3,div+.25,0
+		
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,.25)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,0)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
 		
 	EndIf
 	If CurrentWaterTileRotation=7
-		AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
-		AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,0)
+		VertexTexCoords mySurface,0,div+.25,.25
+		VertexTexCoords mySurface,1,div+.25,0
+		VertexTexCoords mySurface,2,div,.25
+		VertexTexCoords mySurface,3,div,0
+		
+		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
+		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
+		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
+		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,0)
 		
 	EndIf
-	AddTriangle (MySurface,0,1,2)
-	AddTriangle (MySurface,2,1,3)
-	UpdateNormals CurrentWaterTile
+
 	EntityTexture CurrentWaterTile,WaterTexture
 	
 End Function
