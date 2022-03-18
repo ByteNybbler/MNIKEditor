@@ -4926,28 +4926,30 @@ Function UpdateLevelTileSides(i,j)
 	random#=0 ; this is the random for the lower edge - set to zero and only caclulate for the second pixel,
 				; that way, the first pixel of the next square will have the same random factor
 	If j>0
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j-1) 
+		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j-1)
+			z2=0
+			If LevelTileExtrusion(i,j-1)>=LevelTileExtrusion(i,j) z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
 				CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2-1,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTileSideTexture(i,j),i2+1,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTileSideTexture(i,j),i2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1),-j+random
+				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1)+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
@@ -4960,7 +4962,7 @@ Function UpdateLevelTileSides(i,j)
 				EndIf
 	
 				CalculateUV(LevelTileSideTexture(i,j),i2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1),-j+random
+				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1)+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
@@ -4971,28 +4973,30 @@ Function UpdateLevelTileSides(i,j)
 	; east side
 	random#=0
 	If i<LevelWidth-1
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i+1,j) 
+		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i+1,j)
+			z2=0
+			If LevelTileExtrusion(i+1,j)>=LevelTileExtrusion(i,j) z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
 				CalculateUV(LevelTileSideTexture(i,j),j2,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTileSideTexture(i,j),j2+1,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTileSideTexture(i,j),j2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j),-(j+Float(LevelDetail-j2)/Float(LevelDetail))
+				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j)+z2,-(j+Float(LevelDetail-j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
@@ -5005,7 +5009,7 @@ Function UpdateLevelTileSides(i,j)
 				EndIf
 	
 				CalculateUV(LevelTileSideTexture(i,j),j2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j),-(j+Float(LevelDetail-j2-1)/Float(LevelDetail))
+				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j)+z2,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
@@ -5019,25 +5023,27 @@ Function UpdateLevelTileSides(i,j)
 	; south side
 	random#=0
 	If j<LevelHeight-1
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j+1) 
+		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j+1)
+			z2=0
+			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
 				CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTileSideTexture(i,j),i2+1,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTileSideTexture(i,j),i2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1),-(j+1+random)
+				VertexCoords mySurface,vertexside,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1)+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
@@ -5049,36 +5055,46 @@ Function UpdateLevelTileSides(i,j)
 				EndIf
 	
 				CalculateUV(LevelTileSideTexture(i,j),i2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1),-(j+1+random)
+				VertexCoords mySurface,vertexside,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1)+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
 			Next
+		;Else
+		;	For i2=0 To LevelDetail-1
+		;		vertex=GetLevelVertex(i,j,i2,LevelDetail)
+		;		vertexside=GetLevelSideVertex(i,j,CurrentIndex)
+		;		CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
+		;		VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+		;		VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
+		;	Next
 		;EndIf
 	EndIf
 	
 	; west side
 	random#=0
 	If i>0
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i-1,j) 
+		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i-1,j)
+			z2=0
+			If LevelTileExtrusion(i-1,j)>=LevelTileExtrusion(i,j) z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,0,j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
 				CalculateUV(LevelTileSideTexture(i,j),j2,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTileSideTexture(i,j),j2+1,0,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
+				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,0,j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTileSideTexture(i,j),j2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j),-(j+Float(j2)/Float(LevelDetail))
+				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j)+z2,-(j+Float(j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,0,j2+1)
@@ -5090,7 +5106,7 @@ Function UpdateLevelTileSides(i,j)
 				EndIf
 	
 				CalculateUV(LevelTileSideTexture(i,j),j2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j),-(j+Float(j2+1)/Float(LevelDetail))
+				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j)+z2,-(j+Float(j2+1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
