@@ -2085,13 +2085,7 @@ Function EditorMainLoop()
 
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	If WaterFlow>=0
-		PositionTexture WaterTexture,0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
-	EndIf
-	If waterflow<0
-		; rock
-		PositionTexture WaterTexture,0,0.5+0.125*WaterFlow/4*Sin(-(4*LevelTimer*WaterFlow)/10.0)
-	EndIf
+	UpdateWater()
 	
 	; Animate Rainbow Magic
 	If (CurrentObjectType=200 And CurrentObjectData(0)=8) Then
@@ -11523,6 +11517,33 @@ Function UpdateLevelTileVerticesExceptForHeight(i,j)
 	; height would go here
 	ShiftLevelTileEdges(i,j)
 
+End Function
+
+Function UpdateWater()
+
+	If WaterFlow>=0
+		PositionTexture WaterTexture,0,-((4*LevelTimer*WaterFlow) Mod 10000)/10000.0
+	EndIf
+	If waterflow<0
+		; rock
+		PositionTexture WaterTexture,0,0.5+0.125*WaterFlow/4*Sin(-(4*LevelTimer*WaterFlow)/10.0)
+	EndIf
+	
+	For j=0 To LevelHeight-1
+		For i=0 To LevelWidth-1
+			UpdateWaterVertices(i,j)
+		Next
+	Next
+
+End Function
+
+Function UpdateWaterVertices(i,j)
+	mySurface=WaterSurface(j)
+	VertexCoords mySurface,i*4+0,VertexX(mySurface,i*4+0),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180),VertexZ(mySurface,i*4+0)
+	VertexCoords mySurface,i*4+1,VertexX(mySurface,i*4+1),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90),VertexZ(mySurface,i*4+1)
+
+	VertexCoords mySurface,i*4+2,VertexX(mySurface,i*4+2),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180-180),VertexZ(mySurface,i*4+2)
+	VertexCoords mySurface,i*4+3,VertexX(mySurface,i*4+3),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90-180),VertexZ(mySurface,i*4+3)
 End Function
 
 
