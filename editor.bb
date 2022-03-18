@@ -14424,10 +14424,10 @@ Function LoadLevel(levelnumber)
 			Print "CUSTOM WATERTEXTURE NOT FOUND... REVERTING."
 			Delay 2000
 			currentwatertexture=0
-			WaterTexture=myLoadTexture("data\Leveltextures\"+WaterTexturename$(CurrentWaterTexture),2)
+			WaterTexture=myLoadTexture("data\Leveltextures\"+WaterTexturename$(CurrentWaterTexture),1)
 		EndIf
 	Else
-		waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
+		waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
 	EndIf
 	
 	EntityTexture TexturePlane,LevelTexture
@@ -14662,7 +14662,7 @@ Function NewLevel(levelnumber)
 	CurrentLevelTexture=0
 	LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
 	CurrentWaterTexture=0	
-	waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),2)
+	waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
 	EntityTexture TexturePlane,LevelTexture
 	EntityTexture CurrentWaterTile,WaterTexture
 
