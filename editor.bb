@@ -5241,10 +5241,10 @@ Function ShiftLevelTileByHeight(i,j)
 		VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
 		;EndIf
 
-		If j=0
+		If j=LevelHeight-1
 			OtherHeight#=LevelTileHeight(i,j)
 		Else
-			OtherHeight#=HeightAtRowVertex#(i,j-1,i2)
+			OtherHeight#=HeightAtRowVertex#(i,j+1,i2)
 		EndIf
 			
 		; as of second row, build vertical bridge to first row
@@ -5253,15 +5253,22 @@ Function ShiftLevelTileByHeight(i,j)
 			; (also no need to lift first vertex of that part, that's already the center of
 			;  the row and hence lifted above)
 			;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
-			ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
+			ThisVertexesHeight#=NewHeight#+(OtherHeight-NewHeight)*Float(j2-LevelDetail/2)/Float(LevelDetail)
 			;If i>0 And j>1 And i<LevelWidth-1
-			If i>=0 And j>=1 And i<=LevelWidth-1
-				vertex=GetLevelVertex(i,j-1,i2,j2)
-				mySurface=LevelSurface(j-1)
+			If i>=0 And j<=LevelHeight-2 And i<=LevelWidth-1
+				vertex=GetLevelVertex(i,j,i2,j2)
+				;mySurface=LevelSurface(j-1)
 				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
-				mySurface=LevelSurface(j)
+				;mySurface=LevelSurface(j)
 			EndIf
 		Next
+		
+		If j=0
+			OtherHeight#=LevelTileHeight(i,j)
+		Else
+			OtherHeight#=HeightAtRowVertex#(i,j-1,i2)
+		EndIf
+		
 		For j2=0 To LevelDetail/2-1
 			; 2nd half (we're now in the top half of this row)
 			;OtherHeight#=ChunkStoredVHeight(i*(LevelDetail+1)+i2)
