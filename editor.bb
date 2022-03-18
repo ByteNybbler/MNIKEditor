@@ -1759,8 +1759,8 @@ Repeat
 			
 			;FlushKeys ; WHY DOES THIS NOT WORK??? Apparently it doesn't get rid of currently-pressed keys.
 			
-			ForceKeyRelease(56,"left alt")
-			ForceKeyRelease(184,"right alt")
+			;ForceKeyRelease(56,"left alt")
+			;ForceKeyRelease(184,"right alt")
 			
 			ReadColors()
 			
@@ -4541,9 +4541,16 @@ Function ShiftDown()
 
 End Function
 
-Function AltDown()
+; DO NOT USE!!! Alt-tabbing out of the application will make it think alt is still being pressed when you return.
+;Function AltDown()
+;
+;	Return KeyDown(56) Or KeyDown(184) ; left alt or right alt
+;
+;End Function
 
-	Return KeyDown(56) Or KeyDown(184) ; left alt or right alt
+Function FindAndReplaceKeyDown()
+
+	Return KeyDown(41) ; tilde
 
 End Function
 
@@ -10090,7 +10097,7 @@ Function AdjustObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	Case "ObjectTextData0"
 		If LeftMouse=True
-			If AltDown()
+			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObjectTextData$(0)
 					CurrentObjectTextData$(0)=InputString$("Replacement TextData0: ")
@@ -10107,7 +10114,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 	Case "ObjectTextData1"
 		If LeftMouse=True
-			If AltDown()
+			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObjectTextData$(1)
 					CurrentObjectTextData$(1)=InputString$("Replacement TextData1: ")
@@ -10124,7 +10131,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 	Case "TextureName"
 		If LeftMouse=True
-			If AltDown()
+			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObjectTextureName$
 					InputTextureName("Replacement TextureName: ")
@@ -10142,7 +10149,7 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "ModelName"
 		If LeftMouse=True
-			If AltDown()
+			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObjectModelName$
 					InputModelName("Replacement ModelName: ")
@@ -12147,14 +12154,9 @@ Function BuildCurrentTileModel()
 	; and the water tile
 	; top face
 	
-	;If CurrentWaterTile>0 Then FreeEntity CurrentWaterTile
-	
-	;CurrentWaterTile=CreateMesh()
-	;mySurface=CreateSurface(CurrentWaterTile)
 	mySurface=CurrentWaterTileSurface
 	div#=CurrentWaterTileTexture/4.0
 	
-	;xzx
 	If CurrentWaterTileRotation=0
 		VertexTexCoords mySurface,0,div,0
 		VertexTexCoords mySurface,1,div+.25,0
