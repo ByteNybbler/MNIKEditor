@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/17/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/18/22)"
 
 Global MASTERUSER=True
 
@@ -12155,105 +12155,16 @@ Function BuildCurrentTileModel()
 	; top face
 	
 	mySurface=CurrentWaterTileSurface
-	div#=CurrentWaterTileTexture/4.0
-	
-	If CurrentWaterTileRotation=0
-		VertexTexCoords mySurface,0,div,0
-		VertexTexCoords mySurface,1,div+.25,0
-		VertexTexCoords mySurface,2,div,.25
-		VertexTexCoords mySurface,3,div+.25,.25
-	
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
-		
-	EndIf
-	If CurrentWaterTileRotation=1
-		VertexTexCoords mySurface,0,div,.25
-		VertexTexCoords mySurface,1,div,0
-		VertexTexCoords mySurface,2,div+.25,.25
-		VertexTexCoords mySurface,3,div+.25,0
-	
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,0)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
-		
-	EndIf
-	If CurrentWaterTileRotation=2
-		VertexTexCoords mySurface,0,div+.25,.25
-		VertexTexCoords mySurface,1,div,.25
-		VertexTexCoords mySurface,2,div+.25,0
-		VertexTexCoords mySurface,3,div,0
-		
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,0)
-		
-	EndIf
-	If CurrentWaterTileRotation=3
-		VertexTexCoords mySurface,0,div+.25,0
-		VertexTexCoords mySurface,1,div+.25,.25
-		VertexTexCoords mySurface,2,div,0
-		VertexTexCoords mySurface,3,div,.25
-		
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,0)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,.25)
-		
-	EndIf
-	If CurrentWaterTileRotation=4
-		VertexTexCoords mySurface,0,div+.25,0
-		VertexTexCoords mySurface,1,div,0
-		VertexTexCoords mySurface,2,div+.25,.25
-		VertexTexCoords mySurface,3,div,.25
-		
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,0)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,.25)
-		
-	EndIf
-	If CurrentWaterTileRotation=5
-		VertexTexCoords mySurface,0,div,0
-		VertexTexCoords mySurface,1,div,.25
-		VertexTexCoords mySurface,2,div+.25,0
-		VertexTexCoords mySurface,3,div+.25,.25
-		
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
-		
-	EndIf
-	If CurrentWaterTileRotation=6
-		VertexTexCoords mySurface,0,div,.25
-		VertexTexCoords mySurface,1,div+.25,.25
-		VertexTexCoords mySurface,2,div,0
-		VertexTexCoords mySurface,3,div+.25,0
-		
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0,.25)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,0)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,0)
-		
-	EndIf
-	If CurrentWaterTileRotation=7
-		VertexTexCoords mySurface,0,div+.25,.25
-		VertexTexCoords mySurface,1,div+.25,0
-		VertexTexCoords mySurface,2,div,.25
-		VertexTexCoords mySurface,3,div,0
-		
-		;AddVertex (mySurface,1,99.5,3,CurrentWaterTileTexture/4.0+.25,.25)
-		;AddVertex (mySurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-		;AddVertex (mySurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
-		;AddVertex (mySurface,3,99.5,1,CurrentWaterTileTexture/4.0,0)
-		
-	EndIf
 
+	CalculateUV(CurrentWaterTileTexture,0,0,CurrentWaterTileRotation,4)
+	VertexTexCoords mySurface,0,ChunkTileU,ChunkTileV
+	CalculateUV(CurrentWaterTileTexture,LevelDetail,0,CurrentWaterTileRotation,4)
+	VertexTexCoords mySurface,1,ChunkTileU,ChunkTileV
+	CalculateUV(CurrentWaterTileTexture,0,LevelDetail,CurrentWaterTileRotation,4)
+	VertexTexCoords mySurface,2,ChunkTileU,ChunkTileV
+	CalculateUV(CurrentWaterTileTexture,LevelDetail,LevelDetail,CurrentWaterTileRotation,4)
+	VertexTexCoords mySurface,3,ChunkTileU,ChunkTileV
+	
 	EntityTexture CurrentWaterTile,WaterTexture
 	
 End Function
