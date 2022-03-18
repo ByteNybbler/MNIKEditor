@@ -3473,16 +3473,20 @@ Function EditorLocalControls()
 ;				EndIf
 			EndIf
 			If mx>FlStartX+32 And mx<FlStartX+48
-				If (leftmouse=True And leftmousereleased=True) Or MouseScroll<>0
+				If (leftmouse=True And leftmousereleased=True) Or (rightmouse=True And rightmousereleased=True) Or MouseScroll<>0
 					WaterTransparent=1-WaterTransparent
+					UpdateAllWaterMeshTransparent()
 					leftmousereleased=False
+					rightmousereleased=False
 				EndIf
 				
 			EndIf
 			If mx>FlStartX+56 And mx<FlStartX+72
-				If (leftmouse=True And leftmousereleased=True) Or MouseScroll<>0
+				If (leftmouse=True And leftmousereleased=True) Or (rightmouse=True And rightmousereleased=True) Or MouseScroll<>0
 					WaterGlow=1-WaterGlow
+					UpdateAllWaterMeshGlow()
 					leftmousereleased=False
+					rightmousereleased=False
 				EndIf
 				
 			EndIf
@@ -5461,6 +5465,43 @@ Function CreateLevelTileClassic(i,j)
 End Function
 
 
+Function UpdateWaterMeshGlow(i)
+
+	If WaterGlow=True 
+		EntityBlend WaterMesh(i),3
+	Else 
+		EntityBlend WaterMesh(i),1
+	EndIf
+
+End Function
+
+Function UpdateWaterMeshTransparent(i)
+
+	If WaterTransparent=True 
+		EntityAlpha WaterMesh(i),.5
+	Else
+		EntityAlpha WaterMesh(i),1
+	EndIf
+
+End Function
+
+Function UpdateAllWaterMeshGlow()
+
+	For i=0 To 99
+		UpdateWaterMeshGlow(i)
+	Next
+
+End Function
+
+Function UpdateAllWaterMeshTransparent()
+
+	For i=0 To 99
+		UpdateWaterMeshTransparent(i)
+	Next
+
+End Function
+
+
 Function BuildLevelModel()
 
 	
@@ -5471,21 +5512,10 @@ Function BuildLevelModel()
 		
 		Watermesh(i)=CreateMesh()
 		Watersurface(i)=CreateSurface(Watermesh(i))
-		EntityAlpha WaterMesh(i),.5
-		EntityFX WaterMesh(i),2
-
-		; For some reason, this appears to do nothing???
-		;If WaterGlow=True 
-		;	EntityBlend WaterMesh(i),3
-		;Else 
-		;	EntityBlend WaterMesh(i),1
-		;EndIf
-		;If WaterTransparent=True 
-		;	EntityAlpha WaterMesh(i),.5
-		;Else
-		;	EntityAlpha WaterMesh(i),1
-		;EndIf
-		
+		;EntityAlpha WaterMesh(i),.5
+		;EntityFX WaterMesh(i),2
+		UpdateWaterMeshGlow(i)
+		UpdateWaterMeshTransparent(i)
 		
 		Logicmesh(i)=CreateMesh()
 		Logicsurface(i)=CreateSurface(Logicmesh(i))
@@ -5565,14 +5595,15 @@ Function BuildLevelModel()
 			AddTriangle (WaterSurface(j),i*4+0,i*4+1,i*4+2)
 			AddTriangle (WaterSurface(j),i*4+1,i*4+3,i*4+2)
 			
-			VertexColor WaterSurface(j),i*4+0,0,0,0
-			VertexColor WaterSurface(j),i*4+1,0,0,0
-			VertexColor WaterSurface(j),i*4+2,0,0,0
-			VertexColor WaterSurface(j),i*4+3,0,0,0
+			;VertexColor WaterSurface(j),i*4+0,0,0,0
+			;VertexColor WaterSurface(j),i*4+1,0,0,0
+			;VertexColor WaterSurface(j),i*4+2,0,0,0
+			;VertexColor WaterSurface(j),i*4+3,0,0,0
 		Next
 		UpdateNormals WaterMesh(j)
 		EntityTexture WaterMesh(j),WaterTexture
-	
+		
+		TranslateEntity WaterMesh(j),0,-0.04,0
 	Next
 	LevelDetail=OldLevelDetail
 	
