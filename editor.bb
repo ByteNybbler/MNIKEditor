@@ -4348,6 +4348,12 @@ Function EditorLocalControls()
 					UpdateObjectVisibility(i)
 				Next
 				
+				If SimulationLevel>=3
+					For j=0 To LevelHeight-1
+						RecalculateNormals(j)
+					Next
+				EndIf
+				
 				LightingWasChanged()
 			EndIf
 			
@@ -5723,6 +5729,22 @@ Function UpdateAllWaterMeshTransparent()
 
 End Function
 
+Function RecalculateNormals(j)
+
+	UpdateNormals LevelMesh(j)
+	For i=0 To LevelWidth-1
+		For i2=0 To LevelDetail
+			For j2=0 To LevelDetail
+				If i2=0 Or i2=LevelDetail Or j2=0 Or j2=LevelDetail
+					vertex=GetLevelVertex(i,j,i2,j2)
+					VertexNormal LevelSurface(j),vertex,0.0,1.0,0.0
+				EndIf
+			Next
+		Next
+	Next
+	
+End Function
+
 
 Function BuildLevelModel()
 
@@ -5786,17 +5808,7 @@ Function BuildLevelModel()
 	; and point all edge vertex normals "up" (to smooth lighting)
 	
 	For j=0 To LevelHeight-1
-		UpdateNormals LevelMesh(j)
-		For i=0 To LevelWidth-1
-			For i2=0 To LevelDetail
-				For j2=0 To LevelDetail
-					If i2=0 Or i2=LevelDetail Or j2=0 Or j2=LevelDetail
-						vertex=GetLevelVertex(i,j,i2,j2)
-						VertexNormal LevelSurface(j),vertex,0.0,1.0,0.0
-					EndIf
-				Next
-			Next
-		Next
+		RecalculateNormals(j)
 	Next
 	
 	
@@ -5970,6 +5982,16 @@ Function ChangeLevelTile(i,j,update)
 		If HasSouth
 			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
 				UpdateLevelTile(i,j+1)
+			EndIf
+		EndIf
+		
+		If SimulationLevel>=3
+			RecalculateNormals(j)
+			If HasNorth
+				RecalculateNormals(j-1)
+			EndIf
+			If HasSouth
+				RecalculateNormals(j+1)
 			EndIf
 		EndIf
 	EndIf
