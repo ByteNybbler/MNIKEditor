@@ -4240,7 +4240,7 @@ Function EditorLocalControls()
 	If MX>=200 And MX<300
 		; show/hide markers
 		If my>520 And my<550
-			If LeftMouse=True And LeftMouseReleased=True
+			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 				ShowObjectPositions=Not ShowObjectPositions
 				If ShowObjectPositions=True 
 					For j=0 To NofObjects-1
@@ -4254,7 +4254,7 @@ Function EditorLocalControls()
 				EndIf
 	
 				
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
 		; show/hide objects
 		Else If my>565 And my<595
@@ -4279,7 +4279,7 @@ Function EditorLocalControls()
 	If MX>=300 And MX<400
 		; show/hide logic
 		If my>520 And my<550
-			If LeftMouse=True And LeftMouseReleased=True
+			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 				ShowLogicMesh=Not ShowLogicMesh
 				If ShowLogicMesh=True 
 					For j=0 To Levelheight-1
@@ -4293,11 +4293,11 @@ Function EditorLocalControls()
 				EndIf
 	
 				
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
  		 ; show/hide level
 		 Else If my>565 And my<595
-			If LeftMouse=True And LeftMouseReleased=True
+			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 				ShowLevelMesh=Not ShowLevelMesh
 				If ShowLevelMesh=True 
 					For j=0 To Levelheight-1
@@ -4311,7 +4311,7 @@ Function EditorLocalControls()
 				EndIf
 	
 				
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
 	EndIf
@@ -4319,11 +4319,11 @@ Function EditorLocalControls()
 	If MX>=400 And MX<500
 		; border expand
 		If my>520 And my<550
-			If LeftMouse=True And LeftMouseReleased=True
+			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 				BorderExpandOption=Not BorderExpandOption
 				
 				
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
 		
