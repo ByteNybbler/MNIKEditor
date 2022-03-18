@@ -5926,6 +5926,7 @@ Function ChangeLevelTile(i,j,update)
 		Return
 	EndIf
 	
+	HeightWasChanged=False
 	
 	; The Tile
 	If CurrentTileTextureUse=True
@@ -5941,6 +5942,9 @@ Function ChangeLevelTile(i,j,update)
 		LevelTileRandom#(i,j)=CurrentTileRandom ; random height pertubation of tile
 	EndIf
 	If CurrentTileHeightUse=True
+		If LevelTileHeight#(i,j)<>CurrentTileHeight
+			HeightWasChanged=True
+		EndIf
 		LevelTileHeight#(i,j)=CurrentTileHeight ; height of "center" - e.g. to make ditches and hills
 	EndIf
 	If CurrentTileExtrusionUse=True
@@ -5957,19 +5961,48 @@ Function ChangeLevelTile(i,j,update)
 	EndIf
 	If update=True 
 		UpdateLevelTile(i,j)
+		
+		HasWest=i>0
+		HasEast=i<LevelWidth-1
+		HasNorth=j>0
+		HasSouth=j<LevelHeight-1
 	
-		; Possibly update surrounding tiles
-		If i>0
-			If LevelTileExtrusion(i-1,j)>=LevelTileExtrusion(i,j) UpdateLevelTile(i-1,j)
+		; Possibly update surrounding tiles (Height also needs to update diagonals)
+		If HasWest
+			If LevelTileExtrusion(i-1,j)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+				UpdateLevelTile(i-1,j)
+			EndIf
+			If HeightWasChanged
+				If HasNorth
+					UpdateLevelTile(i-1,j-1)
+				EndIf
+				If HasSouth
+					UpdateLevelTile(i-1,j+1)
+				EndIf
+			EndIf
 		EndIf
-		If i<LevelWidth-1
-			If LevelTileExtrusion(i+1,j)>=LevelTileExtrusion(i,j) UpdateLevelTile(i+1,j)
+		If HasEast
+			If LevelTileExtrusion(i+1,j)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+				UpdateLevelTile(i+1,j)
+			EndIf
+			If HeightWasChanged
+				If HasNorth
+					UpdateLevelTile(i+1,j-1)
+				EndIf
+				If HasSouth
+					UpdateLevelTile(i+1,j+1)
+				EndIf
+			EndIf
 		EndIf
-		If j>0
-			If LevelTileExtrusion(i,j-1)>=LevelTileExtrusion(i,j) UpdateLevelTile(i,j-1)
+		If HasNorth
+			If LevelTileExtrusion(i,j-1)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+				UpdateLevelTile(i,j-1)
+			EndIf
 		EndIf
-		If j<LevelHeight-1
-			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) UpdateLevelTile(i,j+1)
+		If HasSouth
+			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+				UpdateLevelTile(i,j+1)
+			EndIf
 		EndIf
 	EndIf
 			
@@ -11778,31 +11811,15 @@ Function UpdateTile(i,j)
 
 End Function
 
-
 Function UpdateLevelTile(i,j)
 
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
-
-	;If j>0
-	;	UpdateLevelTileVerticesExceptForHeight(i,j-1)
-	;EndIf
 
 	ResetLevelTile(i,j)
 	UpdateLevelTileTexture(i,j)
 	ShiftLevelTileByExtrude(i,j)
 	ShiftLevelTileByRandom(i,j)
 	ShiftLevelTileByHeight(i,j)
-	ShiftLevelTileEdges(i,j)
-	UpdateLevelTileSides(i,j)
-
-End Function
-
-Function UpdateLevelTileVerticesExceptForHeight(i,j)
-
-	ResetLevelTile(i,j)
-	ShiftLevelTileByExtrude(i,j)
-	ShiftLevelTileByRandom(i,j)
-	; height would go here
 	ShiftLevelTileEdges(i,j)
 	UpdateLevelTileSides(i,j)
 
