@@ -7088,6 +7088,10 @@ Function UpdateObjectAlpha(Dest)
 	Else
 		Entity=ObjectEntity(Dest)
 	EndIf
+	
+	;If ObjectModelName$(Dest)="!WaterFall"
+	;	Return
+	;EndIf
 
 	EntityAlpha Entity,BaseObjectAlpha(Dest)
 
@@ -12485,6 +12489,14 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CreatePickupItemMesh(CurrentObjectData(2))
 	Else If CurrentObjectModelName$="!Stinker" Or CurrentObjectModelName$="!NPC"
 		CurrentObjectModel=CopyEntity(StinkerMesh)
+		
+		; possible prevention for the body000A.jpg error
+		If CurrentObjectData(0)>8 CurrentObjectData(0)=1
+		If CurrentObjectData(0)<1 CurrentObjectData(0)=8
+		
+		If CurrentObjectData(1)>4 CurrentObjectData(1)=0
+		If CurrentObjectData(1)<0 CurrentObjectData(1)=4
+		
 		
 		If CurrentObjectData(0)=5
 			CurrentObjectTexture=Waterfalltexture(0) ;MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
