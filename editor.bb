@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/18/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/21/22)"
 
 Global MASTERUSER=True
 
@@ -22388,6 +22388,22 @@ Function ControlRetroCoily(i)
 End Function
 
 
+Function ControlCuboid(i)
+
+	If SimulatedObjectData(i,5)<>ObjectTIleX(i) Or SimulatedObjectData(i,6)<>ObjectTileY(i)
+		SimulatedObjectData(i,5)=0
+		SimulatedObjectData(i,6)=0
+	EndIf
+
+	SimulatedObjectXScale(i)=.9+.1*Sin((LevelTimer*2) Mod 360)
+	SimulatedObjectYScale(i)=.9+.1*Sin((LevelTimer*2) Mod 360)
+	SimulatedObjectZScale(i)=.9+.1*Sin((LevelTimer*2) Mod 360)
+	
+	If SimulatedObjectData(i,1)<>0 SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
+
+End Function
+
+
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
 	SimulatedLightGreenGoal=Green
@@ -22728,6 +22744,8 @@ Function ControlObjects()
 				ControlGloveCharge(i)
 			Case 230
 				ControlFireFlower(i)
+			Case 242
+				ControlCuboid(i)
 			Case 260
 				ControlBowler(i)
 			Case 280
