@@ -1777,7 +1777,7 @@ Function FinishDrawing()
 	
 	Flip
 
-End Function	
+End Function
 
 
 
@@ -4046,7 +4046,38 @@ Function EditorLocalControls()
 	StartY=460
 
 	
-	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
+	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20	
+		If CtrlDown() And LeftMouse=True And LeftMouseReleased=True
+			LeftMouseReleased=False
+			Query$=InputString$("Enter category name (or part of the name): ")
+			For i=0 To NofObjectPresetCategories-1
+				If SubstringMatches(Query$,ObjectPresetCategoryName$(i))
+					CurrentObjectPresetCategory=i
+					Exit
+				EndIf
+			Next
+			
+			SetCurrentGrabbedObject(-1)
+			CurrentObjectPresetObject=0
+			i=CurrentObjectPresetCategory
+			
+			NofObjectPresetObjects=0
+			Dir=ReadDir("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i))
+			file$=NextFile$(Dir)
+			While file$<>""
+				If file$<>"." And file$<>".." And FileType("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i)+"\"+file$)=1 And Lower$(Right$(file$,4))=".wop"
+					ObjectPresetObjectName$(NofObjectPresetObjects)=file$
+					NofObjectPresetObjects=NofObjectPresetObjects+1
+				EndIf
+				file$=NextFile$(Dir)
+			Wend
+			CloseDir dir
+			
+			SetEditorMode(3)
+			LoadObjectPreset()
+			BuildCurrentObjectModel()
+		EndIf
+	
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory-1
@@ -4076,8 +4107,7 @@ Function EditorLocalControls()
 			BuildCurrentObjectModel()
 
 		EndIf
-	EndIf
-	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
+
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory+1
@@ -4573,6 +4603,21 @@ Function UpdateCurrentGrabbedObjectMarkerVisibility()
 		ShowEntity CurrentGrabbedObjectMarker
 		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
 	EndIf
+
+End Function
+
+
+; this could potentially be made smarter
+Function SubstringMatches(Query$,Subject$)
+
+	; make case insensitive
+	Query$=Upper$(Query$)
+	Subject$=Upper$(Subject$)
+	
+	; truncate subject to be length of query
+	Subject$=Left$(Subject$,Len(Query$))
+	
+	Return Query$=Subject$
 
 End Function
 
