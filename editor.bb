@@ -13199,7 +13199,7 @@ Function ReSizeLevel()
 			If Floor(ObjectX(i))<0 Or Floor(ObjectX(i))>=LevelWidth
 				DeleteObject(i)
 			Else
-				PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
+				UpdateObjectPosition(i)
 				
 				; extra adjustments	
 				If ObjectType(i)=50 ; spellball
@@ -13218,7 +13218,7 @@ Function ReSizeLevel()
 			If Floor(ObjectY(i))<0 Or Floor(ObjectY(i))>=LevelHeight
 				DeleteObject(i)
 			Else
-				PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
+				UpdateObjectPosition(i)
 				
 				; extra adjustments	
 				If ObjectType(i)=50 ; spellball
@@ -13263,13 +13263,8 @@ Function FlipLevelX()
 		ObjectX(i)=Float(LevelWidth)-ObjectX(i)
 		
 		ObjectTileX(i)=LevelWidth-1-ObjectTileX(i)
-	
-
 		
-
-		
-		PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
-		
+		UpdateObjectPosition(i)
 	Next
 	
 	SomeObjectWasChanged()
@@ -13302,12 +13297,7 @@ Function FlipLevelY()
 		
 		ObjectTileY(i)=LevelHeight-1-ObjectTileY(i)
 		
-
-		
-
-		
-		PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
-		
+		UpdateObjectPosition(i)
 	Next
 	
 	SomeObjectWasChanged()
