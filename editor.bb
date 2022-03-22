@@ -5400,7 +5400,7 @@ Function ShiftLevelTileEdges(i,j)
 
 	If LevelTileEdgeRandom(i,j)=1
 		; north side
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j-1)
+		If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne)
 			
 			j2=0
 			For i2=0 To LevelDetail
