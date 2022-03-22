@@ -7589,20 +7589,15 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 		;If ObjectIsAtInt(i,tilex,tiley)
 			If LevelTileObjectCount(tilex,tiley)=1
 				EntityColor ObjectPositionMarker(i),255,100,100
-			Else
+			ElseIf LevelTileObjectCount(tilex,tiley)>1
 				EntityColor ObjectPositionMarker(i),255,255,100
+			Else ; ERROR: LevelTileObjectCount is zero!
+				EntityColor ObjectPositionMarker(i),255,100,255
 			EndIf
 		EndIf
 	Next
 	
 	;ShowMessage("Update successful.", 100)
-
-End Function
-
-Function PreUpdateObjectPositionMarker(i)
-
-	LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))-1
-	UpdateObjectPositionMarkersAtTile(ObjectTileX(i),ObjectTileY(i))
 
 End Function
 
@@ -13262,7 +13257,6 @@ End Function
 
 Function SetObjectTileX(i,tilex)
 
-	PreUpdateObjectPositionMarker(i)
 	ObjectTileX(i)=tilex
 	PostUpdateObjectPositionMarker(i)
 
@@ -13270,7 +13264,6 @@ End Function
 
 Function SetObjectTileY(i,tiley)
 
-	PreUpdateObjectPositionMarker(i)
 	ObjectTileY(i)=tiley
 	PostUpdateObjectPositionMarker(i)
 
@@ -13278,7 +13271,6 @@ End Function
 
 Function SetObjectTileXY(i,tilex,tiley)
 
-	PreUpdateObjectPositionMarker(i)
 	ObjectTileX(i)=tilex
 	ObjectTileY(i)=tiley
 	PostUpdateObjectPositionMarker(i)
@@ -13377,7 +13369,6 @@ Function FlipLevelXY()
 	; and move the object
 	
 	For i=0 To NofObjects-1
-		PreUpdateObjectPositionMarker(i)
 		x2#=ObjectX(i)
 		ObjectX(i)=ObjectY(i)
 		ObjectY(i)=x2#
