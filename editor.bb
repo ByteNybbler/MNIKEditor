@@ -193,9 +193,6 @@ Global CustomIconName$="Standard"
 Global CustomMapName$
 
 Const FlStartX=706 ; formerly 715
-						
-
-Global TileOrObject=True 	;true Tile, False Object
 
 
 Dim LevelMesh(100),LevelSurface(100) ; one for each row
@@ -3187,9 +3184,9 @@ Function EditorLocalControls()
 	If MX>=StartX And MX<StartX+100 And MY>=StartY And MY<StartY+15
 		;CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
 		CurrentTileExtrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTileExtrusion#, 0.1, 1.0, 150)
-		CurrentTileExtrusion2=CurrentTileExtrusion*100
+		;CurrentTileExtrusion2=CurrentTileExtrusion*100
 		;If CurrentTileExtrusion#<Infinity
-			CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
+		;	CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
 		;EndIf
 		
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -3205,8 +3202,8 @@ Function EditorLocalControls()
 	; CurrentTileHeight
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY And MY<StartY+15
 		CurrentTileHeight#=AdjustFloat#("Enter Height: ", CurrentTileHeight#, 0.1, 1.0, 150)
-		CurrentTileHeight2=CurrentTileHeight*100
-		CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
+		;CurrentTileHeight2=CurrentTileHeight*100
+		;CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -3289,8 +3286,8 @@ Function EditorLocalControls()
 	; CurrentTileRandom
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+170 And MY<StartY+185
 		CurrentTileRandom#=AdjustFloat#("Enter Random: ", CurrentTileRandom#, 0.01, 0.1, 150)
-		CurrentTileRandom2=CurrentTileRandom*1000
-		CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
+		;CurrentTileRandom2=CurrentTileRandom*1000
+		;CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -3348,8 +3345,8 @@ Function EditorLocalControls()
 	; CurrentWaterTileHeight
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+200 And MY<StartY+215
 		CurrentWaterTileHeight#=AdjustFloat#("Enter WHeight: ", CurrentWaterTileHeight#, 0.1, 1.0, 150)
-		CurrentWaterTileHeight2=CurrentWaterTileHeight*100
-		CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
+		;CurrentWaterTileHeight2=CurrentWaterTileHeight*100
+		;CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -3364,8 +3361,8 @@ Function EditorLocalControls()
 	; CurrentWaterTileTurbulence
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+200 And MY<StartY+215
 		CurrentWaterTileTurbulence#=AdjustFloat#("Enter WTurb: ", CurrentWaterTileTurbulence#, 0.1, 1.0, 150)
-		CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
-		CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
+		;CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
+		;CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -10375,6 +10372,16 @@ Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 End Function
 
 Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
+
+	Result#=AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
+	If Result#>-0.00001 And Result#<0.00001
+		Result#=0.0
+	EndIf
+	Return Result#
+
+End Function
+
+Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
 
 	Fast=False
 	If ShiftDown() Then Fast=True
