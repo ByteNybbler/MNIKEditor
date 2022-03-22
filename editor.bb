@@ -793,11 +793,12 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 ; ================================
 If displayfullscreen=True
 	Graphics3D 800,600,16,1
+	SetBuffer BackBuffer()
 Else
 	Graphics3D 800,600,16,2
-
+	SetBuffer BackBuffer()
+	Graphics3D 800,600,16,3
 EndIf
-SetBuffer BackBuffer()
 
 Global Light=CreateLight()
 AmbientLight 155,155,155
