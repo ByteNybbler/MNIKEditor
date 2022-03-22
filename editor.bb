@@ -191,6 +191,8 @@ Global UsingWireFrame=False
 
 Global CustomIconName$="Standard"
 Global CustomMapName$
+
+Const FlStartX=706 ; formerly 715
 						
 
 Global TileOrObject=True 	;true Tile, False Object
@@ -1770,6 +1772,18 @@ Until False ;KeyDown(1) ; escape
 End
 
 
+Function FinishDrawing()
+
+	If displayfullscreen=True
+		DrawImage mouseimg,MouseX(),MouseY()
+	EndIf
+	
+	Flip
+
+End Function	
+
+
+
 Function UpdateEditor()
 
 	EditorGlobalControls()
@@ -1820,33 +1834,18 @@ Function StartEditorMainLoop()
 
 
 End Function
-	
-
 
 
 Function EditorMainLoop()
 
 	If displayfullscreen=True Cls
-	
-	; full window size is 800x600, whereas the level camera viewport is 500x500
-	; draw black regions so stray text doesn't linger there
-	Color RectMarginR,RectMarginG,RectMarginB
-	Rect 500,0,10,500,True ; between level camera and object/tile editors
-	Rect 510,0,290,20,True ; backdrop for the labels of TILES and GLOBALS
-	Rect 710,20,5,220,True ; between TILES and GLOBALS
-	Rect 715,85,80,15 ; between level dimensions and the rest of GLOBALS
-	Rect 795,20,5,500,True ; to the right of GLOBALS
-	Rect 510,240,205,5,True ; beneath TILES and to the left of GLOBALS
-	Rect 510,285,285,20,True ; backdrop for the label of OBJECTS
-	Rect 510,455,285,5,True ; between the object adjusters and object categories
-	Rect 695,430,100,5,True ; between object camera and More button
-
 
 	CameraControls()
 	
 	If CameraPanning=False
 		EditorLocalControls()
 	EndIf
+	EditorLocalRendering()
 	
 	leveltimer=leveltimer+1
 	
@@ -2118,13 +2117,8 @@ Function EditorMainLoop()
 			EndIf
 		Next
 	Next
-		
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
 	
-	Flip
-	
+	FinishDrawing()
 
 End Function
 
@@ -2355,16 +2349,21 @@ Function EditorGlobalControls()
 End Function
 
 
-Function EditorLocalControls()
+Function EditorLocalRendering()
 
-	If KeyPressed(65)
-		UsingWireFrame=Not UsingWireFrame
-		WireFrame UsingWireFrame
-	EndIf
-	
-	MX=MouseX()
-	MY=MouseY()
-	
+	; full window size is 800x600, whereas the level camera viewport is 500x500
+	; draw black regions so stray text doesn't linger there
+	Color RectMarginR,RectMarginG,RectMarginB
+	Rect 500,0,10,500,True ; between level camera and object/tile editors
+	Rect 510,0,290,20,True ; backdrop for the labels of TILES and GLOBALS
+	Rect 710,20,5,220,True ; between TILES and GLOBALS
+	Rect 715,85,80,15 ; between level dimensions and the rest of GLOBALS
+	Rect 795,20,5,500,True ; to the right of GLOBALS
+	Rect 510,240,205,5,True ; beneath TILES and to the left of GLOBALS
+	Rect 510,285,285,20,True ; backdrop for the label of OBJECTS
+	Rect 510,455,285,5,True ; between the object adjusters and object categories
+	Rect 695,430,100,5,True ; between object camera and More button
+
 	If EditorMode=0
 		CameraClsColor camera2,RectOnR,RectOnG,RectOnB
 		CameraClsColor camera4,RectOffR,RectOffG,RectOffB
@@ -2385,13 +2384,260 @@ Function EditorLocalControls()
 		ObjectColorB=RectOnB
 	EndIf
 	
-	Fast=False
-	If ShiftDown() Then Fast=True
-	
-	
 	Color RectToolbarR,RectToolbarG,RectToolbarB
 	;Rect 0,500,500,12,True
 	Rect 0,500,800,100,True
+	
+	Color TextLevelR,TextLevelG,TextLevelB
+	Text 590,5,"TILES"
+	
+	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
+	Rect 714,100,81,145,True
+	Color TextLevelR,TextLevelG,TextLevelB
+
+
+	Select LevelWeather
+	Case 0
+		Text 719,100,"Clear Sky"
+	Case 1
+		Text 715,100,"Light Snow"
+	Case 2
+		Text 715,100,"Heavy Snow"
+	Case 3
+		Text 715,100,"BlizzardRL"
+	Case 4
+		Text 715,100,"BlizzardLR"
+	Case 5
+		Text 715,100,"   Rain"
+	Case 6
+		Text 719,100,"  Weird"
+	Case 7
+		Text 715,100,"ThundrStrm"
+	Case 8
+		Text 715,100,"  Alarm"
+	Case 9
+		Text 715,100,"Light Rise"
+	Case 10
+		Text 715,100,"Light Fall"
+	Case 11
+		Text 715,100,"Rainb Rise"
+	Case 12
+		Text 715,100,"Rainb Fall"
+	Case 13
+		Text 715,100,"  Foggy"
+	Case 14
+		Text 715,100,"FoggyGreen"
+	Case 15
+		Text 715,100,"  Leaves"
+	Case 16
+		Text 715,100,"Sand Storm"
+	Case 17
+		Text 715,100," Abstract"
+
+
+
+
+	
+	End Select
+
+	Select LevelMusic
+	Case -1
+		Text 715,115,"  Beach  "
+	Case 0
+		Text 715,115," No Music"
+	Case 1
+		Text 715,115," WA Intro"
+	Case 2
+		Text 715,115," Pastoral"
+	Case 3
+		Text 715,115,"WonderTown"
+	Case 4
+		Text 715,115,"Dark/Sewer"
+	Case 5
+		Text 715,115,"Cave/Woods"
+	Case 6
+		Text 715,115,"Scary/Void"
+	Case 7
+		Text 715,115,"WondrFalls"
+	Case 8
+		Text 715,115,"  Jungle  "
+	Case 9
+		Text 715,115,"KaboomTown"
+	Case 10
+		Text 715,115,"Acid Pools"
+	Case 11
+		Text 719,115,"  Retro  "
+	Case 12
+		Text 719,115,"  Cave  "
+	Case 13
+		Text 719,115,"POTZ Intro"
+	Case 14
+		Text 719,115," Uo Sound"
+	Case 15
+		Text 719,115,"Z-Ambience"
+	Case 16
+		Text 719,115,"Z-Synchron"
+	Case 17
+		Text 719,115,"RetroScary"
+	Case 18
+		Text 719,115,"DesertWind"
+	Case 19
+		Text 719,115,"DesertCave"
+	Case 20
+		Text 719,115,"Star World"
+	Case 21
+		Text 719,115,"  Piano   "
+	Default
+		Text 719,115,LevelMusic
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	End Select
+	
+	
+	If LevelEdgeStyle=1
+		LevelEdgeStyleString$="-" ; DEFAULT
+	ElseIf LevelEdgeStyle=2
+		LevelEdgeStyleString$="B" ; BORDER
+	ElseIf LevelEdgeStyle=3
+		LevelEdgeStyleString$="X" ; BORDER X
+	ElseIf LevelEdgeStyle=4
+		LevelEdgeStyleString$="N" ; NONE
+	Else
+		LevelEdgeStyleString$=LevelEdgeStyle
+	EndIf
+
+
+	Text 715,133,"<LevelTex>"
+	Text 715,150,"<WaterTex>"
+	Text FlStartX,165," Fl Tr Gl B"
+	Text FlStartX+12,180,Str$(WaterFlow)
+	Text FlStartX+36,180,Str$(WaterTransparent)
+	Text FlStartX+60,180,Str$(WaterGlow)
+	Text FlStartX+80,180,LevelEdgeStyleString$
+	Text 723,200,"  Light  "
+	Text 712,215,Str$(LightRed)
+	Text 741,215,Str$(LightGreen)
+	Text 770,215,Str$(LightBlue)
+	Text 712,228,Str$(AmbientRed)
+	Text 741,228,Str$(AmbientGreen)
+	Text 770,228,Str$(AmbientBlue)
+	
+	
+	StartX=510
+	StartY=245
+	Color TileColorR,TileColorG,TileColorB
+	Rect StartX,StartY,285,40,True
+	Color TextLevelR,TextLevelG,TextLevelB
+	Text StartX+2,StartY+2,"                                   "
+	Text StartX+2+285/2-4*(Len(TilePresetCategoryName$(CurrentTilePresetCategory))+10),StartY,"Category: "+TilePresetCategoryName$(CurrentTilePresetCategory)
+	Text StartX+2,StartY+22,"                                   "
+	Text StartX+2+285/2-4*(Len(TilePresetTileName$(CurrentTilePresetTile))+2),StartY+22,"Tile: "+Left$(TilePresetTileName$(CurrentTilePresetTile),Len(TilePresetTileName$(CurrentTilePresetTile))-4)
+	
+	
+	StartX=695
+	StartY=435
+	
+	Color ObjectColorR,ObjectColorG,ObjectColorB
+	Rect StartX,StartY,100,20,True
+	Color TextLevelR,TextLevelG,TextLevelB
+	
+	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
+		Text StartX+50,StartY+2,"Update"
+	EndIf
+	
+	If NofObjectAdjusters>9
+		Text StartX+6,StartY+2,"More"
+	EndIf
+	
+	StartX=510
+	StartY=460
+	
+	Color ObjectColorR,ObjectColorG,ObjectColorB
+	Rect StartX,StartY,285,40,True
+	Color TextLevelR,TextLevelG,TextLevelB
+	Text StartX+2,StartY+2,"                                   "
+	Text StartX+2+285/2-4*(Len(ObjectPresetCategoryName$(CurrentObjectPresetCategory))+10),StartY,"Category: "+ObjectPresetCategoryName$(CurrentObjectPresetCategory)
+	Text StartX+2,StartY+22,"                                   "
+	Text StartX+2+285/2-4*(Len(ObjectPresetObjectName$(CurrentObjectPresetObject))+4),StartY+22,"Object: "+Left$(ObjectPresetObjectName$(CurrentObjectPresetObject),Len(ObjectPresetObjectName$(CurrentObjectPresetObject))-4)
+	
+	Text 719,5," GLOBALS"
+	StartX=715
+	StartY=20
+	Color RectOnR,RectOnG,RectOnB
+	Rect StartX,StartY,80,35,True
+	Color TextLevelR,TextLevelG,TextLevelB
+	Text StartX+20,StartY+2,"Width"
+	Text StartX,StartY+15,"<<"
+	Text StartX+80-16,StartY+15,">>"
+	If LevelWidth>9
+		Text StartX+40-8,StartY+15,Str$(levelWidth)
+	Else 
+		Text StartX+40-16,StartY+15,Str$(levelWidth)
+	EndIf
+	
+	StartY=50
+	Color RectOnR,RectOnG,RectOnB
+	Rect StartX,StartY,80,35,True
+	Color TextLevelR,TextLevelG,TextLevelB
+	Text StartX+16,StartY+2,"Height"
+	Text StartX,StartY+15,"<<"
+	Text StartX+80-16,StartY+15,">>"
+	If LevelHeight>9
+		Text StartX+40-8,StartY+15,Str$(LevelHeight)
+	Else 
+		Text StartX+40-16,StartY+15,Str$(LevelHeight)
+	EndIf
+	
+	
+	Color TextLevelR,TextLevelG,TextLevelB
+	Text 650-7*4,290,"OBJECTS"
+	StartX=510
+	StartY=305
+	Color ObjectColorR,ObjectColorG,ObjectColorB
+	Rect StartX,StartY,185,150
+	Color TextLevelR,TextLevelG,TextLevelB
+	Text StartX+92-11*4,StartY,"ADJUSTMENTS"
+	
+	If CurrentGrabbedObject<>-1
+		Text StartX+2,StartY,"#"+CurrentGrabbedObject
+	EndIf
+	
+	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
+		
+		DisplayObjectAdjuster(i)
+		
+	Next
+	
+	; local rendering end
+
+
+End Function
+
+
+Function EditorLocalControls()
+
+	If KeyPressed(65)
+		UsingWireFrame=Not UsingWireFrame
+		WireFrame UsingWireFrame
+	EndIf
+	
+	MX=MouseX()
+	MY=MouseY()
+	
+	Fast=False
+	If ShiftDown() Then Fast=True
+	
 	
 	; *************************************
 	; Placing Tiles and Objects on the Editor Field
@@ -2828,9 +3074,6 @@ Function EditorLocalControls()
 	; *************************************
 	; Change the CurrentTile
 	; *************************************
-	
-	Color TextLevelR,TextLevelG,TextLevelB
-	Text 590,5,"TILES"
 		
 	StartX=510
 	StartY=20
@@ -3140,148 +3383,6 @@ Function EditorLocalControls()
 	; Textures and global settings
 	; *************************************
 	
-	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
-	Rect 714,100,81,145,True
-	Color TextLevelR,TextLevelG,TextLevelB
-
-
-	Select LevelWeather
-	Case 0
-		Text 719,100,"Clear Sky"
-	Case 1
-		Text 715,100,"Light Snow"
-	Case 2
-		Text 715,100,"Heavy Snow"
-	Case 3
-		Text 715,100,"BlizzardRL"
-	Case 4
-		Text 715,100,"BlizzardLR"
-	Case 5
-		Text 715,100,"   Rain"
-	Case 6
-		Text 719,100,"  Weird"
-	Case 7
-		Text 715,100,"ThundrStrm"
-	Case 8
-		Text 715,100,"  Alarm"
-	Case 9
-		Text 715,100,"Light Rise"
-	Case 10
-		Text 715,100,"Light Fall"
-	Case 11
-		Text 715,100,"Rainb Rise"
-	Case 12
-		Text 715,100,"Rainb Fall"
-	Case 13
-		Text 715,100,"  Foggy"
-	Case 14
-		Text 715,100,"FoggyGreen"
-	Case 15
-		Text 715,100,"  Leaves"
-	Case 16
-		Text 715,100,"Sand Storm"
-	Case 17
-		Text 715,100," Abstract"
-
-
-
-
-	
-	End Select
-
-	Select LevelMusic
-	Case -1
-		Text 715,115,"  Beach  "
-	Case 0
-		Text 715,115," No Music"
-	Case 1
-		Text 715,115," WA Intro"
-	Case 2
-		Text 715,115," Pastoral"
-	Case 3
-		Text 715,115,"WonderTown"
-	Case 4
-		Text 715,115,"Dark/Sewer"
-	Case 5
-		Text 715,115,"Cave/Woods"
-	Case 6
-		Text 715,115,"Scary/Void"
-	Case 7
-		Text 715,115,"WondrFalls"
-	Case 8
-		Text 715,115,"  Jungle  "
-	Case 9
-		Text 715,115,"KaboomTown"
-	Case 10
-		Text 715,115,"Acid Pools"
-	Case 11
-		Text 719,115,"  Retro  "
-	Case 12
-		Text 719,115,"  Cave  "
-	Case 13
-		Text 719,115,"POTZ Intro"
-	Case 14
-		Text 719,115," Uo Sound"
-	Case 15
-		Text 719,115,"Z-Ambience"
-	Case 16
-		Text 719,115,"Z-Synchron"
-	Case 17
-		Text 719,115,"RetroScary"
-	Case 18
-		Text 719,115,"DesertWind"
-	Case 19
-		Text 719,115,"DesertCave"
-	Case 20
-		Text 719,115,"Star World"
-	Case 21
-		Text 719,115,"  Piano   "
-	Default
-		Text 719,115,LevelMusic
-
-
-
-
-
-
-
-
-
-
-
-	
-
-	End Select
-	
-	
-	If LevelEdgeStyle=1
-		LevelEdgeStyleString$="-" ; DEFAULT
-	ElseIf LevelEdgeStyle=2
-		LevelEdgeStyleString$="B" ; BORDER
-	ElseIf LevelEdgeStyle=3
-		LevelEdgeStyleString$="X" ; BORDER X
-	ElseIf LevelEdgeStyle=4
-		LevelEdgeStyleString$="N" ; NONE
-	Else
-		LevelEdgeStyleString$=LevelEdgeStyle
-	EndIf
-
-
-	Text 715,133,"<LevelTex>"
-	Text 715,150,"<WaterTex>"
-	FlStartX=706 ; formerly 715
-	Text FlStartX,165," Fl Tr Gl B"
-	Text FlStartX+12,180,Str$(WaterFlow)
-	Text FlStartX+36,180,Str$(WaterTransparent)
-	Text FlStartX+60,180,Str$(WaterGlow)
-	Text FlStartX+80,180,LevelEdgeStyleString$
-	Text 723,200,"  Light  "
-	Text 712,215,Str$(LightRed)
-	Text 741,215,Str$(LightGreen)
-	Text 770,215,Str$(LightBlue)
-	Text 712,228,Str$(AmbientRed)
-	Text 741,228,Str$(AmbientGreen)
-	Text 770,228,Str$(AmbientBlue)
 
 	If mx>=715 
 				
@@ -3634,19 +3735,8 @@ Function EditorLocalControls()
 	; Preset Tiles
 	; *************************************
 	
-	StartX=715
-	StartY=190
-	
-		
 	StartX=510
 	StartY=245
-	Color TileColorR,TileColorG,TileColorB
-	Rect StartX,StartY,285,40,True
-	Color TextLevelR,TextLevelG,TextLevelB
-	Text StartX+2,StartY+2,"                                   "
-	Text StartX+2+285/2-4*(Len(TilePresetCategoryName$(CurrentTilePresetCategory))+10),StartY,"Category: "+TilePresetCategoryName$(CurrentTilePresetCategory)
-	Text StartX+2,StartY+22,"                                   "
-	Text StartX+2+285/2-4*(Len(TilePresetTileName$(CurrentTilePresetTile))+2),StartY+22,"Tile: "+Left$(TilePresetTileName$(CurrentTilePresetTile),Len(TilePresetTileName$(CurrentTilePresetTile))-4)
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
@@ -3748,21 +3838,10 @@ Function EditorLocalControls()
 	; *************************************
 	; LevelSize
 	; *************************************
-
-	Text 719,5," GLOBALS"
+	
 	StartX=715
 	StartY=20
-	Color RectOnR,RectOnG,RectOnB
-	Rect StartX,StartY,80,35,True
-	Color TextLevelR,TextLevelG,TextLevelB
-	Text StartX+20,StartY+2,"Width"
-	Text StartX,StartY+15,"<<"
-	Text StartX+80-16,StartY+15,">>"
-	If LevelWidth>9
-		Text StartX+40-8,StartY+15,Str$(levelWidth)
-	Else 
-		Text StartX+40-16,StartY+15,Str$(levelWidth)
-	EndIf
+
 	If mx>=StartX And mx<StartX+40 And my>=StartY+15 And my<StartY+30 
 		If LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
@@ -3793,7 +3872,7 @@ Function EditorLocalControls()
 			ReSizeLevel()
 		EndIf
 
-	EndIf
+	EndIf	
 	If mx>=StartX+40 And mx<StartX+80 And my>=StartY+15 And my<StartY+30 
 		If LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
@@ -3827,17 +3906,7 @@ Function EditorLocalControls()
 	EndIf
 	
 	StartY=50
-	Color RectOnR,RectOnG,RectOnB
-	Rect StartX,StartY,80,35,True
-	Color TextLevelR,TextLevelG,TextLevelB
-	Text StartX+16,StartY+2,"Height"
-	Text StartX,StartY+15,"<<"
-	Text StartX+80-16,StartY+15,">>"
-	If LevelHeight>9
-		Text StartX+40-8,StartY+15,Str$(LevelHeight)
-	Else 
-		Text StartX+40-16,StartY+15,Str$(LevelHeight)
-	EndIf
+	
 	If mx>=StartX And mx<StartX+40 And my>=StartY+15 And my<StartY+30 
 		If LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
@@ -3905,24 +3974,8 @@ Function EditorLocalControls()
 	; OBJECTS
 	; *************************************
 	
-	Color TextLevelR,TextLevelG,TextLevelB
-	Text 650-7*4,290,"OBJECTS"
 	StartX=510
 	StartY=305
-	Color ObjectColorR,ObjectColorG,ObjectColorB
-	Rect StartX,StartY,185,150
-	Color TextLevelR,TextLevelG,TextLevelB
-	Text StartX+92-11*4,StartY,"ADJUSTMENTS"
-	
-	If CurrentGrabbedObject<>-1
-		Text StartX+2,StartY,"#"+CurrentGrabbedObject
-	EndIf
-	
-	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
-		
-		DisplayObjectAdjuster(i)
-		
-	Next
 	
 	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
 		If mx>=StartX And mx<=StartX+185 And my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
@@ -3940,7 +3993,6 @@ Function EditorLocalControls()
 	
 	StartX=695
 	StartY=435
-	
 
 	If mx>500 And my>305 And my<455 ;my<430
 		If LeftMouse=True Or RightMouse=True
@@ -3953,13 +4005,9 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	Color ObjectColorR,ObjectColorG,ObjectColorB
-	Rect StartX,StartY,100,20,True
-	Color TextLevelR,TextLevelG,TextLevelB
-	
 	; Placed in code before "More" to eat the click before it hits "More".
 	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
-		Text StartX+50,StartY+2,"Update"
+		; Update button
 		If mx>=StartX+44 And Mx<StartX+100 And my>=StartY And my<StartY+20
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
@@ -3975,9 +4023,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If NofObjectAdjusters>9
-		Text StartX+6,StartY+2,"More"
-	EndIf
+	; More button
 	If mx>=StartX And Mx<StartX+80 And my>=StartY And my<StartY+20
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			LeftMouseReleased=False
@@ -4001,13 +4047,7 @@ Function EditorLocalControls()
 	
 	StartX=510
 	StartY=460
-	Color ObjectColorR,ObjectColorG,ObjectColorB
-	Rect StartX,StartY,285,40,True
-	Color TextLevelR,TextLevelG,TextLevelB
-	Text StartX+2,StartY+2,"                                   "
-	Text StartX+2+285/2-4*(Len(ObjectPresetCategoryName$(CurrentObjectPresetCategory))+10),StartY,"Category: "+ObjectPresetCategoryName$(CurrentObjectPresetCategory)
-	Text StartX+2,StartY+22,"                                   "
-	Text StartX+2+285/2-4*(Len(ObjectPresetObjectName$(CurrentObjectPresetObject))+4),StartY+22,"Object: "+Left$(ObjectPresetObjectName$(CurrentObjectPresetObject),Len(ObjectPresetObjectName$(CurrentObjectPresetObject))-4)
+
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
@@ -16178,11 +16218,7 @@ Function UserSelectScreen()
 	UpdateWorld 
 	RenderWorld
 	
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-
-	Flip
+	FinishDrawing()
 	
 	If waitflag=True Delay 2000
 
@@ -16469,10 +16505,7 @@ Function AdventureSelectScreen()
 	UpdateWorld 
 	RenderWorld
 	
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-	Flip
+	FinishDrawing()
 	If waitflag=True Delay 2000
 	
 
@@ -16613,10 +16646,7 @@ Function AdventureSelectScreen2()
 	UpdateWorld 
 	RenderWorld
 	
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-	Flip
+	FinishDrawing()
 	If waitflag=True Delay 2000
 
 	
@@ -16717,10 +16747,7 @@ Function AdventureSelectScreen3()
 	UpdateWorld 
 	RenderWorld
 	
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-	Flip
+	FinishDrawing()
 	If waitflag=True Delay 2000
 
 	
@@ -17722,10 +17749,7 @@ Function MasterMainLoop()
 	RenderLetters()
 	RenderWorld()
 	
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-	Flip
+	FinishDrawing()
 	
 	If waitflag=True Delay 1000
 	
@@ -18016,10 +18040,7 @@ Function MasterAdvancedLoop()
 	RenderLetters()
 	RenderWorld()
 	
-	If displayfullscreen=True
-		DrawImage mouseimg,MouseX(),MouseY()
-	EndIf
-	Flip
+	FinishDrawing()
 	
 	If waitflag=True Delay 1000
 End Function
@@ -18487,10 +18508,7 @@ Function HubMainLoop()
 	RenderLetters()
 	RenderWorld()
 	
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-	Flip
+	FinishDrawing()
 	
 	If waitflag=True Delay 1000
 End Function
@@ -18692,10 +18710,7 @@ Function HubAdventureSelectScreen()
 	UpdateWorld 
 	RenderWorld
 	
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-	Flip
+	FinishDrawing()
 	If waitflag=True Delay 2000
 	
 
@@ -20190,10 +20205,7 @@ Function DialogMainLoop()
 	RenderWorld()
 	
 
-	If displayfullscreen=True
-				DrawImage mouseimg,MouseX(),MouseY()
-			EndIf
-	Flip
+	FinishDrawing()
 	
 	
 
