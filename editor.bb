@@ -1839,6 +1839,7 @@ Function EditorMainLoop()
 
 	CameraControls()
 	
+	RenderToolbar()
 	If CameraPanning=False
 		EditorLocalControls()
 	EndIf
@@ -2347,6 +2348,15 @@ Function EditorGlobalControls()
 End Function
 
 
+Function RenderToolbar()
+
+	Color RectToolbarR,RectToolbarG,RectToolbarB
+	;Rect 0,500,500,12,True
+	Rect 0,500,800,100,True
+
+End Function
+
+
 Function EditorLocalRendering()
 
 	; full window size is 800x600, whereas the level camera viewport is 500x500
@@ -2381,10 +2391,6 @@ Function EditorLocalRendering()
 		ObjectColorG=RectOnG
 		ObjectColorB=RectOnB
 	EndIf
-	
-	Color RectToolbarR,RectToolbarG,RectToolbarB
-	;Rect 0,500,500,12,True
-	Rect 0,500,800,100,True
 	
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text 590,5,"TILES"
