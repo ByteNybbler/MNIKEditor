@@ -17445,26 +17445,20 @@ Function MasterMainLoop()
 	
 	; adventure goal
 	If MouseY()>500+32-200 And MouseY()<523+42-200 And MouseX()<450
-		If mb=1 AdventureGoal=AdventureGoal+1
-		If mb=2 AdventureGoal=AdventureGoal-1
-		If AdventureGoal<=-1 Then AdventureGOal=nofwinningconditions-1
+		AdventureGoal=AdjustInt("Adventure goal: ", AdventureGoal, 1, 10, 150)
+		If AdventureGoal<=-1 Then AdventureGoal=nofwinningconditions-1
 		If AdventureGoal>=Nofwinningconditions Then adventuregoal=0
-		Delay 200
 	EndIf
 	
 	; GateKeyVersion
 	If MouseY()>500+32-260 And MouseY()<523+42-260 And MouseX()>480 And MouseX()<700
-		If mb=1 GateKeyVersion=GateKeyVersion+1
-		If mb=2 GateKeyVersion=GateKeyVersion-1
+		GateKeyVersion=AdjustInt("Gate/key version: ", GateKeyVersion, 1, 10, 150)
 		If GateKeyVersion<=0 Then GateKeyVersion=3
 		If GateKeyVersion>=4 Then GateKeyVersion=1
-		Delay 200
 		FreeTexture buttontexture
 		FreeTexture gatetexture
 		ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
 		GateTexture=MyLoadTexture("data\graphics\gates"+Str$(GateKeyVersion)+".bmp",1)
-		
-		
 	EndIf
 
 
