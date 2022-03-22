@@ -7049,8 +7049,8 @@ End Function
 
 Function UpdateObjectAlpha(Dest)
 
-	If ObjectModelName$(Des)="!NPC" Or ObjectModelName$(Des)="!Tentacle"
-		Entity=GetChild(ObjectEntity(Des),3)
+	If ObjectModelName$(Dest)="!NPC" Or ObjectModelName$(Dest)="!Tentacle"
+		Entity=GetChild(ObjectEntity(Dest),3)
 	Else
 		Entity=ObjectEntity(Dest)
 	EndIf
