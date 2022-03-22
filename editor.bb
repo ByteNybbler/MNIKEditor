@@ -13262,7 +13262,7 @@ Function FlipLevelX()
 	For i=0 To NofObjects-1
 		ObjectX(i)=Float(LevelWidth)-ObjectX(i)
 		
-		ObjectTileX(i)=LevelWidth-ObjectTileX(i)
+		ObjectTileX(i)=LevelWidth-1-ObjectTileX(i)
 	
 
 		
@@ -13300,7 +13300,7 @@ Function FlipLevelY()
 	For i=0 To NofObjects-1
 		ObjectY(i)=Float(LevelHeight)-ObjectY(i)
 		
-		ObjectTileY(i)=LevelHeight-ObjectTileY(i)
+		ObjectTileY(i)=LevelHeight-1-ObjectTileY(i)
 		
 
 		
