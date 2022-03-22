@@ -22407,6 +22407,15 @@ Function ControlCuboid(i)
 End Function
 
 
+Function ControlFountain(i)
+
+	If ObjectActive(i)>0
+		AddParticle(ObjectData(i,0),ObjectTileX(i)+.5,ObjectZAdjust(i)+.5,-ObjectTileY(i)-.5,0,.1,Rnd(-.01,.01),Rnd(.07,.099),Rnd(-.01,.01),0,.001,0,-.001,0,150,3)
+	EndIf
+
+End Function
+
+
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
 	SimulatedLightGreenGoal=Green
@@ -22729,6 +22738,8 @@ Function ControlObjects()
 				ControlWaterfall(i)
 			Case 163
 				ControlWindmillRotor(i)
+			Case 164
+				ControlFountain(i)
 			Case 170
 				ControlGoldStar(i)
 			Case 171,174
