@@ -6931,14 +6931,10 @@ Function PlaceObject(x#,y#)
 	SetCurrentGrabbedObject(NofObjects)
 	
 	
-	LevelTileObjectCount(floorx,floory)=LevelTileObjectCount(floorx,floory)+1
-	CreateObjectPositionMarker(NofObjects)
-
-	
 	NofObjects=NofObjects+1
 	
-	
-	UpdateObjectPositionMarkersAtTile(floorx,floory)
+
+	CreateObjectPositionMarker(NofObjects)
 	
 	
 	SomeObjectWasChanged()
@@ -7116,6 +7112,8 @@ Function UpdateObjectPosition(Dest)
 	If ObjectAccEntity(Dest)>0
 		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 	EndIf
+	
+	PositionObjectPositionMarker(Dest)
 
 End Function
 
@@ -7563,12 +7561,21 @@ Function CreateObjectPositionMarker(i)
 	ObjectPositionMarker(i)=CopyEntity(ObjectPositionMarkerMesh)
 	EntityAlpha ObjectPositionMarker(i),.8
 	;EntityColor ObjectPositionMarker(i),255,100,100
-	PositionEntity ObjectPositionMarker(i),ObjectX(i),0,-ObjectY(i)
+	PositionObjectPositionMarker(i)
+
+	LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))+1
+	UpdateObjectPositionMarkersAtTile(ObjectTileX(i),ObjectTileY(i))
 	
 	If ShowObjectPositions=False
 		HideEntity ObjectPositionMarker(i)
 	EndIf
 	
+End Function
+
+Function PositionObjectPositionMarker(i)
+
+	PositionEntity ObjectPositionMarker(i),ObjectX(i),0,-ObjectY(i)
+
 End Function
 
 Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
@@ -7589,6 +7596,20 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 	Next
 	
 	;ShowMessage("Update successful.", 100)
+
+End Function
+
+Function PreUpdateObjectPositionMarker(i)
+
+	LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))-1
+	UpdateObjectPositionMarkersAtTile(ObjectTileX(i),ObjectTileY(i))
+
+End Function
+
+Function PostUpdateObjectPositionMarker(i)
+
+	LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))+1
+	UpdateObjectPositionMarkersAtTile(ObjectTileX(i),ObjectTileY(i))
 
 End Function
 
@@ -13239,6 +13260,31 @@ Function ReSizeLevel()
 
 End Function
 
+Function SetObjectTileX(i,tilex)
+
+	PreUpdateObjectPositionMarker(i)
+	ObjectTileX(i)=tilex
+	PostUpdateObjectPositionMarker(i)
+
+End Function
+
+Function SetObjectTileY(i,tiley)
+
+	PreUpdateObjectPositionMarker(i)
+	ObjectTileY(i)=tiley
+	PostUpdateObjectPositionMarker(i)
+
+End Function
+
+Function SetObjectTileXY(i,tilex,tiley)
+
+	PreUpdateObjectPositionMarker(i)
+	ObjectTileX(i)=tilex
+	ObjectTileY(i)=tiley
+	PostUpdateObjectPositionMarker(i)
+
+End Function
+
 Function FlipLevelX()
 
 	CopyLevel()
@@ -13262,7 +13308,7 @@ Function FlipLevelX()
 	For i=0 To NofObjects-1
 		ObjectX(i)=Float(LevelWidth)-ObjectX(i)
 		
-		ObjectTileX(i)=LevelWidth-1-ObjectTileX(i)
+		SetObjectTileX(i,LevelWidth-1-ObjectTileX(i))
 		
 		UpdateObjectPosition(i)
 	Next
@@ -13295,7 +13341,7 @@ Function FlipLevelY()
 	For i=0 To NofObjects-1
 		ObjectY(i)=Float(LevelHeight)-ObjectY(i)
 		
-		ObjectTileY(i)=LevelHeight-1-ObjectTileY(i)
+		SetObjectTileY(i,LevelHeight-1-ObjectTileY(i))
 		
 		UpdateObjectPosition(i)
 	Next
@@ -13331,18 +13377,16 @@ Function FlipLevelXY()
 	; and move the object
 	
 	For i=0 To NofObjects-1
+		PreUpdateObjectPositionMarker(i)
 		x2#=ObjectX(i)
 		ObjectX(i)=ObjectY(i)
 		ObjectY(i)=x2#
 		x=ObjectTileX(i)
 		ObjectTileX(i)=ObjectTileY(i)
 		ObjectTileY(i)=x
-
+		PostUpdateObjectPositionMarker(i)
 		
-
-		
-		PositionEntity ObjectEntity(i),ObjectX(i),ObjectZ(i),-ObjectY(i)
-		
+		UpdateObjectPosition(i)
 	Next
 	
 	SomeObjectWasChanged()
@@ -14724,14 +14768,11 @@ Function LoadLevel(levelnumber)
 		
 		CreateObjectModel(Dest)
 
-		LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)+1
-		CreateObjectPositionMarker(Dest)
-		
 
 		NofObjects=NofObjects+1
 		
-		
-		UpdateObjectPositionMarkersAtTile(tilex,tiley)
+
+		CreateObjectPositionMarker(Dest)
 	Next
 	
 	
