@@ -6958,7 +6958,7 @@ Function CalculateEffectiveID(Dest)
 			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 		EndIf
 	Case 40,301 ; stepping stone
-		Return 500+(8+ObjectData(i,0))*5+ObjectData(i,1)	   
+		Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)	   
 	Case 280 ; spring
 		Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 	Case 301 ; rainbow float
