@@ -7668,7 +7668,7 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 				EntityColor ObjectPositionMarker(i),255,100,100
 			ElseIf LevelTileObjectCount(tilex,tiley)>1
 				EntityColor ObjectPositionMarker(i),255,255,100
-			Else ; ERROR: LevelTileObjectCount is zero!
+			Else ; ERROR: LevelTileObjectCount is zero or less!
 				EntityColor ObjectPositionMarker(i),255,100,255
 			EndIf
 		EndIf
