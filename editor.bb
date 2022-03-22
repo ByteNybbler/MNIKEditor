@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/21/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/22/22)"
 
 Global MASTERUSER=True
 
@@ -6925,16 +6925,17 @@ Function PlaceObject(x#,y#)
 	BuildCurrentObjectModel()
 	
 	
-	UpdateObjectEntityToCurrent(NofObjects)
-	
-	
-	SetCurrentGrabbedObject(NofObjects)
-	
-	
+	ThisObject=NofObjects
 	NofObjects=NofObjects+1
 	
-
-	CreateObjectPositionMarker(NofObjects)
+	
+	CreateObjectPositionMarker(ThisObject)
+	
+	
+	UpdateObjectEntityToCurrent(ThisObject)
+	
+	
+	SetCurrentGrabbedObject(ThisObject)
 	
 	
 	SomeObjectWasChanged()
