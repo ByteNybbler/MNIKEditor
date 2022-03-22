@@ -7121,17 +7121,13 @@ Function UpdateObjectAlpha(Dest)
 	Else
 		Entity=ObjectEntity(Dest)
 	EndIf
-	
-	;If ObjectModelName$(Dest)="!WaterFall"
-	;	Return
-	;EndIf
 
-	EntityAlpha Entity,BaseObjectAlpha(Dest)
+	EntityAlpha Entity,BaseObjectAlpha#(Dest)
 
 End Function
 
 
-Function BaseObjectAlpha(Dest)
+Function BaseObjectAlpha#(Dest)
 
 	If ObjectModelName$(Dest)="!FloingBubble"
 		Return 0.5
