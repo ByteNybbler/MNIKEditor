@@ -4061,17 +4061,7 @@ Function EditorLocalControls()
 			CurrentObjectPresetObject=0
 			i=CurrentObjectPresetCategory
 			
-			NofObjectPresetObjects=0
-			Dir=ReadDir("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i))
-			file$=NextFile$(Dir)
-			While file$<>""
-				If file$<>"." And file$<>".." And FileType("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i)+"\"+file$)=1 And Lower$(Right$(file$,4))=".wop"
-					ObjectPresetObjectName$(NofObjectPresetObjects)=file$
-					NofObjectPresetObjects=NofObjectPresetObjects+1
-				EndIf
-				file$=NextFile$(Dir)
-			Wend
-			CloseDir dir
+			ReadObjectPresetDirectory(i)
 			
 			SetEditorMode(3)
 			LoadObjectPreset()
@@ -4086,17 +4076,7 @@ Function EditorLocalControls()
 			CurrentObjectPresetObject=0
 			i=CurrentObjectPresetCategory
 			Repeat
-				NofObjectPresetObjects=0
-				Dir=ReadDir("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i))
-				file$=NextFile$(Dir)
-				While file$<>""
-					If file$<>"." And file$<>".." And FileType("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i)+"\"+file$)=1 And Lower$(Right$(file$,4))=".wop"
-						ObjectPresetObjectName$(NofObjectPresetObjects)=file$
-						NofObjectPresetObjects=NofObjectPresetObjects+1
-					EndIf
-					file$=NextFile$(Dir)
-				Wend
-				CloseDir dir
+				ReadObjectPresetDirectory(i)
 				CurrentObjectPresetCategory=i
 				i=i-1
 				If i=-1 Then i=NofObjectPresetCategories-1
@@ -4117,17 +4097,7 @@ Function EditorLocalControls()
 			CurrentObjectPresetObject=0
 			i=CurrentObjectPresetCategory
 			Repeat
-				NofObjectPresetObjects=0
-				Dir=ReadDir("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i))
-				file$=NextFile$(Dir)
-				While file$<>""
-					If file$<>"." And file$<>".." And FileType("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(i)+"\"+file$)=1 And Lower$(Right$(file$,4))=".wop"
-						ObjectPresetObjectName$(NofObjectPresetObjects)=file$
-						NofObjectPresetObjects=NofObjectPresetObjects+1
-					EndIf
-					file$=NextFile$(Dir)
-				Wend
-				CloseDir dir
+				ReadObjectPresetDirectory(i)
 				CurrentObjectPresetCategory=i
 				i=i+1
 				If i=NofObjectPresetCategories Then i=0
@@ -4581,6 +4551,23 @@ Function EditorLocalControls()
 
 
 	
+
+End Function
+
+
+Function ReadObjectPresetDirectory(index)
+
+	NofObjectPresetObjects=0
+	Dir=ReadDir("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(index))
+	file$=NextFile$(Dir)
+	While file$<>""
+		If file$<>"." And file$<>".." And FileType("Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(index)+"\"+file$)=1 And Lower$(Right$(file$,4))=".wop"
+			ObjectPresetObjectName$(NofObjectPresetObjects)=file$
+			NofObjectPresetObjects=NofObjectPresetObjects+1
+		EndIf
+		file$=NextFile$(Dir)
+	Wend
+	CloseDir dir
 
 End Function
 
