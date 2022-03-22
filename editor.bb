@@ -16813,7 +16813,7 @@ Function StartMaster()
 		IconTextureCustom=myLoadTexture("data\Graphics\icons-custom.bmp",4)
 		AdventureStartX=1
 		AdventureStartY=1 ; x/y position of player start
-		AdventureStartDir=0
+		AdventureStartDir=180 ;0
 		AdventureTitle$=""
 		For i=0 To 4
 			AdventureTextLine$(i)=""
@@ -17051,7 +17051,8 @@ Function MasterMainLoop()
 		displaytext2("X:      Y:      Dir:",0,14,TextMenusR,TextMenusG,TextMenusB)
 		displaytext2(Str$(adventurestartx),2,14,255,255,255)
 		displaytext2(Str$(adventurestarty),10,14,255,255,255)
-		displaytext2(Str$((adventurestartdir+180) Mod 360),20,14,255,255,255)
+		;displaytext2(Str$((adventurestartdir+180) Mod 360),20,14,255,255,255)
+		displaytext2(Str$(adventurestartdir),20,14,255,255,255)
 
 		DisplayText2("--------------------------------------",0,15,TextMenusR,TextMenusG,TextMenusB)
 		
@@ -17362,36 +17363,35 @@ Function MasterMainLoop()
 			Repeat
 			Until MouseDown(1)=0 And MouseDown(2)=0
 		EndIf
-		; Change Adventure
 	
-		; change textures
-	
-		; startpos
-		If MouseY()>365-80 And MouseY()<385-80
-			If MouseX()>00 And MouseX()<100
-				If mb=1 adventurestartx=adventurestartx+adj
-				If mb=2 adventurestartx=adventurestartx-adj
-				Delay 150
-			EndIf
-			If MouseX()>160 And MouseX()<260
-				If mb=1 adventurestarty=adventurestarty+adj
-				If mb=2 adventurestarty=adventurestarty-adj
-				Delay 150
-			EndIf
-			If MouseX()>300 And MouseX()<440
-				If mb=1 adventurestartdir=adventurestartdir+45
-				If mb=2 adventurestartdir=adventurestartdir-45
-				If adventurestartdir>=360 Then adventurestartdir=adventurestartdir-360
-				If adventurestartdir<0 Then adventurestartdir=adventurestartdir+360
-				Delay 150
-			EndIf
+	EndIf
 
+	; Change Adventure
+
+	; change textures
+
+	; startpos
+	If MouseY()>365-80 And MouseY()<385-80
+		If MouseX()>00 And MouseX()<100
+			adventurestartx=AdjustInt("Adventure start X: ", adventurestartx, 1, 10, 150)
 		EndIf
+		If MouseX()>160 And MouseX()<260
+			adventurestarty=AdjustInt("Adventure start Y: ", adventurestarty, 1, 10, 150)
+		EndIf
+		If MouseX()>300 And MouseX()<440
+			adventurestartdir=AdjustInt("Adventure start direction: ", adventurestartdir, 45, 45, 150)
+			adventurestartdir=adventurestartdir Mod 360
+			; this if block is necessary because Mod can return negative numbers for some terrible reason
+			If adventurestartdir<0
+				adventurestartdir=adventurestartdir+360
+			EndIf
+		EndIf
+	EndIf
 		
 		
 		
 			
-
+	If mb>0
 
 	; PUT BACK IN FOR ME
 		If MASTERUSER=True
@@ -18728,8 +18728,8 @@ Function LoadMasterFile()
 	GateKeyVersion=1
 	If Eof(file)=False GateKeyVersion=ReadInt(file)
 		
-	adventurestartdir=0
-	If Eof(file)=False Adventurestartdir=ReadInt(file)
+	adventurestartdir=180 ;0
+	If Eof(file)=False Adventurestartdir=ReadInt(file)+180
 	
 	StarterItems=7
 	If Eof(file)=False StarterItems=ReadInt(file)
@@ -18889,7 +18889,7 @@ Function SaveMasterFIle()
 	
 	WriteInt file,GateKeyVersion
 	
-	WriteInt file,AdventureStartDir
+	WriteInt file,AdventureStartDir-180
 	
 	WriteInt file,StarterItems 
 	WriteInt file,WidescreenRange
