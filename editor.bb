@@ -17389,82 +17389,86 @@ Function MasterMainLoop()
 	EndIf
 		
 		
-		
 			
-	If mb>0
 
 	; PUT BACK IN FOR ME
-		If MASTERUSER=True
-			; change hub data
-			For i=0 To 5
-				For j=0 To 4
-					If MouseX()>160+i*90-18 And MouseX()<240+i*90-18 And MouseY()>365+(j+2)*21 And MouseY()<386+(j+2)*21
-						If j=0 And i=0
-							If mb=1 Adventureexitwonlevel=Adventureexitwonlevel+adj
-							If mb=2 Adventureexitwonlevel=Adventureexitwonlevel-adj
-	
-						EndIf
-						If j=0 And i=1
-							If mb=1 Adventureexitwonx=Adventureexitwonx+adj
-							If mb=2 Adventureexitwonx=Adventureexitwonx-adj
-						EndIf
-						If j=0 And i=2
-							If mb=1 Adventureexitwony=Adventureexitwony+adj
-							If mb=2 Adventureexitwony=Adventureexitwony-adj
-						EndIf
-						If j=1 And i=0
-							If mb=1 Adventureexitlostlevel=Adventureexitlostlevel+adj
-							If mb=2 Adventureexitlostlevel=Adventureexitlostlevel-adj
-						EndIf
-						If j=1 And i=1
-							If mb=1 Adventureexitlostx=Adventureexitlostx+adj
-							If mb=2 Adventureexitlostx=Adventureexitlostx-adj
-						EndIf
-						If j=1 And i=2
-							If mb=1 Adventureexitlosty=Adventureexitlosty+adj
-							If mb=2 Adventureexitlosty=Adventureexitlosty-adj
-						EndIf
-						If j=2 Or j=3 Or j=4
-							If mb=1 Adventurewoncommand(j-2,i)=Adventurewoncommand(j-2,i)+adj
-							If mb=2 Adventurewoncommand(j-2,i)=Adventurewoncommand(j-2,i)-adj
-						EndIf
-						
-						Delay 150
+	If MASTERUSER=True
+		; change hub data
+		For i=0 To 5
+			For j=0 To 4
+				If MouseX()>160+i*90-18 And MouseX()<240+i*90-18 And MouseY()>365+(j+2)*21 And MouseY()<386+(j+2)*21
+					If j=0 And i=0
+						Adventureexitwonlevel=AdjustInt("Adventure exit won level: ", Adventureexitwonlevel, 1, 10, 150)
 					EndIf
-					
-				Next
+					If j=0 And i=1
+						Adventureexitwonx=AdjustInt("Adventure exit won X: ", Adventureexitwonx, 1, 10, 150)
+					EndIf
+					If j=0 And i=2
+						Adventureexitwony=AdjustInt("Adventure exit won Y: ", Adventureexitwony, 1, 10, 150)
+					EndIf
+					If j=1 And i=0
+						Adventureexitlostlevel=AdjustInt("Adventure exit lost level: ", Adventureexitlostlevel, 1, 10, 150)
+					EndIf
+					If j=1 And i=1
+						Adventureexitlostx=AdjustInt("Adventure exit lost X: ", Adventureexitlostx, 1, 10, 150)
+					EndIf
+					If j=1 And i=2
+						Adventureexitlosty=AdjustInt("Adventure exit lost Y: ", Adventureexitlosty, 1, 10, 150)
+					EndIf
+					If j=2 Or j=3 Or j=4
+						Select i
+						Case 0
+							cmdbit$="level"
+						Case 1
+							cmdbit$="command"
+						Case 2
+							cmdbit$="Data1"
+						Case 3
+							cmdbit$="Data2"
+						Case 4
+							cmdbit$="Data3"
+						Case 5
+							cmdbit$="Data4"
+						End Select
+						Adventurewoncommand(j-2,i)=AdjustInt("Adventure won command "+cmdbit$+": ", Adventurewoncommand(j-2,i), 1, 10, 150)
+					EndIf
+				EndIf
+				
 			Next
+		Next
+	
+	
+	
+	
+	EndIf
+	
+	
+	; adventure goal
+	If MouseY()>500+32-200 And MouseY()<523+42-200 And MouseX()<450
+		If mb=1 AdventureGoal=AdventureGoal+1
+		If mb=2 AdventureGoal=AdventureGoal-1
+		If AdventureGoal<=-1 Then AdventureGOal=nofwinningconditions-1
+		If AdventureGoal>=Nofwinningconditions Then adventuregoal=0
+		Delay 200
+	EndIf
+	
+	; GateKeyVersion
+	If MouseY()>500+32-260 And MouseY()<523+42-260 And MouseX()>480 And MouseX()<700
+		If mb=1 GateKeyVersion=GateKeyVersion+1
+		If mb=2 GateKeyVersion=GateKeyVersion-1
+		If GateKeyVersion<=0 Then GateKeyVersion=3
+		If GateKeyVersion>=4 Then GateKeyVersion=1
+		Delay 200
+		FreeTexture buttontexture
+		FreeTexture gatetexture
+		ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
+		GateTexture=MyLoadTexture("data\graphics\gates"+Str$(GateKeyVersion)+".bmp",1)
 		
 		
-		
-		
-		EndIf
-		
-		
-		; adventure goal
-		If MouseY()>500+32-200 And MouseY()<523+42-200 And MouseX()<450
-			If mb=1 AdventureGoal=AdventureGoal+1
-			If mb=2 AdventureGoal=AdventureGoal-1
-			If AdventureGoal=-1 Then AdventureGOal=nofwinningconditions-1
-			If AdventureGoal=Nofwinningconditions Then adventuregoal=0
-			Delay 200
-		EndIf
-		
-		; GateKeyVersion
-		If MouseY()>500+32-260 And MouseY()<523+42-260 And MouseX()>480 And MouseX()<700
-			If mb=1 GateKeyVersion=GateKeyVersion+1
-			If mb=2 GateKeyVersion=GateKeyVersion-1
-			If GateKeyVersion=0 Then GateKeyVersion=3
-			If GateKeyVersion=4 Then GateKeyVersion=1
-			Delay 200
-			FreeTexture buttontexture
-			FreeTexture gatetexture
-			ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
-			GateTexture=MyLoadTexture("data\graphics\gates"+Str$(GateKeyVersion)+".bmp",1)
-			
-			
-		EndIf
+	EndIf
 
+
+	If mb>0
 		
 		; custom icon
 		If MouseY()>500+32-200 And MouseY()<523+42-200 And MouseX()>480 And MouseX()<700
