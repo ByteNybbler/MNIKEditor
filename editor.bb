@@ -13048,8 +13048,6 @@ Function ResetLevel()
 		Next
 	Next
 	
-	SomeObjectWasChanged()
-	
 	ResetParticles("data/graphics/particles.bmp")
 
 End Function
@@ -13253,6 +13251,8 @@ Function ReSizeLevel()
 	WidthRightChange=0
 	HeightTopChange=0
 	HeightBottomChange=0
+	
+	SomeObjectWasChanged()
 
 End Function
 
