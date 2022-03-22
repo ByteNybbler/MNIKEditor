@@ -930,10 +930,6 @@ HideEntity ObjectPositionMarkerMesh
 
 ; CurrentGrabbedObjectMarker
 Global CurrentGrabbedObjectMarker=CreateCube()
-;inside=CreateCube()
-;ScaleMesh inside,-1.0,1.0,1.0
-;AddMesh inside,CurrentGrabbedObjectMarker
-;FreeEntity inside
 ScaleMesh CurrentGrabbedObjectMarker,0.5,90,0.5
 EntityColor CurrentGrabbedObjectMarker,100,255,100
 EntityFX CurrentGrabbedObjectMarker,16 ; disable back-face culling
@@ -2150,6 +2146,8 @@ Function SetEditorMode(NewMode)
 	EndIf
 	
 	EditorMode=NewMode
+	
+	UpdateCurrentGrabbedObjectMarkerVisibility()
 
 End Function
 
@@ -4524,12 +4522,18 @@ Function SetCurrentGrabbedObject(i)
 	CurrentGrabbedObject=i
 	CurrentGrabbedObjectModified=False
 	
-	If CurrentGrabbedObject=-1
+	UpdateCurrentGrabbedObjectMarkerVisibility()
+
+End Function
+
+
+Function UpdateCurrentGrabbedObjectMarkerVisibility()
+
+	If CurrentGrabbedObject=-1 Or EditorMode<>3
 		HideEntity CurrentGrabbedObjectMarker
 	Else
 		ShowEntity CurrentGrabbedObjectMarker
 		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
-		;NofWopAdjusters=0
 	EndIf
 
 End Function
