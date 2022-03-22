@@ -1868,6 +1868,7 @@ Function EditorMainLoop()
 	
 	
 	
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	Text 0,5,"ADVENTURE: "+AdventureFileName$
 	If CurrentLevelNumber<10
