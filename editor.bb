@@ -6991,6 +6991,8 @@ Function ShouldBeInvisibleInGame(Dest)
 		Return True
 	ElseIf ObjectModelName$(Dest)="!IceBlock" And ObjectData(Dest,3)<>0 And ObjectData(Dest,3)<>1
 		Return True
+	ElseIf ObjectActive(Dest)=0
+		Return True
 	Else
 		Return False
 	EndIf
@@ -6998,33 +7000,91 @@ Function ShouldBeInvisibleInGame(Dest)
 End Function
 
 
+Function HideEntityAndAccessories(Dest)
+
+	If ObjectEntity(Dest)>0
+		HideEntity ObjectEntity(Dest)
+	EndIf
+	If ObjectHatEntity(Dest)>0
+		HideEntity ObjectHatEntity(Dest)
+	EndIf
+	If ObjectAccEntity(Dest)>0
+		HideEntity ObjectAccEntity(Dest)
+	EndIf
+
+End Function
+
+
+Function ShowEntityAndAccessories(Dest)
+
+	If ObjectEntity(Dest)>0
+		ShowEntity ObjectEntity(Dest)
+	EndIf
+	If ObjectHatEntity(Dest)>0
+		ShowEntity ObjectHatEntity(Dest)
+	EndIf
+	If ObjectAccEntity(Dest)>0
+		ShowEntity ObjectAccEntity(Dest)
+	EndIf
+	
+	UpdateObjectAlpha(Dest)
+
+End Function
+
+
 Function UpdateObjectVisibility(Dest)
 
 	If ShowObjectMesh=0 Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest))
-		If ObjectEntity(Dest)>0
-			HideEntity ObjectEntity(Dest)
-		EndIf
-		If ObjectHatEntity(Dest)>0
-			HideEntity ObjectHatEntity(Dest)
-		EndIf
-		If ObjectAccEntity(Dest)>0
-			HideEntity ObjectAccEntity(Dest)
-		EndIf
+		HideEntityAndAccessories(Dest)
 	Else
 		If SimulationLevel>=2 And ShouldBeInvisibleInGame(Dest)
-			HideEntity ObjectEntity(Dest)
+			HideEntityAndAccessories(Dest)
 		Else
-			If ObjectEntity(Dest)>0
-				ShowEntity ObjectEntity(Dest)
-			EndIf
-			If ObjectHatEntity(Dest)>0
-				ShowEntity ObjectHatEntity(Dest)
-			EndIf
-			If ObjectAccEntity(Dest)>0
-				ShowEntity ObjectAccEntity(Dest)
-			EndIf
+			ShowEntityAndAccessories(Dest)
 		EndIf
 	EndIf
+
+End Function
+
+
+Function UpdateObjectAlpha(Dest)
+
+	If ObjectModelName$(Des)="!NPC" Or ObjectModelName$(Des)="!Tentacle"
+		Entity=GetChild(ObjectEntity(Des),3)
+	Else
+		Entity=ObjectEntity(Dest)
+	EndIf
+
+	EntityAlpha Entity,BaseObjectAlpha(Dest)
+
+End Function
+
+
+Function BaseObjectAlpha(Dest)
+
+	If ObjectModelName$(Dest)="!FloingBubble"
+		Return 0.5
+	ElseIf ObjectModelName$(Dest)="!MagicMirror"
+		Return 0.5
+	ElseIf ObjectModelName$(Dest)="!IceFloat"
+		Return 0.8
+	ElseIf ObjectModelName$(Dest)="!PlantFloat"
+		Return 0.7
+	ElseIf ObjectModelName$(Dest)="!Retrolasergate"
+		Return 0.5
+	ElseIf ObjectModelName$(Dest)="!Teleport"
+		Return 0.6
+	ElseIf ObjectModelName$(Dest)="!WaterFall"
+		Return 0.7
+	ElseIf ObjectModelName$(Dest)="!IceBlock" And (ObjectData(Dest,3)=0 Or ObjectData(Dest,3)=1)
+		Return 0.5
+	ElseIf ObjectModelName$(Dest)="!Conveyor" And ObjectData(Dest,4)=4
+		Return 0.8
+	Else
+		Return 1.0
+	EndIf
+	
+	; rainbow bubble alpha is set to 0.8 during gameplay/simulation
 
 End Function
 
