@@ -2176,6 +2176,12 @@ Function SetEditorMode(NewMode)
 		CustomBrush=False
 	EndIf
 	
+	If NewMode=0
+		CameraProjMode Camera1,1
+		CameraProjMode Camera3,0
+		CameraClsColor camera2,TileColorR,TileColorG,TileColorB
+	EndIf
+	
 	EditorMode=NewMode
 	
 	UpdateCurrentGrabbedObjectMarkerVisibility()
@@ -3098,8 +3104,6 @@ Function EditorLocalControls()
 				EndIf
 				SetEditorMode(0)
 				LeftMouseReleased=False
-				CameraProjMode Camera1,1
-				CameraProjMode Camera3,0
 				BuildCurrentTileModel()
 				ScaleEntity CursorMesh,1,1,1
 			EndIf
@@ -3122,9 +3126,6 @@ Function EditorLocalControls()
 	If MX>=StartX And MX<StartX+200 And MY>=StartY And MY<StartY+220
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		RotationSpeed=4
 		If KeyDown(23) ; I, formerly A (30)
@@ -3142,9 +3143,6 @@ Function EditorLocalControls()
 			CurrentTileRotation=(CurrentTileRotation+1) Mod 8
 			BuildCurrentTileModel()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; Texture
@@ -3157,9 +3155,6 @@ Function EditorLocalControls()
 			ReturnKeyReleased=False
 			CurrentTileTextureUse=1-CurrentTileTextureUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 	EndIf
 		
@@ -3172,9 +3167,6 @@ Function EditorLocalControls()
 			CurrentTileSideRotation=(CurrentTileSideRotation+1) Mod 8
 			BuildCurrentTileModel()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; SideTexture
@@ -3187,9 +3179,6 @@ Function EditorLocalControls()
 			ReturnKeyReleased=False
 			CurrentTileSideTextureUse=1-CurrentTileSideTextureUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 	EndIf
 	
@@ -3200,26 +3189,17 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			BuildCurrentTileModel()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			CurrentWaterTileTexture=(CurrentWaterTileTexture+1) Mod 8
 			LeftMouseReleased=False
 			BuildCurrentTIleModel()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentWaterTileUse=1-CurrentWaterTileUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
 	EndIf
@@ -3237,9 +3217,6 @@ Function EditorLocalControls()
 			ReturnKeyReleased=False
 			CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3253,9 +3230,6 @@ Function EditorLocalControls()
 			ReturnKeyReleased=False
 			CurrentTileHeightUse=1-CurrentTileHeightUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3288,9 +3262,6 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			RightMouseReleased=False
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			Select CurrentTileLogic
@@ -3312,17 +3283,11 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			RightMouseReleased=False
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileLogicUse=1-CurrentTileLogicUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3337,9 +3302,6 @@ Function EditorLocalControls()
 			ReturnKeyReleased=False
 			CurrentTileRandomUse=1-CurrentTileRandomUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3350,17 +3312,11 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTileRounding=1-CurrentTileRounding
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileRoundingUse=1-CurrentTileRoundingUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
 	EndIf
@@ -3371,17 +3327,11 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTileEdgeRandom=1-CurrentTileEdgeRandom
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			CurrentTileEdgeRandomUse=1-CurrentTileEdgeRandomUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
 	EndIf
@@ -3396,9 +3346,6 @@ Function EditorLocalControls()
 			ReturnKeyReleased=False
 			CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3412,9 +3359,6 @@ Function EditorLocalControls()
 			ReturnKeyReleased=False
 			CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 		EndIf
 
  	EndIf
@@ -3805,9 +3749,6 @@ Function EditorLocalControls()
 			Until NofTilePresetTiles>0
 			LoadTilePreset()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -3838,9 +3779,6 @@ Function EditorLocalControls()
 			Until NofTilePresetTiles>0
 			LoadTilePreset()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -3853,9 +3791,6 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			LoadTilePreset()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -3866,9 +3801,6 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			LoadTilePreset()
 			SetEditorMode(0)
-			CameraProjMode Camera1,1
-			CameraProjMode Camera3,0
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 
 		EndIf
 	EndIf
@@ -17502,6 +17434,7 @@ Function MasterMainLoop()
 		; Mouse
 		
 		If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
+			;ShowMessage("Current and old mouse coordinates are not equal!",100)
 			ShowPointer
 		EndIf
 		OldMouseX=MouseX()
