@@ -2815,30 +2815,26 @@ Function EditorLocalControls()
 						Next
 						
 						SetLevelTileAsTarget(x,y)
-						;If EditorMode=0
-						;	ChangeLevelTile(x,y,True)
-						;ElseIf EditorMode=3
-						;	PlaceObject(x,y)
-						;EndIf
 						FloodStackX(0)=x
 						FloodStackY(0)=y
+						LevelTileVisited(x,y)=True
 						ElementCount=1
 						While ElementCount<>0
 							ElementCount=ElementCount-1
 							thisx=FloodStackX(ElementCount)
 							thisy=FloodStackY(ElementCount)
+							If Rnd(0.0,1.0)<=FillDensity#
+								If EditorMode=0
+									ChangeLevelTile(thisx,thisy,True)
+								ElseIf EditorMode=3
+									PlaceObject(thisx,thisy)
+								EndIf
+							EndIf
 														
 							If thisx>0
 								nextx=thisx-1
 								nexty=thisy
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If Rnd(0.0,1.0)<=FillDensity#
-										If EditorMode=0
-											ChangeLevelTile(nextx,nexty,True)
-										ElseIf EditorMode=3
-											PlaceObject(nextx,nexty)
-										EndIf
-									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
 									FloodStackY(ElementCount)=nexty
@@ -2849,13 +2845,6 @@ Function EditorLocalControls()
 								nextx=thisx+1
 								nexty=thisy
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If Rnd(0.0,1.0)<=FillDensity#
-										If EditorMode=0
-											ChangeLevelTile(nextx,nexty,True)
-										ElseIf EditorMode=3
-											PlaceObject(nextx,nexty)
-										EndIf
-									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
 									FloodStackY(ElementCount)=nexty
@@ -2866,13 +2855,6 @@ Function EditorLocalControls()
 								nextx=thisx
 								nexty=thisy-1
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If Rnd(0.0,1.0)<=FillDensity#
-										If EditorMode=0
-											ChangeLevelTile(nextx,nexty,True)
-										ElseIf EditorMode=3
-											PlaceObject(nextx,nexty)
-										EndIf
-									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
 									FloodStackY(ElementCount)=nexty
@@ -2883,13 +2865,6 @@ Function EditorLocalControls()
 								nextx=thisx
 								nexty=thisy+1
 								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									If Rnd(0.0,1.0)<=FillDensity#
-										If EditorMode=0
-											ChangeLevelTile(nextx,nexty,True)
-										ElseIf EditorMode=3
-											PlaceObject(nextx,nexty)
-										EndIf
-									EndIf
 									LevelTileVisited(nextx,nexty)=True
 									FloodStackX(ElementCount)=nextx
 									FloodStackY(ElementCount)=nexty
@@ -2981,20 +2956,20 @@ Function EditorLocalControls()
 				Next
 				
 				SetLevelTileAsTarget(x,y)
-				;DeleteObjectAt(x,y)
 				FloodStackX(0)=x
 				FloodStackY(0)=y
+				LevelTileVisited(x,y)=True
 				ElementCount=1
 				While ElementCount<>0
 					ElementCount=ElementCount-1
 					thisx=FloodStackX(ElementCount)
 					thisy=FloodStackY(ElementCount)
+					DeleteObjectAt(thisx,thisy)
 												
 					If thisx>0
 						nextx=thisx-1
 						nexty=thisy
 						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							DeleteObjectAt(nextx,nexty)
 							LevelTileVisited(nextx,nexty)=True
 							FloodStackX(ElementCount)=nextx
 							FloodStackY(ElementCount)=nexty
@@ -3005,7 +2980,6 @@ Function EditorLocalControls()
 						nextx=thisx+1
 						nexty=thisy
 						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							DeleteObjectAt(nextx,nexty)
 							LevelTileVisited(nextx,nexty)=True
 							FloodStackX(ElementCount)=nextx
 							FloodStackY(ElementCount)=nexty
@@ -3016,7 +2990,6 @@ Function EditorLocalControls()
 						nextx=thisx
 						nexty=thisy-1
 						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							DeleteObjectAt(nextx,nexty)
 							LevelTileVisited(nextx,nexty)=True
 							FloodStackX(ElementCount)=nextx
 							FloodStackY(ElementCount)=nexty
@@ -3027,7 +3000,6 @@ Function EditorLocalControls()
 						nextx=thisx
 						nexty=thisy+1
 						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							DeleteObjectAt(nextx,nexty)
 							LevelTileVisited(nextx,nexty)=True
 							FloodStackX(ElementCount)=nextx
 							FloodStackY(ElementCount)=nexty
