@@ -16187,6 +16187,26 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust=0)
 
 	EndIf
 	
+	If KeyDown(199) ; home
+		MoveMouse 0,84+(y-0)*21+yadjust
+		OldMouseX=MouseX()
+		HidePointer()
+		ColEffect=-1
+		TxtEffect=-1
+	EndIf
+	
+	If KeyDown(207) ; end
+		endx=Len(tex$)
+		If endx>37
+			endx=37
+		EndIf
+		MoveMouse endx*18,84+(y-0)*21+yadjust
+		OldMouseX=MouseX()
+		HidePointer()
+		ColEffect=-1
+		TxtEffect=-1
+	EndIf
+	
 	Return tex$
 
 End Function
@@ -19693,28 +19713,6 @@ Function DialogMainLoop()
 
 
 		EndIf
-		
-		If KeyDown(199) ; home
-			MoveMouse 0,84+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-		EndIf
-		
-		If KeyDown(207) ; end
-			endx=Len(InterChangeTextLine$(WhichInterChange,y))
-			If endx>37
-				endx=37
-			EndIf
-			MoveMouse endx*18,84+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-		EndIf
 
 
 
@@ -19764,28 +19762,6 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 
-		EndIf
-		
-		If KeyDown(199) ; home
-			MoveMouse 0,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-		EndIf
-		
-		If KeyDown(207) ; end
-			endx=Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
-			If endx>37
-				endx=37
-			EndIf
-			MoveMouse endx*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
 		EndIf
 
 
@@ -19837,28 +19813,6 @@ Function DialogMainLoop()
 
 
 		EndIf
-		
-		If KeyDown(199) ; home
-			MoveMouse 0,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-		EndIf
-		
-		If KeyDown(207) ; end
-			endx=Len(AskaboutText$(WhichAskAbout))
-			If endx>37
-				endx=37
-			EndIf
-			MoveMouse endx*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-		EndIf
 
 
 
@@ -19908,29 +19862,6 @@ Function DialogMainLoop()
 			TxtEffect=-1
 
 
-		EndIf
-		
-		
-		If KeyDown(199) ; home
-			MoveMouse 0,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-		EndIf
-		
-		If KeyDown(207) ; end
-			endx=Len(AskaboutTopText$)
-			If endx>37
-				endx=37
-			EndIf
-			MoveMouse endx*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
 		EndIf
 		
 		
