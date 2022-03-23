@@ -16185,7 +16185,7 @@ End Function
 Function MouseTextEntryMoveMouseY(x,y,yadjust)
 
 	MouseTextEntryMoveMouse(x,y,yadjust)
-	OldMouseY=MouseX()
+	OldMouseY=MouseY()
 	HidePointer()
 
 End Function
