@@ -2964,7 +2964,9 @@ Function EditorLocalControls()
 					ElementCount=ElementCount-1
 					thisx=FloodStackX(ElementCount)
 					thisy=FloodStackY(ElementCount)
-					DeleteObjectAt(thisx,thisy)
+					If Rnd(0.0,1.0)<=FillDensity#
+						DeleteObjectAt(thisx,thisy)
+					EndIf
 												
 					If thisx>0
 						nextx=thisx-1
