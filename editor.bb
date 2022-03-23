@@ -16168,6 +16168,22 @@ Function GetPreviousMouseTextEntryLine(ScreenId,y)
 
 End Function
 
+Function MouseTextEntryMoveMouseX(x,y,yadjust)
+
+	MoveMouse x*18,84+y*21+yadjust
+	OldMouseX=MouseX()
+	HidePointer()
+
+End Function
+
+Function MouseTextEntryMoveMouseY(x,y,yadjust)
+
+	MoveMouse x*18,84+y*21+yadjust
+	OldMouseY=MouseX()
+	HidePointer()
+
+End Function
+
 Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 
 	If let>=32 And let<=122
@@ -16176,9 +16192,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		tex$=Left$(tex$,38)
 		; and advance cursor
 		If x<37
-			MoveMouse (x+1)*18,84+y*21+yadjust
-			OldMouseX=MouseX()
-			HidePointer()
+			MouseTextEntryMoveMouseX(x+1,y,yadjust)
 		EndIf
 		ColEffect=-1
 		TxtEffect=-1
@@ -16188,9 +16202,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		; backspace
 		If x>0 
 			tex$=Left$(tex$,x-1)+Right$(tex$,Len(tex$)-x)
-			MoveMouse (x-1)*18,84+y*21+yadjust
-			OldMouseX=MouseX()
-			HidePointer()
+			MouseTextEntryMoveMouseX(x-1,y,yadjust)
 			Delay CharacterDeleteDelay
 		EndIf
 		ColEffect=-1
@@ -16213,9 +16225,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 	If (KeyDown(200) Or KeyDown(72))
 		; up arrow or numpad 8
 		i=GetPreviousMouseTextEntryLine(ScreenId,y)
-		MoveMouse (x+0)*18,84+MouseTextEntryLineY(ScreenId,i)*21+MouseTextEntryLineYAdjust(ScreenId,i)
-		OldMouseY=MouseY()
-		HidePointer()
+		MouseTextEntryMoveMouseY(x,MouseTextEntryLineY(ScreenId,i),MouseTextEntryLineYAdjust(ScreenId,i))
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
@@ -16224,9 +16234,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 	If (KeyDown(208) Or KeyDown(28) Or KeyDown(156))
 		; down arrow or enter or numpad enter
 		i=GetNextMouseTextEntryLine(ScreenId,y)
-		MoveMouse (x+0)*18,84+MouseTextEntryLineY(ScreenId,i)*21+MouseTextEntryLineYAdjust(ScreenId,i)
-		OldMouseY=MouseY()
-		HidePointer()
+		MouseTextEntryMoveMouseY(x,MouseTextEntryLineY(ScreenId,i),MouseTextEntryLineYAdjust(ScreenId,i))
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
@@ -16235,9 +16243,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 	
 	If (KeyDown(203)) And x>0
 		; left arrow
-		MoveMouse (x-1)*18,84+(y-0)*21+yadjust
-		OldMouseX=MouseX()
-		HidePointer()
+		MouseTextEntryMoveMouseX(x-1,y,yadjust)
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
@@ -16245,9 +16251,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 	EndIf
 	If (KeyDown(205)) And x<Len(tex$)
 		; right arrow
-		MoveMouse (x+1)*18,84+(y-0)*21+yadjust
-		OldMouseX=MouseX()
-		HidePointer()
+		MouseTextEntryMoveMouseX(x+1,y,yadjust)
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
@@ -16255,9 +16259,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 	EndIf
 	
 	If KeyDown(199) ; home
-		MoveMouse 0,84+(y-0)*21+yadjust
-		OldMouseX=MouseX()
-		HidePointer()
+		MouseTextEntryMoveMouseX(0,y,yadjust)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
@@ -16267,9 +16269,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		If endx>37
 			endx=37
 		EndIf
-		MoveMouse endx*18,84+(y-0)*21+yadjust
-		OldMouseX=MouseX()
-		HidePointer()
+		MouseTextEntryMoveMouseX(endx,y,yadjust)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
