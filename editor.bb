@@ -2400,6 +2400,32 @@ Function RenderToolbar()
 End Function
 
 
+Function SetUseStateOfAllTileAttributes(NewState)
+
+	CurrentTileTextureUse=NewState
+	CurrentTileSideTextureUse=NewState
+	CurrentTileHeightUse=NewState
+	CurrentTileExtrusionUse=NewState
+	CurrentTileRandomUse=NewState
+	CurrentTileRoundingUse=NewState
+	CurrentTileEdgeRandomUse=NewState
+	CurrentTileLogicUse=NewState
+	CurrentWaterTileUse=NewState
+	CurrentWaterTileHeightUse=NewState
+	CurrentWaterTileTurbulenceUse=NewState
+
+End Function
+
+
+Function MaybeUnuseAllTileAttributes()
+
+	If ShiftDown()
+		SetUseStateOfAllTileAttributes(False)
+	EndIf
+
+End Function
+
+
 Function EditorLocalRendering()
 
 	; full window size is 800x600, whereas the level camera viewport is 500x500
@@ -3153,6 +3179,7 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileTextureUse=1-CurrentTileTextureUse
 			SetEditorMode(0)
 		EndIf
@@ -3177,6 +3204,7 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileSideTextureUse=1-CurrentTileSideTextureUse
 			SetEditorMode(0)
 		EndIf
@@ -3198,6 +3226,7 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentWaterTileUse=1-CurrentWaterTileUse
 			SetEditorMode(0)
 		EndIf
@@ -3215,6 +3244,7 @@ Function EditorLocalControls()
 		
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
 			SetEditorMode(0)
 		EndIf
@@ -3228,6 +3258,7 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileHeightUse=1-CurrentTileHeightUse
 			SetEditorMode(0)
 		EndIf
@@ -3286,6 +3317,7 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileLogicUse=1-CurrentTileLogicUse
 			SetEditorMode(0)
 		EndIf
@@ -3300,6 +3332,7 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileRandomUse=1-CurrentTileRandomUse
 			SetEditorMode(0)
 		EndIf
@@ -3315,6 +3348,7 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileRoundingUse=1-CurrentTileRoundingUse
 			SetEditorMode(0)
 		EndIf
@@ -3330,6 +3364,7 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentTileEdgeRandomUse=1-CurrentTileEdgeRandomUse
 			SetEditorMode(0)
 		EndIf
@@ -3344,6 +3379,7 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
 			SetEditorMode(0)
 		EndIf
@@ -3357,6 +3393,7 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
+			MaybeUnuseAllTileAttributes()
 			CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
 			SetEditorMode(0)
 		EndIf
