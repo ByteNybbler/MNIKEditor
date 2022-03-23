@@ -16123,6 +16123,17 @@ Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
 End Function
 
+Function MouseTextEntryTrackMouseMovement()
+
+	If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
+		;ShowMessage("Current and old mouse coordinates are not equal!",100)
+		ShowPointer
+	EndIf
+	OldMouseX=MouseX()
+	OldMouseY=MouseY()
+
+End Function
+
 Function GetNextMouseTextEntryLine(ScreenId,y)
 
 	Max=MouseTextEntryLineMax(ScreenId)
@@ -17441,15 +17452,8 @@ Function MasterMainLoop()
 	EndIf
 
 		
-			
 		; Mouse
-		
-		If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
-			;ShowMessage("Current and old mouse coordinates are not equal!",100)
-			ShowPointer
-		EndIf
-		OldMouseX=MouseX()
-		OldMouseY=MouseY()
+		MouseTextEntryTrackMouseMovement()
 		; Mouse Pos
 		Entering=0
 		
@@ -18429,11 +18433,7 @@ Function HubMainLoop()
 			
 		EndIf
 	EndIf
-	If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
-		ShowPointer
-	EndIf
-	OldMouseX=MouseX()
-	OldMouseY=MouseY()
+	MouseTextEntryTrackMouseMovement()
 	
 	Entering=0
 	x=MouseX()/18
@@ -19481,12 +19481,7 @@ Function DialogMainLoop()
 
 
 	; Mouse
-	
-	If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
-		ShowPointer
-	EndIf
-	OldMouseX=MouseX()
-	OldMouseY=MouseY()
+	MouseTextEntryTrackMouseMovement()
 	; Mouse Pos
 	Entering=0
 	
