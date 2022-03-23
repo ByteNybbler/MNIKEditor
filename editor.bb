@@ -7070,7 +7070,7 @@ Function ShouldBeInvisibleInGame(Dest)
 		Return True
 	ElseIf ObjectModelName$(Dest)="!IceBlock" And ObjectData(Dest,3)<>0 And ObjectData(Dest,3)<>1
 		Return True
-	ElseIf ObjectActive(Dest)=0
+	ElseIf ObjectModelName$(Dest)="!NPC" And ObjectActive(Dest)=0
 		Return True
 	Else
 		Return False
