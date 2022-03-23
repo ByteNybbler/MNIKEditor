@@ -124,6 +124,40 @@ Global WhichAnswer=0
 Global WhichAskAbout=0
 
 
+
+; 0 is master.dat editor, 1 is dialog editor, 2 is hub editor
+Dim MouseTextEntryLineMax(2)
+MouseTextEntryLineMax(0)=5
+MouseTextEntryLineMax(1)=9
+MouseTextEntryLineMax(2)=1
+
+Dim MouseTextEntryLineY(2,9)
+Dim MouseTextEntryLineYAdjust(2,9)
+
+MouseTextEntryLineY(0,0)=0
+MouseTextEntryLineY(0,1)=3
+MouseTextEntryLineY(0,2)=4
+MouseTextEntryLineY(0,3)=5
+MouseTextEntryLineY(0,4)=6
+MouseTextEntryLineY(0,5)=7
+
+MouseTextEntryLineY(1,0)=0
+MouseTextEntryLineY(1,1)=1
+MouseTextEntryLineY(1,2)=2
+MouseTextEntryLineY(1,3)=3
+MouseTextEntryLineY(1,4)=4
+MouseTextEntryLineY(1,5)=5
+MouseTextEntryLineY(1,6)=6
+MouseTextEntryLineY(1,7)=10
+MouseTextEntryLineY(1,8)=19
+MouseTextEntryLineY(1,9)=24
+MouseTextEntryLineYAdjust(1,8)=-8
+MouseTextEntryLineYAdjust(1,9)=-8
+
+MouseTextEntryLineY(2,0)=0
+MouseTextEntryLineY(2,1)=3
+
+
 ; COMPILER DATA
 
 Global NofCompilerFiles
@@ -16146,7 +16180,41 @@ Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
 End Function
 
-Function MouseTextEntry$(tex$,let,x,y,yadjust=0)
+Function GetNextMouseTextEntryLine(ScreenId,y)
+
+	Max=MouseTextEntryLineMax(ScreenId)
+	i=Max
+	While i>=0
+		If y>=MouseTextEntryLineY(ScreenId,i)
+			;ShowMessage("y="+y+" meets "+i+" at "+MouseTextEntryLineY(ScreenId,i), 1000)
+			If i>=Max
+				Return Max
+			Else
+				Return i+1
+			EndIf
+		EndIf
+		i=i-1
+	Wend
+	Return Max
+
+End Function
+
+Function GetPreviousMouseTextEntryLine(ScreenId,y)
+
+	Max=MouseTextEntryLineMax(ScreenId)
+	i=1
+	While i<=Max
+		If y<=MouseTextEntryLineY(ScreenId,i)
+			;ShowMessage("y="+y+" meets "+i+" at "+MouseTextEntryLineY(ScreenId,i), 1000)
+			Return i-1
+		EndIf
+		i=i+1
+	Wend
+	Return 0
+
+End Function
+
+Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 
 	If let>=32 And let<=122
 		; place letter
@@ -16182,6 +16250,30 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust=0)
 			HidePointer
 			Delay CharacterDeleteDelay
 		EndIf
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	
+	; cursor movement
+	If (KeyDown(200) Or KeyDown(72))
+		; up arrow or numpad 8
+		i=GetPreviousMouseTextEntryLine(ScreenId,y)
+		MoveMouse (x+0)*18,84+MouseTextEntryLineY(ScreenId,i)*21+MouseTextEntryLineYAdjust(ScreenId,i)
+		OldMouseY=MouseY()
+		HidePointer()
+		Delay 100
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	If (KeyDown(208) Or KeyDown(28) Or KeyDown(156))
+		; down arrow or enter or numpad enter
+		i=GetNextMouseTextEntryLine(ScreenId,y)
+		MoveMouse (x+0)*18,84+MouseTextEntryLineY(ScreenId,i)*21+MouseTextEntryLineYAdjust(ScreenId,i)
+		OldMouseY=MouseY()
+		HidePointer()
+		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
 
@@ -17467,7 +17559,7 @@ Function MasterMainLoop()
 				
 			End Select
 			
-			tex$=MouseTextEntry$(tex$,let,x,y)
+			tex$=MouseTextEntry$(tex$,let,x,y,0,0)
 			
 			Select entering
 			Case 1
@@ -17478,44 +17570,6 @@ Function MasterMainLoop()
 		;		AdventureHelpLine$(y-10)=tex$
 				
 			End Select
-			
-			; cursor movement
-			If (KeyDown(200) Or KeyDown(72)) 
-				If (y>3 And y<8) Or y=11 Or y=12 
-					MoveMouse (x+0)*18,84+(y-1)*21
-				Else If y=0
-					MoveMouse (x+0)*18,84+12*21
-				Else If y=3
-					MoveMouse x*18,84+0*21
-				Else If y=10
-					MoveMouse x*18,84+7*21
-				EndIf
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-		
-			EndIf
-			If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-				If (y>2 And y<7) Or y=10 Or y=11
-					MoveMouse (x+0)*18,84+(y+1)*21
-				Else If y=0
-					MoveMouse (x+0)*18,84+3*21
-				Else If y=7
-					MoveMouse x*18,84+10*21
-				Else If y=12
-					MoveMouse x*18,84
-				EndIf
-				OldMouseY=MouseY()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
 	
 	
 		EndIf
@@ -18472,7 +18526,7 @@ Function HubMainLoop()
 			
 		End Select
 		
-		tex$=MouseTextEntry$(tex$,let,x,y)
+		tex$=MouseTextEntry$(tex$,let,x,y,0,2)
 		
 		Select entering
 		Case 1
@@ -18483,44 +18537,6 @@ Function HubMainLoop()
 	;		AdventureHelpLine$(y-10)=tex$
 			
 		End Select
-		
-		; cursor movement
-		If (KeyDown(200) Or KeyDown(72)) 
-			If (y>3 And y<8) Or y=11 Or y=12 
-				MoveMouse (x+0)*18,84+(y-1)*21
-			Else If y=0
-				MoveMouse (x+0)*18,84+12*21
-			Else If y=3
-				MoveMouse x*18,84+0*21
-			Else If y=10
-				MoveMouse x*18,84+7*21
-			EndIf
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-	
-		EndIf
-		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-			If (y>2 And y<7) Or y=10 Or y=11
-				MoveMouse (x+0)*18,84+(y+1)*21
-			Else If y=0
-				MoveMouse (x+0)*18,84+3*21
-			Else If y=7
-				MoveMouse x*18,84+10*21
-			Else If y=12
-				MoveMouse x*18,84
-			EndIf
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
 
 	EndIf	
 		
@@ -19635,120 +19651,22 @@ Function DialogMainLoop()
 	let=GetKey()
 	If Entering=1
 		
-		InterChangeTextLine$(WhichInterChange,y)=MouseTextEntry$(InterChangeTextLine$(WhichInterChange,y),let,x,y)
-		; cursor movement
-		If (KeyDown(200) Or KeyDown(72)) 
-			If y>0
-				MoveMouse (x+0)*18,84+(y-1)*21
-			Else
-				MoveMouse (x+0)*18,525
-			EndIf
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-	
-		EndIf
-		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-			If y<6
-				MoveMouse (x+0)*18,84+(y+1)*21
-			Else
-				MoveMouse (x+0)*18,76+(10)*21
-			EndIf
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
+		InterChangeTextLine$(WhichInterChange,y)=MouseTextEntry$(InterChangeTextLine$(WhichInterChange,y),let,x,y,0,1)
 
 	EndIf
 	If Entering=2
 		
-		InterChangeReplyText$(WhichInterChange,WhichAnswer)=MouseTextEntry$(InterChangeReplyText$(WhichInterChange,WhichAnswer),let,x,y)
-		; cursor movement
-		If (KeyDown(200) Or KeyDown(72)) 
-			MoveMouse (x+0)*18,76+(7)*21
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			Entering=1
-			ColEffect=-1
-			TxtEffect=-1
-
-	
-		EndIf
-		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-			MoveMouse (x+0)*18,465
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			Entering=1
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
+		InterChangeReplyText$(WhichInterChange,WhichAnswer)=MouseTextEntry$(InterChangeReplyText$(WhichInterChange,WhichAnswer),let,x,y,0,1)
 
 	EndIf
 	If Entering=3
 		
-		AskaboutText$(WhichAskAbout)=MouseTextEntry$(AskaboutText$(WhichAskAbout),let,x,y,-8)
-		; cursor movement
-		If (KeyDown(200) Or KeyDown(72)) ; up arrow or numpad 8
-			MoveMouse (x+0)*18,76+(10)*21
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			Entering=1
-			ColEffect=-1
-			TxtEffect=-1
-
-	
-		EndIf
-		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-			MoveMouse (x+0)*18,525
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			Entering=1
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
+		AskaboutText$(WhichAskAbout)=MouseTextEntry$(AskaboutText$(WhichAskAbout),let,x,y,-8,1)
 
 	EndIf
 	If Entering=4
 		
-		AskaboutTopText$=MouseTextEntry$(AskaboutTopText$,let,x,y,-8)
-		; cursor movement
-		If (KeyDown(200) Or KeyDown(72)) 
-			MoveMouse (x+0)*18,465
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			Entering=1
-			ColEffect=-1
-			TxtEffect=-1
-
-	
-		EndIf
-		If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) 
-			MoveMouse (x+0)*18,86;+210
-			OldMouseY=MouseY()
-			HidePointer()
-			Delay 100
-			Entering=1
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
+		AskaboutTopText$=MouseTextEntry$(AskaboutTopText$,let,x,y,-8,1)
 
 	EndIf
 
