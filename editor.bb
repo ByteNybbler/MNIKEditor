@@ -16168,16 +16168,28 @@ Function GetPreviousMouseTextEntryLine(ScreenId,y)
 
 End Function
 
+Function MouseTextEntryGetMoveX(x)
+
+	Return x*18+9
+
+End Function
+
+Function MouseTextEntryGetMoveY(y,yadjust)
+
+	Return 84+y*21+yadjust
+
+End Function
+
 Function MouseTextEntryMoveMouse(x,y,yadjust)
 
-	MoveMouse x*18+9,84+y*21+yadjust
+	MoveMouse MouseTextEntryGetMoveX(x),MouseTextEntryGetMoveY(y,yadjust)
 
 End Function
 
 Function MouseTextEntryMoveMouseX(x,y,yadjust)
 
 	MouseTextEntryMoveMouse(x,y,yadjust)
-	OldMouseX=MouseX()
+	OldMouseX=MouseTextEntryGetMoveX(x)
 	HidePointer()
 
 End Function
@@ -16185,7 +16197,7 @@ End Function
 Function MouseTextEntryMoveMouseY(x,y,yadjust)
 
 	MouseTextEntryMoveMouse(x,y,yadjust)
-	OldMouseY=MouseY()
+	OldMouseY=MouseTextEntryGetMoveY(y,yadjust)
 	HidePointer()
 
 End Function
