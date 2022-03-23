@@ -16183,7 +16183,7 @@ End Function
 
 Function MouseTextEntryGetMoveY(y,yadjust)
 
-	Return 84+y*21+yadjust
+	Return 84+y*21+yadjust+10
 
 End Function
 
