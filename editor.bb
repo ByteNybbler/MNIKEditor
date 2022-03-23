@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/22/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/23/22)"
 
 Global MASTERUSER=True
 
@@ -1770,6 +1770,9 @@ End
 
 
 Function FinishDrawing()
+
+	;Color 255,255,255
+	;Text 0,0,"Mouse: "+MouseX()+", "+MouseY()
 
 	If displayfullscreen=True
 		DrawImage mouseimg,MouseX(),MouseY()
@@ -16143,6 +16146,51 @@ Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
 End Function
 
+Function MouseTextEntry$(tex$,let,x,y,yadjust=0)
+
+	If let>=32 And let<=122
+		; place letter
+		tex$=Left$(tex$,x)+Chr$(let)+Right$(tex$,Len(tex$)-x)
+		tex$=Left$(tex$,38)
+		; and advance cursor
+		If x<37
+			MoveMouse (x+1)*18,84+y*21+yadjust
+			OldMouseX=MouseX()
+			HidePointer()
+		EndIf
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	If KeyDown(14)
+		; backspace
+		If x>0 
+			tex$=Left$(tex$,x-1)+Right$(tex$,Len(tex$)-x)
+			MoveMouse (x-1)*18,84+y*21+yadjust
+			OldMouseX=MouseX()
+			HidePointer()
+			Delay CharacterDeleteDelay
+		EndIf
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	If KeyDown(211)
+		; delete
+		If x<Len(tex$) 
+			tex$=Left$(tex$,x)+Right$(tex$,Len(tex$)-x-1)
+			HidePointer
+			Delay CharacterDeleteDelay
+		EndIf
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	
+	Return tex$
+
+End Function
+
 Function StartUserSelectScreen()
 	SetEditorMode(4)
 	
@@ -17378,44 +17426,7 @@ Function MasterMainLoop()
 				
 			End Select
 			
-			If let>=32 And let<=122
-				; place letter
-				tex$=Left$(tex$,x)+Chr$(let)+Right$(tex$,Len(tex$)-x)
-				tex$=Left$(tex$,38)
-				; and advance cursor
-				If x<37
-					MoveMouse (x+1)*18,84+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(14)
-				; backspace
-				If x>0 
-					tex$=Left$(tex$,x-1)+Right$(tex$,Len(tex$)-x)
-					MoveMouse (x-1)*18,84+y*21
-					OldMouseX=MouseX()
-					HidePointer()
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
-			If KeyDown(211)
-				; delete
-				If x<Len(tex$) 
-					tex$=Left$(tex$,x)+Right$(tex$,Len(tex$)-x-1)
-					HidePointer
-					Delay CharacterDeleteDelay
-				EndIf
-				ColEffect=-1
-				TxtEffect=-1
-
-			EndIf
+			tex$=MouseTextEntry$(tex$,let,x,y)
 			
 			Select entering
 			Case 1
@@ -18444,44 +18455,7 @@ Function HubMainLoop()
 			
 		End Select
 		
-		If let>=32 And let<=122
-			; place letter
-			tex$=Left$(tex$,x)+Chr$(let)+Right$(tex$,Len(tex$)-x)
-			tex$=Left$(tex$,38)
-			; and advance cursor
-			If x<37
-				MoveMouse (x+1)*18,84+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(14)
-			; backspace
-			If x>0 
-				tex$=Left$(tex$,x-1)+Right$(tex$,Len(tex$)-x)
-				MoveMouse (x-1)*18,84+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(211)
-			; delete
-			If x<Len(tex$) 
-				tex$=Left$(tex$,x)+Right$(tex$,Len(tex$)-x-1)
-				HidePointer
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
+		tex$=MouseTextEntry$(tex$,let,x,y)
 		
 		Select entering
 		Case 1
@@ -19669,44 +19643,7 @@ Function DialogMainLoop()
 	let=GetKey()
 	If Entering=1
 		
-		If let>=32 And let<=122
-			; place letter
-			InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x)+Chr$(let)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x)
-			InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),38)
-			; and advance cursor
-			If x<37
-				MoveMouse (x+1)*18,84+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(14)
-			; backspace
-			If x>0 
-				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x-1)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x)
-				MoveMouse (x-1)*18,84+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(211)
-			; delete
-			If x<Len(InterChangeTextLine$(WhichInterChange,y)) 
-				InterChangeTextLine$(WhichInterChange,y)=Left$(InterChangeTextLine$(WhichInterChange,y),x)+Right$(InterChangeTextLine$(WhichInterChange,y),Len(InterChangeTextLine$(WhichInterChange,y))-x-1)
-				HidePointer
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
+		InterChangeTextLine$(WhichInterChange,y)=MouseTextEntry$(InterChangeTextLine$(WhichInterChange,y),let,x,y)
 		; cursor movement
 		If (KeyDown(200) Or KeyDown(72)) 
 			If y>0
@@ -19784,44 +19721,7 @@ Function DialogMainLoop()
 	EndIf
 	If Entering=2
 		
-		If let>=32 And let<=122
-			; place letter
-			InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x)+Chr$(let)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x)
-			InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),38)
-			; and advance cursor
-			If x<37
-				MoveMouse (x+1)*18,76+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(14)
-			; backspace
-			If x>0 
-				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x-1)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x)
-				MoveMouse (x-1)*18,76+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(211)
-			; delete
-			If x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer)) 
-				InterChangeReplyText$(WhichInterChange,WhichAnswer)=Left$(InterChangeReplyText$(WhichInterChange,WhichAnswer),x)+Right$(InterChangeReplyText$(WhichInterChange,WhichAnswer),Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))-x-1)
-				HidePointer
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
+		InterChangeReplyText$(WhichInterChange,WhichAnswer)=MouseTextEntry$(InterChangeReplyText$(WhichInterChange,WhichAnswer),let,x,y)
 		; cursor movement
 		If (KeyDown(200) Or KeyDown(72)) 
 			MoveMouse (x+0)*18,76+(7)*21
@@ -19893,44 +19793,7 @@ Function DialogMainLoop()
 	EndIf
 	If Entering=3
 		
-		If let>=32 And let<=122
-			; place letter
-			AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x)+Chr$(let)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x)
-			AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),38)
-			; and advance cursor
-			If x<37
-				MoveMouse (x+1)*18,76+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(14)
-			; backspace
-			If x>0 
-				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x-1)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x)
-				MoveMouse (x-1)*18,76+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(211)
-			; delete
-			If x<Len(AskaboutText$(WhichAskAbout)) 
-				AskaboutText$(WhichAskAbout)=Left$(AskaboutText$(WhichAskAbout),x)+Right$(AskaboutText$(WhichAskAbout),Len(AskaboutText$(WhichAskAbout))-x-1)
-				HidePointer
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
+		AskaboutText$(WhichAskAbout)=MouseTextEntry$(AskaboutText$(WhichAskAbout),let,x,y,-8)
 		; cursor movement
 		If (KeyDown(200) Or KeyDown(72)) ; up arrow or numpad 8
 			MoveMouse (x+0)*18,76+(10)*21
@@ -20002,44 +19865,7 @@ Function DialogMainLoop()
 	EndIf
 	If Entering=4
 		
-		If let>=32 And let<=122
-			; place letter
-			AskaboutTopText$=Left$(AskaboutTopText$,x)+Chr$(let)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x)
-			AskaboutTopText$=Left$(AskaboutTopText$,38)
-			; and advance cursor
-			If x<37
-				MoveMouse (x+1)*18,76+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(14)
-			; backspace
-			If x>0 
-				AskaboutTopText$=Left$(AskaboutTopText$,x-1)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x)
-				MoveMouse (x-1)*18,76+y*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
-		If KeyDown(211)
-			; delete
-			If x<Len(AskaboutTopText$) 
-				AskaboutTopText$=Left$(AskaboutTopText$,x)+Right$(AskaboutTopText$,Len(AskaboutTopText$)-x-1)
-				HidePointer
-				Delay CharacterDeleteDelay
-			EndIf
-			ColEffect=-1
-			TxtEffect=-1
-
-		EndIf
+		AskaboutTopText$=MouseTextEntry$(AskaboutTopText$,let,x,y,-8)
 		; cursor movement
 		If (KeyDown(200) Or KeyDown(72)) 
 			MoveMouse (x+0)*18,465
