@@ -16187,6 +16187,27 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust=0)
 
 	EndIf
 	
+	If (KeyDown(203)) And x>0
+		; left arrow
+		MoveMouse (x-1)*18,84+(y-0)*21+yadjust
+		OldMouseX=MouseX()
+		HidePointer()
+		Delay 100
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	If (KeyDown(205)) And x<Len(tex$)
+		; right arrow
+		MoveMouse (x+1)*18,84+(y-0)*21+yadjust
+		OldMouseX=MouseX()
+		HidePointer()
+		Delay 100
+		ColEffect=-1
+		TxtEffect=-1
+
+	EndIf
+	
 	If KeyDown(199) ; home
 		MoveMouse 0,84+(y-0)*21+yadjust
 		OldMouseX=MouseX()
@@ -17495,30 +17516,6 @@ Function MasterMainLoop()
 
 	
 			EndIf
-			If (KeyDown(203)) And x>0
-				MoveMouse (x-1)*18,84+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			If (KeyDown(205)) And x<Len(tex$)
-				MoveMouse (x+1)*18,84+(y-0)*21
-				OldMouseX=MouseX()
-				HidePointer()
-				Delay 100
-				ColEffect=-1
-				TxtEffect=-1
-
-	
-			EndIf
-			
-			
-			
-
 	
 	
 		EndIf
@@ -18524,33 +18521,8 @@ Function HubMainLoop()
 
 
 		EndIf
-		If (KeyDown(203)) And x>0
-			MoveMouse (x-1)*18,84+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
 
-
-		EndIf
-		If (KeyDown(205)) And x<Len(tex$)
-			MoveMouse (x+1)*18,84+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-		
-		
-		
-
-
-
-		EndIf	
+	EndIf	
 		
 	
 	RenderLetters()
@@ -19693,28 +19665,6 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (KeyDown(203)) And x>0
-			MoveMouse (x-1)*18,84+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-		If (KeyDown(205)) And x<Len(InterChangeTextLine$(WhichInterChange,y))
-			MoveMouse (x+1)*18,84+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-
-
 
 	EndIf
 	If Entering=2
@@ -19743,28 +19693,6 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (KeyDown(203)) And x>0
-			MoveMouse (x-1)*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-		If (KeyDown(205)) And x<Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
-			MoveMouse (x+1)*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-
-
 
 	EndIf
 	If Entering=3
@@ -19793,28 +19721,6 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (KeyDown(203)) And x>0
-			MoveMouse (x-1)*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-		If (KeyDown(205)) And x<Len(AskaboutText$(WhichAskAbout))
-			MoveMouse (x+1)*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-
-
 
 	EndIf
 	If Entering=4
@@ -19843,30 +19749,6 @@ Function DialogMainLoop()
 
 
 		EndIf
-		If (KeyDown(203)) And x>0
-			MoveMouse (x-1)*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-		If (KeyDown(205)) And x<Len(AskaboutTopText$)
-			MoveMouse (x+1)*18,76+(y-0)*21
-			OldMouseX=MouseX()
-			HidePointer()
-			Delay 100
-			ColEffect=-1
-			TxtEffect=-1
-
-
-		EndIf
-		
-		
-
-
 
 	EndIf
 
