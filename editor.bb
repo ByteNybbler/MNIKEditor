@@ -7044,7 +7044,7 @@ Function ShouldBeInvisibleInGame(Dest)
 		Return True
 	ElseIf ObjectModelName$(Dest)="!IceBlock" And ObjectData(Dest,3)<>0 And ObjectData(Dest,3)<>1
 		Return True
-	ElseIf ObjectModelName$(Dest)="!NPC" And ObjectActive(Dest)=0
+	ElseIf ObjectActive(Dest)=0 And (ObjectModelName$(Dest)="!NPC" Or ObjectType(Dest)=424) ; NPCs, OpenWA retro laser gates
 		Return True
 	Else
 		Return False
@@ -21346,7 +21346,8 @@ Function ControlRetroLaserGate(i)
 		SimulatedObjectRoll(i)=(SimulatedObjectRoll(i)+2) Mod 360
 	EndIf
 	
-	;SimulateObjectRotation(i)
+	; This behavior is OpenWA-exclusive.
+	EntityAlpha ObjectEntity(i),0.5
 			
 End Function
 
