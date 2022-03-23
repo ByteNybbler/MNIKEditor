@@ -16132,12 +16132,8 @@ End Function
 Function MouseTextEntryTrackMouseMovement()
 
 	If AbsoluteDifference(MouseX(),OldMouseX)>3 Or AbsoluteDifference(MouseY(),OldMouseY)>3
-	;If MouseX()<>OldMouseX Or MouseY()<>OldMouseY
-		;ShowMessage("Current and old mouse coordinates are not equal!",100)
 		ShowPointer
 	EndIf
-	;OldMouseX=MouseX()
-	;OldMouseY=MouseY()
 
 End Function
 
@@ -16147,7 +16143,6 @@ Function GetNextMouseTextEntryLine(ScreenId,y)
 	i=Max
 	While i>=0
 		If y>=MouseTextEntryLineY(ScreenId,i)
-			;ShowMessage("y="+y+" meets "+i+" at "+MouseTextEntryLineY(ScreenId,i), 1000)
 			If i>=Max
 				Return Max
 			Else
@@ -16166,7 +16161,6 @@ Function GetPreviousMouseTextEntryLine(ScreenId,y)
 	i=1
 	While i<=Max
 		If y<=MouseTextEntryLineY(ScreenId,i)
-			;ShowMessage("y="+y+" meets "+i+" at "+MouseTextEntryLineY(ScreenId,i), 1000)
 			Return i-1
 		EndIf
 		i=i+1
