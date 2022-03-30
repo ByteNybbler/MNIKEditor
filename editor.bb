@@ -1688,9 +1688,8 @@ Dim CustomGlyphCMD(NoOfGlyphs,5)
 Global SelectedShard
 Global SelectedGlyph
 
-ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
-ResetParticles("data/graphics/particles.bmp")
-ResetText("data/graphics/font.bmp")
+
+InitializeGraphicsEntities()
 
 
 
@@ -1802,6 +1801,29 @@ Until False ;KeyDown(1) ; escape
 
 
 End
+
+
+Function InitializeGraphicsEntities()
+
+	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
+	ResetParticles("data/graphics/particles.bmp")
+	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
+	ResetText("data/graphics/font.bmp")
+
+End Function
+
+Function ResetGraphicsEntities()
+
+	; Setting these handles to 0 since the pointees will be lost by a call to EndGraphics.
+	TextTexture=0
+	TextMesh=0
+	ParticleTexture=0
+	ParticleMesh=0
+	ParticleMesh2=0
+	
+	InitializeGraphicsEntities()
+
+End Function
 
 
 Function FinishDrawing()
@@ -14379,9 +14401,12 @@ End Function
 
 Function ResetWindowSize()
 
+	EndGraphics
 	Graphics3D 800,600,16,2
 	SetBuffer BackBuffer()
 	Graphics3D 800,600,16,3
+	
+	ResetGraphicsEntities()
 
 End Function
 
