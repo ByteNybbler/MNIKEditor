@@ -888,16 +888,7 @@ AddTriangle MouseSurface,1,3,2
 EntityPickMode MousePlane,2
 EntityAlpha MousePlane,0
 ; TexturePlane
-Global TexturePlane=CreateMesh()
-TexturePlaneSurface=CreateSurface(TexturePlane)
-AddVertex TexturePlaneSurface,0,200,0,0,0
-AddVertex TexturePlaneSurface,1,200,0,1,0
-AddVertex TexturePlaneSurface,0,200,-1,0,1
-AddVertex TexturePlaneSurface,1,200,-1,1,1
-AddTriangle TexturePlaneSurface,0,1,2
-AddTriangle TexturePlaneSurface,1,3,2
-UpdateNormals TexturePlane
-EntityPickMode TexturePlane,2
+Global TexturePlane
 ; CurrentTile
 CurrentMesh=CreateMesh()
 CurrentSurface=CreateSurface(CurrentMesh)
@@ -943,11 +934,8 @@ Global CurrentGrabbedObjectMarker
 
 ; Load Textures
 ; =================
-LevelTexture=MyLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-EntityTexture TexturePlane,LevelTexture
 WaterTexture=MyLoadTexture("data\Leveltextures\"+WaterTexturename$(currentwatertexture),1)
-Global ButtonTexture=MyLoadTexture("data\graphics\buttons1.bmp",4)
-Global GateTexture=MyLoadTexture("data\graphics\gates1.bmp",1)
+Global ButtonTexture, GateTexture
 Global CloudTexture=myLoadTexture("Data\graphics\cloud.jpg",4)
 
 Global PlasmaTexture=myLoadTexture("data\models\other\growflower.jpg",1)
@@ -1819,6 +1807,20 @@ Function InitializeGraphicsEntities()
 	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
 	ResetText("data/graphics/font.bmp")
 	
+	TexturePlane=CreateMesh()
+	TexturePlaneSurface=CreateSurface(TexturePlane)
+	AddVertex TexturePlaneSurface,0,200,0,0,0
+	AddVertex TexturePlaneSurface,1,200,0,1,0
+	AddVertex TexturePlaneSurface,0,200,-1,0,1
+	AddVertex TexturePlaneSurface,1,200,-1,1,1
+	AddTriangle TexturePlaneSurface,0,1,2
+	AddTriangle TexturePlaneSurface,1,3,2
+	UpdateNormals TexturePlane
+	EntityPickMode TexturePlane,2
+	
+	UpdateButtonGateTexture()
+	UpdateLevelTexture()
+	
 	CursorMesh=CreateCube()
 	ScaleMesh CursorMesh,0.1,10,0.1
 	tweeny=CreateCube()
@@ -1848,6 +1850,11 @@ Function ResetGraphicsEntities()
 	ParticleMesh2=0
 	
 	InitializeGraphicsEntities()
+	
+	; reload object entities
+	For i=0 To NofObjects-1
+		CreateObjectModel(i)
+	Next
 
 End Function
 
@@ -1865,6 +1872,20 @@ Function UpdateCameraClsColor()
 
 	CameraClsColor camera2,TileColorR,TileColorG,TileColorB
 	CameraClsColor camera4,ObjectColorR,ObjectColorG,ObjectColorB
+
+End Function
+
+Function UpdateButtonGateTexture()
+	
+	ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
+	GateTexture=MyLoadTexture("data\graphics\gates"+Str$(GateKeyVersion)+".bmp",1)
+	
+End Function
+
+Function UpdateLevelTexture()
+
+	LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
+	EntityTexture TexturePlane,LevelTexture
 
 End Function
 
@@ -3493,24 +3514,28 @@ Function EditorLocalControls()
 		If my>133 And my<148 And mx>755 And leftmouse=True And leftmousereleased=True
 			CurrentLevelTexture=CurrentLevelTexture+1
 			If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
+			
 			FreeTexture LevelTexture
-			LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-			EntityTexture TexturePlane,LevelTexture
+			UpdateLevelTexture()
+			
 			For j=0 To LevelHeight-1
 				EntityTexture LevelMesh(j),LevelTexture
 			Next
+			
 			leftmousereleased=False
 			buildcurrenttilemodel()
 		EndIf
 		If my>133 And my<148 And mx<=755 And leftmouse=True And leftmousereleased=True
 			CurrentLevelTexture=CurrentLevelTexture-1
 			If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
+			
 			FreeTexture LevelTexture
-			LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-			EntityTexture TexturePlane,LevelTexture
+			UpdateLevelTexture()
+			
 			For j=0 To LevelHeight-1
 				EntityTexture LevelMesh(j),LevelTexture
 			Next
+			
 			leftmousereleased=False
 			buildcurrenttilemodel()
 		EndIf
@@ -17796,8 +17821,7 @@ Function MasterMainLoop()
 		If GateKeyVersion>=4 Then GateKeyVersion=1
 		FreeTexture buttontexture
 		FreeTexture gatetexture
-		ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
-		GateTexture=MyLoadTexture("data\graphics\gates"+Str$(GateKeyVersion)+".bmp",1)
+		UpdateButtonGateTexture()
 	EndIf
 
 
