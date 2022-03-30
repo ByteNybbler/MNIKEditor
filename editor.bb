@@ -841,9 +841,8 @@ Else
 	Graphics3D 800,600,16,3
 EndIf
 
-Global Light=CreateLight()
+Global Light
 AmbientLight 155,155,155
-RotateEntity Light,80,15,0
 
 Global Camera1 ; level camera
 Global Camera2
@@ -876,16 +875,7 @@ EntityAlpha s,0.5
 ; Create Meshes
 ; =================
 ; Cursor
-Global CursorMesh=CreateCube()
-ScaleMesh CursorMesh,0.1,10,0.1
-tweeny=CreateCube()
-ScaleMesh tweeny,.5,0.1,.5
-AddMesh tweeny,CursorMesh
-FreeEntity tweeny
-EntityAlpha CursorMesh,.3
-EntityColor CursorMesh,255,255,200
-Global CursorMesh2=CreateCube()
-ScaleMesh CursorMesh2,.2,0.01,.2
+Global CursorMesh, CursorMesh2
 ; MousePlane
 Global MousePlane=CreateMesh()
 MouseSurface=CreateSurface(MousePlane)
@@ -946,12 +936,7 @@ ScaleMesh ObjectPositionMarkerMesh,0.08,90,0.08
 ;EntityColor ObjectPositionMarkerMesh,100,255,100
 HideEntity ObjectPositionMarkerMesh
 
-; CurrentGrabbedObjectMarker
-Global CurrentGrabbedObjectMarker=CreateCube()
-ScaleMesh CurrentGrabbedObjectMarker,0.5,90,0.5
-EntityColor CurrentGrabbedObjectMarker,100,255,100
-EntityFX CurrentGrabbedObjectMarker,16 ; disable back-face culling
-HideEntity CurrentGrabbedObjectMarker
+Global CurrentGrabbedObjectMarker
 
 
 
@@ -1788,6 +1773,9 @@ End
 
 Function InitializeGraphicsEntities()
 
+	Light=CreateLight()
+	RotateEntity Light,80,15,0
+
 	CameraPanning=False
 	GameCamera=False
 	
@@ -1830,14 +1818,29 @@ Function InitializeGraphicsEntities()
 	ResetParticles("data/graphics/particles.bmp")
 	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
 	ResetText("data/graphics/font.bmp")
+	
+	CursorMesh=CreateCube()
+	ScaleMesh CursorMesh,0.1,10,0.1
+	tweeny=CreateCube()
+	ScaleMesh tweeny,.5,0.1,.5
+	AddMesh tweeny,CursorMesh
+	FreeEntity tweeny
+	EntityAlpha CursorMesh,.3
+	EntityColor CursorMesh,255,255,200
+	CursorMesh2=CreateCube()
+	ScaleMesh CursorMesh2,.2,0.01,.2
+	
+	CurrentGrabbedObjectMarker=CreateCube()
+	ScaleMesh CurrentGrabbedObjectMarker,0.5,90,0.5
+	EntityColor CurrentGrabbedObjectMarker,100,255,100
+	EntityFX CurrentGrabbedObjectMarker,16 ; disable back-face culling
+	HideEntity CurrentGrabbedObjectMarker
 
 End Function
 
 Function ResetGraphicsEntities()
 
 	; Setting these handles to 0 since the pointees will be lost by a call to EndGraphics.
-	; The handles become invalidated because their pointees are children of camera entities.
-	; Cameras are lost when calling EndGraphics.
 	TextTexture=0
 	TextMesh=0
 	ParticleTexture=0
