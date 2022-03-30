@@ -934,7 +934,6 @@ Global CurrentGrabbedObjectMarker
 
 ; Load Textures
 ; =================
-WaterTexture=MyLoadTexture("data\Leveltextures\"+WaterTexturename$(currentwatertexture),1)
 Global ButtonTexture, GateTexture
 Global CloudTexture=myLoadTexture("Data\graphics\cloud.jpg",4)
 
@@ -1820,6 +1819,7 @@ Function InitializeGraphicsEntities()
 	
 	UpdateButtonGateTexture()
 	UpdateLevelTexture()
+	UpdateWaterTexture()
 	
 	CursorMesh=CreateCube()
 	ScaleMesh CursorMesh,0.1,10,0.1
@@ -1882,10 +1882,18 @@ Function UpdateButtonGateTexture()
 	
 End Function
 
+; TODO: Take custom textures into account.
 Function UpdateLevelTexture()
 
 	LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
 	EntityTexture TexturePlane,LevelTexture
+
+End Function
+
+; TODO: Take custom textures into account.
+Function UpdateWaterTexture()
+
+	WaterTexture=MyLoadTexture("data\Leveltextures\"+WaterTexturename$(currentwatertexture),1)
 
 End Function
 
@@ -3544,8 +3552,10 @@ Function EditorLocalControls()
 			CurrentWaterTexture=CurrentWaterTexture+1
 			
 			If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
+			
 			FreeTexture WaterTexture
-			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
+			UpdateWaterTexture()
+			
 			EntityTexture Currentwatertile,WaterTexture
 			For j=0 To LevelHeight-1
 				EntityTexture WaterMesh(j),WaterTexture
@@ -3558,8 +3568,10 @@ Function EditorLocalControls()
 			CurrentWaterTexture=CurrentWaterTexture-1
 			
 			If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
+			
 			FreeTexture WaterTexture
-			waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
+			UpdateWaterTexture()
+			
 			EntityTexture Currentwatertile,WaterTexture
 			For j=0 To LevelHeight-1
 				EntityTexture WaterMesh(j),WaterTexture
@@ -3596,7 +3608,7 @@ Function EditorLocalControls()
 					Rect 0,0,500,40,True
 					Color 255,255,0
 					Print "TEXTURE COULDN'T LOAD!"
-					LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
+					UpdateLevelTexture()
 					
 
 					Delay 2000
@@ -3639,7 +3651,7 @@ Function EditorLocalControls()
 					Rect 0,0,500,40,True
 					Color 255,255,0
 					Print "TEXTURE COULDN'T LOAD!"
-					WaterTexture=myLoadTexture("data\Leveltextures\"+WaterTexturename$(CurrentWaterTexture),2)
+					UpdateWaterTexture()
 					
 
 					Delay 2000
