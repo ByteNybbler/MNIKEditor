@@ -1644,6 +1644,7 @@ Global SelectedShard
 Global SelectedGlyph
 
 
+InitializeGraphicsCameras() ; needed for loading particles
 InitializeGraphicsEntities()
 InitializeGraphicsTextures()
 
@@ -1761,8 +1762,6 @@ End
 
 Function InitializeGraphicsTextures()
 
-	InitializeGraphicsCameras() ; needed for loading particles
-
 	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
 	ResetParticles("data/graphics/particles.bmp")
 	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
@@ -1779,6 +1778,9 @@ Function ResetGraphicsTextures()
 	; Setting these handles to 0 since the pointees will be lost by a call to Graphics3D.
 	TextTexture=0
 	ParticleTexture=0
+	TextMesh=0
+	ParticleMesh=0
+	ParticleMesh2=0
 	
 	InitializeGraphicsTextures()
 
@@ -1862,18 +1864,26 @@ Function InitializeGraphicsEntities()
 End Function
 
 Function ResetGraphicsEntities()
-
-	; Setting these handles to 0 since the pointees will be lost by a call to EndGraphics.
-	TextMesh=0
-	ParticleMesh=0
-	ParticleMesh2=0
 	
+	InitializeGraphicsCameras()
 	InitializeGraphicsEntities()
+	ResetGraphicsTextures()
 	
 	; reload object entities
 	For i=0 To NofObjects-1
 		CreateObjectModel(i)
 	Next
+
+End Function
+
+Function ResetWindowSize()
+
+	;EndGraphics
+	Graphics3D 800,600,16,2
+	SetBuffer BackBuffer()
+	Graphics3D 800,600,16,3
+	
+	ResetGraphicsEntities()
 
 End Function
 
@@ -14493,19 +14503,6 @@ Function ToggleGameCamera()
 		PositionEntity Camera1,EntityX(Camera1),6,EntityZ(Camera1) ; 7,6,-14
 		CameraZoom Camera1,1
 	EndIf
-
-End Function
-
-
-Function ResetWindowSize()
-
-	EndGraphics
-	Graphics3D 800,600,16,2
-	SetBuffer BackBuffer()
-	Graphics3D 800,600,16,3
-	
-	ResetGraphicsEntities()
-	ResetGraphicsTextures()
 
 End Function
 
