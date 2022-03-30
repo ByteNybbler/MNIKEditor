@@ -842,42 +842,10 @@ Global Camera2
 Global camera3
 Global camera4 ; object camera
 Global camera ; text screen camera
+
 Global CameraPanning=False
 Global GameCamera=False ; whether "game camera mode" is active
-
-Camera1 = CreateCamera()
-TurnEntity Camera1,65,0,0
-PositionEntity Camera1,7,6,-14 
-CameraViewport camera1,0,0,500,500
-CameraRange camera1,.1,50
-
-Camera2 = CreateCamera()
-CameraClsColor camera2,255,0,0
-CameraViewport Camera2,510,20,200,220
-CameraRange camera2,.1,1000
-RotateEntity Camera2,45,25,0
-PositionEntity Camera2,4.9,109,-8
-CameraZoom Camera2,5
-
-Camera3 = CreateCamera()
-CameraClsColor camera3,255,0,0
-CameraViewport Camera3,0,0,500,500
-CameraRange camera3,.1,1000
-RotateEntity Camera3,90,0,0
-PositionEntity Camera3,0.5,210,-0.5
-CameraZoom Camera3,20
-CameraProjMode Camera3,0
-
-Camera4 = CreateCamera() ; objects menu camera
-CameraClsColor camera4,155,0,0
-CameraViewport Camera4,695,305,100,125
-CameraRange camera4,.1,1000
-RotateEntity Camera4,25,0,0
-PositionEntity Camera4,0,303.8,-8
 Global Camera4Zoom#=8.0
-CameraZoom Camera4,Camera4Zoom#
-
-Camera = CreateCamera() ; Text Screen Camera
 
 s=CreateMesh()
 su=CreateSurface(s)
@@ -1804,6 +1772,42 @@ End
 
 
 Function InitializeGraphicsEntities()
+
+	CameraPanning=False
+	GameCamera=False
+	
+	Camera1 = CreateCamera()
+	TurnEntity Camera1,65,0,0
+	PositionEntity Camera1,7,6,-14 
+	CameraViewport camera1,0,0,500,500
+	CameraRange camera1,.1,50
+	
+	Camera2 = CreateCamera()
+	CameraClsColor camera2,255,0,0
+	CameraViewport Camera2,510,20,200,220
+	CameraRange camera2,.1,1000
+	RotateEntity Camera2,45,25,0
+	PositionEntity Camera2,4.9,109,-8
+	CameraZoom Camera2,5
+	
+	Camera3 = CreateCamera()
+	CameraClsColor camera3,255,0,0
+	CameraViewport Camera3,0,0,500,500
+	CameraRange camera3,.1,1000
+	RotateEntity Camera3,90,0,0
+	PositionEntity Camera3,0.5,210,-0.5
+	CameraZoom Camera3,20
+	CameraProjMode Camera3,0
+	
+	Camera4 = CreateCamera() ; objects menu camera
+	CameraClsColor camera4,155,0,0
+	CameraViewport Camera4,695,305,100,125
+	CameraRange camera4,.1,1000
+	RotateEntity Camera4,25,0,0
+	PositionEntity Camera4,0,303.8,-8
+	CameraZoom Camera4,Camera4Zoom#
+	
+	Camera = CreateCamera() ; Text Screen Camera
 
 	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
 	ResetParticles("data/graphics/particles.bmp")
