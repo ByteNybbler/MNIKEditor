@@ -71,6 +71,14 @@ Global TextMenuXB=0
 
 Const ColorsConfig$="colors.cfg"
 
+; Set at runtime
+Global ObjectColorR
+Global ObjectColorG
+Global ObjectColorB
+Global TileColorR
+Global TileColorG
+Global TileColorB
+
 		
 ; EDITOR DIALOG DATA
 
@@ -842,6 +850,13 @@ Global Camera2
 Global camera3
 Global camera4 ; object camera
 Global camera ; text screen camera
+
+; the current projection mode for each camera
+Global Camera1Proj=0
+Global Camera2Proj=0
+Global Camera3Proj=0
+Global Camera4Proj=0
+Global CameraProj=0
 
 Global CameraPanning=False
 Global GameCamera=False ; whether "game camera mode" is active
@@ -1797,7 +1812,6 @@ Function InitializeGraphicsEntities()
 	RotateEntity Camera3,90,0,0
 	PositionEntity Camera3,0.5,210,-0.5
 	CameraZoom Camera3,20
-	CameraProjMode Camera3,0
 	
 	Camera4 = CreateCamera() ; objects menu camera
 	CameraClsColor camera4,155,0,0
@@ -1808,6 +1822,9 @@ Function InitializeGraphicsEntities()
 	CameraZoom Camera4,Camera4Zoom#
 	
 	Camera = CreateCamera() ; Text Screen Camera
+	
+	UpdateCameraProj()
+	UpdateCameraClsColor()
 
 	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
 	ResetParticles("data/graphics/particles.bmp")
@@ -1819,6 +1836,8 @@ End Function
 Function ResetGraphicsEntities()
 
 	; Setting these handles to 0 since the pointees will be lost by a call to EndGraphics.
+	; The handles become invalidated because their pointees are children of camera entities.
+	; Cameras are lost when calling EndGraphics.
 	TextTexture=0
 	TextMesh=0
 	ParticleTexture=0
@@ -1826,6 +1845,23 @@ Function ResetGraphicsEntities()
 	ParticleMesh2=0
 	
 	InitializeGraphicsEntities()
+
+End Function
+
+Function UpdateCameraProj()
+
+	CameraProjMode Camera1,Camera1Proj
+	CameraProjMode Camera2,Camera2Proj
+	CameraProjMode Camera3,Camera3Proj
+	CameraProjMode Camera4,Camera4Proj
+	CameraProjMode Camera,CameraProj
+
+End Function
+
+Function UpdateCameraClsColor()
+
+	CameraClsColor camera2,TileColorR,TileColorG,TileColorB
+	CameraClsColor camera4,ObjectColorR,ObjectColorG,ObjectColorB
 
 End Function
 
@@ -1881,11 +1917,12 @@ Function StartEditorMainLoop()
 	SetEditorMode(EditorModeBeforeMasterEdit)
 	WireFrame UsingWireFrame
 	
-	CameraProjMode Camera1,1
-	CameraProjMode Camera2,1
-	CameraProjMode Camera3,0
-	CameraProjMode Camera4,1
-	CameraProjMode Camera,0
+	Camera1Proj=1
+	Camera2Proj=1
+	Camera3Proj=0
+	Camera4Proj=1
+	CameraProj=0
+	UpdateCameraProj()
 	
 	ClearSurface Textsurface
 	For p.letter = Each letter
@@ -2204,9 +2241,9 @@ Function SetEditorMode(NewMode)
 	EndIf
 	
 	If NewMode=0
-		CameraProjMode Camera1,1
-		CameraProjMode Camera3,0
-		CameraClsColor camera2,TileColorR,TileColorG,TileColorB
+		Camera1Proj=1
+		Camera3Proj=0
+		UpdateCameraProj()
 	EndIf
 	
 	EditorMode=NewMode
@@ -2473,23 +2510,21 @@ Function EditorLocalRendering()
 	Rect 695,430,100,5,True ; between object camera and More button
 
 	If EditorMode=0
-		CameraClsColor camera2,RectOnR,RectOnG,RectOnB
-		CameraClsColor camera4,RectOffR,RectOffG,RectOffB
 		TileColorR=RectOnR
 		TileColorG=RectOnG
 		TileColorB=RectOnB
 		ObjectColorR=RectOffR
 		ObjectColorG=RectOffG
 		ObjectColorB=RectOffB
+		UpdateCameraClsColor()
 	Else If EditorMode=3
-		CameraClsColor camera2,RectOffR,RectOffG,RectOffB
-		CameraClsColor camera4,RectOnR,RectOnG,RectOnB
 		TileColorR=RectOffR
 		TileColorG=RectOffG
 		TileColorB=RectOffB
 		ObjectColorR=RectOnR
 		ObjectColorG=RectOnG
 		ObjectColorB=RectOnB
+		UpdateCameraClsColor()
 	EndIf
 	
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -3177,9 +3212,9 @@ Function EditorLocalControls()
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; Texture
-			CameraProjMode Camera1,0
-			CameraProjMode Camera3,1
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
+			Camera1Proj=0
+			Camera3Proj=1
+			UpdateCameraProj()
 			SetEditorMode(1)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -3202,9 +3237,9 @@ Function EditorLocalControls()
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; SideTexture
-			CameraProjMode Camera1,0
-			CameraProjMode Camera3,1
-			CameraClsColor camera2,TileColorR,TileColorG,TileColorB
+			Camera1Proj=0
+			Camera3Proj=1
+			UpdateCameraProj()
 			SetEditorMode(2)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -16394,11 +16429,12 @@ Function StartUserSelectScreen()
 	
 	CloseDir dirfile
 	
-	CameraProjMode Camera1,0
-	CameraProjMode Camera2,0
-	CameraProjMode Camera3,0
-	CameraProjMode Camera4,0
-	CameraProjMode Camera,1
+	Camera1Proj=0
+	Camera2Proj=0
+	Camera3Proj=0
+	Camera4Proj=0
+	CameraProj=1
+	UpdateCameraProj()
 		
 End Function
 
@@ -16515,11 +16551,12 @@ End Function
 Function StartAdventureSelectScreen()
 
 	SetEditorMode(5)
-	CameraProjMode Camera1,0
-	CameraProjMode Camera2,0
-	CameraProjMode Camera3,0
-	CameraProjMode Camera4,0
-	CameraProjMode Camera,1
+	Camera1Proj=0
+	Camera2Proj=0
+	Camera3Proj=0
+	Camera4Proj=0
+	CameraProj=1
+	UpdateCameraProj()
 	
 	If AdventureCurrentArchive=0
 		GetCurrentAdventures()
@@ -17168,12 +17205,13 @@ Function StartMaster()
 	SetEditorMode(8)
 	
 	CopyingLevel=False
-	
-	CameraProjMode Camera1,0
-	CameraProjMode Camera2,0
-	CameraProjMode Camera3,0
-	CameraProjMode Camera4,0
-	CameraProjMode Camera,1
+
+	Camera1Proj=0
+	Camera2Proj=0
+	Camera3Proj=0
+	Camera4Proj=0
+	CameraProj=1
+	UpdateCameraProj()
 	
 	
 	If AdventureCurrentArchive=1
@@ -17278,11 +17316,12 @@ Function ResumeMaster()
 	
 	CopyingLevel=False
 	
-	CameraProjMode Camera1,0
-	CameraProjMode Camera2,0
-	CameraProjMode Camera3,0
-	CameraProjMode Camera4,0
-	CameraProjMode Camera,1
+	Camera1Proj=0
+	Camera2Proj=0
+	Camera3Proj=0
+	Camera4Proj=0
+	CameraProj=1
+	UpdateCameraProj()
 
 	
 	For i=1 To MaxLevel
@@ -19169,11 +19208,12 @@ Function StartDialog()
 
 	SetEditorMode(9)
 	
-	CameraProjMode Camera1,0
-	CameraProjMode Camera2,0
-	CameraProjMode Camera3,0
-	CameraProjMode Camera4,0
-	CameraProjMode Camera,1
+	Camera1Proj=0
+	Camera2Proj=0
+	Camera3Proj=0
+	Camera4Proj=0
+	CameraProj=1
+	UpdateCameraProj()
 
 	
 	If AdventureCurrentArchive=1
