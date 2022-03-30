@@ -14362,7 +14362,8 @@ Function ToggleGameCamera()
 	If GameCamera
 		RotateEntity Camera1,55,0,0
 		PositionEntity Camera1,EntityX(Camera1),12,EntityZ(Camera1) ; y=12 in-game
-		If Not widescreen
+		;If Not widescreen
+		If Not displayfullscreen
 			CameraZoom Camera1,2
 		Else
 			CameraZoom Camera1,1.5
