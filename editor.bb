@@ -1645,6 +1645,7 @@ Global SelectedGlyph
 
 
 InitializeGraphicsEntities()
+InitializeGraphicsTextures()
 
 
 
@@ -1758,10 +1759,32 @@ Until False ;KeyDown(1) ; escape
 End
 
 
-Function InitializeGraphicsEntities()
+Function InitializeGraphicsTextures()
 
-	Light=CreateLight()
-	RotateEntity Light,80,15,0
+	InitializeGraphicsCameras() ; needed for loading particles
+
+	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
+	ResetParticles("data/graphics/particles.bmp")
+	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
+	ResetText("data/graphics/font.bmp")
+	
+	UpdateButtonGateTexture()
+	UpdateLevelTexture()
+	UpdateWaterTexture()
+
+End Function
+
+Function ResetGraphicsTextures()
+
+	; Setting these handles to 0 since the pointees will be lost by a call to Graphics3D.
+	TextTexture=0
+	ParticleTexture=0
+	
+	InitializeGraphicsTextures()
+
+End Function
+
+Function InitializeGraphicsCameras()
 
 	CameraPanning=False
 	GameCamera=False
@@ -1801,11 +1824,13 @@ Function InitializeGraphicsEntities()
 	UpdateCameraProj()
 	UpdateCameraClsColor()
 
-	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
-	ResetParticles("data/graphics/particles.bmp")
-	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
-	ResetText("data/graphics/font.bmp")
-	
+End Function
+
+Function InitializeGraphicsEntities()
+
+	Light=CreateLight()
+	RotateEntity Light,80,15,0
+
 	TexturePlane=CreateMesh()
 	TexturePlaneSurface=CreateSurface(TexturePlane)
 	AddVertex TexturePlaneSurface,0,200,0,0,0
@@ -1816,10 +1841,6 @@ Function InitializeGraphicsEntities()
 	AddTriangle TexturePlaneSurface,1,3,2
 	UpdateNormals TexturePlane
 	EntityPickMode TexturePlane,2
-	
-	UpdateButtonGateTexture()
-	UpdateLevelTexture()
-	UpdateWaterTexture()
 	
 	CursorMesh=CreateCube()
 	ScaleMesh CursorMesh,0.1,10,0.1
@@ -1843,9 +1864,7 @@ End Function
 Function ResetGraphicsEntities()
 
 	; Setting these handles to 0 since the pointees will be lost by a call to EndGraphics.
-	TextTexture=0
 	TextMesh=0
-	ParticleTexture=0
 	ParticleMesh=0
 	ParticleMesh2=0
 	
@@ -14486,6 +14505,7 @@ Function ResetWindowSize()
 	Graphics3D 800,600,16,3
 	
 	ResetGraphicsEntities()
+	ResetGraphicsTextures()
 
 End Function
 
