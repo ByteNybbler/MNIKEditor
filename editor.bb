@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/23/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (03/30/22)"
 
 Global MASTERUSER=True
 
@@ -2388,6 +2388,10 @@ Function EditorGlobalControls()
 			KeyReleased(i)=True
 		EndIf
 	Next
+	
+	If KeyPressed(66) And displayfullscreen=False ; F8
+		ResetWindowSize()
+	EndIf
 
 End Function
 
@@ -14347,6 +14351,15 @@ Function ToggleGameCamera()
 		PositionEntity Camera1,EntityX(Camera1),6,EntityZ(Camera1) ; 7,6,-14
 		CameraZoom Camera1,1
 	EndIf
+
+End Function
+
+
+Function ResetWindowSize()
+
+	Graphics3D 800,600,16,2
+	SetBuffer BackBuffer()
+	Graphics3D 800,600,16,3
 
 End Function
 
