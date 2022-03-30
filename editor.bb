@@ -4137,18 +4137,20 @@ Function EditorLocalControls()
 	; load/SAVE/ETC	
 	; *************************************
 
+	If CtrlDown() And KeyPressed(48) ; Ctrl+B
+		ToggleBlockMode()
+	EndIf
+	
+	If CtrlDown() And KeyPressed(33) ; Ctrl+F
+		ToggleFillMode(False)
+	EndIf
 	
 	If MX>=00 And Mx<100
 		If my>=510 And my<540
-			If LeftMouse=True And LeftMouseReleased=True
+			If (LeftMouse=True And LeftMouseReleased=True) Or HotkeyBlockMode
 				LeftMouseReleased=False
 				;block
-				If blockmode=0 
-					blockmode=1
-				Else
-					blockmode=0
-				EndIf
-				FillMode=0
+				ToggleBlockMode()
 				
 				Delay 100
 				
@@ -4170,24 +4172,10 @@ Function EditorLocalControls()
 		EndIf
 		
 		If my>=570 And my<600
-			If LeftMouse=True And LeftMouseReleased=True
+			If (LeftMouse=True And LeftMouseReleased=True) Or HotkeyFillMode
 				LeftMouseReleased=False
 				;fill
-				If CtrlDown()
-					fillmode=1
-					FillDensity#=InputFloat#("Enter fill density (0.0 to 1.0): ")
-					If FillDensity#<0.0
-						FillDensity#=0.0
-					ElseIf FillDensity#>1.0
-						FillDensity#=1.0
-					EndIf
-				ElseIf fillmode=0 
-					fillmode=1
-					FillDensity#=1.0
-				Else
-					fillmode=0
-				EndIf
-				BlockMode=0
+				ToggleFillMode(CtrlDown())
 				
 				Delay 100
 				
@@ -4543,6 +4531,39 @@ Function EditorLocalControls()
 
 
 	
+
+End Function
+
+
+Function ToggleBlockMode()
+
+	If blockmode=0 
+		blockmode=1
+	Else
+		blockmode=0
+	EndIf
+	FillMode=0
+	
+End Function
+
+
+Function ToggleFillMode(UseFillDensity)
+
+	If UseFillDensity
+		fillmode=1
+		FillDensity#=InputFloat#("Enter fill density (0.0 to 1.0): ")
+		If FillDensity#<0.0
+			FillDensity#=0.0
+		ElseIf FillDensity#>1.0
+			FillDensity#=1.0
+		EndIf
+	ElseIf fillmode=0 
+		fillmode=1
+		FillDensity#=1.0
+	Else
+		fillmode=0
+	EndIf
+	BlockMode=0
 
 End Function
 
