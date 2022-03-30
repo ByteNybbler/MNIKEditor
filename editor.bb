@@ -843,6 +843,7 @@ Global camera3
 Global camera4 ; object camera
 Global camera ; text screen camera
 Global CameraPanning=False
+Global GameCamera=False ; whether "game camera mode" is active
 
 Camera1 = CreateCamera()
 TurnEntity Camera1,65,0,0
@@ -14225,6 +14226,10 @@ Function CameraControls()
 	Adj#=0.1
 	If ShiftDown() Then Adj=0.4
 	
+	If KeyPressed(20) ; T
+		ToggleGameCamera()
+	EndIf
+	
 	If KeyDown(57) ; space bar
 		CameraPanning=True
 		If LeftMouse=True
@@ -14322,6 +14327,27 @@ Function CameraControls()
 
 		
 	
+End Function
+
+
+Function ToggleGameCamera()
+
+	GameCamera=Not GameCamera
+
+	If GameCamera
+		RotateEntity Camera1,55,0,0
+		PositionEntity Camera1,EntityX(Camera1),12,EntityZ(Camera1) ; y=12 in-game
+		If Not widescreen
+			CameraZoom Camera1,2
+		Else
+			CameraZoom Camera1,1.5
+		EndIf
+	Else
+		RotateEntity Camera1,65,0,0
+		PositionEntity Camera1,EntityX(Camera1),6,EntityZ(Camera1) ; 7,6,-14
+		CameraZoom Camera1,1
+	EndIf
+
 End Function
 
 
