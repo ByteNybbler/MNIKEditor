@@ -893,16 +893,9 @@ Global TexturePlane
 CurrentMesh=CreateMesh()
 CurrentSurface=CreateSurface(CurrentMesh)
 ; CurrentWaterTile
-Global CurrentWaterTile=CreateMesh()
-Global CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
+Global CurrentWaterTile
+Global CurrentWaterTileSurface
 
-AddVertex (CurrentWaterTileSurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
-AddVertex (CurrentWaterTileSurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-AddVertex (CurrentWaterTileSurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
-AddVertex (CurrentWaterTileSurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
-AddTriangle (CurrentWaterTileSurface,0,1,2)
-AddTriangle (CurrentWaterTileSurface,2,1,3)
-UpdateNormals CurrentWaterTile
 ; BlockMode
 BlockModeMesh=CreateMesh()
 BlockModeSurface=CreateSurface(BlockModeMesh)
@@ -1860,6 +1853,17 @@ Function InitializeGraphicsEntities()
 	EntityColor CurrentGrabbedObjectMarker,100,255,100
 	EntityFX CurrentGrabbedObjectMarker,16 ; disable back-face culling
 	HideEntity CurrentGrabbedObjectMarker
+	
+	CurrentWaterTile=CreateMesh()
+	CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
+	
+	AddVertex (CurrentWaterTileSurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
+	AddVertex (CurrentWaterTileSurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
+	AddVertex (CurrentWaterTileSurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
+	AddVertex (CurrentWaterTileSurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
+	AddTriangle (CurrentWaterTileSurface,0,1,2)
+	AddTriangle (CurrentWaterTileSurface,2,1,3)
+	UpdateNormals CurrentWaterTile
 
 End Function
 
@@ -1911,10 +1915,30 @@ Function UpdateButtonGateTexture()
 	
 End Function
 
+Function CurrentLevelTextureName$()
+
+	If CurrentLevelTexture=-1
+		Return LevelTextureCustomName$
+	Else
+		Return LevelTextureName$(CurrentLevelTexture)
+	EndIf
+
+End Function
+
+Function CurrentWaterTextureName$()
+
+	If CurrentWaterTexture=-1
+		Return WaterTextureCustomName$
+	Else
+		Return WaterTextureName$(CurrentWaterTexture)
+	EndIf
+	
+End Function
+
 ; TODO: Take custom textures into account.
 Function UpdateLevelTexture()
 
-	LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
+	LevelTexture=myLoadTexture("data\Leveltextures\"+CurrentLevelTextureName$(),1)
 	EntityTexture TexturePlane,LevelTexture
 
 End Function
@@ -1922,7 +1946,8 @@ End Function
 ; TODO: Take custom textures into account.
 Function UpdateWaterTexture()
 
-	WaterTexture=MyLoadTexture("data\Leveltextures\"+WaterTexturename$(currentwatertexture),1)
+	WaterTexture=MyLoadTexture("data\Leveltextures\"+CurrentWaterTextureName$(),1)
+	EntityTexture Currentwatertile,WaterTexture
 
 End Function
 
@@ -3585,7 +3610,6 @@ Function EditorLocalControls()
 			FreeTexture WaterTexture
 			UpdateWaterTexture()
 			
-			EntityTexture Currentwatertile,WaterTexture
 			For j=0 To LevelHeight-1
 				EntityTexture WaterMesh(j),WaterTexture
 			Next
@@ -3601,7 +3625,6 @@ Function EditorLocalControls()
 			FreeTexture WaterTexture
 			UpdateWaterTexture()
 			
-			EntityTexture Currentwatertile,WaterTexture
 			For j=0 To LevelHeight-1
 				EntityTexture WaterMesh(j),WaterTexture
 			Next
@@ -14564,20 +14587,9 @@ Function SaveLevel()
 	WriteInt file,WaterTransparent
 	WriteInt file,WaterGlow
 	
-	If CurrentLevelTexture=-1
-		WriteString file, LevelTextureCustomName$
-	Else
-		WriteString file,LevelTextureName$(CurrentLevelTexture)
-	EndIf
-	If CurrentWaterTexture=-1
-		WriteString file, WaterTextureCustomName$
-	Else
-		WriteString file,WaterTextureName$(CurrentWaterTexture)
-	EndIf
-	
-	
+	WriteString file,CurrentLevelTextureName$()
+	WriteString file,CurrentWaterTextureName$()
 
-	
 	
 	
 	
