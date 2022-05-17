@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (03/30/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/17/22)"
 
 Global MASTERUSER=True
 
@@ -2782,7 +2782,9 @@ Function EditorLocalRendering()
 	EndIf
 	
 	If NofObjectAdjusters>9
-		Text StartX+6,StartY+2,"More"
+		; formerly the "More" button, located at StartX+6
+		; ceiling division would be nice at NofObjectAdjusters...
+		Text StartX,StartY+2,"Pg"+(ObjectAdjusterStart/9+1)+"/"+((NofObjectAdjusters-1)/9+1)
 	EndIf
 	
 	StartX=510
