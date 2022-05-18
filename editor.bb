@@ -7515,8 +7515,8 @@ Function UpdateObjectEntityToCurrent(Dest)
 	EndIf
 	
 	If CurrentAccModel>0
-		ObjectAccEntity(Dest)=MyLoadMesh("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+".3ds",0)
-		ObjectAccTexture(Dest)=MyLoadTexture("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+Chr$(65+CurrentObjectData(5))+".jpg",4)
+		ObjectAccEntity(Dest)=CreateAccEntity(CurrentObjectData(4))
+		ObjectAccTexture(Dest)=CreateAccTexture(CurrentObjectData(4),CurrentObjectData(5))
 	
 	
 		ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
@@ -7525,7 +7525,11 @@ Function UpdateObjectEntityToCurrent(Dest)
 		TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
 		TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
 	
-		EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+		If ObjectAccTexture(Dest)=0
+			EntityColor ObjectAccEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
+		Else
+			EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+		EndIf
 	EndIf
 	
 	If ObjectModelName$(Dest)="!Tentacle"
@@ -9580,7 +9584,8 @@ Function DisplayObjectAdjuster(i)
 				tex$="Antenna"
 			Case 56
 				tex$="Janet"
-
+			Default
+				tex$="NotVanilla"
 
 
 
@@ -9597,6 +9602,8 @@ Function DisplayObjectAdjuster(i)
 
 						
 			End Select
+			
+			tex$=CurrentObjectData(2)+"/"+tex$
 				
 			
 		EndIf
@@ -9907,8 +9914,8 @@ Function DisplayObjectAdjuster(i)
 				
 				End Select
 
-			Default
-				tex$="Default"
+			;Default
+			;	tex$="Default"
 			End Select
 
 
@@ -9988,7 +9995,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectModelName$="!NPC"
-			tex2$="Glasses"
+			tex2$="Acc" ;"Glasses"
 			
 			Select CurrentObjectData(4)
 			Case 0
@@ -10027,8 +10034,11 @@ Function DisplayObjectAdjuster(i)
 				tex$="Bowtie"
 
 			Default
-				tex$="Default"
+				;tex$="Default"
+				tex$="NotVanilla"
 			End Select
+			
+			tex$=CurrentObjectData(4)+"/"+tex$
 		EndIf
 		
 		If  CurrentObjectModelName$="!Zapbot" Or CurrentObjectModelName$="!Ufo"
@@ -11703,40 +11713,40 @@ Function AdjustObjectAdjuster(i)
 			; hitpoints
 			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
 		EndIf
-		If CurrentObjectModelName$="!NPC"
-
-			Select CurrentObjectData(2)
-			Case 1,5			
-				If CurrentObjectData(3)>7 CurrentObjectData(3)=1
-				If CurrentObjectData(3)<1 CurrentObjectData(3)=7
-			Case 2			
-				If CurrentObjectData(3)>5 CurrentObjectData(3)=1
-				If CurrentObjectData(3)<1 CurrentObjectData(3)=5
-			Case 3,6,7			
-				If CurrentObjectData(3)>3 CurrentObjectData(3)=1
-				If CurrentObjectData(3)<1 CurrentObjectData(3)=3
-			Case 10			
-				If CurrentObjectData(3)>2 CurrentObjectData(3)=1
-				If CurrentObjectData(3)<1 CurrentObjectData(3)=2
-			Case 27
-				If CurrentObjectData(3)>4 CurrentObjectData(3)=1
-				If CurrentObjectData(3)<1 CurrentObjectData(3)=4
-			Case 28
-				If CurrentObjectData(3)>4 CurrentObjectData(3)=1
-				If CurrentObjectData(3)<1 CurrentObjectData(3)=4
-			Case 46
-				If CurrentObjectData(3)>6 CurrentObjectData(3)=1
-				If CurrentObjectData(3)<1 CurrentObjectData(3)=6
-
-
-
-			Default
-				CurrentObjectData(3)=1
-			End Select
-
-
-
-		EndIf
+;		If CurrentObjectModelName$="!NPC"
+;
+;			Select CurrentObjectData(2)
+;			Case 1,5			
+;				If CurrentObjectData(3)>7 CurrentObjectData(3)=1
+;				If CurrentObjectData(3)<1 CurrentObjectData(3)=7
+;			Case 2			
+;				If CurrentObjectData(3)>5 CurrentObjectData(3)=1
+;				If CurrentObjectData(3)<1 CurrentObjectData(3)=5
+;			Case 3,6,7			
+;				If CurrentObjectData(3)>3 CurrentObjectData(3)=1
+;				If CurrentObjectData(3)<1 CurrentObjectData(3)=3
+;			Case 10			
+;				If CurrentObjectData(3)>2 CurrentObjectData(3)=1
+;				If CurrentObjectData(3)<1 CurrentObjectData(3)=2
+;			Case 27
+;				If CurrentObjectData(3)>4 CurrentObjectData(3)=1
+;				If CurrentObjectData(3)<1 CurrentObjectData(3)=4
+;			Case 28
+;				If CurrentObjectData(3)>4 CurrentObjectData(3)=1
+;				If CurrentObjectData(3)<1 CurrentObjectData(3)=4
+;			Case 46
+;				If CurrentObjectData(3)>6 CurrentObjectData(3)=1
+;				If CurrentObjectData(3)<1 CurrentObjectData(3)=6
+;
+;
+;
+;			Default
+;				CurrentObjectData(3)=1
+;			End Select
+;
+;
+;
+;		EndIf
 		;If  Currentobjectmodelname$="!Zapbot"
 			; zapbot range
 		;	If CurrentobjectData(3)<4 CurrentObjectData(3)=4
@@ -11798,15 +11808,15 @@ Function AdjustObjectAdjuster(i)
 			If CurrentobjectData(4)<-1 CurrentObjectData(4)=359
 			If CurrentobjectData(4)>359 CurrentObjectData(4)=0
 		EndIf
-		If CurrentObjectModelName$="!NPC"
-			If CurrentObjectData(4)=-1 CurrentObjectData(4)=116
+;		If CurrentObjectModelName$="!NPC"
+;			If CurrentObjectData(4)=-1 CurrentObjectData(4)=116
 			If CurrentObjectData(4)=1 CurrentObjectData(4)=101
 			If CurrentObjectData(4)=100 CurrentObjectData(4)=0
-			If CurrentObjectData(4)=117 CurrentObjectData(4)=0
-
-		
-
-		EndIf
+;			If CurrentObjectData(4)=117 CurrentObjectData(4)=0
+;
+;		
+;
+;		EndIf
 		
 		If CurrentObjectType=190
 			If CurrentObjectData(4)<0 Then CurrentObjectData(4)=0
@@ -11869,13 +11879,14 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 
-		If CurrentObjectModelName$="!NPC" Or Currentobjectmodelname$="!Conveyor"
+		;If CurrentObjectModelName$="!NPC"
+		If Currentobjectmodelname$="!Conveyor"
 			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
 			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
 			
 
 		EndIf
-		If CurrentObjectModelName$="!NPC" And (CurrentObjectData(4)<>101 And CurrentObjectData(4)<>102) Then CurrentObjectData(5)=0
+		;If CurrentObjectModelName$="!NPC" And (CurrentObjectData(4)<>101 And CurrentObjectData(4)<>102) Then CurrentObjectData(5)=0
 		
 		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 			If CurrentObjectData(5)>255 CurrentObjectData(5)=0
@@ -12854,11 +12865,9 @@ Function BuildCurrentObjectModel()
 			CurrentHatTexture=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
 		EndIf
 		
-		If CurrentObjectData(4)>100	; acc
-			
-				CurrentAccModel=MyLoadMesh("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+".3ds",0)
-				CurrentAccTexture=MyLoadTexture("data/models/stinker/accessory"+Str$(CurrentObjectData(4))+Chr$(65+CurrentObjectData(5))+".jpg",4)
-			
+		If CurrentObjectData(4)>100 ; acc
+			CurrentAccModel=CreateAccEntity(CurrentObjectData(4))
+			CurrentAccTexture=CreateAccTexture(CurrentObjectData(4),CurrentObjectData(5))
 		EndIf
 
 		
@@ -13407,7 +13416,11 @@ Function BuildCurrentObjectModel()
 	If CurrentAccModel>0
 	
 		
-		EntityTexture CurrentAccModel,CurrentAccTexture
+		If CurrentAccTexture=0
+			EntityColor CurrentAccModel,ModelErrorR,ModelErrorG,ModelErrorB
+		Else
+			EntityTexture CurrentAccModel,CurrentAccTexture
+		EndIf
 		ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
 		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
 		RotateEntity CurrentAccModel,0,0,0
@@ -13900,9 +13913,29 @@ Function CreateHatTexture(Data2,Data3)
 
 End Function
 
-Function CreateAccessoryEntity(Data4)
+Function CreateAccEntity(Data4)
 
-	
+	FileName$="data/models/stinker/accessory"+Str$(Data4)+".3ds"
+	If FileExistsModel(FileName$)
+		Return MyLoadMesh(FileName$,0)
+	Else
+		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
+		Entity=CreateSphere()
+		ScaleMesh Entity,10,10,10
+		Return Entity
+	EndIf
+
+End Function
+
+Function CreateAccTexture(Data4,Data5)
+
+	FileName$="data/models/stinker/accessory"+Str$(Data4)+Chr$(65+Data5)+".jpg"
+	If FileExistsTexture(FileName$)
+		Return MyLoadTexture(FileName$,4)
+	Else
+		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
+		Return 0
+	EndIf
 
 End Function
 
@@ -13964,9 +13997,14 @@ Function CreateObjectModel(Dest)
 			
 			If ObjectData(Dest,4)>100	; acc
 				
-					ObjectAccEntity(Dest)=MyLoadMesh("data/models/stinker/accessory"+Str$(ObjectData(Dest,4))+".3ds",0)
-					ObjectAccTexture(Dest)=MyLoadTexture("data/models/stinker/accessory"+Str$(ObjectData(Dest,4))+Chr$(65+ObjectData(Dest,5))+".jpg",4)
-				EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+				ObjectAccEntity(Dest)=CreateAccEntity(ObjectData(Dest,4))
+				ObjectAccTexture(Dest)=CreateAccTexture(ObjectData(Dest,4),ObjectData(Dest,5))
+				
+				If ObjectAccTexture(Dest)=0
+					EntityColor ObjectAccEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
+				Else
+					EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+				EndIf
 				
 				ScaleEntity ObjectAccEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 		
