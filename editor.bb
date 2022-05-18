@@ -374,7 +374,7 @@ LogicName$(4)="Bridge"
 LogicName$(5)="Lava"
 LogicName$(6)="06"
 LogicName$(7)="07"
-LogicName$(8)="08"
+LogicName$(8)="Cage"
 LogicName$(9)="Button"
 LogicName$(10)="Stinker Exit"
 LogicName$(11)="Ice"
@@ -858,8 +858,14 @@ Global Camera4Proj=0
 Global CameraProj=0
 
 Global CameraPanning=False
-Global GameCamera=False ; whether "game camera mode" is active
+Global GameCamera=False ; whether "game camera mode" is active (simulates the in-game camera)
+
+Global Camera1Zoom#=1.0
 Global Camera4Zoom#=8.0
+
+Global Camera1StartY=6
+; saved when entering orthographic mode since orthographic mode mouse wheel scrolling does not change the height, unlike perspective mode mouse wheel scrolling
+Global Camera1PerspectiveY#
 
 s=CreateMesh()
 su=CreateSurface(s)
@@ -1786,7 +1792,7 @@ Function InitializeGraphicsCameras()
 	
 	Camera1 = CreateCamera()
 	TurnEntity Camera1,65,0,0
-	PositionEntity Camera1,7,6,-14 
+	PositionEntity Camera1,7,Camera1StartY,-14
 	CameraViewport camera1,0,0,500,500
 	CameraRange camera1,.1,50
 	
@@ -1812,7 +1818,6 @@ Function InitializeGraphicsCameras()
 	CameraRange camera4,.1,1000
 	RotateEntity Camera4,25,0,0
 	PositionEntity Camera4,0,303.8,-8
-	CameraZoom Camera4,Camera4Zoom#
 	
 	Camera = CreateCamera() ; Text Screen Camera
 	
@@ -1898,6 +1903,9 @@ Function UpdateCameraProj()
 	CameraProjMode Camera3,Camera3Proj
 	CameraProjMode Camera4,Camera4Proj
 	CameraProjMode Camera,CameraProj
+	
+	CameraZoom Camera1,Camera1Zoom#
+	CameraZoom Camera4,Camera4Zoom#
 
 End Function
 
@@ -2854,7 +2862,26 @@ End Function
 
 Function EditorLocalControls()
 
-	If KeyPressed(65)
+	If KeyPressed(64) ; F6
+		; toggle orthographic projection
+		If Camera1Proj=1
+			; to orthographic
+			Camera1Proj=2
+			Camera1Zoom#=0.015
+			Camera1PerspectiveY#=EntityY(Camera1) ; save to return to it later
+			PositionEntity Camera1,EntityX(Camera1),Camera1StartY*2,EntityZ(Camera1)
+		Else
+			; to perspective
+			Camera1Proj=1
+			Camera1Zoom#=1.0
+			PositionEntity Camera1,EntityX(Camera1),Camera1PerspectiveY#,EntityZ(Camera1)
+		EndIf
+		UpdateCameraProj()
+		CameraZoom Camera1,Camera1Zoom#
+	EndIf
+
+	If KeyPressed(65) ; F7
+		; toggle wireframe mode
 		UsingWireFrame=Not UsingWireFrame
 		WireFrame UsingWireFrame
 	EndIf
@@ -14489,9 +14516,24 @@ Function CameraControls()
 	
 	If MouseScroll<>0
 		If Target=Camera1 And mx<510 And my>=0 And my<500 ; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
-			SpeedFactor#=3.0*Adj
-			TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
+			; level camera
+			If Camera1Proj=1 ; perspective
+				SpeedFactor#=3.0*Adj
+				TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
+			ElseIf Camera1Proj=2 ; orthographic
+				ZoomSpeed#=12.0*Adj
+				If MouseScroll>0
+					Camera1Zoom#=Camera1Zoom#*ZoomSpeed
+				ElseIf MouseScroll<0
+					Camera1Zoom#=Camera1Zoom#/ZoomSpeed
+				EndIf
+				If Camera1Zoom#<0.001
+					Camera1Zoom#=0.001
+				EndIf
+				CameraZoom Camera1,Camera1Zoom#
+			EndIf
 		ElseIf Target=Camera4
+			; object camera
 			ZoomSpeed#=12.0*Adj
 			If MouseScroll>0
 				Camera4Zoom#=Camera4Zoom#*ZoomSpeed
