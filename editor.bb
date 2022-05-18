@@ -9469,139 +9469,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Hat"
 			
-			Select CurrentObjectData(2)
-			Case 0
-				tex$="None"
-			Case 1
-				tex$="Cap"
-			Case 2
-				tex$="Top Hat"
-			Case 3
-				tex$="Builder"
-			Case 4
-				tex$="Farmer"
-			Case 5
-				tex$="Wizard"
-			Case 6
-				tex$="Bowler"
-			Case 7
-				tex$="BaseBall"
-			Case 8
-				tex$="Beanie"
-			Case 9
-				tex$="Crown"
-			Case 10
-				tex$="Cape"
-			Case 11
-				tex$="Clown"
-			Case 12
-				tex$="Jewels"
-			Case 13
-				tex$="Feather"
-			Case 14
-				tex$="Flowerpot"
-			Case 15
-				tex$="SillyBase"
-			Case 16
-				tex$="Pirate"
-			Case 17
-				tex$="Safari"
-			Case 18
-				tex$="RobinHood"
-			Case 19
-				tex$="Snowball"
-			Case 20
-				tex$="Sombrero"
-			Case 21
-				tex$="ZBot"
-			Case 22
-				tex$="Santa"
-			Case 23
-				tex$="Captain"
-			Case 24
-				tex$="Bicorn"
-			Case 25
-				tex$="Cowboy"
-			Case 26
-				tex$="FlatRed"
-			Case 27
-				tex$="Flower1"
-			Case 28
-				tex$="Flower2"
-			Case 29
-				tex$="Legion"
-			Case 30
-				tex$="Hat-Ring"
-			Case 31
-				tex$="BandRing1"
-			Case 32
-				tex$="BandRing2"
-			Case 33
-				tex$="Fedora"
-			Case 34
-				tex$="Leaf"
-			Case 35
-				tex$="Nest"
-			Case 36
-				tex$="Pirate1"
-			Case 37
-				tex$="Pirate2"
-			Case 38
-				tex$="Sailor1"
-			Case 39
-				tex$="Sailor2"
-			Case 40
-				tex$="Wrap"
-			Case 41
-				tex$="Sunhat"
-			Case 42
-				tex$="Helmet"
-			Case 43
-				tex$="Fez"
-			Case 44
-				tex$="Sunhat2"
-			Case 45
-				tex$="Chef"
-			Case 46
-				tex$="Bowtie"
-			Case 47
-				tex$="Helmet2"
-			Case 48
-				tex$="Headphone"
-			Case 49
-				tex$="Viking"
-			Case 50
-				tex$="Welder"
-			Case 51
-				tex$="Punk"
-			Case 52
-				tex$="Ninja"
-			Case 53
-				tex$="Bike"
-			Case 54
-				tex$="RainbwCap"
-			Case 55
-				tex$="Antenna"
-			Case 56
-				tex$="Janet"
-			Default
-				tex$="NotVanilla"
-
-
-
-
-
-
-
-
-
-
-
-
-				
-
-						
-			End Select
+			tex$=GetAccessoryName$(CurrentObjectData(2))
 			
 			tex$=CurrentObjectData(2)+"/"+tex$
 				
@@ -9997,46 +9865,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Acc" ;"Glasses"
 			
-			Select CurrentObjectData(4)
-			Case 0
-				tex$="None"
-			Case 101
-				tex$="Thick Frame"
-			Case 102
-				tex$="Thin Large"
-			Case 103
-				tex$="Eyepatch L"
-			Case 104
-				tex$="Eyepatch R"
-			Case 105
-				tex$="Goggles"
-			Case 106
-				tex$="Parrot"
-			Case 107
-				tex$="Square"
-			Case 108
-				tex$="Round"
-			Case 109
-				tex$="Pink"
-			Case 110
-				tex$="Sword"
-			Case 111
-				tex$="Moustache"
-			Case 112
-				tex$="Rose"
-			Case 113
-				tex$="3D"
-			Case 114
-				tex$="Bolt"
-			Case 115
-				tex$="Monocle"
-			Case 116
-				tex$="Bowtie"
-
-			Default
-				;tex$="Default"
-				tex$="NotVanilla"
-			End Select
+			tex$=GetAccessoryName$(CurrentObjectData(4))
 			
 			tex$=CurrentObjectData(4)+"/"+tex$
 		EndIf
@@ -11810,8 +11639,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 ;		If CurrentObjectModelName$="!NPC"
 ;			If CurrentObjectData(4)=-1 CurrentObjectData(4)=116
-			If CurrentObjectData(4)=1 CurrentObjectData(4)=101
-			If CurrentObjectData(4)=100 CurrentObjectData(4)=0
+;			If CurrentObjectData(4)=1 CurrentObjectData(4)=101
+;			If CurrentObjectData(4)=100 CurrentObjectData(4)=0
 ;			If CurrentObjectData(4)=117 CurrentObjectData(4)=0
 ;
 ;		
@@ -12865,7 +12694,7 @@ Function BuildCurrentObjectModel()
 			CurrentHatTexture=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
 		EndIf
 		
-		If CurrentObjectData(4)>100 ; acc
+		If CurrentObjectData(4)>0 ;100 ; acc
 			CurrentAccModel=CreateAccEntity(CurrentObjectData(4))
 			CurrentAccTexture=CreateAccTexture(CurrentObjectData(4),CurrentObjectData(5))
 		EndIf
@@ -13875,9 +13704,170 @@ Function CalculateUV(Texture,i2,j2,Rotation,size)
 End Function
 
 
+Function GetAccessoryName$(DataX)
+
+	Select DataX
+	Case 0
+		tex$="None"
+	Case 1
+		tex$="Cap"
+	Case 2
+		tex$="Top Hat"
+	Case 3
+		tex$="Builder"
+	Case 4
+		tex$="Farmer"
+	Case 5
+		tex$="Wizard"
+	Case 6
+		tex$="Bowler"
+	Case 7
+		tex$="BaseBall"
+	Case 8
+		tex$="Beanie"
+	Case 9
+		tex$="Crown"
+	Case 10
+		tex$="Cape"
+	Case 11
+		tex$="Clown"
+	Case 12
+		tex$="Jewels"
+	Case 13
+		tex$="Feather"
+	Case 14
+		tex$="Flowerpot"
+	Case 15
+		tex$="SillyBase"
+	Case 16
+		tex$="Pirate"
+	Case 17
+		tex$="Safari"
+	Case 18
+		tex$="RobinHood"
+	Case 19
+		tex$="Snowball"
+	Case 20
+		tex$="Sombrero"
+	Case 21
+		tex$="ZBot"
+	Case 22
+		tex$="Santa"
+	Case 23
+		tex$="Captain"
+	Case 24
+		tex$="Bicorn"
+	Case 25
+		tex$="Cowboy"
+	Case 26
+		tex$="FlatRed"
+	Case 27
+		tex$="Flower1"
+	Case 28
+		tex$="Flower2"
+	Case 29
+		tex$="Legion"
+	Case 30
+		tex$="Hat-Ring"
+	Case 31
+		tex$="BandRing1"
+	Case 32
+		tex$="BandRing2"
+	Case 33
+		tex$="Fedora"
+	Case 34
+		tex$="Leaf"
+	Case 35
+		tex$="Nest"
+	Case 36
+		tex$="Pirate1"
+	Case 37
+		tex$="Pirate2"
+	Case 38
+		tex$="Sailor1"
+	Case 39
+		tex$="Sailor2"
+	Case 40
+		tex$="Wrap"
+	Case 41
+		tex$="Sunhat"
+	Case 42
+		tex$="Helmet"
+	Case 43
+		tex$="Fez"
+	Case 44
+		tex$="Sunhat2"
+	Case 45
+		tex$="Chef"
+	Case 46
+		tex$="Bowtie"
+	Case 47
+		tex$="Helmet2"
+	Case 48
+		tex$="Headphone"
+	Case 49
+		tex$="Viking"
+	Case 50
+		tex$="Welder"
+	Case 51
+		tex$="Punk"
+	Case 52
+		tex$="Ninja"
+	Case 53
+		tex$="Bike"
+	Case 54
+		tex$="RainbwCap"
+	Case 55
+		tex$="Antenna"
+	Case 56
+		tex$="Janet"
+	Case 101
+		tex$="Thick Frame"
+	Case 102
+		tex$="Thin Large"
+	Case 103
+		tex$="Eyepatch L"
+	Case 104
+		tex$="Eyepatch R"
+	Case 105
+		tex$="Goggles"
+	Case 106
+		tex$="Parrot"
+	Case 107
+		tex$="Square"
+	Case 108
+		tex$="Round"
+	Case 109
+		tex$="Pink"
+	Case 110
+		tex$="Sword"
+	Case 111
+		tex$="Moustache"
+	Case 112
+		tex$="Rose"
+	Case 113
+		tex$="3D"
+	Case 114
+		tex$="Bolt"
+	Case 115
+		tex$="Monocle"
+	Case 116
+		tex$="Bowtie"
+	Default
+		tex$="NotVanilla"
+	
+	End Select
+	
+	Return tex$
+
+End Function
+
+
 Function CreateHatEntity(Data2)
 
-	If Data2>9 ; two digit
+	If Data2>99
+		Prefix$="data/models/stinker/accessory"
+	ElseIf Data2>9 ; two digit
 		Prefix$="data/models/stinker/accessory0"
 	Else
 		Prefix$="data/models/stinker/accessory00"
@@ -13897,7 +13887,9 @@ End Function
 
 Function CreateHatTexture(Data2,Data3)
 
-	If Data2>9 ; two digit
+	If Data2>99
+		Prefix$="data/models/stinker/accessory"
+	ElseIf Data2>9 ; two digit
 		Prefix$="data/models/stinker/accessory0"
 	Else
 		Prefix$="data/models/stinker/accessory00"
@@ -13915,7 +13907,15 @@ End Function
 
 Function CreateAccEntity(Data4)
 
-	FileName$="data/models/stinker/accessory"+Str$(Data4)+".3ds"
+	If Data4>99
+		Prefix$="data/models/stinker/accessory"
+	ElseIf Data4>9 ; two digit
+		Prefix$="data/models/stinker/accessory0"
+	Else
+		Prefix$="data/models/stinker/accessory00"
+	EndIf
+
+	FileName$=Prefix$+Str$(Data4)+".3ds"
 	If FileExistsModel(FileName$)
 		Return MyLoadMesh(FileName$,0)
 	Else
@@ -13929,7 +13929,15 @@ End Function
 
 Function CreateAccTexture(Data4,Data5)
 
-	FileName$="data/models/stinker/accessory"+Str$(Data4)+Chr$(65+Data5)+".jpg"
+	If Data4>99
+		Prefix$="data/models/stinker/accessory"
+	ElseIf Data4>9 ; two digit
+		Prefix$="data/models/stinker/accessory0"
+	Else
+		Prefix$="data/models/stinker/accessory00"
+	EndIf
+
+	FileName$=Prefix$+Str$(Data4)+Chr$(65+Data5)+".jpg" ; Note the 65+Data, which is different from CreateHatTexture's 64+Data.
 	If FileExistsTexture(FileName$)
 		Return MyLoadTexture(FileName$,4)
 	Else
@@ -13995,7 +14003,7 @@ Function CreateObjectModel(Dest)
 				PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 			EndIf
 			
-			If ObjectData(Dest,4)>100	; acc
+			If ObjectData(Dest,4)>0 ;100 ; acc
 				
 				ObjectAccEntity(Dest)=CreateAccEntity(ObjectData(Dest,4))
 				ObjectAccTexture(Dest)=CreateAccTexture(ObjectData(Dest,4),ObjectData(Dest,5))
