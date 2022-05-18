@@ -15,7 +15,7 @@ Scroll the mouse wheel: Navigate the adventure list. Hold shift to scroll faster
 
 Scroll the mouse wheel: Navigate the LV and DG lists depending on where the mouse is hovering. Hold shift to scroll faster.
 Ctrl+Click the LV or DG column: Type in the number of the wlv or dia you want to edit.
-Right click: Right-clicking a wlv number will copy the wlv. Right-click the same wlv again to cancel the copy, or left-click a nonexistent wlv to copy to that wlv.
+Right click: Right-clicking a wlv or dia number will copy the wlv or dia. Right-click the same wlv or dia again to cancel the copy, or left-click a nonexistent wlv or dia to copy to that wlv or dia.
 Home: Move cursor to beginning of line.
 End: Move cursor to end of line.
 

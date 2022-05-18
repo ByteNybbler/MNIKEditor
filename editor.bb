@@ -200,6 +200,8 @@ Dim MasterDialogList(1000),MasterLevelList(1000)
 
 Global CopyingLevel=False
 Global CopiedLevel=-1
+Global CopyingDialog=False
+Global CopiedDialog=-1
 
 
 Global AdventureExitWonLevel, AdventureExitWonX, AdventureExitWonY ; at what hub level and x/y do you reappear if won.
@@ -17318,6 +17320,7 @@ Function StartMaster()
 	SetEditorMode(8)
 	
 	CopyingLevel=False
+	CopyingDialog=False
 
 	Camera1Proj=0
 	Camera2Proj=0
@@ -17428,6 +17431,7 @@ Function ResumeMaster()
 	SetEditorMode(8)
 	
 	CopyingLevel=False
+	CopyingDialog=False
 	
 	Camera1Proj=0
 	Camera2Proj=0
@@ -17562,6 +17566,10 @@ Function MasterMainLoop()
 				r=100
 				g=100
 				b=100
+			Else If CopyingDialog And CopiedDialog=i+MasterDialogListStart
+				r=0
+				g=255
+				b=255
 			Else
 				r=210
 				g=210
@@ -18005,10 +18013,38 @@ Function MasterMainLoop()
 				For i=1 To 20
 					If MouseY()>62+i*20 And MouseY()<=82+i*20
 						SelectedDialog = i+MasterDialogListStart
-						Currentdialog=SelectedDialog
-						StartDialog()
-						Repeat
-						Until MouseDown(1)=0
+						If mb=1
+							If CopyingDialog And DialogExists(SelectedDialog)=False
+								; copy from CopiedDialog
+								If AdventureCurrentArchive=1
+									ex2$="Archive\"
+								Else
+									ex2$="Current\"
+								EndIf
+
+								dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+								CopyFile(dirbase$+CopiedDialog+".dia",dirbase$+SelectedDialog+".dia")
+								MasterDialogList(SelectedDialog)=1
+								
+								CopyingDialog=False
+							Else
+								Currentdialog=SelectedDialog
+								StartDialog()
+							EndIf
+							
+							Repeat
+							Until MouseDown(1)=0
+						ElseIf mb=2 And DialogExists(SelectedDialog)=True
+							If CopyingDialog And SelectedDialog=CopiedDialog
+								CopyingDialog=False
+							Else
+								CopyingDialog=True
+								CopiedDialog=SelectedDialog
+							EndIf
+							
+							Repeat
+							Until MouseDown(2)=0
+						EndIf
 					EndIf
 				Next
 			EndIf
