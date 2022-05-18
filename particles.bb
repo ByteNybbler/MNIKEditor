@@ -69,6 +69,11 @@ End Function
 
 Function AddParticle(tex,x#,y#,z#,angle#,size#,dx#,dy#,dz#,dangle#,dsize#,ddx#,ddy#,ddz#,LifeSpan,Orient)
 
+	If NofParticles=MaxNofParticles
+		;ShowMessage("We're hitting the ceiling, boys! NofParticles="+NofParticles,1000)
+		Return
+	EndIf
+
 	;Texture	; what cell # in the texture (e.g. 0-63 in an 8x8)
 	;x#,y#,z#	; x/y/z position of center
 	;angle#		; angle (0-359 degrees), rotated clockwise

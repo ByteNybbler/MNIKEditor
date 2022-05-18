@@ -68,6 +68,9 @@ Global TextMenuButtonB=0
 Global TextMenuXR=100
 Global TextMenuXG=100
 Global TextMenuXB=0
+Global TextWarningR=255
+Global TextWarningG=100
+Global TextWarningB=100
 
 Const ColorsConfig$="colors.cfg"
 
@@ -1644,6 +1647,8 @@ Dim CustomGlyphCMD(NoOfGlyphs,5)
 Global SelectedShard
 Global SelectedGlyph
 
+Global MaxParticleWarningTimer=0 ; number of frames remaining before the "too many particles" warning message disappears
+
 
 InitializeGraphicsCameras() ; needed for loading particles
 InitializeGraphicsEntities()
@@ -2316,6 +2321,22 @@ Function EditorMainLoop()
 	
 	DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
 	CurrentTooltip$=""
+	
+	If NofParticles=MaxNofParticles
+		MaxParticleWarningTimer=60
+	EndIf
+	
+	If MaxParticleWarningTimer<>0
+		MaxParticleWarningTimer=MaxParticleWarningTimer-1
+		StartX=250
+		StartY=250
+		Message$="WARNING! Too many particles! This will most likely MAV in-game!"
+		TextOffset=GetCenteredTextOffset(Message$)
+		Color RectToolbarR,RectToolbarG,RectToolbarB
+		Rect StartX-TextOffset,StartY-10,TextOffset*2,30,True
+		Color TextWarningR,TextWarningG,TextWarningB
+		Text StartX-TextOffset,StartY,Message$
+	EndIf
 	
 	FinishDrawing()
 
@@ -4910,7 +4931,7 @@ Function SetupWarning()
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
-	Color 255,100,100
+	Color TextWarningR,TextWarningG,TextWarningB
 
 End Function
 

@@ -37,6 +37,11 @@ End Type
 
 Global NofParticles=0
 
+; The following is the estimated max number of particles that my machine allowed before a MAV.
+; I am not sure if this number differs between machines.
+; ~ MNIK
+Const MaxNofParticles=11500
+
 Type Particle2
 	Field Texture	; what cell # in the texture (e.g. 0-63 in an 8x8)
 	Field x#		; x/y/z position of center
