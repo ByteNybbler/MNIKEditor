@@ -48,7 +48,7 @@
 
 ### TILES MENU
 
-* Enter: Toggled the used state of the tile attribute being hovered over with the mouse.
+* Enter: Toggled the used state of the tile attribute being hovered over with the mouse. This means that any new tiles you "place" won't modify that attribute of the tile(s) you place it on.
 * Shift+Enter: Mark all tile attributes as unused except for the tile attribute being hovered over with the mouse.
 * I while hovering mouse over the TILES menu: Rotates the previewed tile counter-clockwise.
 * O while hovering mouse over the TILES menu: Rotates the previewed tile clockwise.
@@ -83,4 +83,4 @@
 * Ctrl+M: Toggle figure EIght.
 * Ctrl+U: Toggle UpDown.
 * Ctrl+L: Toggle LeftRight.
-* Ctrl+T: Toggle RT.
+* Ctrl+T: Toggle RT. This effect actually does nothing in-game, at least in vanilla.

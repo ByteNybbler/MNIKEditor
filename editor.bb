@@ -11378,11 +11378,11 @@ Function AdjustObjectAdjuster(i)
 
 		EndIf
 
-		If CurrentObjectModelName$="!Gem"
-			If CurrentObjectData(1)>6 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=6
+		;If CurrentObjectModelName$="!Gem"
+		;	If CurrentObjectData(1)>15 CurrentObjectData(1)=0
+		;	If CurrentObjectData(1)<0 CurrentObjectData(1)=15
 
-		EndIf
+		;EndIf
 		If CurrentObjectModelName$="!Bowler"
 			If CurrentObjectData(1)>2 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=2
@@ -12966,10 +12966,21 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CopyEntity(CoinMesh)
 		EntityTexture CurrentObjectModel,TokenCoinTexture
 	Else If CurrentObjectModelName$="!Gem"
-		If currentobjectdata(0)<0 Or currentobjectdata(0)>2 Then currentobjectdata(0)=0
-		CurrentObjectModel=CopyEntity(GemMesh(CurrentObjectData(0)))
-		If currentobjectdata(1)<0 Or currentobjectdata(1)>7 Then currentobjectdata(1)=0
-		EntityTexture CurrentObjectModel,TeleporterTexture(CurrentObjectData(1))
+		;If currentobjectdata(0)<0 Or currentobjectdata(0)>2 Then currentobjectdata(0)=0
+		;If currentobjectdata(1)<0 Or currentobjectdata(1)>7 Then currentobjectdata(1)=0
+		
+		; Note that the vanilla WA3E player will kill you without hesitation if you have a Data0 (gem mesh) outside this range.
+		Data0=CurrentObjectData(0)
+		If Data0<0 Or Data0>2 Then Data0=0
+		
+		CurrentObjectModel=CopyEntity(GemMesh(Data0))
+		
+		Data1=CurrentObjectData(1)
+		If Data1<0 Or Data1>8
+			EntityColor CurrentObjectModel,255,0,0
+		Else
+			EntityTexture CurrentObjectModel,TeleporterTexture(Data1)
+		EndIf
 	Else If CurrentObjectModelName$="!Crystal"
 		CurrentObjectModel=CopyEntity(GemMesh(2))
 		If currentobjectdata(0)=0
@@ -12992,9 +13003,11 @@ Function BuildCurrentObjectModel()
 	Else If CurrentObjectModelName$="!SteppingStone"
 		CurrentObjectModel=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		If CurrentObjectData(0)<0 Or CurrentObjectData(0)>3
-			CurrentObjectData(0)=0
+			;CurrentObjectData(0)=0
+			EntityColor CurrentObjectModel,255,0,0
+		Else
+			EntityTexture CurrentObjectModel,SteppingStoneTexture(CurrentObjectData(0))
 		EndIf
-		EntityTexture CurrentObjectModel,SteppingStoneTexture(CurrentObjectData(0))
 	Else If CurrentObjectModelName$="!Spring" 
 		CurrentObjectModel=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		RotateMesh CurrentObjectModel,90,0,0
@@ -14043,9 +14056,21 @@ Function CreateObjectModel(Dest)
 			EntityTexture ObjectEntity(Dest),TokenCoinTexture
 
 		Else If ObjectModelName$(Dest)= "!Gem"
-			ObjectEntity(Dest)=CopyEntity(GemMesh(ObjectData(Dest,0))) 
-			EntityTexture ObjectEntity(Dest),GoldStarTexture
-			EntityTexture ObjectEntity(Dest),TeleporterTexture(ObjectData(Dest,1))
+			;EntityTexture ObjectEntity(Dest),GoldStarTexture ; wtf? r u ok??
+			;EntityTexture ObjectEntity(Dest),TeleporterTexture(Data1)
+			
+			; Note that the vanilla WA3E player will kill you without hesitation if you have a Data0 (gem mesh) outside this range.
+			Data0=ObjectData(Dest,0)
+			If Data0<0 Or Data0>2 Then Data0=0
+			
+			ObjectEntity(Dest)=CopyEntity(GemMesh(Data0))
+			
+			Data1=ObjectData(Dest,1)
+			If Data1<0 Or Data1>8
+				EntityColor ObjectEntity(Dest),255,0,0
+			Else
+				EntityTexture ObjectEntity(Dest),TeleporterTexture(Data1)
+			EndIf
 		
 		Else If ObjectModelName$(dest)="!Crystal"
 			ObjectEntity(Dest)=CopyEntity(GemMesh(2))
@@ -14126,7 +14151,12 @@ Function CreateObjectModel(Dest)
 
 		Else If ObjectModelName$(Dest)="!SteppingStone"
 			ObjectENtity(Dest)=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
-			EntityTexture ObjectEntity(Dest),SteppingStoneTexture(ObjectData(Dest,0))
+			;EntityTexture ObjectEntity(Dest),SteppingStoneTexture(ObjectData(Dest,0))
+			If ObjectData(Dest,0)<0 Or ObjectData(Dest,0)>3
+				EntityColor ObjectEntity(Dest),255,0,0
+			Else
+				EntityTexture ObjectEntity(Dest),SteppingStoneTexture(ObjectData(Dest,0))
+			EndIf
 		Else If ObjectModelName$(Dest)="!Door"
 			ObjectENtity(Dest)=MyLoadmesh("data\models\houses\door01.3ds",0)
 			
