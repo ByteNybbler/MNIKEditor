@@ -30,7 +30,7 @@
 
 ### CAMERA CONTROLS
 
-* Scroll the mouse wheel: Zoom the target camera in and out or move it up and down. The target camera is determined by the mouse's current location. Hold shift to make this faster.
+* Scroll the mouse wheel: Zoom the target camera in and out or move it up and down. The target camera is determined by the mouse's current location. Hold shift to go faster.
 * Arrow keys or WASD or Numpad 2/4/6/8: Pan the target camera. Hold shift to move faster.
 * Space+Click+Drag: Pan the level editor camera.
 * X or Numpad 5: Reset the target camera's rotation.
