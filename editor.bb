@@ -20477,7 +20477,7 @@ Function GetCommandName$(id)
 	Case 63
 		Return "Change NPC 2"
 	Case 64
-		Return "NPC Particle"
+		Return "NPC Exclamation"
 	Case 65
 		Return "(MOD) Plyr Face"
 	Case 102
@@ -20550,13 +20550,15 @@ Function GetCMDData2$(id)
 		Return "Source X"
 	Case 12
 		Return "Volume Step"
+	Case 51
+		Return "Obsolete"
 	Case 21,22
 		Return "Interchange"
 	Case 23,24,25,26,27
 		Return "AskAbout"
 	Case 41,42
 		Return "Source Y"
-	Case 51,61
+	Case 61
 		Return "Dest X"
 	Case 52
 		Return "MvmtType"
@@ -20583,13 +20585,15 @@ Function GetCMDData3$(id)
 		Return "Source Y"
 	Case 12
 		Return "Pitch"
+	Case 51
+		Return "Obsolete"
 	Case 21
 		Return "Obsolete?"
 	Case 27
 		Return "Interchange"
 	Case 41,42
 		Return "Dest X"
-	Case 51,61
+	Case 61
 		Return "Dest Y"
 	Case 52
 		Return "MvTpData"
