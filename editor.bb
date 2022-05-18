@@ -2513,14 +2513,11 @@ Function DrawTooltip(StartX,StartY,Message$)
 
 	;ShowMessage("Showing tooltip at "+StartX+","+StartY+": "+Message$,1000)
 	
-	;TextOffset=GetCenteredTextOffset(Message$)
 	TextPixelLength=GetTextPixelLength(Message$)
 
 	Color RectToolbarR,RectToolbarG,RectToolbarB
-	;Rect StartX-TextOffset,StartY-40,TextOffset*2,30,True
 	Rect StartX,StartY-40,TextPixelLength,30,True
 	Color TextLevelR,TextLevelG,TextLevelB
-	;Text StartX-TextOffset,StartY-30,Message$
 	Text StartX,StartY-30,Message$
 
 End Function
@@ -2617,9 +2614,11 @@ Function EditorGlobalControls()
 		EndIf
 	Next
 	
-	If KeyPressed(66) And displayfullscreen=False ; F8
-		ResetWindowSize()
-	EndIf
+	; Disabled indefinitely due to potential instability.
+	; Getting this to work would take a huge amount of effort.
+	;If KeyPressed(66) And displayfullscreen=False ; F8
+	;	ResetWindowSize()
+	;EndIf
 
 End Function
 
