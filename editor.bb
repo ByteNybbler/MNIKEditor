@@ -8981,7 +8981,8 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)<10
 				tex2$="Col From"
 			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$="Command"
+				tex2$="CMD"
+				tex$=Str(CurrentObjectData(0))+"/"+GetCommandName$(CurrentObjectData(0))
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="Colour"
 
@@ -9222,6 +9223,8 @@ Function DisplayObjectAdjuster(i)
 				tex2$="Colour2"
 			Else If (CurrentObjectSubType Mod 32)<10
 				tex2$="Col To"
+			Else If (CurrentObjectSubType Mod 32)=15
+				tex2$=GetCMDData1$(CurrentObjectData(0))
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="SubColour"
 			Else If CurrentObjectSubType = 10
@@ -9404,6 +9407,8 @@ Function DisplayObjectAdjuster(i)
 				tex2$="Colour3"
 			Else If (CurrentObjectSubType Mod 32)<10
 				tex2$="SubCol From"
+			Else If (CurrentObjectSubType Mod 32)=15
+				tex2$=GetCMDData2$(CurrentObjectData(0))
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="Direction"
 			Else If CurrentObjectSubType = 10
@@ -9753,6 +9758,8 @@ Function DisplayObjectAdjuster(i)
 				If CurrentObjectData(3)=-1 Then	tex$="No Change"
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2
 				tex2$="How Many"
+			Else If (CurrentObjectSubType Mod 32)=15
+				tex2$=GetCMDData3$(CurrentObjectData(0))
 	
 
 			EndIf
@@ -9943,6 +9950,8 @@ Function DisplayObjectAdjuster(i)
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
 				tex2$="Yaw"
 				If CurrentObjectData(4)=-1 Then	tex$="No Change"
+			Else If (CurrentObjectSubType Mod 32)=15
+				tex2$=GetCMDData4$(CurrentObjectData(0))
 
 
 			EndIf
@@ -20397,6 +20406,213 @@ Function SaveDialogFile()
 	Next
 	CloseFile file
 	
+End Function
+
+Function GetCommandName$(id)
+	Select id
+	Case 1
+		Return "Activate"
+	Case 2
+		Return "Deactivate"
+	Case 3
+		Return "Toggle"
+	Case 4
+		Return "Change Int"
+	Case 5
+		Return "Destroy"
+	Case 6
+		Return "Change Light"
+	Case 7
+		Return "Warp Lvl"
+	Case 8
+		Return "Start Adv"
+	Case 9
+		Return "Earthquake"
+	Case 10
+		Return "Global SFX"
+	Case 11
+		Return "Local SFX"
+	Case 12
+		Return "Adjust Music"
+	Case 13
+		Return "Change Weather"
+	Case 21
+		Return "Start Dialog"
+	Case 22
+		Return "Chng Dia Start"
+	Case 23
+		Return "Acti. AskAbout"
+	Case 24
+		Return "Deac. AskAbout"
+	Case 25
+		Return "Togg. AskAbout"
+	Case 26
+		Return "Set AA Active"
+	Case 27
+		Return "Set AskAbt Dia"
+	Case 28
+		Return "Acti. MstrAA"
+	Case 29
+		Return "Deac. MstrAA"
+	Case 30
+		Return "Togg. MstrAA"
+	Case 41
+		Return "Silent CopyObj"
+	Case 42
+		Return "Flashy CopyObj"
+	Case 51
+		Return "Chng MvmtType"
+	Case 52
+		Return "Chng MvTp+Data"
+	Case 61
+		Return "Move NPC"
+	Case 62
+		Return "Change NPC 1"
+	Case 63
+		Return "Change NPC 2"
+	Case 64
+		Return "NPC Particle"
+	Case 65
+		Return "(MOD) Plyr Face"
+	Case 102
+		Return "Cutscene 1"
+	Case 103
+		Return "Cutscene 2"
+	Case 104
+		Return "Cutscene 3"
+	Case 111
+		Return "Refill Lamp"
+	Case 112
+		Return "4^2 Inventory"
+	Case 113
+		Return "5^2 Inventory"
+	Case 114
+		Return "Enable Shards"
+	Case 115
+		Return "Floing Menu"
+	Case 116
+		Return "Change Hat"
+	Case 117
+		Return "Chng Accessory"
+	Default
+		Return "N/A"
+	End Select
+End Function
+
+Function GetCMDData1$(id)
+	Select id
+	Case 1,2,3,4,5,51,52
+		Return "Target ID"
+	Case 6
+		Return "Red"
+	Case 7
+		Return "Level"
+	Case 8
+		Return "Adv. No"
+	Case 9
+		Return "Duration"
+	Case 10,11
+		Return "Sound"
+	Case 12
+		Return "Volume"
+	Case 13
+		Return "Weather"
+	Case 21,22,23,24,25,26,27
+		Return "Dialog No"
+	Case 28,29,30
+		Return "MstrAA"
+	Case 41,42
+		Return "Source X"
+	Case 61,62,63,64
+		Return "NPC ID"
+	Case 65
+		Return "Expr. No"
+	Default
+		Return "N/A (1)"
+	End Select
+End Function
+
+Function GetCMDData2$(id)
+	Select id
+	Case 4
+		Return "Int"
+	Case 6
+		Return "Green"
+	Case 7
+		Return "Start X"
+	Case 11
+		Return "Source X"
+	Case 12
+		Return "Step Size"
+	Case 21,22
+		Return "Interchange"
+	Case 23,24,25,26,27
+		Return "AskAbout"
+	Case 41,42
+		Return "Source Y"
+	Case 51,61
+		Return "Dest X"
+	Case 52
+		Return "MvmtType"
+	Case 62
+		Return "Dialog"
+	Case 63
+		Return "WalkAnim"
+	Case 64
+		Return "Particle"
+	Default
+		Return "N/A (2)"
+	End Select
+End Function
+
+Function GetCMDData3$(id)
+	Select id
+	Case 4,26
+		Return "Value"
+	Case 6
+		Return "Blue"
+	Case 7
+		Return "Start Y"
+	Case 11
+		Return "Source Y"
+	Case 12
+		Return "Pitch"
+	Case 21
+		Return "Obsolete?"
+	Case 27
+		Return "Interchange"
+	Case 41,42
+		Return "Dest X"
+	Case 51,61
+		Return "Dest Y"
+	Case 52
+		Return "MvTpData"
+	Case 62
+		Return "Expr."
+	Case 63
+		Return "Turning"
+	Case 64
+		Return "Count"
+	Default
+		Return "N/A (3)"
+	End Select
+End Function
+
+Function GetCMDData4$(id)
+	Select id
+	Case 12
+		Return "Step Size"
+	Case 41,42
+		Return "Dest Y"
+	Case 51
+		Return "MvmtType"
+	Case 62
+		Return "Yaw"
+	Case 63
+		Return "IdleAnim"
+	Default
+		Return "N/A (4)"
+	End Select
 End Function
 
 Function BuildHub()

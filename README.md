@@ -33,8 +33,8 @@
 * Ctrl+Click the FILL button: Set the fill density. This is a value in the range [0.0, 1.0] that determines the percentage of tiles that will get filled based on random chance.
 * F6: Toggle orthographic projection.
 * F7: Toggle wireframe mode.
-* Ctrl+B: Toggle block mode. The brush cursor will be blue while block mode is active.
-* Ctrl+F: Toggle fill mode. The brush cursor will be yellow while fill mode is active.
+* Ctrl+B: Toggle block mode. The cursor brush will be blue while block mode is active.
+* Ctrl+F: Toggle fill mode. The cursor brush will be yellow while fill mode is active.
 
 ### CAMERA CONTROLS
 
