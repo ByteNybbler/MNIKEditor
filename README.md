@@ -65,7 +65,7 @@
 
 * Scroll the mouse wheel: Switch through interchanges, answers, and AskAbouts.
 * Ctrl+Click: Switch through interchanges, answers, and AskAbouts by typing the desired number.
-* Right click: Make text white from the cursor's position onwards.
+* Right click: Make text white from the cursor's position onwards until a different text color is reached.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
 * Ctrl+W: Toggle White.

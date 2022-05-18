@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/17/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/18/22)"
 
 Global MASTERUSER=True
 
@@ -2314,6 +2314,9 @@ Function EditorMainLoop()
 		Next
 	Next
 	
+	DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
+	CurrentTooltip$=""
+	
 	FinishDrawing()
 
 End Function
@@ -2482,6 +2485,72 @@ Function StartupColors()
 	ReadColors()
 	WriteColors()
 
+End Function
+
+
+Function GetCenteredTextOffset(Message$)
+
+	Return 4*Len(Message$)
+
+End Function
+
+Function GetTextPixelLength(Message$)
+
+	Return 8*Len(Message$)
+
+End Function
+
+
+Function CenteredText(StartX,StartY,Message$)
+
+	Text StartX-GetCenteredTextOffset(Message$),StartY,Message$
+
+End Function
+
+Function DrawTooltip(StartX,StartY,Message$)
+
+	If Message$="" Then Return
+
+	;ShowMessage("Showing tooltip at "+StartX+","+StartY+": "+Message$,1000)
+	
+	;TextOffset=GetCenteredTextOffset(Message$)
+	TextPixelLength=GetTextPixelLength(Message$)
+
+	Color RectToolbarR,RectToolbarG,RectToolbarB
+	;Rect StartX-TextOffset,StartY-40,TextOffset*2,30,True
+	Rect StartX,StartY-40,TextPixelLength,30,True
+	Color TextLevelR,TextLevelG,TextLevelB
+	;Text StartX-TextOffset,StartY-30,Message$
+	Text StartX,StartY-30,Message$
+
+End Function
+
+Global CurrentTooltipStartX
+Global CurrentTooltipStartY
+Global CurrentTooltip$
+
+Function ShowTooltipLeftAligned(StartX,StartY,Message$)
+
+	CurrentTooltipStartX=StartX
+	CurrentTooltipStartY=StartY
+	CurrentTooltip$=Message$
+	
+End Function
+
+Function ShowTooltipRightAligned(StartX,StartY,Message$)
+
+	CurrentTooltipStartX=StartX-GetTextPixelLength(Message$)
+	CurrentTooltipStartY=StartY
+	CurrentTooltip$=Message$
+	
+End Function
+
+Function ShowTooltipCenterAligned(StartX,StartY,Message$)
+
+	CurrentTooltipStartX=StartX-GetCenteredTextOffset(Message$)
+	CurrentTooltipStartY=StartY
+	CurrentTooltip$=Message$
+	
 End Function
 
 
@@ -3604,64 +3673,70 @@ Function EditorLocalControls()
 
 
 		; level/water textures
-		If my>133 And my<148 And mx>755 And leftmouse=True And leftmousereleased=True
-			CurrentLevelTexture=CurrentLevelTexture+1
-			If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
-			
-			FreeTexture LevelTexture
-			UpdateLevelTexture()
-			
-			For j=0 To LevelHeight-1
-				EntityTexture LevelMesh(j),LevelTexture
-			Next
-			
-			leftmousereleased=False
-			buildcurrenttilemodel()
-		EndIf
-		If my>133 And my<148 And mx<=755 And leftmouse=True And leftmousereleased=True
-			CurrentLevelTexture=CurrentLevelTexture-1
-			If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
-			
-			FreeTexture LevelTexture
-			UpdateLevelTexture()
-			
-			For j=0 To LevelHeight-1
-				EntityTexture LevelMesh(j),LevelTexture
-			Next
-			
-			leftmousereleased=False
-			buildcurrenttilemodel()
+		If my>133 And my<148
+			If mx>755 And leftmouse=True And leftmousereleased=True
+				CurrentLevelTexture=CurrentLevelTexture+1
+				If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
+				
+				FreeTexture LevelTexture
+				UpdateLevelTexture()
+				
+				For j=0 To LevelHeight-1
+					EntityTexture LevelMesh(j),LevelTexture
+				Next
+				
+				leftmousereleased=False
+				buildcurrenttilemodel()
+			EndIf
+			If mx<=755 And leftmouse=True And leftmousereleased=True
+				CurrentLevelTexture=CurrentLevelTexture-1
+				If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
+				
+				FreeTexture LevelTexture
+				UpdateLevelTexture()
+				
+				For j=0 To LevelHeight-1
+					EntityTexture LevelMesh(j),LevelTexture
+				Next
+				
+				leftmousereleased=False
+				buildcurrenttilemodel()
+			EndIf
+			ShowTooltipRightAligned(710,163,CurrentLevelTextureName$())
 		EndIf
 
-		If my>150 And my<163 And mx>755 And leftmouse=True And leftmousereleased=True
-			CurrentWaterTexture=CurrentWaterTexture+1
-			
-			If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
-			
-			FreeTexture WaterTexture
-			UpdateWaterTexture()
-			
-			For j=0 To LevelHeight-1
-				EntityTexture WaterMesh(j),WaterTexture
-			Next
-			leftmousereleased=False
-			buildcurrenttilemodel()
-
-		EndIf
-		If my>150 And my<163 And mx<=755 And leftmouse=True And leftmousereleased=True
-			CurrentWaterTexture=CurrentWaterTexture-1
-			
-			If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
-			
-			FreeTexture WaterTexture
-			UpdateWaterTexture()
-			
-			For j=0 To LevelHeight-1
-				EntityTexture WaterMesh(j),WaterTexture
-			Next
-			leftmousereleased=False
-			buildcurrenttilemodel()
-
+		If my>150 And my<163 
+			If mx>755 And leftmouse=True And leftmousereleased=True
+				CurrentWaterTexture=CurrentWaterTexture+1
+				
+				If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
+				
+				FreeTexture WaterTexture
+				UpdateWaterTexture()
+				
+				For j=0 To LevelHeight-1
+					EntityTexture WaterMesh(j),WaterTexture
+				Next
+				leftmousereleased=False
+				buildcurrenttilemodel()
+	
+			EndIf
+			If mx<=755 And leftmouse=True And leftmousereleased=True
+				CurrentWaterTexture=CurrentWaterTexture-1
+				
+				If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
+				
+				FreeTexture WaterTexture
+				UpdateWaterTexture()
+				
+				For j=0 To LevelHeight-1
+					EntityTexture WaterMesh(j),WaterTexture
+				Next
+				leftmousereleased=False
+				buildcurrenttilemodel()
+	
+			EndIf
+			ShowTooltipRightAligned(710,180,CurrentWaterTextureName$())
 		EndIf
 
 		; custom level/water
