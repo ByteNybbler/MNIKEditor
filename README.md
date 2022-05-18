@@ -10,12 +10,16 @@
 ## ADVENTURE SELECT
 
 * Scroll the mouse wheel: Navigate the adventure list. Hold shift to scroll faster.
+* Page up: Page up.
+* Page down: Page down.
 
 ## MASTER EDITOR
 
 * Scroll the mouse wheel: Navigate the LV and DG lists depending on where the mouse is hovering. Hold shift to scroll faster.
 * Ctrl+Click the LV or DG column: Type in the number of the wlv or dia you want to edit.
 * Right click: Right-clicking a wlv or dia number will copy the wlv or dia. Right-click the same wlv or dia again to cancel the copy, or left-click a nonexistent wlv or dia to copy to that wlv or dia.
+* Page up: Page up on either the LV or DG column, depending on which one the mouse is hovering over.
+* Page down: Page down on either the LV or DG column, depending on which one the mouse is hovering over.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
 
@@ -44,12 +48,16 @@
 ### OBJECTS MENU
 
 * Enter: Toggle the randomized state of the object adjuster being hovered over with the mouse. Any objects placed will choose a random value from the range that you define.
-* Tilde+Click: Finds and replaces a specific value of the chosen adjuster for all objects in the level. Only works on text-based adjusters.
+* Scroll the mouse wheel: Scroll through objects and object categories.
+* Ctrl+Click on Category: Enter a category name or the first few characters of a category name to instantly jump to that object category.
+* Tilde+Click: Find and replace a specific value of the chosen adjuster for all objects in the wlv. Only works on text-based adjusters.
 
 ### TILES MENU
 
 * Enter: Toggled the used state of the tile attribute being hovered over with the mouse. This means that any new tiles you "place" won't modify that attribute of the tile(s) you place it on.
+* Scroll the mouse wheel: Scroll through tiles and tile categories, as well as tile logics.
 * Shift+Enter: Mark all tile attributes as unused except for the tile attribute being hovered over with the mouse.
+* Ctrl+Click: As usual, this works on all numeric adjusters, including the tile logic if you're feeling feisty.
 * I while hovering mouse over the TILES menu: Rotates the previewed tile counter-clockwise.
 * O while hovering mouse over the TILES menu: Rotates the previewed tile clockwise.
 
