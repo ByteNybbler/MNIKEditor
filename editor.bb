@@ -874,7 +874,8 @@ Global Camera4Zoom#=8.0
 
 Global Camera1StartY=6
 ; saved when entering orthographic mode since orthographic mode mouse wheel scrolling does not change the height, unlike perspective mode mouse wheel scrolling
-Global Camera1PerspectiveY#
+Global Camera1PerspectiveY#=Camera1StartY
+Global Camera1SavedProjMode=1 ; the projection mode to return to after being in projection mode 0
 
 s=CreateMesh()
 su=CreateSurface(s)
@@ -1927,6 +1928,14 @@ Function UpdateCameraClsColor()
 
 End Function
 
+Function Camera1To3Proj()
+
+	;Camera1Proj=0
+	Camera3Proj=1
+	UpdateCameraProj()
+	
+End Function
+
 Function UpdateButtonGateTexture()
 	
 	ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
@@ -2022,7 +2031,7 @@ Function StartEditorMainLoop()
 	SetEditorMode(EditorModeBeforeMasterEdit)
 	WireFrame UsingWireFrame
 	
-	Camera1Proj=1
+	Camera1Proj=Camera1SavedProjMode
 	Camera2Proj=1
 	Camera3Proj=0
 	Camera4Proj=1
@@ -2365,7 +2374,7 @@ Function SetEditorMode(NewMode)
 	EndIf
 	
 	If NewMode=0
-		Camera1Proj=1
+		Camera1Proj=Camera1SavedProjMode
 		Camera3Proj=0
 		UpdateCameraProj()
 	EndIf
@@ -2973,6 +2982,7 @@ Function EditorLocalControls()
 		EndIf
 		UpdateCameraProj()
 		CameraZoom Camera1,Camera1Zoom#
+		Camera1SavedProjMode=Camera1Proj
 	EndIf
 
 	If KeyPressed(65) ; F7
@@ -3422,9 +3432,7 @@ Function EditorLocalControls()
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; Texture
-			Camera1Proj=0
-			Camera3Proj=1
-			UpdateCameraProj()
+			Camera1To3Proj()
 			SetEditorMode(1)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -3447,9 +3455,7 @@ Function EditorLocalControls()
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; SideTexture
-			Camera1Proj=0
-			Camera3Proj=1
-			UpdateCameraProj()
+			Camera1To3Proj()
 			SetEditorMode(2)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
