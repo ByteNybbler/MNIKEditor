@@ -25,7 +25,11 @@
 
 ## LEVEL EDITOR
 
+* Left click: Place objects or tiles. Several objects can be placed on the same tile. Using a larger brush size will place a wider spread of objects or tiles at once.
+* Right click: Grab the object or tile at the center of the cursor. This is the easiest way to copy and paste an object or tile. If there are multiple objects stacked on the same tile, right-clicking multiple times will cycle through them.
+* Delete: Delete all objects covered by the cursor brush. If the mouse is hovering over the OBJECTS menu, this will only delete the currently-grabbed object. This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one.
 * Enter: Copy all objects or tiles that are being hovered over by the brush, depending on whether the editor is in object mode or tile mode. This lets you paste those objects or tiles anywhere else. The brush cursor will be purple while a custom brush is active. Press enter again to exit custom brush mode. Try it out with a large brush size!
+* R: Update the currently-grabbed object. This does the same thing as pressing the Update button.
 * Ctrl+Click the FILL button: Set the fill density. This is a value in the range [0.0, 1.0] that determines the percentage of tiles that will get filled based on random chance.
 * F6: Toggle orthographic projection.
 * F7: Toggle wireframe mode.
