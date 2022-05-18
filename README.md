@@ -65,6 +65,10 @@
 * I while hovering mouse over the TILES menu: Rotates the previewed tile counter-clockwise.
 * O while hovering mouse over the TILES menu: Rotates the previewed tile clockwise.
 
+### GLOBALS MENU
+
+* Right click: Set a custom leveltex or custom watertex.
+
 ## DIALOG EDITOR
 
 * Scroll the mouse wheel: Switch through interchanges, answers, and AskAbouts.

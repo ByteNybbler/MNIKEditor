@@ -20549,7 +20549,7 @@ Function GetCMDData2$(id)
 	Case 11
 		Return "Source X"
 	Case 12
-		Return "Step Size"
+		Return "Volume Step"
 	Case 21,22
 		Return "Interchange"
 	Case 23,24,25,26,27
@@ -20607,7 +20607,7 @@ End Function
 Function GetCMDData4$(id)
 	Select id
 	Case 12
-		Return "Step Size"
+		Return "Pitch Step"
 	Case 41,42
 		Return "Dest Y"
 	Case 51
