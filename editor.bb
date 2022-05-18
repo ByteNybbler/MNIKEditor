@@ -14675,9 +14675,10 @@ Function CameraControls()
 	Adj#=0.1
 	If ShiftDown() Then Adj=0.4
 	
-	If KeyPressed(20) ; T
-		ToggleGameCamera()
-	EndIf
+	; Still doesn't really work, and also doesn't behave well with orthographic mode yet.
+	;If KeyPressed(20) ; T
+	;	ToggleGameCamera()
+	;EndIf
 	
 	If KeyDown(57) ; space bar
 		CameraPanning=True
