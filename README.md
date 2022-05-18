@@ -7,6 +7,18 @@ Right click: Adjust down. Holding shift usually adjusts by a greater step size.
 Ctrl+Click: Type value into numeric field.
 Scroll the mouse wheel: Adjust value of numeric field. Holding shift usually adjusts by a greater step size.
 
+## ADVENTURE SELECT
+
+Scroll the mouse wheel: Navigate the adventure list. Hold shift to scroll faster.
+
+## MASTER EDITOR
+
+Scroll the mouse wheel: Navigate the LV and DG lists depending on where the mouse is hovering. Hold shift to scroll faster.
+Ctrl+Click the LV or DG column: Type in the number of the wlv or dia you want to edit.
+Right click: Right-clicking a wlv number will copy the wlv. Right-click the same wlv again to cancel the copy, or left-click a nonexistent wlv to copy to that wlv.
+Home: Move cursor to beginning of line.
+End: Move cursor to end of line.
+
 ## LEVEL EDITOR
 
 Enter: Copy all objects or tiles that are being hovered over by the brush, depending on whether the editor is in object mode or tile mode. This lets you paste those objects or tiles anywhere else. The brush cursor will be purple while a custom brush is active. Press enter again to exit custom brush mode. Try it out with a large brush size!
@@ -43,6 +55,32 @@ O while hovering mouse over the TILES menu: Rotates the previewed tile clockwise
 
 ## DIALOG EDITOR
 
+Scroll the mouse wheel: Switch through interchanges, answers, and AskAbouts.
+Ctrl+Click: Switch through interchanges, answers, and AskAbouts by typing the desired number.
 Right click: Make text white from the cursor's position onwards.
 Home: Move cursor to beginning of line.
 End: Move cursor to end of line.
+Ctrl+W: Toggle White.
+Ctrl+E: Toggle Grey.
+Ctrl+R: Toggle Red.
+Ctrl+O: Toggle Orange.
+Ctrl+Y: Toggle Yellow.
+Ctrl+G: Toggle Green.
+Ctrl+B: Toggle Blue.
+Ctrl+I: Toggle Indigo.
+Ctrl+V: Toggle Violet.
+Ctrl+A: Toggle Rainbow AKA all colors.
+Ctrl+F: Toggle Blinking AKA flashing white.
+Ctrl+D: Toggle Warning AKA flashing red and DOOMY.
+Ctrl+N: Toggle NO effect.
+Ctrl+S: Toggle SHake.
+Ctrl+J: Toggle JItter.
+Ctrl+X: Toggle WAve.
+Ctrl+Z: Toggle BOunce.
+Ctrl+P: Toggle ZOom.
+Ctrl+Q: Toggle ZoomShake.
+Ctrl+C: Toggle CiRcle.
+Ctrl+M: Toggle figure EIght.
+Ctrl+U: Toggle UpDown.
+Ctrl+L: Toggle LeftRight.
+Ctrl+T: Toggle RT.
