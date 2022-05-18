@@ -21308,7 +21308,7 @@ End Function
 
 Function ControlGem(i)
 
-	If ObjectActive(i) Mod 2=1 Then ShowEntity ObjectEntity(i)
+	;If ObjectActive(i) Mod 2=1 Then ShowEntity ObjectEntity(i) ; What did MS mean by this?
 	
 	If ObjectActive(i)<1001 And ObjectActive(i)>0
 		; picked up animation
