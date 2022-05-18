@@ -16663,6 +16663,25 @@ Function UserSelectScreen()
 
 End Function
 
+Function SetAdventureFileNamesListedStart(Target)
+
+	AdventureFileNamesListedStart=Target	
+
+	If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
+	If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
+
+End Function
+
+Function AdventureFileNamesListPageUp()
+	AdventureFileNamesListedStart=AdventureFileNamesListedStart-19
+	If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
+End Function
+
+Function AdventureFileNamesListPageDown()
+	AdventureFileNamesListedStart=AdventureFileNamesListedStart+19
+	If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
+End Function
+
 Function StartAdventureSelectScreen()
 
 	SetEditorMode(5)
@@ -16920,23 +16939,28 @@ Function AdventureSelectScreen()
 			If ShiftDown()
 				Speed=10
 			EndIf
-			AdventureFileNamesListedStart=AdventureFileNamesListedStart-MouseScroll*Speed
+			SetAdventureFileNamesListedStart(AdventureFileNamesListedStart-MouseScroll*Speed)
 		EndIf
 		If (mx<50 Or mx>748) And MouseDown(1)
 			If my>175 And my<235
 				; Page Up
-				AdventureFileNamesListedStart=AdventureFileNamesListedStart-19
+				AdventureFileNamesListPageUp()
 				Repeat
 				Until MouseDown(1)=0
 			ElseIf my>475 And my<535
 				; Page Down
-				AdventureFileNamesListedStart=AdventureFileNamesListedStart+19
+				AdventureFileNamesListPageDown()
 				Repeat
 				Until MouseDown(1)=0
 			EndIf
 		EndIf
-		If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
-		If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
+	EndIf
+	
+	If KeyPressed(201) ; page up
+		AdventureFileNamesListPageUp()
+	EndIf
+	If KeyPressed(209) ; page down
+		AdventureFileNamesListPageDown()
 	EndIf
 		
 	
@@ -17787,7 +17811,7 @@ Function MasterMainLoop()
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
 	
-	; level/dialog list start
+	; level list start
 	If MouseX()>700 And MouseX()<750
 		If (MouseY()>482 And MouseY()<502 And mb>0) Or MouseScroll<0
 			MasterLevelListStart=MasterLevelListStart+adj
@@ -17798,7 +17822,17 @@ Function MasterMainLoop()
 			If MasterLevelListStart<0 Then MasterLevelListStart=0
 			If MouseScroll=0 Then Delay 150
 		EndIf
+		If KeyPressed(201) ; page up
+			MasterLevelListStart=MasterLevelListStart-20
+			If MasterLevelListStart<0 Then MasterLevelListStart=0
+		EndIf
+		If KeyPressed(209) ; page down
+			MasterLevelListStart=MasterLevelListStart+20
+			If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
+		EndIf
 	EndIf
+	
+	; dialog list start
 	If MouseX()>750 And MouseX()<800
 		If (MouseY()>482 And MouseY()<502 And mb>0) Or MouseScroll<0
 			MasterDialogListStart=MasterDialogListStart+adj
@@ -17808,6 +17842,14 @@ Function MasterMainLoop()
 			MasterDialogListStart=MasterDialogListStart-adj
 			If MasterDialogListStart<0 Then MasterDialogListStart=0
 			If MouseScroll=0 Then Delay 150
+		EndIf
+		If KeyPressed(201) ; page up
+			MasterDialogListStart=MasterDialogListStart-20
+			If MasterDialogListStart<0 Then MasterDialogListStart=0
+		EndIf
+		If KeyPressed(209) ; page down
+			MasterDialogListStart=MasterDialogListStart+20
+			If MasterDialogListStart>MaxDialog-20 Then MasterDialogListStart=MaxDialog-20
 		EndIf
 	EndIf
 	
@@ -18922,6 +18964,12 @@ Function HubAdventureSelectScreen()
 	EndIf
 	
 	
+	If KeyPressed(201) ; page up
+		AdventureFileNamesListPageUp()
+	EndIf
+	If KeyPressed(209) ; page down
+		AdventureFileNamesListPageDown()
+	EndIf
 	
 	
 	If MouseDown(1)
