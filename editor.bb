@@ -72,6 +72,10 @@ Global TextWarningR=255
 Global TextWarningG=100
 Global TextWarningB=100
 
+Global ModelErrorR=255
+Global ModelErrorG=0
+Global ModelErrorB=255
+
 Const ColorsConfig$="colors.cfg"
 
 ; Set at runtime
@@ -7493,13 +7497,9 @@ Function UpdateObjectEntityToCurrent(Dest)
 	UpdateObjectVisibility(Dest)
 	
 	If CurrentHatModel>0
-		If CurrentObjectData(2)>9 ; two digit
-			ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+".3ds",0)
-			ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-		Else
-			ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory00"+Str$(CurrentObjectData(2)+".3ds"),0)
-			ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory00"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-		EndIf
+	
+		ObjectHatEntity(Dest)=CreateHatEntity(CurrentObjectData(2))
+		ObjectHatTexture(Dest)=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
 		
 		ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
 		
@@ -7507,7 +7507,11 @@ Function UpdateObjectEntityToCurrent(Dest)
 		TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
 		TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
 	
-		EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
+		If ObjectHatTexture(Dest)=0
+			EntityColor ObjectHatEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
+		Else
+			EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
+		EndIf
 	EndIf
 	
 	If CurrentAccModel>0
@@ -11620,8 +11624,8 @@ Function AdjustObjectAdjuster(i)
 
 		
 		If CurrentObjectModelName$="!NPC"
-			If CurrentObjectData(2)>56 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=56
+			;If CurrentObjectData(2)>56 CurrentObjectData(2)=0
+			;If CurrentObjectData(2)<0 CurrentObjectData(2)=56
 			CurrentObjectData(3)=1
 
 		EndIf
@@ -12846,13 +12850,8 @@ Function BuildCurrentObjectModel()
 		
 		
 		If CurrentObjectData(2)>0	; hat
-			If CurrentObjectData(2)>9 ; two digit
-				CurrentHatModel=MyLoadMesh("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+".3ds",0)
-				CurrentHatTexture=MyLoadTexture("data/models/stinker/accessory0"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-			Else
-				CurrentHatModel=MyLoadMesh("data/models/stinker/accessory00"+Str$(CurrentObjectData(2)+".3ds"),0)
-				CurrentHatTexture=MyLoadTexture("data/models/stinker/accessory00"+Str$(CurrentObjectData(2))+Chr$(64+CurrentObjectData(3))+".jpg",4)
-			EndIf
+			CurrentHatModel=CreateHatEntity(CurrentObjectData(2))
+			CurrentHatTexture=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
 		EndIf
 		
 		If CurrentObjectData(4)>100	; acc
@@ -13087,7 +13086,7 @@ Function BuildCurrentObjectModel()
 		
 		Data1=CurrentObjectData(1)
 		If Data1<0 Or Data1>8
-			EntityColor CurrentObjectModel,255,0,0
+			EntityColor CurrentObjectModel,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
 			EntityTexture CurrentObjectModel,TeleporterTexture(Data1)
 		EndIf
@@ -13114,7 +13113,7 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		If CurrentObjectData(0)<0 Or CurrentObjectData(0)>3
 			;CurrentObjectData(0)=0
-			EntityColor CurrentObjectModel,255,0,0
+			EntityColor CurrentObjectModel,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
 			EntityTexture CurrentObjectModel,SteppingStoneTexture(CurrentObjectData(0))
 		EndIf
@@ -13245,7 +13244,7 @@ Function BuildCurrentObjectModel()
 	Else ;unknown model
 		CurrentObjectModel=CreateSphere()
 		ScaleMesh CurrentObjectModel,.3,.3,.3
-		EntityColor CurrentObjectModel,255,0,255
+		EntityColor CurrentObjectModel,ModelErrorR,ModelErrorG,ModelErrorB
 	
 
 	EndIf
@@ -13387,8 +13386,11 @@ Function BuildCurrentObjectModel()
 	
 	If CurrentHatModel>0
 	
-		
-		EntityTexture CurrentHatModel,CurrentHatTexture
+		If CurrentHatTexture=0
+			EntityColor CurrentHatModel,ModelErrorR,ModelErrorG,ModelErrorB
+		Else
+			EntityTexture CurrentHatModel,CurrentHatTexture
+		EndIf
 		ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
 		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
 		RotateEntity CurrentHatModel,0,0,0
@@ -13860,6 +13862,51 @@ Function CalculateUV(Texture,i2,j2,Rotation,size)
 End Function
 
 
+Function CreateHatEntity(Data2)
+
+	If Data2>9 ; two digit
+		Prefix$="data/models/stinker/accessory0"
+	Else
+		Prefix$="data/models/stinker/accessory00"
+	EndIf
+
+	FileName$=Prefix$+Str$(Data2+".3ds")
+	If FileExistsModel(FileName$)
+		Return MyLoadMesh(FileName$,0)
+	Else
+		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
+		Entity=CreateSphere()
+		ScaleMesh Entity,10,10,10
+		Return Entity
+	EndIf
+
+End Function
+
+Function CreateHatTexture(Data2,Data3)
+
+	If Data2>9 ; two digit
+		Prefix$="data/models/stinker/accessory0"
+	Else
+		Prefix$="data/models/stinker/accessory00"
+	EndIf
+
+	FileName$=Prefix$+Str$(Data2)+Chr$(64+Data3)+".jpg"
+	If FileExistsTexture(FileName$)
+		Return MyLoadTexture(FileName$,4)
+	Else
+		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
+		Return 0
+	EndIf
+
+End Function
+
+Function CreateAccessoryEntity(Data4)
+
+	
+
+End Function
+
+
 Function CreateObjectModel(Dest)
 
 		If ObjectModelName$(Dest)="!Button"
@@ -13896,22 +13943,23 @@ Function CreateObjectModel(Dest)
 			
 			
 			If ObjectData(Dest,2)>0	; hat
-				If ObjectData(Dest,2)>9 ; two digit
-					ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory0"+Str$(ObjectData(Dest,2))+".3ds",0)
-					ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory0"+Str$(ObjectData(Dest,2))+Chr$(64+ObjectData(Dest,3))+".jpg",4)
+				
+				ObjectHatEntity(Dest)=CreateHatEntity(ObjectData(Dest,2))
+				ObjectHatTexture(Dest)=CreateHatTexture(ObjectData(Dest,2),ObjectData(Dest,3))
+				
+				If ObjectHatTexture(Dest)=0
+					EntityColor ObjectHatEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
 				Else
-					ObjectHatEntity(Dest)=MyLoadMesh("data/models/stinker/accessory00"+Str$(ObjectData(Dest,2)+".3ds"),0)
-					ObjectHatTexture(Dest)=MyLoadTexture("data/models/stinker/accessory00"+Str$(ObjectData(Dest,2))+Chr$(64+ObjectData(Dest,3))+".jpg",4)
+					EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
 				EndIf
-				EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
+				
 				ScaleEntity ObjectHatEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 		
 				RotateEntity ObjectHatEntity(Dest),0,0,0
 				TurnEntity ObjectHatEntity(Dest),ObjectPitchAdjust(dest),0,ObjectRollAdjust(dest)
 				TurnEntity ObjectHatEntity(Dest),0,ObjectYawAdjust(dest)-90,0
 
-					PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
-
+				PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 			EndIf
 			
 			If ObjectData(Dest,4)>100	; acc
@@ -13937,39 +13985,39 @@ Function CreateObjectModel(Dest)
 			
 			
 			
-		If CurrentHatModel>0
-		
-			
-			EntityTexture CurrentHatModel,CurrentHatTexture
-			ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
-			RotateEntity CurrentHatModel,0,0,0
-			TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-			TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
-			
-			bone=FindChild(CurrentObjectModel,"hat_bone")
-		
-			PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
-	
-	
-		EndIf
-		
-		If CurrentAccModel>0
-		
-			
-			EntityTexture CurrentAccModel,CurrentAccTexture
-			ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
-			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
-			RotateEntity CurrentAccModel,0,0,0
-			TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-			TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
-			
-			bone=FindChild(CurrentObjectModel,"hat_bone")
-		
-			PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
-	
-	
-		EndIf
+;		If CurrentHatModel>0
+;		
+;			
+;			EntityTexture CurrentHatModel,CurrentHatTexture
+;			ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+;			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
+;			RotateEntity CurrentHatModel,0,0,0
+;			TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;			TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
+;			
+;			bone=FindChild(CurrentObjectModel,"hat_bone")
+;		
+;			PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
+;	
+;	
+;		EndIf
+;		
+;		If CurrentAccModel>0
+;		
+;			
+;			EntityTexture CurrentAccModel,CurrentAccTexture
+;			ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+;			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
+;			RotateEntity CurrentAccModel,0,0,0
+;			TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;			TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
+;			
+;			bone=FindChild(CurrentObjectModel,"hat_bone")
+;		
+;			PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
+;	
+;	
+;		EndIf
 
 
 	
@@ -14177,7 +14225,7 @@ Function CreateObjectModel(Dest)
 			
 			Data1=ObjectData(Dest,1)
 			If Data1<0 Or Data1>8
-				EntityColor ObjectEntity(Dest),255,0,0
+				EntityColor ObjectEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
 			Else
 				EntityTexture ObjectEntity(Dest),TeleporterTexture(Data1)
 			EndIf
@@ -14263,7 +14311,7 @@ Function CreateObjectModel(Dest)
 			ObjectENtity(Dest)=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 			;EntityTexture ObjectEntity(Dest),SteppingStoneTexture(ObjectData(Dest,0))
 			If ObjectData(Dest,0)<0 Or ObjectData(Dest,0)>3
-				EntityColor ObjectEntity(Dest),255,0,0
+				EntityColor ObjectEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
 			Else
 				EntityTexture ObjectEntity(Dest),SteppingStoneTexture(ObjectData(Dest,0))
 			EndIf
@@ -16188,12 +16236,8 @@ Function GetTextureNames()
 	
 End Function
 
-Function MyLoadTexture(ex$,flag)
+Function MyProcessFileNameTexture$(ex$)
 
-;	MyWriteString(debugfile,"Tex: "+ex$)
-
-	exbackup$=ex$
-	
 	j=Len(ex$)
 	Repeat
 		j=j-1
@@ -16216,6 +16260,18 @@ Function MyLoadTexture(ex$,flag)
 		ex2$=ex2$+Chr$(b)
 	Until Mid$(ex$,j,1)="."
 	ex2$=ex2$+"wdf"
+	
+	Return ex2$
+
+End Function
+
+Function MyLoadTexture(ex$,flag)
+
+;	MyWriteString(debugfile,"Tex: "+ex$)
+
+	exbackup$=ex$
+	
+	ex2$=MyProcessFileNameTexture$(ex$)
 	
  
 	;Print ex2$
@@ -16270,8 +16326,7 @@ Function MyLoadTexture(ex$,flag)
 	Return a
 End Function
 
-Function MyLoadMesh(ex$,parent)
-;	MyWriteString(debugfile,"Mesh: "+ex$)
+Function MyProcessFileNameModel$(ex$)
 
 	j=Len(ex$)
 	Repeat
@@ -16300,6 +16355,15 @@ Function MyLoadMesh(ex$,parent)
 		ex2$=ex2$+"wd1"
 	EndIf
 	
+	Return ex2$
+
+End Function
+
+Function MyLoadMesh(ex$,parent)
+;	MyWriteString(debugfile,"Mesh: "+ex$)
+
+	ex2$=MyProcessFileNameModel$(ex$)
+	
 	;Print ex2$
 	
 	
@@ -16323,8 +16387,7 @@ Function MyLoadMesh(ex$,parent)
 		Until FileType(globaldirname$+"\temp\debug."+Str$(jj))=0
 		
 		debugfile=WriteFile (globaldirname$+"\temp\debug."+Str$(jj))
-		Print "Couldn't Load Mesh:"+ex$
-		Delay 5000
+		ShowMessage("Couldn't Load Mesh:"+ex$,5000)
 		WriteString debugfile,ex$
 		WriteString debugfile,ex2$
 		
@@ -19187,6 +19250,28 @@ Function StartTestMode()
 	End
 End Function
 
+Function FileExists(FileName$)
+
+	If FileType(FileName$)=1
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
+
+Function FileExistsModel(FileName$)
+
+	Return FileExists(MyProcessFileNameModel$(FileName$))
+
+End Function
+
+Function FileExistsTexture(FileName$)
+
+	Return FileExists(MyProcessFileNameTexture$(FileName$))
+
+End Function
+
 Function MasterFileExists()
 
 	If AdventureCurrentArchive=1
@@ -19195,11 +19280,7 @@ Function MasterFileExists()
 		ex2$="Current\"
 	EndIf
 
-	If FileType(globaldirname$+"\Custom\editing\"+ex2$+AdventureFileName$+"\master.dat")=1
-		Return True
-	Else
-		Return False
-	EndIf
+	Return FileExists(globaldirname$+"\Custom\editing\"+ex2$+AdventureFileName$+"\master.dat")
 
 End Function
 
