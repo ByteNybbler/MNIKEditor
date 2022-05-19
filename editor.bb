@@ -8850,6 +8850,66 @@ Function DisplayObjectAdjuster(i)
 			
 			EndIf
 		EndIf
+		If CurrentObjectModelName$="!Button"
+			Select CurrentObjectSubType
+			Case 0
+				tex$="Square"
+			Case 1
+				tex$="Round"
+			Case 2
+				tex$="DiamondOnce"
+			Case 3
+				tex$="Diamond"
+			Case 4
+				tex$="Star"
+			Case 5
+				tex$="X2Y Square"
+			Case 6
+				tex$="X2Y Round"
+			Case 7
+				tex$="X2Y Once"
+			Case 8
+				tex$="X2Y Diamond"
+			Case 9
+				tex$="X2Y Star"
+			Case 10
+				tex$="LevelExit"
+			Case 11
+				tex$="NPC Modifier"
+			Case 12
+				tex$="FakeStnkerExit"
+			Case 13
+				tex$="AdventureStar"
+			Case 14
+				tex$="AdventuredStar"
+			Case 15
+				tex$="GeneralCommand"
+			Case 16
+				tex$="Rotator"
+			Case 32
+				tex$="InvSquare"
+			Case 33
+				tex$="InvRound"
+			Case 34
+				tex$="InvOnce"
+			Case 35
+				tex$="InvDiamond"
+			Case 36
+				tex$="InvStar"
+			Case 37
+				tex$="InvX2Y Square"
+			Case 38
+				tex$="InvX2Y Round"
+			Case 39
+				tex$="InvX2Y Once"
+			Case 40
+				tex$="InvX2Y Diamond"
+			Case 41
+				tex$="InvX2Y Star"
+			Case 48
+				tex$="InvRotator"
+			End Select
+		EndIf
 
 
 			
