@@ -9901,26 +9901,8 @@ Function DisplayObjectAdjuster(i)
 				
 			Else If CurrentObjectSubType = 10
 				tex2$="PlayerYaw"
-				DisplayedRotation=(currentobjectData(4)+180) Mod 360
-				tex$=Str$(DisplayedRotation)
-				
-				If DisplayedRotation=0
-					tex$="North"
-				ElseIf DisplayedRotation=45
-					tex$="Northeast"
-				ElseIf DisplayedRotation=90
-					tex$="East"
-				ElseIf DisplayedRotation=135
-					tex$="Southeast"
-				ElseIf DisplayedRotation=180
-					tex$="South"
-				ElseIf DisplayedRotation=225
-					tex$="Southwest"
-				ElseIf DisplayedRotation=270
-					tex$="West"
-				ElseIf DisplayedRotation=315
-					tex$="Northwest"
-				EndIf
+				DisplayedRotation=(currentObjectData(4)+180) Mod 360
+				tex$=GetDirectionString$(DisplayedRotation)
 				
 				
 			Else If CurrentObjectSubType = 11 And (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2)
@@ -9937,6 +9919,9 @@ Function DisplayObjectAdjuster(i)
 				tex2$=GetCMDData4$(CurrentObjectData(0))
 
 				Select CurrentObjectData(0)
+				Case 7
+					DisplayedRotation=(CurrentObjectData(4)+180) Mod 360
+					tex$=GetDirectionString$(DisplayedRotation)
 				Case 51
 					tex$=CurrentObjectData(4)+"/"+GetMovementTypeString$(CurrentObjectData(4))
 				End Select
@@ -20841,6 +20826,8 @@ End Function
 
 Function GetCMDData4$(id)
 	Select id
+	Case 7
+		Return "PlayerYaw"
 	Case 12
 		Return "Pitch Step"
 	Case 41,42
@@ -21214,6 +21201,30 @@ Function GetTypeString$(value)
 		Return "NotVanilla"
 		
 	End Select
+
+End Function
+
+Function GetDirectionString$(DisplayedRotation)
+
+	If DisplayedRotation=0
+		Return "North"
+	ElseIf DisplayedRotation=45
+		Return "Northeast"
+	ElseIf DisplayedRotation=90
+		Return "East"
+	ElseIf DisplayedRotation=135
+		Return "Southeast"
+	ElseIf DisplayedRotation=180
+		Return "South"
+	ElseIf DisplayedRotation=225
+		Return "Southwest"
+	ElseIf DisplayedRotation=270
+		Return "West"
+	ElseIf DisplayedRotation=315
+		Return "Northwest"
+	Else
+		Return DisplayedRotation
+	EndIf
 
 End Function
 
