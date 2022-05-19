@@ -9429,6 +9429,10 @@ Function DisplayObjectAdjuster(i)
 				tex2$="SubCol From"
 			Else If (CurrentObjectSubType Mod 32)=15
 				tex2$=GetCMDData2$(CurrentObjectData(0))
+				
+				If CurrentObjectData(0)=4
+					tex$=CurrentObjectData(2)+"/"+GetCmd4Data2$(CurrentObjectData(2))
+				EndIf
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="Direction"
 			Else If CurrentObjectSubType = 10
