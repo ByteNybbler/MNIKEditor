@@ -9430,9 +9430,12 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)=15
 				tex2$=GetCMDData2$(CurrentObjectData(0))
 				
-				If CurrentObjectData(0)=4
+				Select CurrentObjectData(0)
+				Case 4
 					tex$=CurrentObjectData(2)+"/"+GetCmd4Data2$(CurrentObjectData(2))
-				EndIf
+				Case 52
+					tex$=CurrentObjectData(2)+"/"+GetMovementTypeString$(CurrentObjectData(2))
+				End Select
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="Direction"
 			Else If CurrentObjectSubType = 10
@@ -9848,7 +9851,10 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)=15
 				tex2$=GetCMDData4$(CurrentObjectData(0))
 
-
+				Select CurrentObjectData(0)
+				Case 51
+					tex$=CurrentObjectData(4)+"/"+GetMovementTypeString$(CurrentObjectData(4))
+				End Select
 			EndIf
 		EndIf
 		If CurrentObjectModelName$="!Conveyor"
