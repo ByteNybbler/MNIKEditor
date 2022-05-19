@@ -9900,8 +9900,27 @@ Function DisplayObjectAdjuster(i)
 				tex2$="SubColour1"
 				
 			Else If CurrentObjectSubType = 10
-				tex2$="PlayerStartingYaw"
-				tex$=Str$((currentobjectData(4)+180) Mod 360)
+				tex2$="PlayerYaw"
+				DisplayedRotation=(currentobjectData(4)+180) Mod 360
+				tex$=Str$(DisplayedRotation)
+				
+				If DisplayedRotation=0
+					tex$="North"
+				ElseIf DisplayedRotation=45
+					tex$="Northeast"
+				ElseIf DisplayedRotation=90
+					tex$="East"
+				ElseIf DisplayedRotation=135
+					tex$="Southeast"
+				ElseIf DisplayedRotation=180
+					tex$="South"
+				ElseIf DisplayedRotation=225
+					tex$="Southwest"
+				ElseIf DisplayedRotation=270
+					tex$="West"
+				ElseIf DisplayedRotation=315
+					tex$="Northwest"
+				EndIf
 				
 				
 			Else If CurrentObjectSubType = 11 And (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2)
