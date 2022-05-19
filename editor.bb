@@ -8850,7 +8850,7 @@ Function DisplayObjectAdjuster(i)
 			
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90
 			Select CurrentObjectSubType
 			Case 0
 				tex$="Square"
