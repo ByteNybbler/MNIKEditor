@@ -8749,7 +8749,7 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomIDMin
 		RightAdj$=RandomIDMax
 	Case "Type"
-		tex$=Str$(CurrentObjectType)
+		tex$=Str$(CurrentObjectType)+"/"+GetTypeString$(CurrentObjectType)
 		CrossedOut=RandomType
 		LeftAdj$=RandomTypeMin
 		RightAdj$=RandomTypeMax
@@ -20935,6 +20935,197 @@ Function GetMovementTypeString$(value)
 		Return "MoobotWR"
 	Default
 		Return "Stationary"
+	End Select
+
+End Function
+
+Function GetTypeString$(value)
+
+	Select value
+	Case 0
+		Return "None"
+	Case 1
+		Return "Player"
+	Case 10
+		Return "Gate"
+	Case 11
+		Return "Tollgate"
+	Case 20
+		Return "Fire Trap"
+	Case 30
+		Return "Teleporter"
+	Case 40
+		Return "Stepping Stone"
+	Case 45
+		Return "Conveyor Lead"
+	Case 46
+		Return "Conveyor Tail"
+	Case 50
+		Return "Spellball"
+	Case 51
+		Return "Magic Shooter"
+	Case 52
+		Return "Meteor"
+	Case 53
+		Return "Meteorite"
+	Case 54
+		Return "Magic Mirror"
+	Case 60
+		Return "IceCub/FlngBub"
+	Case 70
+		Return "PickupItem?"
+	Case 71
+		Return "UsedItem?"
+	Case 80,81,82,83,84,85,86,87
+		Return "Keyblock?"
+	Case 90
+		Return "Button"
+	Case 100
+		Return "StinkerHatAcc"
+	Case 101
+		Return "Shadow"
+	Case 110;,111,112,113,114,115,116,117,118,119
+		Return "Stinker NPC"
+	Case 120
+		Return "Wee Stinker"
+	Case 130
+		Return "Stinker Exit"
+	Case 140
+		Return "Cage"
+	Case 150
+		Return "Scritter"
+	Case 151
+		Return "RainbowBubble"
+	Case 160
+		Return "SolidScenery"
+	Case 161
+		Return "Waterfall"
+	Case 162
+		Return "Cottage"
+	Case 163
+		Return "WindmillRotor"
+	Case 164
+		Return "Fountain"
+	Case 165
+		Return "ArcadeMachine"
+	Case 166
+		Return "SkyMachineMap"
+	Case 170
+		Return "Gold Star"
+	Case 171
+		Return "Coin"
+	Case 172
+		Return "Key/Keycard"
+	Case 173
+		Return "Gem"
+	Case 174
+		Return "Token"
+	Case 179
+		Return "Custom Item"
+	Case 180
+		Return "Sign"
+	Case 190
+		Return "ParticleSpawn"
+	Case 200
+		Return "Magic Charger"
+	Case 210
+		Return "Transporter"
+	Case 220
+		Return "Turtle"
+	Case 230
+		Return "FireFlower"
+	Case 240
+		Return "Barrel Reg"
+	Case 241
+		Return "Barrel TNT"
+	Case 242
+		Return "Cuboid"
+	Case 250
+		Return "Chomper"
+	Case 260
+		Return "Spikeyball"
+	Case 270
+		Return "Btrfly/Glworm"
+	Case 271
+		Return "Zipper"
+	Case 280
+		Return "Spring"
+	Case 281
+		Return "Suctube -"	
+	Case 282
+		Return "Suctube X"
+	Case 290
+		Return "Thwart"
+	Case 300
+		Return "Brr Float"
+	Case 301
+		Return "RainbowFloat"
+	Case 310
+		Return "RubberDucky"
+	Case 320
+		Return "Void"
+	Case 330
+		Return "Wysp"
+	Case 340
+		Return "Tentacle"
+	Case 350
+		Return "GrowFlower"
+	Case 360
+		Return "FloingBubble"
+	Case 370
+		Return "Crab"
+	Case 380
+		Return "Ice Troll"
+	Case 390
+		Return "Kaboom NPC"
+	Case 400
+		Return "Baby Boomer"
+	Case 410
+		Return "Flipbridge"
+	Case 420
+		Return "Coily"
+	Case 421
+		Return "Scouge"
+	Case 422
+		Return "Retro UFO"
+	Case 423
+		Return "Retro Z-Bot"
+	Case 424
+		Return "Laser Gate"
+	Case 425
+		Return "Rainbow Coin"
+	Case 426
+		Return "RetroTollgate"
+	Case 430
+		Return "Zipbot"
+	Case 431
+		Return "Zapbot"
+	Case 432
+		Return "Moobot"
+	Case 433
+		Return "Z-Bot NPC"
+	Case 434
+		Return "Mothership"
+	Case 441
+		Return "Sun Sphere 1"
+	Case 442
+		Return "Sun Sphere 2"
+	Case 450
+		Return "Lurker"
+	Case 460
+		Return "Burstflower"
+	Case 470
+		Return "Ghost"
+	Case 471
+		Return "Wraith"
+	Case 472
+		Return "MODDED NPC"
+	Case 805
+		Return "IceBlk Again?"
+		
+	Default	
+		Return "NotVanilla"
+		
 	End Select
 
 End Function
