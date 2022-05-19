@@ -12,7 +12,6 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-
 Global VersionText$="WA Editor       MNIKSource v10.04 (05/19/22)"
 
 Global MASTERUSER=True
@@ -9659,7 +9658,14 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)=15
 				tex2$=GetCMDData3$(CurrentObjectData(0))
 	
-
+				Select CurrentObjectData(0)
+				Case 4
+					If CurrentObjectData(2)=1 ; MovementType
+						tex$=CurrentObjectData(3)+"/"+GetMovementTypeString$(CurrentObjectData(3))
+					ElseIf CurrentObjectData(2)=9 ; Type
+						tex$=CurrentObjectData(3)+"/"+GetTypeString$(CurrentObjectData(3))
+					EndIf
+				End Select
 			EndIf
 		EndIf
 		If CurrentObjectModelName$="!FireFlower"
@@ -20847,6 +20853,8 @@ End Function
 Function GetMovementTypeString$(value)
 
 	Select value
+	Case 0
+		Return "Stationary"
 	Case 10
 		Return "HPathfind0" ;"HPathfind0" "GoalRange0" "HQ A* To 0" ""A*+ Range0""
 	Case 11
@@ -20934,7 +20942,7 @@ Function GetMovementTypeString$(value)
 	Case 88
 		Return "MoobotWR"
 	Default
-		Return "Stationary"
+		Return "NotVanilla"
 	End Select
 
 End Function
@@ -20955,7 +20963,7 @@ Function GetTypeString$(value)
 	Case 30
 		Return "Teleporter"
 	Case 40
-		Return "Stepping Stone"
+		Return "SteppingStone"
 	Case 45
 		Return "Conveyor Lead"
 	Case 46
