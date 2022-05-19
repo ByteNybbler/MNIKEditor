@@ -13,7 +13,7 @@ AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
 
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/18/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/19/22)"
 
 Global MASTERUSER=True
 
@@ -10278,7 +10278,9 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=RandomTalkableMax
 		
 	Case "MovementType"
-		tex$=Str$(CurrentObjectMovementType)
+		;tex$=Str$(CurrentObjectMovementType)
+		tex$=CurrentObjectMovementType+"/"+GetMovementTypeString$(CurrentObjectMovementType)
+		tex2$="MvmtType"
 		CrossedOut=RandomMovementType
 		LeftAdj$=RandomMovementTypeMin
 		RightAdj$=RandomMovementTypeMax
@@ -20757,6 +20759,174 @@ Function GetCMDData4$(id)
 	Default
 		Return "N/A (4)"
 	End Select
+End Function
+
+Function GetCmd4Data2$(value)
+
+	Select value
+	Case 1
+		Return "MovementType"
+	Case 2
+		Return "MovementTypeData"
+	Case 3
+		Return "RadiusType"
+	Case 4
+		Return "Data10"
+	Case 5
+		Return "AttackPower"
+	Case 6
+		Return "DefensePower"
+	Case 7
+		Return "DestructionType"
+	Case 8
+		Return "ID"
+	Case 9
+		Return "Type"
+	Case 10
+		Return "SubType"
+	Case 11
+		Return "Active"
+	Case 12
+		Return "ActivationType"
+	Case 13
+		Return "ActivationSpeed"
+	Case 14
+		Return "Status"
+	Case 15
+		Return "Timer"
+	Case 16
+		Return "TimerMax1"
+	Case 17
+		Return "TimerMax2"
+	Case 18
+		Return "Teleportable"
+	Case 19
+		Return "ButtonPush"
+	Case 20
+		Return "WaterReact"
+	Case 21
+		Return "Telekinesisable"
+	Case 22
+		Return "Freezable"
+	Case 23
+		Return "Data0"
+	Case 24
+		Return "Data1"
+	Case 25
+		Return "Data2"
+	Case 26
+		Return "Data3"
+	Case 27
+		Return "Data4"
+	Case 28
+		Return "Data5"
+	Case 29
+		Return "Data6"
+	Case 30
+		Return "Data7"
+	Case 31
+		Return "Data8"
+	Case 32
+		Return "Data9"
+	Default
+		Return "None"
+	End Select
+
+End Function
+
+Function GetMovementTypeString$(value)
+
+	Select value
+	Case 10
+		Return "HPathfind0" ;"HPathfind0" "GoalRange0" "HQ A* To 0" ""A*+ Range0""
+	Case 11
+		Return "HPathfind1"
+	Case 12
+		Return "HPathfind2"
+	Case 13
+		Return "MPathfind0"
+	Case 14
+		Return "MPathfind1"
+	Case 15
+		Return "MPathfind2"
+	Case 16
+		Return "LPathfind0"
+	Case 17
+		Return "LPathfind1"
+	Case 18
+		Return "LPathfind2"
+	Case 20
+		Return "PlayerPath"
+	Case 30
+		Return "FleeRange0"
+	Case 31
+		Return "FleeRange1"
+	Case 32
+		Return "FleeRange2"
+	Case 33
+		Return "FleeRange3"
+	Case 34
+		Return "FleeRange4"
+	Case 41
+		Return "NorthLeft"
+	Case 42
+		Return "NorthRight"
+	Case 43
+		Return "EastLeft"
+	Case 44
+		Return "EastRight"
+	Case 45
+		Return "SouthLeft"
+	Case 46
+		Return "SouthRight"
+	Case 47
+		Return "WestLeft"
+	Case 48
+		Return "WestRight"
+	Case 51,52
+		Return "NorthSwim"
+	Case 53,54
+		Return "EastSwim"
+	Case 55,56
+		Return "SouthSwim"
+	Case 57,58
+		Return "WestSwim"
+	Case 71
+		Return "NorthBounc"
+	Case 72
+		Return "NorthEast"
+	Case 73
+		Return "EastBounc"
+	Case 74
+		Return "SouthEast"
+	Case 75
+		Return "SouthBounc"
+	Case 76
+		Return "SouthWest"
+	Case 77
+		Return "WestBounc"
+	Case 78
+		Return "NorthWest"
+	Case 81
+		Return "MoobotNL"
+	Case 82
+		Return "MoobotNR"
+	Case 83
+		Return "MoobotEL"
+	Case 84
+		Return "MoobotER"
+	Case 85
+		Return "MoobotSL"
+	Case 86
+		Return "MoobotSR"
+	Case 87
+		Return "MoobotWL"
+	Case 88
+		Return "MoobotWR"
+	Default
+		Return "Stationary"
+	End Select
+
 End Function
 
 Function BuildHub()
