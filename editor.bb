@@ -12355,7 +12355,11 @@ Function CreateSignMesh(Data0,Data1)
 
 	If Data0>-1 And Data0<6
 		Entity=CopyEntity(SignMesh(Data0))
-		EntityTexture Entity,SignTexture(CurrentObjectData(1))
+		If Data1>-1 And Data1<6
+			EntityTexture Entity,SignTexture(CurrentObjectData(1))
+		Else
+			UseErrorColor(Entity)
+		EndIf
 	Else
 		Entity=CreateErrorMesh()
 	EndIf
