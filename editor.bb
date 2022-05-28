@@ -12336,6 +12336,34 @@ Function UpdateLogicTile(i,j)
 
 End Function
 
+Function CreateErrorMesh()
+
+	Entity=CreateSphere()
+	ScaleMesh Entity,.3,.3,.3
+	UseErrorColor(Entity)
+	Return Entity
+
+End Function
+
+Function UseErrorColor(Entity)
+
+	EntityColor Entity,ModelErrorR,ModelErrorG,ModelErrorB
+
+End Function
+
+Function CreateSignMesh(Data0,Data1)
+
+	If Data0>-1 And Data0<6
+		Entity=CopyEntity(SignMesh(Data0))
+		EntityTexture Entity,SignTexture(CurrentObjectData(1))
+	Else
+		Entity=CreateErrorMesh()
+	EndIf
+	
+	Return Entity
+
+End Function
+
 Function CreateSpellBallMesh(subtype)
 
 	entity=CreateSphere(4)
@@ -13048,8 +13076,7 @@ Function BuildCurrentObjectModel()
 
 
 	Else If CurrentObjectModelName$="!Sign"
-		CurrentObjectModel=CopyEntity(SignMesh(CurrentObjectData(0)))
-		EntityTexture CurrentObjectModel,SignTexture(CurrentObjectData(1))
+		CurrentObjectModel=CreateSignMesh(CurrentObjectData(0),CurrentObjectData(1))
 
 
 	Else If CurrentObjectModelName$="!CustomItem"
@@ -13189,9 +13216,7 @@ Function BuildCurrentObjectModel()
 		;EntityAlpha CurrentObjectModel,.5
 		
 	Else ;unknown model
-		CurrentObjectModel=CreateSphere()
-		ScaleMesh CurrentObjectModel,.3,.3,.3
-		EntityColor CurrentObjectModel,ModelErrorR,ModelErrorG,ModelErrorB
+		CurrentObjectModel=CreateErrorMesh()
 	
 
 	EndIf
@@ -14397,8 +14422,8 @@ Function CreateObjectModel(Dest)
 		Else If ObjectModelName$(Dest)="!CustomItem"
 			ObjectEntity(Dest)=CreateCustomItemMesh(ObjectData(Dest,0))
 		Else If ObjectModelName$(Dest)="!Sign"
-			ObjectEntity(Dest)=CopyEntity(SignMesh(ObjectData(Dest,0)))
-			EntityTexture ObjectEntity(Dest),SignTexture(ObjectData(Dest,1))
+			ObjectEntity(Dest)=CreateSignMesh(ObjectData(Dest,0),ObjectData(Dest,1))
+			
 		Else If ObjectModelName$(Dest)="!Barrel1"
 			ObjectEntity(Dest)=CopyEntity(BarrelMesh)
 			EntityTexture ObjectEntity(Dest),BarrelTexture1
