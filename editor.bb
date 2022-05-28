@@ -9424,6 +9424,10 @@ Function DisplayObjectAdjuster(i)
 			tex2$="TileLogic"
 			tex$=LogicIdToLogicName$(CurrentObjectData(0))
 		EndIf
+		
+		If CurrentObjectModelName$="!Sun Sphere1"
+			tex2$="Red"
+		EndIf
 
 
 
@@ -9623,6 +9627,10 @@ Function DisplayObjectAdjuster(i)
 			tex2$="ShotTime"
 		EndIf
 		
+		If CurrentObjectModelName$="!Sun Sphere1"
+			tex2$="Green"
+		EndIf
+		
 
 
 		
@@ -9778,6 +9786,10 @@ Function DisplayObjectAdjuster(i)
 			Case 2
 				tex$="Grow"
 			End Select
+		EndIf
+		
+		If CurrentObjectModelName$="!Sun Sphere1"
+			tex2$="Blue"
 		EndIf
 
 
@@ -10367,6 +10379,10 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalY2"
 		EndIf
+		
+		If CurrentObjectType=441 ; Sun Sphere 1
+			tex2$="TimeOffset"
+		EndIf
 
 
 
@@ -10497,6 +10513,13 @@ Function DisplayObjectAdjuster(i)
 				
 		If CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalY3"
+		EndIf
+		
+		
+		If CurrentObjectType=441 ; Sun Sphere 1
+			tex2$="Empty"
+			If CurrentObjectData(9)=0 tex$="No"
+			If CurrentObjectData(9)=1 tex$="Yes"
 		EndIf
 
 		
