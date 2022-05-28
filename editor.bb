@@ -7450,13 +7450,17 @@ Function CalculateEffectiveID(Dest)
 		If ObjectID(Dest)=-1
 			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 		EndIf
-	Case 40,301 ; stepping stone
+	Case 40 ; stepping stone
 		Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)	   
 	Case 280 ; spring
 		Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
 	Case 301 ; rainbow float
 		If ObjectID(Dest)=-1
 			Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)
+		EndIf
+	Case 432 ; moobot
+		If ObjectTileTypeCollision(Dest)=0
+			Return 500+ObjectData(Dest,0)*5+ObjectData(Dest,1)
 		EndIf
 	End Select
 	
