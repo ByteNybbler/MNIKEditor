@@ -24065,6 +24065,21 @@ Function ControlButterfly(i)
 
 End Function
 
+Function ControlSpellBall(i)
+
+	If ObjectSubType(i)<8
+		myparticle=24+ObjectSubType(i)
+	Else
+		myparticle=Rand(24,31)
+	EndIf
+	
+	; do the trail
+	If (LevelTimer Mod 2=0) And ObjectData(i,8)<>-99
+		AddParticle(myparticle,ObjectX(i)+Rnd(-.1,.1),ObjectZ(i)+Rnd(-.1,.1),-ObjectY(i)+Rnd(-.1,.1),0,0.5,0,0.00,0,3,.01,0,0,0,75,3)
+	EndIf
+
+End Function
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -24376,6 +24391,8 @@ Function ControlObjects()
 				ControlTeleporter(i)
 			Case 40
 				ControlSteppingStone(i)
+			Case 50
+				ControlSpellBall(i)
 			Case 53
 				ControlMeteorite(i)
 			Case 120
