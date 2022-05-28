@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/27/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/28/22)"
 
 Global MASTERUSER=True
 
@@ -2064,7 +2064,7 @@ Function EditorMainLoop()
 	
 	leveltimer=leveltimer+1
 	
-	If KeyPressed(35) ; h
+	If KeyPressed(35) ; h key
 		HighlightWopAdjusters=Not HighlightWopAdjusters
 	EndIf
 	
@@ -2659,7 +2659,7 @@ Function EditorGlobalControls()
 	
 	; Disabled indefinitely due to potential instability.
 	; Getting this to work would take a huge amount of effort.
-	;If KeyPressed(66) And displayfullscreen=False ; F8
+	;If KeyPressed(66) And displayfullscreen=False ; F8 key
 	;	ResetWindowSize()
 	;EndIf
 
@@ -2975,7 +2975,7 @@ End Function
 
 Function EditorLocalControls()
 
-	If KeyPressed(64) ; F6
+	If KeyPressed(64) ; F6 key
 		; toggle orthographic projection
 		If Camera1Proj=1
 			; to orthographic
@@ -2994,7 +2994,7 @@ Function EditorLocalControls()
 		Camera1SavedProjMode=Camera1Proj
 	EndIf
 
-	If KeyPressed(65) ; F7
+	If KeyPressed(65) ; F7 key
 		; toggle wireframe mode
 		UsingWireFrame=Not UsingWireFrame
 		WireFrame UsingWireFrame
@@ -4303,10 +4303,20 @@ Function EditorLocalControls()
 				CurrentGrabbedObjectModified=False
 			EndIf
 		EndIf
-		If KeyDown(19) ; R
+		If KeyDown(19) ; R key
 			SetEditorMode(3)
 			PasteObjectData(CurrentGrabbedObject)
 			CurrentGrabbedObjectModified=False
+		EndIf
+	EndIf
+	
+	If KeyDown(20) ; T key
+		If GetConfirmation("Give the current object its default TrueMovement values?")
+			If RetrieveDefaultTrueMovement()
+				SetEditorMode(3)
+			Else
+				ShowMessage("No default values exist for the current object Type!", 2000)
+			EndIf
 		EndIf
 	EndIf
 	
@@ -14925,7 +14935,7 @@ Function CameraControls()
 	If ShiftDown() Then Adj=0.4
 	
 	; Still doesn't really work, and also doesn't behave well with orthographic mode yet.
-	;If KeyPressed(20) ; T
+	;If KeyPressed(idk) ; Formerly 20, which is T
 	;	ToggleGameCamera()
 	;EndIf
 	
@@ -22208,6 +22218,231 @@ Function CodeCountAccessories(code$)
 	Next
 	
 	Return Result
+
+End Function
+
+; Returns False if the current object Type has no default TrueMovement.
+Function RetrieveDefaultTrueMovement()
+
+	Select CurrentObjectType
+	
+	Case 50 ; Spellball
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^13+2^14
+		CurrentObjectObjectTypeCollision=0 ; -1 in-game, but probably doesn't make a difference.
+	
+	Case 110 ; Stinker NPC
+		CurrentObjectData10=-1
+
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6
+		;If CurrentObjectMoveXGoal=0 And CurrentObjectMoveYGoal=0
+			;CurrentObjectMoveXGoal=Floor(CurrentObjectX)
+			;CurrentObjectMoveYGoal=Floor(CurrentObjectY) 
+			;CurrentObjectCurrentAnim=10
+		;EndIf
+	
+	Case 120 ; Wee Stinker
+		CurrentObjectMovementType=0
+		CurrentObjectMovementSpeed=35
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6+2^8
+		
+		CurrentObjectXScale=0.025
+		CurrentObjectYScale=0.025
+		CurrentObjectZScale=0.025
+	
+	Case 150 ; Scritter
+		CurrentObjectMovementSpeed=50
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6
+		
+	Case 151 ; Rainbow Bubble
+		CurrentObjectMovementType=33
+		CurrentObjectMovementSpeed=25
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
+		
+	Case 220 ; Dragon Turtle
+		CurrentObjectMovementType=41+CurrentObjectData(0)*2+CurrentObjectData(1)
+		CurrentObjectMovementSpeed=25
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6
+		
+	Case 230 ; Fireflower
+		CurrentObjectTileTypeCollision=2^0
+		
+	Case 250 ; Chomper
+		CurrentObjectMovementType=13
+		CurrentObjectMovementSpeed=20+5*CurrentObjectData(0)
+		
+		If CurrentObjectSubType=0 ; Non-Water Chomper
+			CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		Else ; Water Chomper
+			CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14	
+		EndIf
+		
+		If CurrentObjectData(1)=1 ; Ghost Chomper
+			CurrentObjectObjectTypeCollision=2^1+2^4+2^6
+		Else ; Non-Ghost Chomper
+			CurrentObjectObjectTypeCollision=2^1+2^3+2^6
+		EndIf
+		
+	Case 260 ; Spikeyball
+		CurrentObjectMovementSpeed=25+5*CurrentObjectData(2)
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^1+2^2+2^3+2^6+2^9
+		
+		Data0=CurrentObjectData(0) Mod 8
+		If CurrentObjectData(1)=0 Or CurrentObjectData(1)=1
+			; zbot movement
+			CurrentObjectMovementType=41+Data0*2+CurrentObjectData(1)
+		Else If CurrentObjectData(1)=2
+			; bounce movement
+			CurrentObjectMovementType=71+Data0	
+		EndIf
+	
+	Case 290 ; Thwart
+		CurrentObjectData10=-1
+
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^4+2^6
+		;If CurrentObjectMoveXGoal=0 And CurrentObjectMoveYGoal=0
+			;CurrentObjectMoveXGoal=Floor(CurrentObjectX)
+			;CurrentObjectMoveYGoal=Floor(CurrentObjectY) 
+			;CurrentObjectCurrentAnim=10
+		;EndIf
+		
+	Case 310 ; Rubberducky
+		CurrentObjectMovementSpeed=4
+		CurrentObjectTileTypeCollision=2^2 ; -1 in-game, but probably doesn't make a difference.
+		CurrentObjectData(1)=Rand(1,3)
+		CurrentObjectData(2)=Rand(0,360)
+		
+	Case 330 ; Wysp
+		CurrentObjectMovementType=10
+		CurrentObjectMovementSpeed=45
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6+2^8
+		
+	Case 370 ; Crab
+		CurrentObjectMovementSpeed=40
+		CurrentObjectObjectTypeCollision=2^6
+		
+		If CurrentObjectSubType=0 ; green
+			CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+			Select ObjectData(i,1)
+			Case 0
+				; normal
+				CurrentObjectMovementType=0
+			Case 1
+				; curious
+				CurrentObjectMovementType=14
+			Case 2,3
+				; asleep
+				CurrentObjectMovementType=0
+				;AnimateMD2 ObjectEntity(i),3,1,48,49
+			End Select
+			CurrentObjectXScale=0.006
+			CurrentObjectYScale=0.006
+			CurrentObjectZScale=0.006
+		Else ; red
+			CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+			Select ObjectData(i,1)
+			Case 0
+				; normal
+				CurrentObjectMovementType=32
+			Case 1
+				; curious
+				CurrentObjectMovementType=14
+			Case 2,3
+				; asleep
+				CurrentObjectMovementType=0
+				;AnimateMD2 ObjectEntity(i),3,1,48,49
+			End Select
+
+		EndIf
+		
+	Case 380 ; Ice Troll
+		CurrentObjectData10=-1
+
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^4+2^6
+		
+	Case 390 ; Kaboom! NPC
+		CurrentObjectData10=-1
+
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6
+		
+	Case 400 ; Baby Boomer
+		CurrentObjectMovementType=0
+		CurrentObjectMovementSpeed=35
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6+2^8
+		
+	Case 420 ; Coily
+		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementSpeed=30
+		CurrentObjectTileTypeCollision=2^0+2^3+2^9+2^10+2^14
+		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
+	
+	Case 422 ; UFO
+		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementSpeed=20
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^3+2^6
+	
+	Case 423 ; Retro Z-Bot
+		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementSpeed=60
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
+		
+	Case 430 ; Zipbot
+		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementSpeed=120
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
+		
+	Case 431 ; Zapbot
+		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementSpeed=20*CurrentObjectData(2)
+		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^3+2^6
+		
+	Case 432 ; Moobot
+		CurrentObjectMovementType=0
+		CurrentObjectMovementSpeed=60
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6
+		
+		CurrentObjectID=500+CurrentObjectData(0)*5+CurrentObjectData(1)
+		
+	Case 433 ; Z-Bot NPC
+		CurrentObjectData10=-1
+
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^6
+		
+	Case 434 ; Mothership
+		CurrentObjectMovementSpeed=10
+		CurrentObjectTileTypeCollision=0
+		CurrentObjectObjectTypeCollision=0
+		
+		CurrentObjectData(1)=-1
+		CurrentObjectZ=4
+		
+	Case 470 ; Ghost
+		CurrentObjectMovementType=0
+		CurrentObjectMovementSpeed=5+5*CurrentObjectData(1)
+		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
+		
+	Default
+		Return False
+	End Select
+	
+	CurrentGrabbedObjectModified=True
+	Return True
 
 End Function
 
