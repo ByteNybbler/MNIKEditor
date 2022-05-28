@@ -33,6 +33,7 @@
 * Ctrl+Click the FILL button: Set the fill density. This is a value in the range [0.0, 1.0] that determines the percentage of tiles that will get filled based on random chance.
 * F6: Toggle orthographic projection.
 * F7: Toggle wireframe mode.
+* T: Give the current object its in-game TrueMovement values (TTC, OTC, MovementType, and MovementSpeed) based on its Type, SubType, and sometimes some Data values. This makes it very easy to do various small changes that previously required a lot of manual work setting the TTC and OTC. For instance, you can easily define different MovementSpeeds on objects that formerly did not allow that value to be adjusted without making advanced manual adjustments to TrueMovement. Objects like hyperspeed turtles, hyperspeed MooBots, and hyperspeed Wee Stinkers can be constructed with minimal effort. You can also modify the MovementTypes of these objects easily so that you can have stuff like Wee Stinkers that sleepwalk away from you until you wake them up.
 * Ctrl+B: Toggle block mode. The cursor brush will be blue while block mode is active.
 * Ctrl+F: Toggle fill mode. The cursor brush will be yellow while fill mode is active.
 
