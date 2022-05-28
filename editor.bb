@@ -4971,6 +4971,7 @@ Function GetConfirmation(Message$)
 	SetupWarning()
 	Print Message$
 	Confirm$=Input$("Type Y to confirm: ")
+	ReturnKeyReleased=False
 	Return Confirm="Y" Or Confirm="y"
 
 End Function
