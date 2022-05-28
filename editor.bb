@@ -9080,7 +9080,11 @@ Function DisplayObjectAdjuster(i)
 			
 			EndIf
 		EndIf
-		If CurrentObjectType=90
+		If CurrentObjectType=50 ; spellball
+			tex2$="Spell"
+			tex$=GetMagicNameAndId$(CurrentObjectSubType)
+		EndIf
+		If CurrentObjectType=90 ; button
 			Select CurrentObjectSubType
 			Case 0
 				tex$="Square"
@@ -9312,6 +9316,9 @@ Function DisplayObjectAdjuster(i)
 		
 		EndIf
 
+		If CurrentObjectType=50 ; spellball
+			tex2$="GoalX"
+		EndIf
 		If CurrentObjectType=190 Or CurrentObjectType=164
 			tex2$="Particle ID"
 		EndIf
@@ -9551,6 +9558,9 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
+		If CurrentObjectType=50 ; spellball
+			tex2$="GoalY"
+		EndIf
 		If CurrentObjectType=190
 			tex2$="Intensity"
 			If CurrentObjectData(1)=1 tex$="Low"
@@ -9747,6 +9757,10 @@ Function DisplayObjectAdjuster(i)
 
 			EndIf
 		EndIf
+		
+		If CurrentObjectType=50 ; spellball
+			tex2$="SourceX"
+		EndIf
 		If CurrentObjectType=190
 			tex2$="Direction"
 			If CurrentObjectData(2)=0 tex$="Up"
@@ -9906,6 +9920,10 @@ Function DisplayObjectAdjuster(i)
 			Else
 				tex$="Silent/Glitched"
 			EndIf
+		EndIf
+		
+		If CurrentObjectType=50 ; spellball
+			tex2$="SourceY"
 		EndIf
 		If CurrentObjectType=190
 			tex2$="Sound"
@@ -10536,7 +10554,14 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObjectData(8)=1 tex$="Off"
 			
 		EndIf
-
+		
+		
+		
+		If CurrentObjectType=50 ; spellball
+			tex2$="FromZapbot"
+			If CurrentObjectData(8)=0 tex$="No"
+			If CurrentObjectData(8)=-99 tex$="Yes"
+		EndIf
 
 
 		If CurrentObjectModelName$="!Mothership"
@@ -10738,7 +10763,11 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=RandomStatusMax
 
 
-
+		If CurrentObjectType=50 ; spellball
+			tex2$="FromPlayer"
+			If CurrentObjectStatus=0 tex$="No"
+			If CurrentObjectStatus=1 tex$="Yes"
+		EndIf
 
 
 	
