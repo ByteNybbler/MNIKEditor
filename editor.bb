@@ -2550,6 +2550,13 @@ Function DrawTooltip(StartX,StartY,Message$)
 	;ShowMessage("Showing tooltip at "+StartX+","+StartY+": "+Message$,1000)
 	
 	TextPixelLength=GetTextPixelLength(Message$)
+	
+	; clamp the tooltip position so that the rectangle doesn't spill outside the window
+	If StartX+TextPixelLength>800
+		StartX=800-TextPixelLength
+	ElseIf StartX<0
+		StartX=0
+	EndIf
 
 	Color RectToolbarR,RectToolbarG,RectToolbarB
 	Rect StartX,StartY-40,TextPixelLength,30,True
@@ -4262,8 +4269,8 @@ Function EditorLocalControls()
 			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 				AdjustObjectAdjuster(i)
 				SetEditorMode(3)
-
 			EndIf
+			HoverOverObjectAdjuster(i)
 		EndIf
 	Next
 	
@@ -5036,6 +5043,66 @@ Function ReplyFunctionToDataName$(Fnc)
 	Default
 		Return "N/A"
 	End Select
+
+End Function
+
+Function ObjectTypeCollisionBitToName$(BitIndex)
+
+	Select BitIndex
+	Case 1
+		Return "Player"
+	Case 2
+		Return "Talkable NPCs and Signs"
+	Case 3
+		Return "Wee Stinkers and Baby Boomers"
+	Case 4
+		Return "Items"
+	Case 5
+		Return "Scritters and Tentacles"
+	Case 6
+		Return "Sunken Turtles and (if TTC has Bridge) Transporters"
+	Case 7
+		Return "Untalkable NPCs, Signs, and Unsunken Turtles"
+	Case 8
+		Return "Dangerous Creatures (Chompers, etc)"
+	Case 9
+		Return "Barrels, Cuboids, and GrowFlowers"
+	Case 10
+		Return "Frozen Objects"
+	Default
+		Return "???"
+	End Select
+
+End Function
+
+Function BitPositionIndexToBitIndex(BitPositionIndex)
+
+	BitIndex=BitPositionIndex
+	If BitIndex>10
+		BitIndex=BitIndex-1
+	EndIf
+	If BitIndex>5
+		BitIndex=BitIndex-1
+	EndIf
+	Return BitIndex
+
+End Function
+
+Function BitIndexIsValid(BitIndex)
+
+	Return BitIndex>-1 And BitIndex<15
+
+End Function
+
+Function BitPositionIndexIsValid(BitPositionIndex)
+
+	Return BitPositionIndex<>5 And BitPositionIndex<>11
+
+End Function
+
+Function GetBitPositionIndex(BitStartX)
+
+	Return (MouseX()-BitStartX)/8
 
 End Function
 
@@ -8606,8 +8673,6 @@ Function DisplayAsBinaryString$(value)
 
 Result$=""
 
-;Str$(CurrentObjectTileTypeCollision)+"000 0000 0000 00"
-
 For i=0 To 14
 	If i Mod 5 = 0 And i>0
 		Result$=Result$+" "
@@ -8638,6 +8703,41 @@ Function AdjusterAppearsInWop(adjuster$)
 End Function
 
 
+Function HoverOverObjectAdjuster(i)
+
+	StartX=510
+	StartY=305
+	StartY=StartY+15+(i-ObjectAdjusterStart)*15
+	
+	Select ObjectAdjuster$(i)
+	Case "TileTypeCollision"
+		tex2$="TTC"
+		tex$="00000 00000 00000"
+			
+		HalfNameWidth=4*Len(tex2$+": "+tex$)
+		BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
+		
+		BitPositionIndex=GetBitPositionIndex(BitStartX)
+		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
+		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
+			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,StartY+8,LogicIdToLogicName$(BitIndex))
+		EndIf
+	Case "ObjectTypeCollision"
+		tex2$="OTC"
+		tex$="00000 00000 00000"
+			
+		HalfNameWidth=4*Len(tex2$+": "+tex$)
+		BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
+		
+		BitPositionIndex=GetBitPositionIndex(BitStartX)
+		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
+		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
+			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,StartY+8,ObjectTypeCollisionBitToName$(BitIndex))
+		EndIf
+	End Select
+
+End Function
+
 
 Function DisplayObjectAdjuster(i)
 
@@ -8645,6 +8745,7 @@ Function DisplayObjectAdjuster(i)
 	CrossedOut=False
 	StartX=510
 	StartY=305
+	StartY=StartY+15+(i-ObjectAdjusterStart)*15
 
 	Select ObjectAdjuster$(i)
 	Case "TextureName"
@@ -10402,13 +10503,14 @@ Function DisplayObjectAdjuster(i)
 		CrossedOut=RandomTTC
 		LeftAdj$=""
 		RightAdj$=""
+		
 	Case "ObjectTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObjectObjectTypeCollision)
 		tex2$="OTC"
 		CrossedOut=RandomOTC
 		LeftAdj$=""
 		RightAdj$=""
-						
+		
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObjectScaleAdjust)
 		CrossedOut=RandomScaleAdjust
@@ -10529,7 +10631,6 @@ Function DisplayObjectAdjuster(i)
 		Color TextAdjusterR,TextAdjusterG,TextAdjusterB
 	EndIf
 	
-	TextY=StartY+15+(i-ObjectAdjusterStart)*15
 	If CrossedOut
 		;Text StartX+8,StartY+15+(i-ObjectAdjusterStart)*15,"--------------------"
 		tex$=tex2$
@@ -10540,13 +10641,13 @@ Function DisplayObjectAdjuster(i)
 		
 		HalfNameWidth=4*Len(tex$)
 		
-		Text StartX+92-HalfNameWidth,TextY,Dashes$
+		Text StartX+92-HalfNameWidth,StartY,Dashes$
 		
 		;Text StartX+18-4*Len(LeftAdj$),TextY,LeftAdj$
 		;Text StartX+166-4*Len(RightAdj$),TextY,RightAdj$
 		
-		Text StartX+2,TextY,LeftAdj$
-		Text StartX+182-8*Len(RightAdj$),TextY,RightAdj$
+		Text StartX+2,StartY,LeftAdj$
+		Text StartX+182-8*Len(RightAdj$),StartY,RightAdj$
 		
 		;Text StartX+80-HalfNameWidth-8*Len(LeftAdj$),TextY,LeftAdj$
 		;Text StartX+104+HalfNameWidth,TextY,RightAdj$
@@ -10555,7 +10656,7 @@ Function DisplayObjectAdjuster(i)
 		tex$=tex2$+": "+tex$
 	EndIf
 	
-	Text StartX+92-4*Len(tex$),TextY,tex$
+	Text StartX+92-4*Len(tex$),StartY,tex$
 
 End Function
 
@@ -12043,20 +12144,24 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "TileTypeCollision"
 		If Not RandomTTC And ReturnKey=False
-			Adj=0
-			If KeyDown(11) Adj=2^0
-			If KeyDown(2) Adj=2^1
-			If KeyDown(3) Adj=2^2
-			If KeyDown(4) Adj=2^3
-			If KeyDown(5) Adj=2^4
-			If KeyDown(6) Adj=2^5
-			If KeyDown(7) Adj=2^6
-			If KeyDown(8) Adj=2^7
-			If KeyDown(9) Adj=2^8
-			If KeyDown(10) Adj=2^9
-			If Fast Adj=Adj*2^10
-			If LeftMouse=True Or RightMouse=True Then CurrentObjectTileTypeCollision=CurrentObjectTileTypeCollision Xor Adj
-			Delay DelayTime
+			StartX=510
+			StartY=305
+			StartY=StartY+15+(i-ObjectAdjusterStart)*15
+			tex2$="TTC"
+			tex$="00000 00000 00000"
+			
+			HalfNameWidth=4*Len(tex2$+": "+tex$)
+			BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
+			
+			BitPositionIndex=GetBitPositionIndex(BitStartX)
+			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
+			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
+				CurrentObjectTileTypeCollision=CurrentObjectTileTypeCollision Xor 2^BitIndex
+			EndIf
+			
+			If LeftMouse=True Or RightMouse=True
+				Delay DelayTime
+			EndIf
 		EndIf
 		If ReturnPressed()
 			RandomTTC=Not RandomTTC
@@ -12064,20 +12169,24 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "ObjectTypeCollision"
 		If Not RandomOTC And ReturnKey=False
-			Adj=0
-			If KeyDown(11) Adj=2^0
-			If KeyDown(2) Adj=2^1
-			If KeyDown(3) Adj=2^2
-			If KeyDown(4) Adj=2^3
-			If KeyDown(5) Adj=2^4
-			If KeyDown(6) Adj=2^5
-			If KeyDown(7) Adj=2^6
-			If KeyDown(8) Adj=2^7
-			If KeyDown(9) Adj=2^8
-			If KeyDown(10) Adj=2^9
-			If Fast Adj=Adj*2^10
-			If LeftMouse=True Or RightMouse=True Then CurrentObjectObjectTypeCollision=CurrentObjectObjectTypeCollision Xor Adj
-			Delay DelayTime
+			StartX=510
+			StartY=305
+			StartY=StartY+15+(i-ObjectAdjusterStart)*15
+			tex2$="OTC"
+			tex$="00000 00000 00000"
+			
+			HalfNameWidth=4*Len(tex2$+": "+tex$)
+			BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
+			
+			BitPositionIndex=GetBitPositionIndex(BitStartX)
+			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
+			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
+				CurrentObjectObjectTypeCollision=CurrentObjectObjectTypeCollision Xor 2^BitIndex
+			EndIf
+			
+			If LeftMouse=True Or RightMouse=True
+				Delay DelayTime
+			EndIf
 		EndIf
 		If ReturnPressed()
 			RandomOTC=Not RandomOTC
