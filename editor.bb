@@ -9345,7 +9345,7 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)<10
 				tex2$="Col To"
 			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$=GetCMDData1$(CurrentObjectData(0))
+				tex2$=GetCMDData1Name$(CurrentObjectData(0))
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="SubColour"
 			Else If CurrentObjectSubType = 10
@@ -9529,14 +9529,8 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)<10
 				tex2$="SubCol From"
 			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$=GetCMDData2$(CurrentObjectData(0))
-				
-				Select CurrentObjectData(0)
-				Case 4
-					tex$=CurrentObjectData(2)+"/"+GetCmd4Data2$(CurrentObjectData(2))
-				Case 52
-					tex$=CurrentObjectData(2)+"/"+GetMovementTypeString$(CurrentObjectData(2))
-				End Select
+				tex2$=GetCMDData2Name$(CurrentObjectData(0))
+				tex$=GetCmdData2ValueName$(CurrentObjectData(0),CurrentObjectData(2))
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="Direction"
 			Else If CurrentObjectSubType = 10
@@ -9758,16 +9752,8 @@ Function DisplayObjectAdjuster(i)
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2
 				tex2$="How Many"
 			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$=GetCMDData3$(CurrentObjectData(0))
-	
-				Select CurrentObjectData(0)
-				Case 4
-					If CurrentObjectData(2)=1 ; MovementType
-						tex$=CurrentObjectData(3)+"/"+GetMovementTypeString$(CurrentObjectData(3))
-					ElseIf CurrentObjectData(2)=9 ; Type
-						tex$=CurrentObjectData(3)+"/"+GetTypeString$(CurrentObjectData(3))
-					EndIf
-				End Select
+				tex2$=GetCMDData3Name$(CurrentObjectData(0))
+				tex$=GetCmdData3ValueName$(CurrentObjectData(0),CurrentObjectData(2),CurrentObjectData(3))
 			EndIf
 		EndIf
 		If CurrentObjectModelName$="!FireFlower"
@@ -9958,15 +9944,8 @@ Function DisplayObjectAdjuster(i)
 				tex2$="Yaw"
 				If CurrentObjectData(4)=-1 Then	tex$="No Change"
 			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$=GetCMDData4$(CurrentObjectData(0))
-
-				Select CurrentObjectData(0)
-				Case 7
-					DisplayedRotation=(CurrentObjectData(4)+180) Mod 360
-					tex$=GetDirectionString$(DisplayedRotation)
-				Case 51
-					tex$=CurrentObjectData(4)+"/"+GetMovementTypeString$(CurrentObjectData(4))
-				End Select
+				tex2$=GetCMDData4Name$(CurrentObjectData(0))
+				tex$=GetCmdData4ValueName$(CurrentObjectData(0),CurrentObjectData(4))
 			EndIf
 		EndIf
 		If CurrentObjectModelName$="!Conveyor"
@@ -20383,6 +20362,7 @@ Function DialogMainLoop()
 		SetAnswer(target)
 	EndIf
 	; Change AnswerData
+	; thanks to tooltips this is now awesome
 	If MouseY()>305 And MouseY()<345
 		TooltipX=MouseX()/100*100+50
 		TooltipY=385
@@ -20398,17 +20378,16 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCommandName$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 3
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=AdjustInt("Data1: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), 1, 10, 150)
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData1$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData1NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), ": "))
 		Case 4
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, 150)
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData2$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData2NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), ": "))
 		Case 5
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, 150)
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData3$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData3NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), ": "))
 		Case 6
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, 150)
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData4$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
-			;xzx
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData4NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), ": "))
 		End Select
 		
 		If Modified
@@ -20773,7 +20752,7 @@ Function GetCommandName$(id)
 	End Select
 End Function
 
-Function GetCMDData1$(id)
+Function GetCMDData1Name$(id)
 	Select id
 	Case 1,2,3,4,5,51,52
 		Return "Target ID"
@@ -20806,7 +20785,7 @@ Function GetCMDData1$(id)
 	End Select
 End Function
 
-Function GetCMDData2$(id)
+Function GetCMDData2Name$(id)
 	Select id
 	Case 4
 		Return "Int"
@@ -20841,7 +20820,7 @@ Function GetCMDData2$(id)
 	End Select
 End Function
 
-Function GetCMDData3$(id)
+Function GetCMDData3Name$(id)
 	Select id
 	Case 4,26
 		Return "Value"
@@ -20876,7 +20855,7 @@ Function GetCMDData3$(id)
 	End Select
 End Function
 
-Function GetCMDData4$(id)
+Function GetCMDData4Name$(id)
 	Select id
 	Case 7
 		Return "PlayerYaw"
@@ -20895,7 +20874,58 @@ Function GetCMDData4$(id)
 	End Select
 End Function
 
-Function GetCmd4Data2$(value)
+Function GetCmdData1ValueName$(Cmd, Data1)
+
+	Return Data1
+
+End Function
+
+Function GetCmdData2ValueName$(Cmd, Data2)
+
+	Select Cmd
+	Case 4
+		Return Data2+"/"+GetCmd4Data2ValueName$(Data2)
+	Case 52
+		Return Data2+"/"+GetMovementTypeString$(Data2)
+	Default
+		Return Data2
+	End Select
+
+End Function
+
+Function GetCmdData3ValueName$(Cmd, Data2, Data3)
+
+	Select Cmd
+	Case 4
+		Select Data2
+		Case 1 ; MovementType
+			Return Data3+"/"+GetMovementTypeString$(Data3)
+		Case 9 ; Type
+			Return Data3+"/"+GetTypeString$(Data3)
+		Default
+			Return Data3
+		End Select
+	Default
+		Return Data3
+	End Select
+
+End Function
+
+Function GetCmdData4ValueName$(Cmd, Data4)
+
+	Select Cmd
+	Case 7
+		DisplayedRotation=(Data4+180) Mod 360
+		Return GetDirectionString$(DisplayedRotation)
+	Case 51
+		Return Data4+"/"+GetMovementTypeString$(Data4)
+	Default
+		Return Data4
+	End Select
+
+End Function
+
+Function GetCmd4Data2ValueName$(value)
 
 	Select value
 	Case 1
@@ -21062,6 +21092,30 @@ Function GetMovementTypeString$(value)
 	Default
 		Return "NotVanilla"
 	End Select
+
+End Function
+
+Function GetCMDData1NameAndValue$(Cmd,Data1,Joiner$)
+
+	Return GetCmdData1Name$(Cmd)+Joiner$+GetCmdData1ValueName$(Cmd,Data1)
+
+End Function
+
+Function GetCMDData2NameAndValue$(Cmd,Data2,Joiner$)
+
+	Return GetCmdData2Name$(Cmd)+Joiner$+GetCmdData2ValueName$(Cmd,Data2)
+
+End Function
+
+Function GetCMDData3NameAndValue$(Cmd,Data2,Data3,Joiner$)
+
+	Return GetCmdData3Name$(Cmd)+Joiner$+GetCmdData3ValueName$(Cmd,Data2,Data3)
+
+End Function
+
+Function GetCMDData4NameAndValue$(Cmd,Data4,Joiner$)
+
+	Return GetCmdData4Name$(Cmd)+Joiner$+GetCmdData4ValueName$(Cmd,Data4)
 
 End Function
 
