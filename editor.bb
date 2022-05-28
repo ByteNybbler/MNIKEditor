@@ -3313,8 +3313,6 @@ Function EditorLocalControls()
 					CustomBrush=False
 				Else
 					; set custom brush
-					CustomBrush=True
-					CustomBrushEditorMode=EditorMode
 					NofBrushObjects=0
 					BrushOffset=BrushSize/2
 					BrushXStart=x-BrushOffset
@@ -3325,6 +3323,9 @@ Function EditorLocalControls()
 								CopyLevelTileToBrush(BrushXStart+i,BrushYStart+j,i,j)
 							Next
 						Next
+						
+						CustomBrush=True
+						CustomBrushEditorMode=EditorMode
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
 							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushSize And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushSize
@@ -3332,6 +3333,11 @@ Function EditorLocalControls()
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
 						Next
+						
+						If NofBrushObjects<>0
+							CustomBrush=True
+							CustomBrushEditorMode=EditorMode
+						EndIf
 					EndIf
 				EndIf
 			EndIf
