@@ -12143,7 +12143,7 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectMovementTypeData=AdjustInt("MovementTypeData: ", CurrentObjectMovementTypeData, 1, 10, 150)
 		
 	Case "TileTypeCollision"
-		If Not RandomTTC And ReturnKey=False
+		If (Not RandomTTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0)
 			StartX=510
 			StartY=305
 			StartY=StartY+15+(i-ObjectAdjusterStart)*15
@@ -12168,7 +12168,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "ObjectTypeCollision"
-		If Not RandomOTC And ReturnKey=False
+		If (Not RandomOTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0)
 			StartX=510
 			StartY=305
 			StartY=StartY+15+(i-ObjectAdjusterStart)*15
