@@ -10029,6 +10029,16 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!Mothership"
 			tex2$="SourceY"
 		EndIf
+		
+		If CurrentObjectModelName$="!IceBlock"
+			tex2$="Style"
+			Select CurrentObjectData(3)
+			Case 0
+				tex$="Ice"
+			Case 1
+				tex$="Floing"
+			End Select
+		EndIf
 
 
 
