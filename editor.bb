@@ -11368,6 +11368,11 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObjectData(0)>9 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=9
 		EndIf
+		
+		If CurrentObjectModelName$="!Sign"
+			If CurrentObjectData(0)>5 CurrentObjectData(0)=0
+			If CurrentObjectData(0)<0 CurrentObjectData(0)=5
+		EndIf
 
 		
 
