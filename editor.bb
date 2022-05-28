@@ -1148,11 +1148,12 @@ HideEntity BowlerMesh
 
 ; Busterfly
 Global BusterflyMesh,BusterflyTexture
-BusterflyMesh=MyLoadMesh("data\models\busterfly\buster2.3ds",0)
+;BusterflyMesh=MyLoadMesh("data\models\busterfly\buster2.3ds",0)
+BusterflyMesh=myLoadMD2("data\models\busterfly\buster.md2")
 BusterflyTexture=MyLoadTexture("Data\models\busterfly\buster1.bmp",4)
 EntityTexture BusterflyMesh,BusterflyTexture
-ScaleMesh busterflymesh,.01,.01,.01
-RotateMesh busterflymesh,-180,0,0
+;ScaleMesh busterflymesh,.01,.01,.01
+;RotateMesh busterflymesh,-180,0,0
 HideEntity BusterflyMesh
 
 ; Ducky
@@ -13097,6 +13098,7 @@ Function BuildCurrentObjectModel()
 
 	Else If CurrentObjectModelName$="!Busterfly"
 		CurrentObjectModel=CopyEntity(BusterflyMesh)
+		AnimateMD2 CurrentObjectModel,2,.4,2,9
 		
 		
 	Else If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
@@ -14403,6 +14405,7 @@ Function CreateObjectModel(Dest)
 			
 		Else If ObjectModelName$(Dest)="!Busterfly"
 			ObjectEntity(Dest)=CopyEntity(busterflyMesh)
+			AnimateMD2 ObjectEntity(Dest),2,.4,2,9
 			
 		Else If ObjectModelName$(Dest)="!Rubberducky"
 			ObjectEntity(Dest)=CopyEntity(rubberduckymesh)
@@ -22299,6 +22302,25 @@ Function RetrieveDefaultTrueMovement()
 			; bounce movement
 			CurrentObjectMovementType=71+Data0	
 		EndIf
+		
+	Case 270 ; Busterfly/Glowworm
+	
+		CurrentObjectTileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
+		
+		If CurrentObjectModelName$="!Busterfly"
+
+			CurrentObjectXScale=.01
+			CurrentObjectYScale=.01
+			CurrentObjectZScale=.01
+			CurrentObjectRoll2=90
+			
+		EndIf
+		
+	Case 271 ; Zipper
+	
+		CurrentObjectTileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
+		CurrentObjectData(1)=Rand(0,360)
+		CurrentObjectData(2)=Rand(1,4)
 	
 	Case 290 ; Thwart
 		CurrentObjectData10=-1
@@ -22442,6 +22464,7 @@ Function RetrieveDefaultTrueMovement()
 	End Select
 	
 	CurrentGrabbedObjectModified=True
+	BuildCurrentObjectModel()
 	Return True
 
 End Function
@@ -23842,6 +23865,72 @@ Function ControlMeteorite(i)
 	
 End Function
 
+Function ControlZipper(i)
+	
+	If SimulatedObjectTileTypeCollision(i)=0
+		SimulatedObjectTileTypeCollision(i)=-1 ; not really used
+		
+		EntityBlend ObjectEntity(i),3
+		
+		SimulatedObjectData(i,1)=Rand(0,360)
+		SimulatedObjectData(i,2)=Rand(1,4)
+		
+	EndIf
+
+	;zz#=.05*Sin(((Leveltimer+ObjectData(i,1))) Mod 360)
+	SimulatedObjectZ(i)=0
+	size#=.7+.1*Sin(leveltimer Mod 360) 
+	If size<0 Then size=0
+
+	SimulatedObjectXScale(i)=size
+	SimulatedObjectYScale(i)=size
+	SimulatedObjectZScale(i)=size
+	If leveltimer Mod 4=1 AddParticle(Rand(24,30),SimulatedObjectX(i),SimulatedObjectZ(i),-SimulatedObjectY(i),0,.4*size,0,0.00,0,3,0,0,0,0,25,3)
+
+End Function
+
+Function ControlButterfly(i)
+	
+	If SimulatedObjectTileTypeCollision(i)=0
+		SimulatedObjectTileTypeCollision(i)=-1 ; not really used
+		
+		If ObjectModelName$(i)="!Busterfly"
+
+			SimulatedObjectXScale(i)=.01
+			SimulatedObjectYScale(i)=.01
+			SimulatedObjectZScale(i)=.01
+			SimulatedObjectRoll2(i)=90
+			
+			AnimateMD2 ObjectEntity(i),2,.4,2,9
+		Else
+			EntityBlend ObjectEntity(i),3
+		EndIf
+		
+		SimulatedObjectData(i,1)=Rand(0,360)
+		SimulatedObjectData(i,2)=Rand(1,4)
+		
+	EndIf
+	
+
+	If ObjectModelName$(i)="!Busterfly"
+		zz#=.2*Sin((SimulatedObjectData(i,2)*(Leveltimer+SimulatedObjectData(i,1))) Mod 360)
+		;TurnObjectTowardDirection(i,ObjectDX(i),ObjectDY(i),2,90)
+		SimulatedObjectZ(i)=.4+zz
+	Else
+		zz#=.2*Sin(((Leveltimer+SimulatedObjectData(i,1))) Mod 360)
+		SimulatedObjectZ(i)=.4+zz
+		size#=.4+2*zz
+		If size<0 Then size=0
+
+		SimulatedObjectXScale(i)=size
+		SimulatedObjectYScale(i)=size
+		SimulatedObjectZScale(i)=size
+		If leveltimer Mod 4=1 AddParticle(Rand(24,30),SimulatedObjectX(i)-3*ObjectDX(i),SimulatedObjectZ(i),-SimulatedObjectY(i)+3*ObjectDY(i),0,.3*size,0,0.00,0,3,0,0,0,0,15,3)
+
+	EndIf
+
+End Function
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -24191,6 +24280,10 @@ Function ControlObjects()
 				ControlCuboid(i)
 			Case 260
 				ControlBowler(i)
+			Case 270
+				ControlButterfly(i)
+			Case 271
+				ControlZipper(i)
 			Case 280
 				ControlSpring(i)
 			Case 281
