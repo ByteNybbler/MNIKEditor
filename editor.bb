@@ -10782,6 +10782,8 @@ End Function
 
 Function GetMagicName$(id)
 	Select id
+		Case -1
+			Return "No Charge"
 		Case 0
 			Return "Floing"
 		Case 1
@@ -10802,11 +10804,67 @@ Function GetMagicName$(id)
 			Return "Bounce"
 		Case 9
 			Return "Barrel"
+		Case 10
+			Return "Turret"
 	End Select
 End Function
 
 Function GetMagicNameAndId$(id)
 	Return Str(id) + ". " + GetMagicName(id)
+End Function
+
+Function GetMagicColor(id,index)
+
+	Select id
+	Case -1 ; no charge (white in OpenWA, black in vanilla; same as not having any magic charged to your gloves)
+		red=255
+		green=255
+		blue=255
+	Case 0 ; floing
+		red=255
+	Case 1 ; pow
+		red=255
+		green=100
+	Case 2 ; pop
+		red=255
+		green=255
+	Case 3 ; grow
+		green=255
+	Case 4 ; brr
+		green=255
+		blue=255
+	Case 5 ; flash
+		blue=255
+	Case 6 ; blink
+		red=255
+		blue=255
+	Case 7 ; null
+		red=255
+		blue=255
+		green=255
+	Case 8 ; rainbow
+		;red=ii*64
+		;green=255-ii*32
+		;blue=255-ii*64
+		red=255
+		green=255
+		blue=255
+	Case 9 ; barrel
+		red=67
+		blue=67
+		green=67
+	Case 10 ; turret
+		red=107
+		green=0
+		blue=153
+	End Select
+	
+	If index=0 Return red
+	If index=1 Return green
+	If index=2 Return blue
+	
+	Return 255
+
 End Function
 
 
@@ -13508,42 +13566,8 @@ Function BuildCurrentObjectModel()
 		EntityTexture TextureTarget,GloveTex
 			EntityFX TextureTarget,2
 			For i=0 To 3
-				Select CurrentObjectData(0)
-				Case 0
-					red=255
-				Case 1
-					red=255
-					green=100
-				Case 2
-					red=255
-					green=255
-				Case 3
-					green=255
-				Case 4
-					green=255
-					blue=255
-				Case 5
-					blue=255
-				Case 6
-					red=255
-					blue=255
-				Case 7
-					red=255
-					blue=255
-					green=255
-				Case 8
-					red=ii*64
-					;green=255-ii*32
-					;blue=255-ii*64
-					green=64+ii*32
-					blue=255-ii*32
-				Case 9
-					red=67
-					blue=67
-					green=67
-				End Select
-			
-				VertexColor GetSurface(TextureTarget,1),i,red,green,blue
+				Col=CurrentObjectData(0)
+				VertexColor GetSurface(TextureTarget,1),i,GetMagicColor(Col,0),GetMagicColor(Col,1),GetMagicColor(Col,2)
 			Next
 
 	Else If Left(CurrentObjectTextureName$,1)="?"
@@ -14981,40 +15005,8 @@ Function CreateObjectModel(Dest)
 				green=0
 				blue=0
 				For ii=0 To 3
-					Select ObjectData(Dest,0)
-					Case 0
-						red=255
-					Case 1
-						red=255
-						green=100
-					Case 2
-						red=255
-						green=255
-					Case 3
-						green=255
-					Case 4
-						green=255
-						blue=255
-					Case 5
-						blue=255
-					Case 6
-						red=255
-						blue=255
-					Case 7
-						red=255
-						blue=255
-						green=255
-					Case 8
-						red=ii*64
-						green=255-ii*32
-						blue=255-ii*64
-					Case 9
-						red=67
-						blue=67
-						green=67
-					End Select
-				
-					VertexColor GetSurface(TextureTarget,1),ii,red,green,blue
+					Col=ObjectData(Dest,0)
+					VertexColor GetSurface(TextureTarget,1),ii,GetMagicColor(Col,0),GetMagicColor(Col,1),GetMagicColor(Col,2)
 				Next
 			EndIf
 
