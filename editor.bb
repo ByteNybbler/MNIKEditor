@@ -7187,6 +7187,14 @@ Function PlaceObject(x#,y#)
 	ObjectPitchAdjust#(NofObjects)=CurrentObjectPitchAdjust#
 	ObjectYawAdjust#(NofObjects)=CurrentObjectYawAdjust#
 	ObjectRollAdjust#(NofObjects)=CurrentObjectRollAdjust#
+	
+	For i=0 To 9
+		If RandomData(i)
+			CurrentObjectData(i)=Rand(RandomDataMin(i),RandomDataMax(i))
+		EndIf
+	
+		ObjectData(NofObjects,i)=CurrentObjectData(i)
+	Next
 
 	If SetObjectPosition(NofObjects,x#,y#,CurrentObjectX#,CurrentObjectY#)=False
 		; don't place anything
@@ -7246,15 +7254,6 @@ Function PlaceObject(x#,y#)
 	ObjectXAdjust#(NofObjects)=CurrentObjectXAdjust#
 	ObjectZAdjust#(NofObjects)=CurrentObjectZAdjust#
 	ObjectYAdjust#(NofObjects)=CurrentObjectYAdjust#
-	
-	
-	; extra adjustments	
-	If CurrentObjectType=50 ; spellball
-		CurrentObjectData(2)=ObjectTileX(NofObjects)
-		CurrentObjectData(3)=ObjectTileY(NofObjects)
-		CurrentObjectData(4)=ObjectTileX(NofObjects)
-		CurrentObjectData(5)=ObjectTileY(NofObjects)
-	EndIf
 	
 	
 	ObjectOldX#(nofobjects)=-999
@@ -7358,13 +7357,7 @@ Function PlaceObject(x#,y#)
 	ObjectReactive(NofObjects)=CurrentObjectReactive
 	ObjectChild(NofObjects)=CurrentObjectChild
 	ObjectParent(NofObjects)=CurrentObjectParent
-	For i=0 To 9
-		If RandomData(i)
-			CurrentObjectData(i)=Rand(RandomDataMin(i),RandomDataMax(i))
-		EndIf
 	
-		ObjectData(NofObjects,i)=CurrentObjectData(i)
-	Next
 	For i=0 To 4
 		ObjectTextData$(NofObjects,i)=CurrentObjectTextData$(i)
 	Next
@@ -13849,14 +13842,6 @@ Function ReSizeLevel()
 				DeleteObject(i)
 			Else
 				UpdateObjectPosition(i)
-				
-				; extra adjustments	
-				If ObjectType(i)=50 ; spellball
-					ObjectData(i,2)=ObjectTileX(i)
-					ObjectData(i,3)=ObjectTileY(i)
-					ObjectData(i,4)=ObjectTileX(i)
-					ObjectData(i,5)=ObjectTileY(i)
-				EndIf
 			EndIf
 		Next
 	EndIf
@@ -13868,14 +13853,6 @@ Function ReSizeLevel()
 				DeleteObject(i)
 			Else
 				UpdateObjectPosition(i)
-				
-				; extra adjustments	
-				If ObjectType(i)=50 ; spellball
-					ObjectData(i,2)=ObjectTileX(i)
-					ObjectData(i,3)=ObjectTileY(i)
-					ObjectData(i,4)=ObjectTileX(i)
-					ObjectData(i,5)=ObjectTileY(i)
-				EndIf
 			EndIf
 		Next
 	EndIf
@@ -13890,28 +13867,56 @@ Function ReSizeLevel()
 
 End Function
 
-Function SetObjectTileX(i,tilex)
+Function RawSetObjectTileX(i,tilex)
 
 	ObjectTileX(i)=tilex
 	ObjectTileX2(i)=tilex
+	
+	If ObjectType(i)=50 ; spellball
+		ObjectData(i,2)=ObjectTileX(i)
+		ObjectData(i,4)=ObjectTileX(i)
+		If i=CurrentGrabbedObject Or i=NofObjects
+			CurrentObjectData(2)=ObjectData(i,2)
+			CurrentObjectData(4)=ObjectData(i,4)
+		EndIf
+	EndIf
+
+End Function
+
+Function RawSetObjectTileY(i,tiley)
+
+	ObjectTileY(i)=tiley
+	ObjectTileY2(i)=tiley
+	
+	If ObjectType(i)=50 ; spellball
+		ObjectData(i,3)=ObjectTileY(i)
+		ObjectData(i,5)=ObjectTileY(i)
+		If i=CurrentGrabbedObject Or i=NofObjects
+			CurrentObjectData(3)=ObjectData(i,3)
+			CurrentObjectData(5)=ObjectData(i,5)
+		EndIf
+	EndIf
+
+End Function
+
+Function SetObjectTileX(i,tilex)
+
+	RawSetObjectTileX(i,tilex)
 	IncrementLevelTileObjectCountFor(i)
 
 End Function
 
 Function SetObjectTileY(i,tiley)
 
-	ObjectTileY(i)=tiley
-	ObjectTileY2(i)=tiley
+	RawSetObjectTileY(i,tiley)
 	IncrementLevelTileObjectCountFor(i)
 
 End Function
 
 Function SetObjectTileXY(i,tilex,tiley)
 
-	ObjectTileX(i)=tilex
-	ObjectTileY(i)=tiley
-	ObjectTileX2(i)=tilex
-	ObjectTileY2(i)=tiley
+	RawSetObjectTileX(i,tilex)
+	RawSetObjectTileY(i,tiley)
 	IncrementLevelTileObjectCountFor(i)
 
 End Function
