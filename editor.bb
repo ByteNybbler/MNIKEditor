@@ -7030,21 +7030,153 @@ Function ShowMessageOnce(message$, milliseconds)
 
 End Function
 
-
-Function PlaceObject(x#,y#)
+; Returns True if the object can be put in that position, and False otherwise
+Function SetObjectPosition(Dest,x#,y#,xoffset#,yoffset#)
 
 	floorx=Floor(x)
 	floory=Floor(y)
 	
 	If floorx<0 Or floory<0 Or floorx>LevelWidth-1 Or floory>LevelHeight-1
+		Return False
+	EndIf
+	
+	ObjectTileX(Dest)=floorx
+	ObjectTileX2(Dest)=floorx
+	ObjectTileY(Dest)=floory
+	ObjectTileY2(Dest)=floory
+	
+	; Type-specific placements
+	If ObjectType(Dest)=10 And ObjectSubType(Dest)=1 ; house-door
+		If ObjectYawAdjust(Dest)=90
+			ObjectX#(Dest)=x+0.5
+			ObjectY#(Dest)=y+1.0
+		Else If ObjectYawAdjust(Dest)=270
+			ObjectX#(Dest)=x+0.5
+			ObjectY#(Dest)=y
+		Else If ObjectYawAdjust(Dest)=45
+			ObjectX#(Dest)=x-0.1
+			ObjectY#(Dest)=y+0.6
+		Else If ObjectYawAdjust(Dest)=315
+			ObjectX#(Dest)=x+0.40
+			ObjectY#(Dest)=y-0.1
+
+			
+		Else
+			ObjectX#(Dest)=x-0.00
+			ObjectY#(Dest)=y+0.5
+
+		EndIf
+	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=2 ; dungeon-door
+		If ObjectYawAdjust(Dest)=0
+			ObjectX#(Dest)=x
+			ObjectY#(Dest)=y+1.0
+		Else If ObjectYawAdjust(Dest)=90
+			ObjectX#(Dest)=x+1.0
+			ObjectY#(Dest)=y+1.0
+		Else If ObjectYawAdjust(Dest)=180
+			ObjectX#(Dest)=x+1.0
+			ObjectY#(Dest)=y
+		Else
+			ObjectX#(Dest)=x+0.0
+			ObjectY#(Dest)=y+0.0
+
+		EndIf
+	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=3 ; townhouse1-door
+		If ObjectYawAdjust(Dest)=90
+			ObjectX#(Dest)=x+0.6
+			ObjectY#(Dest)=y+1.0
+		Else If ObjectYawAdjust(Dest)=270
+			ObjectX#(Dest)=x+0.40
+			ObjectY#(Dest)=y
+		Else If ObjectYawAdjust(Dest)=45
+			ObjectX#(Dest)=x-0.338
+			ObjectY#(Dest)=y+0.342
+		Else If ObjectYawAdjust(Dest)=315
+			ObjectX#(Dest)=x+0.637
+			ObjectY#(Dest)=y-0.361
+
+			
+		Else
+			ObjectX#(Dest)=x-0.00
+			ObjectY#(Dest)=y+0.6
+
+		EndIf
+
+	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=4 ; townhouse2-door
+		If ObjectYawAdjust(Dest)=90
+			ObjectX#(Dest)=x+0.1
+			ObjectY#(Dest)=y+1.0
+		Else If ObjectYawAdjust(Dest)=270
+			ObjectX#(Dest)=x+0.90
+			ObjectY#(Dest)=y
+		Else If ObjectYawAdjust(Dest)=45
+			ObjectX#(Dest)=x-0.338-.35
+			ObjectY#(Dest)=y+0.342-.35
+		Else If ObjectYawAdjust(Dest)=315
+			ObjectX#(Dest)=x+0.637+.35
+			ObjectY#(Dest)=y-0.361-.35
+
+			
+		Else
+			ObjectX#(Dest)=x+0.00
+			ObjectY#(Dest)=y+0.1
+
+		EndIf
+
+
+
+
+
+	Else
+		ObjectX#(Dest)=x+0.5
+		ObjectY#(Dest)=y+0.5
+	EndIf
+	
+	ObjectX#(Dest)=ObjectX#(Dest)+xoffset#
+	ObjectY#(Dest)=ObjectY#(Dest)+yoffset#
+	
+	Return True
+
+End Function
+
+
+Function PlaceObject(x#,y#)
+
+	If RandomType
+		CurrentObjectType=Rand(RandomTypeMin,RandomTypeMax)
+	EndIf
+	If RandomSubType
+		CurrentObjectSubType=Rand(RandomSubTypeMin,RandomSubTypeMax)
+	EndIf
+	
+	ObjectType(NofObjects)=CurrentObjectType
+	ObjectSubType(NofObjects)=CurrentObjectSubType
+	
+	If RandomPitchAdjust
+		CurrentObjectPitchAdjust#=Rnd(RandomPitchAdjustMin,RandomPitchAdjustMax)
+	EndIf
+	If RandomYawAdjust
+		CurrentObjectYawAdjust#=Rnd(RandomYawAdjustMin,RandomYawAdjustMax)
+	EndIf
+	If RandomRollAdjust
+		CurrentObjectRollAdjust#=Rnd(RandomRollAdjustMin,RandomRollAdjustMax)
+	EndIf
+	
+	ObjectPitchAdjust#(NofObjects)=CurrentObjectPitchAdjust#
+	ObjectYawAdjust#(NofObjects)=CurrentObjectYawAdjust#
+	ObjectRollAdjust#(NofObjects)=CurrentObjectRollAdjust#
+
+	If SetObjectPosition(NofObjects,x#,y#,CurrentObjectX#,CurrentObjectY#)=False
 		; don't place anything
 		Return
 	EndIf
-
+	
 	If NofObjects>999
 		ShowMessageOnce("1000 object limit reached; refusing to place any more", 1000)
 		Return
 	EndIf
+	
+	ObjectZ#(NofObjects)=CurrentObjectZ#
 
 
 	; first check if another object exists on the same tile
@@ -7059,13 +7191,6 @@ Function PlaceObject(x#,y#)
 	ObjectHatTexture(NofObjects)=0
 	ObjectAccEntity(NofObjects)=0
 	ObjectAccTexture(NofObjects)=0
-
-
-	; And Place
-	ObjectTileX(NofObjects)=floorx
-	ObjectTileX2(NofObjects)=floorx
-	ObjectTileY(NofObjects)=floory
-	ObjectTileY2(NofObjects)=floory
 
 
 
@@ -7100,106 +7225,6 @@ Function PlaceObject(x#,y#)
 	ObjectZAdjust#(NofObjects)=CurrentObjectZAdjust#
 	ObjectYAdjust#(NofObjects)=CurrentObjectYAdjust#
 	
-	If RandomPitchAdjust
-		CurrentObjectPitchAdjust#=Rnd(RandomPitchAdjustMin,RandomPitchAdjustMax)
-	EndIf
-	If RandomYawAdjust
-		CurrentObjectYawAdjust#=Rnd(RandomYawAdjustMin,RandomYawAdjustMax)
-	EndIf
-	If RandomRollAdjust
-		CurrentObjectRollAdjust#=Rnd(RandomRollAdjustMin,RandomRollAdjustMax)
-	EndIf
-	
-	ObjectPitchAdjust#(NofObjects)=CurrentObjectPitchAdjust#
-	ObjectYawAdjust#(NofObjects)=CurrentObjectYawAdjust#
-	ObjectRollAdjust#(NofObjects)=CurrentObjectRollAdjust#
-	
-	If CurrentObjectType=10 And CurrentObjectSubType=1 ; house-door
-		If CurrentObjectYawAdjust=90
-			ObjectX#(NofObjects)=x+0.5+CurrentObjectX#
-			ObjectY#(NofObjects)=y+1.0+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=270
-			ObjectX#(NofObjects)=x+0.5+CurrentObjectX#
-			ObjectY#(NofObjects)=y+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=45
-			ObjectX#(NofObjects)=x-0.1+CurrentObjectX#
-			ObjectY#(NofObjects)=y+0.6+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=315
-			ObjectX#(NofObjects)=x+0.40+CurrentObjectX#
-			ObjectY#(NofObjects)=y-0.1+CurrentObjectY#
-
-			
-		Else
-			ObjectX#(NofObjects)=x-0.00+CurrentObjectX#
-			ObjectY#(NofObjects)=y+0.5+CurrentObjectY#
-
-		EndIf
-	Else If CurrentObjectType=10 And CurrentObjectSubType=2 ; dungeon-door
-		If CurrentObjectYawAdjust=0
-			ObjectX#(NofObjects)=x+CurrentObjectX#
-			ObjectY#(NofObjects)=y+1.0+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=90
-			ObjectX#(NofObjects)=x+1.0+CurrentObjectX#
-			ObjectY#(NofObjects)=y+1.0+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=180
-			ObjectX#(NofObjects)=x+1.0+CurrentObjectX#
-			ObjectY#(NofObjects)=y+CurrentObjectY#
-		Else
-			ObjectX#(NofObjects)=x+0.0+CurrentObjectX#
-			ObjectY#(NofObjects)=y+0.0+CurrentObjectY#
-
-		EndIf
-	Else If CurrentObjectType=10 And CurrentObjectSubType=3 ; townhouse1-door
-		If CurrentObjectYawAdjust=90
-			ObjectX#(NofObjects)=x+0.6+CurrentObjectX#
-			ObjectY#(NofObjects)=y+1.0+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=270
-			ObjectX#(NofObjects)=x+0.40+CurrentObjectX#
-			ObjectY#(NofObjects)=y+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=45
-			ObjectX#(NofObjects)=x-0.338+CurrentObjectX#
-			ObjectY#(NofObjects)=y+0.342+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=315
-			ObjectX#(NofObjects)=x+0.637+CurrentObjectX#
-			ObjectY#(NofObjects)=y-0.361+CurrentObjectY#
-
-			
-		Else
-			ObjectX#(NofObjects)=x-0.00+CurrentObjectX#
-			ObjectY#(NofObjects)=y+0.6+CurrentObjectY#
-
-		EndIf
-
-	Else If CurrentObjectType=10 And CurrentObjectSubType=4 ; townhouse2-door
-		If CurrentObjectYawAdjust=90
-			ObjectX#(NofObjects)=x+0.1+CurrentObjectX#
-			ObjectY#(NofObjects)=y+1.0+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=270
-			ObjectX#(NofObjects)=x+0.90+CurrentObjectX#
-			ObjectY#(NofObjects)=y+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=45
-			ObjectX#(NofObjects)=x-0.338-.35+CurrentObjectX#
-			ObjectY#(NofObjects)=y+0.342-.35+CurrentObjectY#
-		Else If CurrentObjectYawAdjust=315
-			ObjectX#(NofObjects)=x+0.637+.35+CurrentObjectX#
-			ObjectY#(NofObjects)=y-0.361-.35+CurrentObjectY#
-
-			
-		Else
-			ObjectX#(NofObjects)=x+0.00+CurrentObjectX#
-			ObjectY#(NofObjects)=y+0.1+CurrentObjectY#
-
-		EndIf
-
-
-
-
-
-	Else
-		ObjectX#(NofObjects)=x+0.5+CurrentObjectX#
-		ObjectY#(NofObjects)=y+0.5+CurrentObjectY#
-	EndIf
-	ObjectZ#(NofObjects)=CurrentObjectZ#
 	
 	; extra adjustments	
 	If CurrentObjectType=50 ; spellball
@@ -7253,16 +7278,6 @@ Function PlaceObject(x#,y#)
 	EndIf
 	
 	ObjectID(NofObjects)=CurrentObjectID
-	
-	If RandomType
-		CurrentObjectType=Rand(RandomTypeMin,RandomTypeMax)
-	EndIf
-	If RandomSubType
-		CurrentObjectSubType=Rand(RandomSubTypeMin,RandomSubTypeMax)
-	EndIf
-	
-	ObjectType(NofObjects)=CurrentObjectType
-	ObjectSubType(NofObjects)=CurrentObjectSubType
 	
 	If RandomActive
 		CurrentObjectActive=Rand(RandomActiveMin,RandomActiveMax)
