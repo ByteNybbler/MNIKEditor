@@ -274,6 +274,8 @@ Global Leveltimer
 
 Global CurrentGrabbedObject=-1
 Global CurrentGrabbedObjectModified=False
+Global CurrentDraggedObject=-1
+
 Global BrushSize=1
 Global CustomBrush=False
 Global CustomBrushEditorMode=-1
@@ -3222,6 +3224,19 @@ Function EditorLocalControls()
 					;BlockMode=0
 					;FillMode=0
 				EndIf
+				If EditorMode=3
+					; object dragging
+					If RightMouse
+						If CurrentDraggedObject<>-1 And (ObjectTileX(CurrentDraggedObject)<>x Or ObjectTileY(CurrentDraggedObject)<>y)
+							DecrementLevelTileObjectCount(ObjectTileX(CurrentDraggedObject),ObjectTileY(CurrentGrabbedObject))
+							SetObjectPosition(CurrentDraggedObject,x,y,0,0)
+							UpdateObjectPosition(CurrentDraggedObject)
+							SomeObjectWasChanged()
+						EndIf
+					Else
+						CurrentDraggedObject=-1
+					EndIf
+				EndIf
 			Else
 				HideEntity CursorMesh
 				HideEntity CursorMesh2
@@ -4904,6 +4919,7 @@ Function SetCurrentGrabbedObject(i)
 
 	CurrentGrabbedObject=i
 	CurrentGrabbedObjectModified=False
+	CurrentDraggedObject=i
 	
 	UpdateCurrentGrabbedObjectMarkerVisibility()
 
@@ -7040,9 +7056,10 @@ Function SetObjectPosition(Dest,x#,y#,xoffset#,yoffset#)
 		Return False
 	EndIf
 	
-	ObjectTileX(Dest)=floorx
+	SetObjectTileXY(Dest,floorx,floory)
+	;ObjectTileX(Dest)=floorx
 	ObjectTileX2(Dest)=floorx
-	ObjectTileY(Dest)=floory
+	;ObjectTileY(Dest)=floory
 	ObjectTileY2(Dest)=floory
 	
 	; Type-specific placements
@@ -7637,6 +7654,10 @@ Function UpdateObjectPosition(Dest)
 	EndIf
 	
 	PositionObjectPositionMarker(Dest)
+	
+	If Dest=CurrentGrabbedObject
+		UpdateCurrentGrabbedObjectMarkerPosition()
+	EndIf
 
 End Function
 
@@ -8090,7 +8111,7 @@ Function CreateObjectPositionMarker(i)
 	;EntityColor ObjectPositionMarker(i),255,100,100
 	PositionObjectPositionMarker(i)
 
-	LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))+1
+	;IncreaseLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
 	UpdateObjectPositionMarkersAtTile(ObjectTileX(i),ObjectTileY(i))
 	
 	If ShowObjectPositions=False
@@ -8099,9 +8120,29 @@ Function CreateObjectPositionMarker(i)
 	
 End Function
 
+Function IncrementLevelTileObjectCount(x,y)
+
+	LevelTileObjectCount(x,y)=LevelTileObjectCount(x,y)+1
+	UpdateObjectPositionMarkersAtTile(x,y)
+
+End Function
+
+Function DecrementLevelTileObjectCount(x,y)
+
+	LevelTileObjectCount(x,y)=LevelTileObjectCount(x,y)-1
+	UpdateObjectPositionMarkersAtTile(x,y)
+
+End Function
+
 Function PositionObjectPositionMarker(i)
 
-	PositionEntity ObjectPositionMarker(i),ObjectX(i),0,-ObjectY(i)
+	PositionEntityInLevel(ObjectPositionMarker(i),ObjectX(i),ObjectY(i))
+
+End Function
+
+Function PositionEntityInLevel(Entity,x#,y#)
+
+	PositionEntity Entity,x#,0,-y#
 
 End Function
 
@@ -8130,8 +8171,7 @@ End Function
 
 Function PostUpdateObjectPositionMarker(i)
 
-	LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))+1
-	UpdateObjectPositionMarkersAtTile(ObjectTileX(i),ObjectTileY(i))
+	IncrementLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
 
 End Function
 
@@ -8696,11 +8736,17 @@ Function PasteObjectData(Dest)
 	
 	UpdateObjectEntityToCurrent(Dest)
 	
-	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
+	UpdateCurrentGrabbedObjectMarkerPosition()
 	
 	SomeObjectWasChanged()
 
 	
+End Function
+
+Function UpdateCurrentGrabbedObjectMarkerPosition()
+
+	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
+
 End Function
 
 
@@ -15592,8 +15638,7 @@ Function LoadLevel(levelnumber)
 		;ObjectTileY(Dest)=ReadInt(file)
 		tilex=ReadInt(file)
 		tiley=ReadInt(file)
-		ObjectTileX(Dest)=tilex
-		ObjectTileY(Dest)=tiley
+		SetObjectTileXY(Dest,tilex,tiley)
 		ObjectTileX2(Dest)=ReadInt(file)
 		ObjectTileY2(Dest)=ReadInt(file)
 		ObjectMovementTimer(Dest)=ReadInt(file)
