@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/19/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/27/22)"
 
 Global MASTERUSER=True
 
@@ -1983,6 +1983,9 @@ Function FinishDrawing()
 
 	;Color 255,255,255
 	;Text 0,0,"Mouse: "+MouseX()+", "+MouseY()
+	
+	DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
+	CurrentTooltip$=""
 
 	If displayfullscreen=True
 		DrawImage mouseimg,MouseX(),MouseY()
@@ -2331,8 +2334,8 @@ Function EditorMainLoop()
 		Next
 	Next
 	
-	DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
-	CurrentTooltip$=""
+	;DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
+	;CurrentTooltip$=""
 	
 	If NofParticles=MaxNofParticles
 		MaxParticleWarningTimer=60
@@ -4994,6 +4997,45 @@ End Function
 Function LevelTileLogicHasVisuals(i,j)
 
 	Return LevelTileLogic(i,j)>0 And LevelTileLogic(i,j)<15
+
+End Function
+
+
+Function ReplyFunctionToName$(Fnc)
+
+	Select Fnc
+	Case 1
+		Return "End Dialog"
+	Case 2
+		Return "Continue Dialog"
+	Case 3
+		Return "Open AskAbout"
+	Case 4
+		Return "Consume Coins (+1 Interchange if player doesn't have enough, +2 otherwise)"
+	Case 5
+		Return "Consume Item (+1 Interchange if player doesn't have item, +2 otherwise)"
+	Case 6
+		Return "Check For Item (+1 Interchange if player doesn't have item, +2 otherwise)"
+	Default
+		Return "Do Nothing"
+	End Select
+
+End Function
+
+Function ReplyFunctionToDataName$(Fnc)
+
+	Select Fnc
+	Case 1,2
+		Return "Destination Interchange"
+	Case 4
+		Return "Number of Coins"
+	Case 5
+		Return "Item FNC ID"
+	Case 6
+		Return "Item FNC ID"
+	Default
+		Return "N/A"
+	End Select
 
 End Function
 
@@ -20342,21 +20384,31 @@ Function DialogMainLoop()
 	EndIf
 	; Change AnswerData
 	If MouseY()>305 And MouseY()<345
+		TooltipX=MouseX()/100*100+50
+		TooltipY=385
 		Select MouseX()/100
 		Case 0			
 			InterChangeReplyFunction(WhichInterChange,WhichAnswer)=AdjustInt("FNC: ", InterChangeReplyFunction(WhichInterChange,WhichAnswer), 1, 10, 150)
+			ShowTooltipLeftAligned(TooltipX-50, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
 		Case 1			
 			InterChangeReplyData(WhichInterChange,WhichAnswer)=AdjustInt("Data: ", InterChangeReplyData(WhichInterChange,WhichAnswer), 1, 10, 150)
+			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToDataName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
 		Case 2
 			InterChangeReplyCommand(WhichInterChange,WhichAnswer)=AdjustInt("CMD: ", InterChangeReplyCommand(WhichInterChange,WhichAnswer), 1, 10, 150)
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCommandName$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 3
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=AdjustInt("Data1: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), 1, 10, 150)
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData1$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 4
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, 150)
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData2$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 5
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, 150)
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData3$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 6
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, 150)
+			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData4$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
+			;xzx
 		End Select
 		
 		If Modified
