@@ -9143,6 +9143,9 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!Gem"
 			tex2$="Shape"
 		EndIf
+		If CurrentObjectModelName$="!Sign"
+			tex2$="Shape"
+		EndIf
 		If CurrentObjectModelName$="!Crystal"
 			tex2$="Type"
 			Select CurrentObjectData(0)
