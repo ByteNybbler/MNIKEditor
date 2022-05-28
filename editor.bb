@@ -21301,7 +21301,7 @@ Function GetTypeString$(value)
 	Case 51
 		Return "Magic Shooter"
 	Case 52
-		Return "Meteor"
+		Return "Meteor Shooter"
 	Case 53
 		Return "Meteorite"
 	Case 54
@@ -23836,6 +23836,12 @@ Function ControlFountain(i)
 
 End Function
 
+Function ControlMeteorite(i)
+
+	AddParticle(Rand(0,3),ObjectX(i)+Rnd(-.1,.1),ObjectZ(i)+Rnd(-.1,.1),-ObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.01,.01),Rnd(-.01,.01),Rnd(-.01,.01),3,.02,0,0,0,125,3)
+	
+End Function
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -24147,6 +24153,8 @@ Function ControlObjects()
 				ControlTeleporter(i)
 			Case 40
 				ControlSteppingStone(i)
+			Case 53
+				ControlMeteorite(i)
 			Case 120
 				ControlStinkerWee(i)
 			Case 130
