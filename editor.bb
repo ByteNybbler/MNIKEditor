@@ -9207,12 +9207,12 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
-			tex$="Turning"
+			tex2$="Turning"
 			Select CurrentObjectData(0)
 				Case 0
-					tex2$="Yes"
+					tex$="Yes"
 				Default
-					tex2$="No"
+					tex$="No"
 			End Select
 		EndIf
 				
