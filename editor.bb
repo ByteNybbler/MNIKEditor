@@ -252,9 +252,10 @@ Global ShowLogicMesh=False
 Global ShowLevelMesh=True
 
 Global ShowObjectMesh=1 ; shows/hides objects: 0=hide objects, 1=show objects
-Const ShowObjectMeshMax=3
+Const ShowObjectMeshMax=4
 Const ShowObjectMeshIds=2
 Const ShowObjectMeshIndices=3
+Const ShowObjectMeshCount=4
 
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
@@ -2111,6 +2112,8 @@ Function EditorMainLoop()
 				ElseIf ShowObjectMesh=ShowObjectMeshIds
 					; display object IDs
 					StringOnObject$=CalculateEffectiveId(i)
+				ElseIf ShowObjectMesh=ShowObjectMeshCount
+					StringOnObject$=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
 				EndIf
 				Text x#-4*Len(StringOnObject$),y#,StringOnObject$
 			EndIf
@@ -2217,6 +2220,8 @@ Function EditorMainLoop()
 		Text 200+4,580,"  INDICES"
 	ElseIf ShowObjectMesh=ShowObjectMeshIds
 		Text 200+4,580,"    IDS"
+	ElseIf ShowObjectMesh=ShowObjectMeshCount
+		Text 200,580,"   COUNTS"
 	Else
 		Text 200+4,580,"  OBJECTS"
 	EndIf
@@ -7058,9 +7063,9 @@ Function SetObjectPosition(Dest,x#,y#,xoffset#,yoffset#)
 	
 	SetObjectTileXY(Dest,floorx,floory)
 	;ObjectTileX(Dest)=floorx
-	ObjectTileX2(Dest)=floorx
+	;ObjectTileX2(Dest)=floorx
 	;ObjectTileY(Dest)=floory
-	ObjectTileY2(Dest)=floory
+	;ObjectTileY2(Dest)=floory
 	
 	; Type-specific placements
 	If ObjectType(Dest)=10 And ObjectSubType(Dest)=1 ; house-door
@@ -8134,6 +8139,18 @@ Function DecrementLevelTileObjectCount(x,y)
 
 End Function
 
+Function IncrementLevelTileObjectCountFor(i)
+
+	IncrementLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
+
+End Function
+
+Function DecrementLevelTileObjectCountFor(i)
+
+	DecrementLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
+
+End Function
+
 Function PositionObjectPositionMarker(i)
 
 	PositionEntityInLevel(ObjectPositionMarker(i),ObjectX(i),ObjectY(i))
@@ -8166,12 +8183,6 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 	Next
 	
 	;ShowMessage("Update successful.", 100)
-
-End Function
-
-Function PostUpdateObjectPositionMarker(i)
-
-	IncrementLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
 
 End Function
 
@@ -13833,7 +13844,7 @@ Function ReSizeLevel()
 	If WidthLeftChange<>0
 		For i=0 To NofObjects-1
 			ObjectX(i)=ObjectX(i)+WidthLeftChange
-			ObjectTileX(i)=ObjectTileX(i)+WidthLeftChange
+			SetObjectTileX(i,ObjectTileX(i)+WidthLeftChange)
 			If Floor(ObjectX(i))<0 Or Floor(ObjectX(i))>=LevelWidth
 				DeleteObject(i)
 			Else
@@ -13852,7 +13863,7 @@ Function ReSizeLevel()
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
 			ObjectY(i)=ObjectY(i)+HeightTopChange
-			ObjectTileY(i)=ObjectTileY(i)+HeightTopChange
+			SetObjectTileY(i,ObjectTileY(i)+HeightTopChange)
 			If Floor(ObjectY(i))<0 Or Floor(ObjectY(i))>=LevelHeight
 				DeleteObject(i)
 			Else
@@ -13882,14 +13893,16 @@ End Function
 Function SetObjectTileX(i,tilex)
 
 	ObjectTileX(i)=tilex
-	PostUpdateObjectPositionMarker(i)
+	ObjectTileX2(i)=tilex
+	IncrementLevelTileObjectCountFor(i)
 
 End Function
 
 Function SetObjectTileY(i,tiley)
 
 	ObjectTileY(i)=tiley
-	PostUpdateObjectPositionMarker(i)
+	ObjectTileY2(i)=tiley
+	IncrementLevelTileObjectCountFor(i)
 
 End Function
 
@@ -13897,7 +13910,30 @@ Function SetObjectTileXY(i,tilex,tiley)
 
 	ObjectTileX(i)=tilex
 	ObjectTileY(i)=tiley
-	PostUpdateObjectPositionMarker(i)
+	ObjectTileX2(i)=tilex
+	ObjectTileY2(i)=tiley
+	IncrementLevelTileObjectCountFor(i)
+
+End Function
+
+Function ChangeObjectTileX(i,tilex)
+
+	DecrementLevelTileObjectCountFor(i)
+	SetObjectTileX(i,tilex)
+
+End Function
+
+Function ChangeObjectTileY(i,tiley)
+
+	DecrementLevelTileObjectCountFor(i)
+	SetObjectTileY(i,tiley)
+
+End Function
+
+Function ChangeObjectTileXY(i,tilex,tiley)
+
+	DecrementLevelTileObjectCountFor(i)
+	SetObjectTileXY(i,tilex,tiley)
 
 End Function
 
@@ -13996,10 +14032,8 @@ Function FlipLevelXY()
 		x2#=ObjectX(i)
 		ObjectX(i)=ObjectY(i)
 		ObjectY(i)=x2#
-		x=ObjectTileX(i)
-		ObjectTileX(i)=ObjectTileY(i)
-		ObjectTileY(i)=x
-		PostUpdateObjectPositionMarker(i)
+		SetObjectTileXY(i,ObjectTileY(i),ObjectTileX(i))
+		
 		
 		UpdateObjectPosition(i)
 	Next
