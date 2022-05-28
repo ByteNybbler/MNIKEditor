@@ -12646,6 +12646,12 @@ Function UseErrorColor(Entity)
 
 End Function
 
+Function UseMagicColor(Entity,Col)
+
+	EntityColor Entity,GetMagicColor(Col,0),GetMagicColor(Col,1),GetMagicColor(Col,2)
+
+End Function
+
 Function CreateSignMesh(Data0,Data1)
 
 	If Data0>-1 And Data0<6
@@ -12663,29 +12669,18 @@ Function CreateSignMesh(Data0,Data1)
 
 End Function
 
+Function CreateNoneMesh()
+
+	Entity=CreateSphere()
+	ScaleMesh Entity,.2,.2,.2
+	Return Entity
+
+End Function
+
 Function CreateSpellBallMesh(subtype)
 
 	entity=CreateSphere(4)
-	Select subtype
-	Case 7,8
-		EntityColor Entity,255,255,255
-	Case 0
-		EntityColor Entity,255,120,0
-	Case 1
-		EntityColor Entity,255,180,50
-	Case 2
-		EntityColor Entity,255,255,50
-	Case 3
-		EntityColor Entity,50,255,50
-	Case 4
-		EntityColor Entity,100,200,255
-	Case 5
-		EntityColor Entity,50,50,255
-	Case 6
-		EntityColor Entity,255,50,255
-	Case 9
-		EntityColor Entity,67,67,67
-	End Select 
+	UseMagicColor(Entity,subtype)
 	ScaleMesh Entity,.15,.15,.15
 	EntityBlend Entity,3
 	
@@ -13511,9 +13506,11 @@ Function BuildCurrentObjectModel()
 
 		
 	Else If CurrentObjectModelName$="!None"
-		CurrentObjectModel=CreateSphere()
-		ScaleMesh CurrentObjectModel,.2,.2,.2
-		;EntityAlpha CurrentObjectModel,.5
+		CurrentObjectModel=CreateNoneMesh()
+		
+		If CurrentObjectType=50 ; spellball
+			UseMagicColor(CurrentObjectModel,CurrentObjectSubType)
+		EndIf
 		
 	Else ;unknown model
 		CurrentObjectModel=CreateErrorMesh()
@@ -14879,9 +14876,11 @@ Function CreateObjectModel(Dest)
 			
 			
  		Else If ObjectModelName$(Dest)="!None"
-			ObjectEntity(Dest)=CreateSphere()
-			ScaleMesh ObjectEntity(Dest),.2,.2,.2
-			;EntityAlpha ObjectEntity(Dest),.5
+			ObjectEntity(Dest)=CreateNoneMesh()
+			
+			If ObjectType(Dest)=50 ; spellball
+				UseMagicColor(ObjectEntity(Dest),ObjectSubType(Dest))
+			EndIf
 			
 		Else ; Unknown model
 			ObjectEntity(Dest)=CreateSphere()
