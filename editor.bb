@@ -1230,6 +1230,7 @@ HideEntity TrollMesh
 Global KaboomMesh=myLoadMD2("data\models\kaboom\kaboom.md2")
 Global KaboomTexture=myLoadTexture("data\models\kaboom\kaboom01.jpg",1)
 EntityTexture KaboomMesh,KaboomTexture
+;TurnEntity KaboomMesh,0,90,0
 HideEntity KaboomMesh
 
 ; Retrostuff
@@ -7705,6 +7706,9 @@ Function UpdateObjectAnimation(i)
 	ModelName$=ObjectModelName$(i)
 	Entity=ObjectEntity(i)
 
+	If ModelName$="!BabyBoomer"
+		AnimateMD2 ObjectEntity(i),0,.2,1,2
+	EndIf
 	If ModelName$="!Busterfly"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
@@ -7728,6 +7732,11 @@ Function UpdateObjectAnimation(i)
 				; asleep
 				AnimateMD2 Entity,3,1,48,49
 			End Select
+		EndIf
+	EndIf
+	If ModelName$="!Kaboom"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
 		EndIf
 	EndIf
 	If ModelName$="!NPC"
@@ -7859,6 +7868,8 @@ Function SimulateObjectRotation(Dest)
 	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
 	TurnEntity ObjectEntity(Dest),0,Yaw#,0
 	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
+	
+	If ObjectModelName$(Dest)="!Kaboom" Or ObjectModelName$(Dest)="!BabyBoomer" Then TurnEntity ObjectEntity(Dest),0,90,0
 
 End Function
 
@@ -13719,7 +13730,7 @@ Function BuildCurrentObjectModel()
 		TurnEntity CurrentObjectModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
 		TurnEntity CurrentObjectModel,0,CurrentObjectYawAdjust,0
 		
-		If CurrentObjectModelName$="!Kaboom" Then TurnEntity CurrentObjectModel,0,90,0
+		If CurrentObjectModelName$="!Kaboom" Or CurrentObjectModelName$="!BabyBoomer" Then TurnEntity CurrentObjectModel,0,90,0
 
 
 	;	PositionEntity CurrentObjectModel,CurrentObjectXAdjust,CurrentObjectZAdjust+CurrentObjectZ,-CurrentObjectYAdjust
@@ -14689,6 +14700,7 @@ Function CreateObjectModel(Dest)
 			ObjectEntity(Dest)=CopyEntity(TrollMesh)
 		Else If ObjectModelName$(Dest)="!Kaboom"
 			ObjectEntity(Dest)=CopyEntity(KaboomMesh)
+			;TurnEntity ObjectEntity(Dest),0,90,0
 			
 
 		Else If ObjectModelName$(Dest)="!BabyBoomer"
@@ -24896,6 +24908,178 @@ Function ControlNPC(i)
 End Function
 
 
+Function ControlKaboom(i)
+
+	If ObjectModelName$(i)<>"!Kaboom" Return
+	
+	If SimulatedObjectTileTypeCollision(i)=0
+		; First time (should later be put into object creation at level editor)
+		SimulatedObjectData10(i)=-1
+
+		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^11+2^12+2^14
+		;SimulatedObjectObjectTypeCollision(i)=2^6
+		If SimulatedObjectMoveXGoal(i)=0 And SimulatedObjectMoveYGoal(i)=0
+			SimulatedObjectMoveXGoal(i)=Floor(ObjectX(i))
+			SimulatedObjectMoveYGoal(i)=Floor(ObjectY(i))
+			;ObjectMovementType(i)=0
+			;ObjectMovementTimer(i)=0
+			;ObjectSubType(i)=0  
+			SimulatedObjectCurrentAnim(i)=10
+			AnimateMD2 ObjectEntity(i),0,.2,1,2
+
+		EndIf
+		
+				
+		
+	EndIf
+	
+	
+	If ObjectDead(i)=1
+		; spinning out of control
+		SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
+		SimulatedObjectZ(i)=SimulatedObjectZ(i)+.01
+		
+		Return
+	EndIf
+	If ObjectDead(i)=3
+		; drowning
+		SimulatedObjectYaw(i)=0
+		SimulatedObjectZ(i)=SimulatedObjectZ(i)-.005
+		
+		Return
+	EndIf
+	
+	
+	dist=100 ; Distance to player
+	
+	
+	If ObjectFlying(i)/10=1
+		; flying
+		If SimulatedObjectCurrentAnim(i)<>11
+			;Animate GetChild(objectentity(i),3),1,1,11
+			AnimateMD2 ObjectEntity(i),3,2,31,60
+			SimulatedObjectCurrentAnim(i)=11
+		EndIf
+		;TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-ObjectYawAdjust(i))
+	Else If ObjectFlying(i)/10=2
+		; on ice
+		If SimulatedObjectCurrentAnim(i)<>11
+			;Animate GetChild(objectentity(i),3),3,2,13
+			AnimateMD2 ObjectEntity(i),3,2,31,60
+			SimulatedObjectCurrentAnim(i)=11
+		EndIf
+
+	Else 
+		; standing controls
+		
+		; Turning?
+		Select SimulatedObjectData(i,7) Mod 10
+		Case 0
+			; Turn toward ObjectYawAdjust, i.e. Angle 0
+			If SimulatedObjectYaw(i)<>0
+				;TurnObjectTowardDirection(i,0,1,4,0)
+			EndIf
+		Case 1
+			; Turn Toward Player
+			;TurnObjectTowardDirection(i,ObjectX(PlayerObject)-ObjectX(i),ObjectY(PlayerObject)-ObjectY(i),6,-ObjectYawAdjust(i))
+		
+		Case 2
+			; Various turning options
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)-.5) Mod 360
+		Case 3
+			; Various turning options
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)-2) Mod 360
+		Case 4
+			; Various turning options
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+.5) Mod 360
+		Case 5
+			; Various turning options
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+2) Mod 360
+		End Select
+		; Jumping?
+		If SimulatedObjectData(i,7)/10=1
+			SimulatedObjectZ(i)=0.4*Abs(Sin((Float(Leveltimer)*3.6) Mod 360))
+		Else If SimulatedObjectData(i,7)/10=2
+			SimulatedObjectZ(i)=0.2*Abs(Sin((Float(Leveltimer)*7.2) Mod 360))
+		EndIf
+		; Animation?
+		Select SimulatedObjectData(i,8)
+		Case 0
+			; Just Swaying
+			If SimulatedObjectCurrentAnim(i)<>10
+				SimulatedObjectCurrentAnim(i)=10
+				;Animate GetChild(objectentity(i),3),1,.05,10
+				AnimateMD2 ObjectEntity(i),0,.2,1,2
+			EndIf
+		
+		Case 1
+			; Just Sit
+			If SimulatedObjectCurrentAnim(i)<>13
+				SimulatedObjectCurrentAnim(i)=13
+				;Animate GetChild(objectentity(i),3),3,.2,14
+				AnimateMD2 ObjectEntity(i),3,.5,31,50
+			EndIf
+		Case 2
+			; Sit if far from player, otherwise stand
+			
+			If SimulatedObjectCurrentAnim(i)<>13 And dist>3
+				SimulatedObjectCurrentAnim(i)=13
+				;Animate GetChild(objectentity(i),3),3,.4,14
+				AnimateMD2 ObjectEntity(i),3,.5,31,50
+			EndIf
+			If SimulatedObjectCurrentAnim(i)<>113 And dist<=3
+				SimulatedObjectCurrentAnim(i)=113
+				;Animate GetChild(objectentity(i),3),3,-.4,14
+				AnimateMD2 ObjectEntity(i),3,-.5,50,31
+			EndIf
+		
+
+		Case 3
+			; Shiver from time to time
+			If SimulatedObjectCurrentAnim(i)=10
+				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
+					SimulatedObjectCurrentAnim(i)=15
+					;Animate GetChild(objectentity(i),3),1,.4,11
+					AnimateMD2 ObjectEntity(i),2,.5,55,70
+					
+				EndIf
+			Else 
+				If Leveltimer Mod 240 =0 
+					SimulatedObjectCurrentAnim(i)=10
+					;Animate GetChild(objectentity(i),3),1,.05,10
+					AnimateMD2 ObjectEntity(i),3,-.2,70,53
+					
+					
+				EndIf
+			EndIf
+
+		Case 4
+			; Shiver All The Time
+			If SimulatedObjectCurrentAnim(i)<>15
+				SimulatedObjectCurrentAnim(i)=15
+				AnimateMD2 ObjectEntity(i),2,.5,59,70
+				
+			EndIf
+		Case 5
+			; Bounce
+			If SimulatedObjectCurrentAnim(i)<>16
+				SimulatedObjectCurrentAnim(i)=16
+				;Animate GetChild(objectentity(i),3),3,.2,14
+				AnimateMD2 ObjectEntity(i),2,.5,31,50
+			EndIf
+
+		End Select
+
+
+
+
+	EndIf
+
+
+
+End Function
+
+
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
 	SimulatedLightGreenGoal=Green
@@ -25272,6 +25456,8 @@ Function ControlObjects()
 				ControlTentacle(i)
 			Case 370 
 				ControlCrab(i)
+			Case 390
+				ControlKaboom(i)
 			Case 400
 				ControlBabyBoomer(i)
 			Case 410
