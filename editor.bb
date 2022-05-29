@@ -1228,8 +1228,14 @@ HideEntity TrollMesh
 
 ; Kaboom
 Global KaboomMesh=myLoadMD2("data\models\kaboom\kaboom.md2")
-Global KaboomTexture=myLoadTexture("data\models\kaboom\kaboom01.jpg",1)
-EntityTexture KaboomMesh,KaboomTexture
+Dim KaboomTexture(5)
+For i=1 To 5
+		
+		
+		KaboomTexture(i)=myLoadTexture("data\models\kaboom\kaboom0"+Str$(i)+".jpg",1)
+		
+Next
+EntityTexture KaboomMesh,KaboomTexture(1)
 ;TurnEntity KaboomMesh,0,90,0
 HideEntity KaboomMesh
 
@@ -13358,9 +13364,10 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CopyEntity(TrollMesh)
 	Else If CurrentObjectModelName$="!Kaboom"
 		CurrentObjectModel=CopyEntity(KaboomMesh)
+		EntityTexture CurrentObjectModel,KaboomTexture(CurrentObjectData(0))
 	Else If CurrentObjectModelName$="!BabyBoomer"
 		CurrentObjectModel=CopyEntity(KaboomMesh)
-
+		EntityTexture CurrentObjectModel,KaboomTexture(1)
 
 
 
@@ -14698,13 +14705,18 @@ Function CreateObjectModel(Dest)
 			If ObjectSubType(Dest)=0 Then EntityTexture ObjectEntity(Dest),CrabTexture2
 		Else If ObjectModelName$(Dest)="!Troll"
 			ObjectEntity(Dest)=CopyEntity(TrollMesh)
+			
+			
 		Else If ObjectModelName$(Dest)="!Kaboom"
 			ObjectEntity(Dest)=CopyEntity(KaboomMesh)
+			EntityTexture ObjectEntity(Dest),KaboomTexture(ObjectData(dest,0))
 			;TurnEntity ObjectEntity(Dest),0,90,0
 			
-
 		Else If ObjectModelName$(Dest)="!BabyBoomer"
 			ObjectEntity(Dest)=CopyEntity(KaboomMesh)
+			EntityTexture ObjectEntity(Dest),KaboomTexture(1)
+			;TurnEntity ObjectEntity(Dest),0,90,0
+			
 			
 		Else If ObjectModelName$(Dest)="!Lurker"
 			ObjectEntity(Dest)=CopyEntity(LurkerMesh)
