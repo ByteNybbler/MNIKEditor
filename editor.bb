@@ -13896,7 +13896,7 @@ Function ShowWorldAdjusterPositions()
 			If CurrentObjectData(1)=CurrentLevelNumber
 				SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
 			EndIf
-		ElseIf CurrentObjectSubType=11 ; NPC modifier
+		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
 			SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
 		ElseIf CurrentObjectSubType=15 ; general command
 			ShowWorldAdjusterPositionsCmd(CurrentObjectData(0),CurrentObjectData(1),CurrentObjectData(2),CurrentObjectData(3),CurrentObjectData(4))
