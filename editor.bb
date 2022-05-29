@@ -3253,6 +3253,11 @@ Function EditorLocalControls()
 						CurrentDraggedObject=-1
 					EndIf
 				EndIf
+				
+				If MouseDown(3) ; middle click / ; middle mouse
+					SetCurrentObjectTargetLocation(x,y)
+					SetEditorMode(3)
+				EndIf
 			Else
 				HideEntity CursorMesh
 				HideEntity CursorMesh2
@@ -6815,6 +6820,114 @@ Function SaveTilePreset()
 	WriteFloat file,CurrentWaterTileTurbulence
 
 	CloseFile file
+End Function
+
+Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
+
+	CurrentObjectModelName$=ModelName$
+	CurrentObjectTextureName$="!None"
+	CurrentObjectXScale#=1
+	CurrentObjectYScale#=1
+	CurrentObjectZScale#=1
+	CurrentObjectXAdjust#=0.0
+	CurrentObjectYAdjust#=0.0
+	CurrentObjectZAdjust#=0.0
+	CurrentObjectPitchAdjust#=0.0
+	CurrentObjectYawAdjust#=0.0
+	CurrentObjectRollAdjust#=0.0
+	CurrentObjectX#=0.0
+	CurrentObjectY#=0.0
+	CurrentObjectZ#=0.0
+	CurrentObjectOldX#=-999
+	CurrentObjectOldY#=-999
+	CurrentObjectOldZ#=-999
+	CurrentObjectDX#=0
+	CurrentObjectDY#=0
+	CurrentObjectDZ#=0
+	CurrentObjectPitch#=0
+	CurrentObjectYaw#=0
+	CurrentObjectRoll#=0
+	CurrentObjectPitch2#=0
+	CurrentObjectYaw2#=0
+	CurrentObjectRoll2#=0
+	CurrentObjectXGoal#=0
+	CurrentObjectYGoal#=0
+	CurrentObjectZGoal#=0
+	CurrentObjectMovementType=0
+	CurrentObjectMovementTypeData=0
+	CurrentObjectSpeed#=0
+	CurrentObjectRadius#=0
+	CurrentObjectRadiusType=0
+	CurrentObjectData10=0
+	CurrentObjectPushDX#=0
+	CurrentObjectPushDY#=0
+	CurrentObjectAttackPower=0
+	CurrentObjectDefensePower=0
+	CurrentObjectDestructionType=0
+	CurrentObjectID=-1
+	CurrentObjectType=ObjType
+	CurrentObjectSubType=ObjSubType
+	CurrentObjectActive=1001
+	CurrentObjectLastActive=1001
+	CurrentObjectActivationType=0
+	CurrentObjectActivationSpeed=0
+	CurrentObjectStatus=0
+	CurrentObjectTimer=0
+	CurrentObjectTimerMax1=0
+	CurrentObjectTimerMax2=0
+	CurrentObjectTeleportable=False
+	CurrentObjectButtonPush=False
+	CurrentObjectWaterReact=0
+	CurrentObjectTelekinesisable=0
+	CurrentObjectFreezable=0
+	CurrentObjectReactive=True
+	CurrentObjectChild=-1
+	CurrentObjectParent=-1
+	For i=0 To 9
+		CurrentObjectData(i)=0
+	Next
+	For i=0 To 3
+		CurrentObjectTextData$(i)=""
+	Next
+	CurrentObjectTalkable=0
+	CurrentObjectCurrentAnim=0
+	CurrentObjectStandardAnim=0
+	CurrentObjectTileX=0
+	CurrentObjectTileY=0
+	CurrentObjectTileX2=0
+	CurrentObjectTileY2=0
+	CurrentObjectMovementTimer=0
+	CurrentObjectMovementSpeed=0
+	CurrentObjectMoveXGoal=0
+	CurrentObjectMoveYGoal=0
+	CurrentObjectTileTypeCollision=0
+	CurrentObjectObjectTypeCollision=0
+	CurrentObjectCaged=0
+	CurrentObjectDead=0
+	CurrentObjectDeadTimer=0
+	CurrentObjectExclamation=0
+	CurrentObjectShadow=-1
+	CurrentObjectLinked=-1
+	CurrentObjectLinkBack=-1
+	CurrentObjectFlying=0
+	CurrentObjectFrozen=0
+	CurrentObjectIndigo=0
+	CurrentObjectFutureInt24=0
+	CurrentObjectFutureInt25=0
+
+	CurrentObjectScaleAdjust=1.0
+	CurrentObjectScaleXAdjust=1.0
+	CurrentObjectScaleYAdjust=1.0
+	CurrentObjectScaleZAdjust=1.0
+	CurrentObjectFutureFloat5=0.0
+	CurrentObjectFutureFloat6=0.0
+	CurrentObjectFutureFloat7=0.0
+	CurrentObjectFutureFloat8=0.0
+	CurrentObjectFutureFloat9=0.0
+	CurrentObjectFutureFloat10=0.0
+	CurrentObjectFutureString1$=""
+	CurrentObjectFutureString2$=""
+
 End Function
 
 Function LoadObjectPreset()
@@ -13885,7 +13998,7 @@ End Function
 
 
 Function ShowWorldAdjusterPositions()
-	;xzx
+
 	For i=0 To 3
 		HideEntity WorldAdjusterPositionMarker(i)
 	Next
@@ -13939,6 +14052,66 @@ Function ShowCurrentObjectMoveXYGoal()
 	Else
 		HideEntity CurrentObjectMoveXYGoalMarker
 	EndIf
+
+End Function
+
+Function SetCurrentObjectTargetLocation(x,y)
+
+	Select CurrentObjectType
+	Case 90 ; button
+		If CurrentObjectSubType=10 ; levelexit
+			CurrentObjectData(1)=CurrentLevelNumber
+			CurrentObjectData(2)=x
+			CurrentObjectData(3)=y
+			CurrentGrabbedObjectModified=True
+		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
+			CurrentObjectData(2)=x
+			CurrentObjectData(3)=y
+			CurrentGrabbedObjectModified=True
+		ElseIf CurrentObjectSubType=15 ; general command
+			SetCurrentObjectTargetLocationCmd(CurrentObjectData(0),1,2,3,x,y)
+		Else
+			GetLevelExitToHere(x,y)
+		EndIf
+	Case 51,52 ; magic shooter, meteor shooter
+		CurrentObjectData(1)=x
+		CurrentObjectData(2)=y
+		CurrentGrabbedObjectModified=True
+	Case 242 ; cuboid
+		SetCurrentObjectTargetLocationCmd(CurrentObjectData(2),3,4,5,x,y)
+	Default
+		GetLevelExitToHere(x,y)
+	End Select
+	
+	BuildCurrentObjectModel()
+
+End Function
+
+Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,x,y)
+
+	Select Cmd
+	Case 7
+		CurrentObjectData(D1)=CurrentLevelNumber
+		CurrentObjectData(D2)=x
+		CurrentObjectData(D3)=y
+		CurrentGrabbedObjectModified=True
+	Case 61
+		CurrentObjectData(D2)=x
+		CurrentObjectData(D3)=y
+		CurrentGrabbedObjectModified=True
+	Default
+		GetLevelExitToHere(x,y)
+	End Select
+
+End Function
+
+Function GetLevelExitToHere(x,y)
+
+	BlankObjectPreset("!Button",90,10)
+	CurrentObjectData(1)=CurrentLevelNumber
+	CurrentObjectData(2)=x
+	CurrentObjectData(3)=y
+	SetCurrentGrabbedObject(-1)
 
 End Function
 
