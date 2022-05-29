@@ -204,9 +204,12 @@ Const MaxDialog=999
 Const MaxLevel=999
 Dim MasterDialogList(1000),MasterLevelList(1000)
 
-Global CopyingLevel=False
+Const StateNotSpecial=0
+Const StateCopying=1
+Const StateSwapping=2
+Global CopyingLevel=StateNotSpecial
 Global CopiedLevel=-1
-Global CopyingDialog=False
+Global CopyingDialog=StateNotSpecial
 Global CopiedDialog=-1
 
 
@@ -16451,7 +16454,7 @@ Function AccessLevel(levelnumber)
 
 End Function
 
-Function MoveLevel(levelnumbersource,levelnumberdest)
+Function MoveFile(numbersource,numberdest,ext$)
 
 	If AdventureCurrentArchive=1
 		ex2$="Archive\"
@@ -16460,18 +16463,29 @@ Function MoveLevel(levelnumbersource,levelnumberdest)
 	EndIf
 
 	dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
-	CopyFile(dirbase$+levelnumbersource+".wlv",dirbase$+levelnumverdest+".wlv")
-	DeleteFile(dirbase$+levelnumbersource+".wlv")
+	CopyFile(dirbase$+numbersource+ext$,dirbase$+numberdest+ext$)
+	DeleteFile(dirbase$+numbersource+ext$)
+
+End Function
+
+Function MoveLevel(levelnumbersource,levelnumberdest)
+
+	MoveFile(levelnumbersource,levelnumberdest,".wlv")
 	MasterLevelList(levelnumbersource)=0
 	MasterLevelList(levelnumberdest)=1
 
 End Function
 
-Function SwapLevel(levelnumber1,levelnumber2)
-	
-	Exists1=LevelExists(levelnumber1)
-	Exists2=LevelExists(levelnumber2)
-	
+Function MoveDialog(levelnumbersource,levelnumberdest)
+
+	MoveFile(levelnumbersource,levelnumberdest,".wlv")
+	MasterLevelList(levelnumbersource)=0
+	MasterLevelList(levelnumberdest)=1
+
+End Function
+
+Function SwapFile(levelnumber1,levelnumber2,ext$,Exists1,Exists2)
+
 	If Exists1 And Exists2
 		If AdventureCurrentArchive=1
 			ex2$="Archive\"
@@ -16480,17 +16494,37 @@ Function SwapLevel(levelnumber1,levelnumber2)
 		EndIf
 	
 		dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
-		CopyFile(dirbase$+levelnumber1+".wlv",dirbase$+"temp"+levelnumber1+".wlv")
-		DeleteFile(dirbase$+levelnumber1+".wlv")
-		CopyFile(dirbase$+levelnumber2+".wlv",dirbase$+levelnumber1+".wlv")
-		DeleteFile(dirbase$+levelnumber2+".wlv")
-		CopyFile(dirbase$+"temp"+levelnumber1+".wlv",dirbase$+levelnumber2+".wlv")
-		DeleteFile(dirbase$+"temp"+levelnumber1+".wlv")
+		CopyFile(dirbase$+levelnumber1+ext$,dirbase$+"temp"+levelnumber1+ext$)
+		DeleteFile(dirbase$+levelnumber1+ext$)
+		CopyFile(dirbase$+levelnumber2+ext$,dirbase$+levelnumber1+ext$)
+		DeleteFile(dirbase$+levelnumber2+ext$)
+		CopyFile(dirbase$+"temp"+levelnumber1+ext$,dirbase$+levelnumber2+ext$)
+		DeleteFile(dirbase$+"temp"+levelnumber1+ext$)
 	ElseIf Exists1=True And Exists2=False
-		MoveLevel(levelnumber1,levelnumber2)
+		MoveFile(levelnumber1,levelnumber2,ext$)
 	ElseIf Exists1=False And Exists2=True
-		MoveLevel(levelnumber2,levelnumber1)
+		MoveFile(levelnumber2,levelnumber1,ext$)
 	EndIf
+
+End Function
+
+Function SwapLevel(levelnumber1,levelnumber2)
+	
+	Exists1=LevelExists(levelnumber1)
+	Exists2=LevelExists(levelnumber2)
+	SwapFile(levelnumber1,levelnumber2,".wlv",Exists1,Exists2)
+	MasterLevelList(levelnumber1)=Exists2
+	MasterLevelList(levelnumber2)=Exists1
+
+End Function
+
+Function SwapDialog(dialognumber1,dialognumber2)
+
+	Exists1=DialogExists(dialognumber1)
+	Exists2=DialogExists(dialognumber2)
+	SwapFile(dialognumber1,dialognumber2,".dia",Exists1,Exists2)
+	MasterDialogList(dialognumber1)=Exists2
+	MasterDialogList(dialognumber2)=Exists1
 
 End Function
 
@@ -18673,8 +18707,8 @@ End Function
 Function StartMaster()
 	SetEditorMode(8)
 	
-	CopyingLevel=False
-	CopyingDialog=False
+	CopyingLevel=StateNotSpecial
+	CopyingDialog=StateNotSpecial
 
 	Camera1Proj=0
 	Camera2Proj=0
@@ -18784,8 +18818,8 @@ Function ResumeMaster()
 
 	SetEditorMode(8)
 	
-	CopyingLevel=False
-	CopyingDialog=False
+	CopyingLevel=StateNotSpecial
+	CopyingDialog=StateNotSpecial
 	
 	Camera1Proj=0
 	Camera2Proj=0
@@ -18888,9 +18922,13 @@ Function MasterMainLoop()
 				r=100
 				g=100
 				b=100
-			Else If CopyingLevel And CopiedLevel=i+MasterLevelListStart
+			Else If CopyingLevel=StateCopying And CopiedLevel=i+MasterLevelListStart
 				r=0
 				g=255
+				b=255
+			Else If CopyingLevel=StateSwapping And CopiedLevel=i+MasterLevelListStart
+				r=255
+				g=0
 				b=255
 			Else
 				r=210
@@ -18920,9 +18958,13 @@ Function MasterMainLoop()
 				r=100
 				g=100
 				b=100
-			Else If CopyingDialog And CopiedDialog=i+MasterDialogListStart
+			Else If CopyingDialog=StateCopying And CopiedDialog=i+MasterDialogListStart
 				r=0
 				g=255
+				b=255
+			Else If CopyingDialog=StateSwapping And CopiedDialog=i+MasterDialogListStart
+				r=255
+				g=0
 				b=255
 			Else
 				r=210
@@ -19140,6 +19182,7 @@ Function MasterMainLoop()
 	mb=0
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
+	If MouseDown(3) mb=3
 	
 	; level list start
 	If MouseX()>700 And MouseX()<750
@@ -19290,141 +19333,167 @@ Function MasterMainLoop()
 	EndIf
 
 
-	If mb>0
+	
 		
-		; custom icon
-		If MouseY()>500+32-200 And MouseY()<523+42-200 And MouseX()>480 And MouseX()<700
-			
-			FreeTexture IconTextureCustom
-			IconTextureCustom=0
-			
-			FlushKeys
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color 255,255,255
-			CustomIconName$=Input$( "Enter Custom Icon Texture Name (e.g. 'standard'):")
-						
-			If CustomIconName$="" Or CustomIconName$="Standard"
-				CustomIconName$="Standard"
-			Else
-				If FileType(globaldirname$+"\custom\icons\icons "+CustomIconName$+".bmp")<>1
-					Locate 0,0
-					Color 0,0,0
-					Rect 0,0,500,60,True
-					Color 255,255,0
-					Print "Error: Custom Icon File '"+customiconname$+"' not found."
-					Print "Reverting to 'Standard' Custom Icon Texture."
-					Delay 2000	
+	; custom icon
+	If mb>0 And MouseY()>500+32-200 And MouseY()<523+42-200 And MouseX()>480 And MouseX()<700
+		
+		FreeTexture IconTextureCustom
+		IconTextureCustom=0
+		
+		FlushKeys
+		Locate 0,0
+		Color 0,0,0
+		Rect 0,0,500,40,True
+		Color 255,255,255
+		CustomIconName$=Input$( "Enter Custom Icon Texture Name (e.g. 'standard'):")
 					
-					CustomIconName$="Standard"
-				EndIf
+		If CustomIconName$="" Or CustomIconName$="Standard"
+			CustomIconName$="Standard"
+		Else
+			If FileType(globaldirname$+"\custom\icons\icons "+CustomIconName$+".bmp")<>1
+				Locate 0,0
+				Color 0,0,0
+				Rect 0,0,500,60,True
+				Color 255,255,0
+				Print "Error: Custom Icon File '"+customiconname$+"' not found."
+				Print "Reverting to 'Standard' Custom Icon Texture."
+				Delay 2000	
 				
+				CustomIconName$="Standard"
 			EndIf
-
-			IconTextureCustom=myLoadTexture(globaldirname$+"\Custom\Icons\icons "+customiconname$+".bmp",4)
-
-
-
+			
 		EndIf
 
-		
-		; load level
-		If MouseX()>700 And MouseX()<750
-			If CtrlDown()
-				SelectedLevel=InputInt("Enter wlv number: ")
-				AccessLevel(SelectedLevel)
-				StartEditorMainLoop()
-			Else
-				For i=1 To 20
-					If MouseY()>62+i*20 And MouseY()<=82+i*20
-						SelectedLevel=i+MasterLevelListStart
-						If mb=1
-							If CopyingLevel And LevelExists(SelectedLevel)=False
-								; copy from CopiedLevel
-								If AdventureCurrentArchive=1
-									ex2$="Archive\"
-								Else
-									ex2$="Current\"
-								EndIf
+		IconTextureCustom=myLoadTexture(globaldirname$+"\Custom\Icons\icons "+customiconname$+".bmp",4)
 
-								dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
-								CopyFile(dirbase$+CopiedLevel+".wlv",dirbase$+SelectedLevel+".wlv")
-								MasterLevelList(SelectedLevel)=1
-								
-								CopyingLevel=False
+
+
+	EndIf
+
+	
+	; load level
+	If MouseX()>700 And MouseX()<750
+		If CtrlDown()
+			SelectedLevel=InputInt("Enter wlv number: ")
+			AccessLevel(SelectedLevel)
+			StartEditorMainLoop()
+		Else
+			For i=1 To 20
+				If MouseY()>62+i*20 And MouseY()<=82+i*20
+					SelectedLevel=i+MasterLevelListStart
+					If mb=1
+						If CopyingLevel=StateCopying And LevelExists(SelectedLevel)=False
+							; copy from CopiedLevel
+							If AdventureCurrentArchive=1
+								ex2$="Archive\"
 							Else
-								AccessLevel(SelectedLevel)
-								StartEditorMainLoop()
+								ex2$="Current\"
 							EndIf
+
+							dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+							CopyFile(dirbase$+CopiedLevel+".wlv",dirbase$+SelectedLevel+".wlv")
+							MasterLevelList(SelectedLevel)=1
 							
-							Repeat
-							Until MouseDown(1)=0
-						ElseIf mb=2 And LevelExists(SelectedLevel)=True
-							If CopyingLevel And SelectedLevel=CopiedLevel
-								CopyingLevel=False
-							Else
-								CopyingLevel=True
-								CopiedLevel=SelectedLevel
-							EndIf
-							
-							Repeat
-							Until MouseDown(2)=0
+							CopyingLevel=StateNotSpecial
+						ElseIf CopyingLevel=StateSwapping
+							SwapLevel(CopiedLevel,SelectedLevel)
+							CopyingLevel=StateNotSpecial
+						Else
+							AccessLevel(SelectedLevel)
+							StartEditorMainLoop()
 						EndIf
-					EndIf
-				Next
-			EndIf
-		EndIf
-		
-		; load dialog
-		If MouseX()>750 And MouseX()<800
-			If CtrlDown()
-				currentdialog=InputInt("Enter dia number: ")
-				StartDialog()
-			Else
-				For i=1 To 20
-					If MouseY()>62+i*20 And MouseY()<=82+i*20
-						SelectedDialog = i+MasterDialogListStart
-						If mb=1
-							If CopyingDialog And DialogExists(SelectedDialog)=False
-								; copy from CopiedDialog
-								If AdventureCurrentArchive=1
-									ex2$="Archive\"
-								Else
-									ex2$="Current\"
-								EndIf
-
-								dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
-								CopyFile(dirbase$+CopiedDialog+".dia",dirbase$+SelectedDialog+".dia")
-								MasterDialogList(SelectedDialog)=1
-								
-								CopyingDialog=False
-							Else
-								Currentdialog=SelectedDialog
-								StartDialog()
-							EndIf
-							
-							Repeat
-							Until MouseDown(1)=0
-						ElseIf mb=2 And DialogExists(SelectedDialog)=True
-							If CopyingDialog And SelectedDialog=CopiedDialog
-								CopyingDialog=False
-							Else
-								CopyingDialog=True
-								CopiedDialog=SelectedDialog
-							EndIf
-							
-							Repeat
-							Until MouseDown(2)=0
+						
+						Repeat
+						Until MouseDown(1)=0
+					ElseIf mb=2 And LevelExists(SelectedLevel)=True
+						If CopyingLevel=StateCopying And SelectedLevel=CopiedLevel
+							CopyingLevel=StateNotSpecial
+						Else
+							CopyingLevel=StateCopying
+							CopiedLevel=SelectedLevel
 						EndIf
+						
+						Repeat
+						Until MouseDown(2)=0
+					ElseIf mb=3 And LevelExists(SelectedLevel)=True
+						If CopyingLevel=StateSwapping And SelectedLevel=CopiedLevel
+							CopyingLevel=StateNotSpecial
+						Else
+							CopyingLevel=StateSwapping
+							CopiedLevel=SelectedLevel
+						EndIf
+						
+						Repeat
+						Until MouseDown(3)=0
 					EndIf
-				Next
-			EndIf
+				EndIf
+			Next
 		EndIf
+	EndIf
+	
+	; load dialog
+	If MouseX()>750 And MouseX()<800
+		If CtrlDown()
+			currentdialog=InputInt("Enter dia number: ")
+			StartDialog()
+		Else
+			For i=1 To 20
+				If MouseY()>62+i*20 And MouseY()<=82+i*20
+					SelectedDialog = i+MasterDialogListStart
+					If mb=1
+						If CopyingDialog=StateCopying And DialogExists(SelectedDialog)=False
+							; copy from CopiedDialog
+							If AdventureCurrentArchive=1
+								ex2$="Archive\"
+							Else
+								ex2$="Current\"
+							EndIf
+
+							dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+							CopyFile(dirbase$+CopiedDialog+".dia",dirbase$+SelectedDialog+".dia")
+							MasterDialogList(SelectedDialog)=1
+							
+							CopyingDialog=StateNotSpecial
+						ElseIf CopyingDialog=StateSwapping
+							SwapDialog(CopiedDialog,SelectedDialog)
+							CopyingDialog=StateNotSpecial
+						Else
+							Currentdialog=SelectedDialog
+							StartDialog()
+						EndIf
+						
+						Repeat
+						Until MouseDown(1)=0
+					ElseIf mb=2 And DialogExists(SelectedDialog)=True
+						If CopyingDialog=StateCopying And SelectedDialog=CopiedDialog
+							CopyingDialog=StateNotSpecial
+						Else
+							CopyingDialog=StateCopying
+							CopiedDialog=SelectedDialog
+						EndIf
+						
+						Repeat
+						Until MouseDown(2)=0
+					ElseIf mb=3 And DialogExists(SelectedDialog)=True
+						If CopyingDialog=StateSwapping And SelectedDialog=CopiedDialog
+							CopyingDialog=StateNotSpecial
+						Else
+							CopyingDialog=StateSwapping
+							CopiedDialog=SelectedDialog
+						EndIf
+						
+						Repeat
+						Until MouseDown(3)=0
+					EndIf
+				EndIf
+			Next
+		EndIf
+	EndIf
 
 		
 		
-		
+	If mb>0
 		
 
 		If MouseY()>550 And MouseX()<200	
