@@ -2750,49 +2750,14 @@ Function EditorLocalRendering()
 	Color TextLevelR,TextLevelG,TextLevelB
 
 
-	Select LevelWeather
-	Case 0
-		Text 719,100,"Clear Sky"
-	Case 1
-		Text 715,100,"Light Snow"
-	Case 2
-		Text 715,100,"Heavy Snow"
-	Case 3
-		Text 715,100,"BlizzardRL"
-	Case 4
-		Text 715,100,"BlizzardLR"
-	Case 5
-		Text 715,100,"   Rain"
-	Case 6
-		Text 719,100,"  Weird"
-	Case 7
-		Text 715,100,"ThundrStrm"
-	Case 8
-		Text 715,100,"  Alarm"
-	Case 9
-		Text 715,100,"Light Rise"
-	Case 10
-		Text 715,100,"Light Fall"
-	Case 11
-		Text 715,100,"Rainb Rise"
-	Case 12
-		Text 715,100,"Rainb Fall"
-	Case 13
-		Text 715,100,"  Foggy"
-	Case 14
-		Text 715,100,"FoggyGreen"
-	Case 15
-		Text 715,100,"  Leaves"
-	Case 16
-		Text 715,100,"Sand Storm"
-	Case 17
-		Text 715,100," Abstract"
+	LevelWeatherString$=GetWeatherName$(LevelWeather)
+	;If Len(LevelWeatherString$) Mod 2=0
+	;	Text 715,100,LevelWeatherString$
+	;Else
+	;	Text 719,100,LevelWeatherString$
+	;EndIf
+	CenteredText(754,100,LevelWeatherString$)
 
-
-
-
-	
-	End Select
 
 	Select LevelMusic
 	Case -1
@@ -21213,6 +21178,8 @@ Function GetCmdData1ValueName$(Cmd, Data1)
 		Else
 			Return Data1
 		EndIf
+	Case 13
+		Return GetWeatherName$(Data1)
 	Default
 		Return Data1
 	End Select
@@ -21446,6 +21413,51 @@ Function GetMovementTypeString$(value)
 		Return "MoobotWL"
 	Case 88
 		Return "MoobotWR"
+	Default
+		Return "NotVanilla"
+	End Select
+
+End Function
+
+Function GetWeatherName$(value)
+
+	Select value
+	Case 0
+		Return "Clear Sky"
+	Case 1
+		Return "Light Snow"
+	Case 2
+		Return "Heavy Snow"
+	Case 3
+		Return "BlizzardRL"
+	Case 4
+		Return "BlizzardLR"
+	Case 5
+		Return "Rain"
+	Case 6
+		Return "Weird"
+	Case 7
+		Return "ThundrStrm"
+	Case 8
+		Return "Alarm"
+	Case 9
+		Return "Light Rise"
+	Case 10
+		Return "Light Fall"
+	Case 11
+		Return "Rainb Rise"
+	Case 12
+		Return "Rainb Fall"
+	Case 13
+		Return "Foggy"
+	Case 14
+		Return "FoggyGreen"
+	Case 15
+		Return "Leaves"
+	Case 16
+		Return "Sand Storm"
+	Case 17
+		Return "Abstract"
 	Default
 		Return "NotVanilla"
 	End Select
