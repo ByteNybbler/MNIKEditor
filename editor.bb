@@ -732,6 +732,7 @@ Global TexturePrefix$=""
 
 Global SimulationLevel=1
 Const SimulationLevelMax=3
+Const SimulationLevelAnimation=1
 
 Dim BrushObjectModelName$(1000)
 Dim BrushObjectTextureName$(1000)
@@ -4662,6 +4663,7 @@ Function EditorLocalControls()
 					SimulateObjectScale(i)
 					
 					UpdateObjectVisibility(i)
+					UpdateObjectAnimation(i)
 				Next
 				
 				If SimulationLevel>=3
@@ -7668,11 +7670,50 @@ Function UpdateObjectEntityToCurrent(Dest)
 		EndIf
 	EndIf
 	
-	If ObjectModelName$(Dest)="!Tentacle"
-		Animate GetChild(ObjectEntity(Dest),3),1,.1,1,0
-	EndIf
+	UpdateObjectAnimation(Dest)
 	
 	UpdateObjectPosition(Dest)
+
+End Function
+
+
+Function UpdateObjectAnimation(i)
+
+	ModelName$=ObjectModelName$(i)
+	Entity=ObjectEntity(i)
+
+	If ModelName$="!Busterfly"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
+		Else
+			AnimateMD2 Entity,2,.4,2,9
+		EndIf
+	EndIf
+	If ModelName$="!Chomper"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
+		Else
+			AnimateMD2 ObjectEntity(i),1,.6,1,29
+		EndIf
+	EndIf
+	If ModelName$="!Crab"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
+		Else
+			Select ObjectData(i,1)
+			Case 2,3
+				; asleep
+				AnimateMD2 Entity,3,1,48,49
+			End Select
+		EndIf
+	EndIf
+	If ModelName$="!Tentacle"
+		If SimulationLevel<SimulationLevelAnimation
+			Animate GetChild(Entity,3),0
+		Else
+			Animate GetChild(Entity,3),1,.1,1,0
+		EndIf
+	EndIf
 
 End Function
 
@@ -13268,7 +13309,7 @@ Function BuildCurrentObjectModel()
 
 	Else If CurrentObjectModelName$="!Busterfly"
 		CurrentObjectModel=CopyEntity(BusterflyMesh)
-		AnimateMD2 CurrentObjectModel,2,.4,2,9
+		;AnimateMD2 CurrentObjectModel,2,.4,2,9
 		
 		
 	Else If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
@@ -15047,6 +15088,8 @@ Function CreateObjectModel(Dest)
 
 		EndIf
 		
+		
+		UpdateObjectAnimation(Dest)
 		
 		UpdateObjectVisibility(Dest)
 
@@ -24474,7 +24517,7 @@ Function ControlButterfly(i)
 			SimulatedObjectZScale(i)=.01
 			SimulatedObjectRoll2(i)=90
 			
-			AnimateMD2 ObjectEntity(i),2,.4,2,9
+			;AnimateMD2 ObjectEntity(i),2,.4,2,9
 		Else
 			EntityBlend ObjectEntity(i),3
 		EndIf
