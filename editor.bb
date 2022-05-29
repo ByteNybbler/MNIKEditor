@@ -14171,7 +14171,7 @@ Function RawSetObjectTileX(i,tilex)
 	If ObjectType(i)=50 ; spellball
 		ObjectData(i,2)=ObjectTileX(i)
 		ObjectData(i,4)=ObjectTileX(i)
-		If i=CurrentGrabbedObject Or i=NofObjects
+		If CurrentObjectType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
 			CurrentObjectData(2)=ObjectData(i,2)
 			CurrentObjectData(4)=ObjectData(i,4)
 		EndIf
@@ -14187,7 +14187,7 @@ Function RawSetObjectTileY(i,tiley)
 	If ObjectType(i)=50 ; spellball
 		ObjectData(i,3)=ObjectTileY(i)
 		ObjectData(i,5)=ObjectTileY(i)
-		If i=CurrentGrabbedObject Or i=NofObjects
+		If CurrentObjectType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
 			CurrentObjectData(3)=ObjectData(i,3)
 			CurrentObjectData(5)=ObjectData(i,5)
 		EndIf
