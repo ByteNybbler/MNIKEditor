@@ -1805,6 +1805,12 @@ Repeat
 			;ForceKeyRelease(56,"left alt")
 			;ForceKeyRelease(184,"right alt")
 			
+			ForceKeyRelease(42,"left shift")
+			ForceKeyRelease(54,"right shift")
+			
+			ForceKeyRelease(29,"left ctrl")
+			ForceKeyRelease(157,"right ctrl")
+			
 			ReadColors()
 			
 		EndIf
