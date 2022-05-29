@@ -1664,6 +1664,13 @@ Global FireTrapTexture=MyLoadTexture("data\models\squares\firetrap.bmp",4)
 
 Global VoidTexture=myLoadTexture("Data\models\void\void.jpg",1)
 
+Dim MirrorTexture(5)
+For i=1 To 5
+	MirrorTexture(i)=myLoadTexture("data\models\mirror\mirror"+Str$(i)+".jpg",1)
+Next
+
+
+
 Global hubmode
 Global HubFileName$, HubTitle$, HubDescription$, HubTotalAdventures, HubAdvStart, HubSelectedAdventure
 Dim HubAdventuresFilenames$(500)
@@ -7776,8 +7783,8 @@ Function BaseObjectAlpha#(Dest)
 
 	If ObjectModelName$(Dest)="!FloingBubble"
 		Return 0.5
-	ElseIf ObjectModelName$(Dest)="!MagicMirror"
-		Return 0.5
+	;ElseIf ObjectModelName$(Dest)="!MagicMirror"
+	;	Return 0.5
 	ElseIf ObjectModelName$(Dest)="!IceFloat"
 		Return 0.8
 	ElseIf ObjectModelName$(Dest)="!PlantFloat"
@@ -13117,6 +13124,16 @@ Function CreatePlantFloatMesh()
 	Return Entity
 End Function
 
+Function CreateMagicMirrorMesh()
+
+	Entity=CreateCube()
+	ScaleMesh Entity,3.5,2.59,.52
+	;EntityColor Entity,255,0,0
+	;EntityAlpha Entity,.5
+	Return Entity
+
+End Function
+
 Function CreateFlipBridgeMesh(tex)
 	
 
@@ -13833,10 +13850,7 @@ Function BuildCurrentObjectModel()
 		EntityColor CurrentObjectModel,255,0,0
 	
 	Else If CurrentObjectModelName="!MagicMirror"
-		CurrentObjectModel=CreateCube()
-		ScaleMesh CurrentObjectModel,3.49,2.49,.52
-		EntityColor CurrentObjectModel,255,0,0
-		EntityAlpha CurrentObjectModel,.5
+		CurrentObjectModel=CreateMagicMirrorMesh()
 
 	
 	
@@ -15348,10 +15362,7 @@ Function CreateObjectModel(Dest)
 			EntityColor ObjectEntity(Dest),255,0,0
 		
 		Else If ObjectModelName$(Dest)="!MagicMirror"
-			ObjectEntity(Dest)=CreateCube()
-			ScaleMesh ObjectEntity(Dest),3.49,2.49,.52
-			EntityColor ObjectEntity(Dest),255,0,0
-			EntityAlpha ObjectEntity(Dest),.5
+			ObjectEntity(Dest)=CreateMagicMirrorMesh()
 
 
 
@@ -25566,6 +25577,34 @@ Function ControlKaboom(i)
 End Function
 
 
+Function ControlMirror(i)
+
+	Select ObjectSubtype(i)	
+
+	Case 0	; inactive
+		;ObjectActivationSpeed(i)=20
+		;DeActivateObject(i)
+		
+	Case 1,2,3,4,5	; fire, ice, time, acid, home
+		;ObjectActivationSpeed(i)=4
+		;ActivateObject(i)
+		EntityTexture ObjectEntity(i),MirrorTexture(ObjectSubtype(i))
+		PositionTexture MirrorTexture(ObjectSubtype(i)),Sin(Leveltimer/10.0),Cos(leveltimer/17.0)
+		ScaleTexture mirrortexture(objectsubtype(i)),0.5+0.1*Sin(leveltimer/7.0),0.5+0.1*Cos(leveltimer/11.0)
+		RotateTexture mirrortexture(objectsubtype(i)),leveltimer / 24.0
+		
+		;If Leveltimer Mod 400 = 0 playsoundfx(123,objectx(i),objectY(i))
+		
+		
+		
+	End Select
+		
+
+
+End Function
+
+
+
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
 	SimulatedLightGreenGoal=Green
@@ -25880,6 +25919,8 @@ Function ControlObjects()
 				ControlSpellBall(i)
 			Case 53
 				ControlMeteorite(i)
+			Case 54
+				ControlMirror(i)
 			Case 110
 				ControlNPC(i)
 			Case 120
