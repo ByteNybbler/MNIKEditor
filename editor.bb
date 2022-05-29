@@ -15207,7 +15207,7 @@ Function CreateObjectModel(Dest)
 			ObjectEntity(Dest)=CopyEntity(TurtleMesh)
 		Else If ObjectModelName$(Dest)="!Thwart"
 			ObjectEntity(Dest)=CopyEntity(ThwartMesh)
-			EntityTexture ObjectEntity(Dest),ThwartTexture(ObjectData(Dest,0))
+			EntityTexture ObjectEntity(Dest),ThwartTexture(ObjectData(Dest,2))
 
 		Else If ObjectModelName$(Dest)="!FireFlower"
 			ObjectEntity(Dest)=CopyEntity(FireFlowerMesh)
