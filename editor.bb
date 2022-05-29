@@ -4396,19 +4396,20 @@ Function EditorLocalControls()
 			For i=0 To NofObjectPresetCategories-1
 				If SubstringMatches(Query$,ObjectPresetCategoryName$(i))
 					CurrentObjectPresetCategory=i
+					
+					SetCurrentGrabbedObject(-1)
+					CurrentObjectPresetObject=0
+					i=CurrentObjectPresetCategory
+					
+					ReadObjectPresetDirectory(i)
+					
+					SetEditorMode(3)
+					LoadObjectPreset()
+					BuildCurrentObjectModel()
+					
 					Exit
 				EndIf
 			Next
-			
-			SetCurrentGrabbedObject(-1)
-			CurrentObjectPresetObject=0
-			i=CurrentObjectPresetCategory
-			
-			ReadObjectPresetDirectory(i)
-			
-			SetEditorMode(3)
-			LoadObjectPreset()
-			BuildCurrentObjectModel()
 		EndIf
 	
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
@@ -4461,13 +4462,14 @@ Function EditorLocalControls()
 			For i=0 To NofObjectPresetObjects-1
 				If SubstringMatches(Query$,ObjectPresetObjectName$(i))
 					CurrentObjectPresetObject=i
+					
+					SetEditorMode(3)
+					LoadObjectPreset()
+					BuildCurrentObjectModel()
+					
 					Exit
 				EndIf
 			Next
-			
-			SetEditorMode(3)
-			LoadObjectPreset()
-			BuildCurrentObjectModel()
 		EndIf	
 
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
