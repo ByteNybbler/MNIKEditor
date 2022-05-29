@@ -14510,16 +14510,47 @@ Function CreateAccTexture(Data4,Data5)
 
 End Function
 
-Function TransformAccessoryEntity(Entity,Dest)
+Function TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Roll#,Pitch#,X#,Y#,Z#)
 
-	ScaleEntity Entity,ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+	ScaleEntity Entity,XScale#,ZScale#,YScale#
 	
-	GameLikeRotation(Entity,ObjectYawAdjust(dest)-90.0,ObjectPitchAdjust(dest),ObjectRollAdjust(dest))
+	GameLikeRotation(Entity,Yaw#-90.0,Pitch#,Roll#)
 
-	PositionEntity Entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+	PositionEntity Entity,X#,Z#+.1+.84*ZScale#/.035,-Y#
 
 End Function
 
+Function TransformAccessoryEntity(Entity,Dest)
+
+	XScale#=ObjectXScale(Dest)*ObjectScaleAdjust(Dest)
+	YScale#=ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+	ZScale#=ObjectZScale(Dest)*ObjectScaleAdjust(Dest)
+	Yaw#=ObjectYaw(Dest)+ObjectYawAdjust(Dest)
+	Roll#=ObjectRoll(Dest)+ObjectRollAdjust(Dest)
+	Pitch#=ObjectPitch(Dest)+ObjectPitchAdjust(Dest)
+	X#=ObjectX(Dest)+ObjectXAdjust(Dest)
+	Y#=ObjectY(Dest)+ObjectYAdjust(Dest)
+	Z#=ObjectZ(Dest)+ObjectZAdjust(Dest)
+	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Roll#,Pitch#,X#,Y#,Z#)
+
+End Function
+
+Function SimulatedTransformAccessoryEntity(Entity,Dest)
+
+	XScale#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
+	YScale#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+	ZScale#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
+	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
+	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
+	Pitch#=SimulatedObjectPitch(Dest)+SimulatedObjectPitchAdjust(Dest)
+	X#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)
+	Y#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
+	Z#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
+	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Roll#,Pitch#,X#,Y#,Z#)
+
+End Function
+
+; haha imagine if this actually seemed to do anything???
 Function TransformAccessoryEntityOntoBone(Entity,Dest)
 
 	bone=FindChild(ObjectEntity(Dest),"hat_bone")
@@ -24711,10 +24742,12 @@ Function ControlNPC(i)
 	
 	; putting accessory controls here
 	If ObjectHatEntity(i)>0
-		TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
+		;TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
+		;SimulatedTransformAccessoryEntity(ObjectHatEntity(i),i)
 	EndIf
 	If ObjectAccEntity(i)>0
-		TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
+		;TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
+		;SimulatedTransformAccessoryEntity(ObjectHatEntity(i),i)
 	EndIf
 	
 
