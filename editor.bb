@@ -3230,7 +3230,7 @@ Function EditorLocalControls()
 					If RightMouse
 						If CurrentDraggedObject<>-1 And (ObjectTileX(CurrentDraggedObject)<>x Or ObjectTileY(CurrentDraggedObject)<>y)
 							DecrementLevelTileObjectCount(ObjectTileX(CurrentDraggedObject),ObjectTileY(CurrentGrabbedObject))
-							SetObjectPosition(CurrentDraggedObject,x,y,0,0)
+							SetObjectPosition(CurrentDraggedObject,x,y);,0,0)
 							UpdateObjectPosition(CurrentDraggedObject)
 							SomeObjectWasChanged()
 						EndIf
@@ -7052,22 +7052,8 @@ Function ShowMessageOnce(message$, milliseconds)
 
 End Function
 
-; Returns True if the object can be put in that position, and False otherwise
-Function SetObjectPosition(Dest,x#,y#,xoffsetNOLONGERUSED#,yoffsetNOLONGERUSED#)
+Function GetObjectOffset#(Dest,index)
 
-	floorx=Floor(x)
-	floory=Floor(y)
-	
-	If floorx<0 Or floory<0 Or floorx>LevelWidth-1 Or floory>LevelHeight-1
-		Return False
-	EndIf
-	
-	SetObjectTileXY(Dest,floorx,floory)
-	;ObjectTileX(Dest)=floorx
-	;ObjectTileX2(Dest)=floorx
-	;ObjectTileY(Dest)=floory
-	;ObjectTileY2(Dest)=floory
-	
 	; Type-specific placements
 	If ObjectType(Dest)=10 And ObjectSubType(Dest)=1 ; house-door
 		If ObjectYawAdjust(Dest)=90
@@ -7152,6 +7138,33 @@ Function SetObjectPosition(Dest,x#,y#,xoffsetNOLONGERUSED#,yoffsetNOLONGERUSED#)
 		yoffset#=0.5
 	EndIf
 	
+	If index=0
+		Return xoffset#
+	Else
+		Return yoffset#
+	EndIf
+
+End Function
+
+; Returns True if the object can be put in that position, and False otherwise
+Function SetObjectPosition(Dest,x#,y#)
+
+	floorx=Floor(x)
+	floory=Floor(y)
+	
+	If floorx<0 Or floory<0 Or floorx>LevelWidth-1 Or floory>LevelHeight-1
+		Return False
+	EndIf
+	
+	SetObjectTileXY(Dest,floorx,floory)
+	;ObjectTileX(Dest)=floorx
+	;ObjectTileX2(Dest)=floorx
+	;ObjectTileY(Dest)=floory
+	;ObjectTileY2(Dest)=floory
+	
+	xoffset#=GetObjectOffset#(Dest,0)
+	yoffset#=GetObjectOffset#(Dest,1)
+	
 	ObjectX#(Dest)=x#+xoffset#
 	ObjectY#(Dest)=y#+yoffset#
 	
@@ -7194,7 +7207,7 @@ Function PlaceObject(x#,y#)
 		ObjectData(NofObjects,i)=CurrentObjectData(i)
 	Next
 
-	If SetObjectPosition(NofObjects,x#,y#,CurrentObjectX#,CurrentObjectY#)=False
+	If SetObjectPosition(NofObjects,x#,y#)=False ;,CurrentObjectX#,CurrentObjectY#)=False
 		; don't place anything
 		Return
 	EndIf
@@ -7898,7 +7911,9 @@ End Function
 
 Function ObjectIsAtInt(i,x,y)
 
-	Return Floor(ObjectX(i))=x And Floor(ObjectY(i))=y
+	MyX#=ObjectX(i)-GetObjectOffset#(i,0)
+	MyY#=ObjectY(i)-GetObjectOffset#(i,1)
+	Return Floor(MyX#)=x And Floor(MyY#)=y
 
 End Function
 
