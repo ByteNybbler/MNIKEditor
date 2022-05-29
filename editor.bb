@@ -7870,9 +7870,7 @@ Function SimulateObjectRotation(Dest)
 	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
 	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
 	
-	RotateEntity ObjectEntity(Dest),0,0,0
-	TurnEntity ObjectEntity(Dest),Pitch#,0,Roll#
-	TurnEntity ObjectEntity(Dest),0,Yaw#,0
+	GameLikeRotation(ObjectEntity(Dest),Yaw#,Pitch#,Roll#)
 	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
 	
 	If ObjectModelName$(Dest)="!Kaboom" Or ObjectModelName$(Dest)="!BabyBoomer" Then TurnEntity ObjectEntity(Dest),0,90,0
@@ -7887,6 +7885,14 @@ Function SimulateObjectScale(Dest)
 	
 	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
 	
+End Function
+
+Function GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
+
+	RotateEntity Entity,0,0,0
+	TurnEntity Entity,Pitch#,0,Roll#
+	TurnEntity Entity,0,Yaw#,0
+
 End Function
 
 
@@ -14504,6 +14510,26 @@ Function CreateAccTexture(Data4,Data5)
 
 End Function
 
+Function TransformAccessoryEntity(Entity,Dest)
+
+	ScaleEntity Entity,ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+	
+	GameLikeRotation(Entity,ObjectYawAdjust(dest)-90.0,ObjectPitchAdjust(dest),ObjectRollAdjust(dest))
+
+	PositionEntity Entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+
+End Function
+
+Function TransformAccessoryEntityOntoBone(Entity,Dest)
+
+	bone=FindChild(ObjectEntity(Dest),"hat_bone")
+
+	PositionEntity Entity,EntityX(bone,True),-EntityZ(bone,True),EntityY(bone,True)
+
+	GameLikeRotation(Entity,EntityYaw(bone,True),EntityPitch(bone,True),EntityRoll(bone,True))
+
+End Function
+
 
 Function CreateObjectModel(Dest)
 
@@ -14551,13 +14577,15 @@ Function CreateObjectModel(Dest)
 					EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
 				EndIf
 				
-				ScaleEntity ObjectHatEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
-		
-				RotateEntity ObjectHatEntity(Dest),0,0,0
-				TurnEntity ObjectHatEntity(Dest),ObjectPitchAdjust(dest),0,ObjectRollAdjust(dest)
-				TurnEntity ObjectHatEntity(Dest),0,ObjectYawAdjust(dest)-90,0
+				TransformAccessoryEntity(ObjectHatEntity(Dest),Dest)
 
-				PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+;				ScaleEntity ObjectHatEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+;		
+;				RotateEntity ObjectHatEntity(Dest),0,0,0
+;				TurnEntity ObjectHatEntity(Dest),ObjectPitchAdjust(dest),0,ObjectRollAdjust(dest)
+;				TurnEntity ObjectHatEntity(Dest),0,ObjectYawAdjust(dest)-90,0
+;
+;				PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 			EndIf
 			
 			If ObjectData(Dest,4)>0 ;100 ; acc
@@ -14571,18 +14599,15 @@ Function CreateObjectModel(Dest)
 					EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
 				EndIf
 				
-				ScaleEntity ObjectAccEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
-		
-				RotateEntity ObjectAccEntity(Dest),0,0,0
-				TurnEntity ObjectAccEntity(Dest),ObjectPitchAdjust(dest),0,ObjectRollAdjust(dest)
-				TurnEntity ObjectAccEntity(Dest),0,ObjectYawAdjust(dest)-90,0
-
+				TransformAccessoryEntity(ObjectAccEntity(Dest),Dest)
 				
-				
-				PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
-
-
-
+;				ScaleEntity ObjectAccEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+;		
+;				RotateEntity ObjectAccEntity(Dest),0,0,0
+;				TurnEntity ObjectAccEntity(Dest),ObjectPitchAdjust(dest),0,ObjectRollAdjust(dest)
+;				TurnEntity ObjectAccEntity(Dest),0,ObjectYawAdjust(dest)-90,0				
+;				
+;				PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 			EndIf
 			
 			
@@ -24682,6 +24707,16 @@ End Function
 Function ControlNPC(i)
 
 	If ObjectModelName$(i)<>"!NPC" Return ; don't want to risk a MAV
+	
+	
+	; putting accessory controls here
+	If ObjectHatEntity(i)>0
+		TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
+	EndIf
+	If ObjectAccEntity(i)>0
+		TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
+	EndIf
+	
 
 	If SimulatedObjectFrozen(i)=1 Or SimulatedObjectFrozen(i)=10001 Or SimulatedObjectFrozen(i)=-1
 		; freeze
