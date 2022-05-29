@@ -9658,11 +9658,15 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObjectData(0)+"/"+tex$
 		EndIf
 		
-		If CurrentObjectType=434 ;mothership
+		If CurrentObjectType=434 ; mothership
 			tex2$="TimerMax"
 		EndIf	
-		If CurrentObjectModelName$="!Ghost" Or CurrentObjectModelName$="!Wraith"
+		If CurrentObjectType=470 Or CurrentObjectType=471 ; ghost or wraith
 			tex2$="Radius"
+		EndIf
+		
+		If CurrentObjectType=52 ; meteor shooter
+			tex2$="StartZ"
 		EndIf
 
 
@@ -9883,6 +9887,10 @@ Function DisplayObjectAdjuster(i)
 			tex2$="ShotTime"
 		EndIf
 		
+		If CurrentObjectType=52 ; meteor shooter
+			tex2$="TargetX"
+		EndIf
+		
 		
 
 
@@ -10062,6 +10070,10 @@ Function DisplayObjectAdjuster(i)
 			Case 2
 				tex$="Grow"
 			End Select
+		EndIf
+		
+		If CurrentObjectType=52 ; meteor shooter
+			tex2$="TargetY"
 		EndIf
 
 
@@ -10331,6 +10343,10 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=434 ; Mothership
 			tex2$="SourceY"
+		EndIf
+		
+		If CurrentObjectType=52 ; meteor shooter
+			tex2$="TargetZ"
 		EndIf
 
 
