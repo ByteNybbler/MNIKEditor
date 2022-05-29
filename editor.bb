@@ -19295,7 +19295,13 @@ Function MasterMainLoop()
 		; change hub data
 		For i=0 To 5
 			For j=0 To 4
-				If MouseX()>160+i*90-18 And MouseX()<240+i*90-18 And MouseY()>365+(j+2)*21 And MouseY()<386+(j+2)*21
+				XMin=160+i*90-18
+				XMax=240+i*90-18
+				YMin=365+(j+2)*21
+				YMax=386+(j+2)*21
+				TooltipX=XMin+40
+				TooltipY=YMin
+				If MouseX()>XMin And MouseX()<XMax And MouseY()>YMin And MouseY()<YMax
 					If j=0 And i=0
 						Adventureexitwonlevel=AdjustInt("Adventure exit won level: ", Adventureexitwonlevel, 1, 10, 150)
 					EndIf
@@ -19320,14 +19326,19 @@ Function MasterMainLoop()
 							cmdbit$="level"
 						Case 1
 							cmdbit$="command"
+							ShowTooltipCenterAligned(TooltipX,TooltipY,GetCommandName$(AdventureWonCommand(j-2,1)))
 						Case 2
 							cmdbit$="Data1"
+							ShowTooltipCenterAligned(TooltipX,TooltipY,GetCMDData1NameAndValue$(AdventureWonCommand(j-2,1),AdventureWonCommand(j-2,2),": "))
 						Case 3
 							cmdbit$="Data2"
+							ShowTooltipCenterAligned(TooltipX,TooltipY,GetCMDData2NameAndValue$(AdventureWonCommand(j-2,1),AdventureWonCommand(j-2,3),": "))
 						Case 4
 							cmdbit$="Data3"
+							ShowTooltipCenterAligned(TooltipX,TooltipY,GetCMDData3NameAndValue$(AdventureWonCommand(j-2,1),AdventureWonCommand(j-2,3),AdventureWonCommand(j-2,4),": "))
 						Case 5
 							cmdbit$="Data4"
+							ShowTooltipCenterAligned(TooltipX,TooltipY,GetCMDData4NameAndValue$(AdventureWonCommand(j-2,1),AdventureWonCommand(j-2,5),": "))
 						End Select
 						Adventurewoncommand(j-2,i)=AdjustInt("Adventure won command "+cmdbit$+": ", Adventurewoncommand(j-2,i), 1, 10, 150)
 					EndIf
