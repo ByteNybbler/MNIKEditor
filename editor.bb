@@ -9903,8 +9903,8 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectType=242 ; cuboid
-			tex2$="Explo CMD"
-			tex$=GetCommandName$(CurrentObjectData(2))
+			tex2$="CMD" ;"Explo CMD"
+			tex$=CurrentObjectData(2)+"/"+GetCommandName$(CurrentObjectData(2))
 		EndIf
 		
 		If CurrentObjectType=434 ; mothership
@@ -10275,7 +10275,7 @@ Function DisplayObjectAdjuster(i)
 
 		If  CurrentObjectType=242 ; Cuboid
 			;tex2$="Cmd Data2"
-			tex2$=GetCMDData2Name$(CurrentObjectData(4))
+			tex2$=GetCMDData2Name$(CurrentObjectData(2))
 			tex$=GetCmdData2ValueName$(CurrentObjectData(2),CurrentObjectData(4))
 		EndIf
 		If CurrentObjectType=434 ; Mothership
