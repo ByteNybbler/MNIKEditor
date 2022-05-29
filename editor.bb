@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/28/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/29/22)"
 
 Global MASTERUSER=True
 
@@ -6920,6 +6920,10 @@ Function LoadObjectPreset()
 	AddAdjuster("TextureName")
 	AddAdjuster("ScaleAdjust")
 	
+	;AddAdjuster("X")
+	;AddAdjuster("Y")
+	;AddAdjuster("Z")
+	
 	AddAdjuster("XAdjust")
 	AddAdjuster("YAdjust")
 	AddAdjuster("ZAdjust")
@@ -7017,7 +7021,7 @@ Function ShowMessageOnce(message$, milliseconds)
 End Function
 
 ; Returns True if the object can be put in that position, and False otherwise
-Function SetObjectPosition(Dest,x#,y#,xoffset#,yoffset#)
+Function SetObjectPosition(Dest,x#,y#,xoffsetNOLONGERUSED#,yoffsetNOLONGERUSED#)
 
 	floorx=Floor(x)
 	floory=Floor(y)
@@ -7035,92 +7039,89 @@ Function SetObjectPosition(Dest,x#,y#,xoffset#,yoffset#)
 	; Type-specific placements
 	If ObjectType(Dest)=10 And ObjectSubType(Dest)=1 ; house-door
 		If ObjectYawAdjust(Dest)=90
-			ObjectX#(Dest)=x+0.5
-			ObjectY#(Dest)=y+1.0
+			xoffset#=0.5
+			yoffset#=1.0
 		Else If ObjectYawAdjust(Dest)=270
-			ObjectX#(Dest)=x+0.5
-			ObjectY#(Dest)=y
+			xoffset#=0.5
+			yoffset#=0.0
 		Else If ObjectYawAdjust(Dest)=45
-			ObjectX#(Dest)=x-0.1
-			ObjectY#(Dest)=y+0.6
+			xoffset#=-0.1
+			yoffset#=0.6
 		Else If ObjectYawAdjust(Dest)=315
-			ObjectX#(Dest)=x+0.40
-			ObjectY#(Dest)=y-0.1
+			xoffset#=0.40
+			yoffset#=-0.1
 
 			
 		Else
-			ObjectX#(Dest)=x-0.00
-			ObjectY#(Dest)=y+0.5
+			xoffset#=-0.00
+			yoffset#=0.5
 
 		EndIf
 	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=2 ; dungeon-door
 		If ObjectYawAdjust(Dest)=0
-			ObjectX#(Dest)=x
-			ObjectY#(Dest)=y+1.0
+			xoffset#=0.0
+			yoffset#=1.0
 		Else If ObjectYawAdjust(Dest)=90
-			ObjectX#(Dest)=x+1.0
-			ObjectY#(Dest)=y+1.0
+			xoffset#=1.0
+			yoffset#=1.0
 		Else If ObjectYawAdjust(Dest)=180
-			ObjectX#(Dest)=x+1.0
-			ObjectY#(Dest)=y
+			xoffset#=1.0
+			yoffset#=0.0
 		Else
-			ObjectX#(Dest)=x+0.0
-			ObjectY#(Dest)=y+0.0
+			xoffset#=0.0
+			yoffset#=0.0
 
 		EndIf
 	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=3 ; townhouse1-door
 		If ObjectYawAdjust(Dest)=90
-			ObjectX#(Dest)=x+0.6
-			ObjectY#(Dest)=y+1.0
+			xoffset#=0.6
+			yoffset#=1.0
 		Else If ObjectYawAdjust(Dest)=270
-			ObjectX#(Dest)=x+0.40
-			ObjectY#(Dest)=y
+			xoffset#=+0.40
+			yoffset#=0.0
 		Else If ObjectYawAdjust(Dest)=45
-			ObjectX#(Dest)=x-0.338
-			ObjectY#(Dest)=y+0.342
+			xoffset#=-0.338
+			yoffset#=0.342
 		Else If ObjectYawAdjust(Dest)=315
-			ObjectX#(Dest)=x+0.637
-			ObjectY#(Dest)=y-0.361
+			xoffset#=0.637
+			yoffset#=-0.361
 
 			
 		Else
-			ObjectX#(Dest)=x-0.00
-			ObjectY#(Dest)=y+0.6
+			xoffset#=-0.00
+			yoffset#=0.6
 
 		EndIf
 
 	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=4 ; townhouse2-door
 		If ObjectYawAdjust(Dest)=90
-			ObjectX#(Dest)=x+0.1
-			ObjectY#(Dest)=y+1.0
+			xoffset#=0.1
+			yoffset#=1.0
 		Else If ObjectYawAdjust(Dest)=270
-			ObjectX#(Dest)=x+0.90
-			ObjectY#(Dest)=y
+			xoffset#=0.90
+			yoffset#=0.0
 		Else If ObjectYawAdjust(Dest)=45
-			ObjectX#(Dest)=x-0.338-.35
-			ObjectY#(Dest)=y+0.342-.35
+			xoffset#=-0.338-.35
+			yoffset#=0.342-.35
 		Else If ObjectYawAdjust(Dest)=315
-			ObjectX#(Dest)=x+0.637+.35
-			ObjectY#(Dest)=y-0.361-.35
+			xoffset#=0.637+.35
+			yoffset#=-0.361-.35
 
 			
 		Else
-			ObjectX#(Dest)=x+0.00
-			ObjectY#(Dest)=y+0.1
+			xoffset#=0.00
+			yoffset#=0.1
 
 		EndIf
 
 
-
-
-
 	Else
-		ObjectX#(Dest)=x+0.5
-		ObjectY#(Dest)=y+0.5
+		xoffset#=0.5
+		yoffset#=0.5
 	EndIf
 	
-	ObjectX#(Dest)=ObjectX#(Dest)+xoffset#
-	ObjectY#(Dest)=ObjectY#(Dest)+yoffset#
+	ObjectX#(Dest)=x#+xoffset#
+	ObjectY#(Dest)=y#+yoffset#
 	
 	Return True
 
@@ -8813,6 +8814,13 @@ Function DisplayObjectAdjuster(i)
 		;If Left$(tex$,1)="?" ; object re-model
 		;	tex$=Right$(tex$,Len(tex$)-1)
 		;EndIf
+		
+	Case "X"
+		tex$=Str$(CurrentObjectX)
+	Case "Y"
+		tex$=Str$(CurrentObjectY)
+	Case "Z"
+		tex$=Str$(CurrentObjectZ)
 	
 	Case "XAdjust"
 		tex$=Str$(CurrentObjectXAdjust)
