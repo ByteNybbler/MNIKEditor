@@ -7654,12 +7654,19 @@ Function UpdateObjectPosition(Dest)
 
 	;PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
 	
-	If ObjectHatEntity(Dest)>0
-		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
-	EndIf
+;	If ObjectHatEntity(Dest)>0
+;		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+;	EndIf
 	
+;	If ObjectAccEntity(Dest)>0
+;		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+;	EndIf
+	
+	If ObjectHatEntity(Dest)>0
+		TransformAccessoryEntityOntoBone(ObjectHatEntity(Dest),ObjectEntity(Dest))
+	EndIf
 	If ObjectAccEntity(Dest)>0
-		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
+		TransformAccessoryEntityOntoBone(ObjectAccEntity(Dest),ObjectEntity(Dest))
 	EndIf
 	
 	PositionObjectPositionMarker(Dest)
@@ -7684,9 +7691,9 @@ Function UpdateObjectEntityToCurrent(Dest)
 		
 		ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
 		
-		RotateEntity ObjectHatEntity(Dest),0,0,0
-		TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
+		;RotateEntity ObjectHatEntity(Dest),0,0,0
+		;TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+		;TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
 	
 		If ObjectHatTexture(Dest)=0
 			EntityColor ObjectHatEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
@@ -7702,9 +7709,9 @@ Function UpdateObjectEntityToCurrent(Dest)
 	
 		ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
 		
-		RotateEntity ObjectAccEntity(Dest),0,0,0
-		TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
+		;RotateEntity ObjectAccEntity(Dest),0,0,0
+		;TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+		;TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
 	
 		If ObjectAccTexture(Dest)=0
 			EntityColor ObjectAccEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
@@ -14632,7 +14639,11 @@ Function CreateObjectModel(Dest)
 					EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
 				EndIf
 				
-				TransformAccessoryEntity(ObjectHatEntity(Dest),Dest)
+				ScaleEntity ObjectHatEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+				
+				;TransformAccessoryEntityOntoBone(ObjectHatEntity(Dest),ObjectEntity(Dest))
+				
+				;TransformAccessoryEntity(ObjectHatEntity(Dest),Dest)
 
 ;				ScaleEntity ObjectHatEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 ;		
@@ -14654,7 +14665,11 @@ Function CreateObjectModel(Dest)
 					EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
 				EndIf
 				
-				TransformAccessoryEntity(ObjectAccEntity(Dest),Dest)
+				ScaleEntity ObjectAccEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
+				
+				;TransformAccessoryEntityOntoBone(ObjectAccEntity(Dest),ObjectEntity(Dest))
+				
+				;TransformAccessoryEntity(ObjectAccEntity(Dest),Dest)
 				
 ;				ScaleEntity ObjectAccEntity(Dest),ObjectXScale(Dest)*ObjectScaleAdjust(Dest),ObjectZScale(Dest)*ObjectScaleAdjust(Dest),ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 ;		
@@ -14664,7 +14679,6 @@ Function CreateObjectModel(Dest)
 ;				
 ;				PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 			EndIf
-			
 			
 			
 			
@@ -15258,6 +15272,13 @@ Function CreateObjectModel(Dest)
 		UpdateObjectVisibility(Dest)
 
 		PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+		
+		If ObjectHatEntity(Dest)>0
+			TransformAccessoryEntityOntoBone(ObjectHatEntity(Dest),ObjectEntity(Dest))
+		EndIf
+		If ObjectAccEntity(Dest)>0
+			TransformAccessoryEntityOntoBone(ObjectAccEntity(Dest),ObjectEntity(Dest))
+		EndIf
 
 
 End Function
