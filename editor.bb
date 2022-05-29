@@ -4404,7 +4404,7 @@ Function EditorLocalControls()
 			LeftMouseReleased=False
 			Query$=InputString$("Enter category name (or part of the name): ")
 			For i=0 To NofObjectPresetCategories-1
-				If SubstringMatches(Query$,ObjectPresetCategoryName$(i))
+				If SubstringMatchesAnywhere(Query$,ObjectPresetCategoryName$(i))
 					CurrentObjectPresetCategory=i
 					
 					SetCurrentGrabbedObject(-1)
@@ -4468,26 +4468,33 @@ Function EditorLocalControls()
 		If CtrlDown() And LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
 			Query$=InputString$("Enter object name (or part of the name): ")
-			
-;			For i=0 To NofObjectPresetObjects-1
-;				If SubstringMatches(Query$,ObjectPresetObjectName$(i))
-;					CurrentObjectPresetObject=i
-;					
-;					SetEditorMode(3)
-;					LoadObjectPreset()
-;					BuildCurrentObjectModel()
-;					
-;					Exit
-;				EndIf
-;			Next
 
 			FormerCategory=CurrentObjectPresetCategory
 			FormerObject=CurrentObjectPresetObject
+			
+			; do two passes: first checking from the start, and then checking from anywhere
+			
 			For i=0 To NofObjectPresetCategories-1
 				ReadObjectPresetDirectory(i)
 				CurrentObjectPresetCategory=i
 				For j=0 To NofObjectPresetObjects-1
-					If SubstringMatches(Query$,ObjectPresetObjectName$(j))
+					If SubstringMatchesStart(Query$,ObjectPresetObjectName$(j))
+						CurrentObjectPresetObject=j
+						
+						SetEditorMode(3)
+						LoadObjectPreset()
+						BuildCurrentObjectModel()
+						
+						Return
+					EndIf
+				Next
+			Next
+			
+			For i=0 To NofObjectPresetCategories-1
+				ReadObjectPresetDirectory(i)
+				CurrentObjectPresetCategory=i
+				For j=0 To NofObjectPresetObjects-1
+					If SubstringMatchesAnywhere(Query$,ObjectPresetObjectName$(j))
 						CurrentObjectPresetObject=j
 						
 						SetEditorMode(3)
@@ -5009,17 +5016,25 @@ Function UpdateCurrentGrabbedObjectMarkerVisibility()
 End Function
 
 
-; this could potentially be made smarter
-Function SubstringMatches(Query$,Subject$)
+; these could potentially be made smarter
+Function SubstringMatchesStart(Query$,Subject$)
 
 	; make case insensitive
 	Query$=Upper$(Query$)
 	Subject$=Upper$(Subject$)
 	
 	; truncate subject to be length of query
-	;Subject$=Left$(Subject$,Len(Query$))
+	Subject$=Left$(Subject$,Len(Query$))
 	
-	;Return Query$=Subject$
+	Return Query$=Subject$
+
+End Function
+
+Function SubstringMatchesAnywhere(Query$,Subject$)
+
+	; make case insensitive
+	Query$=Upper$(Query$)
+	Subject$=Upper$(Subject$)
 	
 	Return Instr(Subject$,Query$)<>0
 
