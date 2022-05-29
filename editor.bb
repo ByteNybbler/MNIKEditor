@@ -663,6 +663,7 @@ Dim ObjectAdjusterWop$(30)
 
 Dim ObjectPositionMarker(1000)
 Dim WorldAdjusterPositionMarker(3)
+Global CurrentObjectMoveXYGoalMarker
 
 Dim SimulatedObjectXScale#(1000)
 Dim SimulatedObjectZScale#(1000)
@@ -1911,6 +1912,9 @@ Function InitializeGraphicsEntities()
 		WorldAdjusterPositionMarker(i)=CopyEntity(WorldAdjusterPositionMarker(0))
 	Next
 	
+	CurrentObjectMoveXYGoalMarker=CopyEntity(CurrentGrabbedObjectMarker)
+	EntityColor CurrentObjectMoveXYGoalMarker,255,100,100
+	
 	CurrentWaterTile=CreateMesh()
 	CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
 	
@@ -2114,6 +2118,7 @@ Function EditorMainLoop()
 	For i=0 To 3
 		EntityAlpha WorldAdjusterPositionMarker(i),MarkerAlpha#
 	Next
+	EntityAlpha CurrentObjectMoveXYGoalMarker,MarkerAlpha#
 	
 	ControlLight()
 	If SimulationLevel>=1
@@ -13841,10 +13846,18 @@ Function BuildCurrentObjectModel()
 	EndIf
 
 
-	ShowWorldAdjusterPositions()
+	FinalizeCurrentObject()
 	
 
 End Function
+
+Function FinalizeCurrentObject()
+
+	ShowCurrentObjectMoveXYGoal()
+	ShowWorldAdjusterPositions()
+
+End Function
+
 
 Function SetWorldAdjusterPosition(index,x,y)
 
@@ -13889,6 +13902,18 @@ Function ShowWorldAdjusterPositions()
 		SetWorldAdjusterPosition(2,CurrentObjectData(6),CurrentObjectData(7))
 		SetWorldAdjusterPosition(3,CurrentObjectData(8),CurrentObjectData(9))
 	End Select
+
+End Function
+
+Function ShowCurrentObjectMoveXYGoal()
+
+	; Check if we're using a pathfinding MovementType.
+	If (CurrentObjectMovementType>9 And CurrentObjectMovementType<19) Or CurrentObjectMoveXGoal<>0 Or CurrentObjectMoveYGoal<>0
+		ShowEntity CurrentObjectMoveXYGoalMarker
+		SetEntityPositionInWorld(CurrentObjectMoveXYGoalMarker,CurrentObjectMoveXGoal+0.5,CurrentObjectMoveYGoal+0.5,0.0)
+	Else
+		HideEntity CurrentObjectMoveXYGoalMarker
+	EndIf
 
 End Function
 
