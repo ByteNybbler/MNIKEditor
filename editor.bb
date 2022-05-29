@@ -13780,7 +13780,7 @@ Function BuildCurrentObjectModel()
 		TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
 		TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
 		
-		bone=FindChild(CurrentObjectModel,"hat_bone")
+		;bone=FindChild(CurrentObjectModel,"hat_bone")
 	
 		PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 
@@ -13801,7 +13801,7 @@ Function BuildCurrentObjectModel()
 		TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
 		TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
 		
-		bone=FindChild(CurrentObjectModel,"hat_bone")
+		;bone=FindChild(CurrentObjectModel,"hat_bone")
 	
 		PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 
@@ -14525,7 +14525,7 @@ Function CreateAccTexture(Data4,Data5)
 
 End Function
 
-Function TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Roll#,Pitch#,X#,Y#,Z#)
+Function TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Pitch#,Roll#,X#,Y#,Z#)
 
 	ScaleEntity Entity,XScale#,ZScale#,YScale#
 	
@@ -14541,12 +14541,12 @@ Function TransformAccessoryEntity(Entity,Dest)
 	YScale#=ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 	ZScale#=ObjectZScale(Dest)*ObjectScaleAdjust(Dest)
 	Yaw#=ObjectYaw(Dest)+ObjectYawAdjust(Dest)
-	Roll#=ObjectRoll(Dest)+ObjectRollAdjust(Dest)
 	Pitch#=ObjectPitch(Dest)+ObjectPitchAdjust(Dest)
+	Roll#=ObjectRoll(Dest)+ObjectRollAdjust(Dest)
 	X#=ObjectX(Dest)+ObjectXAdjust(Dest)
 	Y#=ObjectY(Dest)+ObjectYAdjust(Dest)
 	Z#=ObjectZ(Dest)+ObjectZAdjust(Dest)
-	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Roll#,Pitch#,X#,Y#,Z#)
+	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Pitch#,Roll#,X#,Y#,Z#)
 
 End Function
 
@@ -14556,16 +14556,15 @@ Function SimulatedTransformAccessoryEntity(Entity,Dest)
 	YScale#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
 	ZScale#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
 	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
-	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
 	Pitch#=SimulatedObjectPitch(Dest)+SimulatedObjectPitchAdjust(Dest)
+	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
 	X#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)
 	Y#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
 	Z#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
-	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Roll#,Pitch#,X#,Y#,Z#)
+	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Pitch#,Roll#,X#,Y#,Z#)
 
 End Function
 
-; haha imagine if this actually seemed to do anything???
 Function TransformAccessoryEntityOntoBone(Entity,Dest)
 
 	bone=FindChild(ObjectEntity(Dest),"hat_bone")
