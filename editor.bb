@@ -4455,27 +4455,41 @@ Function EditorLocalControls()
 
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
+		If CtrlDown() And LeftMouse=True And LeftMouseReleased=True
+			LeftMouseReleased=False
+			Query$=InputString$("Enter object name (or part of the name): ")
+			For i=0 To NofObjectPresetObjects-1
+				If SubstringMatches(Query$,ObjectPresetObjectName$(i))
+					CurrentObjectPresetObject=i
+					Exit
+				EndIf
+			Next
+			
+			SetEditorMode(3)
+			LoadObjectPreset()
+			BuildCurrentObjectModel()
+		EndIf	
+
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetObject=CurrentObjectPresetObject-1
 			If CurrentObjectPresetObject=-1 Then CurrentObjectPresetObject=NofObjectPresetObjects-1
 			RightMouseReleased=False
+			
 			SetEditorMode(3)
 			LoadObjectPreset()
 			BuildCurrentObjectModel()
-
 		EndIf
-	EndIf
-	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
+
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			SetCurrentGrabbedObject(-1)
 			CurrentObjectPresetObject=CurrentObjectPresetObject+1
 			If CurrentObjectPresetObject=NofObjectPresetObjects Then CurrentObjectPresetObject=0
 			LeftMouseReleased=False
+			
 			SetEditorMode(3)
 			LoadObjectPreset()
 			BuildCurrentObjectModel()
-
 		EndIf
 	EndIf
 
