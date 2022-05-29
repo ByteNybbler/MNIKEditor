@@ -13690,8 +13690,6 @@ Function ResetLevel()
 			LevelTileRounding(i,j)=0; 0-no, 1-yes: are floors rounded if on a drop-off corner
 			LevelTileEdgeRandom(i,j)=0; 0-no, 1-yes: are edges rippled
 			LevelTileLogic(i,j)=0
-			
-			LevelTileObjectCount(i,j)=0
 		Next
 	Next
 	
@@ -13866,7 +13864,7 @@ Function ReSizeLevel()
 	If WidthLeftChange<>0
 		For i=0 To NofObjects-1
 			ObjectX(i)=ObjectX(i)+WidthLeftChange
-			SetObjectTileX(i,ObjectTileX(i)+WidthLeftChange)
+			ChangeObjectTileX(i,ObjectTileX(i)+WidthLeftChange)
 			If Floor(ObjectX(i))<0 Or Floor(ObjectX(i))>=LevelWidth
 				DeleteObject(i)
 			Else
@@ -13877,7 +13875,7 @@ Function ReSizeLevel()
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
 			ObjectY(i)=ObjectY(i)+HeightTopChange
-			SetObjectTileY(i,ObjectTileY(i)+HeightTopChange)
+			ChangeObjectTileY(i,ObjectTileY(i)+HeightTopChange)
 			If Floor(ObjectY(i))<0 Or Floor(ObjectY(i))>=LevelHeight
 				DeleteObject(i)
 			Else
@@ -13994,7 +13992,7 @@ Function FlipLevelX()
 	For i=0 To NofObjects-1
 		ObjectX(i)=Float(LevelWidth)-ObjectX(i)
 		
-		SetObjectTileX(i,LevelWidth-1-ObjectTileX(i))
+		ChangeObjectTileX(i,LevelWidth-1-ObjectTileX(i))
 		
 		UpdateObjectPosition(i)
 	Next
@@ -14027,7 +14025,7 @@ Function FlipLevelY()
 	For i=0 To NofObjects-1
 		ObjectY(i)=Float(LevelHeight)-ObjectY(i)
 		
-		SetObjectTileY(i,LevelHeight-1-ObjectTileY(i))
+		ChangeObjectTileY(i,LevelHeight-1-ObjectTileY(i))
 		
 		UpdateObjectPosition(i)
 	Next
@@ -14066,7 +14064,7 @@ Function FlipLevelXY()
 		x2#=ObjectX(i)
 		ObjectX(i)=ObjectY(i)
 		ObjectY(i)=x2#
-		SetObjectTileXY(i,ObjectTileY(i),ObjectTileX(i))
+		ChangeObjectTileXY(i,ObjectTileY(i),ObjectTileX(i))
 		
 		
 		UpdateObjectPosition(i)
