@@ -978,6 +978,25 @@ HideEntity StinkerWeeMesh
 ; Stinker
 
 Global StinkerMesh=myLoadAnimMesh("data/models/stinker/body.b3d",0)
+UpdateNormals GetChild(StinkerMesh,3)
+ExtractAnimSeq GetChild(StinkerMesh,3),1,20		; 1 - waddle, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),21,40	; 2 - walk, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),41,60	; 3 - run, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),61,100	; 4 - spell, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),61,80	; 5 - spell on, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),80,84	; 6 - spell hold, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),84,100	; 7 - spell off, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),101,120	; 8 - wave, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),121,140	; 9 - foottap, speed .15
+ExtractAnimSeq GetChild(StinkerMesh,3),141,160	; 10 - idle, speed .05
+ExtractAnimSeq GetChild(StinkerMesh,3),161,180	; 11 - death, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),181,200	; 12 - dance, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),201,220	; 13 - sit, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),201,218	; 14 - sit, speed not too far back .2
+ExtractAnimSeq GetChild(StinkerMesh,3),109,112	; 15 - constant wave, speed .2
+ExtractAnimSeq GetChild(StinkerMesh,3),221,240	; 16 - use
+ExtractAnimSeq GetChild(StinkerMesh,3),201,220	; 17 - sit, again (for backwards eg after ice)
+
 Global StinkerTexture=MyLoadTexture("data\models\stinker\body001a.jpg",1)
 EntityTexture GetChild(StinkerMesh,3),StinkerTexture
 HideEntity StinkerMesh
@@ -7709,6 +7728,13 @@ Function UpdateObjectAnimation(i)
 				; asleep
 				AnimateMD2 Entity,3,1,48,49
 			End Select
+		EndIf
+	EndIf
+	If ModelName$="!NPC"
+		If SimulationLevel<SimulationLevelAnimation
+			Animate GetChild(Entity,3),0
+		Else
+			Animate GetChild(Entity,3),1,.05,10
 		EndIf
 	EndIf
 	If ModelName$="!Tentacle"
@@ -24678,16 +24704,27 @@ Function ControlNPC(i)
 
 	EndIf
 	
+	If ObjectLinked(i)=-1 And SimulatedObjectData10(i)>=0
+		
+		; just restarted after talking and/or after transporter
+	;	If ObjectMoveXGoal(i)=ObjectTileX(i) And ObjectMoveYGoal(i)=ObjectTileY(i)
+			SimulatedObjectMoveXGoal(i)=SimulatedObjectData10(i) Mod 200
+			SimulatedObjectMoveYGoal(i)=SimulatedObjectData10(i) / 200
+			;SimulatedObjectMovementType(i)=10
+	;	EndIf
+		SimulatedObjectData10(i)=-1
+	EndIf
+	
 	If ObjectFlying(i)/10=1
 		; flying
-		If ObjectCurrentAnim(i)<>11
+		If SimulatedObjectCurrentAnim(i)<>11
 			MaybeAnimate(GetChild(objectentity(i),3),1,1,11)
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 		;TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-ObjectYawAdjust(i))
 	Else If ObjectFlying(i)/10=2
 		; on ice
-		If ObjectCurrentAnim(i)<>13
+		If SimulatedObjectCurrentAnim(i)<>13
 			MaybeAnimate(GetChild(objectentity(i),3),3,2,13)
 			SimulatedObjectCurrentAnim(i)=13
 		EndIf
@@ -24719,12 +24756,14 @@ Function ControlNPC(i)
 			; Various turning options
 			SimulatedObjectYaw(i)=(ObjectYaw(i)-2) Mod 360
 		End Select
+		
 		; Jumping?
 		If SimulatedObjectData(i,7)/10=1
 			SimulatedObjectZ(i)=0.4*Abs(Sin((Float(Leveltimer)*3.6) Mod 360))
 		Else If SimulatedObjectData(i,7)/10=2
 			SimulatedObjectZ(i)=0.2*Abs(Sin((Float(Leveltimer)*7.2) Mod 360))
 		EndIf
+		
 		; Animation?
 		Select SimulatedObjectData(i,8)
 		Case 0
