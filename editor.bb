@@ -8988,7 +8988,7 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomSubTypeMin
 		RightAdj$=RandomSubTypeMax
 		
-		If CurrentObjectModelName$="!CustomItem"
+		If CurrentObjectType=179 ; Custom Item
 			tex2$="Fn"
 			If CurrentObjectSubType>=0 And CurrentObjectSubType<30
 				If CurrentObjectSubType Mod 10=0
@@ -9059,7 +9059,7 @@ Function DisplayObjectAdjuster(i)
 			
 		
 		EndIf
-		If CurrentObjectModelName$="!FireFlower"
+		If CurrentObjectType=230 ; FireFlower
 			tex2$="Turning"
 			If CurrentObjectSubType=0
 				tex$="None"
@@ -9071,13 +9071,12 @@ Function DisplayObjectAdjuster(i)
 				tex$="CountW"
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Crab"
-			tex2$="Type"
+		If CurrentObjectType=370 ; Crab
+			tex2$="Color"
 			If CurrentObjectSubType=0
 				tex$="Green"
 			Else If CurrentObjectSubType=1
 				tex$="Red"
-			
 			EndIf
 		EndIf
 		If CurrentObjectType=50 ; spellball
@@ -9264,18 +9263,11 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(0)
 		RightAdj$=RandomDataMax(0)
 		
-		If CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="YawAnim"
 		EndIf
-		If CurrentObjectModelName$="!Scritter" Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage"  Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectType=424 Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
-			tex2$="Colour"
-		EndIf
 		
-		If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
-			tex2$="Shape"
-		EndIf
-		
-		If CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
+		If CurrentObjectType=160 And CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
 			tex2$="Turning"
 			Select CurrentObjectData(0)
 				Case 0
@@ -9284,24 +9276,20 @@ Function DisplayObjectAdjuster(i)
 					tex$="No"
 			End Select
 		EndIf
-				
-
- 
 		
-		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
-				tex2$="Colour1"
-			Else If (CurrentObjectSubType Mod 32)<10
-				tex2$="Col From"
-			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$="CMD"
-				tex$=Str(CurrentObjectData(0))+"/"+GetCommandName$(CurrentObjectData(0))
-			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
-				tex2$="Colour"
-
-
-			EndIf
+		;If CurrentObjectModelName$="!Scritter" Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectType=210 Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage"  Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectType=424 Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
+		If CurrentObjectModelName$="!Scritter" Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"		
+			tex2$="Colour"
 		EndIf
+		
+		If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
+			tex2$="Shape"
+		EndIf
+		
+		If CurrentObjectModelName$="!CustomItem"
+			tex2$="Texture"
+		EndIf
+		
 		If CurrentObjectModelName$="!WaterFall"
 			tex2$="Type"
 			Select CurrentObjectData(0)
@@ -9312,29 +9300,9 @@ Function DisplayObjectAdjuster(i)
 				Case 2
 					tex$="Green"
 			End Select
-			
+		EndIf
 		
-		EndIf
-
-		If CurrentObjectType=50 ; spellball
-			tex2$="GoalX"
-		EndIf
-		If CurrentObjectType=190 Or CurrentObjectType=164
-			tex2$="Particle ID"
-		EndIf
-		If CurrentObjectModelName$="!StarGate"
-			tex2$="Cost"
-		EndIf
-		If CurrentObjectModelName$="!Wisp"
-			tex2$="Texture"
-		EndIf
-
 		
-		If CurrentObjectModelName$="!SteppingStone" tex$=Str$(CurrentObjectData(0)+8)
-		
-		If CurrentObjectModelName$="!CustomItem"
-			tex2$="Texture"
-		EndIf
 		If CurrentObjectModelName$="!Gem"
 			tex2$="Shape"
 		EndIf
@@ -9351,8 +9319,115 @@ Function DisplayObjectAdjuster(i)
 			End Select
 
 		EndIf
+		
+		If CurrentObjectModelName$="!NPC"
+			tex2$="Texture"
+			
+			Select CurrentObjectData(0)
+			Case 1
+				tex$="Blue"
+			Case 2
+				tex$="Purple"
+			Case 3
+				tex$="Red"
+			Case 4
+				tex$="Dark"
+			Case 5
+				tex$="Shadow"
+			Case 6
+				tex$="Fire"
+			Case 7
+				tex$="Green"
+			Case 8
+				tex$="White"
+			End Select
+				
+			
+		EndIf
+		
+		If CurrentObjectModelName$="!Kaboom"
+			tex2$="Texture"
+			
+			Select CurrentObjectData(0)
+			Case 1
+				tex$="Blue"
+			Case 2
+				tex$="Purple"
+			Case 3
+				tex$="Red"
+			Case 4
+				tex$="Gold"
+			Case 5
+				tex$="Dark"
+			End Select
+				
+			
+		EndIf
+		
+		If CurrentObjectModelName$="!Wisp"
+			tex2$="Texture"
+		EndIf
+		
+		If CurrentObjectModelName$="!Sun Sphere1"
+			tex2$="Red"
+		EndIf
+		
+		If CurrentObjectModelName$="!GrowFlower"
+			tex2$="TileLogic"
+			tex$=LogicIdToLogicName$(CurrentObjectData(0))
+		EndIf
+		
+		; Model checks are separated from Type checks so that the Type can override the model.
+		
+		If CurrentObjectType=51 Or CurrentObjectType=200 ;Or CurrentObjectTextureName$="!GloveTex" ; spellball generator or glovecharge
+			tex2$="Spell"
+			tex$=GetMagicNameAndId(CurrentObjectData(0))
+		EndIf
+		
+		If CurrentObjectType=179
+			tex2$="Texture"
+		EndIf
+		
+		If CurrentObjectType=350
+			tex2$="TileLogic"
+			tex$=LogicIdToLogicName$(CurrentObjectData(0))
+		EndIf
 
-		If CurrentObjectModelName$="!Bowler"
+		If CurrentObjectType=280 Or CurrentObjectType=40 Or CurrentObjectType=210 Or CurrentObjectType=10 Or CurrentObjectType=172 Or CurrentObjectType=30 Or CurrentObjectType=140 Or CurrentObjectType=20 Or CurrentObjectType=410 Or CurrentObjectType=424 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=45 Or CurrentObjectType=46
+			tex2$="Colour"
+		EndIf
+		
+		If CurrentObjectType=90 ; button
+			If (CurrentObjectSubType Mod 32)<5
+				tex2$="Colour1"
+			Else If (CurrentObjectSubType Mod 32)<10
+				tex2$="Col From"
+			Else If (CurrentObjectSubType Mod 32)=15
+				tex2$="CMD"
+				tex$=Str(CurrentObjectData(0))+"/"+GetCommandName$(CurrentObjectData(0))
+			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
+				tex2$="Colour"
+
+
+			EndIf
+		EndIf
+
+		If CurrentObjectType=50 ; spellball
+			tex2$="GoalX"
+		EndIf
+		If CurrentObjectType=190 Or CurrentObjectType=164
+			tex2$="Particle ID"
+		EndIf
+		If CurrentObjectType=11 ; TollGate
+			tex2$="Cost"
+		EndIf
+
+		
+		If CurrentObjectType=40 ; bridge
+			tex$=Str$(CurrentObjectData(0)+8)
+		EndIf
+
+		If CurrentObjectType=260 ; spikeyball
 			tex2$="Direction"
 			If CurrentObjectData(1)=2
 				Select CurrentObjectData(0)
@@ -9388,13 +9463,11 @@ Function DisplayObjectAdjuster(i)
 				
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Chomper"
+		If CurrentObjectType=250 ; chomper
 			tex2$="Speed"
 			tex$="+"+Str$(CurrentObjectData(0))
-			
-			
 		EndIf
-		If CurrentObjectModelName$="!FireFlower"
+		If CurrentObjectType=230 ; fireflower
 			tex2$="Direction"
 			
 			Select CurrentObjectData(0)
@@ -9416,7 +9489,8 @@ Function DisplayObjectAdjuster(i)
 				tex$="NorthWest"
 			End Select
 		EndIf
-		If CurrentObjectModelName$="!Turtle" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectType<>424) Or CurrentObjectModelName$="!Weebot"  Or CurrentObjectModelName$="!Zapbot"
+		; turtle or scouge or ufo or retro z-bot or zipbot or zapbot
+		If CurrentObjectType=220 Or CurrentObjectType=421 Or CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
 			tex2$="Direction"
 			
 			Select CurrentObjectData(0)
@@ -9432,50 +9506,8 @@ Function DisplayObjectAdjuster(i)
 				
 			
 		EndIf
-		If CurrentObjectModelName$="!NPC"
-			tex2$="Texture"
-			
-			Select CurrentObjectData(0)
-			Case 1
-				tex$="Blue"
-			Case 2
-				tex$="Purple"
-			Case 3
-				tex$="Red"
-			Case 4
-				tex$="Dark"
-			Case 5
-				tex$="Shadow"
-			Case 6
-				tex$="Fire"
-			Case 7
-				tex$="Green"
-			Case 8
-				tex$="White"
-			End Select
-				
-			
-		EndIf
-		If CurrentObjectModelName$="!Kaboom"
-			tex2$="Texture"
-			
-			Select CurrentObjectData(0)
-			Case 1
-				tex$="Blue"
-			Case 2
-				tex$="Purple"
-			Case 3
-				tex$="Red"
-			Case 4
-				tex$="Gold"
-			Case 5
-				tex$="Dark"
-			End Select
-				
-			
-		EndIf
 
-		If CurrentObjectType=310 ;CurrentObjectModelName$="!Rubberducky"
+		If CurrentObjectType=310 ; duck
 			tex2$="Move"
 			If CurrentObjectData(0)=0 
 				tex$="No"
@@ -9485,26 +9517,11 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObjectData(0)+"/"+tex$
 		EndIf
 		
-
-		If CurrentObjectType=51 Or CurrentObjectTextureName$="!GloveTex" ; spellball generator
-			tex2$="Spell"
-			tex$=GetMagicNameAndId(CurrentObjectData(0))
-		EndIf
-		
-		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;mothership
 			tex2$="TimerMax"
 		EndIf	
 		If CurrentObjectModelName$="!Ghost" Or CurrentObjectModelName$="!Wraith"
 			tex2$="Radius"
-		EndIf
-		
-		If CurrentObjectModelName$="!GrowFlower"
-			tex2$="TileLogic"
-			tex$=LogicIdToLogicName$(CurrentObjectData(0))
-		EndIf
-		
-		If CurrentObjectModelName$="!Sun Sphere1"
-			tex2$="Red"
 		EndIf
 
 
@@ -9517,21 +9534,65 @@ Function DisplayObjectAdjuster(i)
 		CrossedOut=RandomData(1)
 		LeftAdj$=RandomDataMin(1)
 		RightAdj$=RandomDataMax(1)
-		
-		If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key"  Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!Retrolasergate" Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelname$="!Autodoor" Or CurrentObjectModelname$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
-			tex2$="SubColour"
-		EndIf
-		
-		If CurrentObjectModelName$="!CustomModel"
-			tex2$="PitchAnim"
-		EndIf
 
-		
 		If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
 			tex2$="Texture"
 		EndIf
 		
-		If CurrentObjectModelName$="!Cuboid"
+		If CurrentObjectModelName$="!Gem"
+			tex2$="Colour"
+		EndIf
+		
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
+			tex2$="PitchAnim"
+		EndIf
+		
+		If CurrentObjectModelName$="!Chomper"
+			tex2$="Special"
+			If CurrentObjectData(1)=0
+				tex$="---"
+			Else If CurrentobjectData(1)=1
+				tex$="Ghost"
+			Else If CurrentobjectData(1)=2
+				tex$="Glow"
+			Else If CurrentObjectData(1)=3
+				tex$="Mecha"
+			EndIf
+		EndIf
+		
+		If CurrentObjectModelName$="!NPC" 
+			tex2$="Expression"
+			
+			Select CurrentObjectData(1)
+			Case 0
+				tex$="Happy"
+			Case 1
+				tex$="Surprised"
+			Case 2
+				tex$="Sad"
+			Case 3
+				tex$="Asleep"
+			Case 4
+				tex$="Angry"
+			End Select
+			
+		EndIf
+		
+		If CurrentObjectModelName$="!Sun Sphere1"
+			tex2$="Green"
+		EndIf
+		
+		If CurrentObjectModelName$="!Sign"
+			tex2$="Texture"
+		EndIf
+		
+		;If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key"  Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!Retrolasergate" Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelname$="!Autodoor" Or CurrentObjectModelname$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
+		; spring or bridge or transporter or gate or key or teleporter or cage or fire trap or laser gate or moobot or suctube or conveyor
+		If CurrentObjectType=280 Or CurrentObjectType=40 Or CurrentObjectType=210 Or CurrentObjectType=10 Or CurrentObjectType=172 Or CurrentObjectType=30 Or CurrentObjectType=140 Or CurrentObjectType=20 Or CurrentObjectType=410 Or CurrentObjectType=424 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=45 Or CurrentObjectType=46
+			tex2$="SubColour"
+		EndIf
+		
+		If CurrentObjectType=242 ; cuboid
 			tex2$="Turning"
 			If CurrentObjectData(1)=0 
 				tex$="No"
@@ -9568,7 +9629,7 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObjectData(1)=3 tex$="High"
 			
 		EndIf
-		If CurrentObjectModelName$="!StarGate" 
+		If CurrentObjectType=11 ; TollGate
 			tex2$="Type"
 			If CurrentObjectData(1)=0 
 				tex$="Star"
@@ -9577,7 +9638,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 			
 		EndIf
-		If CurrentObjectModelName$="!FireFlower"
+		If CurrentObjectType=230 ; FireFlower
 			tex2$="Type"
 			
 			Select CurrentObjectData(1)
@@ -9592,14 +9653,11 @@ Function DisplayObjectAdjuster(i)
 			End Select
 		EndIf
 
-		If CurrentObjectModelName$="!CustomItem"
+		If CurrentObjectType=179 ; custom item
 			tex2$="Fn ID"
 		EndIf
-		If CurrentObjectModelName$="!Gem"
-			tex2$="Colour"
-		EndIf
 
-		If CurrentObjectModelName$="!Bowler"
+		If CurrentObjectType=260 ; Spikeyball
 			tex2$="Type"
 			If CurrentObjectData(1)=0
 				tex$="Bounce Left"
@@ -9609,7 +9667,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="Bounce Diag"
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Chomper"
+		If CurrentObjectType=250 ; Chomper
 			tex2$="Special"
 			If CurrentObjectData(1)=0
 				tex$="---"
@@ -9617,13 +9675,13 @@ Function DisplayObjectAdjuster(i)
 				tex$="Ghost"
 			Else If currentobjectData(1)=2
 				tex$="Glow"
-			Else
+			Else If CurrentObjectData(1)=3
 				tex$="Mecha"
 			EndIf
 			
 			
 		EndIf
-		If CurrentObjectModelName$="!Turtle"
+		If CurrentObjectType=220 ; Turtle
 			tex2$="Turn"
 			If CurrentObjectData(1)=0
 				tex$="Left"
@@ -9633,7 +9691,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObjectModelName$="!Crab"
+		If CurrentObjectType=370 ; Crab
 			tex2$="Status"
 			If CurrentObjectData(1)=0
 				tex$="Awake"
@@ -9647,31 +9705,10 @@ Function DisplayObjectAdjuster(i)
 			
 			EndIf
 		EndIf
-
-
-
-		If CurrentObjectModelName$="!NPC" 
-			tex2$="Expression"
-			
-			Select CurrentObjectData(1)
-			Case 0
-				tex$="Happy"
-			Case 1
-				tex$="Surprised"
-			Case 2
-				tex$="Sad"
-			Case 3
-				tex$="Asleep"
-			Case 4
-				tex$="Angry"
-			End Select
-				
-			
-		EndIf
 		
 	
 
-		If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll"
+		If CurrentObjectType=290 Or CurrentObjectType=380 ; Thwart or Ice Troll
 			tex2$="Anim"
 			If CurrentObjectData(1)=0
 				tex$="Normal"
@@ -9681,37 +9718,30 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-
-
-		If CurrentObjectModelName$="!Sign"
-			tex2$="Texture"
-		EndIf
 		
 		If CurrentObjectType=51 ; spellball generator
 			tex2$="Goal X"
 		EndIf
 
-		If  (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate") Or CurrentObjectModelName$="!Weebot"  Or CurrentObjectModelName$="!Zapbot"
+		;If (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate") Or CurrentObjectModelName$="!Weebot"  Or CurrentObjectModelName$="!Zapbot"
 
+		; ufo or retro z-bot or zipbot or zapbot
+		If CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
 			tex2$="Turning"
 			If CurrentObjectData(1)=0
 				tex$="Left"
 			Else If CurrentObjectData(1)=1
 				tex$="Right"
-			
 			EndIf
 		EndIf
 		
-		If CurrentObjectModelName$="!Ghost" 
+		If CurrentObjectType=470 ; Ghost
 			tex2$="Speed"
 		EndIf
-		If CurrentObjectModelName$="!Wraith"
+		If CurrentObjectType=471 ; Wraith
 			tex2$="ShotTime"
 		EndIf
 		
-		If CurrentObjectModelName$="!Sun Sphere1"
-			tex2$="Green"
-		EndIf
 		
 
 
@@ -9722,13 +9752,73 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(2)
 		RightAdj$=RandomDataMax(2)
 		
-		If CurrentObjectModelName$="!Spring"  Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!FlipBridge"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX" Or CurrentObjectModelName$="!Conveyor"
-
-			tex2$="Direction"
-			If CurrentObjectModelName$="!Transporter" Then tex$=Str$(3-CurrentObjectData(2))
+		If CurrentObjectModelName$="!ColourGate"
+			tex2$="Frame"
 		EndIf
 		
-		If CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectModelName$="!Gem"
+			tex2$="XOffset"
+		EndIf
+		
+		If CurrentObjectModelName$="!NPC"
+			tex2$="Hat"
+			
+			tex$=GetAccessoryName$(CurrentObjectData(2))
+			
+			tex$=CurrentObjectData(2)+"/"+tex$
+				
+			
+		EndIf
+		
+		If CurrentObjectModelName$="!Thwart" 
+			tex2$="Colour"
+			If CurrentObjectData(2)=0
+				tex$="Standard"
+			Else If CurrentObjectData(2)=1
+				tex$="Red"
+			Else If CurrentObjectData(2)=2
+				tex$="Orange"
+			Else If CurrentObjectData(2)=3
+				tex$="Yellow"
+			Else If CurrentObjectData(2)=4
+				tex$="Green"
+			Else If CurrentObjectData(2)=5
+				tex$="Blue"
+			Else If CurrentObjectData(2)=6
+				tex$="Indigo"
+			Else If CurrentObjectData(2)=7
+				tex$="Purple"
+
+			
+			EndIf
+		EndIf
+		
+		If CurrentObjectModelName$="!Wraith"
+			tex2$="Magic"
+			Select CurrentObjectData(2)
+			Case 0
+				tex$="Fire"
+			Case 1
+				tex$="Ice"
+			Case 2
+				tex$="Grow"
+			End Select
+		EndIf
+		
+		If CurrentObjectModelName$="!Sun Sphere1"
+			tex2$="Blue"
+		EndIf
+		
+		;If CurrentObjectModelName$="!Spring"  Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!FlipBridge"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX" Or CurrentObjectModelName$="!Conveyor"
+		; spring or transporter or flipbridge or moobot or suctube or suctubex or conveyor
+		If CurrentObjectType=280 Or CurrentObjectType=210 Or CurrentObjectType=410 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=282 Or CurrentObjectType=45 Or CurrentObjectType=46
+			tex2$="Direction"
+			If CurrentObjectType=210 ; transporter
+				tex$=Str$(3-CurrentObjectData(2))
+			EndIf
+		EndIf
+		
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="RollAnim"
 		EndIf
 
@@ -9771,55 +9861,13 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObjectData(2)=5 tex$="South"
 			
 		EndIf
-		If CurrentObjectModelName$="!ColourGate"
-			tex2$="Frame"
-		EndIf
-		If CurrentObjectModelName$="!Bowler"
+		
+		If CurrentObjectType=260 ; spikeyball
 			tex2$="Speed"
 			tex$="+"+Str$(CurrentObjectData(2))
-			
-			
 		EndIf
 		
-		If CurrentObjectModelName$="!Gem"
-			tex2$="XOffset"
-
-		EndIf
-
-		
-		If CurrentObjectModelName$="!NPC"
-			tex2$="Hat"
-			
-			tex$=GetAccessoryName$(CurrentObjectData(2))
-			
-			tex$=CurrentObjectData(2)+"/"+tex$
-				
-			
-		EndIf
-		
-		If CurrentObjectModelName$="!Thwart" 
-			tex2$="Colour"
-			If CurrentObjectData(2)=0
-				tex$="Standard"
-			Else If CurrentObjectData(2)=1
-				tex$="Red"
-			Else If CurrentObjectData(2)=2
-				tex$="Orange"
-			Else If CurrentObjectData(2)=3
-				tex$="Yellow"
-			Else If CurrentObjectData(2)=4
-				tex$="Green"
-			Else If CurrentObjectData(2)=5
-				tex$="Blue"
-			Else If CurrentObjectData(2)=6
-				tex$="Indigo"
-			Else If CurrentObjectData(2)=7
-				tex$="Purple"
-
-			
-			EndIf
-		EndIf
-		If CurrentObjectModelName$="!ZbotNPC" 
+		If CurrentObjectType=433 ; Z-Bot NPC
 			tex2$="Turning"
 			If CurrentObjectData(2)=0
 				tex$="Player"
@@ -9829,7 +9877,7 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 
-		If CurrentObjectModelName$="!Sign"
+		If CurrentObjectType=180 ; Sign
 			tex2$="Move"
 			
 				
@@ -9850,19 +9898,20 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Goal Y"
 		EndIf
 		
-		If  CurrentObjectModelName$="!Zapbot"
+		If CurrentObjectType=431 ; zapbot
 			tex2$="Speed"
 		EndIf
 		
-		If  CurrentObjectModelName$="!Cuboid"
-			tex2$="Explo Command"
+		If CurrentObjectType=242 ; cuboid
+			tex2$="Explo CMD"
+			tex$=GetCommandName$(CurrentObjectData(2))
 		EndIf
 		
-		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ; mothership
 			tex2$="SourceX"
 		EndIf
 		
-		If CurrentObjectModelName$="!Wraith"
+		If CurrentObjectType=471 ; wraith
 			tex2$="Magic"
 			Select CurrentObjectData(2)
 			Case 0
@@ -9872,10 +9921,6 @@ Function DisplayObjectAdjuster(i)
 			Case 2
 				tex$="Grow"
 			End Select
-		EndIf
-		
-		If CurrentObjectModelName$="!Sun Sphere1"
-			tex2$="Blue"
 		EndIf
 
 
@@ -9887,99 +9932,20 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(3)
 		RightAdj$=RandomDataMax(3)
 		
-		If CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX"
+		If CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!SuctubeX"
 			tex2$="Style"
-			
-		EndIf
-		If CurrentObjectModelName$="!CustomModel"
-			tex2$="XAnim"
-		EndIf
-
-		If CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectType=45
-			tex2$="Turn"
-			If CurrentObjectData(3)=0
-				tex$="Left"
-			Else If CurrentObjectData(3)=1
-
-				tex$="Right"
-			Else ; only for pushbots
-				tex$="180"
-			EndIf
-		EndIf
-		If currentObjectType=46
-			tex2$="Cycles"
-		EndIf
-		If CurrentObjectModelName$="!SteppingStone"
-			tex2$="Sound"
-			If CurrentObjectData(3)=0
-				tex$="Water"
-			Else If CurrentObjectData(3)=1
-				tex$="Mecha"
-			Else If CurrentObjectData(3)=2
-				tex$="Magic"
-			Else
-				tex$="Silent/Glitched"
-			EndIf
 		EndIf
 		
-		If CurrentObjectType=50 ; spellball
-			tex2$="SourceY"
+		If CurrentObjectModelName$="!IceBlock"
+			tex2$="Style"
+			Select CurrentObjectData(3)
+			Case 0
+				tex$="Ice"
+			Case 1
+				tex$="Floing"
+			End Select
 		EndIf
-		If CurrentObjectType=190
-			tex2$="Sound"
-			If CurrentObjectData(3)=0 tex$="None"
-			If CurrentObjectData(3)=1 
-				If CurrentObjectSubType=4 tex$="Spark"
-				If CurrentObjectSubType=5 tex$="QuietMagic"
-
-			EndIf
-			If CurrentObjectData(3)=2 
-				If CurrentObjectSubType=5 tex$="LoudMecha"
-			EndIf
-			If CurrentObjectData(3)=3 
-				If CurrentObjectSubType=5 tex$="Var.Gong"
-			EndIf
-			If CurrentObjectData(3)=4 
-				If CurrentObjectSubType=5 tex$="Grow Magic"
-			EndIf
-			If CurrentObjectData(3)=5 
-				If CurrentObjectSubType=5 tex$="Floing Magic"
-			EndIf
-			If CurrentObjectData(3)=6 
-				If CurrentObjectSubType=5 tex$="Gem"
-			EndIf
-
-
-		EndIf
-
-		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
-				tex2$="Colour4"
-			Else If (CurrentObjectSubType Mod 32)<10
-				tex2$="SubCol To"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0
-				tex2$="Y Goal"
-			Else If CurrentObjectSubType = 10
-				tex2$="Dest Y"
-
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
-				tex2$="Expression"
-				If CurrentObjectData(3)=0 Then tex$="Happy"
-				If CurrentObjectData(3)=1 Then tex$="Surprised"
-				If CurrentObjectData(3)=2 Then tex$="Sad"
-				If CurrentObjectData(3)=3 Then tex$="Asleep"
-				If CurrentObjectData(3)=4 Then tex$="Angry"
-				If CurrentObjectData(3)=-1 Then	tex$="No Change"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2
-				tex2$="How Many"
-			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$=GetCMDData3Name$(CurrentObjectData(0))
-				tex$=GetCmdData3ValueName$(CurrentObjectData(0),CurrentObjectData(2),CurrentObjectData(3))
-			EndIf
-		EndIf
-		If CurrentObjectModelName$="!FireFlower"
-			tex2$="HitPoints"
-		EndIf
+		
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Colour"
 			
@@ -10120,26 +10086,110 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
-		If  CurrentObjectModelName$="!Zapbot"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
+			tex2$="XAnim"
+		EndIf
+
+		; moobots or transporters or conveyor heads
+		If CurrentObjectType=432 Or CurrentObjectType=210 Or CurrentObjectType=45
+			tex2$="Turn"
+			If CurrentObjectData(3)=0
+				tex$="Left"
+			Else If CurrentObjectData(3)=1
+
+				tex$="Right"
+			Else If CurrentObjectType=432 ; only for pushbots
+				tex$="180"
+			EndIf
+		EndIf
+		If currentObjectType=46 ; conveyor tail
+			tex2$="Cycles"
+		EndIf
+		If CurrentObjectType=40 ; stepping stone
+			tex2$="Sound"
+			If CurrentObjectData(3)=0
+				tex$="Water"
+			Else If CurrentObjectData(3)=1
+				tex$="Mecha"
+			Else If CurrentObjectData(3)=2
+				tex$="Magic"
+			Else
+				tex$="Silent/Glitched"
+			EndIf
+		EndIf
+		
+		If CurrentObjectType=50 ; spellball
+			tex2$="SourceY"
+		EndIf
+		If CurrentObjectType=190
+			tex2$="Sound"
+			If CurrentObjectData(3)=0 tex$="None"
+			If CurrentObjectData(3)=1 
+				If CurrentObjectSubType=4 tex$="Spark"
+				If CurrentObjectSubType=5 tex$="QuietMagic"
+
+			EndIf
+			If CurrentObjectData(3)=2 
+				If CurrentObjectSubType=5 tex$="LoudMecha"
+			EndIf
+			If CurrentObjectData(3)=3 
+				If CurrentObjectSubType=5 tex$="Var.Gong"
+			EndIf
+			If CurrentObjectData(3)=4 
+				If CurrentObjectSubType=5 tex$="Grow Magic"
+			EndIf
+			If CurrentObjectData(3)=5 
+				If CurrentObjectSubType=5 tex$="Floing Magic"
+			EndIf
+			If CurrentObjectData(3)=6 
+				If CurrentObjectSubType=5 tex$="Gem"
+			EndIf
+
+
+		EndIf
+
+		If CurrentObjectType=90 ; button
+			If (CurrentObjectSubType Mod 32)<5
+				tex2$="Colour4"
+			Else If (CurrentObjectSubType Mod 32)<10
+				tex2$="SubCol To"
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0
+				tex2$="Y Goal"
+			Else If CurrentObjectSubType = 10
+				tex2$="Dest Y"
+
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
+				tex2$="Expression"
+				If CurrentObjectData(3)=0 Then tex$="Happy"
+				If CurrentObjectData(3)=1 Then tex$="Surprised"
+				If CurrentObjectData(3)=2 Then tex$="Sad"
+				If CurrentObjectData(3)=3 Then tex$="Asleep"
+				If CurrentObjectData(3)=4 Then tex$="Angry"
+				If CurrentObjectData(3)=-1 Then	tex$="No Change"
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2
+				tex2$="How Many"
+			Else If (CurrentObjectSubType Mod 32)=15
+				tex2$=GetCMDData3Name$(CurrentObjectData(0))
+				tex$=GetCmdData3ValueName$(CurrentObjectData(0),CurrentObjectData(2),CurrentObjectData(3))
+			EndIf
+		EndIf
+		If CurrentObjectType=230 ; FireFlower
+			tex2$="HitPoints"
+		EndIf
+		
+		
+		If  CurrentObjectType=431 ; Zapbot
 			tex2$="Range"
 		EndIf
 		
-		If  CurrentObjectModelName$="!Cuboid"
-			tex2$="Cmd Data1"
+		If  CurrentObjectType=242 ; Cuboid
+			;tex2$="Cmd Data1"
+			tex2$=GetCMDData1Name$(CurrentObjectData(2))
+			tex$=GetCmdData1ValueName$(CurrentObjectData(2),CurrentObjectData(3))
 		EndIf
 		
-		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ; Mothership
 			tex2$="SourceY"
-		EndIf
-		
-		If CurrentObjectModelName$="!IceBlock"
-			tex2$="Style"
-			Select CurrentObjectData(3)
-			Case 0
-				tex$="Ice"
-			Case 1
-				tex$="Floing"
-			End Select
 		EndIf
 
 
@@ -10150,8 +10200,20 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(4)
 		RightAdj$=RandomDataMax(4)
 		
-		If CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="YAnim"
+		EndIf
+		
+		If CurrentObjectModelName$="!Conveyor"
+			tex2$="Visual Type"
+		EndIf
+		
+		If CurrentObjectModelName$="!NPC"
+			tex2$="Acc" ;"Glasses"
+			
+			tex$=GetAccessoryName$(CurrentObjectData(4))
+			
+			tex$=CurrentObjectData(4)+"/"+tex$
 		EndIf
 
 		If CurrentObjectType=90 ; button
@@ -10179,11 +10241,8 @@ Function DisplayObjectAdjuster(i)
 				tex$=GetCmdData4ValueName$(CurrentObjectData(0),CurrentObjectData(4))
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Conveyor"
-			tex2$="Visual Type"
-		EndIf
 		
-		If CurrentObjectModelName$="!Suctube"  
+		If CurrentObjectType=281 ; suctube 
 			tex2$="Sound"
 			If CurrentObjectData(4)=0
 				tex$="Normal"
@@ -10199,21 +10258,13 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObjectData(4)=0 tex$="Random"
 			If CurrentObjectData(4)=1 tex$="Synchro"
 		EndIf
-
-		If CurrentObjectModelName$="!NPC"
-			tex2$="Acc" ;"Glasses"
-			
-			tex$=GetAccessoryName$(CurrentObjectData(4))
-			
-			tex$=CurrentObjectData(4)+"/"+tex$
-		EndIf
 		
 		If  CurrentObjectModelName$="!Zapbot" Or CurrentObjectModelName$="!Ufo"
 
 			tex2$="Track"
 		EndIf
 		
-		If CurrentObjectModelName$="!Autodoor"
+		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
 			If CurrentObjectData(4)>=0
 				tex2$="ActivateID"
 			Else
@@ -10222,10 +10273,12 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 
-		If  CurrentObjectModelName$="!Cuboid"
-			tex2$="Cmd Data2"
+		If  CurrentObjectType=242 ; Cuboid
+			;tex2$="Cmd Data2"
+			tex2$=GetCMDData2Name$(CurrentObjectData(4))
+			tex$=GetCmdData2ValueName$(CurrentObjectData(2),CurrentObjectData(4))
 		EndIf
-		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ; Mothership
 			tex2$="FlyGoalX1"
 		EndIf
 
@@ -10236,7 +10289,41 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(5)
 		RightAdj$=RandomDataMax(5)
 		
-		If CurrentObjectModelName$="!Suctube"
+		If CurrentObjectModelName$="!NPC"
+			tex2$="Colour"
+			
+			Select CurrentObjectData(4)
+			Case 101
+				Select CurrentObjectData(5)
+				Case 0
+					tex$="Normal"
+				Case 1
+					tex$="Sunglass"
+				
+				End Select
+			Case 102
+				Select CurrentObjectData(5)
+				Case 0
+					tex$="Black"
+				Case 1
+					tex$="Red"
+				End Select
+			End Select
+		EndIf
+		
+		If CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Obstacle36" Or CurrentObjectModelName$="!Obstacle37" Or CurrentObjectModelName$="!Obstacle38" Or CurrentObjectModelName$="!Obstacle39" Or CurrentObjectModelName$="!Obstacle40"
+			tex2$="Style"
+		EndIf
+		
+		If CurrentObjectModelName$="!GlowWorm" Or CurrentObjectModelName$="!Zipper"
+			tex2$="Red"
+		EndIf
+		
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
+			tex2$="ZAnim"
+		EndIf
+		
+		If CurrentObjectType=281 ; Suctube
 			tex2$="Particles"
 			If CurrentObjectData(5)=0
 				tex$="Yes"
@@ -10245,11 +10332,6 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 			
 		EndIf
-		
-		If CurrentObjectModelName$="!CustomModel"
-			tex2$="ZAnim"
-		EndIf
-
 		
 
 		If CurrentObjectType=90 ; button
@@ -10277,10 +10359,8 @@ Function DisplayObjectAdjuster(i)
 
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Obstacle36" Or CurrentObjectModelName$="!Obstacle37" Or CurrentObjectModelName$="!Obstacle38" Or CurrentObjectModelName$="!Obstacle39" Or CurrentObjectModelName$="!Obstacle40"
-			tex2$="Style"
-		EndIf
-		If CurrentObjectModelName$="!Conveyor"
+
+		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor (should the tail really be here too?)
 			tex2$="Logic"
 			If CurrentObjectData(5)=0
 				tex$="Move"
@@ -10290,32 +10370,8 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		
-		If CurrentObjectModelName$="!NPC"
-			tex2$="Colour"
-			
-			Select CurrentObjectData(4)
-			Case 101
-				Select CurrentObjectData(5)
-				Case 0
-					tex$="Normal"
-				Case 1
-					tex$="Sunglass"
-				
-				End Select
-			Case 102
-				Select CurrentObjectData(5)
-				Case 0
-					tex$="Black"
-				Case 1
-					tex$="Red"
-				End Select
-			End Select
-		EndIf
-		If CurrentObjectModelName$="!GlowWorm" Or CurrentObjectModelName$="!Zipper"
-			tex2$="Red"
-		EndIf
 		
-		If CurrentObjectModelName$="!Autodoor"
+		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
 			If CurrentObjectData(5)>=0
 				tex2$="ActivateID"
 			Else
@@ -10324,12 +10380,14 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If  CurrentObjectModelName$="!Cuboid"
-			tex2$="Cmd Data3"
+		If CurrentObjectType=242 ; Cuboid
+			;tex2$="Cmd Data3"
+			tex2$=GetCMDData3Name$(CurrentObjectData(2))
+			tex$=GetCmdData3ValueName$(CurrentObjectData(2),CurrentObjectData(4),CurrentObjectData(5))
 		EndIf
 
 
-		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ; Mothership
 			tex2$="FlyGoalY1"
 		EndIf
 
@@ -10341,7 +10399,24 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(6)
 		RightAdj$=RandomDataMax(6)
 		
-		If CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
+			tex2$="Green"
+		EndIf
+		
+		If CurrentObjectModelName$="!NPC"
+			tex2$="WalkAnim"
+			
+			Select CurrentObjectData(6)
+			Case 0
+				tex$="Waddle"
+			Case 1
+				tex$="Walk"
+			Case 2
+				tex$="Run"
+			End Select
+		EndIf
+		
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="XSpeed"
 		EndIf
 
@@ -10363,20 +10438,9 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 			
 		EndIf
-		If CurrentObjectModelName$="!NPC"
-			tex2$="WalkAnim"
-			
-			Select CurrentObjectData(6)
-			Case 0
-				tex$="Waddle"
-			Case 1
-				tex$="Walk"
-			Case 2
-				tex$="Run"
-			End Select
-		EndIf
 		
-		If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or CurrentObjectModelName$="!ZbotNPC"
+		; Thwart, Ice Troll, Z-Bot NPC
+		If CurrentObjectType=290 Or CurrentObjectType=380 Or CurrentObjectType=433
 
 			tex2$="Shooter"
 			Select CurrentObjectData(6)
@@ -10387,11 +10451,8 @@ Function DisplayObjectAdjuster(i)
 			
 			End Select
 		EndIf
-		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
-			tex2$="Green"
-		EndIf
 
-		If CurrentObjectModelName$="!Autodoor"
+		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
 			If CurrentObjectData(6)>=0
 				tex2$="ActivateID"
 			Else
@@ -10399,15 +10460,17 @@ Function DisplayObjectAdjuster(i)
 				tex$=Str$(-CurrentObjectData(6))
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Conveyor"
+		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor (is tail relevant here?)
 			tex2$="ActivationWait"
 		EndIf
 		
-		If  CurrentObjectModelName$="!Cuboid"
-			tex2$="Cmd Data4"
+		If CurrentObjectType=242 ; Cuboid
+			;tex2$="Cmd Data4"
+			tex2$=GetCMDData4Name$(CurrentObjectData(2))
+			tex$=GetCmdData4ValueName$(CurrentObjectData(2),CurrentObjectData(6))
 		EndIf
 
-		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ; Mothership
 			tex2$="FlyGoalX2"
 		EndIf
 
@@ -10418,7 +10481,11 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(7)
 		RightAdj$=RandomDataMax(7)
 		
-		If CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
+			tex2$="Blue"
+		EndIf
+		
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="YSpeed"
 		EndIf
 
@@ -10440,7 +10507,7 @@ Function DisplayObjectAdjuster(i)
 				
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!NPC" Or CurrentObjectModelName$="!Kaboom"
+		If CurrentObjectType=110 Or CurrentObjectType=390 ; Stinker NPC or Kaboom NPC
 		
 			tex2$="Turn"
 			If (CurrentObjectData(7) Mod 10)=0 tex$="Fixed"
@@ -10453,20 +10520,18 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObjectData(7) >=20 And CurrentObjectData(7)<30 tex$=tex$+"BouFas"
 		EndIf
 		
-		If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or CurrentObjectModelName$="!ZbotNPC"
+		If CurrentObjectType=290 Or CurrentObjectType=380 Or CurrentObjectType=433 ; Thwart, Ice Troll, and Z-Bot NPC
 
-			tex2$="TimerMax1"
-		EndIf
-		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
-			tex2$="Blue"
+			tex2$="AttackTimer" ; "TimerMax1"
 		EndIf
 		
-		If CurrentObjectModelName$="!Autodoor"
+		
+		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
 			tex2$="StayOnTimer"
 			
 		EndIf
 
-		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ; Mothership
 			tex2$="FlyGoalY2"
 		EndIf
 		
@@ -10482,8 +10547,17 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(8)
 		RightAdj$=RandomDataMax(8)
 		
-		If CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="ZSpeed"
+		EndIf
+		
+		If CurrentObjectModelName$="!StinkerWee"
+			
+			tex2$="Type"
+			If CurrentObjectData(8)=0 tex$="Normal"
+			If CurrentObjectData(8)=1 tex$="Green"
+			If CurrentObjectData(8)=2 tex$="White"
+
 		EndIf
 
 		If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
@@ -10494,7 +10568,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="Pla"
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!NPC"
+		If CurrentObjectType=110 ; Stinker NPC
 			
 			tex2$="Anim"
 			If CurrentObjectData(8)=0 tex$="Sway"
@@ -10512,7 +10586,7 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
-		If CurrentObjectModelName$="!Kaboom"
+		If CurrentObjectType=390 ; Kaboom NPC
 			
 			tex2$="Anim"
 			If CurrentObjectData(8)=0 tex$="Stand"
@@ -10526,7 +10600,7 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
-		If CurrentObjectModelName$="!BabyBoomer"
+		If CurrentObjectType=400 ; Baby Boomer
 			
 			tex2$="Boom"
 			If CurrentObjectData(8)=0 tex$="No"
@@ -10535,19 +10609,8 @@ Function DisplayObjectAdjuster(i)
 			
 			
 		EndIf
-		If CurrentObjectModelName$="!StinkerWee"
-			
-			tex2$="Type"
-			If CurrentObjectData(8)=0 tex$="Normal"
-			If CurrentObjectData(8)=1 tex$="Green"
-			If CurrentObjectData(8)=2 tex$="White"
-
-				
-			
-			
-		EndIf
 		
-		If CurrentObjectModelName$="!ZbotNPC"
+		If CurrentObjectType=433 ; Z-Bot NPC
 			
 			tex2$="IntroSound"
 			If CurrentObjectData(8)=0 tex$="On"
@@ -10576,7 +10639,7 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(9)
 		RightAdj$=RandomDataMax(9)
 		
-		If CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="Deadly"
 			If CurrentObjectData(9)=0 tex$="No"
 			If CurrentObjectData(9)=1 tex$="Yes"
@@ -10602,7 +10665,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObjectModelName$="!Conveyor"
+		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor head (or conveyor tail, assuming this is needed?)
 			tex2$="Tail Length"
 		EndIf
 		
@@ -11586,9 +11649,6 @@ Function AdjustObjectAdjuster(i)
 			; colours 0-6
 			If CurrentObjectData(0)>6 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=6
-		;Else If CurrentObjectTextureName$="!GloveTex" 
-			;If currentobjectdata(0)<0 Then currentobjectdata(0)=9
-			;If currentobjectdata(0)>9 Then currentobjectdata(0)=0
 	
 		Else If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
 			If CurrentObjectData(0)>3 CurrentObjectData(0)=0
@@ -11816,21 +11876,13 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObjectData(2)<0 CurrentObjectData(2)=3
 		EndIf
 
-		If CurrentObjectModelName$="!Transporter"  Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot"  Or CurrentObjectModelName$="!Pushbot"
+		; transporter, weebot, zapbot, pushbot
+		If CurrentObjectType=210 Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot"  Or CurrentObjectModelName$="!Pushbot"
 			; direction 0-3 (or speed for zap/weebot)
 			If CurrentObjectData(2)>3 CurrentObjectData(2)=0
 			If CurrentObjectData(2)<0 CurrentObjectData(2)=3
 		EndIf
-		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
-			; colours 0-15
-		;	If CurrentObjectData(2)>15 CurrentObjectData(2)=0
-		;	If CurrentObjectData(2)<0 CurrentObjectData(2)=15
-		;EndIf
-		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)>=5 And (CurrentObjectSubType Mod 32)<10)
-			; subcolours 0-4
-		;	If CurrentObjectData(2)>4 CurrentObjectData(2)=0
-		;	If CurrentObjectData(2)<0 CurrentObjectData(2)=4
-		;EndIf
+
 		If CurrentObjectType=90
 			If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				; direction 0-1
@@ -24425,6 +24477,39 @@ Function ControlSpellBall(i)
 
 End Function
 
+Function ControlChomper(i)
+
+	If SimulatedObjectTileTypeCollision(i)=0
+		;AnimateMD2 ObjectEntity(i),1,.6,1,29
+		SimulatedObjectYawAdjust(i)=0
+		SimulatedObjectMovementSpeed(i)=20+5*ObjectData(i,0)
+		;SimulatedObjectTileX(i)=Floor(SimulatedObjectX(i))
+		;SimulatedObjectTileY(i)=Floor(SimulatedObjectY(i))
+		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
+		;SimulatedObjectMovementType(i)=13
+		If SimulatedObjectData(i,1)=1
+			;SimulatedObjectObjectTypeCollision(i)=2^1+2^6+2^4
+			EntityBlend ObjectEntity(i),3
+			
+		EndIf
+		If SimulatedObjectData(i,1)=2
+			EntityFX ObjectEntity(i),1
+		EndIf
+	EndIf
+	
+	
+	If SimulatedObjectData(i,1)=1
+		If leveltimer Mod 360<180
+			EntityAlpha ObjectEntity(i),Abs(Sin(LevelTimer Mod 360))
+		Else
+			EntityAlpha ObjectEntity(i),0.3*Abs(Sin(LevelTimer Mod 360))
+
+		EndIf
+	EndIf
+
+End Function
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -24774,6 +24859,8 @@ Function ControlObjects()
 				ControlFireFlower(i)
 			Case 242
 				ControlCuboid(i)
+			Case 250
+				ControlChomper(i)
 			Case 260
 				ControlBowler(i)
 			Case 270
