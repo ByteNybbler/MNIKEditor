@@ -14060,57 +14060,102 @@ Function SetCurrentObjectTargetLocation(x,y)
 	Select CurrentObjectType
 	Case 90 ; button
 		If CurrentObjectSubType=10 ; levelexit
-			CurrentObjectData(1)=CurrentLevelNumber
-			CurrentObjectData(2)=x
-			CurrentObjectData(3)=y
+			CalculateLevelExitToHere(1,2,3,4,x,y)
 			CurrentGrabbedObjectModified=True
 		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
 			CurrentObjectData(2)=x
 			CurrentObjectData(3)=y
 			CurrentGrabbedObjectModified=True
 		ElseIf CurrentObjectSubType=15 ; general command
-			SetCurrentObjectTargetLocationCmd(CurrentObjectData(0),1,2,3,x,y)
+			SetCurrentObjectTargetLocationCmd(CurrentObjectData(0),1,2,3,4,x,y)
 		Else
-			GetLevelExitToHere(x,y)
+			GenerateLevelExitToHere(x,y)
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
 		CurrentObjectData(1)=x
 		CurrentObjectData(2)=y
 		CurrentGrabbedObjectModified=True
 	Case 242 ; cuboid
-		SetCurrentObjectTargetLocationCmd(CurrentObjectData(2),3,4,5,x,y)
+		SetCurrentObjectTargetLocationCmd(CurrentObjectData(2),3,4,5,6,x,y)
 	Default
-		GetLevelExitToHere(x,y)
+		GenerateLevelExitToHere(x,y)
 	End Select
 	
 	BuildCurrentObjectModel()
 
 End Function
 
-Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,x,y)
+Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,D4,x,y)
 
 	Select Cmd
 	Case 7
-		CurrentObjectData(D1)=CurrentLevelNumber
-		CurrentObjectData(D2)=x
-		CurrentObjectData(D3)=y
+		CalculateLevelExitToHere(D1,D2,D3,D4,x,y)
 		CurrentGrabbedObjectModified=True
 	Case 61
 		CurrentObjectData(D2)=x
 		CurrentObjectData(D3)=y
 		CurrentGrabbedObjectModified=True
 	Default
-		GetLevelExitToHere(x,y)
+		GenerateLevelExitToHere(x,y)
 	End Select
 
 End Function
 
-Function GetLevelExitToHere(x,y)
+Function CalculateLevelExitToHere(D1,D2,D3,D4,x,y)
+
+	CurrentObjectData(D1)=CurrentLevelNumber
+	CurrentObjectData(D2)=x
+	CurrentObjectData(D3)=y
+	StartingYaw=0 ; south
+	; examine surroundings to infer player facing direction
+	For i=0 To NofObjects-1
+		If ObjectType(i)=90 And ObjectSubType(i)=10 ; LevelExit
+			If x=ObjectTileX(i)
+				If y+1=ObjectTileY(i)
+					; player face north
+					StartingYaw=180
+				EndIf
+			ElseIf x+1=ObjectTileX(i)
+				If y-1=ObjectTileY(i)
+					; player face southwest
+					StartingYaw=45
+				ElseIf y=ObjectTileY(i)
+					; player face west
+					StartingYaw=90
+				ElseIf y+1=ObjectTileY(i)
+					; player face northwest
+					StartingYaw=135
+				EndIf
+			ElseIf x-1=ObjectTileX(i)
+				If y-1=ObjectTileY(i)
+					; player face southeast
+					StartingYaw=315
+				ElseIf y=ObjectTileY(i)
+					; player face east
+					StartingYaw=270
+				ElseIf y+1=ObjectTileY(i)
+					; player face northeast
+					StartingYaw=225
+				EndIf
+			EndIf
+		EndIf
+	Next
+	
+	CurrentObjectData(D4)=StartingYaw
+	
+	If CurrentObjectType=90 And CurrentObjectSubType=10 ; LevelExit
+		CurrentObjectYawAdjust=180-StartingYaw
+		If CurrentObjectYawAdjust<0
+			CurrentObjectYawAdjust=CurrentObjectYawAdjust+360
+		EndIf
+	EndIf
+
+End Function
+
+Function GenerateLevelExitToHere(x,y)
 
 	BlankObjectPreset("!Button",90,10)
-	CurrentObjectData(1)=CurrentLevelNumber
-	CurrentObjectData(2)=x
-	CurrentObjectData(3)=y
+	CalculateLevelExitToHere(1,2,3,4,x,y)
 	SetCurrentGrabbedObject(-1)
 
 End Function
