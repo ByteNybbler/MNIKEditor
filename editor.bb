@@ -13270,11 +13270,15 @@ Function BuildCurrentObjectModel()
 		If CurrentObjectData(2)>0	; hat
 			CurrentHatModel=CreateHatEntity(CurrentObjectData(2))
 			CurrentHatTexture=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
+			
+			;TransformAccessoryEntityOntoBone(CurrentHatModel,CurrentObjectModel)
 		EndIf
 		
 		If CurrentObjectData(4)>0 ;100 ; acc
 			CurrentAccModel=CreateAccEntity(CurrentObjectData(4))
 			CurrentAccTexture=CreateAccTexture(CurrentObjectData(4),CurrentObjectData(5))
+			
+			;TransformAccessoryEntityOntoBone(CurrentAccModel,CurrentObjectModel)
 		EndIf
 
 		
@@ -13775,15 +13779,17 @@ Function BuildCurrentObjectModel()
 			EntityTexture CurrentHatModel,CurrentHatTexture
 		EndIf
 		ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+		
 		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
-		RotateEntity CurrentHatModel,0,0,0
-		TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
+;		RotateEntity CurrentHatModel,0,0,0
+;		TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;		TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
 		
 		;bone=FindChild(CurrentObjectModel,"hat_bone")
 	
-		PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
+;		PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 
+		TransformAccessoryEntityOntoBone(CurrentHatModel,CurrentObjectModel)
 
 	EndIf
 	
@@ -13796,15 +13802,17 @@ Function BuildCurrentObjectModel()
 			EntityTexture CurrentAccModel,CurrentAccTexture
 		EndIf
 		ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+		
 		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
-		RotateEntity CurrentAccModel,0,0,0
-		TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
+;		RotateEntity CurrentAccModel,0,0,0
+;		TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;		TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
 		
 		;bone=FindChild(CurrentObjectModel,"hat_bone")
 	
-		PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
+;		PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 
+		TransformAccessoryEntityOntoBone(CurrentAccModel,CurrentObjectModel)
 
 	EndIf
 
@@ -14565,13 +14573,15 @@ Function SimulatedTransformAccessoryEntity(Entity,Dest)
 
 End Function
 
-Function TransformAccessoryEntityOntoBone(Entity,Dest)
+Function TransformAccessoryEntityOntoBone(Entity,BoneHaver)
 
-	bone=FindChild(ObjectEntity(Dest),"hat_bone")
+	bone=FindChild(BoneHaver,"hat_bone")
 
 	PositionEntity Entity,EntityX(bone,True),EntityY(bone,True),EntityZ(bone,True)
 
-	GameLikeRotation(Entity,EntityYaw(bone,True),EntityPitch(bone,True),EntityRoll(bone,True))
+	RotateEntity Entity,EntityPitch(bone,True),EntityYaw(bone,True),EntityRoll(bone,True)
+
+	;GameLikeRotation(Entity,EntityYaw(bone,True),EntityRoll(bone,True),-EntityPitch(bone,True))
 
 End Function
 
@@ -25579,10 +25589,10 @@ Function ControlObjects()
 		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
 		
 			If ObjectHatEntity(i)>0
-				TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
+				TransformAccessoryEntityOntoBone(ObjectHatEntity(i),ObjectEntity(i))
 			EndIf
 			If ObjectAccEntity(i)>0
-				TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
+				TransformAccessoryEntityOntoBone(ObjectAccEntity(i),ObjectEntity(i))
 			EndIf
 			
 		EndIf
