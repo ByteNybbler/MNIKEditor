@@ -9509,10 +9509,10 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObjectType=310 ; duck
 			tex2$="Move"
-			If CurrentObjectData(0)=0 
-				tex$="No"
-			Else
+			If CurrentObjectData(0)=1 
 				tex$="Yes"
+			Else
+				tex$="No"
 			EndIf
 			tex$=CurrentObjectData(0)+"/"+tex$
 		EndIf
