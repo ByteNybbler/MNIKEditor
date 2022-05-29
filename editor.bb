@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/29/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/30/22)"
 
 Global MASTERUSER=True
 
@@ -9745,8 +9745,8 @@ Function DisplayObjectAdjuster(i)
 				tex$=Str(CurrentObjectData(0))+"/"+GetCommandName$(CurrentObjectData(0))
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				tex2$="Colour"
-
-
+			Else If CurrentObjectSubType=13 ; Adventure Star
+				tex2$="Adventure ID"
 			EndIf
 		EndIf
 
