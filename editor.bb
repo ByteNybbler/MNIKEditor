@@ -681,8 +681,12 @@ Dim SimulatedObjectActive(1000),SimulatedObjectLastActive(1000)
 Dim SimulatedObjectStatus(1000)
 Dim SimulatedObjectTimer(1000)
 Dim SimulatedObjectData(1000,10)
+Dim SimulatedObjectCurrentAnim(1000)
 Dim SimulatedObjectMovementSpeed(1000)
+Dim SimulatedObjectMoveXGoal(1000),SimulatedObjectMoveYGoal(1000)
+Dim SimulatedObjectData10(1000)
 Dim SimulatedObjectTileTypeCollision(1000)
+Dim SimulatedObjectFrozen(1000)
 ;Dim SimulatedObjectScaleAdjust#(1000) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
 Dim SimulatedObjectScaleXAdjust#(1000),SimulatedObjectScaleYAdjust#(1000),SimulatedObjectScaleZAdjust#(1000)
 
@@ -7718,6 +7722,31 @@ Function UpdateObjectAnimation(i)
 End Function
 
 
+; Returns True if the entity gets animated.
+Function MaybeAnimate(Entity,mode=1,speed#=1,sequence=0,transition#=0)
+	
+	If SimulationLevel<SimulationLevelAnimation
+		Return False
+	Else
+		Animate Entity,mode,speed#,sequence,transition#
+		Return True
+	EndIf
+	
+End Function
+
+Function MaybeAnimateMD2(Entity,mode=1,speed#=1,sequence=0,transition#=0)
+	
+	If SimulationLevel<SimulationLevelAnimation
+		Return False
+	Else
+		AnimateMD2 Entity,mode,speed#,sequence,transition#
+		Return True
+	EndIf
+	
+End Function
+
+
+
 Function SomeObjectWasChanged()
 
 	ResetSimulatedQuantities()
@@ -7760,8 +7789,13 @@ Function ResetSimulatedQuantities()
 		For j=0 To 10
 			SimulatedObjectData(i,j)=ObjectData(i,j)
 		Next
+		SimulatedObjectCurrentAnim(i)=ObjectCurrentAnim(i)
 		SimulatedObjectMovementSpeed(i)=ObjectMovementSpeed(i)
+		SimulatedObjectMoveXGoal(i)=ObjectMoveXGoal(i)
+		SimulatedObjectMoveYGoal(i)=ObjectMoveYGoal(i)
+		SimulatedObjectData10(i)=ObjectData10(i)
 		SimulatedObjectTileTypeCollision(i)=ObjectTileTypeCollision(i)
+		SimulatedObjectFrozen(i)=ObjectFrozen(i)
 		If ObjectScaleAdjust(i)<>0.0
 			SimulatedObjectXScale(i)=SimulatedObjectXScale(i)*ObjectScaleAdjust(i)
 			SimulatedObjectYScale(i)=SimulatedObjectYScale(i)*ObjectScaleAdjust(i)
@@ -24595,6 +24629,233 @@ Function ControlChomper(i)
 
 End Function
 
+Function ControlNPC(i)
+
+	If ObjectModelName$(i)<>"!NPC" Return ; don't want to risk a MAV
+
+	If SimulatedObjectFrozen(i)=1 Or SimulatedObjectFrozen(i)=10001 Or SimulatedObjectFrozen(i)=-1
+		; freeze
+		If SimulatedObjectFrozen(i)=10001 
+			SimulatedObjectFrozen(i)=SimulatedObjectFrozen(i)+999
+		Else
+			SimulatedObjectFrozen(i)=1000*SimulatedObjectFrozen(i)
+		EndIf
+		SimulatedObjectCurrentAnim(i)=11
+		MaybeAnimate(GetChild(objectentity(i),3),3,1,11)
+		;PlaySoundFX(85,ObjectX(i),ObjectY(i))
+
+	EndIf
+	If SimulatedObjectFrozen(i)=2 Or SimulatedObjectFrozen(i)=10002
+		; revert
+		SimulatedObjectFrozen(i)=0
+		SimulatedObjectCurrentAnim(i)=10
+		MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+
+	EndIf
+;	If SimulatedObjectFrozen(i)>2 Or SimulatedObjectFrozen(i)<0
+;		; frozen
+;		SimulatedObjectFrozen(i)=SimulatedObjectFrozen(i)-1
+;		
+;		Return
+;	EndIf
+
+	dist=100 ; Distance from player
+
+
+	If SimulatedObjectTileTypeCollision(i)=0
+		SimulatedObjectData10(i)=-1
+
+		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^11+2^12+2^14
+		;SimulatedObjectObjectTypeCollision(i)=2^6
+		If SimulatedObjectMoveXGoal(i)=0 And SimulatedObjectMoveYGoal(i)=0
+			SimulatedObjectMoveXGoal(i)=Floor(SimulatedObjectX(i))
+			SimulatedObjectMoveYGoal(i)=Floor(SimulatedObjectY(i))
+			;ObjectMovementType(i)=0
+			;ObjectMovementTimer(i)=0
+			;ObjectSubType(i)=0  
+			SimulatedObjectCurrentAnim(i)=10
+		EndIf
+
+	EndIf
+	
+	If ObjectFlying(i)/10=1
+		; flying
+		If ObjectCurrentAnim(i)<>11
+			MaybeAnimate(GetChild(objectentity(i),3),1,1,11)
+			SimulatedObjectCurrentAnim(i)=11
+		EndIf
+		;TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-ObjectYawAdjust(i))
+	Else If ObjectFlying(i)/10=2
+		; on ice
+		If ObjectCurrentAnim(i)<>13
+			MaybeAnimate(GetChild(objectentity(i),3),3,2,13)
+			SimulatedObjectCurrentAnim(i)=13
+		EndIf
+
+	Else 
+		; standing controls
+		
+		; Turning?
+		Select SimulatedObjectData(i,7) Mod 10
+		Case 0
+			; Turn toward ObjectYawAdjust, i.e. Angle 0
+			If SimulatedObjectYaw(i)<>0
+				;TurnObjectTowardDirection(i,0,1,4,0)
+			EndIf
+		Case 1
+			; Turn Toward Player
+			;TurnObjectTowardDirection(i,ObjectX(PlayerObject)-ObjectX(i),ObjectY(PlayerObject)-ObjectY(i),6,-ObjectYawAdjust(i))
+		
+		Case 2
+			; Various turning options
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+.5) Mod 360
+		Case 3
+			; Various turning options
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+2) Mod 360
+		Case 4
+			; Various turning options
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)-.5) Mod 360
+		Case 5
+			; Various turning options
+			SimulatedObjectYaw(i)=(ObjectYaw(i)-2) Mod 360
+		End Select
+		; Jumping?
+		If SimulatedObjectData(i,7)/10=1
+			SimulatedObjectZ(i)=0.4*Abs(Sin((Float(Leveltimer)*3.6) Mod 360))
+		Else If SimulatedObjectData(i,7)/10=2
+			SimulatedObjectZ(i)=0.2*Abs(Sin((Float(Leveltimer)*7.2) Mod 360))
+		EndIf
+		; Animation?
+		Select SimulatedObjectData(i,8)
+		Case 0
+			; Just Swaying
+			If SimulatedObjectCurrentAnim(i)<>10
+				SimulatedObjectCurrentAnim(i)=10
+				MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+			EndIf
+		Case 1
+			; Wave from time to Time
+			If SimulatedObjectCurrentAnim(i)=10
+				If Rand(1,10)<5 And Leveltimer Mod 120 =0 
+					SimulatedObjectCurrentAnim(i)=8
+					MaybeAnimate(GetChild(objectentity(i),3),3,.2,8)
+				EndIf
+			Else If Animating (GetChild(objectentity(i),3))=False
+				SimulatedObjectCurrentAnim(i)=10
+				MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+			EndIf
+
+
+		Case 2
+			; Wave All The Time
+			If SimulatedObjectCurrentAnim(i)<>15
+				SimulatedObjectCurrentAnim(i)=15
+				MaybeAnimate(GetChild(objectentity(i),3),2,.2,15)
+			EndIf
+		Case 3
+			; Foottap from time to Time
+			If SimulatedObjectCurrentAnim(i)=10
+				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
+					SimulatedObjectCurrentAnim(i)=9
+					MaybeAnimate(GetChild(objectentity(i),3),1,.4,9)
+				EndIf
+			Else 
+				If Rand(0,1000)<2
+					SimulatedObjectCurrentAnim(i)=10
+					MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+				EndIf
+			EndIf
+	
+		Case 4
+			; Foottap All The Time
+			If SimulatedObjectCurrentAnim(i)<>9
+				SimulatedObjectCurrentAnim(i)=9
+				MaybeAnimate(GetChild(objectentity(i),3),1,.2,9)
+			EndIf
+			
+		Case 5
+			; Dance
+			If SimulatedObjectCurrentAnim(i)<>12
+				SimulatedObjectCurrentAnim(i)=12
+				If SimulatedObjectData(i,7)>=20
+					MaybeAnimate(GetChild(objectentity(i),3),1,.4,12)
+				Else
+					MaybeAnimate(GetChild(objectentity(i),3),1,.2,12)
+				EndIf
+			EndIf
+		Case 6
+			; Just Sit
+			If SimulatedObjectCurrentAnim(i)<>14
+				SimulatedObjectCurrentAnim(i)=14
+				MaybeAnimate(GetChild(objectentity(i),3),3,.2,14)
+			EndIf
+		Case 7
+			; Sit if far from player, otherwise stand
+			
+			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
+				SimulatedObjectCurrentAnim(i)=14
+				MaybeAnimate(GetChild(objectentity(i),3),3,.4,14)
+			EndIf
+			If SimulatedObjectCurrentAnim(i)<>114 And dist<=3
+				SimulatedObjectCurrentAnim(i)=114
+				MaybeAnimate(GetChild(objectentity(i),3),3,-.4,14)
+			EndIf
+		Case 8
+			; Sit if far from player, otherwise stand and wave fast
+			Dist=maximum2(Abs(ObjectTileX(i)-ObjectTileX(PlayerObject)),Abs(ObjectTileY(i)-ObjectTileY(PlayerObject)))
+			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
+				SimulatedObjectCurrentAnim(i)=14
+				MaybeAnimate(GetChild(objectentity(i),3),3,.4,14)
+			EndIf
+			If SimulatedObjectCurrentAnim(i)<>114 And dist<=3
+				SimulatedObjectCurrentAnim(i)=114
+				MaybeAnimate(GetChild(objectentity(i),3),3,-.4,14)
+			EndIf
+			If SimulatedObjectCurrentAnim(i)=114 And Animating(GetChild(objectentity(i),3))=False
+				MaybeAnimate(GetChild(objectentity(i),3),3,.4,15)
+			EndIf
+
+
+
+
+		Case 9
+			; Deathwave from time to Time (+Jumping)
+			If SimulatedObjectCurrentAnim(i)=10
+				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
+					SimulatedObjectCurrentAnim(i)=11
+					MaybeAnimate(GetChild(objectentity(i),3),1,.4,11)
+					If SimulatedObjectData(i,y)<10 Then SimulatedObjectData(i,7)=SimulatedObjectData(i,7)+20
+				EndIf
+			Else 
+				If Leveltimer Mod 120 =0 
+					SimulatedObjectCurrentAnim(i)=10
+					MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+					SimulatedObjectData(i,7)=SimulatedObjectData(i,7)-20
+					SimulatedObjectZ(i)=0
+				EndIf
+			EndIf
+
+		Case 10
+			; Deathwave All The Time
+			If SimulatedObjectCurrentAnim(i)<>11
+				SimulatedObjectCurrentAnim(i)=11
+				If SimulatedObjectData(i,7)>=20
+					MaybeAnimate(GetChild(objectentity(i),3),1,.4,11)
+				Else
+					MaybeAnimate(GetChild(objectentity(i),3),1,.2,11)
+				EndIf
+
+			EndIf
+		End Select
+
+
+
+
+	EndIf
+
+
+End Function
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -24910,6 +25171,8 @@ Function ControlObjects()
 				ControlSpellBall(i)
 			Case 53
 				ControlMeteorite(i)
+			Case 110
+				ControlNPC(i)
 			Case 120
 				ControlStinkerWee(i)
 			Case 130
