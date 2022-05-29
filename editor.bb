@@ -5014,9 +5014,11 @@ Function SubstringMatches(Query$,Subject$)
 	Subject$=Upper$(Subject$)
 	
 	; truncate subject to be length of query
-	Subject$=Left$(Subject$,Len(Query$))
+	;Subject$=Left$(Subject$,Len(Query$))
 	
-	Return Query$=Subject$
+	;Return Query$=Subject$
+	
+	Return Instr(Subject$,Query$)<>0
 
 End Function
 
@@ -16445,6 +16447,49 @@ Function AccessLevel(levelnumber)
 		LoadLevel(levelnumber)
 	Else
 		NewLevel(levelnumber)
+	EndIf
+
+End Function
+
+Function MoveLevel(levelnumbersource,levelnumberdest)
+
+	If AdventureCurrentArchive=1
+		ex2$="Archive\"
+	Else
+		ex2$="Current\"
+	EndIf
+
+	dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+	CopyFile(dirbase$+levelnumbersource+".wlv",dirbase$+levelnumverdest+".wlv")
+	DeleteFile(dirbase$+levelnumbersource+".wlv")
+	MasterLevelList(levelnumbersource)=0
+	MasterLevelList(levelnumberdest)=1
+
+End Function
+
+Function SwapLevel(levelnumber1,levelnumber2)
+	
+	Exists1=LevelExists(levelnumber1)
+	Exists2=LevelExists(levelnumber2)
+	
+	If Exists1 And Exists2
+		If AdventureCurrentArchive=1
+			ex2$="Archive\"
+		Else
+			ex2$="Current\"
+		EndIf
+	
+		dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+		CopyFile(dirbase$+levelnumber1+".wlv",dirbase$+"temp"+levelnumber1+".wlv")
+		DeleteFile(dirbase$+levelnumber1+".wlv")
+		CopyFile(dirbase$+levelnumber2+".wlv",dirbase$+levelnumber1+".wlv")
+		DeleteFile(dirbase$+levelnumber2+".wlv")
+		CopyFile(dirbase$+"temp"+levelnumber1+".wlv",dirbase$+levelnumber2+".wlv")
+		DeleteFile(dirbase$+"temp"+levelnumber1+".wlv")
+	ElseIf Exists1=True And Exists2=False
+		MoveLevel(levelnumber1,levelnumber2)
+	ElseIf Exists1=False And Exists2=True
+		MoveLevel(levelnumber2,levelnumber1)
 	EndIf
 
 End Function
