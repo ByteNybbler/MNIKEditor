@@ -9384,6 +9384,23 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Spell"
 			tex$=GetMagicNameAndId$(CurrentObjectSubType)
 		EndIf
+		If CurrentObjectType=54 ; Magic Mirror
+			tex2$="Glyph"
+			Select CurrentObjectSubType
+			Case 0
+				tex$="Inactive"
+			Case 1
+				tex$="Fire"
+			Case 2
+				tex$="Ice"
+			Case 3
+				tex$="Time"
+			Case 4
+				tex$="Acid"
+			Case 5
+				tex$="Home"
+			End Select
+		EndIf
 		If CurrentObjectType=90 ; button
 			Select CurrentObjectSubType
 			Case 0
