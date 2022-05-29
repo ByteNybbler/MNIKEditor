@@ -22947,7 +22947,7 @@ Function ObjectIndexGameToEditor(Index, PlayerIndex)
 
 End Function
 
-; reflects the in-game logic for spawning shadows
+; Reflects the in-game logic for spawning shadows (see CreateObjectShadow in adventures.bb).
 Function ObjectHasShadow(Dest)
 
 	Select ObjectModelName$(Dest)
@@ -22962,7 +22962,7 @@ Function ObjectHasShadow(Dest)
 		Return True
 	Case "!FlipBridge"
 		Return True
-	Case "!NPC" ; Normally this shadow is created by the CreateStinkerModel function.
+	Case "!NPC" ; Normally this shadow is created by the CreateStinkerModel function rather than CreateObjectShadow.
 		Return True
 	Default
 		Return False
