@@ -21207,6 +21207,12 @@ Function GetCmdData1ValueName$(Cmd, Data1)
 	Select Cmd
 	Case 10,11
 		Return Data1+"/"+GetSoundName$(Data1)
+	Case 12
+		If Data1=0
+			Return "No Change"
+		Else
+			Return Data1
+		EndIf
 	Default
 		Return Data1
 	End Select
@@ -21218,6 +21224,12 @@ Function GetCmdData2ValueName$(Cmd, Data2)
 	Select Cmd
 	Case 4
 		Return Data2+"/"+GetCmd4Data2ValueName$(Data2)
+	Case 12
+		If Data2=0
+			Return "Instant"
+		Else
+			Return Data2
+		EndIf
 	Case 52
 		Return Data2+"/"+GetMovementTypeString$(Data2)
 	Default
@@ -21238,6 +21250,12 @@ Function GetCmdData3ValueName$(Cmd, Data2, Data3)
 		Default
 			Return Data3
 		End Select
+	Case 12
+		If Data3=0
+			Return "No Change"
+		Else
+			Return Data3
+		EndIf
 	Default
 		Return Data3
 	End Select
@@ -21250,6 +21268,12 @@ Function GetCmdData4ValueName$(Cmd, Data4)
 	Case 7
 		DisplayedRotation=(Data4+180) Mod 360
 		Return GetDirectionString$(DisplayedRotation)
+	Case 12
+		If Data4=0
+			Return "Instant"
+		Else
+			Return Data4
+		EndIf
 	Case 51
 		Return Data4+"/"+GetMovementTypeString$(Data4)
 	Default
