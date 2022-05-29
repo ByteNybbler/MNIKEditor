@@ -24754,16 +24754,6 @@ Function ControlNPC(i)
 	If ObjectModelName$(i)<>"!NPC" Return ; don't want to risk a MAV
 	
 	
-	; putting accessory controls here
-	If ObjectHatEntity(i)>0
-		TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
-		;SimulatedTransformAccessoryEntity(ObjectHatEntity(i),i)
-	EndIf
-	If ObjectAccEntity(i)>0
-		TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
-		;SimulatedTransformAccessoryEntity(ObjectHatEntity(i),i)
-	EndIf
-	
 
 	If SimulatedObjectFrozen(i)=1 Or SimulatedObjectFrozen(i)=10001 Or SimulatedObjectFrozen(i)=-1
 		; freeze
@@ -25587,6 +25577,13 @@ Function ControlObjects()
 			
 		;Else
 		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
+		
+			If ObjectHatEntity(i)>0
+				TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
+			EndIf
+			If ObjectAccEntity(i)>0
+				TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
+			EndIf
 			
 		EndIf
 	
