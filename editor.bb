@@ -14569,7 +14569,7 @@ Function TransformAccessoryEntityOntoBone(Entity,Dest)
 
 	bone=FindChild(ObjectEntity(Dest),"hat_bone")
 
-	PositionEntity Entity,EntityX(bone,True),-EntityZ(bone,True),EntityY(bone,True)
+	PositionEntity Entity,EntityX(bone,True),EntityY(bone,True),EntityZ(bone,True)
 
 	GameLikeRotation(Entity,EntityYaw(bone,True),EntityPitch(bone,True),EntityRoll(bone,True))
 
@@ -24756,11 +24756,11 @@ Function ControlNPC(i)
 	
 	; putting accessory controls here
 	If ObjectHatEntity(i)>0
-		;TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
+		TransformAccessoryEntityOntoBone(ObjectHatEntity(i),i)
 		;SimulatedTransformAccessoryEntity(ObjectHatEntity(i),i)
 	EndIf
 	If ObjectAccEntity(i)>0
-		;TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
+		TransformAccessoryEntityOntoBone(ObjectAccEntity(i),i)
 		;SimulatedTransformAccessoryEntity(ObjectHatEntity(i),i)
 	EndIf
 	
