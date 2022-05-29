@@ -23584,7 +23584,7 @@ Function ControlSigns(i)
 
 	Case 2
 		; Bounce
-		SimulatedObjectZScale(i)=1.0+0.15*Sin((Leveltimer*4) Mod 360)
+		SimulatedObjectScaleZAdjust(i)=1.0+0.15*Sin((Leveltimer*4) Mod 360)
 		SimulatedObjectRoll(i)=5*Sin((leveltimer*2) Mod 360)
 	Case 3
 		; turn
