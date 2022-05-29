@@ -9288,7 +9288,7 @@ Function DisplayObjectAdjuster(i)
 
  
 		
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="Colour1"
 			Else If (CurrentObjectSubType Mod 32)<10
@@ -9475,15 +9475,14 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 
-		If CurrentObjectModelName$="!Rubberducky"
+		If CurrentObjectType=310 ;CurrentObjectModelName$="!Rubberducky"
 			tex2$="Move"
 			If CurrentObjectData(0)=0 
 				tex$="No"
 			Else
 				tex$="Yes"
 			EndIf
-			
-			
+			tex$=CurrentObjectData(0)+"/"+tex$
 		EndIf
 		
 
@@ -9492,7 +9491,7 @@ Function DisplayObjectAdjuster(i)
 			tex$=GetMagicNameAndId(CurrentObjectData(0))
 		EndIf
 		
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="TimerMax"
 		EndIf	
 		If CurrentObjectModelName$="!Ghost" Or CurrentObjectModelName$="!Wraith"
@@ -9541,7 +9540,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="Colour2"
 			Else If (CurrentObjectSubType Mod 32)<10
@@ -9733,7 +9732,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="RollAnim"
 		EndIf
 
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="Colour3"
 			Else If (CurrentObjectSubType Mod 32)<10
@@ -9859,7 +9858,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Explo Command"
 		EndIf
 		
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="SourceX"
 		EndIf
 		
@@ -9953,7 +9952,7 @@ Function DisplayObjectAdjuster(i)
 
 		EndIf
 
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="Colour4"
 			Else If (CurrentObjectSubType Mod 32)<10
@@ -10129,7 +10128,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Cmd Data1"
 		EndIf
 		
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="SourceY"
 		EndIf
 		
@@ -10155,7 +10154,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="YAnim"
 		EndIf
 
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="SubColour1"
 				
@@ -10226,7 +10225,7 @@ Function DisplayObjectAdjuster(i)
 		If  CurrentObjectModelName$="!Cuboid"
 			tex2$="Cmd Data2"
 		EndIf
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalX1"
 		EndIf
 
@@ -10253,7 +10252,7 @@ Function DisplayObjectAdjuster(i)
 
 		
 
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="SubColour2"
 			Else If CurrentObjectSubType = 10
@@ -10330,7 +10329,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalY1"
 		EndIf
 
@@ -10346,7 +10345,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="XSpeed"
 		EndIf
 
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="SubColour3"
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0
@@ -10408,7 +10407,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Cmd Data4"
 		EndIf
 
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalX2"
 		EndIf
 
@@ -10423,7 +10422,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="YSpeed"
 		EndIf
 
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)<5
 				tex2$="SubColour4"
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
@@ -10467,7 +10466,7 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalY2"
 		EndIf
 		
@@ -10487,7 +10486,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="ZSpeed"
 		EndIf
 
-		If CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
 			tex2$="ActivateID"
 			If CurrentObjectData(8)=0
 				tex$="All"
@@ -10565,7 +10564,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalX3"
 		EndIf
 
@@ -10585,7 +10584,7 @@ Function DisplayObjectAdjuster(i)
 
 		EndIf
 
-		If CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 ; button
 			If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
 				tex2$="Anim"
 				If CurrentObjectData(9)=0 tex$="Sway"
@@ -10609,7 +10608,7 @@ Function DisplayObjectAdjuster(i)
 		
 				
 				
-		If CurrentObjectModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalY3"
 		EndIf
 		
@@ -11594,24 +11593,6 @@ Function AdjustObjectAdjuster(i)
 		Else If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
 			If CurrentObjectData(0)>3 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=3
-
-	
-
-		;Else If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or (CurrentObjectModelName$="!Button" And ((CurrentObjectSubType Mod 32)<10 Or (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17)) Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!ColourGate"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor" 
-
-			; colours 0-15
-			;If CurrentObjectData(0)>15 CurrentObjectData(0)=0
-			;If CurrentObjectData(0)<0 CurrentObjectData(0)=15
-		;Else If CurrentObjectModelName$="!KeyCard"
-			; colours 0-7
-			;If CurrentObjectData(0)>7 CurrentObjectData(0)=0
-			;If CurrentObjectData(0)<0 CurrentObjectData(0)=7
-
-		;Else If CurrentObjectModelName$="!Teleport" 
-			; colours 0-8
-			;If CurrentObjectData(0)>8 CurrentObjectData(0)=0
-			;If CurrentObjectData(0)<0 CurrentObjectData(0)=8
-
 		EndIf
 		
 		If CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
@@ -11686,10 +11667,10 @@ Function AdjustObjectAdjuster(i)
 		
 
 
-		If CurrentObjectModelName$="!Rubberducky"
-			If CurrentObjectData(0)>1 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=1
-		EndIf
+		;If CurrentObjectType=310 ;CurrentObjectModelName$="!Rubberducky"
+		;	If CurrentObjectData(0)>1 CurrentObjectData(0)=0
+		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=1
+		;EndIf
 		
 		If CurrentObjectType=51
 			If CurrentObjectData(0)>9 CurrentObjectData(0)=0
@@ -11850,25 +11831,26 @@ Function AdjustObjectAdjuster(i)
 		;	If CurrentObjectData(2)>4 CurrentObjectData(2)=0
 		;	If CurrentObjectData(2)<0 CurrentObjectData(2)=4
 		;EndIf
-		If  (CurrentObjectModelName$="!Button" And ((CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17))
-			; direction 0-1
-			If CurrentObjectData(2)>1 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=1
-
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=0
-			; x goal
-			If CurrentobjectData(2)<0 CurrentObjectData(2)=0
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=1
-			; talkable
-			If CurrentobjectData(2)<-1 CurrentObjectData(2)=-1
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=2
-			; particle
-			If CurrentobjectData(2)<0 CurrentObjectData(2)=63
-			If CurrentobjectData(2)>63 CurrentObjectData(2)=0
-
+		If CurrentObjectType=90
+			If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
+				; direction 0-1
+				If CurrentObjectData(2)>1 CurrentObjectData(2)=0
+				If CurrentObjectData(2)<0 CurrentObjectData(2)=1
+			EndIf
+			If CurrentObjectSubType=11
+				Select CurrentObjectData(0)
+				Case 0
+					; x goal
+					If CurrentobjectData(2)<0 CurrentObjectData(2)=0
+				Case 1
+					; talkable
+					If CurrentobjectData(2)<-1 CurrentObjectData(2)=-1
+				Case 2
+					; particle
+					If CurrentobjectData(2)<0 CurrentObjectData(2)=63
+					If CurrentobjectData(2)>63 CurrentObjectData(2)=0
+				End Select
+			EndIf
 		EndIf
 		If CurrentObjectType=190
 			; particle spray dir
@@ -11938,31 +11920,20 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObjectData(3)>3 CurrentObjectData(3)=0
 			If CurrentObjectData(3)<0 CurrentObjectData(3)=3
 		EndIf
-		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
-			; colours 0-15
-		;	If CurrentObjectData(3)>15 CurrentObjectData(3)=0
-		;	If CurrentObjectData(3)<0 CurrentObjectData(3)=15
-		;EndIf
-		;If (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)>=5 And (CurrentObjectSubType Mod 32)<10)
-			; subcolour 0-4
-		;	If CurrentObjectData(3)>4 CurrentObjectData(3)=0
-		;	If CurrentObjectData(3)<0 CurrentObjectData(3)=4
-		;EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=0
-			; y goal
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=1
-			; y goal
-			If CurrentobjectData(3)<-1 CurrentObjectData(3)=4
-			If CurrentobjectData(3)>4 CurrentObjectData(3)=-1
-			
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=2
-			; how many particles
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=9
-			If CurrentobjectData(3)>9 CurrentObjectData(3)=0
-			
+		If CurrentObjectType=90 And CurrentObjectSubType=11 ; button
+			Select CurrentObjectData(0)
+			Case 0
+				; y goal
+				If CurrentobjectData(3)<0 CurrentObjectData(3)=0
+			Case 1
+				; y goal
+				If CurrentobjectData(3)<-1 CurrentObjectData(3)=4
+				If CurrentobjectData(3)>4 CurrentObjectData(3)=-1
+			Case 2
+				; how many particles
+				If CurrentobjectData(3)<0 CurrentObjectData(3)=9
+				If CurrentobjectData(3)>9 CurrentObjectData(3)=0
+			End Select
 		EndIf
 		If  CurrentObjectModelName$="!FireFlower" 
 			; hitpoints
@@ -12034,7 +12005,7 @@ Function AdjustObjectAdjuster(i)
 	Case "Data4"
 		Adj=1
 		AdjFast=10
-		If CurrentObjectModelName$="!Button" And CurrentObjectSubType=10
+		If CurrentObjectType=90 And CurrentObjectSubType=10
 			Adj=45
 			AdjFast=45
 		EndIf
@@ -12042,27 +12013,24 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(4)=AdjustInt("Data4: ", CurrentObjectData(4), Adj, AdjFast, DelayTime)
 		AdjustObjectData(4, Adj, AdjFast, DelayTime)
 
-		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
-			; subcolours 0-4
-		;	If CurrentObjectData(4)>4 CurrentObjectData(4)=0
-		;	If CurrentObjectData(4)<0 CurrentObjectData(4)=4
-		;EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=10
-			;playerstartingyaw
-			If CurrentObjectData(4)<0 Then CurrentObjectData(4)=360-45
-			If CurrentObjectData(4)>359 Then CurrentObjectData(4)=0
-			
+		If CurrentObjectType=90
+			If CurrentObjectSubType=10
+				;playerstartingyaw
+				If CurrentObjectData(4)<0 Then CurrentObjectData(4)=360-45
+				If CurrentObjectData(4)>359 Then CurrentObjectData(4)=0
+			ElseIf CurrentObjectSubType=11
+				If (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2)
+					; repeatable
+					If CurrentobjectData(4)<0 CurrentObjectData(4)=1
+					If CurrentobjectData(4)>1 CurrentObjectData(4)=0
+				ElseIf CurrentObjectData(0)=1
+					; yaw
+					If CurrentobjectData(4)<-1 CurrentObjectData(4)=359
+					If CurrentobjectData(4)>359 CurrentObjectData(4)=0
+				EndIf
+			EndIf
 		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2)
-			; repeatable
-			If CurrentobjectData(4)<0 CurrentObjectData(4)=1
-			If CurrentobjectData(4)>1 CurrentObjectData(4)=0
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=1
-			; yaw
-			If CurrentobjectData(4)<-1 CurrentObjectData(4)=359
-			If CurrentobjectData(4)>359 CurrentObjectData(4)=0
-		EndIf
+
 ;		If CurrentObjectModelName$="!NPC"
 ;			If CurrentObjectData(4)=-1 CurrentObjectData(4)=116
 ;			If CurrentObjectData(4)=1 CurrentObjectData(4)=101
@@ -12105,32 +12073,26 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(5)=AdjustInt("Data5: ", CurrentObjectData(5), SlowInt, FastInt, DelayTime)
 		AdjustObjectData(5, SlowInt, FastInt, DelayTime)
 		
-		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
-		;	; subcolours 0-4
-		;	If CurrentObjectData(5)>4 CurrentObjectData(5)=0
-		;	If CurrentObjectData(5)<0 CurrentObjectData(5)=4
-		;Else
-		If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)=15)
-			; repeatable
-			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
-
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=0
-			; timer
-			If CurrentobjectData(5)<0 CurrentObjectData(5)=0
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=1
-			; repeatable
-			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
-
-		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=10
-			; levelexit flyover
-			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
-
+		If CurrentObjectType=90 ; button
+			If (CurrentObjectSubType Mod 32)=15
+				; repeatable
+				If CurrentObjectData(5)>1 CurrentObjectData(5)=0
+				If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+			EndIf
+			If CurrentObjectSubType=11
+				If CurrentObjectData(0)=0
+					; timer
+					If CurrentobjectData(5)<0 CurrentObjectData(5)=0
+				ElseIf CurrentObjectData(0)=1
+					; repeatable
+					If CurrentObjectData(5)>1 CurrentObjectData(5)=0
+					If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+				EndIf
+			ElseIf CurrentObjectSubType=10
+				; levelexit flyover
+				If CurrentObjectData(5)>1 CurrentObjectData(5)=0
+				If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+			EndIf
 		EndIf
 
 
@@ -12164,21 +12126,17 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(6)=AdjustInt("Data6: ", CurrentObjectData(6), 1, 10, 150)
 		AdjustObjectData(6, SlowInt, FastInt, DelayTime)
 		
-		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
-		;	; subcolours 0-4
-		;	If CurrentObjectData(6)>4 CurrentObjectData(6)=0
-		;	If CurrentObjectData(6)<0 CurrentObjectData(6)=4
-		;EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=0
-			; timer reset
-			If CurrentobjectData(6)<0 CurrentObjectData(6)=0
+		If CurrentObjectType=90 And CurrentObjectSubType=11
+			If CurrentObjectData(0)=0
+				; timer reset
+				If CurrentobjectData(6)<0 CurrentObjectData(6)=0
+			ElseIf CurrentObjectData(0)=1
+				; walk anim
+				If CurrentobjectData(6)<-1 CurrentObjectData(6)=2
+				If CurrentobjectData(6)>2 CurrentObjectData(6)=-1
+			EndIf
 		EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=1
-			; walk anim
-			If CurrentobjectData(6)<-1 CurrentObjectData(6)=2
-			If CurrentobjectData(6)>2 CurrentObjectData(6)=-1
 
-		EndIf
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(6)>2 CurrentObjectData(6)=0
 			If CurrentObjectData(6)<0 CurrentObjectData(6)=2
@@ -12205,12 +12163,7 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(7)=AdjustInt("Data7: ", CurrentObjectData(7), 1, 10, 150)
 		AdjustObjectData(7, SlowInt, FastInt, DelayTime)
 		
-		;If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<5)
-		;	; subcolours 0-4
-		;	If CurrentObjectData(7)>4 CurrentObjectData(7)=0
-		;	If CurrentObjectData(7)<0 CurrentObjectData(7)=4
-		;EndIf
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=1
+		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObjectData(0)=1
 			; turn
 			If CurrentobjectData(7)=-2 CurrentObjectData(7)=25
 			If CurrentobjectData(7)=26 CurrentObjectData(7)=-1
@@ -12244,7 +12197,7 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(8)=AdjustInt("Data8: ", CurrentObjectData(8), 1, 10, 150)
 		AdjustObjectData(8, SlowInt, FastInt, DelayTime)
 
-		If CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!Button"
+		If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
 			If LeftMouse=True
 				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=0
 			ElseIf RightMouse=True
@@ -12283,12 +12236,12 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(9)=AdjustInt("Data9: ", CurrentObjectData(9), 1, 10, 150)
 		AdjustObjectData(9, SlowInt, FastInt, DelayTime)
 		
-		If  CurrentObjectModelName$="!CustomModel"
+		If CurrentObjectModelName$="!CustomModel"
 			If CurrentobjectData(9)>1 CurrentObjectData(9)=1
 			If CurrentobjectData(9)<0 CurrentObjectData(9)=0
 		EndIf
 		
-		If  CurrentObjectModelName$="!Button" And CurrentObjectSubType=11 And CurrentObjectData(0)=1
+		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObjectData(0)=1
 			; anim
 			If CurrentobjectData(9)<-1 CurrentObjectData(9)=10
 			If CurrentobjectData(9)>10 CurrentObjectData(9)=-1
