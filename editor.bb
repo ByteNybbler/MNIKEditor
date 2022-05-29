@@ -8186,6 +8186,10 @@ End Function
 Function FreeObject(i)
 
 	FreeModel(i)
+	
+	tilex=ObjectTileX(i)
+	tiley=ObjectTileY(i)
+	LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)-1
 
 	If ObjectPositionMarker(i)>0
 		FreeEntity ObjectPositionMarker(i)
@@ -8197,10 +8201,6 @@ End Function
 Function DeleteObject(i)
 
 	;ShowMessage("Deleting object "+i, 100)
-
-	tilex=ObjectTileX(i)
-	tiley=ObjectTileY(i)
-	LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)-1
 
 	FreeObject(i)
 	
