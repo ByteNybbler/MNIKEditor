@@ -13899,25 +13899,33 @@ Function ShowWorldAdjusterPositions()
 		ElseIf CurrentObjectSubType=11 ; NPC modifier
 			SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
 		ElseIf CurrentObjectSubType=15 ; general command
-			Select CurrentObjectData(0)
-			Case 7
-				If CurrentObjectData(1)=CurrentLevelNumber
-					SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
-				EndIf
-			Case 41,42
-				SetWorldAdjusterPosition(0,CurrentObjectData(1),CurrentObjectData(2))
-				SetWorldAdjusterPosition(1,CurrentObjectData(3),CurrentObjectData(4))
-			Case 61
-				SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
-			End Select
+			ShowWorldAdjusterPositionsCmd(CurrentObjectData(0),CurrentObjectData(1),CurrentObjectData(2),CurrentObjectData(3),CurrentObjectData(4))
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
 		SetWorldAdjusterPosition(0,CurrentObjectData(1),CurrentObjectData(2))
+	Case 242 ; cuboid
+		ShowWorldAdjusterPositionsCmd(CurrentObjectData(2),CurrentObjectData(3),CurrentObjectData(4),CurrentObjectData(5),CurrentObjectData(6))
 	Case 434 ; mothership
 		SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
 		SetWorldAdjusterPosition(1,CurrentObjectData(4),CurrentObjectData(5))
 		SetWorldAdjusterPosition(2,CurrentObjectData(6),CurrentObjectData(7))
 		SetWorldAdjusterPosition(3,CurrentObjectData(8),CurrentObjectData(9))
+	End Select
+
+End Function
+
+Function ShowWorldAdjusterPositionsCmd(Cmd,Data1,Data2,Data3,Data4)
+
+	Select Cmd
+	Case 7
+		If Data1=CurrentLevelNumber
+			SetWorldAdjusterPosition(0,Data2,Data3)
+		EndIf
+	Case 41,42
+		SetWorldAdjusterPosition(0,Data1,Data2)
+		SetWorldAdjusterPosition(1,Data3,Data4)
+	Case 61
+		SetWorldAdjusterPosition(0,Data2,Data3)
 	End Select
 
 End Function
