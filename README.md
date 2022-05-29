@@ -56,7 +56,7 @@
 
 * Enter: Toggle the randomized state of the object adjuster being hovered over with the mouse. Any objects placed will choose a random value from the range that you define.
 * Scroll the mouse wheel: Scroll through objects and object categories.
-* Ctrl+Click on "Object": Enter an object name or the first few characters of an object name to instantly jump to that object in the current category.
+* Ctrl+Click on "Object": Enter an object name or the first few characters of an object name to instantly jump to that object. All object categories will be searched.
 * Ctrl+Click on "Category": Enter a category name or the first few characters of a category name to instantly jump to that object category.
 * Tilde+Click: Find and replace a specific value of the chosen adjuster for all objects in the wlv. Only works on text-based adjusters.
 

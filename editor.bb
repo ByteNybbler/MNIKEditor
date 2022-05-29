@@ -4438,7 +4438,6 @@ Function EditorLocalControls()
 			If CurrentObjectPresetCategory=NofObjectPresetCategories Then CurrentObjectPresetCategory=0
 			LeftMouseReleased=False
 			CurrentObjectPresetObject=0
-			CurrentObjectPresetObject=0
 			i=CurrentObjectPresetCategory
 			Repeat
 				ReadObjectPresetDirectory(i)
@@ -4459,17 +4458,41 @@ Function EditorLocalControls()
 		If CtrlDown() And LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
 			Query$=InputString$("Enter object name (or part of the name): ")
-			For i=0 To NofObjectPresetObjects-1
-				If SubstringMatches(Query$,ObjectPresetObjectName$(i))
-					CurrentObjectPresetObject=i
-					
-					SetEditorMode(3)
-					LoadObjectPreset()
-					BuildCurrentObjectModel()
-					
-					Exit
-				EndIf
+			
+;			For i=0 To NofObjectPresetObjects-1
+;				If SubstringMatches(Query$,ObjectPresetObjectName$(i))
+;					CurrentObjectPresetObject=i
+;					
+;					SetEditorMode(3)
+;					LoadObjectPreset()
+;					BuildCurrentObjectModel()
+;					
+;					Exit
+;				EndIf
+;			Next
+
+			FormerCategory=CurrentObjectPresetCategory
+			FormerObject=CurrentObjectPresetObject
+			For i=0 To NofObjectPresetCategories-1
+				ReadObjectPresetDirectory(i)
+				CurrentObjectPresetCategory=i
+				For j=0 To NofObjectPresetObjects-1
+					If SubstringMatches(Query$,ObjectPresetObjectName$(j))
+						CurrentObjectPresetObject=j
+						
+						SetEditorMode(3)
+						LoadObjectPreset()
+						BuildCurrentObjectModel()
+						
+						Return
+					EndIf
+				Next
 			Next
+
+			CurrentObjectPresetCategory=FormerCategory
+			ReadObjectPresetDirectory(CurrentObjectPresetCategory)
+			CurrentObjectPresetObject=FormerObject
+			;LoadObjectPreset()
 		EndIf	
 
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
