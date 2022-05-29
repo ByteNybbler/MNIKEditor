@@ -7833,6 +7833,7 @@ End Function
 Function SomeObjectWasChanged()
 
 	ResetSimulatedQuantities()
+	FinalizeCurrentObject()
 
 End Function
 
@@ -12849,7 +12850,7 @@ Function CreateSignMesh(Data0,Data1)
 	If Data0>-1 And Data0<6
 		Entity=CopyEntity(SignMesh(Data0))
 		If Data1>-1 And Data1<6
-			EntityTexture Entity,SignTexture(CurrentObjectData(1))
+			EntityTexture Entity,SignTexture(Data1)
 		Else
 			UseErrorColor(Entity)
 		EndIf
