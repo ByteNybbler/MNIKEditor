@@ -662,6 +662,7 @@ Global NofWopAdjusters=0
 Dim ObjectAdjusterWop$(30)
 
 Dim ObjectPositionMarker(1000)
+Dim WorldAdjusterPositionMarker(3)
 
 Dim SimulatedObjectXScale#(1000)
 Dim SimulatedObjectZScale#(1000)
@@ -944,7 +945,6 @@ ScaleMesh ObjectPositionMarkerMesh,0.08,90,0.08
 HideEntity ObjectPositionMarkerMesh
 
 Global CurrentGrabbedObjectMarker
-
 
 
 
@@ -1904,6 +1904,12 @@ Function InitializeGraphicsEntities()
 	EntityColor CurrentGrabbedObjectMarker,100,255,100
 	EntityFX CurrentGrabbedObjectMarker,16 ; disable back-face culling
 	HideEntity CurrentGrabbedObjectMarker
+
+	WorldAdjusterPositionMarker(0)=CopyEntity(CurrentGrabbedObjectMarker)
+	EntityColor WorldAdjusterPositionMarker(0),100,200,255
+	For i=1 To 3
+		WorldAdjusterPositionMarker(i)=CopyEntity(WorldAdjusterPositionMarker(0))
+	Next
 	
 	CurrentWaterTile=CreateMesh()
 	CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
@@ -2103,7 +2109,11 @@ Function EditorMainLoop()
 		HighlightWopAdjusters=Not HighlightWopAdjusters
 	EndIf
 	
-	EntityAlpha CurrentGrabbedObjectMarker,0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
+	MarkerAlpha#=0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
+	EntityAlpha CurrentGrabbedObjectMarker,MarkerAlpha#
+	For i=0 To 3
+		EntityAlpha WorldAdjusterPositionMarker(i),MarkerAlpha#
+	Next
 	
 	ControlLight()
 	If SimulationLevel>=1
@@ -7643,7 +7653,14 @@ End Function
 
 Function SetEntityPositionToObjectPositionWithoutZ(entity, Dest, z#)
 
-	PositionEntity entity,ObjectX(Dest)+ObjectXAdjust(Dest),z#,-ObjectY(Dest)-ObjectYAdjust(Dest)	
+	SetEntityPositionInWorld(entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectY(Dest)+ObjectYAdjust(Dest),z#)
+
+End Function
+
+
+Function SetEntityPositionInWorld(entity,x#,y#,z#)
+
+	PositionEntity entity,x#,z#,-y#
 
 End Function
 
@@ -13823,10 +13840,57 @@ Function BuildCurrentObjectModel()
 
 	EndIf
 
+
+	ShowWorldAdjusterPositions()
 	
 
 End Function
 
+Function SetWorldAdjusterPosition(index,x,y)
+
+	ShowEntity WorldAdjusterPositionMarker(index)
+	SetEntityPositionInWorld(WorldAdjusterPositionMarker(index),x+0.5,y+0.5,0.0)
+
+End Function
+
+
+Function ShowWorldAdjusterPositions()
+	;xzx
+	For i=0 To 3
+		HideEntity WorldAdjusterPositionMarker(i)
+	Next
+
+	Select CurrentObjectType
+	Case 90 ; button
+		If CurrentObjectSubType=10 ; levelexit
+			If CurrentObjectData(1)=CurrentLevelNumber
+				SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
+			EndIf
+		ElseIf CurrentObjectSubType=11 ; NPC modifier
+			SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
+		ElseIf CurrentObjectSubType=15 ; general command
+			Select CurrentObjectData(0)
+			Case 7
+				If CurrentObjectData(1)=CurrentLevelNumber
+					SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
+				EndIf
+			Case 41,42
+				SetWorldAdjusterPosition(0,CurrentObjectData(1),CurrentObjectData(2))
+				SetWorldAdjusterPosition(1,CurrentObjectData(3),CurrentObjectData(4))
+			Case 61
+				SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
+			End Select
+		EndIf
+	Case 51,52 ; magic shooter, meteor shooter
+		SetWorldAdjusterPosition(0,CurrentObjectData(1),CurrentObjectData(2))
+	Case 434 ; mothership
+		SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
+		SetWorldAdjusterPosition(1,CurrentObjectData(4),CurrentObjectData(5))
+		SetWorldAdjusterPosition(2,CurrentObjectData(6),CurrentObjectData(7))
+		SetWorldAdjusterPosition(3,CurrentObjectData(8),CurrentObjectData(9))
+	End Select
+
+End Function
 
 
 Function ResetLevel()
