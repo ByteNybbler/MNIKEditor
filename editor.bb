@@ -15167,7 +15167,7 @@ Function CreateObjectModel(Dest)
 			TurnEntity ObjectEntity(Dest),ObjectPitchAdjust(Dest),0,ObjectRollAdjust(Dest)
 			TurnEntity ObjectEntity(Dest),0,ObjectYawAdjust(Dest),0
 			
-			If ObjectModelName$(Dest)="!Kaboom" TurnEntity ObjectEntity(Dest),0,90,0
+			If ObjectModelName$(Dest)="!Kaboom" Or ObjectModelName$(Dest)="!BabyBoomer" TurnEntity ObjectEntity(Dest),0,90,0
 
 
 		EndIf
