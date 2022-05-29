@@ -14124,6 +14124,8 @@ Function ShowWorldAdjusterPositionsCmd(Cmd,Data1,Data2,Data3,Data4)
 		If Data1=CurrentLevelNumber
 			SetWorldAdjusterPosition(0,Data2,Data3)
 		EndIf
+	Case 11
+		SetWorldAdjusterPosition(0,Data2,Data3)
 	Case 41,42
 		SetWorldAdjusterPosition(0,Data1,Data2)
 		SetWorldAdjusterPosition(1,Data3,Data4)
@@ -14180,6 +14182,10 @@ Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,D4,x,y)
 	Select Cmd
 	Case 7
 		CalculateLevelExitToHere(D1,D2,D3,D4,x,y)
+		CurrentGrabbedObjectModified=True
+	Case 11
+		CurrentObjectData(D2)=x
+		CurrentObjectData(D3)=y
 		CurrentGrabbedObjectModified=True
 	Case 61
 		CurrentObjectData(D2)=x
