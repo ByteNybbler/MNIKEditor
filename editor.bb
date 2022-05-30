@@ -10315,142 +10315,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Colour"
-			
-			Select CurrentObjectData(2)
-			Case 1
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="Blue"
-				Case 2
-					tex$="Rainbow"
-				Case 3
-					tex$="Red"
-				Case 4
-					tex$="Green"
-				Case 5
-					tex$="Orange"
-				Case 6
-					tex$="LightBlue"
-				Case 7
-					tex$="Purple"
-				End Select
-			Case 2
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="Blue"
-				Case 2
-					tex$="Purple"
-				Case 3
-					tex$="Red"
-				Case 4
-					tex$="Green"
-				Case 5
-					tex$="Orange"
-				End Select
-			Case 3
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="Red"
-				Case 2
-					tex$="Green"
-				Case 3
-					tex$="Blue"
-				
-				End Select
-			Case 5
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="Red"
-				Case 2
-					tex$="Orange"
-				Case 3
-					tex$="Yellow"
-				Case 4
-					tex$="Green"
-				Case 5
-					tex$="Blue"
-				Case 6
-					tex$="Indigo"
-				Case 7
-					tex$="Purple"
-				End Select
-			Case 6
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="Black"
-				Case 2
-					tex$="Blue"
-				Case 3
-					tex$="Red"
-				
-				End Select
-			Case 7
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="WS"
-				Case 2
-					tex$="Red"
-				Case 3
-					tex$="Blue S"
-				
-				End Select
-			Case 10
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="Blue"
-				Case 2
-					tex$="Purple"
-				End Select
-			Case 27
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="Red"
-				Case 2
-					tex$="Purple"
-				Case 3
-					tex$="Gold"
-				Case 4
-					tex$="Green"
-				
-				End Select
-			Case 28
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="RedYel"
-				Case 2
-					tex$="YelGreen"
-				Case 3
-					tex$="BluePurp"
-				Case 4
-					Tex$="PurpRed"
-				
-				End Select
-
-			Case 46
-				Select CurrentObjectData(3)
-				Case 1
-					tex$="RedPink"
-				Case 2
-					tex$="BlueGold"
-				Case 3
-					tex$="GreeWhit"
-				Case 4
-					Tex$="Fall"
-				Case 5
-					tex$="Frosty"
-				Case 6
-					tex$="FullPink"
-				
-				End Select
-
-			;Default
-			;	tex$="Default"
-			End Select
-
-
-			
-				
-			
+			tex$=GetAccessoryColorNameWithColorInt$(CurrentObjectData(2),CurrentObjectData(3))
 		EndIf
 		
 		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
@@ -10662,24 +10527,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Colour"
-			
-			Select CurrentObjectData(4)
-			Case 101
-				Select CurrentObjectData(5)
-				Case 0
-					tex$="Normal"
-				Case 1
-					tex$="Sunglass"
-				
-				End Select
-			Case 102
-				Select CurrentObjectData(5)
-				Case 0
-					tex$="Black"
-				Case 1
-					tex$="Red"
-				End Select
-			End Select
+			tex$=GetAccessoryColorNameWithColorInt$(CurrentObjectData(4),CurrentObjectData(5)+1)
 		EndIf
 		
 		If CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Obstacle36" Or CurrentObjectModelName$="!Obstacle37" Or CurrentObjectModelName$="!Obstacle38" Or CurrentObjectModelName$="!Obstacle39" Or CurrentObjectModelName$="!Obstacle40"
@@ -14742,9 +14590,9 @@ Function CalculateUV(Texture,i2,j2,Rotation,size)
 End Function
 
 
-Function GetAccessoryName$(DataX)
+Function GetAccessoryName$(AccessoryId)
 
-	Select DataX
+	Select AccessoryId
 	Case 0
 		tex$="None"
 	Case 1
@@ -14897,6 +14745,206 @@ Function GetAccessoryName$(DataX)
 	End Select
 	
 	Return tex$
+
+End Function
+
+
+Function GetAccessoryColorName$(AccessoryId,ColorId)
+
+	Select AccessoryId
+	Case 1
+		Select ColorId
+		Case 1
+			tex$="Blue"
+		Case 2
+			tex$="Rainbow"
+		Case 3
+			tex$="Red"
+		Case 4
+			tex$="Green"
+		Case 5
+			tex$="Orange"
+		Case 6
+			tex$="LightBlue"
+		Case 7
+			tex$="Purple"
+		Default
+			tex$="NotVanilla"
+		End Select
+	Case 2
+		Select ColorId
+		Case 1
+			tex$="Blue"
+		Case 2
+			tex$="Purple"
+		Case 3
+			tex$="Red"
+		Case 4
+			tex$="Green"
+		Case 5
+			tex$="Orange"
+		Default
+			tex$="NotVanilla"
+		End Select
+	Case 3
+		Select ColorId
+		Case 1
+			tex$="Red"
+		Case 2
+			tex$="Green"
+		Case 3
+			tex$="Blue"
+		Default
+			tex$="NotVanilla"
+		
+		End Select
+	Case 5
+		Select ColorId
+		Case 1
+			tex$="Red"
+		Case 2
+			tex$="Orange"
+		Case 3
+			tex$="Yellow"
+		Case 4
+			tex$="Green"
+		Case 5
+			tex$="Blue"
+		Case 6
+			tex$="Indigo"
+		Case 7
+			tex$="Purple"
+		Default
+			tex$="NotVanilla"
+			
+		End Select
+	Case 6
+		Select ColorId
+		Case 1
+			tex$="Black"
+		Case 2
+			tex$="Blue"
+		Case 3
+			tex$="Red"
+		Default
+			tex$="NotVanilla"
+		
+		End Select
+	Case 7
+		Select ColorId
+		Case 1
+			tex$="WS"
+		Case 2
+			tex$="Red"
+		Case 3
+			tex$="Blue S"
+		Default
+			tex$="NotVanilla"
+		
+		End Select
+	Case 10
+		Select ColorId
+		Case 1
+			tex$="Blue"
+		Case 2
+			tex$="Purple"
+		Default
+			tex$="NotVanilla"
+			
+		End Select
+	Case 27
+		Select ColorId
+		Case 1
+			tex$="Red"
+		Case 2
+			tex$="Purple"
+		Case 3
+			tex$="Gold"
+		Case 4
+			tex$="Green"
+		Default
+			tex$="NotVanilla"
+		
+		End Select
+	Case 28
+		Select ColorId
+		Case 1
+			tex$="RedYel"
+		Case 2
+			tex$="YelGreen"
+		Case 3
+			tex$="BluePurp"
+		Case 4
+			tex$="PurpRed"
+		Default
+			tex$="NotVanilla"
+		
+		End Select
+
+	Case 46
+		Select ColorId
+		Case 1
+			tex$="RedPink"
+		Case 2
+			tex$="BlueGold"
+		Case 3
+			tex$="GreeWhit"
+		Case 4
+			Tex$="Fall"
+		Case 5
+			tex$="Frosty"
+		Case 6
+			tex$="FullPink"
+		Default
+			tex$="NotVanilla"
+		
+		End Select
+
+	Case 101
+		Select ColorId
+		Case 1
+			tex$="Normal"
+		Case 2
+			tex$="Sunglass"
+		Default
+			tex$="NotVanilla"
+		
+		End Select
+	Case 102
+		Select ColorId
+		Case 1
+			tex$="Black"
+		Case 2
+			tex$="Red"
+		Default
+			tex$="NotVanilla"
+			
+		End Select
+
+	Default
+		If ColorId=1 And IsAccessoryIdVanilla(AccessoryId)
+			tex$="Default"
+		Else
+			tex$="NotVanilla"
+		EndIf
+	End Select
+	
+	Return tex$
+
+End Function
+
+
+Function IsAccessoryIdVanilla(AccessoryId)
+
+	Return (AccessoryId>-1 And AccessoryId<57) Or (AccessoryId>100 And AccessoryId<117)
+
+End Function
+
+
+Function GetAccessoryColorNameWithColorInt$(AccessoryId,ColorId)
+
+	ColorName$=GetAccessoryColorName$(AccessoryId,ColorId)
+	Return ColorId+"/"+ColorName$
 
 End Function
 
