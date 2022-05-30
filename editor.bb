@@ -9127,31 +9127,58 @@ Function HoverOverObjectAdjuster(i)
 	StartY=305
 	StartY=StartY+15+(i-ObjectAdjusterStart)*15
 	
+	CenterX=StartX+92
+	TooltipLeftY=StartY+30
+	TooltipAboveY=StartY+8
+	
 	Select ObjectAdjuster$(i)
+	
+	Case "Data2"
+		If CurrentObjectModelName$="!NPC"
+			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(2))))
+		EndIf
+		
+	Case "Data3"
+		If CurrentObjectModelName$="!NPC"
+			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(2),CurrentObjectData(3))))
+		EndIf
+		
+	Case "Data4"
+		If CurrentObjectModelName$="!NPC"
+			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(4))))
+		EndIf
+		
+	Case "Data5"
+		If CurrentObjectModelName$="!NPC"
+			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(4),CurrentObjectData(5)+1)))
+		EndIf
+	
 	Case "TileTypeCollision"
 		tex2$="TTC"
 		tex$="00000 00000 00000"
 			
 		HalfNameWidth=4*Len(tex2$+": "+tex$)
-		BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
+		BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
 		
 		BitPositionIndex=GetBitPositionIndex(BitStartX)
 		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
 		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,StartY+8,LogicIdToLogicName$(BitIndex))
+			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,TooltipAboveY,LogicIdToLogicName$(BitIndex))
 		EndIf
+		
 	Case "ObjectTypeCollision"
 		tex2$="OTC"
 		tex$="00000 00000 00000"
 			
 		HalfNameWidth=4*Len(tex2$+": "+tex$)
-		BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
+		BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
 		
 		BitPositionIndex=GetBitPositionIndex(BitStartX)
 		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
 		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,StartY+8,ObjectTypeCollisionBitToName$(BitIndex))
+			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,TooltipAboveY,ObjectTypeCollisionBitToName$(BitIndex))
 		EndIf
+		
 	End Select
 
 End Function
