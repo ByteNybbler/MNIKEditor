@@ -9135,22 +9135,30 @@ Function HoverOverObjectAdjuster(i)
 	
 	Case "Data2"
 		If CurrentObjectModelName$="!NPC"
-			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(2))))
+			If CurrentObjectData(2)>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(2))))
+			EndIf
 		EndIf
 		
 	Case "Data3"
 		If CurrentObjectModelName$="!NPC"
-			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(2),CurrentObjectData(3))))
+			If CurrentObjectData(2)>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(2),CurrentObjectData(3))))
+			EndIf
 		EndIf
 		
 	Case "Data4"
 		If CurrentObjectModelName$="!NPC"
-			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(4))))
+			If CurrentObjectData(4)>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(4))))
+			EndIf
 		EndIf
 		
 	Case "Data5"
 		If CurrentObjectModelName$="!NPC"
-			ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(4),CurrentObjectData(5)+1)))
+			If CurrentObjectData(4)>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(4),CurrentObjectData(5)+1)))
+			EndIf
 		EndIf
 	
 	Case "TileTypeCollision"
