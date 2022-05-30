@@ -7895,7 +7895,7 @@ Function UpdateObjectEntityToCurrent(Dest)
 	
 	If CurrentHatModel>0
 	
-		ObjectHatEntity(Dest)=CreateHatEntity(CurrentObjectData(2))
+		ObjectHatEntity(Dest)=CreateAccEntity(CurrentObjectData(2))
 		ObjectHatTexture(Dest)=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
 		
 		ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
@@ -7913,7 +7913,7 @@ Function UpdateObjectEntityToCurrent(Dest)
 	
 	If CurrentAccModel>0
 		ObjectAccEntity(Dest)=CreateAccEntity(CurrentObjectData(4))
-		ObjectAccTexture(Dest)=CreateAccTexture(CurrentObjectData(4),CurrentObjectData(5))
+		ObjectAccTexture(Dest)=CreateGlassesTexture(CurrentObjectData(4),CurrentObjectData(5))
 	
 	
 		ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
@@ -13537,7 +13537,7 @@ Function BuildCurrentObjectModel()
 		
 		
 		If CurrentObjectData(2)>0	; hat
-			CurrentHatModel=CreateHatEntity(CurrentObjectData(2))
+			CurrentHatModel=CreateAccEntity(CurrentObjectData(2))
 			CurrentHatTexture=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
 			
 			;TransformAccessoryEntityOntoBone(CurrentHatModel,CurrentObjectModel)
@@ -13545,7 +13545,7 @@ Function BuildCurrentObjectModel()
 		
 		If CurrentObjectData(4)>0 ;100 ; acc
 			CurrentAccModel=CreateAccEntity(CurrentObjectData(4))
-			CurrentAccTexture=CreateAccTexture(CurrentObjectData(4),CurrentObjectData(5))
+			CurrentAccTexture=CreateGlassesTexture(CurrentObjectData(4),CurrentObjectData(5))
 			
 			;TransformAccessoryEntityOntoBone(CurrentAccModel,CurrentObjectModel)
 		EndIf
@@ -14901,87 +14901,64 @@ Function GetAccessoryName$(DataX)
 End Function
 
 
-Function CreateHatEntity(Data2)
+Function CreateAccEntity(AccessoryId)
 
-	If Data2>99
+	If AccessoryId>99
 		Prefix$="data/models/stinker/accessory"
-	ElseIf Data2>9 ; two digit
+	ElseIf AccessoryId>9 ; two digit
 		Prefix$="data/models/stinker/accessory0"
 	Else
 		Prefix$="data/models/stinker/accessory00"
 	EndIf
 
-	FileName$=Prefix$+Str$(Data2+".3ds")
+	FileName$=Prefix$+Str$(AccessoryId)+".3ds"
 	If FileExistsModel(FileName$)
 		Return MyLoadMesh(FileName$,0)
 	Else
 		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
-		Entity=CreateSphere()
-		ScaleMesh Entity,10,10,10
-		Return Entity
+		Return CreateAccEntityNotExist()
+	EndIf
+
+End Function
+
+Function CreateAccEntityNotExist()
+
+	Entity=CreateSphere()
+	ScaleMesh Entity,10,10,10
+	Return Entity
+
+End Function
+
+Function CreateAccTexture(AccessoryId,ColorId,Offset)
+
+	If AccessoryId>99
+		Prefix$="data/models/stinker/accessory"
+	ElseIf AccessoryId>9 ; two digit
+		Prefix$="data/models/stinker/accessory0"
+	Else
+		Prefix$="data/models/stinker/accessory00"
+	EndIf
+
+	FileName$=Prefix$+Str$(AccessoryId)+Chr$(64+ColorId+Offset)+".jpg"
+	If FileExistsTexture(FileName$)
+		Return MyLoadTexture(FileName$,4)
+	Else
+		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
+		Return 0
 	EndIf
 
 End Function
 
 Function CreateHatTexture(Data2,Data3)
 
-	If Data2>99
-		Prefix$="data/models/stinker/accessory"
-	ElseIf Data2>9 ; two digit
-		Prefix$="data/models/stinker/accessory0"
-	Else
-		Prefix$="data/models/stinker/accessory00"
-	EndIf
-
-	FileName$=Prefix$+Str$(Data2)+Chr$(64+Data3)+".jpg"
-	If FileExistsTexture(FileName$)
-		Return MyLoadTexture(FileName$,4)
-	Else
-		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
-		Return 0
-	EndIf
+	Return CreateAccTexture(Data2,Data3,0)
 
 End Function
 
-Function CreateAccEntity(Data4)
+Function CreateGlassesTexture(Data4,Data5)
 
-	If Data4>99
-		Prefix$="data/models/stinker/accessory"
-	ElseIf Data4>9 ; two digit
-		Prefix$="data/models/stinker/accessory0"
-	Else
-		Prefix$="data/models/stinker/accessory00"
-	EndIf
-
-	FileName$=Prefix$+Str$(Data4)+".3ds"
-	If FileExistsModel(FileName$)
-		Return MyLoadMesh(FileName$,0)
-	Else
-		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
-		Entity=CreateSphere()
-		ScaleMesh Entity,10,10,10
-		Return Entity
-	EndIf
-
-End Function
-
-Function CreateAccTexture(Data4,Data5)
-
-	If Data4>99
-		Prefix$="data/models/stinker/accessory"
-	ElseIf Data4>9 ; two digit
-		Prefix$="data/models/stinker/accessory0"
-	Else
-		Prefix$="data/models/stinker/accessory00"
-	EndIf
-
-	FileName$=Prefix$+Str$(Data4)+Chr$(65+Data5)+".jpg" ; Note the 65+Data, which is different from CreateHatTexture's 64+Data.
-	If FileExistsTexture(FileName$)
-		Return MyLoadTexture(FileName$,4)
-	Else
-		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
-		Return 0
-	EndIf
+	; The color ID on glasses is ahead of hats by 1.
+	Return CreateAccTexture(Data4,Data5,1)
 
 End Function
 
@@ -15075,7 +15052,7 @@ Function CreateObjectModel(Dest)
 			
 			If ObjectData(Dest,2)>0	; hat
 				
-				ObjectHatEntity(Dest)=CreateHatEntity(ObjectData(Dest,2))
+				ObjectHatEntity(Dest)=CreateAccEntity(ObjectData(Dest,2))
 				ObjectHatTexture(Dest)=CreateHatTexture(ObjectData(Dest,2),ObjectData(Dest,3))
 				
 				If ObjectHatTexture(Dest)=0
@@ -15102,7 +15079,7 @@ Function CreateObjectModel(Dest)
 			If ObjectData(Dest,4)>0 ;100 ; acc
 				
 				ObjectAccEntity(Dest)=CreateAccEntity(ObjectData(Dest,4))
-				ObjectAccTexture(Dest)=CreateAccTexture(ObjectData(Dest,4),ObjectData(Dest,5))
+				ObjectAccTexture(Dest)=CreateGlassesTexture(ObjectData(Dest,4),ObjectData(Dest,5))
 				
 				If ObjectAccTexture(Dest)=0
 					EntityColor ObjectAccEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
