@@ -4357,15 +4357,11 @@ Function EditorLocalControls()
 		If mx>=StartX+44 And Mx<StartX+100 And my>=StartY And my<StartY+20
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
-				SetEditorMode(3)
-				PasteObjectData(CurrentGrabbedObject)
-				CurrentGrabbedObjectModified=False
+				UpdateCurrentGrabbedObject()
 			EndIf
 		EndIf
 		If KeyDown(19) ; R key
-			SetEditorMode(3)
-			PasteObjectData(CurrentGrabbedObject)
-			CurrentGrabbedObjectModified=False
+			UpdateCurrentGrabbedObject()
 		EndIf
 	EndIf
 	
@@ -4924,8 +4920,14 @@ Function EditorLocalControls()
 					FlushKeys
 					SetupWarning()
 					Print("You have not hit the Update button on the selected object.")
-					Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
-					If Confirm="Y" Or Confirm="y"
+					;Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
+					Print("Type E to save and exit without updating.")
+					Confirm$=Upper$(Input$("Type R to update the object and save and exit: "))
+					If Confirm="E"
+						SaveLevel()
+						ResumeMaster()
+					ElseIf Confirm="R"
+						UpdateCurrentGrabbedObject()
 						SaveLevel()
 						ResumeMaster()
 					EndIf
@@ -8920,6 +8922,15 @@ Function CopyObjectDataToBrush(Source,Dest,XOffset#,YOffset#)
 	BrushObjectFutureFloat10(Dest)=ObjectFutureFloat10(Source)
 	BrushObjectFutureString1$(Dest)=ObjectFutureString1$(Source)
 	BrushObjectFutureString2$(Dest)=ObjectFutureString1$(Source)
+
+End Function
+
+
+Function UpdateCurrentGrabbedObject()
+
+	SetEditorMode(3)
+	PasteObjectData(CurrentGrabbedObject)
+	CurrentGrabbedObjectModified=False
 
 End Function
 
