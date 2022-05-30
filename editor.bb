@@ -14987,6 +14987,9 @@ Const AccessoryDirectory$="data/models/stinker/"
 
 Function GetAccFilenameStart$(AccessoryId)
 
+	; This is done because only the last three digits of the accessory ID are read in-game due to funky string handling.
+	AccessoryId=AccessoryId Mod 1000
+	
 	If AccessoryId>99
 		Prefix$="accessory"
 	ElseIf AccessoryId>9 ; two digit
