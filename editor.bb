@@ -14948,20 +14948,40 @@ Function GetAccessoryColorNameWithColorInt$(AccessoryId,ColorId)
 
 End Function
 
+Const AccessoryDirectory$="data/models/stinker/"
+
+Function GetAccFilenameStart$(AccessoryId)
+
+	If AccessoryId>99
+		Prefix$="accessory"
+	ElseIf AccessoryId>9 ; two digit
+		Prefix$="accessory0"
+	Else
+		Prefix$="accessory00"
+	EndIf
+
+	Return Prefix$+Str$(AccessoryId)
+	
+End Function
+
+Function GetAccFilenameModel$(AccessoryId)
+
+	Return GetAccFilenameStart$(AccessoryId)+".3ds"	
+
+End Function
+
+Function GetAccFilenameTexture$(AccessoryId,ColorId)
+
+	Return GetAccFilenameStart$(AccessoryId)+Chr$(64+ColorId)+".jpg"
+
+End Function
+
 
 Function CreateAccEntity(AccessoryId)
 
-	If AccessoryId>99
-		Prefix$="data/models/stinker/accessory"
-	ElseIf AccessoryId>9 ; two digit
-		Prefix$="data/models/stinker/accessory0"
-	Else
-		Prefix$="data/models/stinker/accessory00"
-	EndIf
-
-	FileName$=Prefix$+Str$(AccessoryId)+".3ds"
-	If FileExistsModel(FileName$)
-		Return MyLoadMesh(FileName$,0)
+	FilePath$=AccessoryDirectory$+GetAccFilenameModel$(AccessoryId)
+	If FileExistsModel(FilePath$)
+		Return MyLoadMesh(FilePath$,0)
 	Else
 		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
 		Return CreateAccEntityNotExist()
@@ -14977,19 +14997,11 @@ Function CreateAccEntityNotExist()
 
 End Function
 
-Function CreateAccTexture(AccessoryId,ColorId,Offset)
+Function CreateAccTexture(AccessoryId,ColorId)
 
-	If AccessoryId>99
-		Prefix$="data/models/stinker/accessory"
-	ElseIf AccessoryId>9 ; two digit
-		Prefix$="data/models/stinker/accessory0"
-	Else
-		Prefix$="data/models/stinker/accessory00"
-	EndIf
-
-	FileName$=Prefix$+Str$(AccessoryId)+Chr$(64+ColorId+Offset)+".jpg"
-	If FileExistsTexture(FileName$)
-		Return MyLoadTexture(FileName$,4)
+	FilePath$=AccessoryDirectory$+GetAccFilenameTexture$(AccessoryId,ColorId)
+	If FileExistsTexture(FilePath$)
+		Return MyLoadTexture(FilePath$,4)
 	Else
 		;ShowMessage("YOU FAIL!!! "+FileName$+" IS NOT EVEN REAL!!!", 1000)
 		Return 0
@@ -14999,14 +15011,14 @@ End Function
 
 Function CreateHatTexture(Data2,Data3)
 
-	Return CreateAccTexture(Data2,Data3,0)
+	Return CreateAccTexture(Data2,Data3)
 
 End Function
 
 Function CreateGlassesTexture(Data4,Data5)
 
 	; The color ID on glasses is ahead of hats by 1.
-	Return CreateAccTexture(Data4,Data5,1)
+	Return CreateAccTexture(Data4,Data5+1)
 
 End Function
 
