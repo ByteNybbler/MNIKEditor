@@ -12337,15 +12337,15 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		EndIf
 
-;		If CurrentObjectModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 ;			If CurrentObjectData(4)=-1 CurrentObjectData(4)=116
 ;			If CurrentObjectData(4)=1 CurrentObjectData(4)=101
 ;			If CurrentObjectData(4)=100 CurrentObjectData(4)=0
 ;			If CurrentObjectData(4)=117 CurrentObjectData(4)=0
-;
-;		
-;
-;		EndIf
+
+			; Set the glasses color back to 1.
+			CurrentObjectData(5)=0
+		EndIf
 		
 		If CurrentObjectType=190
 			If CurrentObjectData(4)<0 Then CurrentObjectData(4)=0
