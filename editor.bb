@@ -21,7 +21,7 @@ SeedRnd MilliSecs() ; Seed the randomizer with the current system time in millis
 Global LeftMouse,LeftMouseReleased,RightMouse,RightMouseReleased
 Global MouseScroll=0
 Global ReturnKey,ReturnKeyReleased,DeleteKey,DeleteKeyReleased
-Const KeyCount=237
+Const KeyCount=237 ; How many keys to track for their state.
 Dim KeyReleased(KeyCount)
 
 Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
@@ -31,7 +31,14 @@ Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						;9-dialog edit screen
 						
 Global EditorModeBeforeMasterEdit=0
-						
+
+; The default level coordinates to focus on when opening a level.
+Const DefaultCameraFocusX=7
+Const DefaultCameraFocusY=10
+
+; Whether or not the level or dialog has unsaved changes. Not implemented for dialogs yet.
+Global UnsavedChanges=False
+
 ; COLORS
 
 Global RectOnR=255
@@ -887,7 +894,7 @@ Global Camera4Zoom#=8.0
 Global Camera1StartY=6
 ; saved when entering orthographic mode since orthographic mode mouse wheel scrolling does not change the height, unlike perspective mode mouse wheel scrolling
 Global Camera1PerspectiveY#=Camera1StartY
-Global Camera1SavedProjMode=1 ; the projection mode to return to after being in projection mode 0
+Global Camera1SavedProjMode=1 ; the projection mode to return to after being in projection mode 0 (which means the camera is disabled)
 
 s=CreateMesh()
 su=CreateSurface(s)
@@ -1994,6 +2001,13 @@ Function Camera1To3Proj()
 	Camera3Proj=1
 	UpdateCameraProj()
 	
+End Function
+
+; Before this function was invented, the level editor camera was originally positioned to approximately be focused on the coordinates 7,10.
+Function PositionCameraInLevel(FocusOnTileX,FocusOnTileY)
+
+	PositionEntity Camera1,FocusOnTileX,EntityY(Camera1),-FocusOnTileY-4
+
 End Function
 
 Function UpdateButtonGateTexture()
@@ -4916,25 +4930,7 @@ Function EditorLocalControls()
 				
 			Else If my>560 And my<600
 				; save and exit
-				If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
-					FlushKeys
-					SetupWarning()
-					Print("You have not hit the Update button on the selected object.")
-					;Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
-					Print("Type E to save and exit without updating.")
-					Confirm$=Upper$(Input$("Type R to update the object and save and exit: "))
-					If Confirm="E"
-						SaveLevel()
-						ResumeMaster()
-					ElseIf Confirm="R"
-						UpdateCurrentGrabbedObject()
-						SaveLevel()
-						ResumeMaster()
-					EndIf
-				Else
-					SaveLevel()
-					ResumeMaster()
-				EndIf
+				SaveLevelAndExit()
 				
 				Repeat
 				Until MouseDown(1)=False
@@ -4947,6 +4943,31 @@ Function EditorLocalControls()
 
 
 	
+
+End Function
+
+
+Function SaveLevelAndExit()
+
+	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
+		FlushKeys
+		SetupWarning()
+		Print("You have not hit the Update button on the selected object.")
+		;Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
+		Print("Type E to save and exit without updating.")
+		Confirm$=Upper$(Input$("Type R to update the object and save and exit: "))
+		If Confirm="E"
+			SaveLevel()
+			ResumeMaster()
+		ElseIf Confirm="R"
+			UpdateCurrentGrabbedObject()
+			SaveLevel()
+			ResumeMaster()
+		EndIf
+	Else
+		SaveLevel()
+		ResumeMaster()
+	EndIf
 
 End Function
 
@@ -8021,6 +8042,7 @@ Function SomeObjectWasChanged()
 
 	ResetSimulatedQuantities()
 	FinalizeCurrentObject()
+	UnsavedChanges=True
 
 End Function
 
@@ -16197,7 +16219,9 @@ End Function
 
 
 
-Function LoadLevel(levelnumber)
+Function LoadLevel(levelnumber,FocusOnTileX,FocusOnTileY)
+
+	PositionCameraInLevel(FocusOnTileX,FocusOnTileY)
 
 	CurrentLevelNumber=levelnumber
 
@@ -16522,7 +16546,9 @@ Function LoadLevel(levelnumber)
 	
 End Function
 
-Function NewLevel(levelnumber)
+Function NewLevel(levelnumber,FocusOnTileX,FocusOnTileY)
+
+	PositionCameraInLevel(FocusOnTileX,FocusOnTileY)
 
 	; new level
 	CurrentLevelNumber=levelnumber
@@ -16557,12 +16583,14 @@ Function CompileLevel()
 
 End Function
 
-Function AccessLevel(levelnumber)
+Function AccessLevel(levelnumber,FocusOnTileX,FocusOnTileY)
+
+	UnsavedChanges=False
 
 	If LevelExists(levelnumber)=True
-		LoadLevel(levelnumber)
+		LoadLevel(levelnumber,FocusOnTileX,FocusOnTileY)
 	Else
-		NewLevel(levelnumber)
+		NewLevel(levelnumber,FocusOnTileX,FocusOnTileY)
 	EndIf
 
 End Function
@@ -19500,7 +19528,7 @@ Function MasterMainLoop()
 	If MouseX()>700 And MouseX()<750
 		If CtrlDown()
 			SelectedLevel=InputInt("Enter wlv number: ")
-			AccessLevel(SelectedLevel)
+			AccessLevel(SelectedLevel,DefaultCameraFocusX,DefaultCameraFocusY)
 			StartEditorMainLoop()
 		Else
 			For i=1 To 20
@@ -19524,7 +19552,7 @@ Function MasterMainLoop()
 							SwapLevel(CopiedLevel,SelectedLevel)
 							CopyingLevel=StateNotSpecial
 						Else
-							AccessLevel(SelectedLevel)
+							AccessLevel(SelectedLevel,DefaultCameraFocusX,DefaultCameraFocusY)
 							StartEditorMainLoop()
 						EndIf
 						
@@ -20942,6 +20970,8 @@ Function SetAskabout(i)
 End Function
 
 Function StartDialog()
+
+	UnsavedChanges=False
 
 	SetEditorMode(9)
 	
