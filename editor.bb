@@ -2277,13 +2277,7 @@ Function EditorMainLoop()
 	
 	
 	If BrushMode=BrushModeFill
-		If PlacementDensity#<1.0
-			Color 255,155,0
-			Text 0,580,">FILL "+PlacementDensity#+"<"
-			Color TextLevelR,TextLevelG,TextLevelB
-		Else
-			Text 0,580,"   >FILL<"
-		EndIf
+		Text 0,580,"   >FILL<"
 	Else
 		Text 0,580,"    FILL"
 	EndIf
@@ -2386,10 +2380,14 @@ Function EditorMainLoop()
 	EndIf
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	Text 600,565,"  XTRUDE"
-	Text 600,580,"  LOGICS"
+	;Text 600,565,"  XTRUDE"
+	;Text 600,580,"  LOGICS"
 	
-	Color 255,255,0
+	If PlacementDensity#<1.0
+		Color 255,155,0
+	EndIf
+	Text 600,565," DENSITY"
+	CenteredText(636,580,PlacementDensity#)
 	
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
@@ -4562,7 +4560,7 @@ Function EditorLocalControls()
 	EndIf
 	
 	If CtrlDown() And KeyPressed(33) ; Ctrl+F
-		ToggleFillMode(False)
+		ToggleFillMode()
 	EndIf
 	
 	If CtrlDown() And KeyPressed(23) ; Ctrl+I
@@ -4602,7 +4600,7 @@ Function EditorLocalControls()
 			If (LeftMouse=True And LeftMouseReleased=True) Or HotkeyFillMode
 				LeftMouseReleased=False
 				;fill
-				ToggleFillMode(CtrlDown())
+				ToggleFillMode()
 				
 				Delay 100
 				
@@ -4903,12 +4901,20 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 		
-		; xtrude logics
 		If my>565 And my<595
 			If LeftMouse=True And LeftMouseReleased=True
-				If GetConfirmation("Do you want to set Xtrude logics?")
-					XtrudeLogics()
+				; placement density
+				PlacementDensity#=InputFloat#("Enter placement density (0.0 to 1.0): ")
+				If PlacementDensity#<0.0
+					PlacementDensity#=0.0
+				ElseIf PlacementDensity#>1.0
+					PlacementDensity#=1.0
 				EndIf
+				
+				; xtrude logics
+				;If GetConfirmation("Do you want to set Xtrude logics?")
+				;	XtrudeLogics()
+				;EndIf
 			EndIf
 		EndIf
 	EndIf
@@ -5006,33 +5012,26 @@ Function XtrudeLogics()
 End Function
 
 
-Function ToggleFillMode(UseFillDensity)
+Function ToggleFillMode()
 
-	If UseFillDensity
-		BrushMode=BrushModeFill
-		PlacementDensity#=InputFloat#("Enter fill density (0.0 to 1.0): ")
-		If PlacementDensity#<0.0
-			PlacementDensity#=0.0
-		ElseIf PlacementDensity#>1.0
-			PlacementDensity#=1.0
-		EndIf
-	ElseIf BrushMode<>BrushModeFill
-		BrushMode=BrushModeFill
-		PlacementDensity#=1.0
-	Else
-		BrushMode=BrushModeNormal
-	EndIf
+	ToggleFromNormalBrush(BrushModeFill)
 
 End Function
 
 Function ToggleInlineMode()
 
-	If BrushMode=BrushModeInline
+	ToggleFromNormalBrush(BrushModeInline)
+	
+End Function
+
+Function ToggleFromNormalBrush(TargetBrushMode)
+
+	If BrushMode=TargetBrushMode
 		BrushMode=BrushModeNormal
 	Else
-		BrushMode=BrushModeInline
+		BrushMode=TargetBrushMode
 	EndIf
-	
+
 End Function
 
 
