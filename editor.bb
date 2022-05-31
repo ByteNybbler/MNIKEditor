@@ -282,6 +282,9 @@ Const BrushModeFill=3
 Const BrushModeInlineSoft=4
 Const BrushModeInlineHard=5
 
+; Negative brush mode IDs can't be selected from the normal brush mode menu.
+Const BrushModeCustom=-1
+
 Function IsBrushInBlockMode()
 	Return BrushMode=BrushModeBlock Or BrushMode=BrushModeBlockPlacing
 End Function
@@ -309,7 +312,6 @@ Global CurrentGrabbedObjectModified=False
 Global CurrentDraggedObject=-1
 
 Global BrushSize=1
-Global CustomBrush=False
 Global CustomBrushEditorMode=-1
 
 Global RandomYawAdjust=False
@@ -2275,8 +2277,11 @@ Function EditorMainLoop()
 ;		Text 0+4,520,"   BLOCK"
 ;	EndIf
 
+	Color GetBrushModeColor(BrushMode,0),GetBrushModeColor(BrushMode,1),GetBrushModeColor(BrushMode,2)
 	
 	CenteredText(50,520,GetBrushModeName$(BrushMode))
+	
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	
 	Text 0,550,"    WIPE"
@@ -2488,7 +2493,7 @@ Function SetEditorMode(NewMode)
 	EndIf
 		
 	If (NewMode=0 Or NewMode=3) And NewMode<>CustomBrushEditorMode
-		CustomBrush=False
+		BrushMode=BrushModeNormal
 	EndIf
 	
 	If NewMode=0
@@ -2512,7 +2517,9 @@ Function SetBrushSize(NewBrushSize)
 		BrushSize=1
 	EndIf
 	
-	CustomBrush=False
+	If BrushMode=BrushModeCustom
+		BrushMode=BrushModeNormal
+	EndIf
 
 End Function
 
@@ -3165,39 +3172,9 @@ Function EditorLocalControls()
 				Color TextLevelR,TextLevelG,TextLevelB
 				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
 				
-				If BrushMode=BrushModeFill
-					; yellow
-					r=255
-					g=255
-					b=0
-				ElseIf IsBrushInBlockMode()
-					; blue
-					r=0
-					g=255
-					b=255
-				ElseIf BrushMode=BrushModeInlineSoft
-					; orange
-					r=255
-					g=80
-					b=0
-				ElseIf BrushMode=BrushModeInlineHard
-					; red
-					r=255
-					g=0
-					b=0
-				Else
-					If CustomBrush
-						; purple
-						r=255
-						g=0
-						b=255
-					Else ; normal brush mode, AKA BrushModeNormal
-						; white
-						r=255
-						g=255
-						b=255
-					EndIf
-				EndIf
+				r=GetBrushModeColor(BrushMode,0)
+				g=GetBrushModeColor(BrushMode,1)
+				b=GetBrushModeColor(BrushMode,2)
 				EntityColor CursorMesh,r,g,b
 				EntityColor CursorMesh2,r,g,b
 				
@@ -3305,39 +3282,36 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Next
-					Else 
-						; default
-						If CustomBrush
-							If EditorMode=0
-								BrushOffset=BrushSize/2
-								BrushXStart=x-BrushOffset
-								BrushYStart=y-BrushOffset
-								For i=0 To BrushSize-1
-									For j=0 To BrushSize-1
-										GrabLevelTileFromBrush(i,j)
-										ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
-									Next
-								Next
-							ElseIf EditorMode=3
-								For k=0 To NofBrushObjects-1
-									GrabObjectFromBrush(k)
-									PlaceObject(x+BrushObjectXOffset#(k),y+BrushObjectYOffset#(k))
-								Next
-							EndIf
-						Else
+					ElseIf BrushMode=BrushModeCustom
+						If EditorMode=0
 							BrushOffset=BrushSize/2
 							BrushXStart=x-BrushOffset
 							BrushYStart=y-BrushOffset
 							For i=0 To BrushSize-1
 								For j=0 To BrushSize-1
-									If EditorMode=0
-										ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
-									ElseIf EditorMode=3
-										PlaceObject(BrushXStart+i,BrushYStart+j)
-									EndIf
+									GrabLevelTileFromBrush(i,j)
+									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								Next
 							Next
+						ElseIf EditorMode=3
+							For k=0 To NofBrushObjects-1
+								GrabObjectFromBrush(k)
+								PlaceObject(x+BrushObjectXOffset#(k),y+BrushObjectYOffset#(k))
+							Next
 						EndIf
+					Else ; normal brush
+						BrushOffset=BrushSize/2
+						BrushXStart=x-BrushOffset
+						BrushYStart=y-BrushOffset
+						For i=0 To BrushSize-1
+							For j=0 To BrushSize-1
+								If EditorMode=0
+									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
+								ElseIf EditorMode=3
+									PlaceObject(BrushXStart+i,BrushYStart+j)
+								EndIf
+							Next
+						Next
 					EndIf
 					
 					If EditorMode=3
@@ -3447,11 +3421,11 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 			
-			If ReturnKey=True And ReturnKeyReleased=True And BrushMode=BrushModeNormal
+			If ReturnKey=True And ReturnKeyReleased=True
 				ReturnKeyReleased=False
-				If CustomBrush
-					CustomBrush=False
-				Else
+				If BrushMode=BrushModeCustom
+					BrushMode=BrushModeNormal
+				ElseIf BrushMode=BrushModeNormal
 					; set custom brush
 					NofBrushObjects=0
 					BrushOffset=BrushSize/2
@@ -3464,7 +3438,7 @@ Function EditorLocalControls()
 							Next
 						Next
 						
-						CustomBrush=True
+						BrushMode=BrushModeCustom
 						CustomBrushEditorMode=EditorMode
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
@@ -3475,7 +3449,7 @@ Function EditorLocalControls()
 						Next
 						
 						If NofBrushObjects<>0
-							CustomBrush=True
+							BrushMode=BrushModeCustom
 							CustomBrushEditorMode=EditorMode
 						EndIf
 					EndIf
@@ -4611,23 +4585,23 @@ Function EditorLocalControls()
 	
 	If MX>=00 And Mx<100
 		If my>=510 And my<540
-			; switch brush mode
+			; brush mode
+			BrushChange=0
 			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 				LeftMouseReleased=False
 
-				BrushMode=BrushMode+1
-				If BrushMode=BrushModeBlockPlacing
-					BrushMode=BrushMode+1
-				EndIf
+				BrushChange=1
 			EndIf
 			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 				RightMouseReleased=False
 
-				BrushMode=BrushMode-1
-				If BrushMode=BrushModeBlockPlacing
-					BrushMode=BrushMode-1
-				EndIf
+				BrushChange=-1
 			EndIf
+			
+			BrushMode=BrushMode+BrushChange
+			While BrushMode=BrushModeBlockPlacing Or BrushMode=BrushModeCustom
+				BrushMode=BrushMode+BrushChange
+			Wend
 			If BrushMode<0
 				BrushMode=MaxBrushMode
 			ElseIf BrushMode>MaxBrushMode
@@ -14841,6 +14815,51 @@ Function GetBrushModeName$(Value)
 	Default
 		Return "UNKNOWN"
 	End Select
+
+End Function
+
+
+Function GetBrushModeColor$(Value,index)
+
+	If Value=BrushModeFill
+		; yellow
+		r=255
+		g=255
+		b=0
+	ElseIf Value=BrushModeBlock Or Value=BrushModeBlockPlacing
+		; blue
+		r=0
+		g=255
+		b=255
+	ElseIf Value=BrushModeInlineSoft
+		; orange
+		r=255
+		g=80
+		b=0
+	ElseIf Value=BrushModeInlineHard
+		; red
+		r=255
+		g=0
+		b=0
+	ElseIf Value=BrushModeCustom
+		; purple
+		r=255
+		g=0
+		b=255
+	Else ; normal brush mode, AKA BrushModeNormal
+		; white
+		r=255
+		g=255
+		b=255
+	EndIf
+	
+	If index=0
+		Return r
+	ElseIf index=1
+		Return g
+	Else
+		Return b
+	EndIf
 
 End Function
 

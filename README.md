@@ -39,7 +39,7 @@
 * Ctrl+B: Toggle block mode. The cursor brush will be blue while block mode is active.
 * Ctrl+F: Toggle fill mode. The cursor brush will be yellow while fill mode is active.
 * Ctrl+I: Toggle inline soft mode. The cursor brush will be orange while inline soft mode is active.
-* Ctrl+O: Toggle inline hard mode. The cursor brush will be red while inline soft mode is active.
+* Ctrl+O: Toggle inline hard mode. The cursor brush will be red while inline hard mode is active.
 
 ### CAMERA CONTROLS
 
