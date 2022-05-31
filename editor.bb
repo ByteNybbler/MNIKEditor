@@ -5335,6 +5335,7 @@ Function SaveLevelAndExit()
 		SaveLevel()
 		Return True
 	EndIf
+	Return False
 
 End Function
 
