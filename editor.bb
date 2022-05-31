@@ -253,6 +253,7 @@ Global CustomIconName$="Standard"
 Global CustomMapName$
 
 Const FlStartX=706 ; formerly 715
+Const FlStartY=165
 
 
 Dim LevelMesh(100),LevelSurface(100) ; one for each row
@@ -2664,18 +2665,22 @@ Function DrawTooltip(StartX,StartY,Message$)
 	;ShowMessage("Showing tooltip at "+StartX+","+StartY+": "+Message$,1000)
 	
 	TextPixelLength=GetTextPixelLength(Message$)
+	HorizontalPadding=10
+	TotalHorizontalPadding=HorizontalPadding*2
+	RectangleWidth=TextPixelLength+TotalHorizontalPadding
+	StartX=StartX-TotalHorizontalPadding
 	
 	; clamp the tooltip position so that the rectangle doesn't spill outside the window
-	If StartX+TextPixelLength>800
-		StartX=800-TextPixelLength
+	If StartX+RectangleWidth>800
+		StartX=800-RectangleWidth
 	ElseIf StartX<0
 		StartX=0
 	EndIf
 
 	Color RectToolbarR,RectToolbarG,RectToolbarB
-	Rect StartX,StartY-40,TextPixelLength,30,True
+	Rect StartX,StartY-40,RectangleWidth,30,True
 	Color TextLevelR,TextLevelG,TextLevelB
-	Text StartX,StartY-30,Message$
+	Text StartX+HorizontalPadding,StartY-30,Message$
 
 End Function
 
@@ -2756,6 +2761,17 @@ Function KeyPressed(i)
 		Return True
 	Else
 		Return False
+	EndIf
+
+End Function
+
+
+Function TrueToYes$(Bool)
+
+	If Bool=True
+		Return "Yes"
+	Else
+		Return "No"
 	EndIf
 
 End Function
@@ -2971,22 +2987,12 @@ Function EditorLocalRendering()
 	End Select
 	
 	
-	If LevelEdgeStyle=1
-		LevelEdgeStyleString$="-" ; DEFAULT
-	ElseIf LevelEdgeStyle=2
-		LevelEdgeStyleString$="B" ; BORDER
-	ElseIf LevelEdgeStyle=3
-		LevelEdgeStyleString$="X" ; BORDER X
-	ElseIf LevelEdgeStyle=4
-		LevelEdgeStyleString$="N" ; NONE
-	Else
-		LevelEdgeStyleString$=LevelEdgeStyle
-	EndIf
+	LevelEdgeStyleString$=GetLevelEdgeStyleChar$(LevelEdgeStyle)
 
 
 	Text 715,133,"<LevelTex>"
 	Text 715,150,"<WaterTex>"
-	Text FlStartX,165," Fl Tr Gl B"
+	Text FlStartX,FlStartY," Fl Tr Gl B"
 	Text FlStartX+12,180,Str$(WaterFlow)
 	Text FlStartX+36,180,Str$(WaterTransparent)
 	Text FlStartX+60,180,Str$(WaterGlow)
@@ -3941,14 +3947,7 @@ Function EditorLocalControls()
 		If my>165 And my<195 ;my<185 
 			If mx>FlStartX+8 And mx<FlStartX+24
 				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, 150)
-;				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
-;					Waterflow=WaterFlow+1
-;					leftmousereleased=False
-;				EndIf
-;				If (rightmouse=True And rightmousereleased=True) Or MouseScroll<0
-;					Waterflow=Waterflow-1
-;					rightmousereleased=False
-;				EndIf
+				ShowTooltipCenterAligned(FlStartX+16,FlStartY+8,"Water Flow Speed: "+Waterflow)
 			EndIf
 			If mx>FlStartX+32 And mx<FlStartX+48
 				If (leftmouse=True And leftmousereleased=True) Or (rightmouse=True And rightmousereleased=True) Or MouseScroll<>0
@@ -3957,7 +3956,7 @@ Function EditorLocalControls()
 					leftmousereleased=False
 					rightmousereleased=False
 				EndIf
-				
+				ShowTooltipCenterAligned(FlStartX+40,FlStartY+8,"Water is Transparent: "+TrueToYes$(WaterTransparent))
 			EndIf
 			If mx>FlStartX+56 And mx<FlStartX+72
 				If (leftmouse=True And leftmousereleased=True) Or (rightmouse=True And rightmousereleased=True) Or MouseScroll<>0
@@ -3966,7 +3965,7 @@ Function EditorLocalControls()
 					leftmousereleased=False
 					rightmousereleased=False
 				EndIf
-				
+				ShowTooltipCenterAligned(FlStartX+64,FlStartY+8,"Water Glows: "+TrueToYes$(WaterGlow))
 			EndIf
 			If mx>FlStartX+80 And mx<FlStartX+100
 				LevelEdgeStyle=AdjustInt("Enter LevelEdgeStyle: ", LevelEdgeStyle, 1, 10, 150)
@@ -3975,6 +3974,7 @@ Function EditorLocalControls()
 				ElseIf LevelEdgeStyle>4
 					LevelEdgeStyle=1
 				EndIf
+				ShowTooltipCenterAligned(FlStartX+90,FlStartY+8,"Level Edge Style: "+GetLevelEdgeStyleName$(LevelEdgeStyle))
 			EndIf
 
 
@@ -14717,6 +14717,41 @@ Function CalculateUV(Texture,i2,j2,Rotation,size)
 	Default
 		ChunkTileu#=Float((Texture Mod size))/size+(Float(i2)/Float(LevelDetail))/size+uoverlap
 		ChunkTilev#=Float((Texture)/size)/size+(Float(j2)/Float(LevelDetail))/size+voverlap
+	End Select
+
+End Function
+
+
+Function GetLevelEdgeStyleChar$(Value)
+
+	Select Value
+	Case 1
+		Return "-"
+	Case 2
+		Return "B"
+	Case 3
+		Return "X"
+	Case 4
+		Return "N"
+	Default
+		Return Value
+	End Select
+
+End Function
+
+Function GetLevelEdgeStyleName$(Value)
+
+	Select Value
+	Case 1
+		Return "Default"
+	Case 2
+		Return "Border"
+	Case 3
+		Return "Border X"
+	Case 4
+		Return "None"
+	Default
+		Return Value
 	End Select
 
 End Function
