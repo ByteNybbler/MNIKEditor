@@ -16349,10 +16349,23 @@ Function SaveLevel()
 End Function
 
 
+Function AccessLevelAt(levelnumber,FocusOnTileX,FocusOnTileY)
 
-Function LoadLevel(levelnumber,FocusOnTileX,FocusOnTileY)
-
+	AccessLevel(levelnumber)
 	PositionCameraInLevel(FocusOnTileX,FocusOnTileY)
+
+End Function
+
+
+Function AccessLevelAtCenter(levelnumber)
+
+	AccessLevel(levelnumber)
+	PositionCameraInLevel(LevelWidth/2,LevelHeight/2)
+
+End Function
+
+
+Function LoadLevel(levelnumber)
 
 	CurrentLevelNumber=levelnumber
 
@@ -16677,9 +16690,7 @@ Function LoadLevel(levelnumber,FocusOnTileX,FocusOnTileY)
 	
 End Function
 
-Function NewLevel(levelnumber,FocusOnTileX,FocusOnTileY)
-
-	PositionCameraInLevel(FocusOnTileX,FocusOnTileY)
+Function NewLevel(levelnumber)
 
 	; new level
 	CurrentLevelNumber=levelnumber
@@ -16714,14 +16725,14 @@ Function CompileLevel()
 
 End Function
 
-Function AccessLevel(levelnumber,FocusOnTileX,FocusOnTileY)
+Function AccessLevel(levelnumber)
 
 	UnsavedChanges=False
 
 	If LevelExists(levelnumber)=True
-		LoadLevel(levelnumber,FocusOnTileX,FocusOnTileY)
+		LoadLevel(levelnumber)
 	Else
-		NewLevel(levelnumber,FocusOnTileX,FocusOnTileY)
+		NewLevel(levelnumber)
 	EndIf
 
 End Function
@@ -19659,7 +19670,7 @@ Function MasterMainLoop()
 	If MouseX()>700 And MouseX()<750
 		If CtrlDown()
 			SelectedLevel=InputInt("Enter wlv number: ")
-			AccessLevel(SelectedLevel,DefaultCameraFocusX,DefaultCameraFocusY)
+			AccessLevelAtCenter(SelectedLevel)
 			StartEditorMainLoop()
 		Else
 			For i=1 To 20
@@ -19683,7 +19694,7 @@ Function MasterMainLoop()
 							SwapLevel(CopiedLevel,SelectedLevel)
 							CopyingLevel=StateNotSpecial
 						Else
-							AccessLevel(SelectedLevel,DefaultCameraFocusX,DefaultCameraFocusY)
+							AccessLevelAtCenter(SelectedLevel)
 							StartEditorMainLoop()
 						EndIf
 						
