@@ -9982,6 +9982,7 @@ Function DisplayObjectAdjuster(i)
 				Default
 					tex$="No"
 			End Select
+			tex$=CurrentObjectData(0)+"/"+tex$
 		EndIf
 		
 		;If CurrentObjectModelName$="!Scritter" Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectType=210 Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage"  Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectType=424 Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
@@ -10347,6 +10348,7 @@ Function DisplayObjectAdjuster(i)
 			Else
 				tex$="Coin"
 			EndIf
+			tex$=CurrentObjectData(1)+"/"+tex$
 			
 		EndIf
 		If CurrentObjectType=230 ; FireFlower
@@ -10508,6 +10510,10 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
+		If CurrentObjectModelName$="!Sun Sphere1"
+			tex2$="Blue"
+		EndIf
+		
 		If CurrentObjectModelName$="!Wraith"
 			tex2$="Magic"
 			Select CurrentObjectData(2)
@@ -10517,11 +10523,10 @@ Function DisplayObjectAdjuster(i)
 				tex$="Ice"
 			Case 2
 				tex$="Grow"
+			Default
+				tex$="None"
 			End Select
-		EndIf
-		
-		If CurrentObjectModelName$="!Sun Sphere1"
-			tex2$="Blue"
+			tex$=CurrentObjectData(2)+"/"+tex$
 		EndIf
 		
 		;If CurrentObjectModelName$="!Spring"  Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!FlipBridge"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX" Or CurrentObjectModelName$="!Conveyor"
@@ -10535,6 +10540,21 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="RollAnim"
+		EndIf
+		
+		If CurrentObjectType=471 ; Wraith
+			tex2$="Magic"
+			Select CurrentObjectData(2)
+			Case 0
+				tex$="Fire"
+			Case 1
+				tex$="Ice"
+			Case 2
+				tex$="Grow"
+			Default
+				tex$="None"
+			End Select
+			tex$=CurrentObjectData(2)+"/"+tex$
 		EndIf
 
 		If CurrentObjectType=90 ; button
@@ -10624,18 +10644,6 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=434 ; mothership
 			tex2$="SourceX"
-		EndIf
-		
-		If CurrentObjectType=471 ; wraith
-			tex2$="Magic"
-			Select CurrentObjectData(2)
-			Case 0
-				tex$="Fire"
-			Case 1
-				tex$="Ice"
-			Case 2
-				tex$="Grow"
-			End Select
 		EndIf
 		
 		If CurrentObjectType=52 ; meteor shooter
@@ -12230,11 +12238,11 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=3
 		EndIf
 		
-		If CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
-			If CurrentObjectData(0)>1 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=1
-
-		EndIf
+		;If CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
+		;	If CurrentObjectData(0)>1 CurrentObjectData(0)=0
+		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=1
+		;
+		;EndIf
 
 		
 		If CurrentObjectType=190 Or CurrentObjectType=164
@@ -12259,7 +12267,7 @@ Function AdjustObjectAdjuster(i)
 
 
 		EndIf
-		If CurrentObjectModelName$="!Bowler"
+		If CurrentObjectType=260 ; Spikeyball
 			If CurrentObjectData(1)=2
 				If CurrentObjectData(0)>7 CurrentObjectData(0)=0
 				If CurrentObjectData(0)<0 CurrentObjectData(0)=7
@@ -12268,15 +12276,17 @@ Function AdjustObjectAdjuster(i)
 				If CurrentObjectData(0)<0 CurrentObjectData(0)=3
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!FireFlower"
+		If CurrentObjectType=230 ; FireFlower
 			If CurrentObjectData(0)>7 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=7
 		EndIf
-		If CurrentObjectModelName$="!Turtle" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectType<>424) Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot"
+		;If CurrentObjectModelName$="!Turtle" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectType<>424) Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot"
+		; turtle or scouge or ufo or retro z-bot or zipbot or zapbot
+		If CurrentObjectType=220 Or CurrentObjectType=421 Or CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
 			If CurrentObjectData(0)>3 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=3
 		EndIf
-		If  CurrentObjectModelName="!Kaboom"
+		If CurrentObjectModelName="!Kaboom"
 
 			If CurrentObjectData(0)>5 CurrentObjectData(0)=1
 			If CurrentObjectData(0)<1 CurrentObjectData(0)=5
@@ -12290,11 +12300,13 @@ Function AdjustObjectAdjuster(i)
 
 		
 		If CurrentObjectModelName$="!Wisp"
+			; texture
 			If CurrentObjectData(0)>9 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=9
 		EndIf
 		
 		If CurrentObjectModelName$="!Sign"
+			; shape
 			If CurrentObjectData(0)>5 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=5
 		EndIf
@@ -12313,11 +12325,12 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!WaterFall"
+			; liquid type
 			If CurrentObjectData(0)>2 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=2
 		EndIf
 		
-		If CurrentObjectModelName$="!Ghost" Or CurrentObjectModelName$="!Wraith"
+		If CurrentObjectType=470 Or CurrentObjectType=471 ; ghost or wraith
 			
 			If CurrentObjectData(1)<2 CurrentObjectData(1)=2
 			
@@ -12356,17 +12369,17 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObjectData(1)>3 CurrentObjectData(1)=1
 			If CurrentObjectData(1)<1 CurrentObjectData(1)=3
 		EndIf
-		If CurrentObjectModelName$="!StarGate"
-			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
-
-		EndIf
-		If CurrentObjectModelName$="!FireFlower" 
+;		If CurrentObjectType=11 ; TollGate
+;			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
+;			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+;
+;		EndIf
+		If CurrentObjectType=230 ; FireFlower
 			If CurrentObjectData(1)>3 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=3
 		EndIf 
 		
-		If CurrentObjectModelName$="!Cuboid"
+		If CurrentObjectType=242 ; Cuboid
 
 			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
@@ -12378,7 +12391,7 @@ Function AdjustObjectAdjuster(i)
 		;	If CurrentObjectData(1)<0 CurrentObjectData(1)=15
 
 		;EndIf
-		If CurrentObjectModelName$="!Bowler"
+		If CurrentObjectType=260 ; SpikeyBall
 			If CurrentObjectData(1)>2 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=2
 
@@ -12390,15 +12403,15 @@ Function AdjustObjectAdjuster(i)
 				If CurrentObjectData(0)<0 CurrentObjectData(0)=3
 			EndIf
 		EndIf
-		If CurrentObjectModelName$="!Chomper"
+		If CurrentObjectType=250 ; Chomper
 			If CurrentObjectData(1)>3 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=3
 		EndIf
-		If CurrentObjectModelName$="!Turtle"
+		If CurrentObjectType=220 ; Turtle
 			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
 		EndIf
-		If CurrentObjectModelName$="!Crab"
+		If CurrentObjectType=370 ; Crab
 			If CurrentObjectData(1)>3 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=3
 		EndIf
@@ -12411,26 +12424,34 @@ Function AdjustObjectAdjuster(i)
 			
 
 		EndIf
-		If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate")  Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot" Or CurrentObjectModelname$="!Portal Warp"
-
+		;If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate")  Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot" Or CurrentObjectModelname$="!Portal Warp"
+		If CurrentObjectType=290 Or CurrentObjectType=380 ; Thwart or Ice Troll
 			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
-			
-
+		EndIf
+		
+		; ufo or retro z-bot or zipbot or zapbot
+		If CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
+			; turning
+			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
+			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+		EndIf
+		
+		If CurrentObjectModelname$="!Portal Warp"
+			; ???
+			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
+			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
 		EndIf
 		
 		If CurrentObjectModelName$="!Sign"
+			; texture
 			If CurrentObjectData(1)>5 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=5
-			
-
 		EndIf
-		If CurrentObjectModelName$="!Ghost"
-			If CurrentObjectData(1)>9 CurrentObjectData(1)=1
-			If CurrentObjectData(1)<1 CurrentObjectData(1)=9
-			
-
-		EndIf
+;		If CurrentObjectType=470 ; Ghost
+;			If CurrentObjectData(1)>9 CurrentObjectData(1)=1
+;			If CurrentObjectData(1)<1 CurrentObjectData(1)=9
+;		EndIf
 
 
 		
@@ -12440,19 +12461,19 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(2)=AdjustInt("Data2: ", CurrentObjectData(2), SlowInt, FastInt, DelayTime)
 		AdjustObjectData(2, SlowInt, FastInt, DelayTime)
 		
-		If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!FlipBridge"
+		If CurrentObjectType=280 Or CurrentObjectType=410 ; Spring or FlipBridge
 			; direction 0-7
 			If CurrentObjectData(2)>7 CurrentObjectData(2)=0
 			If CurrentObjectData(2)<0 CurrentObjectData(2)=7
 		EndIf
-		If CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX" Or CurrentObjectModelName$="!Conveyor"
+		If CurrentObjectType=281 Or CurrentObjectType=282 Or CurrentObjectType=45 Or CurrentObjectType=46 ; Suctube or Suctube X or Conveyor
 			; direction 0-3
 			If CurrentObjectData(2)>3 CurrentObjectData(2)=0
 			If CurrentObjectData(2)<0 CurrentObjectData(2)=3
 		EndIf
 
 		; transporter, weebot, zapbot, pushbot
-		If CurrentObjectType=210 Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot"  Or CurrentObjectModelName$="!Pushbot"
+		If CurrentObjectType=210 Or CurrentObjectType=430 Or CurrentObjectType=431 Or CurrentObjectType=432
 			; direction 0-3 (or speed for zap/weebot)
 			If CurrentObjectData(2)>3 CurrentObjectData(2)=0
 			If CurrentObjectData(2)<0 CurrentObjectData(2)=3
@@ -12490,10 +12511,10 @@ Function AdjustObjectAdjuster(i)
 		;	If CurrentObjectData(2)<0 CurrentObjectData(2)=2
 		;EndIf
 		
-		If CurrentObjectModelName$="!Gem"
-			If CurrentObjectData(0)>2 CurrentObjectData(0)=-2
-			If CurrentObjectData(0)<-2 CurrentObjectData(0)=2
-		EndIf
+		;If CurrentObjectModelName$="!Gem"
+		;	If CurrentObjectData(0)>2 CurrentObjectData(0)=-2
+		;	If CurrentObjectData(0)<-2 CurrentObjectData(0)=2
+		;EndIf
 
 
 		
@@ -12504,29 +12525,33 @@ Function AdjustObjectAdjuster(i)
 
 		EndIf
 		
-		If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!ZbotNPC"
+		If CurrentObjectModelName$="!Thwart"
+			; colour
 			If CurrentObjectData(2)>7 CurrentObjectData(2)=0
 			If CurrentObjectData(2)<0 CurrentObjectData(2)=7
-			
-
-		EndIf
-
-
-
-		If CurrentObjectModelName$="!Sign"
-			If CurrentObjectData(2)>3 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=3
-			
-
 		EndIf
 		
-		If CurrentObjectModelName$="!Wraith"
-			If CurrentObjectData(2)>2 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=2
-
+		If CurrentObjectType=433 ; Z-Bot NPC
+			If CurrentObjectData(2)>1 CurrentObjectData(2)=0
+			If CurrentObjectData(2)<0 CurrentObjectData(2)=1
 		EndIf
 
 
+
+		;If CurrentObjectModelName$="!Sign"
+		;	If CurrentObjectData(2)>3 CurrentObjectData(2)=0
+		;	If CurrentObjectData(2)<0 CurrentObjectData(2)=3
+		;	
+		;
+		;EndIf
+		
+		If CurrentObjectModelName$="!Wraith"
+			; Doubles as both magic type and texture
+			If CurrentObjectData(2)>2 CurrentObjectData(2)=0
+			If CurrentObjectData(2)<0 CurrentObjectData(2)=2
+		EndIf
+
+		
 
 	Case "Data3"
 		;CurrentObjectData(3)=AdjustInt("Data3: ", CurrentObjectData(3), SlowInt, FastInt, DelayTime)
@@ -12542,7 +12567,7 @@ Function AdjustObjectAdjuster(i)
 			End Select
 		EndIf
 
-		If CurrentObjectModelName$="!SteppingStone"
+		If CurrentObjectType=40 ; stepping stone
 			; sound
 			If CurrentObjectData(3)>3 CurrentObjectData(3)=0
 			If CurrentObjectData(3)<0 CurrentObjectData(3)=3
@@ -12562,7 +12587,7 @@ Function AdjustObjectAdjuster(i)
 				If CurrentobjectData(3)>9 CurrentObjectData(3)=0
 			End Select
 		EndIf
-		If  CurrentObjectModelName$="!FireFlower" 
+		If  CurrentObjectType=230 ; FireFlower
 			; hitpoints
 			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
 		EndIf
@@ -12605,22 +12630,21 @@ Function AdjustObjectAdjuster(i)
 		;	If CurrentobjectData(3)<4 CurrentObjectData(3)=4
 		;	If CurrentobjectData(3)>30 CurrentObjectData(3)=30
 		;EndIf
-		If  Currentobjectmodelname$="!Pushbot" 
+		If  CurrentObjectType=432 ; moobot
 			; pushbot left/right turn,
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
-			If CurrentobjectData(3)>2 CurrentObjectData(3)=2
+			If CurrentobjectData(3)<0 CurrentObjectData(3)=2
+			If CurrentobjectData(3)>2 CurrentObjectData(3)=0
 		EndIf
-		If  CurrentObjectType=45
-			; conveyor lead
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
-			If CurrentobjectData(3)>1 CurrentObjectData(3)=1
+		If  CurrentObjectType=45 ; conveyor lead
+			; turn direction
+			If CurrentobjectData(3)<0 CurrentObjectData(3)=1
+			If CurrentobjectData(3)>1 CurrentObjectData(3)=0
 		EndIf
 
-		If  CurrentObjectType=46
-			; pushbot left/right turn,
-			If CurrentobjectData(3)<1 CurrentObjectData(3)=1
-			
-		EndIf
+;		If  CurrentObjectType=46 ; conveyor tail
+;			If CurrentobjectData(3)<1 CurrentObjectData(3)=1
+;			
+;		EndIf
 
 		If  Currentobjectmodelname$="!Suctube" Or CurrentObjectModelName$="!SuctubeX"
 			; Suctube tex
@@ -12674,24 +12698,24 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 		
-		If  Currentobjectmodelname$="!Zapbot" Or CurrentObjectModelName$="!Ufo"
-
+		If CurrentObjectType=431 Or CurrentObjectType=422 ; Zapbot or UFO
 			; zapbot track?
-			If CurrentobjectData(4)<0 CurrentObjectData(4)=0
-			If CurrentobjectData(4)>1 CurrentObjectData(4)=1
+			If CurrentobjectData(4)<0 CurrentObjectData(4)=1
+			If CurrentobjectData(4)>1 CurrentObjectData(4)=0
 		EndIf
 		
 		
 		If  Currentobjectmodelname$="!Conveyor"
 			; visual type
-			If CurrentobjectData(4)<0 CurrentObjectData(4)=0
-			If CurrentobjectData(4)>4 CurrentObjectData(4)=4
+			If CurrentobjectData(4)<0 CurrentObjectData(4)=4
+			If CurrentobjectData(4)>4 CurrentObjectData(4)=0
 		EndIf
 
 
-		If CurrentObjectModelName$="!Suctube"  
-			If CurrentobjectData(4)<0 CurrentObjectData(4)=0
-			If CurrentobjectData(4)>1 CurrentObjectData(4)=1
+		If CurrentObjectType=281 ; Suctube
+			; sound
+			If CurrentobjectData(4)<0 CurrentObjectData(4)=1
+			If CurrentobjectData(4)>1 CurrentObjectData(4)=0
 		EndIf
 
 
@@ -12724,26 +12748,22 @@ Function AdjustObjectAdjuster(i)
 
 
 		;If CurrentObjectModelName$="!NPC"
-		If Currentobjectmodelname$="!Conveyor"
+		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor
+			; Logic
 			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
 			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
-			
-
 		EndIf
 		;If CurrentObjectModelName$="!NPC" And (CurrentObjectData(4)<>101 And CurrentObjectData(4)<>102) Then CurrentObjectData(5)=0
 		
 		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 			If CurrentObjectData(5)>255 CurrentObjectData(5)=0
 			If CurrentObjectData(5)<0 CurrentObjectData(5)=255
-			
-
 		EndIf
 		
-		If CurrentObjectModelName$="!Suctube"
+		If CurrentObjectType=281 ;CurrentObjectModelName$="!Suctube"
+			; particles
 			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
 			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
-			
-
 		EndIf
 
 			
@@ -12765,12 +12785,15 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectModelName$="!NPC"
+			; WalkAnim
 			If CurrentObjectData(6)>2 CurrentObjectData(6)=0
 			If CurrentObjectData(6)<0 CurrentObjectData(6)=2
 			
 
 		EndIf
-		If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or CurrentObjectModelName$="!ZbotNPC"
+
+		If CurrentObjectType=290 Or CurrentObjectType=380 Or CurrentObjectType=433 ; Thwart or Ice Troll or Z-Bot NPC
+			; Shooter
 			If CurrentObjectData(6)>1 CurrentObjectData(6)=0
 			If CurrentObjectData(6)<0 CurrentObjectData(6)=1
 			
@@ -12802,6 +12825,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If CurrentObjectModelName$="!NPC"  Or CurrentObjectModelName="!Kaboom"
 
+			; Turn
 			If CurrentobjectData(7)=-2 CurrentObjectData(7)=25
 			If CurrentobjectData(7)=26 CurrentObjectData(7)=-1
 			If CurrentobjectData(7)=6 CurrentObjectData(7)=10
@@ -12832,6 +12856,7 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		EndIf
 		If CurrentObjectModelName$="!NPC"
+			; Anim
 			If CurrentObjectData(8)>10 CurrentObjectData(8)=0
 			If CurrentObjectData(8)<0 CurrentObjectData(8)=10
 			
@@ -12839,20 +12864,22 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!Kaboom"
+			; Anim
 			If CurrentObjectData(8)>5 CurrentObjectData(8)=0
 			If CurrentObjectData(8)<0 CurrentObjectData(8)=5
 			
 
 		EndIf
 
-		If CurrentObjectModelName$="!BabyBoomer" Or CurrentObjectModelName$="!ZbotNPC"
-
+		If CurrentObjectType=400 Or CurrentObjectType=433 ; Baby Boomer or Z-Bot NPC
+			; Boom?
+			; IntroSound
 			If CurrentObjectData(8)>1 CurrentObjectData(8)=0
 			If CurrentObjectData(8)<0 CurrentObjectData(8)=1
 		EndIf
 		
 		If CurrentObjectModelName$="!StinkerWee"
-
+			; Texture
 			If CurrentObjectData(8)>2 CurrentObjectData(8)=0
 			If CurrentObjectData(8)<0 CurrentObjectData(8)=2
 		EndIf
@@ -12863,9 +12890,10 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(9)=AdjustInt("Data9: ", CurrentObjectData(9), 1, 10, 150)
 		AdjustObjectData(9, SlowInt, FastInt, DelayTime)
 		
-		If CurrentObjectModelName$="!CustomModel"
-			If CurrentobjectData(9)>1 CurrentObjectData(9)=1
-			If CurrentobjectData(9)<0 CurrentObjectData(9)=0
+		If CurrentObjectModelName$="!CustomModel" And CurrentObjectType=160
+			; Deadly
+			If CurrentobjectData(9)>1 CurrentObjectData(9)=0
+			If CurrentobjectData(9)<0 CurrentObjectData(9)=1
 		EndIf
 		
 		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObjectData(0)=1
@@ -12874,9 +12902,7 @@ Function AdjustObjectAdjuster(i)
 			If CurrentobjectData(9)>10 CurrentObjectData(9)=-1
 		EndIf
 		
-		If CurrentObjectModelName$="!Conveyor"
-
-			
+		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor
 			If CurrentObjectData(9)<1 CurrentObjectData(9)=1
 		EndIf
 
