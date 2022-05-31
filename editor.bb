@@ -4685,8 +4685,9 @@ Function EditorLocalControls()
 						Print("This level has unsaved changes. Type R to save and exit.")
 						Typed$=Upper$(Input$("Type E to exit without saving: "))
 						If Typed$="R"
-							SaveLevelAndExit(False)
-							AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
+							If SaveLevelAndExit()
+								AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
+							EndIf
 						ElseIf Typed$="E"
 							AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
 						EndIf
@@ -5256,7 +5257,9 @@ Function EditorLocalControls()
 				
 			Else If my>560 And my<600
 				; save and exit
-				SaveLevelAndExit(True)
+				If SaveLevelAndExit()
+					ResumeMaster()
+				EndIf
 				
 				Repeat
 				Until MouseDown(1)=False
@@ -5273,7 +5276,8 @@ Function EditorLocalControls()
 End Function
 
 
-Function SaveLevelAndExit(WillResumeMaster)
+; Returns True if saved successfully.
+Function SaveLevelAndExit()
 
 	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
 		FlushKeys
@@ -5284,17 +5288,15 @@ Function SaveLevelAndExit(WillResumeMaster)
 		Confirm$=Upper$(Input$("Type R to update the object and save and exit: "))
 		If Confirm="E"
 			SaveLevel()
-			ResumeMaster()
+			Return True
 		ElseIf Confirm="R"
 			UpdateCurrentGrabbedObject()
 			SaveLevel()
-			ResumeMaster()
+			Return True
 		EndIf
 	Else
 		SaveLevel()
-		If WillResumeMaster
-			ResumeMaster()
-		EndIf
+		Return True
 	EndIf
 
 End Function
