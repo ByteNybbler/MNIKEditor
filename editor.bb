@@ -3274,51 +3274,66 @@ Function EditorLocalControls()
 							thisx=FloodStackX(ElementCount)
 							thisy=FloodStackY(ElementCount)
 							
-							ElementCountBefore=ElementCount
+							OutsideAdjacent=False
 													
 							If thisx>0
 								nextx=thisx-1
 								nexty=thisy
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
+								If LevelTileMatchesTarget(nextx,nexty)
+									If LevelTileVisited(nextx,nexty)=False
+										LevelTileVisited(nextx,nexty)=True
+										FloodStackX(ElementCount)=nextx
+										FloodStackY(ElementCount)=nexty
+										ElementCount=ElementCount+1
+									EndIf
+								Else
+									OutsideAdjacent=True
 								EndIf
 							EndIf
 							If thisx<LevelWidth-1
 								nextx=thisx+1
 								nexty=thisy
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
+								If LevelTileMatchesTarget(nextx,nexty)
+									If LevelTileVisited(nextx,nexty)=False
+										LevelTileVisited(nextx,nexty)=True
+										FloodStackX(ElementCount)=nextx
+										FloodStackY(ElementCount)=nexty
+										ElementCount=ElementCount+1
+									EndIf
+								Else
+									OutsideAdjacent=True
 								EndIf
 							EndIf
 							If thisy>0
 								nextx=thisx
 								nexty=thisy-1
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
+								If LevelTileMatchesTarget(nextx,nexty)
+									If LevelTileVisited(nextx,nexty)=False
+										LevelTileVisited(nextx,nexty)=True
+										FloodStackX(ElementCount)=nextx
+										FloodStackY(ElementCount)=nexty
+										ElementCount=ElementCount+1
+									EndIf
+								Else
+									OutsideAdjacent=True
 								EndIf
 							EndIf
 							If thisy<LevelHeight-1
 								nextx=thisx
 								nexty=thisy+1
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
+								If LevelTileMatchesTarget(nextx,nexty)
+									If LevelTileVisited(nextx,nexty)=False
+										LevelTileVisited(nextx,nexty)=True
+										FloodStackX(ElementCount)=nextx
+										FloodStackY(ElementCount)=nexty
+										ElementCount=ElementCount+1
+									EndIf
+								Else
+									OutsideAdjacent=True
 								EndIf
 							EndIf
 							
-							; check if something is at the border
-							If ElementCount-ElementCountBefore>0
+							If OutsideAdjacent
 								If EditorMode=0
 									ChangeLevelTile(thisx,thisy,True)
 								ElseIf EditorMode=3
