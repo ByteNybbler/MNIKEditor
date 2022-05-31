@@ -592,6 +592,8 @@ Global TargetWaterTileTurbulenceUse=True
 ; used for flood fill algorithm
 Dim FloodStackX(10250) ; no pun intended hahahahaha
 Dim FloodStackY(10250)
+Global FloodElementCount ; I wish I had OOP
+Global FloodOutsideAdjacent
 
 ; TILE PRESETS
 ; ========================
@@ -2708,6 +2710,47 @@ Function ShowTooltipCenterAligned(StartX,StartY,Message$)
 End Function
 
 
+; Wow! What a great Object-Oriented Programming Constructor I have just written!
+Function FloodFillInitializeState(StartX,StartY)
+
+	For i=0 To LevelWidth-1
+		For j=0 To LevelHeight-1
+			LevelTileVisited(i,j)=False
+		Next
+	Next
+	
+	SetLevelTileAsTarget(StartX,StartY)
+	FloodStackX(0)=StartX
+	FloodStackY(0)=StartY
+	LevelTileVisited(StartX,StartY)=True
+	FloodElementCount=1
+
+End Function
+
+
+Function FloodFillVisitLevelTile(nextx,nexty)
+
+;	If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+;		LevelTileVisited(nextx,nexty)=True
+;		FloodStackX(FloodElementCount)=nextx
+;		FloodStackY(FloodElementCount)=nexty
+;		FloodElementCount=FloodElementCount+1
+;	EndIf
+
+	If LevelTileMatchesTarget(nextx,nexty)
+		If LevelTileVisited(nextx,nexty)=False
+			LevelTileVisited(nextx,nexty)=True
+			FloodStackX(FloodElementCount)=nextx
+			FloodStackY(FloodElementCount)=nexty
+			FloodElementCount=FloodElementCount+1
+		EndIf
+	Else
+		FloodOutsideAdjacent=True
+	EndIf
+
+End Function
+
+
 Function KeyPressed(i)
 
 	If KeyDown(i) And KeyReleased(i)
@@ -3190,145 +3233,37 @@ Function EditorLocalControls()
 					Else If BrushMode=BrushModeFill
 						; flood fill
 						
-						; initialize state
-						For i=0 To LevelWidth-1
-							For j=0 To LevelHeight-1
-								LevelTileVisited(i,j)=False
-							Next
-						Next
-						
-						SetLevelTileAsTarget(x,y)
-						FloodStackX(0)=x
-						FloodStackY(0)=y
-						LevelTileVisited(x,y)=True
-						ElementCount=1
-						While ElementCount<>0
-							ElementCount=ElementCount-1
-							thisx=FloodStackX(ElementCount)
-							thisy=FloodStackY(ElementCount)
+						FloodFillInitializeState(x,y)
+						While FloodElementCount<>0
+							FloodElementCount=FloodElementCount-1
+							thisx=FloodStackX(FloodElementCount)
+							thisy=FloodStackY(FloodElementCount)
 							
-							If EditorMode=0
-								ChangeLevelTile(thisx,thisy,True)
-							ElseIf EditorMode=3
-								PlaceObject(thisx,thisy)
-							EndIf
+							FloodFillVisitLevelTile(thisx-1,thisy)
+							FloodFillVisitLevelTile(thisx+1,thisy)
+							FloodFillVisitLevelTile(thisx,thisy-1)
+							FloodFillVisitLevelTile(thisx,thisy+1)
 							
-							nextx=thisx-1
-							nexty=thisy
-							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-								LevelTileVisited(nextx,nexty)=True
-								FloodStackX(ElementCount)=nextx
-								FloodStackY(ElementCount)=nexty
-								ElementCount=ElementCount+1
-							EndIf
-
-							nextx=thisx+1
-							nexty=thisy
-							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-								LevelTileVisited(nextx,nexty)=True
-								FloodStackX(ElementCount)=nextx
-								FloodStackY(ElementCount)=nexty
-								ElementCount=ElementCount+1
-							EndIf
-
-							nextx=thisx
-							nexty=thisy-1
-							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-								LevelTileVisited(nextx,nexty)=True
-								FloodStackX(ElementCount)=nextx
-								FloodStackY(ElementCount)=nexty
-								ElementCount=ElementCount+1
-							EndIf
-
-							nextx=thisx
-							nexty=thisy+1
-							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-								LevelTileVisited(nextx,nexty)=True
-								FloodStackX(ElementCount)=nextx
-								FloodStackY(ElementCount)=nexty
-								ElementCount=ElementCount+1
-							EndIf
+							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Wend
 					Else If BrushMode=BrushModeInline
 						; flood fill for inline
 						
-						; initialize state
-						For i=0 To LevelWidth-1
-							For j=0 To LevelHeight-1
-								LevelTileVisited(i,j)=False
-							Next
-						Next
-						
-						SetLevelTileAsTarget(x,y)
-						FloodStackX(0)=x
-						FloodStackY(0)=y
-						LevelTileVisited(x,y)=True
-						ElementCount=1
-						While ElementCount<>0
-							ElementCount=ElementCount-1
-							thisx=FloodStackX(ElementCount)
-							thisy=FloodStackY(ElementCount)
+						FloodFillInitializeState(x,y)
+						While FloodElementCount<>0
+							FloodOutsideAdjacent=False
 							
-							OutsideAdjacent=False
+							FloodElementCount=FloodElementCount-1
+							thisx=FloodStackX(FloodElementCount)
+							thisy=FloodStackY(FloodElementCount)
 
-							nextx=thisx-1
-							nexty=thisy
-							If LevelTileMatchesTarget(nextx,nexty)
-								If LevelTileVisited(nextx,nexty)=False
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
-							Else
-								OutsideAdjacent=True
-							EndIf
-
-							nextx=thisx+1
-							nexty=thisy
-							If LevelTileMatchesTarget(nextx,nexty)
-								If LevelTileVisited(nextx,nexty)=False
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
-							Else
-								OutsideAdjacent=True
-							EndIf
-
-							nextx=thisx
-							nexty=thisy-1
-							If LevelTileMatchesTarget(nextx,nexty)
-								If LevelTileVisited(nextx,nexty)=False
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
-							Else
-								OutsideAdjacent=True
-							EndIf
-
-							nextx=thisx
-							nexty=thisy+1
-							If LevelTileMatchesTarget(nextx,nexty)
-								If LevelTileVisited(nextx,nexty)=False
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
-							Else
-								OutsideAdjacent=True
-							EndIf
+							FloodFillVisitLevelTile(thisx-1,thisy)
+							FloodFillVisitLevelTile(thisx+1,thisy)
+							FloodFillVisitLevelTile(thisx,thisy-1)
+							FloodFillVisitLevelTile(thisx,thisy+1)
 							
-							If OutsideAdjacent
-								If EditorMode=0
-									ChangeLevelTile(thisx,thisy,True)
-								ElseIf EditorMode=3
-									PlaceObject(thisx,thisy)
-								EndIf
+							If FloodOutsideAdjacent
+								PlaceObjectOrChangeLevelTile(thisx,thisy)
 							EndIf
 						Wend
 					Else 
@@ -3408,77 +3343,59 @@ Function EditorLocalControls()
 				y=-1
 			EndIf
 	
-			If BrushMode=BrushModeBlockPlacing And DeleteKey=True And DeleteKeyReleased=True
-				DeleteKeyReleased=False
-				
-				For i=cornleft To cornright
-						For j=cornup To corndown
-							DeleteObjectAt(i,j)
-						Next
-					Next
-				
-				BrushMode=BrushModeBlock
-				Delay 100
-			Else If BrushMode=BrushModeFill And DeleteKey=True And DeleteKeyReleased=True
-				DeleteKeyReleased=False
-			
-				; flood fill but it deletes
-				
-				; initialize state
-				For i=0 To LevelWidth-1
-					For j=0 To LevelHeight-1
-						LevelTileVisited(i,j)=False
-					Next
-				Next
-				
-				SetLevelTileAsTarget(x,y)
-				FloodStackX(0)=x
-				FloodStackY(0)=y
-				LevelTileVisited(x,y)=True
-				ElementCount=1
-				While ElementCount<>0
-					ElementCount=ElementCount-1
-					thisx=FloodStackX(ElementCount)
-					thisy=FloodStackY(ElementCount)
-
-					DeleteObjectAt(thisx,thisy)
-
-					nextx=thisx-1
-					nexty=thisy
-					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-						LevelTileVisited(nextx,nexty)=True
-						FloodStackX(ElementCount)=nextx
-						FloodStackY(ElementCount)=nexty
-						ElementCount=ElementCount+1
-					EndIf
+			If DeleteKey=True And DeleteKeyReleased=True
+				If BrushMode=BrushModeBlockPlacing
+					DeleteKeyReleased=False
 					
-					nextx=thisx+1
-					nexty=thisy
-					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-						LevelTileVisited(nextx,nexty)=True
-						FloodStackX(ElementCount)=nextx
-						FloodStackY(ElementCount)=nexty
-						ElementCount=ElementCount+1
-					EndIf
-
-					nextx=thisx
-					nexty=thisy-1
-					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-						LevelTileVisited(nextx,nexty)=True
-						FloodStackX(ElementCount)=nextx
-						FloodStackY(ElementCount)=nexty
-						ElementCount=ElementCount+1
-					EndIf
-
-					nextx=thisx
-					nexty=thisy+1
-					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-						LevelTileVisited(nextx,nexty)=True
-						FloodStackX(ElementCount)=nextx
-						FloodStackY(ElementCount)=nexty
-						ElementCount=ElementCount+1
-					EndIf
-				Wend
+					For i=cornleft To cornright
+							For j=cornup To corndown
+								DeleteObjectAt(i,j)
+							Next
+						Next
+					
+					BrushMode=BrushModeBlock
+					Delay 100
+				Else If BrushMode=BrushModeFill
+					DeleteKeyReleased=False
+				
+					; flood fill but it deletes
+					
+					FloodFillInitializeState(x,y)
+					While FloodElementCount<>0
+						FloodElementCount=FloodElementCount-1
+						thisx=FloodStackX(FloodElementCount)
+						thisy=FloodStackY(FloodElementCount)
+	
+						FloodFillVisitLevelTile(thisx-1,thisy)
+						FloodFillVisitLevelTile(thisx+1,thisy)
+						FloodFillVisitLevelTile(thisx,thisy-1)
+						FloodFillVisitLevelTile(thisx,thisy+1)
+						
+						DeleteObjectAt(thisx,thisy)
+					Wend
+				Else If BrushMode=BrushModeInline
+					DeleteKeyReleased=False
+					
+					; flood fill for inline but it deletes
+							
+					FloodFillInitializeState(x,y)
+					While FloodElementCount<>0
+						FloodOutsideAdjacent=False
+						
+						FloodElementCount=FloodElementCount-1
+						thisx=FloodStackX(FloodElementCount)
+						thisy=FloodStackY(FloodElementCount)
+	
+						FloodFillVisitLevelTile(thisx-1,thisy)
+						FloodFillVisitLevelTile(thisx+1,thisy)
+						FloodFillVisitLevelTile(thisx,thisy-1)
+						FloodFillVisitLevelTile(thisx,thisy+1)
+						
+						If FloodOutsideAdjacent
+							DeleteObjectAt(thisx,thisy)
+						EndIf
+					Wend
+				EndIf
 			EndIf
 			
 			If ReturnKey=True And ReturnKeyReleased=True And BrushMode=BrushModeNormal
@@ -7531,6 +7448,17 @@ Function SetObjectPosition(Dest,x#,y#)
 	ObjectY#(Dest)=y#+yoffset#
 	
 	Return True
+
+End Function
+
+
+Function PlaceObjectOrChangeLevelTile(x,y)
+
+	If EditorMode=0
+		ChangeLevelTile(x,y,True)
+	ElseIf EditorMode=3
+		PlaceObject(x,y)
+	EndIf
 
 End Function
 
