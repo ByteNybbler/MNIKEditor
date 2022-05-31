@@ -4585,18 +4585,23 @@ Function EditorLocalControls()
 	; *************************************
 	; load/SAVE/ETC	
 	; *************************************
-
-	If CtrlDown() And KeyPressed(48) ; Ctrl+B
-		ToggleBlockMode()
-	EndIf
-	If CtrlDown() And KeyPressed(33) ; Ctrl+F
-		ToggleFillMode()
-	EndIf
-	If CtrlDown() And KeyPressed(23) ; Ctrl+I
-		ToggleInlineSoftMode()
-	EndIf
-	If CtrlDown() And KeyPressed(24) ; Ctrl+O
-		ToggleInlineHardMode()
+	
+	If CtrlDown()
+		If KeyPressed(49) ; Ctrl+N
+			BrushMode=BrushModeNormal
+		EndIf
+		If KeyPressed(48) ; Ctrl+B
+			ToggleBlockMode()
+		EndIf
+		If KeyPressed(33) ; Ctrl+F
+			ToggleFillMode()
+		EndIf
+		If KeyPressed(23) ; Ctrl+I
+			ToggleInlineSoftMode()
+		EndIf
+		If KeyPressed(24) ; Ctrl+O
+			ToggleInlineHardMode()
+		EndIf
 	EndIf
 	
 	If MX>=00 And Mx<100
