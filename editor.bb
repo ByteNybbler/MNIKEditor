@@ -2332,7 +2332,7 @@ Function EditorMainLoop()
 	Text 300+4,580,"   LEVEL"
 
 	
-	Text 400,520,"   BORDER"
+	Text 400,520,"   RESIZE"
 	If BorderExpandOption=0
 		Text 400+4,535,"  CURRENT"
 	Else BorderExpandOption=1
