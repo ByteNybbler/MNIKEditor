@@ -4834,31 +4834,43 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 		
-		; elevation
+		; elevate
 		If my>565 And my<595
-			If LeftMouse=True And LeftMouseReleased=True				
-				Adjustment#=InputFloat#("Amount to shift level up/down: ")
-				For i=0 To LevelWidth-1
-					For j=0 To LevelHeight-1
-						LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
-						WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
-						;UpdateLevelTile(i,j)
-						;UpdateWaterTile(i,j)
+			If LeftMouse=True And LeftMouseReleased=True
+				SetupPrompt()
+				Print("Amount to shift level up/down (or type X to skip to Xtrude")
+				Amount$=Input$("Logics): ")
+				ReturnKeyReleased=False
+				Adjustment#=Amount
+				If Amount$="x" Or Amount$="X"
+					XtrudeLogics()
+				ElseIf Adjustment#<>0.0
+					For i=0 To LevelWidth-1
+						For j=0 To LevelHeight-1
+							LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
+							WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
+							;UpdateLevelTile(i,j)
+							;UpdateWaterTile(i,j)
+						Next
 					Next
-				Next
-				;ReBuildLevelModel()
-				For i=0 To LevelWidth-1
-					For j=0 To LevelHeight-1
-						UpdateTile(i,j)
+					;ReBuildLevelModel()
+					For i=0 To LevelWidth-1
+						For j=0 To LevelHeight-1
+							UpdateTile(i,j)
+						Next
 					Next
-				Next
-				For i=0 To NofObjects-1
-					ObjectZAdjust(i)=ObjectZAdjust(i)+Adjustment
-					UpdateObjectPosition(i)
-				Next
-				CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
-				BuildCurrentObjectModel()
-				SomeObjectWasChanged()
+					For i=0 To NofObjects-1
+						ObjectZAdjust(i)=ObjectZAdjust(i)+Adjustment
+						UpdateObjectPosition(i)
+					Next
+					CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
+					BuildCurrentObjectModel()
+					SomeObjectWasChanged()
+					
+					If GetConfirmation("Do you want to set Xtrude logics?")
+						XtrudeLogics()
+					EndIf
+				EndIf
 			EndIf
 		EndIf
 	EndIf
@@ -4895,28 +4907,7 @@ Function EditorLocalControls()
 		If my>565 And my<595
 			If LeftMouse=True And LeftMouseReleased=True
 				If GetConfirmation("Do you want to set Xtrude logics?")
-					Prompt$=InputString$("Enter logic for Xtrude < 0 (leave blank for water): ")
-					Logic=LogicNameToLogicId(Prompt$)
-					If Logic=-1
-						LessThanZero=2
-					Else
-						LessThanZero=Logic
-					EndIf
-					Prompt$=InputString$("Enter logic for Xtrude == 0 (leave blank for floor): ")
-					Logic=LogicNameToLogicId(Prompt$)
-					If Logic=-1
-						EqualToZero=0
-					Else
-						EqualToZero=Logic
-					EndIf
-					Prompt$=InputString$("Enter logic for Xtrude > 0 (leave blank for wall): ")
-					Logic=LogicNameToLogicId(Prompt$)
-					If Logic=-1
-						GreaterThanZero=1
-					Else
-						GreaterThanZero=Logic
-					EndIf
-					SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
+					XtrudeLogics()
 				EndIf
 			EndIf
 		EndIf
@@ -4984,6 +4975,34 @@ Function ToggleBlockMode()
 		BrushMode=BrushModeBlock
 	EndIf
 	
+End Function
+
+
+Function XtrudeLogics()
+
+	Prompt$=InputString$("Enter logic for Xtrude < 0 (leave blank for water): ")
+	Logic=LogicNameToLogicId(Prompt$)
+	If Logic=-1
+		LessThanZero=2
+	Else
+		LessThanZero=Logic
+	EndIf
+	Prompt$=InputString$("Enter logic for Xtrude == 0 (leave blank for floor): ")
+	Logic=LogicNameToLogicId(Prompt$)
+	If Logic=-1
+		EqualToZero=0
+	Else
+		EqualToZero=Logic
+	EndIf
+	Prompt$=InputString$("Enter logic for Xtrude > 0 (leave blank for wall): ")
+	Logic=LogicNameToLogicId(Prompt$)
+	If Logic=-1
+		GreaterThanZero=1
+	Else
+		GreaterThanZero=Logic
+	EndIf
+	SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
+
 End Function
 
 
@@ -11299,34 +11318,30 @@ Function OnLeftHalfAdjuster()
 
 End Function
 
-Function InputString$(title$)
+Function SetupPrompt()
 	FlushKeys
 	Locate 0,0
 	Color 0,0,0
 	Rect 0,0,500,40,True
 	Color 255,255,255
+End Function
+
+Function InputString$(title$)
+	SetupPrompt()
 	Result$=Input$(title$)
 	ReturnKeyReleased=False
 	Return Result$
 End Function
 
 Function InputInt(title$)
-	FlushKeys
-	Locate 0,0
-	Color 0,0,0
-	Rect 0,0,500,40,True
-	Color 255,255,255
+	SetupPrompt()
 	Result=Input(title$)
 	ReturnKeyReleased=False
 	Return Result
 End Function
 
 Function InputFloat#(title$)
-	FlushKeys
-	Locate 0,0
-	Color 0,0,0
-	Rect 0,0,500,40,True
-	Color 255,255,255
+	SetupPrompt()
 	Result$=Input$(title$)
 	ReturnKeyReleased=False
 	Return Result$
