@@ -728,6 +728,8 @@ Dim ObjectAdjusterWop$(30)
 Dim ObjectPositionMarker(1000)
 Dim WorldAdjusterPositionMarker(3)
 Global CurrentObjectMoveXYGoalMarker
+Global WhereWeEndedUpMarker ; For traveling with G between LevelExits.
+Global WhereWeEndedUpAlpha#=0.0
 
 Dim SimulatedObjectXScale#(1000)
 Dim SimulatedObjectZScale#(1000)
@@ -2002,6 +2004,10 @@ Function InitializeGraphicsEntities()
 	CurrentObjectMoveXYGoalMarker=CopyEntity(CurrentGrabbedObjectMarker)
 	EntityColor CurrentObjectMoveXYGoalMarker,255,100,100
 	
+	WhereWeEndedUpMarker=CopyEntity(CurrentGrabbedObjectMarker)
+	EntityColor WhereWeEndedUpMarker,255,255,0
+	ShowEntity WhereWeEndedUpMarker
+	
 	CurrentWaterTile=CreateMesh()
 	CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
 	
@@ -2213,6 +2219,9 @@ Function EditorMainLoop()
 		EntityAlpha WorldAdjusterPositionMarker(i),MarkerAlpha#
 	Next
 	EntityAlpha CurrentObjectMoveXYGoalMarker,MarkerAlpha#
+	
+	WhereWeEndedUpAlpha#=WhereWeEndedUpAlpha#-0.002
+	EntityAlpha WhereWeEndedUpMarker,WhereWeEndedUpAlpha#
 	
 	ControlLight()
 	If SimulationLevel>=1
@@ -3023,6 +3032,52 @@ Function HideCursors()
 		HideEntity CursorMesh2(i)
 	Next
 
+End Function
+
+
+Function SetWhereWeEndedUpMarker(x,y)
+
+	;ShowMessage("Marker ended up at "+x+","+y,1000)
+	SetEntityPositionInWorld(WhereWeEndedUpMarker,Float(x)+0.5,Float(y)+0.5,0.0)
+	WhereWeEndedUpAlpha#=0.5
+
+End Function
+
+
+Function EndUpAt(level,x,y)
+
+	AccessLevelAt(level,x,y)
+	SetWhereWeEndedUpMarker(x,y)
+
+End Function
+
+
+Function TryLevelGoto(i,x,y,D1,D2,D3)
+
+	If ObjectTileX(i)=x And ObjectTileY(i)=y
+		ToLevel=ObjectData(i,D1)
+		If ToLevel=CurrentLevelNumber
+			PositionCameraInLevel(ObjectData(i,D2),ObjectData(i,D3))
+			SetWhereWeEndedUpMarker(ObjectData(i,D2),ObjectData(i,D3))
+		ElseIf UnsavedChanges
+			FlushKeys
+			SetupWarning()
+			ReturnKeyReleased=False
+			Print("This level has unsaved changes. Type R to save and exit.")
+			Typed$=Upper$(Input$("Type E to exit without saving: "))
+			If Typed$="R"
+				If SaveLevelAndExit()
+					; Destination level might have changed from possible object update event, so we read from Data1 again.
+					EndUpAt(ObjectData(i,D1),ObjectData(i,D2),ObjectData(i,D3))
+				EndIf
+			ElseIf Typed$="E"
+				EndUpAt(ToLevel,ObjectData(i,D2),ObjectData(i,D3))
+			EndIf
+		Else
+			EndUpAt(ToLevel,ObjectData(i,D2),ObjectData(i,D3))
+		EndIf
+	EndIf
+				
 End Function
 
 
@@ -4674,27 +4729,9 @@ Function EditorLocalControls()
 	If KeyDown(34) ; G key
 		For i=0 To NofObjects-1
 			If ObjectType(i)=90 And (ObjectSubType(i)=10 Or (ObjectSubType(i)=15 And ObjectData(i,0)=7)) ; levelexit or CMD 7
-				If ObjectTileX(i)=x And ObjectTileY(i)=y
-					ToLevel=ObjectData(i,1)
-					If ToLevel=CurrentLevelNumber
-						PositionCameraInLevel(ObjectData(i,2),ObjectData(i,3))
-					ElseIf UnsavedChanges
-						FlushKeys
-						SetupWarning()
-						ReturnKeyReleased=False
-						Print("This level has unsaved changes. Type R to save and exit.")
-						Typed$=Upper$(Input$("Type E to exit without saving: "))
-						If Typed$="R"
-							If SaveLevelAndExit()
-								AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
-							EndIf
-						ElseIf Typed$="E"
-							AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
-						EndIf
-					Else
-						AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
-					EndIf
-				EndIf
+				TryLevelGoto(i,x,y,1,2,3)
+			ElseIf ObjectType(i)=242 And ObjectData(i,2)=7 ; Cuboid
+				TryLevelGoto(i,x,y,3,4,5)
 			EndIf
 		Next
 	EndIf
@@ -8534,6 +8571,13 @@ Function SomeObjectWasChanged()
 
 	ResetSimulatedQuantities()
 	FinalizeCurrentObject()
+	UnsavedChanges=True
+
+End Function
+
+
+Function SomeTileWasChanged()
+
 	UnsavedChanges=True
 
 End Function
@@ -13373,6 +13417,8 @@ Function UpdateLevelTile(i,j)
 	ShiftLevelTileByHeight(i,j)
 	ShiftLevelTileEdges(i,j)
 	UpdateLevelTileSides(i,j)
+	
+	SomeTileWasChanged()
 
 End Function
 
@@ -17286,6 +17332,8 @@ Function CompileLevel()
 End Function
 
 Function AccessLevel(levelnumber)
+
+	WhereWeEndedUpAlpha#=0.0
 
 	If LevelExists(levelnumber)=True
 		LoadLevel(levelnumber)
