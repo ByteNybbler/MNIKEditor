@@ -3344,9 +3344,8 @@ Function EditorLocalControls()
 			EndIf
 	
 			If DeleteKey=True And DeleteKeyReleased=True
+				DeleteKeyReleased=False
 				If BrushMode=BrushModeBlockPlacing
-					DeleteKeyReleased=False
-					
 					For i=cornleft To cornright
 							For j=cornup To corndown
 								DeleteObjectAt(i,j)
@@ -3356,8 +3355,6 @@ Function EditorLocalControls()
 					BrushMode=BrushModeBlock
 					Delay 100
 				Else If BrushMode=BrushModeFill
-					DeleteKeyReleased=False
-				
 					; flood fill but it deletes
 					
 					FloodFillInitializeState(x,y)
@@ -3374,8 +3371,6 @@ Function EditorLocalControls()
 						DeleteObjectAt(thisx,thisy)
 					Wend
 				Else If BrushMode=BrushModeInline
-					DeleteKeyReleased=False
-					
 					; flood fill for inline but it deletes
 							
 					FloodFillInitializeState(x,y)
@@ -3395,6 +3390,15 @@ Function EditorLocalControls()
 							DeleteObjectAt(thisx,thisy)
 						EndIf
 					Wend
+				Else ; normal brush
+					BrushOffset=BrushSize/2
+					BrushXStart=x-BrushOffset
+					BrushYStart=y-BrushOffset
+					For i=0 To BrushSize-1
+						For j=0 To BrushSize-1
+							DeleteObjectAt(BrushXStart+i,BrushYStart+j)
+						Next
+					Next
 				EndIf
 			EndIf
 			
@@ -3436,47 +3440,15 @@ Function EditorLocalControls()
 		Else
 			HideEntity CursorMesh
 			HideEntity cursorMesh2
-		EndIf
-	EndIf
-	
-	
-	If mx>=0 And mx<500 And my>=0 And my<500
-		Entity=CameraPick(camera1,MouseX(),MouseY())
-		If Entity>0
 			
-			x=Floor(PickedX())
-			y=Floor(-PickedZ())
-			; Delete Object
-			If DeleteKey=True And DeleteKeyReleased=True
-				
-				DeleteKeyReleased=False
-				
-				BrushOffset=BrushSize/2
-				BrushXStart=x-BrushOffset
-				BrushYStart=y-BrushOffset
-				For i=0 To BrushSize-1
-					For j=0 To BrushSize-1
-						DeleteObjectAt(BrushXStart+i,BrushYStart+j)
-					Next
-				Next
-				
-				
-			EndIf
-			
-		Else
-			HideEntity CursorMesh
-			HideEntity CursorMesh2
-
 			x=-1
 			y=-1
 		EndIf
-
 	EndIf
 	
-
-
 	
-
+	
+	
 	
 	; *************************************
 	; Selecting A Texture
