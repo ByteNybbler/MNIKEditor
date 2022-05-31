@@ -4814,6 +4814,11 @@ Function EditorLocalControls()
 	If MX>=500 And MX<600
 		; brush size
 		If my>520 And my<550
+			If ShiftDown()
+				Adj=20
+			Else
+				Adj=2
+			EndIf
 			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 				;BorderExpandOption=Not BorderExpandOption
 				;WidescreenRangeLevel=WidescreenRangeLevel+1
@@ -4823,11 +4828,11 @@ Function EditorLocalControls()
 				;	WidescreenRangeLevel=1
 				;EndIf
 				
-				SetBrushSize(BrushSize+2)
+				SetBrushSize(BrushSize+Adj)
 				If MouseScroll=0 Then Delay 100
 			EndIf
 			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-				SetBrushSize(BrushSize-2)
+				SetBrushSize(BrushSize-Adj)
 				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
@@ -4901,21 +4906,10 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 		
+		; placement density
 		If my>565 And my<595
-			If LeftMouse=True And LeftMouseReleased=True
-				; placement density
-				PlacementDensity#=InputFloat#("Enter placement density (0.0 to 1.0): ")
-				If PlacementDensity#<0.0
-					PlacementDensity#=0.0
-				ElseIf PlacementDensity#>1.0
-					PlacementDensity#=1.0
-				EndIf
-				
-				; xtrude logics
-				;If GetConfirmation("Do you want to set Xtrude logics?")
-				;	XtrudeLogics()
-				;EndIf
-			EndIf
+			Value#=AdjustFloat#("Enter placement density (0.0 to 1.0): ",PlacementDensity#,0.05,0.2,100)
+			SetPlacementDensity(Value#)
 		EndIf
 	EndIf
 	
@@ -5031,6 +5025,18 @@ Function ToggleFromNormalBrush(TargetBrushMode)
 	Else
 		BrushMode=TargetBrushMode
 	EndIf
+
+End Function
+
+Function SetPlacementDensity(Value#)
+
+	PlacementDensity#=Value#
+	If PlacementDensity#<0.0
+		PlacementDensity#=0.0
+	ElseIf PlacementDensity#>1.0
+		PlacementDensity#=1.0
+	EndIf
+	PlacementDensity#=ZeroRoundFloat#(PlacementDensity#)
 
 End Function
 
@@ -11373,12 +11379,20 @@ Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 
 End Function
 
+Function ZeroRoundFloat#(Value#)
+
+	If Value#>-0.00001 And Value#<0.00001
+		Return 0.0
+	Else
+		Return Value#
+	EndIf
+
+End Function
+
 Function AdjustFloat#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
 
 	Result#=AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
-	If Result#>-0.00001 And Result#<0.00001
-		Result#=0.0
-	EndIf
+	Result#=ZeroRoundFloat#(Result#)
 	Return Result#
 
 End Function
