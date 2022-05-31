@@ -273,14 +273,16 @@ Global BorderExpandOption=0 ;0-current, 1-duplicate
 
 ;Global BlockMode,FillMode
 Global BrushMode=0
-Const MaxBrushMode=5
+Const MaxBrushMode=7
 
 Const BrushModeNormal=0
 Const BrushModeBlock=1
 Const BrushModeBlockPlacing=2
 Const BrushModeFill=3
-Const BrushModeInlineSoft=4
-Const BrushModeInlineHard=5
+Const BrushModeInlineHard=4
+Const BrushModeInlineSoft=5
+Const BrushModeOutlineHard=6
+Const BrushModeOutlineSoft=7
 
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
@@ -299,6 +301,10 @@ End Function
 
 Function IsBrushInInlineMode()
 	Return BrushMode=BrushModeInlineSoft Or BrushMode=BrushModeInlineHard
+End Function
+
+Function IsBrushInOutlineMode()
+	Return BrushMode=BrushModeOutlineSoft Or BrushMode=BrushModeOutlineHard
 End Function
 
 Global PlacementDensity#=1.0
@@ -4597,10 +4603,16 @@ Function EditorLocalControls()
 			ToggleFillMode()
 		EndIf
 		If KeyPressed(23) ; Ctrl+I
+			ToggleInlineHardMode()
+		EndIf
+		If KeyPressed(22) ; Ctrl+U
 			ToggleInlineSoftMode()
 		EndIf
 		If KeyPressed(24) ; Ctrl+O
-			ToggleInlineHardMode()
+			ToggleOutlineHardMode()
+		EndIf
+		If KeyPressed(25) ; Ctrl+P
+			ToggleOutlineSoftMode()
 		EndIf
 	EndIf
 	
@@ -5070,6 +5082,18 @@ End Function
 Function ToggleInlineHardMode()
 
 	ToggleFromNormalBrush(BrushModeInlineHard)
+	
+End Function
+
+Function ToggleOutlineSoftMode()
+
+	ToggleFromNormalBrush(BrushModeOutlineSoft)
+	
+End Function
+
+Function ToggleOutlineHardMode()
+
+	ToggleFromNormalBrush(BrushModeOutlineHard)
 	
 End Function
 
@@ -14862,6 +14886,10 @@ Function GetBrushModeName$(Value)
 		Return "INLINE SOFT"
 	Case BrushModeInlineHard
 		Return "INLINE HARD"
+	Case BrushModeOutlineSoft
+		Return "OUTLINE SOFT"
+	Case BrushModeOutlineHard
+		Return "OUTLINE HARD"
 	Default
 		Return "UNKNOWN"
 	End Select
@@ -14891,6 +14919,16 @@ Function GetBrushModeColor$(Value,index)
 		r=255
 		g=0
 		b=0
+	ElseIf Value=BrushModeOutlineHard
+		; indigo
+		r=0
+		g=0
+		b=255
+	ElseIf Value=BrushModeOutlineSoft
+		; lighter indigo
+		r=0
+		g=80
+		b=255
 	ElseIf Value=BrushModeCustom
 		; purple
 		r=255
