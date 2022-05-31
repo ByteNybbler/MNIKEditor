@@ -619,6 +619,7 @@ Dim FloodStackY(10250)
 Dim FloodedStackX(10250) ; Stores positions to flood when done visiting. Useful for flood fill as used in inline mode.
 Dim FloodedStackY(10250)
 Global FloodElementCount ; I wish I had OOP
+Global FloodedElementCount
 Global FloodOutsideAdjacent
 
 ; TILE PRESETS
@@ -2768,6 +2769,16 @@ Function FloodFillInitializeState(StartX,StartY)
 	FloodStackY(0)=StartY
 	LevelTileVisited(StartX,StartY)=True
 	FloodElementCount=1
+	FloodedElementCount=0
+
+End Function
+
+
+Function AddToFloodedStack(NewX,NewY)
+
+	FloodedStackX(FloodedElementCount)=NewX
+	FloodedStackY(FloodedElementCount)=NewY
+	FloodedElementCount=FloodedElementCount+1
 
 End Function
 
@@ -2790,6 +2801,22 @@ Function FloodFillVisitLevelTile(nextx,nexty)
 		EndIf
 	Else
 		FloodOutsideAdjacent=True
+	EndIf
+
+End Function
+
+
+Function FloodFillVisitLevelTileOutline(nextx,nexty)
+
+	If LevelTileMatchesTarget(nextx,nexty)
+		If LevelTileVisited(nextx,nexty)=False
+			LevelTileVisited(nextx,nexty)=True
+			FloodStackX(FloodElementCount)=nextx
+			FloodStackY(FloodElementCount)=nexty
+			FloodElementCount=FloodElementCount+1
+		EndIf
+	Else
+		AddToFloodedStack(nextx,nexty)
 	EndIf
 
 End Function
@@ -3270,8 +3297,6 @@ Function EditorLocalControls()
 						; flood fill for inline
 						LeftMouseReleased=False
 						
-						FloodedElementCount=0
-						
 						FloodFillInitializeState(x,y)
 						While FloodElementCount<>0
 							FloodOutsideAdjacent=False
@@ -3293,9 +3318,43 @@ Function EditorLocalControls()
 							
 							; for tile mode, wait to change the tiles until the flood fill visits all the tiles
 							If FloodOutsideAdjacent
-								FloodedStackX(FloodedElementCount)=thisx
-								FloodedStackY(FloodedElementCount)=thisy
-								FloodedElementCount=FloodedElementCount+1
+								AddToFloodedStack(thisx,thisy)
+							EndIf
+						Wend
+						
+						For i=0 To FloodedElementCount-1
+							thisx=FloodedStackX(i)
+							thisy=FloodedStackY(i)
+							PlaceObjectOrChangeLevelTile(thisx,thisy)
+						Next
+					Else If IsBrushInOutlineMode()
+						; flood fill for outline
+						LeftMouseReleased=False
+						
+						FloodFillInitializeState(x,y)
+						While FloodElementCount<>0
+							FloodElementCount=FloodElementCount-1
+							thisx=FloodStackX(FloodElementCount)
+							thisy=FloodStackY(FloodElementCount)
+							
+							FloodFillVisitLevelTileOutline(thisx-1,thisy)
+							FloodFillVisitLevelTileOutline(thisx+1,thisy)
+							FloodFillVisitLevelTileOutline(thisx,thisy-1)
+							FloodFillVisitLevelTileOutline(thisx,thisy+1)
+							
+							If BrushMode=BrushModeOutlineHard
+								If Not LevelTileMatchesTarget(thisx-1,thisy-1)
+									AddToFloodedStack(thisx-1,thisy-1)
+								EndIf
+								If Not LevelTileMatchesTarget(thisx+1,thisy-1)
+									AddToFloodedStack(thisx+1,thisy-1)
+								EndIf
+								If Not LevelTileMatchesTarget(thisx-1,thisy+1)
+									AddToFloodedStack(thisx-1,thisy+1)
+								EndIf
+								If Not LevelTileMatchesTarget(thisx+1,thisy+1)
+									AddToFloodedStack(thisx+1,thisy+1)
+								EndIf
 							EndIf
 						Wend
 						
@@ -3407,7 +3466,7 @@ Function EditorLocalControls()
 					Wend
 				Else If IsBrushInInlineMode()
 					; flood fill for inline but it deletes
-							
+					
 					FloodFillInitializeState(x,y)
 					While FloodElementCount<>0
 						FloodOutsideAdjacent=False
@@ -3431,6 +3490,41 @@ Function EditorLocalControls()
 							DeleteObjectAt(thisx,thisy)
 						EndIf
 					Wend
+				Else If IsBrushInOutlineMode()
+					; flood fill for outline but it deletes
+					
+					FloodFillInitializeState(x,y)
+					While FloodElementCount<>0
+						FloodElementCount=FloodElementCount-1
+						thisx=FloodStackX(FloodElementCount)
+						thisy=FloodStackY(FloodElementCount)
+						
+						FloodFillVisitLevelTileOutline(thisx-1,thisy)
+						FloodFillVisitLevelTileOutline(thisx+1,thisy)
+						FloodFillVisitLevelTileOutline(thisx,thisy-1)
+						FloodFillVisitLevelTileOutline(thisx,thisy+1)
+						
+						If BrushMode=BrushModeOutlineHard
+							If Not LevelTileMatchesTarget(thisx-1,thisy-1)
+								AddToFloodedStack(thisx-1,thisy-1)
+							EndIf
+							If Not LevelTileMatchesTarget(thisx+1,thisy-1)
+								AddToFloodedStack(thisx+1,thisy-1)
+							EndIf
+							If Not LevelTileMatchesTarget(thisx-1,thisy+1)
+								AddToFloodedStack(thisx-1,thisy+1)
+							EndIf
+							If Not LevelTileMatchesTarget(thisx+1,thisy+1)
+								AddToFloodedStack(thisx+1,thisy+1)
+							EndIf
+						EndIf
+					Wend
+					
+					For i=0 To FloodedElementCount-1
+						thisx=FloodedStackX(i)
+						thisy=FloodedStackY(i)
+						DeleteObjectAt(thisx,thisy)
+					Next
 				Else ; normal brush
 					BrushOffset=BrushSize/2
 					BrushXStart=x-BrushOffset
