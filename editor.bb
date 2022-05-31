@@ -282,7 +282,7 @@ Function IsBrushInBlockMode()
 	Return BrushMode=BrushModeBlock Or BrushMode=BrushModeBlockPlacing
 End Function
 
-Global FillDensity#=1.0
+Global PlacementDensity#=1.0
 
 Global BlockModeMesh,BlockModeSurface,BlockCornerX,BlockCornerY
 Global LevelTextureNum, WaterTextureNum
@@ -2264,13 +2264,20 @@ Function EditorMainLoop()
 	EndIf
 	
 	
-	Text 0,550,"    WIPE"
+	;Text 0,550,"    WIPE"
+	
+	
+	If BrushMode=BrushModeInline
+		Text 0,550,"  >INLINE<"
+	Else
+		Text 0,550,"   INLINE"
+	EndIf
 	
 	
 	If BrushMode=BrushModeFill
-		If FillDensity#<1.0
+		If PlacementDensity#<1.0
 			Color 255,155,0
-			Text 0,580,">FILL "+FillDensity#+"<"
+			Text 0,580,">FILL "+PlacementDensity#+"<"
 			Color TextLevelR,TextLevelG,TextLevelB
 		Else
 			Text 0,580,"   >FILL<"
@@ -2493,6 +2500,17 @@ Function SetBrushSize(NewBrushSize)
 	EndIf
 	
 	CustomBrush=False
+
+End Function
+
+
+Function PassesPlacementDensityTest()
+
+	If Rnd(0.0,1.0)<=PlacementDensity#
+		Return True
+	Else
+		Return False
+	EndIf
 
 End Function
 
@@ -3089,23 +3107,28 @@ Function EditorLocalControls()
 				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
 				
 				If BrushMode=BrushModeFill
+					; yellow
 					r=255
 					g=255
 					b=0
 				Else If IsBrushInBlockMode()
+					; blue
 					r=0
 					g=255
 					b=255
 				Else If BrushMode=BrushModeInline
+					; red
 					r=255
-					g=255
+					g=0
 					b=0
 				Else
 					If CustomBrush
+						; purple
 						r=255
 						g=0
 						b=255
-					Else ; normal brush mode
+					Else ; normal brush mode, AKA BrushModeNormal
+						; white
 						r=255
 						g=255
 						b=255
@@ -3183,14 +3206,13 @@ Function EditorLocalControls()
 							ElementCount=ElementCount-1
 							thisx=FloodStackX(ElementCount)
 							thisy=FloodStackY(ElementCount)
-							If Rnd(0.0,1.0)<=FillDensity#
-								If EditorMode=0
-									ChangeLevelTile(thisx,thisy,True)
-								ElseIf EditorMode=3
-									PlaceObject(thisx,thisy)
-								EndIf
+							
+							If EditorMode=0
+								ChangeLevelTile(thisx,thisy,True)
+							ElseIf EditorMode=3
+								PlaceObject(thisx,thisy)
 							EndIf
-														
+													
 							If thisx>0
 								nextx=thisx-1
 								nexty=thisy
@@ -3229,6 +3251,78 @@ Function EditorLocalControls()
 									FloodStackX(ElementCount)=nextx
 									FloodStackY(ElementCount)=nexty
 									ElementCount=ElementCount+1
+								EndIf
+							EndIf
+						Wend
+					Else If BrushMode=BrushModeInline
+						; flood fill for inline
+						
+						; initialize state
+						For i=0 To LevelWidth-1
+							For j=0 To LevelHeight-1
+								LevelTileVisited(i,j)=False
+							Next
+						Next
+						
+						SetLevelTileAsTarget(x,y)
+						FloodStackX(0)=x
+						FloodStackY(0)=y
+						LevelTileVisited(x,y)=True
+						ElementCount=1
+						While ElementCount<>0
+							ElementCount=ElementCount-1
+							thisx=FloodStackX(ElementCount)
+							thisy=FloodStackY(ElementCount)
+							
+							ElementCountBefore=ElementCount
+													
+							If thisx>0
+								nextx=thisx-1
+								nexty=thisy
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
+								EndIf
+							EndIf
+							If thisx<LevelWidth-1
+								nextx=thisx+1
+								nexty=thisy
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
+								EndIf
+							EndIf
+							If thisy>0
+								nextx=thisx
+								nexty=thisy-1
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
+								EndIf
+							EndIf
+							If thisy<LevelHeight-1
+								nextx=thisx
+								nexty=thisy+1
+								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
+								EndIf
+							EndIf
+							
+							; check if something is at the border
+							If ElementCount-ElementCountBefore>0
+								If EditorMode=0
+									ChangeLevelTile(thisx,thisy,True)
+								ElseIf EditorMode=3
+									PlaceObject(thisx,thisy)
 								EndIf
 							EndIf
 						Wend
@@ -3340,9 +3434,9 @@ Function EditorLocalControls()
 					ElementCount=ElementCount-1
 					thisx=FloodStackX(ElementCount)
 					thisy=FloodStackY(ElementCount)
-					If Rnd(0.0,1.0)<=FillDensity#
-						DeleteObjectAt(thisx,thisy)
-					EndIf
+
+					DeleteObjectAt(thisx,thisy)
+
 												
 					If thisx>0
 						nextx=thisx-1
@@ -4582,6 +4676,10 @@ Function EditorLocalControls()
 		ToggleFillMode(False)
 	EndIf
 	
+	If CtrlDown() And KeyPressed(23) ; Ctrl+I
+		ToggleInlineMode()
+	EndIf
+	
 	If MX>=00 And Mx<100
 		If my>=510 And my<540
 			If (LeftMouse=True And LeftMouseReleased=True) Or HotkeyBlockMode
@@ -4597,14 +4695,17 @@ Function EditorLocalControls()
 		If my>=540 And my<570
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
+				;inline
+				ToggleInlineMode()
+				
 				;wipe
-				If GetConfirmation("Are you sure you want to wipe?")
-					For i=0 To LevelWidth-1
-						For j=0 To LevelHeight-1
-							ChangeLevelTile(i,j,True)
-						Next
-					Next
-				EndIf
+;				If GetConfirmation("Are you sure you want to wipe?")
+;					For i=0 To LevelWidth-1
+;						For j=0 To LevelHeight-1
+;							ChangeLevelTile(i,j,True)
+;						Next
+;					Next
+;				EndIf
 			EndIf
 		EndIf
 		
@@ -5001,19 +5102,29 @@ Function ToggleFillMode(UseFillDensity)
 
 	If UseFillDensity
 		BrushMode=BrushModeFill
-		FillDensity#=InputFloat#("Enter fill density (0.0 to 1.0): ")
-		If FillDensity#<0.0
-			FillDensity#=0.0
-		ElseIf FillDensity#>1.0
-			FillDensity#=1.0
+		PlacementDensity#=InputFloat#("Enter fill density (0.0 to 1.0): ")
+		If PlacementDensity#<0.0
+			PlacementDensity#=0.0
+		ElseIf PlacementDensity#>1.0
+			PlacementDensity#=1.0
 		EndIf
 	ElseIf BrushMode<>BrushModeFill
 		BrushMode=BrushModeFill
-		FillDensity#=1.0
+		PlacementDensity#=1.0
 	Else
 		BrushMode=BrushModeNormal
 	EndIf
 
+End Function
+
+Function ToggleInlineMode()
+
+	If BrushMode=BrushModeInline
+		BrushMode=BrushModeNormal
+	Else
+		BrushMode=BrushModeInline
+	EndIf
+	
 End Function
 
 
@@ -6553,6 +6664,10 @@ Function ChangeLevelTile(i,j,update)
 		Return
 	EndIf
 	
+	If Not PassesPlacementDensityTest()
+		Return
+	EndIf
+	
 	HeightWasChanged=False
 	
 	; The Tile
@@ -7409,6 +7524,10 @@ End Function
 
 
 Function PlaceObject(x#,y#)
+
+	If Not PassesPlacementDensityTest()
+		Return
+	EndIf
 
 	If RandomType
 		CurrentObjectType=Rand(RandomTypeMin,RandomTypeMax)
@@ -8668,6 +8787,10 @@ Function DeleteObject(i)
 End Function
 
 Function DeleteObjectAt(x,y)
+
+	If Not PassesPlacementDensityTest()
+		Return
+	EndIf
 
 	DeleteCount=0
 	For i=0 To NofObjects-1
