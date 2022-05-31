@@ -8287,6 +8287,13 @@ Function UpdateObjectAnimation(i)
 			End Select
 		EndIf
 	EndIf
+	If ModelName$="!Troll"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
+		Else
+			AnimateMD2 Entity,2,0.005,81,82
+		EndIf
+	EndIf
 	If ModelName$="!Kaboom"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
@@ -8304,6 +8311,13 @@ Function UpdateObjectAnimation(i)
 			Animate GetChild(Entity,3),0
 		Else
 			Animate GetChild(Entity,3),1,.1,1,0
+		EndIf
+	EndIf
+	If ModelName$="!Thwart"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
+		Else
+			AnimateMD2 Entity,2,0.005,81,82
 		EndIf
 	EndIf
 
