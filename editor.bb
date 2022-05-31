@@ -1024,8 +1024,14 @@ Next
 
 ; StinkerWee
 Global StinkerWeeMesh=MyLoadMD2("data\models\stinkerwee\stinkerwee.md2")
-Global StinkerWeeTexture=MyLoadTexture("data\models\stinkerwee\stinkerwee1.jpg",1)
-EntityTexture StinkerWeeMesh,StinkerWeeTexture
+;Global StinkerWeeTexture=MyLoadTexture("data\models\stinkerwee\stinkerwee1.jpg",1)
+Dim StinkerWeeTexture(3)
+For i=1 To 3
+	StinkerWeeTexture(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+".jpg",1)
+	;StinkerWeeTextureSleep(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sleep.jpg",1)
+	;StinkerWeeTextureSad(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sad.jpg",1)
+Next
+EntityTexture StinkerWeeMesh,StinkerWeeTexture(1)
 HideEntity StinkerWeeMesh
 
 ; Stinker
@@ -13813,6 +13819,7 @@ Function BuildCurrentObjectModel()
 		
 	Else If CurrentObjectModelName$="!StinkerWee"
 		CurrentObjectModel=CopyEntity(StinkerWeeMesh)
+		EntityTexture CurrentObjectModel,StinkerWeeTexture(CurrentObjectData(8)+1)
 	Else If CurrentObjectModelName$="!Cage"
 		CurrentObjectModel=CopyEntity(CageMesh)
 		Else If CurrentObjectModelName$="!StarGate"
@@ -15742,6 +15749,7 @@ Function CreateObjectModel(Dest)
 
 		Else If ObjectModelName$(Dest)="!StinkerWee"
 			ObjectEntity(Dest)=CopyEntity(StinkerWeeMesh)
+			EntityTexture ObjectEntity(Dest),StinkerWeeTexture(ObjectData(Dest,8)+1)
 		Else If ObjectModelName$(Dest)="!Cage"
 			ObjectEntity(Dest)=CopyEntity(CageMesh)
 		Else If ObjectModelName$(Dest)="!StarGate"
