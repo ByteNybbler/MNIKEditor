@@ -7527,6 +7527,23 @@ End Function
 
 Function PlaceObject(x#,y#)
 
+	PlaceObjectActual(x#,y#)
+	
+	If DupeMode=DupeModeX
+		PlaceObjectActual(LevelWidth-1-x#,y#)
+	ElseIf DupeMode=DupeModeY
+		PlaceObjectActual(x#,LevelHeight-1-y#)
+	ElseIf DupeMode=DupeModeXPlusY
+		PlaceObjectActual(LevelWidth-1-x#,y#)
+		PlaceObjectActual(x#,LevelHeight-1-y#)
+		PlaceObjectActual(LevelWidth-1-x#,LevelHeight-1-y#)
+	EndIf
+
+End Function
+
+
+Function PlaceObjectActual(x#,y#)
+
 	If Not PassesPlacementDensityTest()
 		Return
 	EndIf
