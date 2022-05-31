@@ -32,10 +32,6 @@ Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						
 Global EditorModeBeforeMasterEdit=0
 
-; The default level coordinates to focus on when opening a level.
-Const DefaultCameraFocusX=7
-Const DefaultCameraFocusY=10
-
 ; Whether or not the level or dialog has unsaved changes. Not implemented for dialogs yet.
 Global UnsavedChanges=False
 
@@ -252,9 +248,13 @@ Global UsingWireFrame=False
 Global CustomIconName$="Standard"
 Global CustomMapName$
 
+; The default level coordinates to focus on when opening a level.
+; No longer in use since the camera is now centered when opening a level.
+Const DefaultCameraFocusX=7
+Const DefaultCameraFocusY=10
+
 Const FlStartX=706 ; formerly 715
 Const FlStartY=165
-
 
 Dim LevelMesh(100),LevelSurface(100) ; one for each row
 Dim WaterMesh(100),WaterSurface(100)
@@ -593,6 +593,8 @@ Global TargetWaterTileTurbulenceUse=True
 ; used for flood fill algorithm
 Dim FloodStackX(10250) ; no pun intended hahahahaha
 Dim FloodStackY(10250)
+Dim FloodedStackX(10250) ; Stores positions to flood when done visiting. Useful for flood fill as used in inline mode.
+Dim FloodedStackY(10250)
 Global FloodElementCount ; I wish I had OOP
 Global FloodOutsideAdjacent
 
@@ -3208,7 +3210,6 @@ Function EditorLocalControls()
 					VertexCoords BlockModeSurface,2,cornleft-0,0.1,-(corndown+1)
 					VertexCoords BlockModeSurface,3,cornright+1,0.1,-(corndown+1)
 				EndIf
-					
 				
 				If LeftMouse=True And LeftMouseReleased=True
 					If BrushMode=BrushModeBlock
@@ -3236,6 +3237,7 @@ Function EditorLocalControls()
 						Delay 100
 					Else If BrushMode=BrushModeFill
 						; flood fill
+						LeftMouseReleased=False
 						
 						FloodFillInitializeState(x,y)
 						While FloodElementCount<>0
@@ -3252,6 +3254,9 @@ Function EditorLocalControls()
 						Wend
 					Else If BrushMode=BrushModeInline
 						; flood fill for inline
+						LeftMouseReleased=False
+						
+						FloodedElementCount=0
 						
 						FloodFillInitializeState(x,y)
 						While FloodElementCount<>0
@@ -3266,10 +3271,19 @@ Function EditorLocalControls()
 							FloodFillVisitLevelTile(thisx,thisy-1)
 							FloodFillVisitLevelTile(thisx,thisy+1)
 							
+							; for tile mode, wait to change the tiles until the flood fill visits all the tiles
 							If FloodOutsideAdjacent
-								PlaceObjectOrChangeLevelTile(thisx,thisy)
+								FloodedStackX(FloodedElementCount)=thisx
+								FloodedStackY(FloodedElementCount)=thisy
+								FloodedElementCount=FloodedElementCount+1
 							EndIf
 						Wend
+						
+						For i=0 To FloodedElementCount-1
+							thisx=FloodedStackX(i)
+							thisy=FloodedStackY(i)
+							PlaceObjectOrChangeLevelTile(thisx,thisy)
+						Next
 					Else 
 						; default
 						If CustomBrush
@@ -4967,14 +4981,10 @@ Function SaveLevelAndExit()
 End Function
 
 
-Function ToggleBlockMode()
+Function PositionIsEqual(x1,y1,x2,y2)
 
-	If IsBrushInBlockMode()
-		BrushMode=BrushModeNormal
-	Else
-		BrushMode=BrushModeBlock
-	EndIf
-	
+	Return x1=x2 And y1=y2
+
 End Function
 
 
@@ -5003,6 +5013,17 @@ Function XtrudeLogics()
 	EndIf
 	SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
 
+End Function
+
+
+Function ToggleBlockMode()
+
+	If IsBrushInBlockMode()
+		BrushMode=BrushModeNormal
+	Else
+		BrushMode=BrushModeBlock
+	EndIf
+	
 End Function
 
 
