@@ -19706,6 +19706,44 @@ Function MasterMainLoop()
 			DisplayText2("+EXIT",36,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		EndIf
 	EndIf
+	
+	AdventureExitButtonsMinX=438
+	AdventureExitButtonsMaxX=680
+	AdventureExitButtonsStartY=406
+	AdventureExitButtonsGapY=20
+	If MouseX()>AdventureExitButtonsMinX And MouseX()<AdventureExitButtonsMaxX And MouseY()>AdventureExitButtonsStartY And MouseY()<AdventureExitButtonsStartY+AdventureExitButtonsGapY
+		r=255
+		g=255
+		b=255
+		
+		If MouseDown(1)
+			adventureexitwonlevel=adventureexitlostlevel
+			adventureexitwonx=adventureexitlostx
+			adventureexitwony=adventureexitlosty
+		EndIf
+	Else
+		r=TextMenuButtonR
+		g=TextMenuButtonG
+		b=TextMenuButtonB
+	EndIf
+	DisplayText2("Set To LostExt",24,20,r,g,b)
+	
+	If MouseX()>AdventureExitButtonsMinX And MouseX()<AdventureExitButtonsMaxX And MouseY()>AdventureExitButtonsStartY+AdventureExitButtonsGapY And MouseY()<AdventureExitButtonsStartY+AdventureExitButtonsGapY*2
+		r=255
+		g=255
+		b=255
+		
+		If MouseDown(1)
+			adventureexitlostlevel=adventureexitwonlevel
+			adventureexitlostx=adventureexitwonx
+			adventureexitlosty=adventureexitwony
+		EndIf
+	Else
+		r=TextMenuButtonR
+		g=TextMenuButtonG
+		b=TextMenuButtonB
+	EndIf
+	DisplayText2("Set To WonExit",24,21,r,g,b)
 
 		
 		; Mouse
