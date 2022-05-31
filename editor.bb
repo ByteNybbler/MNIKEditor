@@ -269,8 +269,21 @@ Const ShowObjectMeshCount=4
 
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
-Global BlockMode,FillMode
+
+;Global BlockMode,FillMode
+Global BrushMode=0
+Const BrushModeNormal=0
+Const BrushModeBlock=1
+Const BrushModeBlockPlacing=2
+Const BrushModeFill=3
+Const BrushModeInline=4
+
+Function IsBrushInBlockMode()
+	Return BrushMode=BrushModeBlock Or BrushMode=BrushModeBlockPlacing
+End Function
+
 Global FillDensity#=1.0
+
 Global BlockModeMesh,BlockModeSurface,BlockCornerX,BlockCornerY
 Global LevelTextureNum, WaterTextureNum
 Dim LevelTextureName$(30),WaterTextureName$(20)
@@ -2241,23 +2254,20 @@ Function EditorMainLoop()
 	;Rect 0,500,800,100,True
 	
 	Color TextLevelR,TextLevelG,TextLevelB
-
-	If BlockMode=0
-		Text 0+4,520,"   BLOCK"
-	Else If blockmode=1
+	
+	If BrushMode=BrushModeBlock
 		Text 0+4,520,"  >BLOCK<"
-	Else If blockmode=2
+	Else If BrushMode=BrushModeBlockPlacing
 		Text 0+4,520," >>BLOCK<<"
-
+	Else
+		Text 0+4,520,"   BLOCK"
 	EndIf
 	
 	
 	Text 0,550,"    WIPE"
 	
 	
-	If FillMode=0
-		Text 0,580,"    FILL"
-	Else If FillMode=1
+	If BrushMode=BrushModeFill
 		If FillDensity#<1.0
 			Color 255,155,0
 			Text 0,580,">FILL "+FillDensity#+"<"
@@ -2265,6 +2275,8 @@ Function EditorMainLoop()
 		Else
 			Text 0,580,"   >FILL<"
 		EndIf
+	Else
+		Text 0,580,"    FILL"
 	EndIf
 
 	
@@ -3076,20 +3088,24 @@ Function EditorLocalControls()
 				Color TextLevelR,TextLevelG,TextLevelB
 				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
 				
-				If FillMode>0
+				If BrushMode=BrushModeFill
 					r=255
 					g=255
 					b=0
-				Else If BlockMode>0
+				Else If IsBrushInBlockMode()
 					r=0
 					g=255
 					b=255
+				Else If BrushMode=BrushModeInline
+					r=255
+					g=255
+					b=0
 				Else
 					If CustomBrush
 						r=255
 						g=0
 						b=255
-					Else
+					Else ; normal brush mode
 						r=255
 						g=255
 						b=255
@@ -3100,7 +3116,7 @@ Function EditorLocalControls()
 				
 				
 				HideEntity BlockModeMesh
-				If BlockMode=2
+				If BrushMode=BrushModeBlockPlacing
 					; show the block
 					ShowEntity BlockModeMesh
 					If x>BlockCornerx
@@ -3125,13 +3141,13 @@ Function EditorLocalControls()
 					
 				
 				If LeftMouse=True And LeftMouseReleased=True
-					If BlockMode=1
+					If BrushMode=BrushModeBlock
 						; place one corner of block
 						BlockCornerX=x
 						BlockCornerY=y
-						blockmode=2
+						BrushMode=BrushModeBlockPlacing
 						Delay 100
-					Else If blockmode=2
+					Else If BrushMode=BrushModeBlockPlacing
 						; fill block
 						If EditorMode=0
 							For i=cornleft To cornright
@@ -3146,9 +3162,9 @@ Function EditorLocalControls()
 								Next
 							Next
 						EndIf
-						blockmode=1
+						BrushMode=BrushModeBlock
 						Delay 100
-					Else If fillmode=1
+					Else If BrushMode=BrushModeFill
 						; flood fill
 						
 						; initialize state
@@ -3258,8 +3274,8 @@ Function EditorLocalControls()
 				If RightMouse=True And RightMouseReleased=True
 					RightMouseReleased=False
 					
-					If BlockMode=2
-						BlockMode=1
+					If BrushMode=BrushModeBlockPlacing
+						BrushMode=BrushModeBlock
 					Else				
 						If EditorMode=0
 							GrabLevelTile(x,y)
@@ -3267,8 +3283,6 @@ Function EditorLocalControls()
 							GrabObject(x,y)
 						EndIf
 					EndIf
-					;BlockMode=0
-					;FillMode=0
 				EndIf
 				If EditorMode=3
 					; object dragging
@@ -3295,7 +3309,7 @@ Function EditorLocalControls()
 				y=-1
 			EndIf
 	
-			If BlockMode=2 And DeleteKey=True And DeleteKeyReleased=True
+			If BrushMode=BrushModeBlockPlacing And DeleteKey=True And DeleteKeyReleased=True
 				DeleteKeyReleased=False
 				
 				For i=cornleft To cornright
@@ -3304,9 +3318,9 @@ Function EditorLocalControls()
 						Next
 					Next
 				
-				BlockMode=1
+				BrushMode=BrushModeBlock
 				Delay 100
-			Else If FillMode=1 And DeleteKey=True And DeleteKeyReleased=True
+			Else If BrushMode=BrushModeFill And DeleteKey=True And DeleteKeyReleased=True
 				; flood fill but it deletes
 				DeleteKeyReleased=False
 				
@@ -3373,7 +3387,7 @@ Function EditorLocalControls()
 				Wend
 			EndIf
 			
-			If ReturnKey=True And ReturnKeyReleased=True And BlockMode=0
+			If ReturnKey=True And ReturnKeyReleased=True And BrushMode=BrushModeNormal
 				ReturnKeyReleased=False
 				If CustomBrush
 					CustomBrush=False
@@ -4974,12 +4988,11 @@ End Function
 
 Function ToggleBlockMode()
 
-	If blockmode=0 
-		blockmode=1
+	If IsBrushInBlockMode()
+		BrushMode=BrushModeNormal
 	Else
-		blockmode=0
+		BrushMode=BrushModeBlock
 	EndIf
-	FillMode=0
 	
 End Function
 
@@ -4987,20 +5000,19 @@ End Function
 Function ToggleFillMode(UseFillDensity)
 
 	If UseFillDensity
-		fillmode=1
+		BrushMode=BrushModeFill
 		FillDensity#=InputFloat#("Enter fill density (0.0 to 1.0): ")
 		If FillDensity#<0.0
 			FillDensity#=0.0
 		ElseIf FillDensity#>1.0
 			FillDensity#=1.0
 		EndIf
-	ElseIf fillmode=0 
-		fillmode=1
+	ElseIf BrushMode<>BrushModeFill
+		BrushMode=BrushModeFill
 		FillDensity#=1.0
 	Else
-		fillmode=0
+		BrushMode=BrushModeNormal
 	EndIf
-	BlockMode=0
 
 End Function
 
