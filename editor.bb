@@ -2492,7 +2492,7 @@ Function SetEditorMode(NewMode)
 		EndIf
 	EndIf
 		
-	If (NewMode=0 Or NewMode=3) And NewMode<>CustomBrushEditorMode
+	If BrushMode=BrushModeCustom And (NewMode=0 Or NewMode=3) And NewMode<>CustomBrushEditorMode
 		BrushMode=BrushModeNormal
 	EndIf
 	
@@ -3425,7 +3425,7 @@ Function EditorLocalControls()
 				ReturnKeyReleased=False
 				If BrushMode=BrushModeCustom
 					BrushMode=BrushModeNormal
-				ElseIf BrushMode=BrushModeNormal
+				Else
 					; set custom brush
 					NofBrushObjects=0
 					BrushOffset=BrushSize/2
@@ -4590,22 +4590,12 @@ Function EditorLocalControls()
 			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 				LeftMouseReleased=False
 
-				BrushChange=1
+				ChangeBrushModeByDelta(1)
 			EndIf
 			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 				RightMouseReleased=False
 
-				BrushChange=-1
-			EndIf
-			
-			BrushMode=BrushMode+BrushChange
-			While BrushMode=BrushModeBlockPlacing Or BrushMode=BrushModeCustom
-				BrushMode=BrushMode+BrushChange
-			Wend
-			If BrushMode<0
-				BrushMode=MaxBrushMode
-			ElseIf BrushMode>MaxBrushMode
-				BrushMode=0
+				ChangeBrushModeByDelta(-1)
 			EndIf
 		EndIf
 	
@@ -14808,6 +14798,8 @@ Function GetBrushModeName$(Value)
 		Return ">BLOCK<"
 	Case BrushModeFill
 		Return "FILL"
+	Case BrushModeCustom
+		Return "CUSTOM"
 	Case BrushModeInlineSoft
 		Return "INLINE SOFT"
 	Case BrushModeInlineHard
@@ -14859,6 +14851,21 @@ Function GetBrushModeColor$(Value,index)
 		Return g
 	Else
 		Return b
+	EndIf
+
+End Function
+
+Function ChangeBrushModeByDelta(Delta)
+
+	BrushMode=BrushMode+Delta
+	While BrushMode=BrushModeBlockPlacing Or BrushMode=BrushModeCustom
+		BrushMode=BrushMode+Delta
+	Wend
+	
+	If BrushMode<0
+		BrushMode=MaxBrushMode
+	ElseIf BrushMode>MaxBrushMode
+		BrushMode=0
 	EndIf
 
 End Function
