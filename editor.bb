@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/30/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (05/31/22)"
 
 Global MASTERUSER=True
 
@@ -273,14 +273,21 @@ Global BorderExpandOption=0 ;0-current, 1-duplicate
 
 ;Global BlockMode,FillMode
 Global BrushMode=0
+Const MaxBrushMode=5
+
 Const BrushModeNormal=0
 Const BrushModeBlock=1
 Const BrushModeBlockPlacing=2
 Const BrushModeFill=3
-Const BrushModeInline=4
+Const BrushModeInlineSoft=4
+Const BrushModeInlineHard=5
 
 Function IsBrushInBlockMode()
 	Return BrushMode=BrushModeBlock Or BrushMode=BrushModeBlockPlacing
+End Function
+
+Function IsBrushInInlineMode()
+	Return BrushMode=BrushModeInlineSoft Or BrushMode=BrushModeInlineHard
 End Function
 
 Global PlacementDensity#=1.0
@@ -2260,30 +2267,33 @@ Function EditorMainLoop()
 	
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	If BrushMode=BrushModeBlock
-		Text 0+4,520,"  >BLOCK<"
-	Else If BrushMode=BrushModeBlockPlacing
-		Text 0+4,520," >>BLOCK<<"
-	Else
-		Text 0+4,520,"   BLOCK"
-	EndIf
+;	If BrushMode=BrushModeBlock
+;		Text 0+4,520,"  >BLOCK<"
+;	Else If BrushMode=BrushModeBlockPlacing
+;		Text 0+4,520," >>BLOCK<<"
+;	Else
+;		Text 0+4,520,"   BLOCK"
+;	EndIf
+
+	
+	CenteredText(50,520,GetBrushModeName$(BrushMode))
 	
 	
-	;Text 0,550,"    WIPE"
+	Text 0,550,"    WIPE"
 	
 	
-	If BrushMode=BrushModeInline
-		Text 0,550,"  >INLINE<"
-	Else
-		Text 0,550,"   INLINE"
-	EndIf
+;	If BrushMode=BrushModeInline
+;		Text 0,550,"  >INLINE<"
+;	Else
+;		Text 0,550,"   INLINE"
+;	EndIf
 	
 	
-	If BrushMode=BrushModeFill
-		Text 0,580,"   >FILL<"
-	Else
-		Text 0,580,"    FILL"
-	EndIf
+;	If BrushMode=BrushModeFill
+;		Text 0,580,"   >FILL<"
+;	Else
+;		Text 0,580,"    FILL"
+;	EndIf
 
 	
 	Text 100,520,"   FLIP"
@@ -3160,12 +3170,17 @@ Function EditorLocalControls()
 					r=255
 					g=255
 					b=0
-				Else If IsBrushInBlockMode()
+				ElseIf IsBrushInBlockMode()
 					; blue
 					r=0
 					g=255
 					b=255
-				Else If BrushMode=BrushModeInline
+				ElseIf BrushMode=BrushModeInlineSoft
+					; orange
+					r=255
+					g=80
+					b=0
+				ElseIf BrushMode=BrushModeInlineHard
 					; red
 					r=255
 					g=0
@@ -3252,7 +3267,7 @@ Function EditorLocalControls()
 							
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Wend
-					Else If BrushMode=BrushModeInline
+					Else If IsBrushInInlineMode()
 						; flood fill for inline
 						LeftMouseReleased=False
 						
@@ -3270,6 +3285,12 @@ Function EditorLocalControls()
 							FloodFillVisitLevelTile(thisx+1,thisy)
 							FloodFillVisitLevelTile(thisx,thisy-1)
 							FloodFillVisitLevelTile(thisx,thisy+1)
+							
+							If BrushMode=BrushModeInlineHard
+								If (Not LevelTileMatchesTarget(thisx-1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx-1,thisy+1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy+1))
+									FloodOutsideAdjacent=True
+								EndIf
+							EndIf
 							
 							; for tile mode, wait to change the tiles until the flood fill visits all the tiles
 							If FloodOutsideAdjacent
@@ -3388,7 +3409,7 @@ Function EditorLocalControls()
 						
 						DeleteObjectAt(thisx,thisy)
 					Wend
-				Else If BrushMode=BrushModeInline
+				Else If IsBrushInInlineMode()
 					; flood fill for inline but it deletes
 							
 					FloodFillInitializeState(x,y)
@@ -3403,6 +3424,12 @@ Function EditorLocalControls()
 						FloodFillVisitLevelTile(thisx+1,thisy)
 						FloodFillVisitLevelTile(thisx,thisy-1)
 						FloodFillVisitLevelTile(thisx,thisy+1)
+						
+						If BrushMode=BrushModeInlineHard
+							If (Not LevelTileMatchesTarget(thisx-1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx-1,thisy+1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy+1))
+								FloodOutsideAdjacent=True
+							EndIf
+						EndIf
 						
 						If FloodOutsideAdjacent
 							DeleteObjectAt(thisx,thisy)
@@ -4572,24 +4599,39 @@ Function EditorLocalControls()
 	If CtrlDown() And KeyPressed(48) ; Ctrl+B
 		ToggleBlockMode()
 	EndIf
-	
 	If CtrlDown() And KeyPressed(33) ; Ctrl+F
 		ToggleFillMode()
 	EndIf
-	
 	If CtrlDown() And KeyPressed(23) ; Ctrl+I
-		ToggleInlineMode()
+		ToggleInlineSoftMode()
+	EndIf
+	If CtrlDown() And KeyPressed(24) ; Ctrl+O
+		ToggleInlineHardMode()
 	EndIf
 	
 	If MX>=00 And Mx<100
 		If my>=510 And my<540
-			If (LeftMouse=True And LeftMouseReleased=True) Or HotkeyBlockMode
+			; switch brush mode
+			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 				LeftMouseReleased=False
-				;block
-				ToggleBlockMode()
-				
-				Delay 100
-				
+
+				BrushMode=BrushMode+1
+				If BrushMode=BrushModeBlockPlacing
+					BrushMode=BrushMode+1
+				EndIf
+			EndIf
+			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
+				RightMouseReleased=False
+
+				BrushMode=BrushMode-1
+				If BrushMode=BrushModeBlockPlacing
+					BrushMode=BrushMode-1
+				EndIf
+			EndIf
+			If BrushMode<0
+				BrushMode=MaxBrushMode
+			ElseIf BrushMode>MaxBrushMode
+				BrushMode=0
 			EndIf
 		EndIf
 	
@@ -4597,27 +4639,24 @@ Function EditorLocalControls()
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				;inline
-				ToggleInlineMode()
+				;ToggleInlineMode()
 				
 				;wipe
-;				If GetConfirmation("Are you sure you want to wipe?")
-;					For i=0 To LevelWidth-1
-;						For j=0 To LevelHeight-1
-;							ChangeLevelTile(i,j,True)
-;						Next
-;					Next
-;				EndIf
+				If GetConfirmation("Are you sure you want to wipe?")
+					For i=0 To LevelWidth-1
+						For j=0 To LevelHeight-1
+							ChangeLevelTile(i,j,True)
+						Next
+					Next
+				EndIf
 			EndIf
 		EndIf
 		
 		If my>=570 And my<600
-			If (LeftMouse=True And LeftMouseReleased=True) Or HotkeyFillMode
+			If (LeftMouse=True And LeftMouseReleased=True)
 				LeftMouseReleased=False
 				;fill
-				ToggleFillMode()
-				
-				Delay 100
-				
+				;ToggleFillMode()
 			EndIf
 		EndIf
 	
@@ -5033,9 +5072,15 @@ Function ToggleFillMode()
 
 End Function
 
-Function ToggleInlineMode()
+Function ToggleInlineSoftMode()
 
-	ToggleFromNormalBrush(BrushModeInline)
+	ToggleFromNormalBrush(BrushModeInlineSoft)
+	
+End Function
+
+Function ToggleInlineHardMode()
+
+	ToggleFromNormalBrush(BrushModeInlineHard)
 	
 End Function
 
@@ -14773,6 +14818,28 @@ Function GetLevelEdgeStyleName$(Value)
 		Return "None"
 	Default
 		Return Value
+	End Select
+
+End Function
+
+
+Function GetBrushModeName$(Value)
+
+	Select Value
+	Case BrushModeNormal
+		Return "NORMAL"
+	Case BrushModeBlock
+		Return "BLOCK"
+	Case BrushModeBlockPlacing
+		Return ">BLOCK<"
+	Case BrushModeFill
+		Return "FILL"
+	Case BrushModeInlineSoft
+		Return "INLINE SOFT"
+	Case BrushModeInlineHard
+		Return "INLINE HARD"
+	Default
+		Return "UNKNOWN"
 	End Select
 
 End Function
