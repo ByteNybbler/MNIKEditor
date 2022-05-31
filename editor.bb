@@ -4671,6 +4671,33 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
+	If KeyDown(34) ; G key
+		For i=0 To NofObjects-1
+			If ObjectType(i)=90 And (ObjectSubType(i)=10 Or (ObjectSubType(i)=15 And ObjectData(i,0)=7)) ; levelexit or CMD 7
+				If ObjectTileX(i)=x And ObjectTileY(i)=y
+					ToLevel=ObjectData(i,1)
+					If ToLevel=CurrentLevelNumber
+						PositionCameraInLevel(ObjectData(i,2),ObjectData(i,3))
+					ElseIf UnsavedChanges
+						FlushKeys
+						SetupWarning()
+						ReturnKeyReleased=False
+						Print("This level has unsaved changes. Type R to save and exit.")
+						Typed$=Upper$(Input$("Type E to exit without saving: "))
+						If Typed$="R"
+							SaveLevelAndExit(False)
+							AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
+						ElseIf Typed$="E"
+							AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
+						EndIf
+					Else
+						AccessLevelAt(ToLevel,ObjectData(i,2),ObjectData(i,3))
+					EndIf
+				EndIf
+			EndIf
+		Next
+	EndIf
+	
 	; More button
 	If mx>=StartX And Mx<StartX+80 And my>=StartY And my<StartY+20
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
@@ -5229,7 +5256,7 @@ Function EditorLocalControls()
 				
 			Else If my>560 And my<600
 				; save and exit
-				SaveLevelAndExit()
+				SaveLevelAndExit(True)
 				
 				Repeat
 				Until MouseDown(1)=False
@@ -5246,7 +5273,7 @@ Function EditorLocalControls()
 End Function
 
 
-Function SaveLevelAndExit()
+Function SaveLevelAndExit(WillResumeMaster)
 
 	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
 		FlushKeys
@@ -5265,7 +5292,9 @@ Function SaveLevelAndExit()
 		EndIf
 	Else
 		SaveLevel()
-		ResumeMaster()
+		If WillResumeMaster
+			ResumeMaster()
+		EndIf
 	EndIf
 
 End Function
@@ -17213,6 +17242,8 @@ Function LoadLevel(levelnumber)
 	
 	LightingWasChanged()
 	
+	UnsavedChanges=False
+	
 End Function
 
 Function NewLevel(levelnumber)
@@ -17243,6 +17274,8 @@ Function NewLevel(levelnumber)
 
 	rebuildlevelmodel()
 	BuildCurrentTileModel()
+	
+	UnsavedChanges=False
 
 End Function
 
@@ -17251,8 +17284,6 @@ Function CompileLevel()
 End Function
 
 Function AccessLevel(levelnumber)
-
-	UnsavedChanges=False
 
 	If LevelExists(levelnumber)=True
 		LoadLevel(levelnumber)
