@@ -6849,13 +6849,17 @@ Function ChangeLevelTile(i,j,update)
 	ChangeLevelTileActual(i,j,update)
 	
 	If DupeMode=DupeModeX
-		ChangeLevelTileActual(LevelWidth-1-i,j,update)
+		TargetX=LevelWidth-1-i
+		ChangeLevelTileActual(TargetX,j,update)
 	ElseIf DupeMode=DupeModeY
-		ChangeLevelTileActual(i,LevelHeight-1-j,update)
+		TargetY=LevelHeight-1-j
+		ChangeLevelTileActual(i,TargetY,update)
 	ElseIf DupeMode=DupeModeXPlusY
-		ChangeLevelTileActual(LevelWidth-1-i,j,update)
-		ChangeLevelTileActual(i,LevelHeight-1-j,update)
-		ChangeLevelTileActual(LevelWidth-1-i,LevelHeight-1-j,update)
+		TargetX=LevelWidth-1-i
+		TargetY=LevelHeight-1-j
+		ChangeLevelTileActual(TargetX,j,update)
+		ChangeLevelTileActual(i,TargetY,update)
+		ChangeLevelTileActual(TargetX,TargetY,update)
 	EndIf
 
 End Function
@@ -7760,13 +7764,27 @@ Function PlaceObject(x#,y#)
 	PlaceObjectActual(x#,y#)
 	
 	If DupeMode=DupeModeX
-		PlaceObjectActual(LevelWidth-1-x#,y#)
+		TargetX#=LevelWidth-1-x#
+		If TargetX#<>x#
+			PlaceObjectActual(TargetX#,y#)
+		EndIf
 	ElseIf DupeMode=DupeModeY
-		PlaceObjectActual(x#,LevelHeight-1-y#)
+		TargetY#=LevelHeight-1-y#
+		If TargetY#<>y#
+			PlaceObjectActual(x#,LevelHeight-1-y#)
+		EndIf
 	ElseIf DupeMode=DupeModeXPlusY
-		PlaceObjectActual(LevelWidth-1-x#,y#)
-		PlaceObjectActual(x#,LevelHeight-1-y#)
-		PlaceObjectActual(LevelWidth-1-x#,LevelHeight-1-y#)
+		TargetX#=LevelWidth-1-x#
+		TargetY#=LevelHeight-1-y#
+		If TargetX#<>x#
+			PlaceObjectActual(TargetX#,y#)
+		EndIf
+		If TargetY#<>y#
+			PlaceObjectActual(x#,TargetY#)
+		EndIf
+		If TargetX#<>x# And TargetY#<>y#
+			PlaceObjectActual(TargetX#,TargetY#)
+		EndIf
 	EndIf
 
 End Function
@@ -12949,14 +12967,22 @@ Function AdjustObjectAdjuster(i)
 
 	Case "Data8"
 		;CurrentObjectData(8)=AdjustInt("Data8: ", CurrentObjectData(8), 1, 10, 150)
+		PrevValue=CurrentObjectData(8)
 		AdjustObjectData(8, SlowInt, FastInt, DelayTime)
+		NewValue=CurrentObjectData(8)
 
 		If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
-			If LeftMouse=True
+			; ActivateID (Pla is -2, so skip -1 to get there)
+			If NewValue>PrevValue
 				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=0
-			ElseIf RightMouse=True
+			Else
 				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=-2
 			EndIf
+;			If LeftMouse=True
+;				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=0
+;			ElseIf RightMouse=True
+;				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=-2
+;			EndIf
 		EndIf
 		If CurrentObjectModelName$="!NPC"
 			; Anim
