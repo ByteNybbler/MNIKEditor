@@ -3212,46 +3212,41 @@ Function EditorLocalControls()
 							ElseIf EditorMode=3
 								PlaceObject(thisx,thisy)
 							EndIf
-													
-							If thisx>0
-								nextx=thisx-1
-								nexty=thisy
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
+							
+							nextx=thisx-1
+							nexty=thisy
+							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+								LevelTileVisited(nextx,nexty)=True
+								FloodStackX(ElementCount)=nextx
+								FloodStackY(ElementCount)=nexty
+								ElementCount=ElementCount+1
 							EndIf
-							If thisx<LevelWidth-1
-								nextx=thisx+1
-								nexty=thisy
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
+
+							nextx=thisx+1
+							nexty=thisy
+							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+								LevelTileVisited(nextx,nexty)=True
+								FloodStackX(ElementCount)=nextx
+								FloodStackY(ElementCount)=nexty
+								ElementCount=ElementCount+1
 							EndIf
-							If thisy>0
-								nextx=thisx
-								nexty=thisy-1
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
+
+							nextx=thisx
+							nexty=thisy-1
+							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+								LevelTileVisited(nextx,nexty)=True
+								FloodStackX(ElementCount)=nextx
+								FloodStackY(ElementCount)=nexty
+								ElementCount=ElementCount+1
 							EndIf
-							If thisy<LevelHeight-1
-								nextx=thisx
-								nexty=thisy+1
-								If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-									LevelTileVisited(nextx,nexty)=True
-									FloodStackX(ElementCount)=nextx
-									FloodStackY(ElementCount)=nexty
-									ElementCount=ElementCount+1
-								EndIf
+
+							nextx=thisx
+							nexty=thisy+1
+							If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+								LevelTileVisited(nextx,nexty)=True
+								FloodStackX(ElementCount)=nextx
+								FloodStackY(ElementCount)=nexty
+								ElementCount=ElementCount+1
 							EndIf
 						Wend
 					Else If BrushMode=BrushModeInline
@@ -3275,62 +3270,57 @@ Function EditorLocalControls()
 							thisy=FloodStackY(ElementCount)
 							
 							OutsideAdjacent=False
-													
-							If thisx>0
-								nextx=thisx-1
-								nexty=thisy
-								If LevelTileMatchesTarget(nextx,nexty)
-									If LevelTileVisited(nextx,nexty)=False
-										LevelTileVisited(nextx,nexty)=True
-										FloodStackX(ElementCount)=nextx
-										FloodStackY(ElementCount)=nexty
-										ElementCount=ElementCount+1
-									EndIf
-								Else
-									OutsideAdjacent=True
+
+							nextx=thisx-1
+							nexty=thisy
+							If LevelTileMatchesTarget(nextx,nexty)
+								If LevelTileVisited(nextx,nexty)=False
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
 								EndIf
+							Else
+								OutsideAdjacent=True
 							EndIf
-							If thisx<LevelWidth-1
-								nextx=thisx+1
-								nexty=thisy
-								If LevelTileMatchesTarget(nextx,nexty)
-									If LevelTileVisited(nextx,nexty)=False
-										LevelTileVisited(nextx,nexty)=True
-										FloodStackX(ElementCount)=nextx
-										FloodStackY(ElementCount)=nexty
-										ElementCount=ElementCount+1
-									EndIf
-								Else
-									OutsideAdjacent=True
+
+							nextx=thisx+1
+							nexty=thisy
+							If LevelTileMatchesTarget(nextx,nexty)
+								If LevelTileVisited(nextx,nexty)=False
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
 								EndIf
+							Else
+								OutsideAdjacent=True
 							EndIf
-							If thisy>0
-								nextx=thisx
-								nexty=thisy-1
-								If LevelTileMatchesTarget(nextx,nexty)
-									If LevelTileVisited(nextx,nexty)=False
-										LevelTileVisited(nextx,nexty)=True
-										FloodStackX(ElementCount)=nextx
-										FloodStackY(ElementCount)=nexty
-										ElementCount=ElementCount+1
-									EndIf
-								Else
-									OutsideAdjacent=True
+
+							nextx=thisx
+							nexty=thisy-1
+							If LevelTileMatchesTarget(nextx,nexty)
+								If LevelTileVisited(nextx,nexty)=False
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
 								EndIf
+							Else
+								OutsideAdjacent=True
 							EndIf
-							If thisy<LevelHeight-1
-								nextx=thisx
-								nexty=thisy+1
-								If LevelTileMatchesTarget(nextx,nexty)
-									If LevelTileVisited(nextx,nexty)=False
-										LevelTileVisited(nextx,nexty)=True
-										FloodStackX(ElementCount)=nextx
-										FloodStackY(ElementCount)=nexty
-										ElementCount=ElementCount+1
-									EndIf
-								Else
-									OutsideAdjacent=True
+
+							nextx=thisx
+							nexty=thisy+1
+							If LevelTileMatchesTarget(nextx,nexty)
+								If LevelTileVisited(nextx,nexty)=False
+									LevelTileVisited(nextx,nexty)=True
+									FloodStackX(ElementCount)=nextx
+									FloodStackY(ElementCount)=nexty
+									ElementCount=ElementCount+1
 								EndIf
+							Else
+								OutsideAdjacent=True
 							EndIf
 							
 							If OutsideAdjacent
@@ -3430,8 +3420,9 @@ Function EditorLocalControls()
 				BrushMode=BrushModeBlock
 				Delay 100
 			Else If BrushMode=BrushModeFill And DeleteKey=True And DeleteKeyReleased=True
-				; flood fill but it deletes
 				DeleteKeyReleased=False
+			
+				; flood fill but it deletes
 				
 				; initialize state
 				For i=0 To LevelWidth-1
@@ -3452,46 +3443,40 @@ Function EditorLocalControls()
 
 					DeleteObjectAt(thisx,thisy)
 
-												
-					If thisx>0
-						nextx=thisx-1
-						nexty=thisy
-						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							LevelTileVisited(nextx,nexty)=True
-							FloodStackX(ElementCount)=nextx
-							FloodStackY(ElementCount)=nexty
-							ElementCount=ElementCount+1
-						EndIf
+					nextx=thisx-1
+					nexty=thisy
+					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+						LevelTileVisited(nextx,nexty)=True
+						FloodStackX(ElementCount)=nextx
+						FloodStackY(ElementCount)=nexty
+						ElementCount=ElementCount+1
 					EndIf
-					If thisx<LevelWidth-1
-						nextx=thisx+1
-						nexty=thisy
-						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							LevelTileVisited(nextx,nexty)=True
-							FloodStackX(ElementCount)=nextx
-							FloodStackY(ElementCount)=nexty
-							ElementCount=ElementCount+1
-						EndIf
+					
+					nextx=thisx+1
+					nexty=thisy
+					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+						LevelTileVisited(nextx,nexty)=True
+						FloodStackX(ElementCount)=nextx
+						FloodStackY(ElementCount)=nexty
+						ElementCount=ElementCount+1
 					EndIf
-					If thisy>0
-						nextx=thisx
-						nexty=thisy-1
-						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							LevelTileVisited(nextx,nexty)=True
-							FloodStackX(ElementCount)=nextx
-							FloodStackY(ElementCount)=nexty
-							ElementCount=ElementCount+1
-						EndIf
+
+					nextx=thisx
+					nexty=thisy-1
+					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+						LevelTileVisited(nextx,nexty)=True
+						FloodStackX(ElementCount)=nextx
+						FloodStackY(ElementCount)=nexty
+						ElementCount=ElementCount+1
 					EndIf
-					If thisy<LevelHeight-1
-						nextx=thisx
-						nexty=thisy+1
-						If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-							LevelTileVisited(nextx,nexty)=True
-							FloodStackX(ElementCount)=nextx
-							FloodStackY(ElementCount)=nexty
-							ElementCount=ElementCount+1
-						EndIf
+
+					nextx=thisx
+					nexty=thisy+1
+					If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
+						LevelTileVisited(nextx,nexty)=True
+						FloodStackX(ElementCount)=nextx
+						FloodStackY(ElementCount)=nexty
+						ElementCount=ElementCount+1
 					EndIf
 				Wend
 			EndIf
@@ -6930,6 +6915,18 @@ Function SetLevelTileAsTarget(i,j)
 End Function
 
 Function LevelTileMatchesTarget(i,j)
+
+	If i<0
+		Return False
+	ElseIf i>=LevelWidth
+		Return False
+	EndIf
+	
+	If j<0
+		Return False
+	ElseIf j>=LevelHeight
+		Return False
+	EndIf
 
 	If TargetTileTextureUse And TargetTileTexture<>LevelTileTexture(i,j)
 		Return False
