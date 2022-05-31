@@ -283,7 +283,15 @@ Const BrushModeInlineSoft=4
 Const BrushModeInlineHard=5
 
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
-Const BrushModeCustom=-1
+Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
+
+Global DupeMode=0
+Const DupeModeMax=3
+
+Const DupeModeNone=0
+Const DupeModeX=1
+Const DupeModeY=2
+Const DupeModeXPlusY=3
 
 Function IsBrushInBlockMode()
 	Return BrushMode=BrushModeBlock Or BrushMode=BrushModeBlockPlacing
@@ -2299,6 +2307,14 @@ Function EditorMainLoop()
 ;	Else
 ;		Text 0,580,"    FILL"
 ;	EndIf
+
+	If DupeMode<>DupeModeNone
+		Color 255,155,0
+	EndIf
+	
+	CenteredText(50,580,GetDupeModeName$(DupeMode))
+
+	Color TextLevelR,TextLevelG,TextLevelB
 
 	
 	Text 100,520,"   FLIP"
@@ -4617,10 +4633,14 @@ Function EditorLocalControls()
 		EndIf
 		
 		If my>=570 And my<600
-			If (LeftMouse=True And LeftMouseReleased=True)
-				LeftMouseReleased=False
-				;fill
-				;ToggleFillMode()
+			;fill
+			;ToggleFillMode()
+			
+			DupeMode=AdjustInt("Enter dupe mode: ",DupeMode,1,1,100)
+			If DupeMode<0
+				DupeMode=DupeModeMax
+			ElseIf DupeMode>DupeModeMax
+				DupeMode=0
 			EndIf
 		EndIf
 	
@@ -6595,6 +6615,22 @@ Function BuildLevelModel()
 End Function
 
 Function ChangeLevelTile(i,j,update)
+
+	ChangeLevelTileActual(i,j,update)
+	
+	If DupeMode=DupeModeX
+		ChangeLevelTileActual(LevelWidth-1-i,j,update)
+	ElseIf DupeMode=DupeModeY
+		ChangeLevelTileActual(i,LevelHeight-1-j,update)
+	ElseIf DupeMode=DupeModeXPlusY
+		ChangeLevelTileActual(LevelWidth-1-i,j,update)
+		ChangeLevelTileActual(i,LevelHeight-1-j,update)
+		ChangeLevelTileActual(LevelWidth-1-i,LevelHeight-1-j,update)
+	EndIf
+
+End Function
+
+Function ChangeLevelTileActual(i,j,update)
 
 	If i<0
 		Return
@@ -14867,6 +14903,24 @@ Function ChangeBrushModeByDelta(Delta)
 	ElseIf BrushMode>MaxBrushMode
 		BrushMode=0
 	EndIf
+
+End Function
+
+
+Function GetDupeModeName$(Value)
+
+	Select Value
+	Case DupeModeNormal
+		Return "NO DUPE"
+	Case DupeModeX
+		Return "DUPE X"
+	Case DupeModeY
+		Return "DUPE Y"
+	Case DupeModeXPlusY
+		Return "DUPE X+Y"
+	Default
+		Return "DUPE UNKNOWN"
+	End Select
 
 End Function
 
