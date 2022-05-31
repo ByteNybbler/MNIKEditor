@@ -2931,11 +2931,18 @@ Function SetUseStateOfAllTileAttributes(NewState)
 End Function
 
 
-Function MaybeUnuseAllTileAttributes()
+Function MaybeUnuseAllTileAttributes(MyState)
 
 	If ShiftDown()
-		SetUseStateOfAllTileAttributes(False)
+		If MyState=False
+			SetUseStateOfAllTileAttributes(True)
+			Return False
+		Else
+			SetUseStateOfAllTileAttributes(False)
+			Return True
+		EndIf
 	EndIf
+	Return True
 
 End Function
 
@@ -3651,8 +3658,9 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileTextureUse=1-CurrentTileTextureUse
+			If MaybeUnuseAllTileAttributes(CurrentTileTextureUse)
+				CurrentTileTextureUse=1-CurrentTileTextureUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 	EndIf
@@ -3674,8 +3682,9 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileSideTextureUse=1-CurrentTileSideTextureUse
+			If MaybeUnuseAllTileAttributes(CurrentTileSideTextureUse)
+				CurrentTileSideTextureUse=1-CurrentTileSideTextureUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 	EndIf
@@ -3696,8 +3705,9 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentWaterTileUse=1-CurrentWaterTileUse
+			If MaybeUnuseAllTileAttributes(CurrentWaterTileUse)
+				CurrentWaterTileUse=1-CurrentWaterTileUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3714,8 +3724,9 @@ Function EditorLocalControls()
 		
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
+			If MaybeUnuseAllTileAttributes(CurrentTileExtrusionUse)
+				CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3728,8 +3739,9 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileHeightUse=1-CurrentTileHeightUse
+			If MaybeUnuseAllTileAttributes(CurrentTileHeightUse)
+				CurrentTileHeightUse=1-CurrentTileHeightUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3787,8 +3799,9 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileLogicUse=1-CurrentTileLogicUse
+			If MaybeUnuseAllTileAttributes(CurrentTileLogicUse)
+				CurrentTileLogicUse=1-CurrentTileLogicUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3802,8 +3815,9 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileRandomUse=1-CurrentTileRandomUse
+			If MaybeUnuseAllTileAttributes(CurrentTileRandomUse)
+				CurrentTileRandomUse=1-CurrentTileRandomUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3818,8 +3832,9 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileRoundingUse=1-CurrentTileRoundingUse
+			If MaybeUnuseAllTileAttributes(CurrentTileRoundingUse)
+				CurrentTileRoundingUse=1-CurrentTileRoundingUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3834,8 +3849,9 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentTileEdgeRandomUse=1-CurrentTileEdgeRandomUse
+			If MaybeUnuseAllTileAttributes(CurrentTileEdgeRandomUse)
+				CurrentTileEdgeRandomUse=1-CurrentTileEdgeRandomUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3849,8 +3865,9 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
+			If MaybeUnuseAllTileAttributes(CurrentWaterTileHeightUse)
+				CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
@@ -3863,8 +3880,9 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			MaybeUnuseAllTileAttributes()
-			CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
+			If MaybeUnuseAllTileAttributes(CurrentWaterTileTurbulenceUse)
+				CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
+			EndIf
 			SetEditorMode(0)
 		EndIf
 
