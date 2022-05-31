@@ -71,6 +71,7 @@
 * Scroll the mouse wheel: Scroll through tiles and tile categories, as well as tile logics.
 * Shift+Enter: Mark all tile attributes as unused except for the used tile attribute being hovered over with the mouse. If the tile attribute being hovered over is unused, mark all tile attributes as used.
 * Ctrl+Click: As usual, this works on all numeric adjusters, including the tile logic if you're feeling feisty.
+* Ctrl+Enter while hovering the mouse over a numeric tile adjuster: Set a step size for that adjuster. This will modify the value by that amount every time the left mouse button is pressed to place some tiles. To disable the step size, press Ctrl+Enter while hovering the mouse over that adjuster.
 * I while hovering mouse over the TILES menu: Rotates the previewed tile counter-clockwise.
 * O while hovering mouse over the TILES menu: Rotates the previewed tile clockwise.
 

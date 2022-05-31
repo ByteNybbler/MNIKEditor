@@ -587,6 +587,18 @@ Global CurrentWaterTileUse=True
 Global CurrentWaterTileHeightUse=True
 Global CurrentWaterTileTurbulenceUse=True
 
+Global StepSizeTileRandom#
+Global StepSizeTileHeight#
+Global StepSizeTileExtrusion#
+Global StepSizeWaterTileHeight#
+Global StepSizeWaterTileTurbulence#
+
+Function IsAnyStepSizeActive()
+
+	Return StepSizeTileRandom#<>0 Or StepSizeTileHeight#<>0 Or StepSizeTileExtrusion#<>0 Or StepSizeWaterTileHeight#<>0 Or StepSizeWaterTileTurbulence#<>0
+
+End Function
+
 Global TargetTileTexture=8
 Global TargetTileRotation
 Global TargetTileSideTexture=6
@@ -2254,16 +2266,22 @@ Function EditorMainLoop()
 	
 	Text StartX,StartY,"Xtrude: "+CurrentTileExtrusion
 	If CurrentTileExtrusionUse=False Text StartX,StartY,"------------"
+	If StepSizeTileExtrusion#<>0.0 DrawStepSize(StartX,StartY+60,StepSizeTileExtrusion#)
+	Color TextLevelR,TextLevelG,TextLevelB
+	
 	Text StartX+48,StartY,"       Height: "+CurrentTileHeight
 	If CurrentTileHeightUse=False Text StartX+48,StartY,"       ------------"
+	If StepSizeTileHeight#<>0.0 DrawStepSize(StartX+160,StartY+60,StepSizeTileHeight#)
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	CurrentLogicName$=LogicIdToLogicName$(CurrentTileLogic)
 	Text StartX+50,StartY+15,"Logic: "+CurrentLogicName$
-
-
 	If CurrentTileLogicUse=False Text StartX+50,StartY+15,"  ---------"
+	
 	Text StartX+50,StartY+170," Random: "+CurrentTileRandom
 	If CurrentTileRandomUse=False Text StartX+50,StartY+170,"--------------"
+	If StepSizeTileRandom#<>0.0 DrawStepSize(StartX+80,StartY+180,StepSizeTileRandom#)
+	Color TextLevelR,TextLevelG,TextLevelB
 	
 	If CurrentTileRounding=0
 		Text StartX,StartY+185,"Corner:Squar"
@@ -2281,8 +2299,12 @@ Function EditorMainLoop()
 
 	Text StartX,StartY+200,"WHeight:"+CurrentWaterTileHeight
 	If CurrentWaterTileHeightUse=False Text StartX,StartY+200,"------------"
+	If StepSizeWaterTileHeight#<>0.0 DrawStepSize(StartX,StartY+190,StepSizeWaterTileHeight#)
+	Color TextLevelR,TextLevelG,TextLevelB
+	
 	Text StartX+100,StartY+200," WTurb:"+CurrentWaterTileTurbulence
 	If CurrentWaterTileTurbulenceUse=False Text StartX+100,StartY+200,"------------"
+	If StepSizeWaterTileTurbulence#<>0.0 DrawStepSize(StartX+170,StartY+180,StepSizeWaterTileTurbulence#)
 
 	;Color RectToolbarR,RectToolbarG,RectToolbarB
 	;Rect 0,520,800,80,True
@@ -2706,11 +2728,9 @@ Function CenteredText(StartX,StartY,Message$)
 
 End Function
 
-Function DrawTooltip(StartX,StartY,Message$)
+Function DrawTextRectangle(StartX,StartY,Message$,RectR,RectG,RectB,TextR,TextG,TextB)
 
 	If Message$="" Then Return
-
-	;ShowMessage("Showing tooltip at "+StartX+","+StartY+": "+Message$,1000)
 	
 	TextPixelLength=GetTextPixelLength(Message$)
 	HorizontalPadding=10
@@ -2718,17 +2738,24 @@ Function DrawTooltip(StartX,StartY,Message$)
 	RectangleWidth=TextPixelLength+TotalHorizontalPadding
 	StartX=StartX-TotalHorizontalPadding
 	
-	; clamp the tooltip position so that the rectangle doesn't spill outside the window
+	; clamp the rectangle position so that the rectangle doesn't spill outside the window
 	If StartX+RectangleWidth>800
 		StartX=800-RectangleWidth
 	ElseIf StartX<0
 		StartX=0
 	EndIf
 
-	Color RectToolbarR,RectToolbarG,RectToolbarB
+	Color RectR,RectG,RectB
 	Rect StartX,StartY-40,RectangleWidth,30,True
-	Color TextLevelR,TextLevelG,TextLevelB
+	Color TextR,TextG,TextB
 	Text StartX+HorizontalPadding,StartY-30,Message$
+
+
+End Function
+
+Function DrawTooltip(StartX,StartY,Message$)
+
+	DrawTextRectangle(StartX,StartY,Message$,RectToolbarR,RectToolbarG,RectToolbarB,TextLevelR,TextLevelG,TextLevelB)
 
 End Function
 
@@ -2916,6 +2943,13 @@ Function RenderToolbar()
 	Color RectToolbarR,RectToolbarG,RectToolbarB
 	;Rect 0,500,500,12,True
 	Rect 0,500,800,100,True
+
+End Function
+
+
+Function DrawStepSize(x,y,StepSize#)
+
+	DrawTextRectangle(x,y,StepSize#, 255,100,0, 0,0,0)
 
 End Function
 
@@ -3266,6 +3300,15 @@ Function EditorLocalControls()
 				EndIf
 				
 				If LeftMouse=True And LeftMouseReleased=True
+					If EditorMode=0 And IsAnyStepSizeActive() And BrushMode<>BrushModeBlock
+						LeftMouseReleased=False
+						CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
+						CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
+						CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
+						CurrentWaterTileHeight#=CurrentWaterTileHeight#+StepSizeWaterTileHeight#
+						CurrentWaterTileTurbulence#=CurrentWaterTileTurbulence#+StepSizeWaterTileTurbulence#
+					EndIf
+				
 					If BrushMode=BrushModeBlock
 						; place one corner of block
 						BlockCornerX=x
@@ -3407,7 +3450,7 @@ Function EditorLocalControls()
 							Next
 						Next
 					EndIf
-					
+						
 					If EditorMode=3
 						LeftMouseReleased=False
 					EndIf
@@ -3730,8 +3773,16 @@ Function EditorLocalControls()
 		
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			If MaybeUnuseAllTileAttributes(CurrentTileExtrusionUse)
-				CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
+			If CtrlDown()
+				If StepSizeTileExtrusion#=0.0
+					StepSizeTileExtrusion#=InputFloat#("Enter step size for Xtrude: ")
+				Else
+					StepSizeTileExtrusion#=0.0
+				EndIf
+			Else
+				If MaybeUnuseAllTileAttributes(CurrentTileExtrusionUse)
+					CurrentTileExtrusionUse=1-CurrentTileExtrusionUse
+				EndIf
 			EndIf
 			SetEditorMode(0)
 		EndIf
@@ -3745,8 +3796,16 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			If MaybeUnuseAllTileAttributes(CurrentTileHeightUse)
-				CurrentTileHeightUse=1-CurrentTileHeightUse
+			If CtrlDown()
+				If StepSizeTileHeight#=0.0
+					StepSizeTileHeight#=InputFloat#("Enter step size for Height: ")
+				Else
+					StepSizeTileHeight#=0.0
+				EndIf
+			Else
+				If MaybeUnuseAllTileAttributes(CurrentTileHeightUse)
+					CurrentTileHeightUse=1-CurrentTileHeightUse
+				EndIf
 			EndIf
 			SetEditorMode(0)
 		EndIf
@@ -3821,8 +3880,16 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			If MaybeUnuseAllTileAttributes(CurrentTileRandomUse)
-				CurrentTileRandomUse=1-CurrentTileRandomUse
+			If CtrlDown()
+				If StepSizeTileRandom#=0.0
+					StepSizeTileRandom#=InputFloat#("Enter step size for Random: ")
+				Else
+					StepSizeTileRandom#=0.0
+				EndIf
+			Else
+				If MaybeUnuseAllTileAttributes(CurrentTileRandomUse)
+					CurrentTileRandomUse=1-CurrentTileRandomUse
+				EndIf
 			EndIf
 			SetEditorMode(0)
 		EndIf
@@ -3871,8 +3938,16 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			If MaybeUnuseAllTileAttributes(CurrentWaterTileHeightUse)
-				CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
+			If CtrlDown()
+				If StepSizeWaterTileHeight#=0.0
+					StepSizeWaterTileHeight#=InputFloat#("Enter step size for WHeight: ")
+				Else
+					StepSizeWaterTileHeight#=0.0
+				EndIf
+			Else
+				If MaybeUnuseAllTileAttributes(CurrentWaterTileHeightUse)
+					CurrentWaterTileHeightUse=1-CurrentWaterTileHeightUse
+				EndIf
 			EndIf
 			SetEditorMode(0)
 		EndIf
@@ -3886,8 +3961,16 @@ Function EditorLocalControls()
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			If MaybeUnuseAllTileAttributes(CurrentWaterTileTurbulenceUse)
-				CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
+			If CtrlDown()
+				If StepSizeWaterTileTurbulence#=0.0
+					StepSizeWaterTileTurbulence#=InputFloat#("Enter step size for WTurb: ")
+				Else
+					StepSizeWaterTileTurbulence#=0.0
+				EndIf
+			Else
+				If MaybeUnuseAllTileAttributes(CurrentWaterTileTurbulenceUse)
+					CurrentWaterTileTurbulenceUse=1-CurrentWaterTileTurbulenceUse
+				EndIf
 			EndIf
 			SetEditorMode(0)
 		EndIf
