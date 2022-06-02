@@ -1725,6 +1725,8 @@ EntityTexture ObstacleMesh(62),ObstacleTexture(59)
 HideEntity ObstacleMesh(62)
 
 
+Global Cylinder=MyLoadmesh("data\models\bridges\cylinder1.b3d",0)
+HideEntity Cylinder
 
 
 Global Fence1=MyLoadmesh("data\models\houses\fence.3ds",0)
@@ -1979,16 +1981,21 @@ Function InitializeGraphicsEntities()
 	EntityPickMode TexturePlane,2
 	
 	For i=0 To 3
+		; Pillar
 		CursorMesh(i)=CreateCube()
 		ScaleMesh CursorMesh(i),0.1,10,0.1
-		tweeny=CreateCube()
-		ScaleMesh tweeny,.5,0.1,.5
-		AddMesh tweeny,CursorMesh(i)
-		FreeEntity tweeny
 		EntityAlpha CursorMesh(i),.3
 		EntityColor CursorMesh(i),255,255,200
+		
+		; Little square at the center of the brush
 		CursorMesh2(i)=CreateCube()
 		ScaleMesh CursorMesh2(i),.2,0.01,.2
+		
+		; The square region that the brush covers
+		CursorMeshRegion=CreateCube()
+		ScaleMesh CursorMeshRegion,.5,0.1,.5
+		AddMesh CursorMeshRegion,CursorMesh(i)
+		FreeEntity CursorMeshRegion
 	Next
 	
 	CurrentGrabbedObjectMarker=CreateCube()
@@ -14345,6 +14352,10 @@ Function BuildCurrentObjectModel()
 	
 	Else If CurrentObjectModelName$="!Door"
 		CurrentObjectModel=MyLoadmesh("data\models\houses\door01.3ds",0)
+		
+	Else If CurrentObjectModelName$="!Cylinder"
+		CurrentObjectModel=CopyEntity(cylinder)
+		
 	Else If CurrentObjectModelName$="!Square"
 		CurrentObjectModel=MyLoadmesh("data\models\squares\square1.b3d",0)
 		
@@ -15303,6 +15314,10 @@ Function GetBrushModeName$(Value)
 		Return "OUTLINE SOFT"
 	Case BrushModeOutlineHard
 		Return "OUTLINE HARD"
+	Case BrushModeRow
+		Return "ROW"
+	Case BrushModeColumn
+		Return "COLUMN"
 	Default
 		Return "UNKNOWN"
 	End Select
@@ -16261,6 +16276,9 @@ Function CreateObjectModel(Dest)
 		Else If ObjectModelName$(Dest)="!Prism"
 			ObjectEntity(Dest)=CopyEntity(PrismMesh)
 			EntityTexture ObjectEntity(Dest),PrismTexture
+			
+		Else If ObjectModelName$(Dest)="!Cylinder"
+			ObjectEntity(Dest)=CopyEntity(cylinder)
 				
 		Else If ObjectModelName$(Dest)="!Square"
 			ObjectEntity(Dest)=MyLoadmesh("data\models\squares\square1.b3d",0)
