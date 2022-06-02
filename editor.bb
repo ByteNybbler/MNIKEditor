@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (05/31/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (06/01/22)"
 
 Global MASTERUSER=True
 
@@ -273,7 +273,7 @@ Global BorderExpandOption=0 ;0-current, 1-duplicate
 
 ;Global BlockMode,FillMode
 Global BrushMode=0
-Const MaxBrushMode=7
+Const MaxBrushMode=9
 
 Const BrushModeNormal=0
 Const BrushModeBlock=1
@@ -283,6 +283,8 @@ Const BrushModeInlineHard=4
 Const BrushModeInlineSoft=5
 Const BrushModeOutlineHard=6
 Const BrushModeOutlineSoft=7
+Const BrushModeRow=8
+Const BrushModeColumn=9
 
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
@@ -2340,7 +2342,8 @@ Function EditorMainLoop()
 	Color TextLevelR,TextLevelG,TextLevelB
 	
 	
-	Text 0,550,"    WIPE"
+	;Text 0,550,"    WIPE"
+	CenteredText(50,550,"WIPE/FLIP")
 	
 	
 ;	If BrushMode=BrushModeInline
@@ -2365,7 +2368,7 @@ Function EditorMainLoop()
 	Color TextLevelR,TextLevelG,TextLevelB
 
 	
-	Text 100,520,"   FLIP"
+	;Text 100,520,"   FLIP"
 	;Text 100,520,"   FLIP X"
 	;Text 100,550,"   FLIP Y"
 	;Text 100+4,580,"  FLIP XY"
@@ -4950,17 +4953,41 @@ Function EditorLocalControls()
 		If my>=540 And my<570
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
-				;inline
-				;ToggleInlineMode()
+				;wipe ;flip
+
+				;Flipped=False
 				
-				;wipe
-				If GetConfirmation("Are you sure you want to wipe?")
+				;If GetConfirmation("Are you sure you want to wipe?")
+				SetupPrompt()
+				ReturnKeyReleased=False
+				Print("Type W to wipe, or type X, Y, or XY to flip across the chosen")
+				DesiredAction$=Upper$(Input$("axes: "))
+				
+				If DesiredAction$="W"
 					For i=0 To LevelWidth-1
 						For j=0 To LevelHeight-1
 							ChangeLevelTile(i,j,True)
 						Next
 					Next
+				ElseIf DesiredAction$="X"
+					FlipLevelX()
+					Flipped=True
+				ElseIf DesiredAction="Y"
+					FlipLevelY()
+					Flipped=True
+				ElseIf DesiredAction="XY"
+					FlipLevelXY()
+					Flipped=True
 				EndIf
+				
+				;If Flipped
+				;	Locate 0,0
+				;	Color 0,0,0
+				;	Rect 0,0,500,40,True
+				;	Color 255,255,255
+				;	Print "Flipped"
+				;	Delay 1000
+				;EndIf
 			EndIf
 		EndIf
 		
@@ -4982,27 +5009,7 @@ Function EditorLocalControls()
 		If my>=510 And my<540
 			If LeftMouse=True And LeftMouseReleased=True
 				;flip
-				Flipped=False
-				DesiredFlip$=Upper$(InputString$("Enter desired flip (X, Y, or XY): "))
-				If DesiredFlip$="X"
-					FlipLevelX()
-					Flipped=True
-				ElseIf DesiredFlip$="Y"
-					FlipLevelY()
-					Flipped=True
-				ElseIf DesiredFlip$="XY"
-					FlipLevelXY()
-					Flipped=True
-				EndIf
-				
-				If Flipped
-					Locate 0,0
-					Color 0,0,0
-					Rect 0,0,500,40,True
-					Color 255,255,255
-					Print "Flipped"
-					Delay 1000
-				EndIf
+				;DesiredFlip$=Upper$(InputString$("Enter desired flip (X, Y, or XY): "))
 			EndIf
 		EndIf
 ;		If my>=540 And my<570
@@ -7218,6 +7225,13 @@ Function CopyLevelTileToBrush(i,j,iDest,jDest)
 
 End Function
 
+Function LevelTileIsInBrush(tilex,tiley,cursorx,cursory)
+
+	HalfBrushSize=BrushSize/2
+	Return tilex>=cursorx-HalfBrushSize And tilex<=cursorx+HalfBrushSize And tiley>=cursory-HalfBrushSize And tiley<=cursory+HalfBrushSize
+
+End Function
+
 Function SetLevelTileAsTarget(i,j)
 	
 	TargetTileTexture=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
@@ -7258,6 +7272,10 @@ Function LevelTileMatchesTarget(i,j)
 	ElseIf j>=LevelHeight
 		Return False
 	EndIf
+	
+	;If LevelTileIsInBrush(i,j)
+	;	Return True
+	;EndIf
 
 	If TargetTileTextureUse And TargetTileTexture<>LevelTileTexture(i,j)
 		Return False
