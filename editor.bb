@@ -4842,7 +4842,7 @@ Function EditorLocalControls()
 	
 	If KeyDown(34) ; G key
 		For i=0 To NofObjects-1
-			If ObjectType(i)=90 And (ObjectSubType(i)=10 Or (ObjectSubType(i)=15 And ObjectData(i,0)=7)) ; levelexit or CMD 7
+			If ObjectType(i)=90 And (ObjectSubType(i)=10 Or (ObjectSubType(i)=15 And ObjectData(i,0)=7)) ; LevelExit or CMD 7
 				TryLevelGoto(i,BrushCursorX,BrushCursorY,1,2,3)
 			ElseIf ObjectType(i)=242 And ObjectData(i,2)=7 ; Cuboid
 				TryLevelGoto(i,BrushCursorX,BrushCursorY,3,4,5)
@@ -4850,7 +4850,7 @@ Function EditorLocalControls()
 		Next
 	EndIf
 	
-	; More button
+	; More button / Page switch button
 	If mx>=StartX And Mx<StartX+80 And my>=StartY And my<StartY+20
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			LeftMouseReleased=False
@@ -11239,15 +11239,19 @@ Function DisplayObjectAdjuster(i)
 		
 
 		
-		If CurrentObjectType=190
+		If CurrentObjectType=190 ; Particle Emitter
 			tex2$="Timing"
 			If CurrentObjectData(4)=0 tex$="Random"
 			If CurrentObjectData(4)=1 tex$="Synchro"
 		EndIf
 		
-		If  CurrentObjectModelName$="!Zapbot" Or CurrentObjectModelName$="!Ufo"
-
+		If CurrentObjectType=431 Or CurrentObjectType=422 ; Zapbot or UFO
 			tex2$="Track"
+			tex$=OneToYes$(CurrentObjectData(4))
+		EndIf
+		
+		If CurrentObjectType=230 ; FireFlower
+			tex2$="PreviousHP"
 		EndIf
 		
 		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
