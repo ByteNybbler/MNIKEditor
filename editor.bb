@@ -682,6 +682,7 @@ Until NofTilePresetTiles>0
 ; ------------------------
 
 Global NofObjects=0
+Const MaxNofObjects=1000
 
 Global CurrentObjectModel,CurrentObjectTexture
 Global CurrentHatModel,CurrentHatTexture
@@ -4777,15 +4778,23 @@ Function EditorLocalControls()
 	StartX=510
 	StartY=305
 	
-	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
-		If mx>=StartX And mx<=StartX+185 And my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
-			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
-				AdjustObjectAdjuster(i)
-				SetEditorMode(3)
-			EndIf
-			HoverOverObjectAdjuster(i)
+	If mx>=StartX And mx<=StartX+185
+		If my>=StartY And my<StartY+15
+			TooltipLeftY=StartY+30
+			Percent#=Float#(NofObjects)/Float#(MaxNofObjects)*100.0
+			ShowTooltipRightAligned(StartX,TooltipLeftY,NofObjects+"/"+MaxNofObjects+" ("+Percent#+"%) level object slots used")
 		EndIf
-	Next
+	
+		For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
+			If my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
+				If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
+					AdjustObjectAdjuster(i)
+					SetEditorMode(3)
+				EndIf
+				HoverOverObjectAdjuster(i)
+			EndIf
+		Next
+	EndIf
 	
 	; *************************************
 	; Preset Objects
@@ -8054,8 +8063,8 @@ Function PlaceObjectActual(x#,y#)
 		Return
 	EndIf
 	
-	If NofObjects>999
-		ShowMessageOnce("1000 object limit reached; refusing to place any more", 1000)
+	If NofObjects>=MaxNofObjects
+		ShowMessageOnce(MaxNofObjects+" object limit reached; refusing to place any more", 1000)
 		Return
 	EndIf
 	
