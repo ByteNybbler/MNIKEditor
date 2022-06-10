@@ -26141,14 +26141,16 @@ Function ControlFireFlower(i)
 
 	If (SimulatedObjectTimer(i)>=0 And SimulatedObjectData(i,2)=0) Or (SimulatedObjectData(i,2)=2 And SimulatedObjectTimer(i)=ObjectTimerMax1(i))
 		SimulatedObjectData(i,2)=1
-		;AnimateMD2 ObjectEntity(i),1,.2,1,20,1
+		;MaybeAnimateMD2(ObjectEntity(i),1,.2,1,20,1)
 	EndIf
 	
-	If ObjectActive(i)<1001
-		SimulatedObjectTimer(i)=ObjectTimerMax1(i)
-	EndIf
+	;If ObjectActive(i)<1001
+	;	SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+	;EndIf
 	
 	;If ObjectIndigo(i)=0 SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+	SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+80) Mod 8
+	SimulatedObjectYawAdjust(i)=0
 	
 	dx#=0
 	dy#=0
@@ -26182,7 +26184,7 @@ Function ControlFireFlower(i)
 	If SimulatedObjectTimer(i)<0
 
 		If SimulatedObjectData(i,2)=1
-			;AnimateMD2 ObjectEntity(i),1,.5,21,60,1
+			;MaybeAnimateMD2(ObjectEntity(i),1,.5,21,60,1)
 			SimulatedObjectData(i,2)=0
 		EndIf
 	
