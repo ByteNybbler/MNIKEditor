@@ -11632,6 +11632,10 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalX3"
 		EndIf
+		
+		If CurrentObjectType=471 ; Wraith
+			tex2$="TimeOffset"
+		EndIf
 
 
 
@@ -11682,6 +11686,10 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Empty"
 			If CurrentObjectData(9)=0 tex$="No"
 			If CurrentObjectData(9)=1 tex$="Yes"
+		EndIf
+		
+		If CurrentObjectType=470 Or CurrentObjectType=471 ; Ghost or Wraith
+			tex2$="Visibility"
 		EndIf
 
 		
@@ -11832,6 +11840,17 @@ Function DisplayObjectAdjuster(i)
 			tex2$="FromPlayer"
 			If CurrentObjectStatus=0 tex$="No"
 			If CurrentObjectStatus=1 tex$="Yes"
+		EndIf
+		
+		If CurrentObjectType=470 Or CurrentObjectType=471 ; Wraith or Ghost
+			Select CurrentObjectStatus
+			Case 0
+				tex$="Hidden"
+			Case 1
+				tex$="Attacking"
+			Case 2
+				tex$="Watching"
+			End Select
 		EndIf
 
 
@@ -27183,6 +27202,185 @@ Function ControlMirror(i)
 End Function
 
 
+Function ControlGhost(i)
+
+	If SimulatedObjectTileTypeCollision(i)=0
+	
+		SimulatedObjectYawAdjust(i)=0
+		;SimulatedObjectMovementSpeed(i)=5+5*ObjectData(i,1)
+		;SimulatedObjectTileX(i)=Floor(ObjectX(i))
+		;SimulatedObjectTileY(i)=Floor(ObjectY(i))
+		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
+		;SimulatedObjectMovementType(i)=0
+		
+	EndIf
+
+	;If ObjectMovementTimer(i)>0
+	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),3,180)
+	;Else
+		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),1,180)
+	;EndIf
+	
+	If SimulatedObjectStatus(i)=0
+		If Rand(0,100)<5
+			If SimulatedObjectData(i,8)=1
+				a=Rand(0,360)
+				b#=Rnd(0.002,0.003)
+	
+				AddParticle(30,SimulatedObjectX(i)+0.2*Sin(a),0,-SimulatedObjectY(i)-0.2*Cos(a),0,.2,b*Sin(a),0.005,-b*Cos(a),1,0,0,0,0,80,3)
+	
+			EndIf
+		EndIf
+		
+		If SimulationLevel>=2	
+			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+		EndIf
+		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
+		
+		;ObjectMovementType(i)=0
+		If Abs(SimulatedObjectX(i)-PlayerX())<=SimulatedObjectData(i,0) And Abs(SimulatedObjectY(i)-PlayerY())<=SimulatedObjectData(i,0)
+
+			; in range
+			SimulatedObjectStatus(i)=1
+			;SoundPitch SoundFX(28),21000
+
+			;PlaySoundFX(28,ObjectX(i),ObjectY(i))
+		EndIf
+			
+	
+	Else If SimulatedObjectStatus(i)=1
+		SimulatedObjectData(i,8)=1
+		;ObjectMovementTYpe(i)=13
+		If SimulationLevel>=2
+			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+		EndIf
+		If SimulatedObjectData(i,9)<50 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)+2
+		
+		If Abs(SimulatedObjectX(i)-ObjectX(PlayerObject))>SimulatedObjectData(i,0) Or Abs(SimulatedObjectY(i)-ObjectY(PlayerObject))>SimulatedObjectData(i,0)
+
+			SimulatedObjectStatus(i)=0
+			;PlaySoundFX(102,ObjectX(i),ObjectY(i))
+		EndIf
+
+
+	EndIf
+
+
+End Function
+
+
+Function ControlWraith(i)
+
+	If SimulatedObjectTileTypeCollision(i)=0
+	
+		SimulatedObjectYawAdjust(i)=0
+		;ObjectMovementSpeed(i)=20+5*ObjectData(i,0)
+		;ObjectTileX(i)=Floor(ObjectX(i))
+		;ObjectTileY(i)=Floor(ObjectY(i))
+		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
+		;SimulatedObjectMovementType(i)=0
+		
+	EndIf
+
+	;If ObjectMovementTimer(i)>0
+	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),3,180)
+	;Else
+		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),1,180)
+	;EndIf
+	
+	If SimulatedObjectStatus(i)=0
+		If SimulationLevel>=2
+			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+		EndIf
+			
+		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
+		
+		;ObjectMovementType(i)=0
+		If Abs(ObjectX(i)-PlayerX())<=SimulatedObjectData(i,0) And Abs(ObjectY(i)-PlayerY())<=SimulatedObjectData(i,0)
+
+
+			; in range
+			SimulatedObjectStatus(i)=1
+			;PlaySoundFX(29,ObjectX(i),ObjectY(i))
+		EndIf
+		SimulatedObjectData(i,8)=0
+
+			
+	
+	Else If SimulatedObjectStatus(i)=1
+		
+		If SimulationLevel>=2
+			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+		EndIf
+		
+		
+		If SimulatedObjectData(i,9)<50 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)+2
+		
+		If SimulatedObjectData(i,8)<SimulatedObjectData(i,1)
+			SimulatedObjectData(i,8)=SimulatedObjectData(i,8)+1
+		 	If SimulatedObjectData(i,8)=SimulatedObjectData(i,1)-20
+				Select SimulatedObjectData(i,2)
+					
+					Case 0
+						part=25
+					Case 1
+						part=28
+					Case 2
+						part=27
+					
+				End Select
+				
+				For xx=1 To 30
+					AddParticle(part,SimulatedObjectX(i)+Sin(xx*12),1.1,-SimulatedObjectY(i)+Cos(xx*12),Rand(0,360),.3,-0.05*Sin(xx*12),0,-0.05*Cos(xx*12),Rnd(0,2),0,0,0,0,30,4)
+				Next
+				;If SimulatedObjectData(i,2)=2
+				;	SimulatedObjectData(i,6)=ObjectTileX2(PlayerObject)*100+50
+				;	SimulatedObjectData(i,7)=ObjectTileY2(PlayerObject)*100+50
+				;Else
+				;	SimulatedObjectData(i,6)=(ObjectX(PlayerObject)*100+0)
+				;	SimulatedObjectData(i,7)=ObjectY(PlayerObject)*100+0
+				;EndIf
+
+				
+
+			EndIf	
+		Else
+			;fire
+;			If ObjectData(i,6)=-1
+;				If ObjectData(i,2)=2
+;					ObjectData(i,6)=ObjectTileX2(PlayerObject)*100+50
+;
+;					ObjectData(i,7)=ObjectTileY2(PlayerObject)*100+50
+;
+;				Else
+;					ObjectData(i,6)=(ObjectX(PlayerObject)*100+0)
+;					ObjectData(i,7)=ObjectY(PlayerObject)*100+0
+;				EndIf
+;
+;			EndIf
+			SimulatedObjectData(i,8)=0
+
+;			SimulatedObjectData(i,6)=-1
+
+			
+		EndIf
+		
+		If Abs(ObjectX(i)-PlayerX())>SimulatedObjectData(i,0) Or Abs(ObjectY(i)-PlayerY())>SimulatedObjectData(i,0)
+
+			SimulatedObjectData(i,8)=0
+			
+			SimulatedObjectStatus(i)=0
+			;PlaySoundFX(102,ObjectX(i),ObjectY(i))
+		EndIf
+
+
+	EndIf
+
+End Function
+
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -27594,6 +27792,10 @@ Function ControlObjects()
 				ControlLurker(i)
 			Case 460
 				ControlBurstFlower(i)
+			Case 470
+				ControlGhost(i)
+			Case 471
+				ControlWraith(i)
 				
 			End Select
 			
