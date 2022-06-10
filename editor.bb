@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (06/01/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (06/09/22)"
 
 Global MASTERUSER=True
 
@@ -29,7 +29,10 @@ Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						;5,6,7-adventure select screen (6="edit/delete/move/cancel",7="delete sure?")
 						;8-master edit screen
 						;9-dialog edit screen
-						
+
+Const EditorModeTile=0
+Const EditorModeObject=3
+
 Global EditorModeBeforeMasterEdit=0
 
 ; Whether or not the level or dialog has unsaved changes. Not implemented for dialogs yet.
@@ -271,9 +274,9 @@ Const ShowObjectMeshCount=4
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 
-;Global BlockMode,FillMode
-Global BrushMode=0
-Const MaxBrushMode=9
+; The position of the level editor cursor.
+Global BrushCursorX=-1
+Global BrushCursorY=-1
 
 Const BrushModeNormal=0
 Const BrushModeBlock=1
@@ -285,6 +288,10 @@ Const BrushModeOutlineHard=6
 Const BrushModeOutlineSoft=7
 Const BrushModeRow=8
 Const BrushModeColumn=9
+
+;Global BlockMode,FillMode
+Global BrushMode=BrushModeNormal
+Const MaxBrushMode=9
 
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
@@ -2561,13 +2568,13 @@ Function SetEditorMode(NewMode)
 		
 		WireFrame False
 		
-		If EditorMode=0 Or EditorMode=3
+		If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
 			EditorModeBeforeMasterEdit=EditorMode
 		EndIf
 	EndIf
 		
-	If BrushMode=BrushModeCustom And (NewMode=0 Or NewMode=3) And NewMode<>CustomBrushEditorMode
-		BrushMode=BrushModeNormal
+	If BrushMode=BrushModeCustom And (NewMode=EditorModeTile Or NewMode=EditorModeObject) And NewMode<>CustomBrushEditorMode
+		SetBrushMode(BrushModeNormal)
 	EndIf
 	
 	If NewMode=0
@@ -2592,7 +2599,7 @@ Function SetBrushSize(NewBrushSize)
 	EndIf
 	
 	If BrushMode=BrushModeCustom
-		BrushMode=BrushModeNormal
+		SetBrushMode(BrushModeNormal)
 	EndIf
 
 End Function
@@ -2811,6 +2818,40 @@ Function ShowTooltipCenterAligned(StartX,StartY,Message$)
 End Function
 
 
+Function SetBrushMode(NewBrushMode)
+
+	BrushMode=NewBrushMode
+	BrushCursorStateWasChanged()
+	
+End Function
+
+
+Function SetBrushCursorPosition(x,y)
+
+	If Not PositionIsEqual(x,y,BrushCursorX,BrushCursorY)
+	
+		BrushCursorPositionWasChanged()
+		
+	EndIf
+
+	BrushCursorX=x
+	BrushCursorY=y
+
+End Function
+
+Function BrushCursorPositionWasChanged()
+
+	BrushCursorStateWasChanged()
+
+End Function
+
+Function BrushCursorStateWasChanged()
+
+	; recalculate flood fill preview region
+
+End Function
+
+
 ; Wow! What a great Object-Oriented Programming Constructor I have just written!
 Function FloodFillInitializeState(StartX,StartY)
 
@@ -3024,7 +3065,7 @@ Function GetNumberOfCursorsInDupeMode(Value)
 End Function
 
 
-Function PositionCursor(i,x,y)
+Function PositionCursorEntity(i,x,y)
 
 	ShowEntity CursorMesh(i)
 	ShowEntity CursorMesh2(i)
@@ -3356,30 +3397,31 @@ Function EditorLocalControls()
 	; Placing Tiles and Objects on the Editor Field
 	; *************************************
 	
-	If EditorMode=0 Or EditorMode=3
+	If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
 		If mx>=0 And mx<500 And my>=0 And my<500
 			Entity=CameraPick(camera1,MouseX(),MouseY())
 			If Entity>0
 				
-				x=Floor(PickedX())
-				y=Floor(-PickedZ())
+				;BrushCursorX=Floor(PickedX())
+				;BrushCursorY=Floor(-PickedZ())
+				SetBrushCursorPosition(Floor(PickedX()),Floor(-PickedZ()))
 				
 				For i=1 To 3
 					HideEntity CursorMesh(i)
 					HideEntity CursorMesh2(i)
 				Next
 				
-				PositionCursor(0,x,y)
+				PositionCursorEntity(0,BrushCursorX,BrushCursorY)
 				If DupeMode=DupeModeX
-					PositionCursor(1,LevelWidth-1-x,y)
+					PositionCursorEntity(1,LevelWidth-1-BrushCursorX,BrushCursorY)
 				EndIf
 				If DupeMode=DupeModeY
-					PositionCursor(1,x,LevelHeight-1-y)
+					PositionCursorEntity(1,BrushCursorX,LevelHeight-1-BrushCursorY)
 				EndIf
 				If DupeMode=DupeModeXPlusY
-					PositionCursor(1,LevelWidth-1-x,y)
-					PositionCursor(2,x,LevelHeight-1-y)
-					PositionCursor(3,LevelWidth-1-x,LevelHeight-1-y)
+					PositionCursorEntity(1,LevelWidth-1-BrushCursorX,BrushCursorY)
+					PositionCursorEntity(2,x,LevelHeight-1-BrushCursorY)
+					PositionCursorEntity(3,LevelWidth-1-BrushCursorX,LevelHeight-1-BrushCursorY)
 				EndIf
 				
 				r=GetBrushModeColor(BrushMode,0)
@@ -3392,24 +3434,24 @@ Function EditorLocalControls()
 				Next
 				
 				Color TextLevelR,TextLevelG,TextLevelB
-				Text 250-4.5*8,500,"X:"+Str$(Abs(x))+", Y:"+Str$(Abs(y))
+				Text 250-4.5*8,500,"X:"+Str$(Abs(BrushCursorX))+", Y:"+Str$(Abs(BrushCursorY))
 				
 				HideEntity BlockModeMesh
 				If BrushMode=BrushModeBlockPlacing
 					; show the block
 					ShowEntity BlockModeMesh
-					If x>BlockCornerx
+					If BrushCursorX>BlockCornerx
 						cornleft=Blockcornerx
-						cornright=x
+						cornright=BrushCursorX
 					Else
-						cornleft=x
+						cornleft=BrushCursorX
 						cornright=Blockcornerx
 					EndIf
 					If y>BlockCornery
 						cornup=BlockCornery
-						corndown=y
+						corndown=BrushCursorY
 					Else
-						cornup=y
+						cornup=BrushCursorY
 						corndown=blockcornery
 					EndIf
 					VertexCoords BlockModeSurface,0,cornleft-0,0.1,-(cornup)
@@ -3430,9 +3472,9 @@ Function EditorLocalControls()
 				
 					If BrushMode=BrushModeBlock
 						; place one corner of block
-						BlockCornerX=x
-						BlockCornerY=y
-						BrushMode=BrushModeBlockPlacing
+						BlockCornerX=BrushCursorX
+						BlockCornerY=BrushCursorY
+						SetBrushMode(BrushModeBlockPlacing)
 						Delay 100
 					Else If BrushMode=BrushModeBlockPlacing
 						; fill block
@@ -3449,13 +3491,13 @@ Function EditorLocalControls()
 								Next
 							Next
 						EndIf
-						BrushMode=BrushModeBlock
+						SetBrushMode(BrushModeBlock)
 						Delay 100
 					Else If BrushMode=BrushModeFill
 						; flood fill
 						LeftMouseReleased=False
 						
-						FloodFillInitializeState(x,y)
+						FloodFillInitializeState(BrushCursorX,BrushCursorY)
 						While FloodElementCount<>0
 							FloodElementCount=FloodElementCount-1
 							thisx=FloodStackX(FloodElementCount)
@@ -3472,7 +3514,7 @@ Function EditorLocalControls()
 						; flood fill for inline
 						LeftMouseReleased=False
 						
-						FloodFillInitializeState(x,y)
+						FloodFillInitializeState(BrushCursorX,BrushCursorY)
 						While FloodElementCount<>0
 							FloodOutsideAdjacent=False
 							
@@ -3506,7 +3548,7 @@ Function EditorLocalControls()
 						; flood fill for outline
 						LeftMouseReleased=False
 						
-						FloodFillInitializeState(x,y)
+						FloodFillInitializeState(BrushCursorX,BrushCursorY)
 						While FloodElementCount<>0
 							FloodElementCount=FloodElementCount-1
 							thisx=FloodStackX(FloodElementCount)
@@ -3541,8 +3583,8 @@ Function EditorLocalControls()
 					ElseIf BrushMode=BrushModeCustom
 						If EditorMode=0
 							BrushOffset=BrushSize/2
-							BrushXStart=x-BrushOffset
-							BrushYStart=y-BrushOffset
+							BrushXStart=BrushCursorX-BrushOffset
+							BrushYStart=BrushCursorY-BrushOffset
 							For i=0 To BrushSize-1
 								For j=0 To BrushSize-1
 									GrabLevelTileFromBrush(i,j)
@@ -3557,8 +3599,8 @@ Function EditorLocalControls()
 						EndIf
 					Else ; normal brush
 						BrushOffset=BrushSize/2
-						BrushXStart=x-BrushOffset
-						BrushYStart=y-BrushOffset
+						BrushXStart=BrushCursorX-BrushOffset
+						BrushYStart=BrushCursorY-BrushOffset
 						For i=0 To BrushSize-1
 							For j=0 To BrushSize-1
 								If EditorMode=0
@@ -3578,21 +3620,21 @@ Function EditorLocalControls()
 					RightMouseReleased=False
 					
 					If BrushMode=BrushModeBlockPlacing
-						BrushMode=BrushModeBlock
+						SetBrushMode(BrushModeBlock)
 					Else				
 						If EditorMode=0
-							GrabLevelTile(x,y)
+							GrabLevelTile(BrushCursorX,BrushCursorY)
 						ElseIf EditorMode=3
-							GrabObject(x,y)
+							GrabObject(BrushCursorX,BrushCursorY)
 						EndIf
 					EndIf
 				EndIf
 				If EditorMode=3
 					; object dragging
 					If RightMouse
-						If CurrentDraggedObject<>-1 And (ObjectTileX(CurrentDraggedObject)<>x Or ObjectTileY(CurrentDraggedObject)<>y)
+						If CurrentDraggedObject<>-1 And (ObjectTileX(CurrentDraggedObject)<>BrushCursorX Or ObjectTileY(CurrentDraggedObject)<>BrushCursorY)
 							DecrementLevelTileObjectCount(ObjectTileX(CurrentDraggedObject),ObjectTileY(CurrentGrabbedObject))
-							SetObjectPosition(CurrentDraggedObject,x,y);,0,0)
+							SetObjectPosition(CurrentDraggedObject,BrushCursorX,BrushCursorY);,0,0)
 							UpdateObjectPosition(CurrentDraggedObject)
 							SomeObjectWasChanged()
 						EndIf
@@ -3602,7 +3644,7 @@ Function EditorLocalControls()
 				EndIf
 				
 				If MouseDown(3) ; middle click / ; middle mouse
-					SetCurrentObjectTargetLocation(x,y)
+					SetCurrentObjectTargetLocation(BrushCursorX,BrushCursorY)
 					SetEditorMode(3)
 				EndIf
 			Else
@@ -3620,12 +3662,12 @@ Function EditorLocalControls()
 							Next
 						Next
 					
-					BrushMode=BrushModeBlock
+					SetBrushMode(BrushModeBlock)
 					Delay 100
 				Else If BrushMode=BrushModeFill
 					; flood fill but it deletes
 					
-					FloodFillInitializeState(x,y)
+					FloodFillInitializeState(BrushCursorX,BrushCursorY)
 					While FloodElementCount<>0
 						FloodElementCount=FloodElementCount-1
 						thisx=FloodStackX(FloodElementCount)
@@ -3641,7 +3683,7 @@ Function EditorLocalControls()
 				Else If IsBrushInInlineMode()
 					; flood fill for inline but it deletes
 					
-					FloodFillInitializeState(x,y)
+					FloodFillInitializeState(BrushCursorX,BrushCursorY)
 					While FloodElementCount<>0
 						FloodOutsideAdjacent=False
 						
@@ -3667,7 +3709,7 @@ Function EditorLocalControls()
 				Else If IsBrushInOutlineMode()
 					; flood fill for outline but it deletes
 					
-					FloodFillInitializeState(x,y)
+					FloodFillInitializeState(BrushCursorX,BrushCursorY)
 					While FloodElementCount<>0
 						FloodElementCount=FloodElementCount-1
 						thisx=FloodStackX(FloodElementCount)
@@ -3701,8 +3743,8 @@ Function EditorLocalControls()
 					Next
 				Else ; normal brush
 					BrushOffset=BrushSize/2
-					BrushXStart=x-BrushOffset
-					BrushYStart=y-BrushOffset
+					BrushXStart=BrushCursorX-BrushOffset
+					BrushYStart=BrushCursorY-BrushOffset
 					For i=0 To BrushSize-1
 						For j=0 To BrushSize-1
 							DeleteObjectAt(BrushXStart+i,BrushYStart+j)
@@ -3714,13 +3756,13 @@ Function EditorLocalControls()
 			If ReturnKey=True And ReturnKeyReleased=True
 				ReturnKeyReleased=False
 				If BrushMode=BrushModeCustom
-					BrushMode=BrushModeNormal
+					SetBrushMode(BrushModeNormal)
 				Else
 					; set custom brush
 					NofBrushObjects=0
 					BrushOffset=BrushSize/2
-					BrushXStart=x-BrushOffset
-					BrushYStart=y-BrushOffset
+					BrushXStart=BrushCursorX-BrushOffset
+					BrushYStart=BrushCursorY-BrushOffset
 					If EditorMode=0
 						For i=0 To BrushSize-1
 							For j=0 To BrushSize-1
@@ -3728,7 +3770,7 @@ Function EditorLocalControls()
 							Next
 						Next
 						
-						BrushMode=BrushModeCustom
+						SetBrushMode(BrushModeCustom)
 						CustomBrushEditorMode=EditorMode
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
@@ -3739,7 +3781,7 @@ Function EditorLocalControls()
 						Next
 						
 						If NofBrushObjects<>0
-							BrushMode=BrushModeCustom
+							SetBrushMode(BrushModeCustom)
 							CustomBrushEditorMode=EditorMode
 						EndIf
 					EndIf
@@ -3748,8 +3790,7 @@ Function EditorLocalControls()
 		
 		Else
 			HideCursors()
-			x=-1
-			y=-1
+			SetBrushCursorPosition(-1,-1)
 		EndIf
 	EndIf
 	
@@ -4919,7 +4960,7 @@ Function EditorLocalControls()
 	
 	If CtrlDown()
 		If KeyPressed(49) ; Ctrl+N
-			BrushMode=BrushModeNormal
+			SetBrushMode(BrushModeNormal)
 		EndIf
 		If KeyPressed(48) ; Ctrl+B
 			ToggleBlockMode()
@@ -5392,9 +5433,9 @@ End Function
 Function ToggleBlockMode()
 
 	If IsBrushInBlockMode()
-		BrushMode=BrushModeNormal
+		SetBrushMode(BrushModeNormal)
 	Else
-		BrushMode=BrushModeBlock
+		SetBrushMode(BrushModeBlock)
 	EndIf
 	
 End Function
@@ -5433,9 +5474,9 @@ End Function
 Function ToggleFromNormalBrush(TargetBrushMode)
 
 	If BrushMode=TargetBrushMode
-		BrushMode=BrushModeNormal
+		SetBrushMode(BrushModeNormal)
 	Else
-		BrushMode=TargetBrushMode
+		SetBrushMode(TargetBrushMode)
 	EndIf
 
 End Function
@@ -15381,15 +15422,15 @@ End Function
 
 Function ChangeBrushModeByDelta(Delta)
 
-	BrushMode=BrushMode+Delta
+	SetBrushMode(BrushMode+Delta)
 	While BrushMode=BrushModeBlockPlacing Or BrushMode=BrushModeCustom
-		BrushMode=BrushMode+Delta
+		SetBrushMode(BrushMode+Delta)
 	Wend
 	
 	If BrushMode<0
-		BrushMode=MaxBrushMode
+		SetBrushMode(MaxBrushMode)
 	ElseIf BrushMode>MaxBrushMode
-		BrushMode=0
+		SetBrushMode(0)
 	EndIf
 
 End Function
