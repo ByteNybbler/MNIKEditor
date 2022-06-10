@@ -764,6 +764,7 @@ Dim SimulatedObjectCurrentAnim(1000)
 Dim SimulatedObjectMovementSpeed(1000)
 Dim SimulatedObjectMoveXGoal(1000),SimulatedObjectMoveYGoal(1000)
 Dim SimulatedObjectData10(1000)
+Dim SimulatedObjectSubType(1000)
 Dim SimulatedObjectTileTypeCollision(1000)
 Dim SimulatedObjectExclamation(1000)
 Dim SimulatedObjectFrozen(1000)
@@ -1038,12 +1039,13 @@ Next
 
 ; StinkerWee
 Global StinkerWeeMesh=MyLoadMD2("data\models\stinkerwee\stinkerwee.md2")
-;Global StinkerWeeTexture=MyLoadTexture("data\models\stinkerwee\stinkerwee1.jpg",1)
 Dim StinkerWeeTexture(3)
+Dim StinkerWeeTextureSleep(3)
+Dim StinkerWeeTextureSad(3)
 For i=1 To 3
 	StinkerWeeTexture(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+".jpg",1)
-	;StinkerWeeTextureSleep(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sleep.jpg",1)
-	;StinkerWeeTextureSad(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sad.jpg",1)
+	StinkerWeeTextureSleep(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sleep.jpg",1)
+	StinkerWeeTextureSad(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sad.jpg",1)
 Next
 EntityTexture StinkerWeeMesh,StinkerWeeTexture(1)
 HideEntity StinkerWeeMesh
@@ -8649,6 +8651,10 @@ Function UpdateObjectAnimation(i)
 		Else
 			Animate GetChild(Entity,3),1,.05,10
 		EndIf
+	ElseIf ModelName$="!StinkerWee"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
+		EndIf
 	ElseIf ModelName$="!Tentacle"
 		If SimulationLevel<SimulationLevelAnimation
 			Animate GetChild(Entity,3),0
@@ -8753,6 +8759,7 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectMoveXGoal(i)=ObjectMoveXGoal(i)
 		SimulatedObjectMoveYGoal(i)=ObjectMoveYGoal(i)
 		SimulatedObjectData10(i)=ObjectData10(i)
+		SimulatedObjectSubType(i)=ObjectSubType(i)
 		SimulatedObjectTileTypeCollision(i)=ObjectTileTypeCollision(i)
 		SimulatedObjectExclamation(i)=ObjectExclamation(i)
 		SimulatedObjectFrozen(i)=ObjectFrozen(i)
@@ -10253,6 +10260,25 @@ Function DisplayObjectAdjuster(i)
 				tex$="InvRotator"
 			End Select
 		EndIf
+		
+		If CurrentObjectType=120
+			Select CurrentObjectSubType
+			Case -2
+				tex$="Dying?"
+			Case -1
+				tex$="Exiting"
+			Case 0
+				tex$="Asleep"
+			Case 1
+				tex$="Following"
+			Case 2
+				tex$="Stationary"
+			Case 3
+				tex$="FallingAsleep"
+			Case 4
+				tex$="Caged"
+			End Select
+		EndIf
 
 
 			
@@ -11439,6 +11465,11 @@ Function DisplayObjectAdjuster(i)
 
 			EndIf
 			
+		EndIf
+		
+		If CurrentObjectType=120 ; Wee Stinker
+			tex2$="Burning"
+			If CurrentObjectData(6)=600 tex$="Death"
 		EndIf
 		
 		; Thwart, Ice Troll, Z-Bot NPC
@@ -26004,18 +26035,26 @@ End Function
 
 Function ControlStinkerWee(i)
 
+	For i2=1 To 4
+		; heating up smoke
+		If SimulatedObjectData(i,6)>i2*120 And Rand(1,9)<4
+			AddParticle(0+Floor(i2/2),SimulatedObjectX(i)+Rnd(-.1,.1),0.5,-SimulatedObjectY(i)+Rnd(-.1,.1),0,0.2,Rnd(-0.012,0.012),Rnd(0,0.12),Rnd(-0.012,0.012),5,0.01,0,0,0,35,3)
+		EndIf
+	Next
+
+	If ObjectModelName$(i)<>"!StinkerWee"
+		Return
+	EndIf
+
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		SimulatedObjectMovementSpeed(i)=35	
-		;SimulatedObjectSubType(i)=0  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged
-		;AnimateMD2 ObjectEntity(i),1,Rnd(.002,.008),217,219,1
-		;SimulatedObjectCurrentAnim(i)=1 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
+		SimulatedObjectSubType(i)=0  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged
+		MaybeAnimateMD2(ObjectEntity(i),1,Rnd(.002,.008),217,219,1)
+		SimulatedObjectCurrentAnim(i)=1 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
 		SimulatedObjectXScale(i)=0.025
 		SimulatedObjectYScale(i)=0.025
 		SimulatedObjectZScale(i)=0.025
-		
-		;SimulateObjectScale(i)
-		
 	EndIf
 	
 	If ObjectDead(i)=1
@@ -26032,6 +26071,159 @@ Function ControlStinkerWee(i)
 		;ObjectSubType(i)=-2
 		Return
 	EndIf
+	
+	If ObjectSubType(i)=-1 
+		TurnObjectTowardDirection(i,0,1,4,0)
+		Return ; already on its way out
+	EndIf
+	
+	If ObjectCaged(i)=True And SimulatedObjectSubType(i)<>4 And SimulatedObjectSubType(i)<>5
+		; just Caged
+		EntityTexture ObjectEntity(i),StinkerWeeTextureSad(SimulatedObjectData(i,8)+1)
+		;PlaySoundFX(66,ObjectTileX(i),ObjectTileY(i))
+		If SimulatedObjectSubType(i)=2
+			SimulatedObjectSubType(i)=5
+		Else
+			SimulatedObjectSubType(i)=4
+		EndIf
+		
+		MaybeAnimateMD2(ObjectEntity(i),1,.2,108,114,1)
+	EndIf
+	If ObjectCaged(i)=False And (SimulatedObjectSubType(i)=4 Or SimulatedObjectSubType(i)=5)
+		; just released
+		EntityTexture ObjectEntity(i),StinkerWeeTexture(SimulatedObjectData(i,8)+1)
+
+		SimulatedObjectSubType(i)=SimulatedObjectSubType(i)-3
+		MaybeAnimateMD2(ObjectEntity(i),1,.4,1,20,1)
+		SimulatedObjectCurrentAnim(i)=4
+		;SimulatedObjectMovementTypeData(i)=0
+	EndIf
+
+	
+	If ObjectCaged(i)=True
+		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),3,0)
+		Return
+	EndIf
+	
+	If SimulatedObjectSubType(i)=0 
+		EntityTexture ObjectEntity(i),StinkerWeeTextureSleep(SimulatedObjectData(i,8)+1)
+
+	Else
+		EntityTexture ObjectEntity(i),StinkerWeeTexture(SimulatedObjectData(i,8)+1)
+
+	EndIf
+	
+	If SimulatedObjectSubType(i)=3 ; asleep after walking
+		; fall asleep now
+		;EntityTexture ObjectEntity(i),StinkerWeeTextureSleep
+		MaybeAnimateMD2(ObjectEntity(i),3,.2,201,217,1)
+		SimulatedObjectCurrentAnim(i)=7
+		SimulatedObjectData(i,0)=0
+		SimulatedObjectData(i,1)=0
+		SimulatedObjectData(i,2)=4
+		SimulatedObjectSubType(i)=2
+		;ObjectMoveXGoal(i)=ObjectTileX(i)
+		;ObjectMoveYGoal(i)=ObjectTileY(i)
+	Else If SimulatedObjectData(i,2)<4
+		; stopped - but wait a few frames before switching animation
+		; (to avoid start/stop animation)
+		SimulatedObjectData(i,2)=SimulatedObjectData(i,2)+1
+		
+	Else
+		; not walking
+		If SimulatedObjectSubType(i)=0 ; asleep
+			SimulatedObjectData(i,2)=SimulatedObjectData(i,2)+1
+			If SimulatedObjectData(i,2)>200
+				If Rand(0,100)<3  
+					AddParticle(9,ObjectTileX(i)+.5,.9,-ObjectTileY(i)-.5,0,0.5,0,0.01,0,0,.001,0,0,0,200,3)
+					SimulatedObjectData(i,2)=0
+					;PlaySoundFX(59,ObjectTileX(i),ObjectTileY(i))
+				EndIf
+				
+				
+			EndIf
+			If SimulatedObjectCurrentAnim(i)<>1
+				MaybeAnimateMD2(ObjectEntity(i),1,Rnd(.002,.008),217,219,1)
+				SimulatedObjectCurrentAnim(i)=1
+			EndIf
+			If SimulatedObjectYaw(i)<>180 Then TurnObjectTowardDirection(i,0,1,5,0)
+		
+
+		Else ; either in follow or directive mode, but standing
+			
+			If SimulatedObjectCurrentAnim(i)<>7
+				; turn toward player unless sitting
+				TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),3,0)
+			EndIf
+			If SimulatedObjectCurrentAnim(i)<>3 And SimulatedObjectCurrentAnim(i)<>4 And SimulatedObjectCurrentAnim(i)<>5 And SimulatedObjectCurrentAnim(i)<>7
+				MaybeAnimateMD2(ObjectEntity(i),1,Rnd(.01,.08),141,160,1)
+				SimulatedObjectCurrentAnim(i)=3
+				SimulatedObjectData(i,0)=0
+			Else If SimulatedObjectCurrentAnim(i)=3
+				; possible wave/tap animation when in directive mode
+				If Rand(0,1000)<2 And SimulatedObjectData(i,1)>100
+					; do an animation
+					If (Rand(0,100)<50) ; wave
+						;PlaySoundFX(Rand(50,54),ObjectTileX(i),ObjectTileY(i))
+						MaybeAnimateMD2(ObjectENtity(i),3,.2,101,120,1)
+						SimulatedObjectCurrentAnim(i)=4
+					Else If SimulatedObjectSubtype(i)=2	; tap
+						MaybeAnimateMD2(ObjectENtity(i),1,.2,121,140,1)
+						SimulatedObjectCurrentAnim(i)=5
+					EndIf			
+				EndIf
+			Else If SimulatedObjectCurrentAnim(i)=4
+				SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
+				If SimulatedObjectData(i,0)>100
+					SimulatedObjectData(i,0)=0
+					MaybeAnimateMD2(ObjectEntity(i),1,Rnd(.01,.03),141,160,1)
+					SimulatedObjectCurrentAnim(i)=3
+				EndIf
+;			Else If SimulatedObjectCurrentAnim(i)=5
+;				SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
+;				If SimulatedObjectData(i,0)>1500
+;					SimulatedObjectData(i,0)=0
+;					MaybeAnimateMD2(ObjectEntity(i),1,Rnd(.01,.03),141,160,1)
+;					SimulatedObjectCurrentAnim(i)=3
+;				EndIf
+;			Else If SimulatedObjectCurrentAnim(i)=7
+;				SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
+;				If SimulatedObjectYaw(i)<>180 Then TurnObjectTowardDirection(i,0,1,1,0)
+;
+;				If SimulatedObjectData(i,0)>100
+;					; asleep
+;					MaybeAnimateMD2(ObjectEntity(i),1,Rnd(.002,.008),217,219,1)
+;					SimulatedObjectCurrentAnim(i)=1
+;					SimulatedObjectSubType(i)=0
+;				EndIf
+			EndIf
+			
+			; If in directive mode - use timer to see if falling asleep again
+;			If ObjectSubType(i)=1
+;				ObjectData(i,1)=ObjectData(i,1)+1
+;				If ObjectData(i,1)>5000 And leveltimer Mod 5000=0
+;					; bored!
+;					PlaySoundFX(68,ObjectTileX(i),ObjectTileY(i))
+;					ObjectData(i,1)=0
+; 					EndIf
+;			EndIf
+
+;			If ObjectSubType(i)=2
+;				ObjectData(i,1)=ObjectData(i,1)+1
+;				
+;				If ObjectData(i,1)>4800
+;					; fell asleep again
+;					PlaySoundFX(69,ObjectTileX(i),ObjectTileY(i))
+;			;		EntityTexture ObjectEntity(i),StinkerWeeTextureSleep
+;					AnimateMD2 ObjectEntity(i),3,.2,201,217,1
+;					ObjectCurrentAnim(i)=7
+;					ObjectData(i,0)=0
+;					ObjectData(i,1)=0
+;				EndIf
+;			EndIf
+		EndIf
+	EndIf
+
 
 End Function
 
