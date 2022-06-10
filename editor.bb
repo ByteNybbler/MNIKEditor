@@ -8637,7 +8637,7 @@ Function UpdateObjectAnimation(i)
 			Animate GetChild(Entity,3),1,.1,1,0
 		EndIf
 	EndIf
-	If ModelName$="!Thwart"
+	If ObjectType(i)=290 And ModelName$="!Thwart"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
