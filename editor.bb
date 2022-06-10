@@ -2982,6 +2982,20 @@ Function ZeroToYes$(Value)
 
 End Function
 
+Function MaybePluralize$(TargetString$,Count)
+
+	If Count=1
+		Return TargetString$
+	Else
+		If TargetString$="has"
+			Return "have"
+		Else
+			Return TargetString$+"s"
+		EndIf
+	EndIf
+
+End Function
+
 
 Function ReturnPressed()
 
@@ -9839,6 +9853,22 @@ Function HoverOverObjectAdjuster(i)
 			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,TooltipAboveY,ObjectTypeCollisionBitToName$(BitIndex))
 		EndIf
 		
+	Case "Type"
+		Count=CountObjectTypes(CurrentObjectType)
+		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this Type.")
+	
+	Case "SubType"
+		Count=CountObjectLogics(CurrentObjectType,CurrentObjectSubType)
+		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this object logic.")
+		
+	Case "ModelName"
+		Count=CountObjectModelNames(CurrentObjectModelName$)
+		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this ModelName.")
+	
+	Case "TextureName"
+		Count=CountObjectTextureNames(CurrentObjectTextureName$)
+		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this TextureName.")
+		
 	End Select
 
 End Function
@@ -16668,6 +16698,55 @@ Function UpdateObjectModel(Dest)
 	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),10)
 	
 	CreateObjectModel(Dest)
+
+End Function
+
+
+Function CountObjectTypes(TargetType)
+
+	Count=0
+	For i=0 To NofObjects-1
+		If ObjectType(i)=TargetType
+			Count=Count+1
+		EndIf
+	Next
+	Return Count
+
+End Function
+
+Function CountObjectLogics(TargetType,TargetSubType)
+
+	Count=0
+	For i=0 To NofObjects-1
+		If ObjectType(i)=TargetType And ObjectSubType(i)=TargetSubType
+			Count=Count+1
+		EndIf
+	Next
+	Return Count
+
+End Function
+
+Function CountObjectModelNames(TargetModelName$)
+
+	Count=0
+	For i=0 To NofObjects-1
+		If ObjectModelName$(i)=TargetModelName$
+			Count=Count+1
+		EndIf
+	Next
+	Return Count
+
+End Function
+
+Function CountObjectTextureNames(TargetTextureName$)
+
+	Count=0
+	For i=0 To NofObjects-1
+		If ObjectTextureName$(i)=TargetTextureName$
+			Count=Count+1
+		EndIf
+	Next
+	Return Count
 
 End Function
 
