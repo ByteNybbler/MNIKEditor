@@ -10480,7 +10480,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(TargetSubType)
 				tex2$="Colour1"
 			Else If (CurrentObjectSubType Mod 32)<10
 				tex2$="Col From"
@@ -12601,6 +12601,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "Data0"
+		OldData=CurrentObjectData(0)
+		
 		;CurrentObjectData(0)=AdjustInt("Data0: ", CurrentObjectData(0), SlowInt, FastInt, DelayTime)
 		AdjustObjectData(0, SlowInt, FastInt, DelayTime)
 		
@@ -12619,6 +12621,10 @@ Function AdjustObjectAdjuster(i)
 		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=1
 		;
 		;EndIf
+		
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			SetThreeOtherDataIfNotEqual(1,2,3,0,OldData)
+		EndIf
 
 		
 		If CurrentObjectType=190 Or CurrentObjectType=164
@@ -13032,20 +13038,22 @@ Function AdjustObjectAdjuster(i)
 	Case "Data4"
 		Adj=1
 		AdjFast=10
-		If CurrentObjectType=90 And CurrentObjectSubType=10
+		If CurrentObjectType=90 And CurrentObjectSubType=10 ; LevelExit
 			Adj=45
 			AdjFast=45
 		EndIf
+		
+		OldData=CurrentObjectData(4)
 		
 		;CurrentObjectData(4)=AdjustInt("Data4: ", CurrentObjectData(4), Adj, AdjFast, DelayTime)
 		AdjustObjectData(4, Adj, AdjFast, DelayTime)
 
 		If CurrentObjectType=90
-			If CurrentObjectSubType=10
+			If CurrentObjectSubType=10 ; LevelExit
 				;playerstartingyaw
 				If CurrentObjectData(4)<0 Then CurrentObjectData(4)=360-45
 				If CurrentObjectData(4)>359 Then CurrentObjectData(4)=0
-			ElseIf CurrentObjectSubType=11
+			ElseIf CurrentObjectSubType=11 ; NPC Modifier
 				If (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2)
 					; repeatable
 					If CurrentobjectData(4)<0 CurrentObjectData(4)=1
@@ -13055,6 +13063,8 @@ Function AdjustObjectAdjuster(i)
 					If CurrentobjectData(4)<-1 CurrentObjectData(4)=359
 					If CurrentobjectData(4)>359 CurrentObjectData(4)=0
 				EndIf
+			ElseIf IsObjectSubTypeFourColorButton(CurrentObjectSubType)
+				SetThreeOtherDataIfNotEqual(5,6,7,4,OldData)
 			EndIf
 		EndIf
 
@@ -16756,6 +16766,32 @@ Function CountObjectTextureNames(TargetTextureName$)
 		EndIf
 	Next
 	Return Count
+
+End Function
+
+Function IsObjectSubTypeFourColorButton(TargetSubType)
+
+	Return (TargetSubType Mod 32)<5 ; square, round, diamond, diamondonce, star
+
+End Function
+
+Function IsObjectLogicFourColorButton(TargetType,TargetSubType)
+
+	If TargetType=90
+		Return IsObjectSubTypeFourColorButton(TargetSubType)
+	Else
+		Return False
+	EndIf
+
+End Function
+
+Function SetThreeOtherDataIfNotEqual(DTo1,DTo2,DTo3,DFrom,OldData)
+
+	If CurrentObjectData(DTo1)=OldData And CurrentObjectData(DTo2)=OldData And CurrentObjectData(DTo3)=OldData
+		CurrentObjectData(DTo1)=CurrentObjectData(DFrom)
+		CurrentObjectData(DTo2)=CurrentObjectData(DFrom)
+		CurrentObjectData(DTo3)=CurrentObjectData(DFrom)
+	EndIf
 
 End Function
 
