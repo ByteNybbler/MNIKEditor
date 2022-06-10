@@ -8592,22 +8592,19 @@ Function UpdateObjectAnimation(i)
 
 	If ModelName$="!BabyBoomer"
 		AnimateMD2 ObjectEntity(i),0,.2,1,2
-	EndIf
-	If ModelName$="!Busterfly"
+	ElseIf ModelName$="!Busterfly"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
 			AnimateMD2 Entity,2,.4,2,9
 		EndIf
-	EndIf
-	If ModelName$="!Chomper"
+	ElseIf ModelName$="!Chomper"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
 			AnimateMD2 ObjectEntity(i),1,.6,1,29
 		EndIf
-	EndIf
-	If ModelName$="!Crab"
+	ElseIf ModelName$="!Crab"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
@@ -8617,34 +8614,29 @@ Function UpdateObjectAnimation(i)
 				AnimateMD2 Entity,3,1,48,49
 			End Select
 		EndIf
-	EndIf
-	If ModelName$="!Kaboom"
+	ElseIf ModelName$="!Kaboom"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		EndIf
-	EndIf
-	If ModelName$="!NPC"
+	ElseIf ModelName$="!NPC"
 		If SimulationLevel<SimulationLevelAnimation
 			Animate GetChild(Entity,3),0
 		Else
 			Animate GetChild(Entity,3),1,.05,10
 		EndIf
-	EndIf
-	If ModelName$="!Tentacle"
+	ElseIf ModelName$="!Tentacle"
 		If SimulationLevel<SimulationLevelAnimation
 			Animate GetChild(Entity,3),0
 		Else
 			Animate GetChild(Entity,3),1,.1,1,0
 		EndIf
-	EndIf
-	If ObjectType(i)=290 And ModelName$="!Thwart"
+	ElseIf ObjectType(i)=290 And ModelName$="!Thwart"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
 			AnimateMD2 Entity,2,0.005,81,82
 		EndIf
-	EndIf
-	If ModelName$="!Troll"
+	ElseIf ModelName$="!Troll"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
