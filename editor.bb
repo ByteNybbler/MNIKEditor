@@ -765,6 +765,7 @@ Dim SimulatedObjectMovementSpeed(1000)
 Dim SimulatedObjectMoveXGoal(1000),SimulatedObjectMoveYGoal(1000)
 Dim SimulatedObjectData10(1000)
 Dim SimulatedObjectTileTypeCollision(1000)
+Dim SimulatedObjectExclamation(1000)
 Dim SimulatedObjectFrozen(1000)
 ;Dim SimulatedObjectScaleAdjust#(1000) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
 Dim SimulatedObjectScaleXAdjust#(1000),SimulatedObjectScaleYAdjust#(1000),SimulatedObjectScaleZAdjust#(1000)
@@ -1361,7 +1362,8 @@ Global PushbotTexture=myLoadTexture("data\graphics\pushbot.bmp",1)
 Global ZbotNPCMesh=myLoadMesh("data\models\zbots\zbotnpc.3ds",0)
 
 RotateMesh ZBOTNPCMesh,-90,0,0
-RotateMesh ZBOTNPCMesh,0,-90,0
+RotateMesh ZBOTNPCMesh,0,90,0 ; formerly -90
+ScaleMesh ZBotNPCMesh,1,1.5,1
 
 Dim ZbotNPCTexture(8)
 For i=0 To 7
@@ -8729,6 +8731,7 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectMoveYGoal(i)=ObjectMoveYGoal(i)
 		SimulatedObjectData10(i)=ObjectData10(i)
 		SimulatedObjectTileTypeCollision(i)=ObjectTileTypeCollision(i)
+		SimulatedObjectExclamation(i)=ObjectExclamation(i)
 		SimulatedObjectFrozen(i)=ObjectFrozen(i)
 		If ObjectScaleAdjust(i)<>0.0
 			SimulatedObjectXScale(i)=SimulatedObjectXScale(i)*ObjectScaleAdjust(i)
@@ -8766,6 +8769,7 @@ Function SimulateObjectRotation(Dest)
 	GameLikeRotation(ObjectEntity(Dest),Yaw#,Pitch#,Roll#)
 	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
 	
+	If ObjectModelName$(Dest)="!Troll" Or ObjectModelName$(Dest)="!Crab" Then TurnEntity ObjectEntity(Dest),0,-90,0
 	If ObjectModelName$(Dest)="!Kaboom" Or ObjectModelName$(Dest)="!BabyBoomer" Then TurnEntity ObjectEntity(Dest),0,90,0
 
 End Function
@@ -13191,7 +13195,7 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObjectData(7)=AdjustInt("Data7: ", CurrentObjectData(7), 1, 10, 150)
 		AdjustObjectData(7, SlowInt, FastInt, DelayTime)
 		
-		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObjectData(0)=1
+		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObjectData(0)=1 ; NPC Modifier
 			; turn
 			If CurrentobjectData(7)=-2 CurrentObjectData(7)=25
 			If CurrentobjectData(7)=26 CurrentObjectData(7)=-1
@@ -13201,7 +13205,15 @@ Function AdjustObjectAdjuster(i)
 			If CurrentobjectData(7)=19 CurrentObjectData(7)=15
 
 		EndIf
-		If CurrentObjectModelName$="!NPC"  Or CurrentObjectModelName="!Kaboom"
+		
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
+			If CurrentObjectData(7)>255 CurrentObjectData(7)=0
+			If CurrentObjectData(7)<0 CurrentObjectData(7)=255
+			
+
+		EndIf
+		
+		If CurrentObjectType=110 Or CurrentObjectType=390 ; Stinker NPC or Kaboom NPC
 
 			; Turn
 			If CurrentobjectData(7)=-2 CurrentObjectData(7)=25
@@ -13211,13 +13223,6 @@ Function AdjustObjectAdjuster(i)
 			If CurrentobjectData(7)=16 CurrentObjectData(7)=20
 			If CurrentobjectData(7)=19 CurrentObjectData(7)=15
 
-
-		EndIf
-		
-		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
-			If CurrentObjectData(7)>255 CurrentObjectData(7)=0
-			If CurrentObjectData(7)<0 CurrentObjectData(7)=255
-			
 
 		EndIf
 
@@ -24943,6 +24948,77 @@ Function RetrieveDefaultTrueMovement()
 End Function
 
 
+Function TurnObjectTowardDirection(i,dx#,dy#,speed,Adjust)
+	
+	; Turns Object by speed degrees toward the angle made by dx/dy. 
+	; Adjust is a fixed angle added to goal (in case the base models orientation is off, for example) 
+	
+	If dx<>0 Or dy<>0
+		
+		ObjectYawGoal=ATan2(-dy,dx)+90+Adjust
+		While ObjectYawGoal>180 
+			ObjectYawGoal=ObjectYawGoal-360
+		Wend
+		While ObjectYawGoal<=-180 
+			ObjectYawGoal=ObjectYawGoal+360
+		Wend
+
+		If Abs(ObjectYawGoal-SimulatedObjectYaw(i))>speed
+			dyaw=speed
+		Else
+			dyaw=1
+		EndIf
+
+		If SimulatedObjectYaw(i)>ObjectYawGoal
+			If SimulatedObjectYaw(i)-ObjectYawGoal<180
+				SimulatedObjectYaw(i)=SimulatedObjectYaw(i)-dyaw
+			Else
+				SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+dyaw
+			EndIf
+		Else If SimulatedObjectYaw(i)<ObjectYawGoal
+			If ObjectYawGoal-SimulatedObjectYaw(i)<180
+				SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+dyaw
+			Else
+				SimulatedObjectYaw(i)=SimulatedObjectYaw(i)-dyaw
+			EndIf
+		EndIf
+		If SimulatedObjectYaw(i)>180 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)-360
+		If SimulatedObjectYaw(i)<-180 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+360
+		
+	EndIf
+
+End Function
+
+Function PlayerTileX()
+
+	Return BrushCursorX
+
+End Function
+
+Function PlayerTileY()
+
+	; Make player-facing objects turn approximately south when cursor is not present.
+	If BrushCursorY=-1
+		Return 100000000
+	Else
+		Return BrushCursorY
+	EndIf
+
+End Function
+
+Function PlayerX#()
+	
+	Return PlayerTileX()+0.5
+	
+End Function
+
+Function PlayerY#()
+	
+	Return PlayerTileY()+0.5
+	
+End Function
+
+
 Function ControlParticleEmitters(i)
 	
 	;If ObjectActive(i)=0 Then Return
@@ -25891,6 +25967,18 @@ Function ControlStinkerWeeExit(i)
 End Function
 
 
+Function ControlScritter(i)
+
+	;If ObjectMovementTimer(i)>0
+	;	SimulatedObjectZ(i)=0.4*Abs(Sin(ObjectMovementTimer(i)*360/1000))
+	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),10,0)
+	;Else
+		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),6,0)
+	;EndIf
+
+End Function
+
+
 Function ControlCrab(i)
 
 	;subtype -0-male, 1-female
@@ -25898,7 +25986,7 @@ Function ControlCrab(i)
 	;status - 0 normal, 2 submerged
 
 	If SimulatedObjectTileTypeCollision(i)=0
-		; First time (should later be put into object creation at level editor)
+		; First time
 		If ObjectSubType(i)=0
 			; male
 			SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
@@ -25922,7 +26010,7 @@ Function ControlCrab(i)
 		Else
 			;female
 			SimulatedObjectTileTypeCollision(i)=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
-;			Select ObjectData(i,1)
+;			Select SimulatedObjectData(i,1)
 ;			Case 0
 ;				; normal
 ;				ObjectMovementType(i)=32
@@ -25938,6 +26026,44 @@ Function ControlCrab(i)
 		EndIf
 		
 	EndIf
+	
+	If ObjectModelName$(i)="!Crab"
+		; anim
+		; 1-idle
+		; 2-walk
+		; 3-walk (used for non-stop animation between tiles)
+		; 4-retract
+		; 5-come out
+		If ObjectFrozen(i)>0
+			MaybeAnimateMD2(ObjectEntity(i),2,.01,1,2)
+			SimulatedObjectCurrentAnim(i)=0
+		Else If ObjectMovementTimer(i)=0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=3) And SimulatedObjectdata(i,1)<2
+			
+			
+			MaybeAnimateMD2(ObjectEntity(i),2,Rnd(.02,.04),1,13)
+			SimulatedObjectCurrentAnim(i)=1
+			
+			
+		Else If SimulatedObjectCurrentAnim(i)=2 
+			SimulatedObjectCurrentAnim(i)=3
+		Else If ObjectMovementTimer(i)>0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=1 Or SimulatedObjectCurrentAnim(i)=20)
+			MaybeAnimateMD2(ObjectEntity(i),1,1,1,30)
+			SimulatedObjectCurrentAnim(i)=2
+		Else If SimulatedObjectCurrentAnim(i)>=5 And SimulatedObjectCurrentAnim(i)<20
+			; delay for coming out anim so it doesn' immediately go into walking
+			SimulatedObjectCurrentAnim(i)=SimulatedObjectCurrentAnim(i)+1
+		EndIf
+	EndIf
+	
+	If SimulatedObjectStatus(i)=0 And SimulatedObjectData(i,1)<2
+		SimulatedObjectZ(i)=0
+		;If ObjectMovementTimer(i)>0 
+		;	TurnObjectTowardDirection(i,-(ObjectTileX2(i)-ObjectTileX(i)),-(ObjectTileY2(i)-ObjectTileY(i)),10,0)
+		;Else
+			TurnObjectTowardDirection(i,-(PlayerX()-ObjectX(i)),-(PlayerY()-ObjectY(i)),6,0)
+		;EndIf
+	EndIf
+	
 End Function
 
 
@@ -25996,6 +26122,37 @@ Function ControlFireFlower(i)
 	
 	If ObjectActive(i)<1001
 		SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+	EndIf
+	
+	;If ObjectIndigo(i)=0 SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+	
+	dx#=0
+	dy#=0
+	If ObjectSubType(i)=1
+		; follow player
+		dx=PlayerX()-ObjectX(i)
+		dy=PlayerY()-ObjectY(i)
+		total#=Sqr(dx^2+dy^2)
+		dx=dx/total
+		dy=dy/total
+		
+	Else
+		; turn or static
+		If SimulatedObjectData(i,0)>0 And SimulatedObjectData(i,0)<4
+			dx=1
+		EndIf
+		If SimulatedObjectData(i,0)>4
+			dx=-1
+		EndIf
+		If SimulatedObjectData(i,0)<2 Or SimulatedObjectData(i,0)>6
+			dy=-1
+		EndIf
+		If SimulatedObjectData(i,0)>2 And SimulatedObjectData(i,0)<6
+			dy=1
+		EndIf
+	EndIf
+	If SimulatedObjectTimer(i)>-10
+		TurnObjectTowardDirection(i,dx,dy,3,180)
 	EndIf
 	
 	If SimulatedObjectTimer(i)<0
@@ -26301,6 +26458,20 @@ Function ControlSuctube(i)
 End Function
 
 
+Function ControlThwart(i)
+
+	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+
+End Function
+
+
+Function ControlTroll(i)
+
+	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+
+End Function
+
+
 Function ControlRetroCoily(i)
 
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
@@ -26449,6 +26620,13 @@ Function ControlChomper(i)
 
 		EndIf
 	EndIf
+	
+	
+	;If ObjectMovementTimer(i)>0
+	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),3,180)
+	;Else
+		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),1,180)
+	;EndIf
 
 End Function
 
@@ -26484,7 +26662,17 @@ Function ControlNPC(i)
 ;		Return
 ;	EndIf
 
-	dist=100 ; Distance from player
+	;dist=100 ; Distance from player
+	Dist=maximum2(Abs(ObjectTileX(i)-BrushCursorX),Abs(ObjectTileY(i)-BrushCursorY))
+	; Exclamation
+	If SimulatedObjectExclamation(i)>=100 And SimulatedObjectExclamation(i)<200 And Dist>4
+		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)-100
+	EndIf
+	If SimulatedObjectExclamation(i)>=0 And SimulatedObjectExclamation(i)<100 And Dist<4
+		
+		AddParticle(SimulatedObjectExclamation(i),ObjectTileX(i)+.5,1.3,-ObjectTileY(i)-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
+		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)+100
+	EndIf
 
 
 	If SimulatedObjectTileTypeCollision(i)=0
@@ -26520,7 +26708,7 @@ Function ControlNPC(i)
 			MaybeAnimate(GetChild(objectentity(i),3),1,1,11)
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
-		;TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-ObjectYawAdjust(i))
+		TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-SimulatedObjectYawAdjust(i))
 	Else If ObjectFlying(i)/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>13
@@ -26536,11 +26724,11 @@ Function ControlNPC(i)
 		Case 0
 			; Turn toward ObjectYawAdjust, i.e. Angle 0
 			If SimulatedObjectYaw(i)<>0
-				;TurnObjectTowardDirection(i,0,1,4,0)
+				TurnObjectTowardDirection(i,0,1,4,0)
 			EndIf
 		Case 1
 			; Turn Toward Player
-			;TurnObjectTowardDirection(i,ObjectX(PlayerObject)-ObjectX(i),ObjectY(PlayerObject)-ObjectY(i),6,-ObjectYawAdjust(i))
+			TurnObjectTowardDirection(i,PlayerX()-ObjectX(i),PlayerY()-ObjectY(i),6,-SimulatedObjectYawAdjust(i))
 		
 		Case 2
 			; Various turning options
@@ -26640,7 +26828,7 @@ Function ControlNPC(i)
 			EndIf
 		Case 8
 			; Sit if far from player, otherwise stand and wave fast
-			Dist=maximum2(Abs(ObjectTileX(i)-ObjectTileX(PlayerObject)),Abs(ObjectTileY(i)-ObjectTileY(PlayerObject)))
+			Dist=maximum2(Abs(ObjectTileX(i)-PlayerTileX()),Abs(ObjectTileY(i)-PlayerTileY()))
 			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
 				SimulatedObjectCurrentAnim(i)=14
 				MaybeAnimate(GetChild(objectentity(i),3),3,.4,14)
@@ -26737,8 +26925,17 @@ Function ControlKaboom(i)
 	EndIf
 	
 	
-	dist=100 ; Distance to player
-	
+	;dist=100 ; Distance to player
+	Dist=maximum2(Abs(ObjectTileX(i)-PlayerTileX()),Abs(ObjectTileY(i)-PlayerTileY()))
+	; Exclamation
+	If SimulatedObjectExclamation(i)>=100 And SimulatedObjectExclamation(i)<200 And Dist>4
+		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)-100
+	EndIf
+	If SimulatedObjectExclamation(i)>=0 And SimulatedObjectExclamation(i)<100 And Dist<4
+		
+		AddParticle(SimulatedObjectExclamation(i),ObjectTileX(i)+.5,1.3,-ObjectTileY(i)-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
+		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)+100
+	EndIf
 	
 	If ObjectFlying(i)/10=1
 		; flying
@@ -26747,7 +26944,7 @@ Function ControlKaboom(i)
 			AnimateMD2 ObjectEntity(i),3,2,31,60
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
-		;TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-ObjectYawAdjust(i))
+		TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-SimulatedObjectYawAdjust(i))
 	Else If ObjectFlying(i)/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>11
@@ -26764,11 +26961,11 @@ Function ControlKaboom(i)
 		Case 0
 			; Turn toward ObjectYawAdjust, i.e. Angle 0
 			If SimulatedObjectYaw(i)<>0
-				;TurnObjectTowardDirection(i,0,1,4,0)
+				TurnObjectTowardDirection(i,0,1,4,0)
 			EndIf
 		Case 1
 			; Turn Toward Player
-			;TurnObjectTowardDirection(i,ObjectX(PlayerObject)-ObjectX(i),ObjectY(PlayerObject)-ObjectY(i),6,-ObjectYawAdjust(i))
+			TurnObjectTowardDirection(i,PlayerX()-ObjectX(i),PlayerY()-ObjectY(i),6,-SimulatedObjectYawAdjust(i))
 		
 		Case 2
 			; Various turning options
@@ -26863,6 +27060,36 @@ Function ControlKaboom(i)
 	EndIf
 
 
+
+End Function
+
+
+Function ControlZbotNPC(i)
+
+	If SimulatedObjectData(i,0)>0 And ObjectIndigo(i)=0
+		SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
+		If SimulatedObjectData(i,0)=120 
+			;DestroyObject(i,0)
+			Return
+		EndIf
+	EndIf
+
+	If SimulatedObjectData(i,0)>0 And ObjectIndigo(i)=0
+		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectData(i,0))/10.0
+		SimulatedObjectZ(i)=SimulatedObjectZ(i)+0.002
+		Return
+	EndIf
+
+	; particle effects
+	If ObjectActive(i)>0 And ObjectActive(i)<1001 ; currently activating or deactivating
+		If Rand(0,100)<50
+			a=Rand(0,360)
+			b#=Rnd(0.002,0.006)
+			AddParticle(23,ObjectX(i)+0.5*Sin(a),0,-ObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
+		EndIf
+	EndIf
+	
+	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
 
 End Function
 
@@ -27217,6 +27444,8 @@ Function ControlObjects()
 				ControlStinkerWee(i)
 			Case 130
 				ControlStinkerWeeExit(i)
+			Case 150
+				ControlScritter(i)
 			Case 151
 				ControlRainbowBubble(i)
 			Case 160
@@ -27259,6 +27488,8 @@ Function ControlObjects()
 				ControlSpring(i)
 			Case 281
 				ControlSucTube(i)
+			Case 290 
+				ControlThwart(i)
 			Case 300
 				ControlIceFloat(i)
 			Case 301
@@ -27271,8 +27502,10 @@ Function ControlObjects()
 				ControlWisp(i)
 			Case 340
 				ControlTentacle(i)
-			Case 370 
+			Case 370
 				ControlCrab(i)
+			Case 380
+				ControlTroll(i)
 			Case 390
 				ControlKaboom(i)
 			Case 400
@@ -27287,6 +27520,8 @@ Function ControlObjects()
 				ControlRetroLaserGate(i)
 			Case 425
 				ControlRetroRainbowCoin(i)
+			Case 433
+				ControlZbotNPC(i)
 			Case 434
 				ControlMothership(i)
 			Case 441
