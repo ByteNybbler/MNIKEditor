@@ -1197,12 +1197,10 @@ EntityTexture TurtleMesh,TurtleTexture
 HideEntity TurtleMesh
 
 ; FireFlowers
-;Global FireFlowerMesh=myLoadMD2("data\models\fireflower\fireflower.wdf")
-;RotateEntity FireFlowerMesh,-90,0,0
-;RotateEntity FireFlowerMesh,0,90,0
-Global FireFlowerMesh=MyLoadMesh("data\models\fireflower\fireflower2.3ds",0)
-RotateMesh FireFlowerMesh,-90,0,0
-RotateMesh FireFlowerMesh,0,90,0
+Global FireFlowerMesh=myLoadMD2("data\models\fireflower\fireflower.wdf")
+;Global FireFlowerMesh=MyLoadMesh("data\models\fireflower\fireflower2.3ds",0)
+;RotateMesh FireFlowerMesh,-90,0,0
+;RotateMesh FireFlowerMesh,0,90,0
 
 Global FireFlowerTexture=MyLoadTexture("data\models\fireflower\fireflower04.png",1)
 Global FireFlowerTexture2=myLoadTexture("data\models\fireflower\fireflowerice.png",4)
@@ -8487,9 +8485,30 @@ Function BaseObjectAlpha#(Dest)
 End Function
 
 
+Function SetEntityPositionToWorldPosition(entity,XP#,YP#,ZP#,TargetType,Yaw#,XScale#,YScale#)
+
+	If TargetType=230
+		; adjustment for fireflower position (MS why did you put yourself through this??)
+		xadjust#=-26.0
+		yadjust#=0.0
+		
+		ScaleThingXCos#=XScale*xadjust*Cos(Yaw#)
+		ScaleThingXSin#=XScale*xadjust*Sin(Yaw#)
+		ScaleThingYCos#=YScale*yadjust*Cos(Yaw#)
+		ScaleThingYSin#=YScale*yadjust*Sin(Yaw#)
+		XP#=XP#+ScaleThingXCos#+ScaleThingYSin#
+		YP#=YP#-ScaleThingXSin#+ScaleThingYCos#
+	EndIf
+	
+	SetEntityPositionInWorld(entity,XP#,YP#,ZP#)
+
+End Function
+
+
 Function SetEntityPositionToObjectPosition(entity, Dest)
 
-	PositionEntity entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)	
+	SetEntityPositionToWorldPosition(entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectY(Dest)+ObjectYAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),ObjectType(Dest),ObjectYaw(Dest)+ObjectYawAdjust(Dest),ObjectXScale(Dest),ObjectYScale(Dest))
+	;PositionEntity entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)	
 
 End Function
 
@@ -8616,6 +8635,10 @@ Function UpdateObjectAnimation(i)
 				AnimateMD2 Entity,3,1,48,49
 			End Select
 		EndIf
+	ElseIf ModelName$="!FireFlower"
+		If SimulationLevel<SimulationLevelAnimation
+			AnimateMD2 Entity,0
+		EndIf
 	ElseIf ModelName$="!Kaboom"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
@@ -8661,12 +8684,12 @@ Function MaybeAnimate(Entity,mode=1,speed#=1,sequence=0,transition#=0)
 	
 End Function
 
-Function MaybeAnimateMD2(Entity,mode=1,speed#=1,sequence=0,transition#=0)
+Function MaybeAnimateMD2(Entity,mode=1,speed#=1,FirstFrame=1,LastFrame=1,transition#=0)
 	
 	If SimulationLevel<SimulationLevelAnimation
 		Return False
 	Else
-		AnimateMD2 Entity,mode,speed#,sequence,transition#
+		AnimateMD2 Entity,mode,speed#,FirstFrame,LastFrame,transition#
 		Return True
 	EndIf
 	
@@ -8756,7 +8779,8 @@ Function SimulateObjectPosition(Dest)
 	XP#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)
 	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
 	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
-	PositionEntity ObjectEntity(Dest),XP#,ZP#,-YP#
+	
+	SetEntityPositionToWorldPosition(ObjectEntity(Dest),XP#,YP#,ZP#,ObjectType(Dest),SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest),SimulatedObjectXScale(Dest),SimulatedObjectYScale(Dest))
 
 End Function
 
@@ -17242,7 +17266,10 @@ Function LoadLevel(levelnumber)
 
 	file=ReadFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+levelnumber+".wlv")
 	LevelWidth=ReadInt(File)
-	If levelwidth>121
+	If LevelWidth=-999
+		; MOFI level, skip the first int.
+		LevelWidth=ReadInt(File)
+	ElseIf LevelWidth>121
 		; WA3 VAULTS
 		LevelWidth=LevelWidth-121
 	EndIf
@@ -26139,18 +26166,22 @@ End Function
 
 Function ControlFireFlower(i)
 
+	If ObjectModelName$(i)<>"!FireFlower"
+		Return
+	EndIf
+
 	If (SimulatedObjectTimer(i)>=0 And SimulatedObjectData(i,2)=0) Or (SimulatedObjectData(i,2)=2 And SimulatedObjectTimer(i)=ObjectTimerMax1(i))
 		SimulatedObjectData(i,2)=1
-		;MaybeAnimateMD2(ObjectEntity(i),1,.2,1,20,1)
+		MaybeAnimateMD2(ObjectEntity(i),1,.2,1,20,1)
 	EndIf
 	
 	;If ObjectActive(i)<1001
 	;	SimulatedObjectTimer(i)=ObjectTimerMax1(i)
 	;EndIf
 	
-	;If ObjectIndigo(i)=0 SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+	If ObjectIndigo(i)=0 SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
 	SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+80) Mod 8
-	SimulatedObjectYawAdjust(i)=0
+	SimulatedObjectYawAdjust(i)=0 ; Necessary to make the model face the correct way due to the weird special case handling of its rotation.
 	
 	dx#=0
 	dy#=0
@@ -26184,7 +26215,7 @@ Function ControlFireFlower(i)
 	If SimulatedObjectTimer(i)<0
 
 		If SimulatedObjectData(i,2)=1
-			;MaybeAnimateMD2(ObjectEntity(i),1,.5,21,60,1)
+			MaybeAnimateMD2(ObjectEntity(i),1,.5,21,60,1)
 			SimulatedObjectData(i,2)=0
 		EndIf
 	
