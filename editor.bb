@@ -4843,9 +4843,9 @@ Function EditorLocalControls()
 	If KeyDown(34) ; G key
 		For i=0 To NofObjects-1
 			If ObjectType(i)=90 And (ObjectSubType(i)=10 Or (ObjectSubType(i)=15 And ObjectData(i,0)=7)) ; levelexit or CMD 7
-				TryLevelGoto(i,x,y,1,2,3)
+				TryLevelGoto(i,BrushCursorX,BrushCursorY,1,2,3)
 			ElseIf ObjectType(i)=242 And ObjectData(i,2)=7 ; Cuboid
-				TryLevelGoto(i,x,y,3,4,5)
+				TryLevelGoto(i,BrushCursorX,BrushCursorY,3,4,5)
 			EndIf
 		Next
 	EndIf
