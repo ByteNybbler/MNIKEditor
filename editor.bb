@@ -2387,11 +2387,16 @@ Function EditorMainLoop()
 	;Text 100,550,"   FLIP Y"
 	;Text 100+4,580,"  FLIP XY"
 	
+	CenteredText(150,520,"BRUSH SIZE")
+	CenteredText(150,535,BrushSize)
+	
 	If TexturePrefix<>""
 		Color 255,155,0
 	EndIf
-	Text 90,565,"  TEX PREFIX"
-	Text 100,580,TexturePrefix$
+	CenteredText(150,565,"TEX PREFIX")
+	CenteredText(150,580,TexturePrefix$)
+	;Text 90,565,"  TEX PREFIX"
+	;Text 100,580,TexturePrefix$
 	Color TextLevelR,TextLevelG,TextLevelB
 	
 	If ShowObjectPositions=True
@@ -2463,8 +2468,8 @@ Function EditorMainLoop()
 	;	Text 500,535,"   RANGE: MASTER"
 	;EndIf
 	
-	Text 500,520,"   BRUSH"
-	Text 500,535,"   SIZE "+BrushSize
+	;Text 500,520,"   BRUSH"
+	;Text 500,535,"   SIZE "+BrushSize
 	
 	Text 500,565,"   ELEVATE"
 	
@@ -5054,38 +5059,31 @@ Function EditorLocalControls()
 	EndIf
 
 	If MX>=100 And Mx<200
-		If my>=510 And my<540
-			If LeftMouse=True And LeftMouseReleased=True
-				;flip
-				;DesiredFlip$=Upper$(InputString$("Enter desired flip (X, Y, or XY): "))
+		; brush size
+		If my>520 And my<550
+			If ShiftDown()
+				Adj=20
+			Else
+				Adj=2
+			EndIf
+			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
+				;BorderExpandOption=Not BorderExpandOption
+				;WidescreenRangeLevel=WidescreenRangeLevel+1
+				;If WidescreenRangeLevel>1
+				;	WidescreenRangeLevel=-1
+				;ElseIf WidescreenRangeLevel<-1
+				;	WidescreenRangeLevel=1
+				;EndIf
+				
+				SetBrushSize(BrushSize+Adj)
+				If MouseScroll=0 Then Delay 100
+			EndIf
+			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
+				SetBrushSize(BrushSize-Adj)
+				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
-;		If my>=540 And my<570
-;			If LeftMouse=True And LeftMouseReleased=True
-;				;flipy
-;				FlipLevelY()
-;				Locate 0,0
-;				Color 0,0,0
-;				Rect 0,0,500,40,True
-;				Color 255,255,255
-;				Print "Flipped"
-;				Delay 1000
-;			EndIf
-;		EndIf
-;		If my>=570 And my<600
-;			If LeftMouse=True And LeftMouseReleased=True
-;				;flipxy
-;				FlipLevelXY()
-;				Locate 0,0
-;				Color 0,0,0
-;				Rect 0,0,500,40,True
-;				Color 255,255,255
-;				Print "Flipped"
-;				Delay 1000
-;
-;			EndIf
-;		EndIf
-
+		
 		If my>=565 And my<595
 			If LeftMouse=True And LeftMouseReleased=True
 				;texture prefix
@@ -5236,29 +5234,9 @@ Function EditorLocalControls()
 	EndIf
 	
 	If MX>=500 And MX<600
-		; brush size
+		; step per placement/tile
 		If my>520 And my<550
-			If ShiftDown()
-				Adj=20
-			Else
-				Adj=2
-			EndIf
-			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
-				;BorderExpandOption=Not BorderExpandOption
-				;WidescreenRangeLevel=WidescreenRangeLevel+1
-				;If WidescreenRangeLevel>1
-				;	WidescreenRangeLevel=-1
-				;ElseIf WidescreenRangeLevel<-1
-				;	WidescreenRangeLevel=1
-				;EndIf
-				
-				SetBrushSize(BrushSize+Adj)
-				If MouseScroll=0 Then Delay 100
-			EndIf
-			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-				SetBrushSize(BrushSize-Adj)
-				If MouseScroll=0 Then Delay 100
-			EndIf
+			;
 		EndIf
 		
 		; elevate
