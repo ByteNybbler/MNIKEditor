@@ -334,7 +334,9 @@ Global CurrentGrabbedObject=-1
 Global CurrentGrabbedObjectModified=False
 Global CurrentDraggedObject=-1
 
-Global BrushSize=1
+;Global BrushSize=1
+Global BrushWidth=1
+Global BrushHeight=1
 Global CustomBrushEditorMode=-1
 
 Global RandomYawAdjust=False
@@ -2388,7 +2390,7 @@ Function EditorMainLoop()
 	;Text 100+4,580,"  FLIP XY"
 	
 	CenteredText(150,520,"BRUSH SIZE")
-	CenteredText(150,535,BrushSize)
+	CenteredText(150,535,BrushWidth+" x "+BrushHeight)
 	
 	If TexturePrefix<>""
 		Color 255,155,0
@@ -2595,12 +2597,26 @@ Function SetEditorMode(NewMode)
 End Function
 
 
-Function SetBrushSize(NewBrushSize)
+Function SetBrushWidth(NewBrushWidth)
 
-	BrushSize=NewBrushSize
+	BrushWidth=NewBrushWidth
 	
-	If BrushSize<1
-		BrushSize=1
+	If BrushWidth<1
+		BrushWidth=1
+	EndIf
+	
+	If BrushMode=BrushModeCustom
+		SetBrushMode(BrushModeNormal)
+	EndIf
+
+End Function
+
+Function SetBrushHeight(NewBrushHeight)
+
+	BrushHeight=NewBrushHeight
+	
+	If BrushHeight<1
+		BrushHeight=1
 	EndIf
 	
 	If BrushMode=BrushModeCustom
@@ -3075,7 +3091,7 @@ Function PositionCursorEntity(i,x,y)
 	ShowEntity CursorMesh(i)
 	ShowEntity CursorMesh2(i)
 	PositionEntity CursorMesh(i),x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
-	ScaleEntity CursorMesh(i),BrushSize,1,BrushSize
+	ScaleEntity CursorMesh(i),BrushWidth,1,BrushHeight
 	PositionEntity CursorMesh2(i),x+.5,0,-y-.5
 
 End Function
@@ -3587,11 +3603,10 @@ Function EditorLocalControls()
 						Next
 					ElseIf BrushMode=BrushModeCustom
 						If EditorMode=0
-							BrushOffset=BrushSize/2
-							BrushXStart=BrushCursorX-BrushOffset
-							BrushYStart=BrushCursorY-BrushOffset
-							For i=0 To BrushSize-1
-								For j=0 To BrushSize-1
+							BrushXStart=BrushCursorX-BrushWidth/2
+							BrushYStart=BrushCursorY-BrushHeight/2
+							For i=0 To BrushWidth-1
+								For j=0 To BrushHeight-1
 									GrabLevelTileFromBrush(i,j)
 									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								Next
@@ -3603,11 +3618,10 @@ Function EditorLocalControls()
 							Next
 						EndIf
 					Else ; normal brush
-						BrushOffset=BrushSize/2
-						BrushXStart=BrushCursorX-BrushOffset
-						BrushYStart=BrushCursorY-BrushOffset
-						For i=0 To BrushSize-1
-							For j=0 To BrushSize-1
+						BrushXStart=BrushCursorX-BrushWidth/2
+						BrushYStart=BrushCursorY-BrushHeight/2
+						For i=0 To BrushWidth-1
+							For j=0 To BrushHeight-1
 								If EditorMode=0
 									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								ElseIf EditorMode=3
@@ -3747,11 +3761,10 @@ Function EditorLocalControls()
 						DeleteObjectAt(thisx,thisy)
 					Next
 				Else ; normal brush
-					BrushOffset=BrushSize/2
-					BrushXStart=BrushCursorX-BrushOffset
-					BrushYStart=BrushCursorY-BrushOffset
-					For i=0 To BrushSize-1
-						For j=0 To BrushSize-1
+					BrushXStart=BrushCursorX-BrushWidth/2
+					BrushYStart=BrushCursorY-BrushHeight/2
+					For i=0 To BrushWidth-1
+						For j=0 To BrushHeight-1
 							DeleteObjectAt(BrushXStart+i,BrushYStart+j)
 						Next
 					Next
@@ -3765,12 +3778,11 @@ Function EditorLocalControls()
 				Else
 					; set custom brush
 					NofBrushObjects=0
-					BrushOffset=BrushSize/2
-					BrushXStart=BrushCursorX-BrushOffset
-					BrushYStart=BrushCursorY-BrushOffset
+					BrushXStart=BrushCursorX-BrushWidth/2
+					BrushYStart=BrushCursorY-BrushHeight/2
 					If EditorMode=0
-						For i=0 To BrushSize-1
-							For j=0 To BrushSize-1
+						For i=0 To BrushWidth-1
+							For j=0 To BrushHeight-1
 								CopyLevelTileToBrush(BrushXStart+i,BrushYStart+j,i,j)
 							Next
 						Next
@@ -3779,7 +3791,7 @@ Function EditorLocalControls()
 						CustomBrushEditorMode=EditorMode
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
-							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushSize And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushSize
+							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushWidth And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushHeight
 								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-x,ObjectY(k)-y)
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
@@ -5066,6 +5078,8 @@ Function EditorLocalControls()
 			Else
 				Adj=2
 			EndIf
+			ShouldChangeBrushWidth=my<535 Or mx<160
+			ShouldChangeBrushHeight=my<535 Or mx>140
 			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 				;BorderExpandOption=Not BorderExpandOption
 				;WidescreenRangeLevel=WidescreenRangeLevel+1
@@ -5075,11 +5089,21 @@ Function EditorLocalControls()
 				;	WidescreenRangeLevel=1
 				;EndIf
 				
-				SetBrushSize(BrushSize+Adj)
+				If ShouldChangeBrushWidth
+					SetBrushWidth(BrushWidth+Adj)
+				EndIf
+				If ShouldChangeBrushHeight
+					SetBrushHeight(BrushHeight+Adj)
+				EndIf
 				If MouseScroll=0 Then Delay 100
 			EndIf
 			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-				SetBrushSize(BrushSize-Adj)
+				If ShouldChangeBrushWidth
+					SetBrushWidth(BrushWidth-Adj)
+				EndIf
+				If ShouldChangeBrushHeight
+					SetBrushHeight(BrushHeight-Adj)
+				EndIf
 				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
