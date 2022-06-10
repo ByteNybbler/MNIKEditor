@@ -3468,7 +3468,7 @@ Function EditorLocalControls()
 						cornleft=BrushCursorX
 						cornright=Blockcornerx
 					EndIf
-					If y>BlockCornery
+					If BrushCursorY>BlockCornery
 						cornup=BlockCornery
 						corndown=BrushCursorY
 					Else
