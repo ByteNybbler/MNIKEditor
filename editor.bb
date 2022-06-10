@@ -10048,6 +10048,15 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomSubTypeMin
 		RightAdj$=RandomSubTypeMax
 		
+		If CurrentObjectModelName$="!Crab"
+			tex2$="Color"
+			If CurrentObjectSubType=0
+				tex$="Green"
+			Else If CurrentObjectSubType=1
+				tex$="Red"
+			EndIf
+		EndIf
+		
 		If CurrentObjectType=179 ; Custom Item
 			tex2$="Fn"
 			If CurrentObjectSubType>=0 And CurrentObjectSubType<30
@@ -10668,6 +10677,19 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Texture"
 		EndIf
 		
+		If CurrentObjectModelName$="!Crab"
+			tex2$="Status"
+			If CurrentObjectData(1)=0
+				tex$="Awake"
+			Else If CurrentObjectData(1)=1
+				tex$="Curious"
+			Else If CurrentObjectData(1)=2
+				tex$="Asleep"
+			Else If CurrentObjectData(1)=3
+				tex$="Disabled"
+			EndIf
+		EndIf
+		
 		;If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key"  Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!Retrolasergate" Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelname$="!Autodoor" Or CurrentObjectModelname$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
 		; spring or bridge or transporter or gate or key or teleporter or cage or fire trap or laser gate or moobot or suctube or conveyor
 		If CurrentObjectType=280 Or CurrentObjectType=40 Or CurrentObjectType=210 Or CurrentObjectType=10 Or CurrentObjectType=172 Or CurrentObjectType=30 Or CurrentObjectType=140 Or CurrentObjectType=20 Or CurrentObjectType=410 Or CurrentObjectType=424 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=45 Or CurrentObjectType=46
@@ -10784,8 +10806,6 @@ Function DisplayObjectAdjuster(i)
 				tex$="Asleep"
 			Else If CurrentObjectData(1)=3
 				tex$="Disabled"
-
-			
 			EndIf
 		EndIf
 		
@@ -12384,7 +12404,7 @@ Function AdjustObjectAdjuster(i)
 			RandomSubType=Not RandomSubType
 		EndIf
 				
-		If CurrentObjectModelName$="!CustomItem"
+		If CurrentObjectType=179 ; Custom Item
 		
 			Min=-400
 			Max=509
@@ -12419,11 +12439,11 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		
 		EndIf
-		If CurrentObjectModelName$="!FireFlower"
+		If CurrentObjectType=230 ; FireFlower
 			If CurrentObjectSubType<0 Then CUrrentObjectSubType=3
 			If CurrentObjectSubType>3 Then CurrentObjectSubType=0
 		EndIf
-		If CurrentObjectModelName$="!Crab"
+		If CurrentObjectType=370 ; Crab
 			If CurrentObjectSubType<0 Then CUrrentObjectSubType=1
 			If CurrentObjectSubType>1 Then CurrentObjectSubType=0
 		EndIf
