@@ -999,22 +999,8 @@ CurrentSurface=CreateSurface(CurrentMesh)
 Global CurrentWaterTile
 Global CurrentWaterTileSurface
 
-; BlockMode
-BlockModeMesh=CreateMesh()
-BlockModeSurface=CreateSurface(BlockModeMesh)
-AddVertex (BlockModeSurface,0,0,0)
-AddVertex (BlockModeSurface,0,0,0)
-AddVertex (BlockModeSurface,0,0,0)
-AddVertex (BlockModeSurface,0,0,0)
-AddTriangle (BlockModeSurface,0,1,2)
-AddTriangle (BlockModeSurface,1,3,2)
-EntityAlpha BlockModeMesh,0.5
-EntityOrder BlockModeMesh,-1
 ; CurrentObjectMarker
-CurrentObjectMarkerMesh=CreateCylinder()
-ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
-PositionEntity CurrentObjectMarkerMesh,0,300,0
-;EntityBlend CurrentObjectMarkerMesh,3
+Global CurrentObjectMarkerMesh
 
 ; ObjectPositionMarker
 Global ObjectPositionMarkerMesh=CreateCube()
@@ -2006,6 +1992,10 @@ Function InitializeGraphicsEntities()
 		FreeEntity CursorMeshRegion
 	Next
 	
+	CurrentObjectMarkerMesh=CreateCylinder()
+	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
+	PositionEntity CurrentObjectMarkerMesh,0,300,0
+	
 	CurrentGrabbedObjectMarker=CreateCube()
 	ScaleMesh CurrentGrabbedObjectMarker,0.5,90,0.5
 	EntityColor CurrentGrabbedObjectMarker,100,255,100
@@ -2024,6 +2014,17 @@ Function InitializeGraphicsEntities()
 	WhereWeEndedUpMarker=CopyEntity(CurrentGrabbedObjectMarker)
 	EntityColor WhereWeEndedUpMarker,255,255,0
 	ShowEntity WhereWeEndedUpMarker
+	
+	BlockModeMesh=CreateMesh()
+	BlockModeSurface=CreateSurface(BlockModeMesh)
+	AddVertex (BlockModeSurface,0,0,0)
+	AddVertex (BlockModeSurface,0,0,0)
+	AddVertex (BlockModeSurface,0,0,0)
+	AddVertex (BlockModeSurface,0,0,0)
+	AddTriangle (BlockModeSurface,0,1,2)
+	AddTriangle (BlockModeSurface,1,3,2)
+	EntityAlpha BlockModeMesh,0.5
+	EntityOrder BlockModeMesh,-1
 	
 	CurrentWaterTile=CreateMesh()
 	CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
@@ -3464,13 +3465,13 @@ Function EditorLocalControls()
 					PositionCursorEntity(3,LevelWidth-1-BrushCursorX,LevelHeight-1-BrushCursorY)
 				EndIf
 				
-				r=GetBrushModeColor(BrushMode,0)
-				g=GetBrushModeColor(BrushMode,1)
-				b=GetBrushModeColor(BrushMode,2)
+				BrushR=GetBrushModeColor(BrushMode,0)
+				BrushG=GetBrushModeColor(BrushMode,1)
+				BrushB=GetBrushModeColor(BrushMode,2)
 				
 				For i=0 To 3
-					EntityColor CursorMesh(i),r,g,b
-					EntityColor CursorMesh2(i),r,g,b
+					EntityColor CursorMesh(i),BrushR,BrushG,BrushB
+					EntityColor CursorMesh2(i),BrushR,BrushG,BrushB
 				Next
 				
 				Color TextLevelR,TextLevelG,TextLevelB
@@ -3480,6 +3481,7 @@ Function EditorLocalControls()
 				If BrushMode=BrushModeBlockPlacing
 					; show the block
 					ShowEntity BlockModeMesh
+					EntityColor BlockModeMesh,BrushR,BrushG,BrushB
 					If BrushCursorX>BlockCornerx
 						cornleft=Blockcornerx
 						cornright=BrushCursorX
