@@ -11000,6 +11000,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=50 ; spellball
 			tex2$="SourceX"
 		EndIf
+		
 		If CurrentObjectType=190
 			tex2$="Direction"
 			If CurrentObjectData(2)=0 tex$="Up"
@@ -11011,7 +11012,11 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
-		If CurrentObjectType=260 ; spikeyball
+		If CurrentObjectType=230 ; FireFlower
+			tex2$="State"
+		EndIf
+		
+		If CurrentObjectType=260 ; Spikeyball
 			tex2$="Speed"
 			tex$="+"+Str$(CurrentObjectData(2))
 		EndIf
