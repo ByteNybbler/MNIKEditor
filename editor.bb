@@ -9824,7 +9824,7 @@ End Function
 Function DisplayObjectAdjuster(i)
 
 	tex2$=ObjectAdjuster$(i)
-	CrossedOut=False
+	Randomized=False
 	StartX=510
 	StartY=305
 	StartY=StartY+15+(i-ObjectAdjusterStart)*15
@@ -9853,33 +9853,33 @@ Function DisplayObjectAdjuster(i)
 	
 	Case "XAdjust"
 		tex$=Str$(CurrentObjectXAdjust)
-		CrossedOut=RandomXAdjust
+		Randomized=RandomXAdjust
 		LeftAdj$=RandomXAdjustMin
 		RightAdj$=RandomXAdjustMax
 	Case "YAdjust"
 		tex$=Str$(CurrentObjectYAdjust)
-		CrossedOut=RandomYAdjust
+		Randomized=RandomYAdjust
 		LeftAdj$=RandomYAdjustMin
 		RightAdj$=RandomYAdjustMax
 	Case "ZAdjust"
 		tex$=Str$(CurrentObjectZAdjust)
-		CrossedOut=RandomZAdjust
+		Randomized=RandomZAdjust
 		LeftAdj$=RandomZAdjustMin
 		RightAdj$=RandomZAdjustMax
 	
 	Case "XScale"
 		tex$=Str$(CurrentObjectXScale)
-		CrossedOut=RandomXScale
+		Randomized=RandomXScale
 		LeftAdj$=RandomXScaleMin
 		RightAdj$=RandomXScaleMax
 	Case "YScale"
 		tex$=Str$(CurrentObjectYScale)
-		CrossedOut=RandomYScale
+		Randomized=RandomYScale
 		LeftAdj$=RandomYScaleMin
 		RightAdj$=RandomYScaleMax
 	Case "ZScale"
 		tex$=Str$(CurrentObjectZScale)
-		CrossedOut=RandomZScale
+		Randomized=RandomZScale
 		LeftAdj$=RandomZScaleMin
 		RightAdj$=RandomZScaleMax
 		
@@ -9937,7 +9937,7 @@ Function DisplayObjectAdjuster(i)
 
 		End Select
 		
-		CrossedOut=RandomDefensePower
+		Randomized=RandomDefensePower
 		LeftAdj$=RandomDefensePowerMin
 		RightAdj$=RandomDefensePowerMax
 		
@@ -9960,33 +9960,33 @@ Function DisplayObjectAdjuster(i)
 
 	Case "YawAdjust"
 		tex$=Str$(CurrentObjectYawAdjust)
-		CrossedOut=RandomYawAdjust
+		Randomized=RandomYawAdjust
 		LeftAdj$=RandomYawAdjustMin
 		RightAdj$=RandomYawAdjustMax
 	Case "PitchAdjust"
 		tex$=Str$(CurrentObjectPitchAdjust)
-		CrossedOut=RandomPitchAdjust
+		Randomized=RandomPitchAdjust
 		LeftAdj$=RandomPitchAdjustMin
 		RightAdj$=RandomPitchAdjustMax
 	Case "RollAdjust"
 		tex$=Str$(CurrentObjectRollAdjust)
-		CrossedOut=RandomRollAdjust
+		Randomized=RandomRollAdjust
 		LeftAdj$=RandomRollAdjustMin
 		RightAdj$=RandomRollAdjustMax
 	
 	Case "ID"
 		tex$=Str$(CurrentObjectID)
-		CrossedOut=RandomID
+		Randomized=RandomID
 		LeftAdj$=RandomIDMin
 		RightAdj$=RandomIDMax
 	Case "Type"
 		tex$=Str$(CurrentObjectType)+"/"+GetTypeString$(CurrentObjectType)
-		CrossedOut=RandomType
+		Randomized=RandomType
 		LeftAdj$=RandomTypeMin
 		RightAdj$=RandomTypeMax
 	Case "SubType"
 		tex$=Str$(CurrentObjectSubType)
-		CrossedOut=RandomSubType
+		Randomized=RandomSubType
 		LeftAdj$=RandomSubTypeMin
 		RightAdj$=RandomSubTypeMax
 		
@@ -10168,17 +10168,17 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "TimerMax1"
 		tex$=Str$(CurrentObjectTimerMax1)
-		CrossedOut=RandomTimerMax1
+		Randomized=RandomTimerMax1
 		LeftAdj$=RandomTimerMax1Min
 		RightAdj$=RandomTimerMax1Max
 	Case "TimerMax2"
 		tex$=Str$(CurrentObjectTimerMax2)
-		CrossedOut=RandomTimerMax2
+		Randomized=RandomTimerMax2
 		LeftAdj$=RandomTimerMax2Min
 		RightAdj$=RandomTimerMax2Max
 	Case "Timer"
 		tex$=Str$(CurrentObjectTimer)
-		CrossedOut=RandomTimer
+		Randomized=RandomTimer
 		LeftAdj$=RandomTimerMin
 		RightAdj$=RandomTimerMax
 
@@ -10203,13 +10203,13 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$="Soon Yes ("+CurrentObjectActive+")"
 		EndIf
-		CrossedOut=RandomActive
+		Randomized=RandomActive
 		LeftAdj$=RandomActiveMin
 		RightAdj$=RandomActiveMax
 		
 	Case "ActivationSpeed"
 		tex$=Str$(CurrentObjectActivationSpeed)
-		CrossedOut=RandomActivationSpeed
+		Randomized=RandomActivationSpeed
 		LeftAdj$=RandomActivationSpeedMin
 		RightAdj$=RandomActivationSpeedMax
 		
@@ -10249,7 +10249,7 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObjectActivationType)
 		EndIf
-		CrossedOut=RandomActivationType
+		Randomized=RandomActivationType
 		LeftAdj$=RandomActivationTypeMin
 		RightAdj$=RandomActivationTypeMax
 
@@ -10257,7 +10257,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "ButtonPush"
 		tex$=Str$(CurrentObjectButtonPush)
-		CrossedOut=RandomButtonPush
+		Randomized=RandomButtonPush
 		LeftAdj$=""
 		RightAdj$=""
 		
@@ -10272,13 +10272,13 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Teleportable"
 		tex$=Str$(CurrentObjectTeleportable)
-		CrossedOut=RandomTeleportable
+		Randomized=RandomTeleportable
 		LeftAdj$=""
 		RightAdj$=""
 	
 	Case "Data0"
 		tex$=Str$(CurrentObjectData(0))
-		CrossedOut=RandomData(0)
+		Randomized=RandomData(0)
 		LeftAdj$=RandomDataMin(0)
 		RightAdj$=RandomDataMax(0)
 		
@@ -10555,7 +10555,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data1"
 		tex$=Str$(CurrentObjectData(1))
-		CrossedOut=RandomData(1)
+		Randomized=RandomData(1)
 		LeftAdj$=RandomDataMin(1)
 		RightAdj$=RandomDataMax(1)
 
@@ -10777,7 +10777,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data2" 
 		tex$=Str$(CurrentObjectData(2))
-		CrossedOut=RandomData(2)
+		Randomized=RandomData(2)
 		LeftAdj$=RandomDataMin(2)
 		RightAdj$=RandomDataMax(2)
 		
@@ -10967,7 +10967,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data3"
 		tex$=Str$(CurrentObjectData(3))
-		CrossedOut=RandomData(3)
+		Randomized=RandomData(3)
 		LeftAdj$=RandomDataMin(3)
 		RightAdj$=RandomDataMax(3)
 		
@@ -11104,7 +11104,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data4"
 		tex$=Str$(CurrentObjectData(4))
-		CrossedOut=RandomData(4)
+		Randomized=RandomData(4)
 		LeftAdj$=RandomDataMin(4)
 		RightAdj$=RandomDataMax(4)
 		
@@ -11193,7 +11193,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data5"
 		tex$=Str$(CurrentObjectData(5))
-		CrossedOut=RandomData(5)
+		Randomized=RandomData(5)
 		LeftAdj$=RandomDataMin(5)
 		RightAdj$=RandomDataMax(5)
 		
@@ -11286,7 +11286,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data6"
 		tex$=Str$(CurrentObjectData(6))
-		CrossedOut=RandomData(6)
+		Randomized=RandomData(6)
 		LeftAdj$=RandomDataMin(6)
 		RightAdj$=RandomDataMax(6)
 		
@@ -11368,7 +11368,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data7"
 		tex$=Str$(CurrentObjectData(7))
-		CrossedOut=RandomData(7)
+		Randomized=RandomData(7)
 		LeftAdj$=RandomDataMin(7)
 		RightAdj$=RandomDataMax(7)
 		
@@ -11434,7 +11434,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data8"
 		tex$=Str$(CurrentObjectData(8))
-		CrossedOut=RandomData(8)
+		Randomized=RandomData(8)
 		LeftAdj$=RandomDataMin(8)
 		RightAdj$=RandomDataMax(8)
 		
@@ -11526,7 +11526,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data9"
 		tex$=Str$(CurrentObjectData(9))
-		CrossedOut=RandomData(9)
+		Randomized=RandomData(9)
 		LeftAdj$=RandomDataMin(9)
 		RightAdj$=RandomDataMax(9)
 		
@@ -11577,7 +11577,7 @@ Function DisplayObjectAdjuster(i)
 	Case "Talkable"
 		tex$=Str$(CurrentObjectTalkable)
 		tex2$="Dialog"
-		CrossedOut=RandomTalkable
+		Randomized=RandomTalkable
 		LeftAdj$=RandomTalkableMin
 		RightAdj$=RandomTalkableMax
 		
@@ -11585,39 +11585,39 @@ Function DisplayObjectAdjuster(i)
 		;tex$=Str$(CurrentObjectMovementType)
 		tex$=CurrentObjectMovementType+"/"+GetMovementTypeString$(CurrentObjectMovementType)
 		tex2$="MvmtType"
-		CrossedOut=RandomMovementType
+		Randomized=RandomMovementType
 		LeftAdj$=RandomMovementTypeMin
 		RightAdj$=RandomMovementTypeMax
 	Case "MovementTypeData"
 		tex$=Str$(CurrentObjectMovementTypeData)
 	Case "MovementSpeed"
 		tex$=Str$(CurrentObjectMovementSpeed)
-		CrossedOut=RandomMovementSpeed
+		Randomized=RandomMovementSpeed
 		LeftAdj$=RandomMovementSpeedMin
 		RightAdj$=RandomMovementSpeedMax
 		
 	Case "TileTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObjectTileTypeCollision)
 		tex2$="TTC"
-		CrossedOut=RandomTTC
+		Randomized=RandomTTC
 		LeftAdj$=""
 		RightAdj$=""
 		
 	Case "ObjectTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObjectObjectTypeCollision)
 		tex2$="OTC"
-		CrossedOut=RandomOTC
+		Randomized=RandomOTC
 		LeftAdj$=""
 		RightAdj$=""
 		
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObjectScaleAdjust)
-		CrossedOut=RandomScaleAdjust
+		Randomized=RandomScaleAdjust
 		LeftAdj$=RandomScaleAdjustMin
 		RightAdj$=RandomScaleAdjustMax
 	Case "Exclamation"
 		tex$=Str$(CurrentObjectExclamation)
-		CrossedOut=RandomExclamation
+		Randomized=RandomExclamation
 		LeftAdj$=RandomExclamationMin
 		RightAdj$=RandomExclamationMax
 		
@@ -11652,12 +11652,12 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "MoveXGoal"
 		tex$=Str$(CurrentObjectMoveXGoal)
-		CrossedOut=RandomMoveXGoal
+		Randomized=RandomMoveXGoal
 		LeftAdj$=RandomMoveXGoalMin
 		RightAdj$=RandomMoveXGoalMax
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObjectMoveYGoal)
-		CrossedOut=RandomMoveYGoal
+		Randomized=RandomMoveYGoal
 		LeftAdj$=RandomMoveYGoalMin
 		RightAdj$=RandomMoveYGoalMax
 		
@@ -11675,7 +11675,7 @@ Function DisplayObjectAdjuster(i)
 			Case 3
 				tex$="Sinking"
 		End Select
-		CrossedOut=RandomDead
+		Randomized=RandomDead
 		LeftAdj$=RandomDeadMin
 		RightAdj$=RandomDeadMax
 		
@@ -11712,7 +11712,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Status"
 		tex$=Str$(CurrentObjectStatus)
-		CrossedOut=RandomStatus
+		Randomized=RandomStatus
 		LeftAdj$=RandomStatusMin
 		RightAdj$=RandomStatusMax
 
@@ -11733,6 +11733,8 @@ Function DisplayObjectAdjuster(i)
 	Else
 		Color TextAdjusterR,TextAdjusterG,TextAdjusterB
 	EndIf
+	
+	CrossedOut=Randomized
 	
 	If CrossedOut
 		;Text StartX+8,StartY+15+(i-ObjectAdjusterStart)*15,"--------------------"
