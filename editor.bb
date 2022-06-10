@@ -2962,6 +2962,26 @@ Function TrueToYes$(Bool)
 
 End Function
 
+Function OneToYes$(Value)
+
+	If Value=1
+		Return "Yes"
+	Else
+		Return "No"
+	EndIf
+
+End Function
+
+Function ZeroToYes$(Value)
+
+	If Value=0
+		Return "Yes"
+	Else
+		Return "No"
+	EndIf
+
+End Function
+
 
 Function ReturnPressed()
 
@@ -10258,7 +10278,7 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "ButtonPush"
-		tex$=Str$(CurrentObjectButtonPush)
+		tex$=OneToYes$(CurrentObjectButtonPush)
 		Randomized=RandomButtonPush
 		LeftAdj$=""
 		RightAdj$=""
@@ -10273,7 +10293,7 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectFrozen)
 		
 	Case "Teleportable"
-		tex$=Str$(CurrentObjectTeleportable)
+		tex$=OneToYes$(CurrentObjectTeleportable)
 		Randomized=RandomTeleportable
 		LeftAdj$=""
 		RightAdj$=""
