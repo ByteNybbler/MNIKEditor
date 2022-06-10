@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (06/09/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (06/10/22)"
 
 Global MASTERUSER=True
 
@@ -289,20 +289,19 @@ Const BrushModeOutlineSoft=7
 Const BrushModeRow=8
 Const BrushModeColumn=9
 
-;Global BlockMode,FillMode
-Global BrushMode=BrushModeNormal
 Const MaxBrushMode=9
+Global BrushMode=BrushModeNormal
 
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
-
-Global DupeMode=0
-Const DupeModeMax=3
 
 Const DupeModeNone=0
 Const DupeModeX=1
 Const DupeModeY=2
 Const DupeModeXPlusY=3
+
+Const DupeModeMax=3
+Global DupeMode=DupeModeNone
 
 Function IsBrushInBlockMode()
 	Return BrushMode=BrushModeBlock Or BrushMode=BrushModeBlockPlacing
@@ -3461,7 +3460,7 @@ Function EditorLocalControls()
 				EndIf
 				If DupeMode=DupeModeXPlusY
 					PositionCursorEntity(1,LevelWidth-1-BrushCursorX,BrushCursorY)
-					PositionCursorEntity(2,x,LevelHeight-1-BrushCursorY)
+					PositionCursorEntity(2,BrushCursorX,LevelHeight-1-BrushCursorY)
 					PositionCursorEntity(3,LevelWidth-1-BrushCursorX,LevelHeight-1-BrushCursorY)
 				EndIf
 				
@@ -3634,7 +3633,7 @@ Function EditorLocalControls()
 						ElseIf EditorMode=3
 							For k=0 To NofBrushObjects-1
 								GrabObjectFromBrush(k)
-								PlaceObject(x+BrushObjectXOffset#(k),y+BrushObjectYOffset#(k))
+								PlaceObject(BrushCursorX+BrushObjectXOffset#(k),BrushCursorY+BrushObjectYOffset#(k))
 							Next
 						EndIf
 					Else ; normal brush
@@ -3812,7 +3811,7 @@ Function EditorLocalControls()
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
 							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushWidth And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushHeight
-								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-x,ObjectY(k)-y)
+								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-BrushCursorX,ObjectY(k)-BrushCursorY)
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
 						Next
