@@ -2452,12 +2452,12 @@ Function EditorMainLoop()
 	Text 300+4,580,"   LEVEL"
 
 	
-	Text 400,520,"   RESIZE"
-	If BorderExpandOption=0
-		Text 400+4,535,"  CURRENT"
-	Else BorderExpandOption=1
-		Text 400+4,535," DUPLICATE"
-	EndIf
+;	Text 400,520,"   RESIZE"
+;	If BorderExpandOption=0
+;		Text 400+4,535,"  CURRENT"
+;	Else BorderExpandOption=1
+;		Text 400+4,535," DUPLICATE"
+;	EndIf
 	
 	;Text 400,565," LEVEL BORDER"
 	;If LevelEdgeStyle=1
@@ -4672,133 +4672,146 @@ Function EditorLocalControls()
 	
 	StartX=715
 	StartY=20
-
-	If mx>=StartX And mx<StartX+40 And my>=StartY+15 And my<StartY+30 
-		If LeftMouse=True And LeftMouseReleased=True
-			LeftMouseReleased=False
-			If CtrlDown()
-				NewWidth=InputInt("Enter Width: ")
-				DeltaWidth=NewWidth-LevelWidth
-				;If NewWidth>LevelWidth
-				;	For i=1 To DeltaWidth
-				;		WidthLeftChange=1
-				;		ResizeLevel()
-				;	Next
-				;ElseIf NewWidth<LevelWidth
-				;	For i=1 To -DeltaWidth
-				;		WidthLeftChange=-1
-				;		ResizeLevel()
-				;	Next
-				;EndIf
-				WidthLeftChange=DeltaWidth
-				ReSizeLevel()
-			Else
-				WidthLeftChange=1
-				ReSizeLevel()
-			EndIf
-		EndIf
-		If RightMouse=True And RightMouseReleased=True
-			WidthLeftChange=-1
-			RightMouseReleased=False
-			ReSizeLevel()
-		EndIf
-
-	EndIf	
-	If mx>=StartX+40 And mx<StartX+80 And my>=StartY+15 And my<StartY+30 
-		If LeftMouse=True And LeftMouseReleased=True
-			LeftMouseReleased=False
-			If CtrlDown()
-				NewWidth=InputInt("Enter Width: ")
-				DeltaWidth=NewWidth-LevelWidth
-				;If NewWidth>LevelWidth
-				;	For i=1 To DeltaWidth
-				;		WidthRightChange=1
-				;		ResizeLevel()
-				;	Next
-				;ElseIf NewWidth<LevelWidth
-				;	For i=1 To -DeltaWidth
-				;		WidthRightChange=-1
-				;		ResizeLevel()
-				;	Next
-				;EndIf
-				WidthRightChange=DeltaWidth
-				ReSizeLevel()
-			Else
-				WidthRightChange=1
-				ReSizeLevel()
-			EndIf
-		EndIf
-		If RightMouse=True And RightMouseReleased=True
-			WidthRightChange=-1
-			RightMouseReleased=False
-			ReSizeLevel()
-		EndIf
-
-	EndIf
 	
-	StartY=50
+	If mx>=StartX And mx<StartX+80 And my>=StartY+15 And my<80
 	
-	If mx>=StartX And mx<StartX+40 And my>=StartY+15 And my<StartY+30 
-		If LeftMouse=True And LeftMouseReleased=True
-			LeftMouseReleased=False
-			If CtrlDown()
-				NewHeight=InputInt("Enter Height: ")
-				DeltaHeight=NewHeight-LevelHeight
-				;If NewHeight>LevelHeight
-				;	For i=1 To DeltaHeight
-				;		HeightTopChange=1
-				;		ResizeLevel()
-				;	Next
-				;ElseIf NewHeight<LevelHeight
-				;	For i=1 To -DeltaHeight
-				;		HeightTopChange=-1
-				;		ResizeLevel()
-				;	Next
-				;EndIf
-				HeightTopChange=DeltaHeight
-				ResizeLevel()
-			Else
-				HeightTopChange=1
+		If MouseScroll<>0
+			BorderExpandOption=Not BorderExpandOption
+		EndIf
+		
+		If BorderExpandOption=0
+			ResizeName$="Current"
+		Else
+			ResizeName$="Duplicate"
+		EndIf
+	
+		; Formerly StartX,StartY+60
+		ShowTooltipRightAligned(800,StartY+105,"Resize "+ResizeName$+": Scroll the mouse wheel to change.")
+	
+		If mx<StartX+40 And my<StartY+30 
+			If LeftMouse=True And LeftMouseReleased=True
+				LeftMouseReleased=False
+				If CtrlDown()
+					NewWidth=InputInt("Enter Width: ")
+					DeltaWidth=NewWidth-LevelWidth
+					;If NewWidth>LevelWidth
+					;	For i=1 To DeltaWidth
+					;		WidthLeftChange=1
+					;		ResizeLevel()
+					;	Next
+					;ElseIf NewWidth<LevelWidth
+					;	For i=1 To -DeltaWidth
+					;		WidthLeftChange=-1
+					;		ResizeLevel()
+					;	Next
+					;EndIf
+					WidthLeftChange=DeltaWidth
+					ReSizeLevel()
+				Else
+					WidthLeftChange=1
+					ReSizeLevel()
+				EndIf
+			EndIf
+			If RightMouse=True And RightMouseReleased=True
+				WidthLeftChange=-1
+				RightMouseReleased=False
+				ReSizeLevel()
+			EndIf
+		EndIf	
+		If mx>=StartX+40 And my<StartY+30 
+			If LeftMouse=True And LeftMouseReleased=True
+				LeftMouseReleased=False
+				If CtrlDown()
+					NewWidth=InputInt("Enter Width: ")
+					DeltaWidth=NewWidth-LevelWidth
+					;If NewWidth>LevelWidth
+					;	For i=1 To DeltaWidth
+					;		WidthRightChange=1
+					;		ResizeLevel()
+					;	Next
+					;ElseIf NewWidth<LevelWidth
+					;	For i=1 To -DeltaWidth
+					;		WidthRightChange=-1
+					;		ResizeLevel()
+					;	Next
+					;EndIf
+					WidthRightChange=DeltaWidth
+					ReSizeLevel()
+				Else
+					WidthRightChange=1
+					ReSizeLevel()
+				EndIf
+			EndIf
+			If RightMouse=True And RightMouseReleased=True
+				WidthRightChange=-1
+				RightMouseReleased=False
 				ReSizeLevel()
 			EndIf
 		EndIf
-		If RightMouse=True And RightMouseReleased=True
-			HeightTopChange=-1
-			RightMouseReleased=False
-			ReSizeLevel()
-		EndIf
-
-	EndIf
-	If mx>=StartX+40 And mx<StartX+80 And my>=StartY+15 And my<StartY+30 
-		If LeftMouse=True And LeftMouseReleased=True
-			LeftMouseReleased=False
-			If CtrlDown()
-				NewHeight=InputInt("Enter Height: ")
-				DeltaHeight=NewHeight-LevelHeight
-				;If NewHeight>LevelHeight
-				;	For i=1 To DeltaHeight
-				;		HeightBottomChange=1
-				;		ResizeLevel()
-				;	Next
-				;ElseIf NewHeight<LevelHeight
-				;	For i=1 To -DeltaHeight
-				;		HeightBottomChange=-1
-				;		ResizeLevel()
-				;	Next
-				;EndIf
-				HeightBottomChange=DeltaHeight
-				ResizeLevel()
-			Else
-				HeightBottomChange=1
+		
+		StartY=50
+		
+		If mx<StartX+40 And my>=StartY+15 And my<StartY+30 
+			If LeftMouse=True And LeftMouseReleased=True
+				LeftMouseReleased=False
+				If CtrlDown()
+					NewHeight=InputInt("Enter Height: ")
+					DeltaHeight=NewHeight-LevelHeight
+					;If NewHeight>LevelHeight
+					;	For i=1 To DeltaHeight
+					;		HeightTopChange=1
+					;		ResizeLevel()
+					;	Next
+					;ElseIf NewHeight<LevelHeight
+					;	For i=1 To -DeltaHeight
+					;		HeightTopChange=-1
+					;		ResizeLevel()
+					;	Next
+					;EndIf
+					HeightTopChange=DeltaHeight
+					ResizeLevel()
+				Else
+					HeightTopChange=1
+					ReSizeLevel()
+				EndIf
+			EndIf
+			If RightMouse=True And RightMouseReleased=True
+				HeightTopChange=-1
+				RightMouseReleased=False
 				ReSizeLevel()
 			EndIf
 		EndIf
-		If RightMouse=True And RightMouseReleased=True
-			HeightBottomChange=-1
-			RightMouseReleased=False
-			ReSizeLevel()
+		If mx>=StartX+40 And my>=StartY+15 And my<StartY+30 
+			If LeftMouse=True And LeftMouseReleased=True
+				LeftMouseReleased=False
+				If CtrlDown()
+					NewHeight=InputInt("Enter Height: ")
+					DeltaHeight=NewHeight-LevelHeight
+					;If NewHeight>LevelHeight
+					;	For i=1 To DeltaHeight
+					;		HeightBottomChange=1
+					;		ResizeLevel()
+					;	Next
+					;ElseIf NewHeight<LevelHeight
+					;	For i=1 To -DeltaHeight
+					;		HeightBottomChange=-1
+					;		ResizeLevel()
+					;	Next
+					;EndIf
+					HeightBottomChange=DeltaHeight
+					ResizeLevel()
+				Else
+					HeightBottomChange=1
+					ReSizeLevel()
+				EndIf
+			EndIf
+			If RightMouse=True And RightMouseReleased=True
+				HeightBottomChange=-1
+				RightMouseReleased=False
+				ReSizeLevel()
+			EndIf
 		EndIf
-
+	
 	EndIf
 	
 	; *************************************
@@ -5292,14 +5305,14 @@ Function EditorLocalControls()
 	
 	If MX>=400 And MX<500
 		; border expand
-		If my>520 And my<550
-			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
-				BorderExpandOption=Not BorderExpandOption
-				
-				
-				If MouseScroll=0 Then Delay 100
-			EndIf
-		EndIf
+;		If my>520 And my<550
+;			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
+;				BorderExpandOption=Not BorderExpandOption
+;				
+;				
+;				If MouseScroll=0 Then Delay 100
+;			EndIf
+;		EndIf
 		
 		; simulation level
 		If my>565 And my<595
