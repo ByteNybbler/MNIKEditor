@@ -9,10 +9,11 @@
 ;
 ;
 
-AppTitle "Wonderland Adventures MNIKEditor"
+Global VersionDate$="06/11/22"
+AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (06/11/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 ("+VersionDate$+")"
 
 Global MASTERUSER=True
 
