@@ -10,8 +10,8 @@
 ## ADVENTURE SELECT
 
 * Scroll the mouse wheel: Navigate the adventure list. Hold shift to scroll faster.
-* Page up: Page up.
-* Page down: Page down.
+* PageUp: Page up.
+* PageDown: Page down.
 
 ## MASTER EDITOR
 
@@ -19,8 +19,8 @@
 * Ctrl+Click the LV or DG column: Type in the number of the wlv or dia you want to edit.
 * Right click: Right-clicking a wlv or dia number will copy the wlv or dia. Right-click the same wlv or dia again to cancel the copy, or left-click a nonexistent wlv or dia to copy to that wlv or dia.
 * Middle click: Middle-clicking a wlv or dia number will mark the wlv or dia for swapping. Middle-click the same wlv or dia again to cancel the swap, or left-click a different wlv or dia to swap with that wlv or dia. Swapping with nonexistent wlvs or dias is allowed.
-* Page up: Page up on either the LV or DG column, depending on which one the mouse is hovering over.
-* Page down: Page down on either the LV or DG column, depending on which one the mouse is hovering over.
+* PageUp: Page up on either the LV or DG column, depending on which one the mouse is hovering over.
+* PageDown: Page down on either the LV or DG column, depending on which one the mouse is hovering over.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
 * Ctrl+S: Save master.dat.

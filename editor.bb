@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/11/22"
+Global VersionDate$="06/12/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -3717,6 +3717,11 @@ Function EditorLocalControls()
 						EndIf
 					ElseIf BrushMode=BrushModeTestLevel
 						If AskToSaveLevelAndExit()
+							; Just in case the user is cheeky and decides to use Test Level At Brush in a brand new wlv.
+							If Not LevelExists(CurrentLevelNumber)
+								SaveLevel()
+							EndIf
+							
 							StartTestModeAt(CurrentLevelNumber,BrushCursorX,BrushCursorY)
 						EndIf
 					Else ; normal brush
