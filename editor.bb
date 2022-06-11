@@ -1032,6 +1032,74 @@ EntityAlpha s,0.5
 ; Cursor
 Dim CursorMeshPillar(3)
 Dim CursorMeshOpaque(3)
+Global CursorMeshTexturePicker
+
+Global BrushMesh
+Global BrushSurface
+Global BrushSurfaceVertexCount=0
+
+Const BrushMeshOffsetY#=0.01
+
+Function ClearBrushSurface()
+	
+	ClearSurface BrushSurface
+	BrushSurfaceVertexCount=0
+	
+End Function
+
+Function FinishBrushSurface()
+	
+	UpdateNormals BrushMesh
+	
+End Function
+
+Function AddSquareToBrushSurface(i,j,y#)
+
+	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j
+	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j
+	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j-1
+	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j-1
+	;StartingVertex=(i+j*101)*4
+	StartingVertex=BrushSurfaceVertexCount
+	AddTriangle BrushSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
+	AddTriangle BrushSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
+	BrushSurfaceVertexCount=BrushSurfaceVertexCount+4
+
+End Function
+
+Function AddTileToBrushSurfaceActual(i,j)
+
+	AddSquareToBrushSurface(i,j,0.0)
+	If LevelTileExtrusion(i,j)<>0.0
+		AddSquareToBrushSurface(i,j,LevelTileExtrusion(i,j))
+	EndIf
+
+End Function
+
+Function AddTileToBrushSurface(i,j)
+
+	If Not IsPositionInLevel(i,j)
+		Return
+	EndIf
+
+	AddTileToBrushSurfaceActual(i,j)
+	
+	If DupeMode=DupeModeX
+		TargetX=LevelWidth-1-i
+		AddTileToBrushSurfaceActual(TargetX,j)
+	ElseIf DupeMode=DupeModeY
+		TargetY=LevelHeight-1-j
+		AddTileToBrushSurfaceActual(i,TargetY)
+	ElseIf DupeMode=DupeModeXPlusY
+		TargetX=LevelWidth-1-i
+		TargetY=LevelHeight-1-j
+		AddTileToBrushSurfaceActual(TargetX,j)
+		AddTileToBrushSurfaceActual(i,TargetY)
+		AddTileToBrushSurfaceActual(TargetX,TargetY)
+	EndIf
+
+End Function
+
 ; MousePlane
 Global MousePlane=CreateMesh()
 MouseSurface=CreateSurface(MousePlane)
@@ -2029,11 +2097,19 @@ Function InitializeGraphicsEntities()
 		ScaleMesh CursorMeshOpaque(i),.2,0.01,.2
 		
 		; The square region that the brush covers
-		CursorMeshRegion=CreateCube()
-		ScaleMesh CursorMeshRegion,.5,0.1,.5
-		AddMesh CursorMeshRegion,CursorMeshPillar(i)
-		FreeEntity CursorMeshRegion
+		CursorMeshTexturePicker=CreateCube()
+		ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
+		EntityAlpha CursorMeshTexturePicker,.3
+		EntityColor CursorMeshTexturePicker,255,255,200
+		HideEntity CursorMeshTexturePicker
+		;AddMesh CursorMeshRegion,CursorMeshPillar(i)
+		;FreeEntity CursorMeshRegion
 	Next
+	
+	BrushMesh=CreateMesh()
+	BrushSurface=CreateSurface(BrushMesh)
+	EntityAlpha BrushMesh,.3
+	EntityColor BrushMesh,255,255,200
 	
 	CurrentObjectMarkerMesh=CreateCylinder()
 	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
@@ -2939,14 +3015,14 @@ End Function
 
 Function SetBrushCursorPosition(x,y)
 
-	If Not PositionIsEqual(x,y,BrushCursorX,BrushCursorY)
-	
-		BrushCursorPositionWasChanged()
-		
-	EndIf
+	PositionChanged=Not PositionIsEqual(x,y,BrushCursorX,BrushCursorY)
 
 	BrushCursorX=x
 	BrushCursorY=y
+	
+	If PositionChanged
+		BrushCursorPositionWasChanged()
+	EndIf
 
 End Function
 
@@ -2956,9 +3032,37 @@ Function BrushCursorPositionWasChanged()
 
 End Function
 
+Function BrushCursorOffMap()
+	
+	HideCursors()
+	ClearBrushSurface()
+	SetBrushCursorPosition(-1,-1)
+	
+End Function
+
 Function BrushCursorStateWasChanged()
 
-	; recalculate flood fill preview region
+	;ShowMessage("Brush cursor state changed",1000)
+
+	ClearBrushSurface()
+	
+	If BrushCursorX<>-1 And BrushCursorY<>-1
+		If BrushMode=BrushModeFill
+			; recalculate flood fill preview region
+		ElseIf BrushMode=BrushModeNormal
+			BrushXStart=BrushCursorX-BrushWidth/2
+			BrushYStart=BrushCursorY-BrushHeight/2
+			For i=0 To BrushWidth-1
+				For j=0 To BrushHeight-1
+					AddTileToBrushSurface(BrushXStart+i,BrushYStart+j)
+				Next
+			Next
+		Else
+			AddTileToBrushSurface(BrushCursorX,BrushCursorY)
+		EndIf
+	EndIf
+	
+	FinishBrushSurface()
 
 End Function
 
@@ -3215,7 +3319,7 @@ Function PositionCursorEntity(i,x,y)
 	ShowEntity CursorMeshPillar(i)
 	ShowEntity CursorMeshOpaque(i)
 	PositionEntity CursorMeshPillar(i),x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
-	ScaleEntity CursorMeshPillar(i),BrushWidth,1,BrushHeight
+	;ScaleEntity CursorMeshPillar(i),BrushWidth,1,BrushHeight
 	PositionEntity CursorMeshOpaque(i),x+.5,0,-y-.5
 
 End Function
@@ -3562,6 +3666,8 @@ Function EditorLocalControls()
 				For i=0 To 3
 					EntityColor CursorMeshPillar(i),BrushR,BrushG,BrushB
 					EntityColor CursorMeshOpaque(i),BrushR,BrushG,BrushB
+					EntityColor CursorMeshTexturePicker,BrushR,BrushG,BrushB
+					EntityColor BrushMesh,BrushR,BrushG,BrushB
 				Next
 				
 				Color TextLevelR,TextLevelG,TextLevelB
@@ -3926,8 +4032,7 @@ Function EditorLocalControls()
 			EndIf
 		
 		Else
-			HideCursors()
-			SetBrushCursorPosition(-1,-1)
+			BrushCursorOffMap()
 		EndIf
 	EndIf
 	
@@ -3941,9 +4046,12 @@ Function EditorLocalControls()
 	If EditorMode=1 Or EditorMode=2
 		If mx>=0 And mx<500 And my>=0 And my<500 
 			ScaleEntity CursorMeshPillar(0),0.0325,0.01,0.0325
-			PositionEntity CursorMeshOpaque(0),Floor(mx/62.5)*0.125+0.0625,200,-Floor(my/62.5)*0.125-0.0625
+			ScaleEntity CursorMeshTexturePicker,0.0325,0.01,0.0325
+			PositionEntity CursorMeshPillar(0),Floor(mx/62.5)*0.125+0.0625,200,-Floor(my/62.5)*0.125-0.0625
+			PositionEntity CursorMeshTexturePicker,Floor(mx/62.5)*0.125+0.0625,200,-Floor(my/62.5)*0.125-0.0625
 			ShowEntity CursorMeshPillar(0)
 			ShowEntity CursorMeshOpaque(0)
+			ShowEntity CursorMeshTexturePicker
 			If LeftMouse=True
 				If editormode=1
 					; main texture
@@ -8138,6 +8246,13 @@ Function GetObjectOffset#(Dest,index)
 
 End Function
 
+
+Function IsPositionInLevel(x,y)
+
+	Return x>=0 And y>=0 And x<LevelWidth And y<LevelHeight
+
+End Function
+
 ; Returns True if the object can be put in that position, and False otherwise
 Function SetObjectPosition(Dest,x#,y#)
 
@@ -8145,7 +8260,7 @@ Function SetObjectPosition(Dest,x#,y#)
 	floory=Floor(y)
 	
 	If PreventPlacingObjectsOutsideLevel
-		If floorx<0 Or floory<0 Or floorx>LevelWidth-1 Or floory>LevelHeight-1
+		If Not IsPositionInLevel(floorx,floory)
 			Return False
 		EndIf
 	EndIf
