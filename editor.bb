@@ -2492,12 +2492,13 @@ Function EditorMainLoop()
 	If IDFilterEnabled
 		Color 255,155,0
 	EndIf
-	Text 600,520," ID FILTER"
+	CenteredText(650,520,"ID FILTER")
 	If IDFilterEnabled
-		Text 600,535," "+IDFilterAllow
+		Line1$=IDFilterAllow
 	Else
-		Text 600,535," OFF"
+		Line1$="OFF"
 	EndIf
+	CenteredText(650,535,Line1$)
 	Color TextLevelR,TextLevelG,TextLevelB
 	
 	;Text 600,565,"  XTRUDE"
@@ -2506,8 +2507,8 @@ Function EditorMainLoop()
 	If PlacementDensity#<1.0
 		Color 255,155,0
 	EndIf
-	Text 600,565," DENSITY"
-	CenteredText(636,580,PlacementDensity#)
+	CenteredText(650,565,"DENSITY")
+	CenteredText(650,580,PlacementDensity#)
 	
 	Line1$="   EXIT   "
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
