@@ -4934,8 +4934,18 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If CtrlDown() And KeyPressed(26) ; Ctrl+[
-		TryPopPreviousLevel()
+	If CtrlDown()
+		If KeyPressed(26) ; Ctrl+[
+			TryPopPreviousLevel()
+		ElseIf KeyPressed(201) ; Ctrl+PageUp
+			If AskToSaveLevelAndExit()
+				AccessLevelAtCenter(CurrentLevelNumber+1)
+			EndIf
+		ElseIf KeyPressed(209) ; Ctrl+PageDown
+			If AskToSaveLevelAndExit()
+				AccessLevelAtCenter(CurrentLevelNumber-1)
+			EndIf
+		EndIf
 	EndIf
 	
 	; More button / Page switch button
