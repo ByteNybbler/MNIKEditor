@@ -654,6 +654,8 @@ Global StepSizeTileExtrusion#
 Global StepSizeWaterTileHeight#
 Global StepSizeWaterTileTurbulence#
 
+Global OnceTilePlacement=True
+
 Function IsAnyStepSizeActive()
 
 	Return StepSizeTileRandom#<>0 Or StepSizeTileHeight#<>0 Or StepSizeTileExtrusion#<>0 Or StepSizeWaterTileHeight#<>0 Or StepSizeWaterTileTurbulence#<>0
@@ -3028,6 +3030,7 @@ End Function
 
 Function BrushCursorPositionWasChanged()
 
+	OnceTilePlacement=True
 	BrushCursorStateWasChanged()
 
 End Function
@@ -3698,15 +3701,12 @@ Function EditorLocalControls()
 					VertexCoords BlockModeSurface,3,cornright+1,0.1,-(corndown+1)
 				EndIf
 				
-				If LeftMouse=True And LeftMouseReleased=True
-					If EditorMode=0 And IsAnyStepSizeActive() And BrushMode<>BrushModeBlock
-						LeftMouseReleased=False
-						CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
-						CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
-						CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
-						CurrentWaterTileHeight#=CurrentWaterTileHeight#+StepSizeWaterTileHeight#
-						CurrentWaterTileTurbulence#=CurrentWaterTileTurbulence#+StepSizeWaterTileTurbulence#
-					EndIf
+				If LeftMouse=False
+					OnceTilePlacement=True
+				EndIf
+				
+				If LeftMouse=True And LeftMouseReleased=True And (EditorMode<>0 Or OnceTilePlacement=True)
+					OnceTilePlacement=False
 				
 					If BrushMode=BrushModeBlock
 						; place one corner of block
@@ -3859,6 +3859,18 @@ Function EditorLocalControls()
 						
 					If EditorMode=3
 						LeftMouseReleased=False
+					EndIf
+					
+					If EditorMode=0
+						If IsAnyStepSizeActive() And BrushMode<>BrushModeBlock
+							CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
+							CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
+							CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
+							CurrentWaterTileHeight#=CurrentWaterTileHeight#+StepSizeWaterTileHeight#
+							CurrentWaterTileTurbulence#=CurrentWaterTileTurbulence#+StepSizeWaterTileTurbulence#
+						EndIf
+						
+						BrushCursorStateWasChanged()
 					EndIf
 				EndIf
 				If RightMouse=True And RightMouseReleased=True
