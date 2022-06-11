@@ -4959,11 +4959,11 @@ Function EditorLocalControls()
 	If CtrlDown()
 		If KeyPressed(26) ; Ctrl+[
 			TryPopPreviousLevel()
-		ElseIf KeyPressed(201) ; Ctrl+PageUp
+		ElseIf KeyPressed(209) ; Ctrl+PageDown
 			If AskToSaveLevelAndExit()
 				AccessLevelAtCenter(CurrentLevelNumber+1)
 			EndIf
-		ElseIf KeyPressed(209) ; Ctrl+PageDown
+		ElseIf KeyPressed(201) ; Ctrl+PageUp
 			If AskToSaveLevelAndExit()
 				AccessLevelAtCenter(CurrentLevelNumber-1)
 			EndIf
