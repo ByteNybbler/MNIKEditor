@@ -537,12 +537,12 @@ Global AdventureCurrentArchive=0
 Global DisplayFullScreen=False
 
 
-filed=ReadFile (globaldirname$+"\display-ed.wdf")
-If filed>0
-
-	DisplayFullScreen=ReadInt(filed)
-	CloseFile filed
-EndIf
+;filed=ReadFile (globaldirname$+"\display-ed.wdf")
+;If filed>0
+;
+;	DisplayFullScreen=ReadInt(filed)
+;	CloseFile filed
+;EndIf
 
 
 
@@ -19612,12 +19612,13 @@ Function AdventureSelectScreen()
 
 	DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2("            ====================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	If displayfullscreen=True
-		DisplayText2("                                (FullScreen)",0,1,255,255,255)
-	Else
-		DisplayText2("                                ( Windowed )",0,1,255,255,255)
-	EndIf
+	;DisplayText2("            ====================",0,1,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("            ================================",0,1,TextMenusR,TextMenusG,TextMenusB)
+;	If displayfullscreen=True
+;		DisplayText2("                                (FullScreen)",0,1,255,255,255)
+;	Else
+;		DisplayText2("                                ( Windowed )",0,1,255,255,255)
+;	EndIf
 	;hubmode=True
 	If hubmode=True
 		DisplayText2("(   Hubs   )",0,1,255,255,255)
@@ -19780,19 +19781,19 @@ Function AdventureSelectScreen()
 		
 		If my<50 And mx>650
 			; switch window/fullscreen
-			DisplayFullScreen = Not DisplayFullScreen
-			filed=WriteFile (globaldirname$+"\display-ed.wdf")
-			If filed>0
-			
-				WriteInt filed,DisplayFullScreen
-				CloseFile filed
-			EndIf
-			
-			; and restart
-			Cls
-			Flip
-			Print "Note: Screenmode will be switched upon next restart."
-			Delay 4000
+;			DisplayFullScreen = Not DisplayFullScreen
+;			filed=WriteFile (globaldirname$+"\display-ed.wdf")
+;			If filed>0
+;			
+;				WriteInt filed,DisplayFullScreen
+;				CloseFile filed
+;			EndIf
+;			
+;			; and restart
+;			Cls
+;			Flip
+;			Print "Note: Screenmode will be switched upon next restart."
+;			Delay 4000
 			 
 			
 		EndIf
