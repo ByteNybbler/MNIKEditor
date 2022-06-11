@@ -2549,47 +2549,40 @@ Function EditorMainLoop()
 	Line1$="   EXIT   "
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
-		;Text 704,520," > CANCEL <"
-		;Text 704,535," >AND EXIT<"
 		Line1$=">"+Line1$+"<"
 	Else
 		Color TextLevelR,TextLevelG,TextLevelB
-		;Text 720,520," CANCEL"
-		;Text 720,535,"AND EXIT"
 	EndIf
 	CenteredText(750,520,Line1$)
 	
-	AlreadyUsingCarrots=False
+	UsingCarrots=False
 	If UnsavedChanges
 		Line1$="SAVE LEVEL"
 		Line2$=""
 	Else
-		Line1$="TEST LEVEL"
-		Line2$=" AT BRUSH "
 		If BrushMode=BrushModeTestLevel
-			Line1$=">"+Line1$+"<"
-			Line2$=">"+Line2$+"<"
-			AlreadyUsingCarrots=True
+			UsingCarrots=True
+			Line1$="CLICK TILE"
+			Line2$="TO TEST"
+		Else
+			Line1$="TEST LEVEL"
+			Line2$="AT CURSOR"
 		EndIf
 	EndIf
 	
 	If MouseX()>700 And MouseY()>560 And MouseY()<600
 		Color 255,255,0
-		;Text 696,565," >SAVE LEVEL<"
-		;Text 696,580," > AND EXIT <"
-		If Not AlreadyUsingCarrots
-			Line1$=">"+Line1$+"<"
-			If Line2$<>""
-				Line2$=">"+Line2$+"<"
-			EndIf
-		EndIf
+		UsingCarrots=True
 	Else
 		Color TextLevelR,TextLevelG,TextLevelB
-		;Text 712,565,"SAVE LEVEL"
-		;Text 712,580," AND EXIT"
 	EndIf
 	CenteredText(750,565,Line1$)
 	CenteredText(750,580,Line2$)
+	If UsingCarrots
+		Line1$=">          <"
+		CenteredText(750,565,Line1$)
+		CenteredText(750,580,Line1$)
+	EndIf
 
 	Color TextLevelR,TextLevelG,TextLevelB
 	
