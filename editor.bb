@@ -2595,7 +2595,9 @@ Function EditorMainLoop()
 	If UsingCarrots
 		Line1$=">          <"
 		CenteredText(750,565,Line1$)
-		CenteredText(750,580,Line1$)
+		If Line2$<>""
+			CenteredText(750,580,Line1$)
+		EndIf
 	EndIf
 
 	Color TextLevelR,TextLevelG,TextLevelB
