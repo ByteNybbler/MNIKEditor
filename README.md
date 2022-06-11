@@ -23,6 +23,8 @@
 * Page down: Page down on either the LV or DG column, depending on which one the mouse is hovering over.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
+* Ctrl+S: Save master.dat.
+* Ctrl+O: Type in the number of the wlv you want to open.
 * Ctrl+T: Save+Test.
 
 ## LEVEL EDITOR
@@ -38,13 +40,15 @@
 * F6: Toggle orthographic projection.
 * F7: Toggle wireframe mode.
 * T: Give the current object its default in-game TrueMovement values (TTC, OTC, MovementType, and MovementSpeed) based on its Type, SubType, and sometimes some Data values. This makes it very easy to do various small changes that previously required a lot of manual work setting the TTC and OTC. For instance, you can easily define different MovementSpeeds on objects that formerly did not allow that value to be adjusted without making advanced manual adjustments to TrueMovement. Objects like hyperspeed turtles, hyperspeed MooBots, and hyperspeed Wee Stinkers can be constructed with minimal effort. You can also modify the MovementTypes of these objects easily so that you can have stuff like Wee Stinkers that sleepwalk away from you until you wake them up.
+* Ctrl+S: Save level.
+* Ctrl+O: Type in the number of the wlv you want to open.
 * Ctrl+N: Go to normal brush mode.
 * Ctrl+B: Toggle block mode. The cursor brush will be blue while block mode is active.
 * Ctrl+F: Toggle fill mode. The cursor brush will be yellow while fill mode is active.
 * Ctrl+I: Toggle inline hard mode. The cursor brush will be red while inline hard mode is active.
 * Ctrl+U: Toggle inline soft mode. The cursor brush will be orange while inline soft mode is active.
-* Ctrl+O: Toggle outline hard mode. The cursor brush will be indigo while outline hard mode is active.
-* Ctrl+P: Toggle outline soft mode. The cursor brush will be a slightly lighter indigo while outline soft mode is active.
+* Ctrl+K: Toggle outline hard mode. The cursor brush will be indigo while outline hard mode is active.
+* Ctrl+J: Toggle outline soft mode. The cursor brush will be a slightly lighter indigo while outline soft mode is active.
 
 ### CAMERA CONTROLS
 
@@ -88,6 +92,7 @@
 * Right click: Make text white from the cursor's position onwards until a different text color is reached.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
+* Ctrl+S: Save dialog.
 * Ctrl+W: Toggle White.
 * Ctrl+E: Toggle Grey.
 * Ctrl+R: Toggle Red.

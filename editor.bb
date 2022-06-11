@@ -4861,6 +4861,10 @@ Function EditorLocalControls()
 	
 	If HotkeySave()
 		SaveLevel()
+	ElseIf HotkeyOpen()
+		If AskToSaveLevelAndExit()
+			AccessLevelAtCenter(InputInt("Enter wlv number to open: "))
+		EndIf
 	EndIf
 	
 	; More button / Page switch button
@@ -5050,10 +5054,10 @@ Function EditorLocalControls()
 		If KeyPressed(22) ; Ctrl+U
 			ToggleInlineSoftMode()
 		EndIf
-		If KeyPressed(24) ; Ctrl+O
+		If KeyPressed(37) ; Ctrl+K
 			ToggleOutlineHardMode()
 		EndIf
-		If KeyPressed(25) ; Ctrl+P
+		If KeyPressed(36) ; Ctrl+J
 			ToggleOutlineSoftMode()
 		EndIf
 	EndIf
@@ -5711,6 +5715,12 @@ End Function
 Function HotkeySave()
 
 	Return CtrlDown() And KeyPressed(31) ; Ctrl+S
+
+End Function
+
+Function HotkeyOpen()
+
+	Return CtrlDown() And KeyPressed(24) ; Ctrl+O
 
 End Function
 
@@ -20805,9 +20815,14 @@ Function MasterMainLoop()
 
 	
 	; load level
+	If HotkeyOpen()
+		AccessLevelAtCenter(InputInt("Enter wlv number to open: "))
+		StartEditorMainLoop()
+	EndIf
+	
 	If MouseX()>700 And MouseX()<750
-		If CtrlDown()
-			SelectedLevel=InputInt("Enter wlv number: ")
+		If CtrlDown() And mb>0
+			SelectedLevel=InputInt("Enter wlv number to open: ")
 			AccessLevelAtCenter(SelectedLevel)
 			StartEditorMainLoop()
 		Else
@@ -20866,8 +20881,8 @@ Function MasterMainLoop()
 	
 	; load dialog
 	If MouseX()>750 And MouseX()<800
-		If CtrlDown()
-			currentdialog=InputInt("Enter dia number: ")
+		If CtrlDown() And mb>0
+			currentdialog=InputInt("Enter dia number to open: ")
 			StartDialog()
 		Else
 			For i=1 To 20
