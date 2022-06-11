@@ -4921,12 +4921,17 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If KeyDown(20) ; T key
-		If GetConfirmation("Give the current object its default TrueMovement values?")
-			If RetrieveDefaultTrueMovement()
-				SetEditorMode(3)
-			Else
-				ShowMessage("No default values exist for the current object Type!", 2000)
+	If KeyPressed(20) ; T key
+		If CtrlDown() ; Ctrl+T
+			SaveLevel()
+			SetBrushMode(BrushModeTestLevel)
+		Else
+			If GetConfirmation("Give the current object its default TrueMovement values?")
+				If RetrieveDefaultTrueMovement()
+					SetEditorMode(3)
+				Else
+					ShowMessage("No default values exist for the current object Type!", 2000)
+				EndIf
 			EndIf
 		EndIf
 	EndIf
