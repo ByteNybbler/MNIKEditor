@@ -10682,7 +10682,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectType=90 ; button
-			If IsObjectSubTypeFourColorButton(TargetSubType)
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="Colour1"
 			Else If (CurrentObjectSubType Mod 32)<10
 				tex2$="Col From"
