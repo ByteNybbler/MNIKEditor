@@ -595,8 +595,6 @@ Dim CopyWaterTileRotation(100,100)
 Dim CopyWaterTileHeight#(100,100)
 Dim CopyWaterTileTurbulence#(100,100)
 
-; some helper stuff for the editor
-Dim LevelTileVisited(100,100) ; for use in the flood fill algorithm
 Dim LevelTileObjectCount(100,100) ; for changing the marker color when there's more than one object present
 
 Dim BrushLevelTileTexture(100,100) ; corresponding to squares in LevelTexture
@@ -689,6 +687,7 @@ Global TargetWaterTileHeightUse=True
 Global TargetWaterTileTurbulenceUse=True
 
 ; used for flood fill algorithm
+Dim LevelTileVisited(100,100)
 Dim FloodStackX(10250) ; no pun intended hahahahaha
 Dim FloodStackY(10250)
 Dim FloodedStackX(10250) ; Stores positions to flood when done visiting. Useful for flood fill as used in inline mode.
@@ -1046,6 +1045,18 @@ Function ClearBrushSurface()
 	
 	ClearSurface BrushSurface
 	BrushSurfaceVertexCount=0
+	
+End Function
+
+Function ShowBrushSurface()
+
+	ShowEntity BrushMesh
+
+End Function
+
+Function HideBrushSurface()
+
+	HideEntity BrushMesh
 	
 End Function
 
@@ -3010,6 +3021,7 @@ End Function
 
 Function SetBrushMode(NewBrushMode)
 
+	FloodedElementsClear()
 	BrushMode=NewBrushMode
 	BrushCursorStateWasChanged()
 	
@@ -3039,9 +3051,16 @@ End Function
 Function BrushCursorOffMap()
 	
 	HideCursors()
-	ClearBrushSurface()
+	HideBrushSurface()
 	SetBrushCursorPosition(-1,-1)
 	
+End Function
+
+Function BrushCursorLeftMouseWasPressed()
+
+	ClearBrushSurface()
+	BrushCursorStateWaschanged()
+
 End Function
 
 Function BrushCursorStateWasChanged()
@@ -3054,11 +3073,42 @@ End Function
 
 Function GenerateBrushSurface()
 
+	; Don't regenerate the brush surface if it is unnecessary.
+	If BrushSurfaceVertexCount<>0 And BrushMode=BrushModeFill
+		If FloodedStackHasTile(BrushCursorX,BrushCursorY)
+			Return
+		EndIf
+	EndIf
+
 	ClearBrushSurface()
 
 	If BrushCursorX<>-1 And BrushCursorY<>-1
 		If BrushMode=BrushModeFill
-			; recalculate flood fill preview region
+			; recalculate flood fill region
+			
+			FloodFill(BrushCursorX,BrushCursorY)
+			
+			For i=0 To FloodedElementCount-1
+				thisx=FloodedStackX(i)
+				thisy=FloodedStackY(i)
+				AddTileToBrushSurface(thisx,thisy)
+			Next
+		ElseIf IsBrushInInlineMode()
+			FloodFillInline(BrushCursorX,BrushCursorY,BrushMode=BrushModeInlineHard)
+			
+			For i=0 To FloodedElementCount-1
+				thisx=FloodedStackX(i)
+				thisy=FloodedStackY(i)
+				AddTileToBrushSurface(thisx,thisy)
+			Next
+		ElseIf IsBrushInOutlineMode()
+			FloodFillOutline(BrushCursorX,BrushCursorY,BrushMode=BrushModeOutlineHard)
+			
+			For i=0 To FloodedElementCount-1
+				thisx=FloodedStackX(i)
+				thisy=FloodedStackY(i)
+				AddTileToBrushSurface(thisx,thisy)
+			Next
 		ElseIf BrushMode=BrushModeNormal Or BrushMode=BrushModeCustom
 			BrushXStart=BrushCursorX-BrushWidth/2
 			BrushYStart=BrushCursorY-BrushHeight/2
@@ -3091,6 +3141,13 @@ Function FloodFillInitializeState(StartX,StartY)
 	FloodStackY(0)=StartY
 	LevelTileVisited(StartX,StartY)=True
 	FloodElementCount=1
+	FloodedElementsClear()
+
+End Function
+
+
+Function FloodedElementsClear()
+
 	FloodedElementCount=0
 
 End Function
@@ -3140,6 +3197,97 @@ Function FloodFillVisitLevelTileOutline(nextx,nexty)
 	Else
 		AddToFloodedStack(nextx,nexty)
 	EndIf
+
+End Function
+
+
+Function FloodedStackHasTile(x,y)
+
+	For i=0 To FloodedElementCount-1
+		thisx=FloodedStackX(i)
+		thisy=FloodedStackY(i)
+		If PositionIsEqual(x,y,thisx,thisy)
+			Return True
+		EndIf
+	Next
+	Return False
+
+End Function
+
+Function FloodFill(StartX,StartY)
+
+	FloodFillInitializeState(BrushCursorX,BrushCursorY)
+	While FloodElementCount<>0
+		FloodElementCount=FloodElementCount-1
+		thisx=FloodStackX(FloodElementCount)
+		thisy=FloodStackY(FloodElementCount)
+		
+		FloodFillVisitLevelTile(thisx-1,thisy)
+		FloodFillVisitLevelTile(thisx+1,thisy)
+		FloodFillVisitLevelTile(thisx,thisy-1)
+		FloodFillVisitLevelTile(thisx,thisy+1)
+		
+		AddToFloodedStack(thisx,thisy)
+	Wend
+
+End Function
+
+Function FloodFillInline(StartX,StartY,IsHard)
+
+	FloodFillInitializeState(StartX,StartY)
+	While FloodElementCount<>0
+		FloodOutsideAdjacent=False
+		
+		FloodElementCount=FloodElementCount-1
+		thisx=FloodStackX(FloodElementCount)
+		thisy=FloodStackY(FloodElementCount)
+
+		FloodFillVisitLevelTile(thisx-1,thisy)
+		FloodFillVisitLevelTile(thisx+1,thisy)
+		FloodFillVisitLevelTile(thisx,thisy-1)
+		FloodFillVisitLevelTile(thisx,thisy+1)
+		
+		If IsHard
+			If (Not LevelTileMatchesTarget(thisx-1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx-1,thisy+1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy+1))
+				FloodOutsideAdjacent=True
+			EndIf
+		EndIf
+		
+		If FloodOutsideAdjacent
+			AddToFloodedStack(thisx,thisy)
+		EndIf
+	Wend
+
+End Function
+
+Function FloodFillOutline(StartX,StartY,IsHard)
+
+	FloodFillInitializeState(StartX,StartY)
+	While FloodElementCount<>0
+		FloodElementCount=FloodElementCount-1
+		thisx=FloodStackX(FloodElementCount)
+		thisy=FloodStackY(FloodElementCount)
+		
+		FloodFillVisitLevelTileOutline(thisx-1,thisy)
+		FloodFillVisitLevelTileOutline(thisx+1,thisy)
+		FloodFillVisitLevelTileOutline(thisx,thisy-1)
+		FloodFillVisitLevelTileOutline(thisx,thisy+1)
+		
+		If IsHard
+			If Not LevelTileMatchesTarget(thisx-1,thisy-1)
+				AddToFloodedStack(thisx-1,thisy-1)
+			EndIf
+			If Not LevelTileMatchesTarget(thisx+1,thisy-1)
+				AddToFloodedStack(thisx+1,thisy-1)
+			EndIf
+			If Not LevelTileMatchesTarget(thisx-1,thisy+1)
+				AddToFloodedStack(thisx-1,thisy+1)
+			EndIf
+			If Not LevelTileMatchesTarget(thisx+1,thisy+1)
+				AddToFloodedStack(thisx+1,thisy+1)
+			EndIf
+		EndIf
+	Wend
 
 End Function
 
@@ -3671,6 +3819,8 @@ Function EditorLocalControls()
 					PositionCursorEntity(3,LevelWidth-1-BrushCursorX,LevelHeight-1-BrushCursorY)
 				EndIf
 				
+				ShowBrushSurface()
+				
 				BrushR=GetBrushModeColor(BrushMode,0)
 				BrushG=GetBrushModeColor(BrushMode,1)
 				BrushB=GetBrushModeColor(BrushMode,2)
@@ -3740,87 +3890,9 @@ Function EditorLocalControls()
 						EndIf
 						SetBrushMode(BrushModeBlock)
 						Delay 100
-					Else If BrushMode=BrushModeFill
+					Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode()
 						; flood fill
 						LeftMouseReleased=False
-						
-						FloodFillInitializeState(BrushCursorX,BrushCursorY)
-						While FloodElementCount<>0
-							FloodElementCount=FloodElementCount-1
-							thisx=FloodStackX(FloodElementCount)
-							thisy=FloodStackY(FloodElementCount)
-							
-							FloodFillVisitLevelTile(thisx-1,thisy)
-							FloodFillVisitLevelTile(thisx+1,thisy)
-							FloodFillVisitLevelTile(thisx,thisy-1)
-							FloodFillVisitLevelTile(thisx,thisy+1)
-							
-							PlaceObjectOrChangeLevelTile(thisx,thisy)
-						Wend
-					Else If IsBrushInInlineMode()
-						; flood fill for inline
-						LeftMouseReleased=False
-						
-						FloodFillInitializeState(BrushCursorX,BrushCursorY)
-						While FloodElementCount<>0
-							FloodOutsideAdjacent=False
-							
-							FloodElementCount=FloodElementCount-1
-							thisx=FloodStackX(FloodElementCount)
-							thisy=FloodStackY(FloodElementCount)
-
-							FloodFillVisitLevelTile(thisx-1,thisy)
-							FloodFillVisitLevelTile(thisx+1,thisy)
-							FloodFillVisitLevelTile(thisx,thisy-1)
-							FloodFillVisitLevelTile(thisx,thisy+1)
-							
-							If BrushMode=BrushModeInlineHard
-								If (Not LevelTileMatchesTarget(thisx-1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx-1,thisy+1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy+1))
-									FloodOutsideAdjacent=True
-								EndIf
-							EndIf
-							
-							; for tile mode, wait to change the tiles until the flood fill visits all the tiles
-							If FloodOutsideAdjacent
-								AddToFloodedStack(thisx,thisy)
-							EndIf
-						Wend
-						
-						For i=0 To FloodedElementCount-1
-							thisx=FloodedStackX(i)
-							thisy=FloodedStackY(i)
-							PlaceObjectOrChangeLevelTile(thisx,thisy)
-						Next
-					Else If IsBrushInOutlineMode()
-						; flood fill for outline
-						LeftMouseReleased=False
-						
-						FloodFillInitializeState(BrushCursorX,BrushCursorY)
-						While FloodElementCount<>0
-							FloodElementCount=FloodElementCount-1
-							thisx=FloodStackX(FloodElementCount)
-							thisy=FloodStackY(FloodElementCount)
-							
-							FloodFillVisitLevelTileOutline(thisx-1,thisy)
-							FloodFillVisitLevelTileOutline(thisx+1,thisy)
-							FloodFillVisitLevelTileOutline(thisx,thisy-1)
-							FloodFillVisitLevelTileOutline(thisx,thisy+1)
-							
-							If BrushMode=BrushModeOutlineHard
-								If Not LevelTileMatchesTarget(thisx-1,thisy-1)
-									AddToFloodedStack(thisx-1,thisy-1)
-								EndIf
-								If Not LevelTileMatchesTarget(thisx+1,thisy-1)
-									AddToFloodedStack(thisx+1,thisy-1)
-								EndIf
-								If Not LevelTileMatchesTarget(thisx-1,thisy+1)
-									AddToFloodedStack(thisx-1,thisy+1)
-								EndIf
-								If Not LevelTileMatchesTarget(thisx+1,thisy+1)
-									AddToFloodedStack(thisx+1,thisy+1)
-								EndIf
-							EndIf
-						Wend
 						
 						For i=0 To FloodedElementCount-1
 							thisx=FloodedStackX(i)
@@ -3881,6 +3953,8 @@ Function EditorLocalControls()
 						
 						BrushCursorStateWasChanged()
 					EndIf
+					
+					BrushCursorLeftMouseWasPressed()
 				EndIf
 				If RightMouse=True And RightMouseReleased=True
 					RightMouseReleased=False
@@ -3928,77 +4002,9 @@ Function EditorLocalControls()
 					
 					SetBrushMode(BrushModeBlock)
 					Delay 100
-				Else If BrushMode=BrushModeFill
+				Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode()
 					; flood fill but it deletes
-					
-					FloodFillInitializeState(BrushCursorX,BrushCursorY)
-					While FloodElementCount<>0
-						FloodElementCount=FloodElementCount-1
-						thisx=FloodStackX(FloodElementCount)
-						thisy=FloodStackY(FloodElementCount)
-	
-						FloodFillVisitLevelTile(thisx-1,thisy)
-						FloodFillVisitLevelTile(thisx+1,thisy)
-						FloodFillVisitLevelTile(thisx,thisy-1)
-						FloodFillVisitLevelTile(thisx,thisy+1)
-						
-						DeleteObjectAt(thisx,thisy)
-					Wend
-				Else If IsBrushInInlineMode()
-					; flood fill for inline but it deletes
-					
-					FloodFillInitializeState(BrushCursorX,BrushCursorY)
-					While FloodElementCount<>0
-						FloodOutsideAdjacent=False
-						
-						FloodElementCount=FloodElementCount-1
-						thisx=FloodStackX(FloodElementCount)
-						thisy=FloodStackY(FloodElementCount)
-	
-						FloodFillVisitLevelTile(thisx-1,thisy)
-						FloodFillVisitLevelTile(thisx+1,thisy)
-						FloodFillVisitLevelTile(thisx,thisy-1)
-						FloodFillVisitLevelTile(thisx,thisy+1)
-						
-						If BrushMode=BrushModeInlineHard
-							If (Not LevelTileMatchesTarget(thisx-1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx-1,thisy+1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy+1))
-								FloodOutsideAdjacent=True
-							EndIf
-						EndIf
-						
-						If FloodOutsideAdjacent
-							DeleteObjectAt(thisx,thisy)
-						EndIf
-					Wend
-				Else If IsBrushInOutlineMode()
-					; flood fill for outline but it deletes
-					
-					FloodFillInitializeState(BrushCursorX,BrushCursorY)
-					While FloodElementCount<>0
-						FloodElementCount=FloodElementCount-1
-						thisx=FloodStackX(FloodElementCount)
-						thisy=FloodStackY(FloodElementCount)
-						
-						FloodFillVisitLevelTileOutline(thisx-1,thisy)
-						FloodFillVisitLevelTileOutline(thisx+1,thisy)
-						FloodFillVisitLevelTileOutline(thisx,thisy-1)
-						FloodFillVisitLevelTileOutline(thisx,thisy+1)
-						
-						If BrushMode=BrushModeOutlineHard
-							If Not LevelTileMatchesTarget(thisx-1,thisy-1)
-								AddToFloodedStack(thisx-1,thisy-1)
-							EndIf
-							If Not LevelTileMatchesTarget(thisx+1,thisy-1)
-								AddToFloodedStack(thisx+1,thisy-1)
-							EndIf
-							If Not LevelTileMatchesTarget(thisx-1,thisy+1)
-								AddToFloodedStack(thisx-1,thisy+1)
-							EndIf
-							If Not LevelTileMatchesTarget(thisx+1,thisy+1)
-								AddToFloodedStack(thisx+1,thisy+1)
-							EndIf
-						EndIf
-					Wend
+					LeftMouseReleased=False
 					
 					For i=0 To FloodedElementCount-1
 						thisx=FloodedStackX(i)
@@ -18073,6 +18079,8 @@ Function CompileLevel()
 End Function
 
 Function AccessLevel(levelnumber)
+
+	FloodedElementsClear()
 
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
