@@ -2108,7 +2108,7 @@ End Function
 ; Before this function was invented, the level editor camera was originally positioned to approximately be focused on the coordinates 7,10.
 Function PositionCameraInLevel(FocusOnTileX,FocusOnTileY)
 
-	PositionEntity Camera1,FocusOnTileX,EntityY(Camera1),-FocusOnTileY-4
+	PositionEntity Camera1,FocusOnTileX+0.5,EntityY(Camera1),-FocusOnTileY+0.5-4
 
 End Function
 
