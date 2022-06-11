@@ -4270,6 +4270,7 @@ Function EditorLocalControls()
 			If levelweather=-1 Then levelweather=17
 			LightingWasChanged()
 		EndIf
+		OldValue=LevelMusic
 		If my>=115 And my<130 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
 			leftmousereleased=False
 			If CtrlDown()
@@ -4294,6 +4295,9 @@ Function EditorLocalControls()
 			levelmusic=levelmusic-Adj
 			If levelmusic=-2 Then levelmusic=20
 		EndIf
+		If LevelMusic<>OldValue
+			UnsavedChanges=True
+		EndIf
 
 
 		; level/water textures
@@ -4311,6 +4315,7 @@ Function EditorLocalControls()
 				
 				leftmousereleased=False
 				buildcurrenttilemodel()
+				UnsavedChanges=True
 			EndIf
 			If mx<=755 And leftmouse=True And leftmousereleased=True
 				CurrentLevelTexture=CurrentLevelTexture-1
@@ -4325,6 +4330,7 @@ Function EditorLocalControls()
 				
 				leftmousereleased=False
 				buildcurrenttilemodel()
+				UnsavedChanges=True
 			EndIf
 			ShowTooltipRightAligned(710,163,CurrentLevelTextureName$())
 		EndIf
@@ -4343,7 +4349,7 @@ Function EditorLocalControls()
 				Next
 				leftmousereleased=False
 				buildcurrenttilemodel()
-	
+				UnsavedChanges=True
 			EndIf
 			If mx<=755 And leftmouse=True And leftmousereleased=True
 				CurrentWaterTexture=CurrentWaterTexture-1
@@ -4358,7 +4364,7 @@ Function EditorLocalControls()
 				Next
 				leftmousereleased=False
 				buildcurrenttilemodel()
-	
+				UnsavedChanges=True
 			EndIf
 			ShowTooltipRightAligned(710,180,CurrentWaterTextureName$())
 		EndIf
@@ -4405,7 +4411,7 @@ Function EditorLocalControls()
 			EndIf
 			rightmousereleased=False
 			buildcurrenttilemodel()
-
+			UnsavedChanges=True
 		EndIf
 		If my>150 And my<163 And rightmouse=True And rightmousereleased=True
 			FlushKeys
@@ -4451,14 +4457,18 @@ Function EditorLocalControls()
 			
 			buildcurrenttilemodel()
 
-
+			UnsavedChanges=True
 		EndIf
 
 		
 		If my>165 And my<195 ;my<185 
 			If mx>FlStartX+8 And mx<FlStartX+24
+				OldValue=WaterFlow
 				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, 150)
 				ShowTooltipCenterAligned(FlStartX+16,FlStartY+8,"Water Flow Speed: "+Waterflow)
+				If OldValue<>WaterFlow
+					UnsavedChanges=True
+				EndIf
 			EndIf
 			If mx>FlStartX+32 And mx<FlStartX+48
 				If (leftmouse=True And leftmousereleased=True) Or (rightmouse=True And rightmousereleased=True) Or MouseScroll<>0
@@ -4466,6 +4476,7 @@ Function EditorLocalControls()
 					UpdateAllWaterMeshTransparent()
 					leftmousereleased=False
 					rightmousereleased=False
+					UnsavedChanges=True
 				EndIf
 				ShowTooltipCenterAligned(FlStartX+40,FlStartY+8,"Water is Transparent: "+TrueToYes$(WaterTransparent))
 			EndIf
@@ -4475,10 +4486,12 @@ Function EditorLocalControls()
 					UpdateAllWaterMeshGlow()
 					leftmousereleased=False
 					rightmousereleased=False
+					UnsavedChanges=True
 				EndIf
 				ShowTooltipCenterAligned(FlStartX+64,FlStartY+8,"Water Glows: "+TrueToYes$(WaterGlow))
 			EndIf
 			If mx>FlStartX+80 And mx<FlStartX+100
+				OldValue=LevelEdgeStyle
 				LevelEdgeStyle=AdjustInt("Enter LevelEdgeStyle: ", LevelEdgeStyle, 1, 10, 150)
 				If LevelEdgeStyle<1
 					LevelEdgeStyle=4
@@ -4486,6 +4499,9 @@ Function EditorLocalControls()
 					LevelEdgeStyle=1
 				EndIf
 				ShowTooltipCenterAligned(FlStartX+90,FlStartY+8,"Level Edge Style: "+GetLevelEdgeStyleName$(LevelEdgeStyle))
+				If OldValue<>LevelEdgeStyle
+					UnsavedChanges=True
+				EndIf
 			EndIf
 
 
@@ -8869,6 +8885,7 @@ End Function
 Function LightingWasChanged()
 
 	SetLightNow(LightRed,LightGreen,LightBlue,AmbientRed,AmbientGreen,AmbientBlue)
+	UnsavedChanges=True
 
 End Function
 
