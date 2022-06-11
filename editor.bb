@@ -23612,6 +23612,12 @@ Function GetCmdData2ValueName$(Cmd, Data2)
 		Else
 			Return Data2+"%"
 		EndIf
+	Case 21
+		If Data2=-1
+			Return "Current"
+		Else
+			Return Data2
+		EndIf
 	Case 52
 		Return Data2+"/"+GetMovementTypeString$(Data2)
 	Default
