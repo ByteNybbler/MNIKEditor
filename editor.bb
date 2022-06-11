@@ -12,7 +12,7 @@
 AppTitle "Wonderland Adventures MNIKEditor"
 
 Include "particles-define.bb"
-Global VersionText$="WA Editor       MNIKSource v10.04 (06/10/22)"
+Global VersionText$="WA Editor       MNIKSource v10.04 (06/11/22)"
 
 Global MASTERUSER=True
 
@@ -274,6 +274,8 @@ Const ShowObjectMeshCount=4
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 
+Global PreventPlacingObjectsOutsideLevel=True
+
 ; The position of the level editor cursor.
 Global BrushCursorX=-1
 Global BrushCursorY=-1
@@ -289,11 +291,12 @@ Const BrushModeOutlineSoft=7
 Const BrushModeRow=8
 Const BrushModeColumn=9
 
-Const MaxBrushMode=9
-Global BrushMode=BrushModeNormal
-
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
+Const BrushModeTestLevel=-2
+
+Const MaxBrushMode=9
+Global BrushMode=BrushModeNormal
 
 Const DupeModeNone=0
 Const DupeModeX=1
@@ -1812,28 +1815,13 @@ LoadObjectPreset()
 
 Global Mouseimg=LoadImage ("data\Mouseimg.bmp")
 
-testfile=ReadFile(globaldirname$+"\temp\test.dat")
-If testfile<>0 ;FileType(globaldirname$+"\custom\editing\")
-	AdventureFileName$=ReadString$(testfile)
-	HubFileName$=ReadString$(testfile)
-	If HubFileName$<>""
-		hubmode=true
-		StartHub()
-	Endif
-	StartMaster()
-	SetEditorMode(ReadInt(testfile))
-	CloseFile testfile
-	DeleteFile globaldirname$+"\temp\test.dat"
-	
-	
-EndIf
-
 
 StartupColors()
 
-
 TweenPeriod=1000/60;85
 TweenTime=MilliSecs()-TweenPeriod
+
+ReadTestFile()
 
 Repeat
 		
@@ -1872,18 +1860,7 @@ Repeat
 				Delay 200
 			Until HasFocus()
 			
-			;FlushKeys ; WHY DOES THIS NOT WORK??? Apparently it doesn't get rid of currently-pressed keys.
-			
-			;ForceKeyRelease(56,"left alt")
-			;ForceKeyRelease(184,"right alt")
-			
-			ForceKeyRelease(42,"left shift")
-			ForceKeyRelease(54,"right shift")
-			
-			ForceKeyRelease(29,"left ctrl")
-			ForceKeyRelease(157,"right ctrl")
-			
-			ReadColors()
+			OnRegainFocus()
 			
 		EndIf
 	
@@ -1893,6 +1870,22 @@ Until False ;KeyDown(1) ; escape
 
 End
 
+Function OnRegainFocus()
+
+	;FlushKeys ; WHY DOES THIS NOT WORK??? Apparently it doesn't get rid of currently-pressed keys.
+	
+	;ForceKeyRelease(56,"left alt")
+	;ForceKeyRelease(184,"right alt")
+	
+	ForceKeyRelease(42,"left shift")
+	ForceKeyRelease(54,"right shift")
+	
+	ForceKeyRelease(29,"left ctrl")
+	ForceKeyRelease(157,"right ctrl")
+	
+	ReadColors()
+
+End Function
 
 Function InitializeGraphicsTextures()
 
@@ -2498,25 +2491,50 @@ Function EditorMainLoop()
 	Text 600,565," DENSITY"
 	CenteredText(636,580,PlacementDensity#)
 	
+	Line1$="   EXIT   "
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
-		Text 704,520," > CANCEL <"
-		Text 704,535," >AND EXIT<"
+		;Text 704,520," > CANCEL <"
+		;Text 704,535," >AND EXIT<"
+		Line1$=">"+Line1$+"<"
 	Else
 		Color TextLevelR,TextLevelG,TextLevelB
-		Text 720,520," CANCEL"
-		Text 720,535,"AND EXIT"
+		;Text 720,520," CANCEL"
+		;Text 720,535,"AND EXIT"
+	EndIf
+	CenteredText(750,520,Line1$)
+	
+	AlreadyUsingCarrots=False
+	If UnsavedChanges
+		Line1$="SAVE LEVEL"
+		Line2$=""
+	Else
+		Line1$="TEST LEVEL"
+		Line2$=" AT BRUSH "
+		If BrushMode=BrushModeTestLevel
+			Line1$=">"+Line1$+"<"
+			Line2$=">"+Line2$+"<"
+			AlreadyUsingCarrots=True
+		EndIf
 	EndIf
 	
 	If MouseX()>700 And MouseY()>560 And MouseY()<600
 		Color 255,255,0
-		Text 696,565," >SAVE LEVEL<"
-		Text 696,580," > AND EXIT <"
+		;Text 696,565," >SAVE LEVEL<"
+		;Text 696,580," > AND EXIT <"
+		If Not AlreadyUsingCarrots
+			Line1$=">"+Line1$+"<"
+			If Line2$<>""
+				Line2$=">"+Line2$+"<"
+			EndIf
+		EndIf
 	Else
 		Color TextLevelR,TextLevelG,TextLevelB
-		Text 712,565,"SAVE LEVEL"
-		Text 712,580," AND EXIT"
+		;Text 712,565,"SAVE LEVEL"
+		;Text 712,580," AND EXIT"
 	EndIf
+	CenteredText(750,565,Line1$)
+	CenteredText(750,580,Line2$)
 
 	Color TextLevelR,TextLevelG,TextLevelB
 	
@@ -2525,9 +2543,9 @@ Function EditorMainLoop()
 	; Animate Rainbow Magic
 	If (CurrentObjectType=200 And CurrentObjectData(0)=8) Then
 		For i=0 To 3
-		    red=128+120*Sin(Leveltimer Mod 360)
-		    green=128+120*Cos(Leveltimer Mod 360)
-		    blue=128-120*Sin(Leveltimer Mod 360)
+		    red=GetAnimatedRainbowRed()
+		    green=GetAnimatedRainbowGreen()
+		    blue=GetAnimatedRainbowBlue()
 			
 		    VertexColor GetSurface(CurrentObjectmodel,1),i,red,green,blue
 		Next
@@ -3641,6 +3659,10 @@ Function EditorLocalControls()
 								GrabObjectFromBrush(k)
 								PlaceObject(BrushCursorX+BrushObjectXOffset#(k),BrushCursorY+BrushObjectYOffset#(k))
 							Next
+						EndIf
+					ElseIf BrushMode=BrushModeTestLevel
+						If AskToSaveLevelAndExit()
+							StartTestModeAt(CurrentLevelNumber,BrushCursorX,BrushCursorY)
 						EndIf
 					Else ; normal brush
 						BrushXStart=BrushCursorX-BrushWidth/2
@@ -5376,16 +5398,27 @@ Function EditorLocalControls()
 
 		If MX>700
 			If my>515 And my<555
-				; cancel and exit
-				ResumeMaster()
+				; exit ; cancel and exit
+				If AskToSaveLevelAndExit()
+					ResumeMaster()
+				EndIf
 				
 				Repeat
 				Until MouseDown(1)=False	
 				
 			Else If my>560 And my<600
-				; save and exit
-				If SaveLevelAndExit()
-					ResumeMaster()
+				; save ; save and exit
+				;If SaveLevelAndExit()
+				;	ResumeMaster()
+				;EndIf
+				If UnsavedChanges
+					SaveLevel()
+				Else
+					If BrushMode=BrushModeTestLevel
+						SetBrushMode(BrushModeNormal)
+					Else
+						SetBrushMode(BrushModeTestLevel)
+					EndIf
 				EndIf
 				
 				Repeat
@@ -7998,8 +8031,10 @@ Function SetObjectPosition(Dest,x#,y#)
 	floorx=Floor(x)
 	floory=Floor(y)
 	
-	If floorx<0 Or floory<0 Or floorx>LevelWidth-1 Or floory>LevelHeight-1
-		Return False
+	If PreventPlacingObjectsOutsideLevel
+		If floorx<0 Or floory<0 Or floorx>LevelWidth-1 Or floory>LevelHeight-1
+			Return False
+		EndIf
 	EndIf
 	
 	SetObjectTileXY(Dest,floorx,floory)
@@ -14939,7 +14974,7 @@ Function SetCurrentObjectTargetLocation(x,y)
 	Select CurrentObjectType
 	Case 90 ; button
 		If CurrentObjectSubType=10 ; levelexit
-			CalculateLevelExitToHere(1,2,3,4,x,y)
+			CalculateLevelExitTo(1,2,3,4,CurrentLevelNumber,x,y)
 			CurrentGrabbedObjectModified=True
 		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
 			CurrentObjectData(2)=x
@@ -14948,7 +14983,7 @@ Function SetCurrentObjectTargetLocation(x,y)
 		ElseIf CurrentObjectSubType=15 ; general command
 			SetCurrentObjectTargetLocationCmd(CurrentObjectData(0),1,2,3,4,x,y)
 		Else
-			GenerateLevelExitToHere(x,y)
+			GenerateLevelExitTo(CurrentLevelNumber,x,y)
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
 		CurrentObjectData(1)=x
@@ -14957,7 +14992,7 @@ Function SetCurrentObjectTargetLocation(x,y)
 	Case 242 ; cuboid
 		SetCurrentObjectTargetLocationCmd(CurrentObjectData(2),3,4,5,6,x,y)
 	Default
-		GenerateLevelExitToHere(x,y)
+		GenerateLevelExitTo(CurrentLevelNumber,x,y)
 	End Select
 	
 	BuildCurrentObjectModel()
@@ -14968,7 +15003,7 @@ Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,D4,x,y)
 
 	Select Cmd
 	Case 7
-		CalculateLevelExitToHere(D1,D2,D3,D4,x,y)
+		CalculateLevelExitTo(D1,D2,D3,D4,CurrentLevelNumber,x,y)
 		CurrentGrabbedObjectModified=True
 	Case 11
 		CurrentObjectData(D2)=x
@@ -14979,14 +15014,14 @@ Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,D4,x,y)
 		CurrentObjectData(D3)=y
 		CurrentGrabbedObjectModified=True
 	Default
-		GenerateLevelExitToHere(x,y)
+		GenerateLevelExitTo(CurrentLevelNumber,x,y)
 	End Select
 
 End Function
 
-Function CalculateLevelExitToHere(D1,D2,D3,D4,x,y)
+Function CalculateLevelExitTo(D1,D2,D3,D4,level,x,y)
 
-	CurrentObjectData(D1)=CurrentLevelNumber
+	CurrentObjectData(D1)=level
 	CurrentObjectData(D2)=x
 	CurrentObjectData(D3)=y
 	StartingYaw=0 ; south
@@ -15035,10 +15070,10 @@ Function CalculateLevelExitToHere(D1,D2,D3,D4,x,y)
 
 End Function
 
-Function GenerateLevelExitToHere(x,y)
+Function GenerateLevelExitTo(level,x,y)
 
 	BlankObjectPreset("!Button",90,10)
-	CalculateLevelExitToHere(1,2,3,4,x,y)
+	CalculateLevelExitTo(1,2,3,4,level,x,y)
 	SetCurrentGrabbedObject(-1)
 
 End Function
@@ -15572,6 +15607,8 @@ Function GetBrushModeName$(Value)
 		Return "ROW"
 	Case BrushModeColumn
 		Return "COLUMN"
+	Case BrushModeTestLevel
+		Return "TEST LEVEL"
 	Default
 		Return "UNKNOWN"
 	End Select
@@ -15616,6 +15653,11 @@ Function GetBrushModeColor$(Value,index)
 		r=255
 		g=0
 		b=255
+	ElseIf Value=BrushModeTestLevel
+		; rainbow
+		r=GetAnimatedRainbowRed()
+		g=GetAnimatedRainbowGreen()
+		b=GetAnimatedRainbowBlue()
 	Else ; normal brush mode, AKA BrushModeNormal
 		; white
 		r=255
@@ -15632,6 +15674,18 @@ Function GetBrushModeColor$(Value,index)
 	EndIf
 
 End Function
+
+
+Function GetAnimatedRainbowRed()
+	Return 128+120*Sin(Leveltimer Mod 360)
+End Function
+Function GetAnimatedRainbowGreen()
+	Return 128+120*Cos(Leveltimer Mod 360)
+End Function
+Function GetAnimatedRainbowBlue()
+	Return 128-120*Sin(Leveltimer Mod 360)
+End Function
+
 
 Function ChangeBrushModeByDelta(Delta)
 
@@ -17312,7 +17366,7 @@ Function SaveLevel()
 	
 	CloseFile file
 
-	
+	UnsavedChanges=False
 
 End Function
 
@@ -17712,17 +17766,73 @@ Function AccessLevel(levelnumber)
 
 End Function
 
-Function MoveFile(numbersource,numberdest,ext$)
+Function GetAdventureDir$()
 
 	If AdventureCurrentArchive=1
 		ex2$="Archive\"
 	Else
 		ex2$="Current\"
 	EndIf
+	
+	Return globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
 
-	dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+End Function
+
+Function MoveFile(numbersource,numberdest,ext$)
+	
+	dirbase$=GetAdventureDir$()
 	CopyFile(dirbase$+numbersource+ext$,dirbase$+numberdest+ext$)
 	DeleteFile(dirbase$+numbersource+ext$)
+
+End Function
+
+Function DuplicateMaster(SourceName$,DestinationName$)
+
+	dirbase$=GetAdventureDir$()
+	CopyFile(dirbase$+SourceName$+".dat",dirbase$+DestinationName$+".dat")
+
+End Function
+
+Function DeleteMaster(TargetName$)
+
+	dirbase$=GetAdventureDir$()
+	DeleteFile(dirbase$+TargetName$+".dat")
+
+End Function
+
+Function RestoreOriginalMaster()
+
+	dirbase$=GetAdventureDir$()
+	If FileExists(dirbase$+OriginalMasterDat$+".dat")
+		DeleteMaster("master")
+		DuplicateMaster(OriginalMasterDat$,"master")
+		DeleteMaster(OriginalMasterDat$)
+	EndIf
+
+End Function
+
+Function RestoreOriginal1Wlv()
+
+	dirbase$=GetAdventureDir$()
+	If FileExists(dirbase$+Original1Wlv$+".wlv")
+		DeleteLevel(1)
+		DuplicateLevel(Original1Wlv$,1)
+		DeleteLevel(Original1Wlv$)
+	EndIf
+
+End Function
+
+Function DeleteLevel(TargetLevelName$)
+
+	dirbase$=GetAdventureDir$()
+	DeleteFile(dirbase$+TargetLevelName$+".wlv")
+
+End Function
+
+Function DuplicateLevel(levelnumbersource$,levelnumberdest$)
+
+	dirbase$=GetAdventureDir$()
+	CopyFile(dirbase$+levelnumbersource+".wlv",dirbase$+levelnumberdest+".wlv")
 
 End Function
 
@@ -17745,13 +17855,7 @@ End Function
 Function SwapFile(levelnumber1,levelnumber2,ext$,Exists1,Exists2)
 
 	If Exists1 And Exists2
-		If AdventureCurrentArchive=1
-			ex2$="Archive\"
-		Else
-			ex2$="Current\"
-		EndIf
-	
-		dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+		dirbase$=GetAdventureDir$()
 		CopyFile(dirbase$+levelnumber1+ext$,dirbase$+"temp"+levelnumber1+ext$)
 		DeleteFile(dirbase$+levelnumber1+ext$)
 		CopyFile(dirbase$+levelnumber2+ext$,dirbase$+levelnumber1+ext$)
@@ -19963,6 +20067,9 @@ Function DialogExists(dialognumber)
 End Function
 
 Function StartMaster()
+	RestoreOriginalMaster()
+	RestoreOriginal1Wlv()
+
 	SetEditorMode(8)
 	
 	CopyingLevel=StateNotSpecial
@@ -21737,6 +21844,32 @@ Function HubAdventureSelectScreen()
 	
 End Function
 
+Function ReadTestFile()
+
+	testfile=ReadFile(globaldirname$+"\temp\test.dat")
+	If testfile<>0 ;FileType(globaldirname$+"\custom\editing\")
+		AdventureFileName$=ReadString$(testfile)
+		HubFileName$=ReadString$(testfile)
+		If HubFileName$<>""
+			hubmode=True
+			StartHub()
+		EndIf
+		StartMaster()
+		SetEditorMode(ReadInt(testfile))
+		
+		If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
+			AccessLevelAtCenter(ReadInt(testfile))
+			StartEditorMainLoop()
+		EndIf
+		
+		CloseFile testfile
+		DeleteFile globaldirname$+"\temp\test.dat"
+		
+		
+	EndIf
+
+End Function
+
 Function StartTestMode()
 	WaitFlag=True
 	SaveMasterFile()
@@ -21749,9 +21882,47 @@ Function StartTestMode()
 	EndIf
 	
 	WriteInt file, EditorMode
+	
+	If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
+		WriteInt file,CurrentLevelNumber
+	EndIf
+	
 	CloseFile file
 	ExecFile ("wg.exe")
 	End
+End Function
+
+Const OriginalMasterDat$="__master_ORIGINAL__.bak"
+Const Original1Wlv$="__1_ORIGINAL__.bak"
+
+; This is hacky, but it should work regardless of the player executable's version.
+Function StartTestModeAt(level,x,y)
+	
+	SaveMasterFile()
+	DuplicateMaster("master",OriginalMasterDat$)
+	; Change adventure start coordinates to be far out-of-bounds.
+	; Using coordinates that are farther out than about -100 seems to cause MAVs in-game.
+	AdventureStartX=-100
+	AdventureStartY=-50
+	; master.dat gets saved in StartTestMode, so we don't have to save it here.
+	
+	If CurrentLevelNumber<>1
+		AccessLevel(1)
+		; If 1.wlv does not exist, create the file.
+		If Not LevelExists(1)
+			SaveLevel()
+		EndIf
+	EndIf
+	DuplicateLevel(1,Original1Wlv$)
+	; Place a level transition at the adventure start coordinates.
+	GenerateLevelExitTo(level,x,y)
+	CurrentObjectZAdjust=1000.0 ; Move the LevelExit out of view in-game.
+	PreventPlacingObjectsOutsideLevel=False
+	PlaceObject(AdventureStartX,AdventureStartY)
+	SaveLevel()
+	CurrentLevelNumber=level ; Necessary so that the editor knows what level to return to when re-opening after testing.
+	StartTestMode()
+
 End Function
 
 Function FileExists(FileName$)
