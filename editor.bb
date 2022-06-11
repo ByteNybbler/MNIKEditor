@@ -2317,11 +2317,12 @@ Function EditorMainLoop()
 	Color TextLevelR,TextLevelG,TextLevelB
 	
 	Text 0,5,"ADVENTURE: "+AdventureFileName$
-	If CurrentLevelNumber<10
-		Text 500-9*8,5,"LEVEL: 0"+CurrentLevelNumber
+	If CurrentLevelNumber<10 And CurrentLevelNumber>=0
+		Line1$="LEVEL: 0"+CurrentLevelNumber
 	Else
-		Text 500-9*8,5,"LEVEL: "+CurrentLevelNumber
+		Line1$="LEVEL: "+CurrentLevelNumber
 	EndIf
+	RightAlignedText(500,5,Line1$)
 	
 	If ShowObjectMesh>=2
 		For i=0 To NofObjects-1
@@ -2858,6 +2859,12 @@ End Function
 Function CenteredText(StartX,StartY,Message$)
 
 	Text StartX-GetCenteredTextOffset(Message$),StartY,Message$
+
+End Function
+
+Function RightAlignedText(StartX,StartY,Message$)
+
+	Text StartX-GetTextPixelLength(Message$),StartY,Message$
 
 End Function
 
