@@ -3047,9 +3047,15 @@ End Function
 Function BrushCursorStateWasChanged()
 
 	;ShowMessage("Brush cursor state changed",1000)
+	
+	GenerateBrushSurface()
+
+End Function
+
+Function GenerateBrushSurface()
 
 	ClearBrushSurface()
-	
+
 	If BrushCursorX<>-1 And BrushCursorY<>-1
 		If BrushMode=BrushModeFill
 			; recalculate flood fill preview region
@@ -3330,6 +3336,8 @@ End Function
 
 
 Function HideCursors()
+
+	ClearBrushSurface()
 
 	For i=0 To 3
 		HideEntity CursorMeshPillar(i)
@@ -3906,9 +3914,7 @@ Function EditorLocalControls()
 					SetEditorMode(3)
 				EndIf
 			Else
-				HideCursors()
-				x=-1
-				y=-1
+				BrushCursorOffMap()
 			EndIf
 	
 			If DeleteKey=True And DeleteKeyReleased=True
