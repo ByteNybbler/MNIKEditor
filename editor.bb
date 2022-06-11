@@ -4899,7 +4899,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If CtrlDown() And KeyPressed(14) ; Ctrl+Backspace
+	If CtrlDown() And KeyPressed(26) ; Ctrl+[
 		TryPopPreviousLevel()
 	EndIf
 	

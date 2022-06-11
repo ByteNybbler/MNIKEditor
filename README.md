@@ -42,7 +42,7 @@
 * T: Give the current object its default in-game TrueMovement values (TTC, OTC, MovementType, and MovementSpeed) based on its Type, SubType, and sometimes some Data values. This makes it very easy to do various small changes that previously required a lot of manual work setting the TTC and OTC. For instance, you can easily define different MovementSpeeds on objects that formerly did not allow that value to be adjusted without making advanced manual adjustments to TrueMovement. Objects like hyperspeed turtles, hyperspeed MooBots, and hyperspeed Wee Stinkers can be constructed with minimal effort. You can also modify the MovementTypes of these objects easily so that you can have stuff like Wee Stinkers that sleepwalk away from you until you wake them up.
 * Ctrl+S: Save level.
 * Ctrl+O: Type in the number of the wlv you want to open.
-* Ctrl+Backspace: Open the previous wlv that was opened. This can be done numerous times in a row to retrace your steps, perhaps after having followed LevelExits by pressing G. The last 100 opened wlvs are tracked.
+* Ctrl+[: Open the previous wlv that was opened. This can be done numerous times in a row to retrace your steps, perhaps after having followed LevelExits by pressing G. The last 100 opened wlvs are tracked.
 * Ctrl+N: Go to normal brush mode.
 * Ctrl+B: Toggle block mode. The cursor brush will be blue while block mode is active.
 * Ctrl+F: Toggle fill mode. The cursor brush will be yellow while fill mode is active.
