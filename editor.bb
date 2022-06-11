@@ -27051,6 +27051,34 @@ End Function
 Function ControlThwart(i)
 
 	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+	
+	; shooting?
+	If SimulatedObjectData(i,6)>0 And ObjectIndigo(i)=0
+		dx#=PlayerX()-ObjectX(i)
+		dy#=PlayerY()-ObjectY(i)
+		total#=Sqr(dx^2+dy^2)
+		dx=dx/total
+		dy=dy/total
+		
+		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+		
+		If SimulatedObjectTimer(i)<0
+			If SimulatedObjectTimer(i)=-10
+				; aquire target now
+				SimulatedObjectData(i,4)=dx*10000
+				SimulatedObjectData(i,5)=dy*10000
+			EndIf
+			If SimulatedObjectTimer(i)=-1
+				If ObjectModelName$(i)="!Thwart"
+					MaybeAnimateMD2(ObjectEntity(i),3,1,81,120,1)
+				EndIf
+			EndIf
+		
+			If SimulatedObjectTimer(i)=-40
+				SimulatedObjectTimer(i)=SimulatedObjectData(i,7)
+			EndIf
+		EndIf
+	EndIf
 
 End Function
 
@@ -27058,6 +27086,34 @@ End Function
 Function ControlTroll(i)
 
 	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+	
+	; shooting?
+	If SimulatedObjectData(i,6)>0 And SimulatedObjectActive(i)=1001 And ObjectIndigo(i)=0
+		dx#=PlayerX()-ObjectX(i)
+		dy#=PlayerY()-ObjectY(i)
+		total#=Sqr(dx^2+dy^2)
+		dx=dx/total
+		dy=dy/total
+		
+		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+		
+		If SimulatedObjectTimer(i)<0
+			If SimulatedObjectTimer(i)=-10
+				; aquire target now
+				SimulatedObjectData(i,4)=dx*10000
+				SimulatedObjectData(i,5)=dy*10000
+			EndIf
+			If SimulatedObjectTimer(i)=-1
+				If ObjectModelName$(i)="!Troll"
+					MaybeAnimateMD2(ObjectEntity(i),3,1,81,119,1)
+				EndIf
+			EndIf
+		
+			If SimulatedObjectTimer(i)=-40
+				SimulatedObjectTimer(i)=SimulatedObjectData(i,7)
+			EndIf
+		EndIf
+	EndIf
 
 End Function
 
