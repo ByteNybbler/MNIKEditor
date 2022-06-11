@@ -1030,11 +1030,8 @@ EntityAlpha s,0.5
 ; Create Meshes
 ; =================
 ; Cursor
-;Global CursorMesh, CursorMesh2
-Dim CursorMesh(3)
-Dim CursorMesh2(3)
-Dim BrushMeshAtZero(100,100)
-Dim BrushMeshAtNonZero(100,100)
+Dim CursorMeshPillar(3)
+Dim CursorMeshOpaque(3)
 ; MousePlane
 Global MousePlane=CreateMesh()
 MouseSurface=CreateSurface(MousePlane)
@@ -2022,36 +2019,20 @@ Function InitializeGraphicsEntities()
 	
 	For i=0 To 3
 		; Pillar
-		CursorMesh(i)=CreateCube()
-		ScaleMesh CursorMesh(i),0.1,10,0.1
-		EntityAlpha CursorMesh(i),.3
-		EntityColor CursorMesh(i),255,255,200
+		CursorMeshPillar(i)=CreateCube()
+		ScaleMesh CursorMeshPillar(i),0.1,10,0.1
+		EntityAlpha CursorMeshPillar(i),.3
+		EntityColor CursorMeshPillar(i),255,255,200
 		
 		; Little square at the center of the brush
-		CursorMesh2(i)=CreateCube()
-		ScaleMesh CursorMesh2(i),.2,0.01,.2
+		CursorMeshOpaque(i)=CreateCube()
+		ScaleMesh CursorMeshOpaque(i),.2,0.01,.2
 		
 		; The square region that the brush covers
 		CursorMeshRegion=CreateCube()
 		ScaleMesh CursorMeshRegion,.5,0.1,.5
-		AddMesh CursorMeshRegion,CursorMesh(i)
+		AddMesh CursorMeshRegion,CursorMeshPillar(i)
 		FreeEntity CursorMeshRegion
-	Next
-	
-	For i=0 To 100
-		For j=0 To 100
-			BrushMeshAtZero(i,j)=CreateCube()
-			ScaleMesh BrushMeshAtZero(i,j),.5,0.1,.5
-			EntityAlpha BrushMeshAtZero(i,j),.3
-			PositionEntity BrushMeshAtZero(i,j),i,0,-j
-			HideEntity BrushMeshAtZero(i,j)
-			
-			BrushMeshAtNonZero(i,j)=CreateCube()
-			ScaleMesh BrushMeshAtNonZero(i,j),.5,0.1,.5
-			EntityAlpha BrushMeshAtNonZero(i,j),.3
-			PositionEntity BrushMeshAtNonZero(i,j),i,0,-j
-			HideEntity BrushMeshAtNonZero(i,j)
-		Next
 	Next
 	
 	CurrentObjectMarkerMesh=CreateCylinder()
@@ -3231,11 +3212,11 @@ End Function
 
 Function PositionCursorEntity(i,x,y)
 
-	ShowEntity CursorMesh(i)
-	ShowEntity CursorMesh2(i)
-	PositionEntity CursorMesh(i),x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
-	ScaleEntity CursorMesh(i),BrushWidth,1,BrushHeight
-	PositionEntity CursorMesh2(i),x+.5,0,-y-.5
+	ShowEntity CursorMeshPillar(i)
+	ShowEntity CursorMeshOpaque(i)
+	PositionEntity CursorMeshPillar(i),x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
+	ScaleEntity CursorMeshPillar(i),BrushWidth,1,BrushHeight
+	PositionEntity CursorMeshOpaque(i),x+.5,0,-y-.5
 
 End Function
 
@@ -3243,8 +3224,8 @@ End Function
 Function HideCursors()
 
 	For i=0 To 3
-		HideEntity CursorMesh(i)
-		HideEntity CursorMesh2(i)
+		HideEntity CursorMeshPillar(i)
+		HideEntity CursorMeshOpaque(i)
 	Next
 
 End Function
@@ -3553,13 +3534,12 @@ Function EditorLocalControls()
 			Entity=CameraPick(camera1,MouseX(),MouseY())
 			If Entity>0
 				
-				;BrushCursorX=Floor(PickedX())
-				;BrushCursorY=Floor(-PickedZ())
 				SetBrushCursorPosition(Floor(PickedX()),Floor(-PickedZ()))
 				
+				; Hide all cursors except for cursor 0.
 				For i=1 To 3
-					HideEntity CursorMesh(i)
-					HideEntity CursorMesh2(i)
+					HideEntity CursorMeshPillar(i)
+					HideEntity CursorMeshOpaque(i)
 				Next
 				
 				PositionCursorEntity(0,BrushCursorX,BrushCursorY)
@@ -3580,8 +3560,8 @@ Function EditorLocalControls()
 				BrushB=GetBrushModeColor(BrushMode,2)
 				
 				For i=0 To 3
-					EntityColor CursorMesh(i),BrushR,BrushG,BrushB
-					EntityColor CursorMesh2(i),BrushR,BrushG,BrushB
+					EntityColor CursorMeshPillar(i),BrushR,BrushG,BrushB
+					EntityColor CursorMeshOpaque(i),BrushR,BrushG,BrushB
 				Next
 				
 				Color TextLevelR,TextLevelG,TextLevelB
@@ -3960,10 +3940,10 @@ Function EditorLocalControls()
 	; *************************************
 	If EditorMode=1 Or EditorMode=2
 		If mx>=0 And mx<500 And my>=0 And my<500 
-			ScaleEntity CursorMesh(0),0.0325,0.01,0.0325
-			PositionEntity CursorMesh(0),Floor(mx/62.5)*0.125+0.0625,200,-Floor(my/62.5)*0.125-0.0625
-			ShowEntity CursorMesh(0)
-			ShowEntity CursorMesh2(0)
+			ScaleEntity CursorMeshPillar(0),0.0325,0.01,0.0325
+			PositionEntity CursorMeshOpaque(0),Floor(mx/62.5)*0.125+0.0625,200,-Floor(my/62.5)*0.125-0.0625
+			ShowEntity CursorMeshPillar(0)
+			ShowEntity CursorMeshOpaque(0)
 			If LeftMouse=True
 				If editormode=1
 					; main texture
@@ -3975,7 +3955,7 @@ Function EditorLocalControls()
 				SetEditorMode(0)
 				LeftMouseReleased=False
 				BuildCurrentTileModel()
-				ScaleEntity CursorMesh(0),1,1,1
+				ScaleEntity CursorMeshPillar(0),1,1,1
 			EndIf
 	
 		Else 
