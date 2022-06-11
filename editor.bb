@@ -4115,8 +4115,16 @@ Function EditorLocalControls()
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; Texture
-			Camera1To3Proj()
-			SetEditorMode(1)
+			If CtrlDown()
+				CurrentTileTexture=InputInt("Enter Texture ID: ")
+				BuildCurrentTileModel()
+			Else
+				Camera1To3Proj()
+				SetEditorMode(1)
+			EndIf
+		ElseIf MouseScroll<>0
+			CurrentTileTexture=CurrentTileTexture+MouseScroll
+			BuildCurrentTileModel()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -4125,6 +4133,7 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
+		ShowTooltipRightAligned(StartX,StartY+95,"Texture ID: "+CurrentTileTexture)
 	EndIf
 		
 	
@@ -4139,8 +4148,16 @@ Function EditorLocalControls()
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			; SideTexture
-			Camera1To3Proj()
-			SetEditorMode(2)
+			If CtrlDown()
+				CurrentTileSideTexture=InputInt("Enter SideTexture ID: ")
+				BuildCurrentTileModel()
+			Else
+				Camera1To3Proj()
+				SetEditorMode(2)
+			EndIf
+		ElseIf MouseScroll<>0
+			CurrentTileSideTexture=CurrentTileSideTexture+MouseScroll
+			BuildCurrentTileModel()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -4149,6 +4166,7 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
+		ShowTooltipRightAligned(StartX,StartY+140,"SideTexture ID: "+CurrentTileSideTexture)
 	EndIf
 	
 	; WaterTexture/Rotation

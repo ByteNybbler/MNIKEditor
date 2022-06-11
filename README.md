@@ -78,9 +78,9 @@
 ### TILES MENU
 
 * Enter: Toggled the used state of the tile attribute being hovered over with the mouse. This means that any new tiles you "place" won't modify that attribute of the tile(s) you place it on.
-* Scroll the mouse wheel: Scroll through tiles and tile categories, as well as tile logics.
+* Scroll the mouse wheel: Scroll through tiles and tile categories as well as tile logics and tile textures.
 * Shift+Enter: Mark all tile attributes as unused except for the used tile attribute being hovered over with the mouse. If the tile attribute being hovered over is unused, mark all tile attributes as used.
-* Ctrl+Click: As usual, this works on all numeric adjusters, including the tile logic if you're feeling feisty.
+* Ctrl+Click: As usual, this works on all numeric adjusters, including the tile logic if you're feeling feisty. It can also be used to type tile texture IDs. If you enter very large numbers, you will get bizarre metatextures.
 * Ctrl+Enter while hovering the mouse over a numeric tile adjuster: Set a step size for that adjuster. This will modify the value by that amount every time the left mouse button is pressed to place some tiles. To disable the step size, press Ctrl+Enter while hovering the mouse over that adjuster.
 * I while hovering mouse over the TILES menu: Rotates the previewed tile counter-clockwise.
 * O while hovering mouse over the TILES menu: Rotates the previewed tile clockwise.
