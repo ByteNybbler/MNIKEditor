@@ -23466,7 +23466,7 @@ Function GetCMDData1Name$(id)
 	Case 10,11
 		Return "Sound"
 	Case 12
-		Return "Volume"
+		Return "TargetVolume"
 	Case 13
 		Return "Weather"
 	Case 21,22,23,24,25,26,27
@@ -23495,7 +23495,7 @@ Function GetCMDData2Name$(id)
 	Case 11
 		Return "Source X"
 	Case 12
-		Return "Volume Step"
+		Return "MaxVolumeStep" ;"Volume Step"
 	Case 51
 		Return "Obsolete"
 	Case 21,22
@@ -23530,7 +23530,7 @@ Function GetCMDData3Name$(id)
 	Case 11
 		Return "Source Y"
 	Case 12
-		Return "Pitch"
+		Return "TargetPitch"
 	Case 51
 		Return "Obsolete"
 	Case 21
@@ -23559,7 +23559,7 @@ Function GetCMDData4Name$(id)
 	Case 7
 		Return "PlayerYaw"
 	Case 12
-		Return "Pitch Step"
+		Return "MaxPitchStep"
 	Case 41,42
 		Return "Dest Y"
 	Case 51
@@ -23582,7 +23582,7 @@ Function GetCmdData1ValueName$(Cmd, Data1)
 		If Data1=0
 			Return "No Change"
 		Else
-			Return Data1
+			Return Data1+"%"
 		EndIf
 	Case 13
 		Return GetWeatherName$(Data1)
@@ -23601,7 +23601,7 @@ Function GetCmdData2ValueName$(Cmd, Data2)
 		If Data2=0
 			Return "Instant"
 		Else
-			Return Data2
+			Return Data2+"%"
 		EndIf
 	Case 52
 		Return Data2+"/"+GetMovementTypeString$(Data2)
@@ -23627,7 +23627,7 @@ Function GetCmdData3ValueName$(Cmd, Data2, Data3)
 		If Data3=0
 			Return "No Change"
 		Else
-			Return Data3
+			Return Data3+" kHz"
 		EndIf
 	Default
 		Return Data3
@@ -23645,7 +23645,7 @@ Function GetCmdData4ValueName$(Cmd, Data4)
 		If Data4=0
 			Return "Instant"
 		Else
-			Return Data4
+			Return Data4+" kHz"
 		EndIf
 	Case 51
 		Return Data4+"/"+GetMovementTypeString$(Data4)
