@@ -1033,6 +1033,8 @@ EntityAlpha s,0.5
 ;Global CursorMesh, CursorMesh2
 Dim CursorMesh(3)
 Dim CursorMesh2(3)
+Dim BrushMeshAtZero(100,100)
+Dim BrushMeshAtNonZero(100,100)
 ; MousePlane
 Global MousePlane=CreateMesh()
 MouseSurface=CreateSurface(MousePlane)
@@ -2034,6 +2036,22 @@ Function InitializeGraphicsEntities()
 		ScaleMesh CursorMeshRegion,.5,0.1,.5
 		AddMesh CursorMeshRegion,CursorMesh(i)
 		FreeEntity CursorMeshRegion
+	Next
+	
+	For i=0 To 100
+		For j=0 To 100
+			BrushMeshAtZero(i,j)=CreateCube()
+			ScaleMesh BrushMeshAtZero(i,j),.5,0.1,.5
+			EntityAlpha BrushMeshAtZero(i,j),.3
+			PositionEntity BrushMeshAtZero(i,j),i,0,-j
+			HideEntity BrushMeshAtZero(i,j)
+			
+			BrushMeshAtNonZero(i,j)=CreateCube()
+			ScaleMesh BrushMeshAtNonZero(i,j),.5,0.1,.5
+			EntityAlpha BrushMeshAtNonZero(i,j),.3
+			PositionEntity BrushMeshAtNonZero(i,j),i,0,-j
+			HideEntity BrushMeshAtNonZero(i,j)
+		Next
 	Next
 	
 	CurrentObjectMarkerMesh=CreateCylinder()
