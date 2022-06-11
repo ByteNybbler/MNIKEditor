@@ -23,6 +23,7 @@
 * Page down: Page down on either the LV or DG column, depending on which one the mouse is hovering over.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
+* Ctrl+T: Save+Test.
 
 ## LEVEL EDITOR
 

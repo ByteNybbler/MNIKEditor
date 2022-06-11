@@ -20827,6 +20827,7 @@ Function MasterMainLoop()
 
 		EndIf
 		
+		; SAVE+TEST
 		If MouseY()>550 And MouseX()>400 And MouseX()<600
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
@@ -20877,7 +20878,7 @@ End Function
 
 Function MasterAdvancedLoop()
 
-	If KeyDown(157) And KeyDown(20)
+	If CtrlDown() And KeyDown(20) ; Ctrl+T
 		StartTestMode()
 	EndIf
 	
