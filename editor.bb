@@ -5204,6 +5204,7 @@ Function EditorLocalControls()
 				Color 255,255,255
 				Print "Enter texture prefix (leave blank to disable texture prefix): "
 				TexturePrefix$=Input$("")
+				ReturnKeyReleased=False
 			EndIf
 		EndIf
 
