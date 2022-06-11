@@ -1916,7 +1916,7 @@ Until False ;KeyDown(1) ; escape
 
 
 
-End
+EndApplication()
 
 Function OnRegainFocus()
 
@@ -2199,6 +2199,19 @@ Function FinishDrawing()
 	EndIf
 	
 	Flip
+
+End Function
+
+
+
+Function EndApplication()
+
+	Color 0,0,0
+	Rect 0,0,800,600
+	
+	Flip
+
+	End
 
 End Function
 
@@ -17897,6 +17910,9 @@ End Function
 
 Function AccessLevel(levelnumber)
 
+	RestoreOriginalMaster()
+	RestoreOriginal1Wlv()
+
 	WhereWeEndedUpAlpha#=0.0
 
 	If LevelExists(levelnumber)=True
@@ -20324,6 +20340,9 @@ End Function
 
 Function ResumeMaster()
 
+	RestoreOriginalMaster()
+	RestoreOriginal1Wlv()
+
 	SetEditorMode(8)
 	
 	CopyingLevel=StateNotSpecial
@@ -22041,7 +22060,7 @@ Function StartTestMode()
 	
 	CloseFile file
 	ExecFile ("wg.exe")
-	End
+	EndApplication()
 End Function
 
 Const OriginalMasterDat$="__master_ORIGINAL__.bak"
@@ -22049,6 +22068,9 @@ Const Original1Wlv$="__1_ORIGINAL__.bak"
 
 ; This is hacky, but it should work regardless of the player executable's version.
 Function StartTestModeAt(level,x,y)
+
+	RestoreOriginalMaster()
+	RestoreOriginal1Wlv()
 	
 	SaveMasterFile()
 	DuplicateMaster("master",OriginalMasterDat$)
