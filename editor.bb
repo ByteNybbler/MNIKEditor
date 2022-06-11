@@ -3059,7 +3059,7 @@ Function GenerateBrushSurface()
 	If BrushCursorX<>-1 And BrushCursorY<>-1
 		If BrushMode=BrushModeFill
 			; recalculate flood fill preview region
-		ElseIf BrushMode=BrushModeNormal
+		ElseIf BrushMode=BrushModeNormal Or BrushMode=BrushModeCustom
 			BrushXStart=BrushCursorX-BrushWidth/2
 			BrushYStart=BrushCursorY-BrushHeight/2
 			For i=0 To BrushWidth-1
