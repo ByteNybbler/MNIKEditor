@@ -241,7 +241,25 @@ Repeat
 Until winningcondition$(nofwinningconditions-1)="Done"
 nofwinningconditions=nofwinningconditions-1
 
-Global CurrentLevelNumber
+Global CurrentLevelNumber=0
+
+; Use a ring buffer to track which wlvs have been visited.
+Const PreviousLevelNumberBufferSize=100
+; Waste a slot in the buffer to differentiate between empty and full states.
+; The alternative is using a bool, but since bools and ints seem to be the same type in Blitz and thus the same size, there's no reason to put forth the implementation effort.
+Const PreviousLevelNumberBufferMax=PreviousLevelNumberBufferSize
+Dim PreviousLevelNumberBuffer(PreviousLevelNumberBufferMax)
+Global PreviousLevelNumberBufferStart
+Global PreviousLevelNumberBufferCurrent
+Global OpenedFirstLevelYet ; This is necessary to prevent CurrentLevelNumber's initial value from being added to the ring buffer.
+
+Function ResetPreviousLevelNumberBuffer()
+
+	PreviousLevelNumberBufferStart=0
+	PreviousLevelNumberBufferCurrent=0
+	OpenedFirstLevelYet=False
+
+End Function
 
 Global ShowingError=False
 Global UsingWireFrame=False
@@ -4865,6 +4883,10 @@ Function EditorLocalControls()
 		If AskToSaveLevelAndExit()
 			AccessLevelAtCenter(InputInt("Enter wlv number to open: "))
 		EndIf
+	EndIf
+	
+	If CtrlDown() And KeyPressed(14) ; Ctrl+Backspace
+		TryPopPreviousLevel()
 	EndIf
 	
 	; More button / Page switch button
@@ -17411,9 +17433,52 @@ Function AccessLevelAtCenter(levelnumber)
 End Function
 
 
+Function SetCurrentLevelNumber(levelnumber)
+
+	If OpenedFirstLevelYet And CurrentLevelNumber<>levelnumber
+		; Add the current level number to the ring buffer that's tracking previous level numbers.
+		PreviousLevelNumberBuffer(PreviousLevelNumberBufferCurrent)=CurrentLevelNumber
+		If PreviousLevelNumberBufferCurrent=PreviousLevelNumberBufferMax
+			PreviousLevelNumberBufferCurrent=0
+		Else
+			PreviousLevelNumberBufferCurrent=PreviousLevelNumberBufferCurrent+1
+		EndIf
+		If PreviousLevelNumberBufferCurrent=PreviousLevelNumberBufferStart
+			If PreviousLevelNumberBufferStart=PreviousLevelNumberBufferMax
+				PreviousLevelNumberBufferStart=0
+			Else
+				PreviousLevelNumberBufferStart=PreviousLevelNumberBufferStart+1
+			EndIf
+		EndIf
+	Else
+		OpenedFirstLevelYet=True
+	EndIf
+	
+	CurrentLevelNumber=levelnumber
+
+End Function
+
+
+Function TryPopPreviousLevel()
+
+	If PreviousLevelNumberBufferStart<>PreviousLevelNumberBufferCurrent
+		If AskToSaveLevelAndExit()
+			If PreviousLevelNumberBufferCurrent=0
+				PreviousLevelNumberBufferCurrent=PreviousLevelNumberBufferMax
+			Else
+				PreviousLevelNumberBufferCurrent=PreviousLevelNumberBufferCurrent-1
+			EndIf
+			CurrentLevelNumber=PreviousLevelNumberBuffer(PreviousLevelNumberBufferCurrent)
+			AccessLevelAtCenter(CurrentLevelNumber)
+		EndIf
+	EndIf
+
+End Function
+
+
 Function LoadLevel(levelnumber)
 
-	CurrentLevelNumber=levelnumber
+	SetCurrentLevelNumber(levelnumber)
 
 	resetlevel()
 	
@@ -17744,7 +17809,7 @@ End Function
 Function NewLevel(levelnumber)
 
 	; new level
-	CurrentLevelNumber=levelnumber
+	SetCurrentLevelNumber(levelnumber)
 	resetlevel()
 	; clear current objects 
 	
@@ -20093,6 +20158,8 @@ End Function
 Function StartMaster()
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
+	
+	ResetPreviousLevelNumberBuffer()
 
 	SetEditorMode(8)
 	
