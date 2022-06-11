@@ -22625,7 +22625,7 @@ Function DialogMainLoop()
 	
 	
 	DisplayText2("Adventure: "+Left$(AdventureFileName$,20),0,0,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2("Dialog #"+Str$(CurrentDialog),34,0,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("Dialog #"+Str$(CurrentDialog),36-Len(Str$(CurrentDialog)),0,TextMenusR,TextMenusG,TextMenusB)
 	
 	
 	
