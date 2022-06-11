@@ -1072,8 +1072,9 @@ End Function
 Function AddTileToBrushSurfaceActual(i,j)
 
 	AddSquareToBrushSurface(i,j,0.0)
-	If LevelTileExtrusion(i,j)<>0.0
-		AddSquareToBrushSurface(i,j,LevelTileExtrusion(i,j))
+	Y#=LevelTileExtrusion(i,j)+LevelTileHeight(i,j)
+	If Y#<>0.0
+		AddSquareToBrushSurface(i,j,Y#)
 	EndIf
 
 End Function
