@@ -3168,25 +3168,12 @@ Function TryLevelGoto(i,x,y,D1,D2,D3)
 		If ToLevel=CurrentLevelNumber
 			PositionCameraInLevel(ObjectData(i,D2),ObjectData(i,D3))
 			SetWhereWeEndedUpMarker(ObjectData(i,D2),ObjectData(i,D3))
-		ElseIf UnsavedChanges
-			FlushKeys
-			SetupWarning()
-			ReturnKeyReleased=False
-			Print("This level has unsaved changes. Type R to save and exit.")
-			Typed$=Upper$(Input$("Type E to exit without saving: "))
-			If Typed$="R"
-				If SaveLevelAndExit()
-					; Destination level might have changed from possible object update event, so we read from Data1 again.
-					EndUpAt(ObjectData(i,D1),ObjectData(i,D2),ObjectData(i,D3))
-				EndIf
-			ElseIf Typed$="E"
-				EndUpAt(ToLevel,ObjectData(i,D2),ObjectData(i,D3))
-			EndIf
-		Else
-			EndUpAt(ToLevel,ObjectData(i,D2),ObjectData(i,D3))
+		ElseIf AskToSaveLevelAndExit()
+			; Destination level might have changed from possible object update event, so we read from Data1 again.
+			EndUpAt(ObjectData(i,D1),ObjectData(i,D2),ObjectData(i,D3))
 		EndIf
 	EndIf
-				
+
 End Function
 
 
@@ -5416,16 +5403,60 @@ Function EditorLocalControls()
 End Function
 
 
-; Returns True if saved successfully.
-Function SaveLevelAndExit()
-
-	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
+; Returns True if the user chooses to proceed, with or without saving.
+Function AskToSaveLevelAndExit()
+	
+	If UnsavedChanges
+		FlushKeys
+		SetupWarning()
+		ReturnKeyReleased=False
+		Print("This level has unsaved changes. Type R to save and exit.")
+		Typed$=Upper$(Input$("Type E to exit without saving: "))
+		ReturnKeyReleased=False
+		If Typed$="R"
+			If SaveLevelAndExit()
+				Return True
+			Else
+				Return False
+			EndIf
+		ElseIf Typed$="E"
+			Return True
+		Else
+			Return False
+		EndIf
+	ElseIf CurrentObjectCanBeUpdated()
 		FlushKeys
 		SetupWarning()
 		Print("You have not hit the Update button on the selected object.")
-		;Confirm$=Input$("Are you sure you want to exit? Type Y to confirm: ")
-		Print("Type E to save and exit without updating.")
-		Confirm$=Upper$(Input$("Type R to update the object and save and exit: "))
+		Print("Type R to update the object and save and exit.")
+		Confirm$=Upper$(Input$("Type E to exit without updating: "))
+		ReturnKeyReleased=False
+		If Confirm="E"
+			Return True
+		ElseIf Confirm="R"
+			UpdateCurrentGrabbedObject()
+			SaveLevel()
+			Return True
+		Else
+			Return False
+		EndIf
+	Else
+		Return True
+	EndIf
+
+End Function
+
+
+; Returns True if the user chose to save.
+Function SaveLevelAndExit()
+
+	If CurrentObjectCanBeUpdated()
+		FlushKeys
+		SetupWarning()
+		Print("You have not hit the Update button on the selected object.")
+		Print("Type R to update the object and save and exit.")
+		Confirm$=Upper$(Input$("Type E to save and exit without updating: "))
+		ReturnKeyReleased=False
 		If Confirm="E"
 			SaveLevel()
 			Return True
@@ -5433,12 +5464,20 @@ Function SaveLevelAndExit()
 			UpdateCurrentGrabbedObject()
 			SaveLevel()
 			Return True
+		Else
+			Return False
 		EndIf
 	Else
 		SaveLevel()
 		Return True
 	EndIf
-	Return False
+
+End Function
+
+
+Function CurrentObjectCanBeUpdated()
+
+	Return CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
 
 End Function
 
