@@ -295,7 +295,7 @@ Const BrushModeColumn=9
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
 Const BrushModeTestLevel=-2
 
-Const MaxBrushMode=9
+Const MaxBrushMode=7
 Global BrushMode=BrushModeNormal
 
 Const DupeModeNone=0
