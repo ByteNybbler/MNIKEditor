@@ -8967,6 +8967,11 @@ Function ResetSimulatedQuantities()
 			ControlFlipbridge(i)
 		EndIf
 	Next
+	
+	; This solves the flickering issue with objects that change scale in their control code.
+	If SimulationLevel>=1
+		ControlObjects()
+	EndIf
 
 End Function
 
