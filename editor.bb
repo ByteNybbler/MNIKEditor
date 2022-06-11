@@ -4859,6 +4859,10 @@ Function EditorLocalControls()
 		Next
 	EndIf
 	
+	If HotkeySave()
+		SaveLevel()
+	EndIf
+	
 	; More button / Page switch button
 	If mx>=StartX And Mx<StartX+80 And my>=StartY And my<StartY+20
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
@@ -5701,6 +5705,12 @@ End Function
 Function FindAndReplaceKeyDown()
 
 	Return KeyDown(41) ; tilde
+
+End Function
+
+Function HotkeySave()
+
+	Return CtrlDown() And KeyPressed(31) ; Ctrl+S
 
 End Function
 
@@ -17026,6 +17036,10 @@ Function CameraControls()
 	If Target=-1
 		Return
 	EndIf
+	
+	If CtrlDown()
+		Return
+	EndIf
 
 	If KeyDown(75) Or KeyDown(203) Or KeyDown(30) ; numpad 4 or left arrow or A
 			
@@ -20215,8 +20229,12 @@ End Function
 
 Function MasterMainLoop()
 	
-	If (KeyDown(157) Or KeyDown(29)) And KeyDown(20)
+	If CtrlDown() And KeyDown(20) ; Ctrl+T
 		StartTestMode()
+	EndIf
+	
+	If HotkeySave()
+		SaveMasterFile()
 	EndIf
 	
 	dialogtimer=dialogtimer+1
@@ -22437,6 +22455,10 @@ Function DialogMainLoop()
 	
 	adj=1
 	If ShiftDown() Then adj=10
+	
+	If HotkeySave()
+		SaveDialogFile()
+	EndIf
 	
 	
 	DisplayText2("Adventure: "+Left$(AdventureFileName$,20),0,0,TextMenusR,TextMenusG,TextMenusB)
