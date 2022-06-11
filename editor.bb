@@ -294,6 +294,35 @@ Global BorderExpandOption=0 ;0-current, 1-duplicate
 
 Global PreventPlacingObjectsOutsideLevel=True
 
+Const ToolbarDensityX=250
+Const ToolbarDensityY=520
+
+Const ToolbarElevateX=250
+Const ToolbarElevateY=565
+
+Const ToolbarShowMarkersX=450
+Const ToolbarShowMarkersY=520
+
+Const ToolbarShowObjectsX=450
+Const ToolbarShowObjectsY=565
+
+Const ToolbarShowLogicX=550
+Const ToolbarShowLogicY=520
+
+Const ToolbarShowLevelX=550
+Const ToolbarShowLevelY=565
+
+Const ToolbarSimulationLevelX=650
+Const ToolbarSimulationLevelY=565
+
+Function IsMouseOverToolbarItem(x,y)
+
+	mx=MouseX()
+	my=MouseY()
+	Return mx>=x-50 And mx<x+50 And my>y And my<y+30
+
+End Function
+
 ; The position of the level editor cursor.
 Global BrushCursorX=-1
 Global BrushCursorY=-1
@@ -2416,40 +2445,45 @@ Function EditorMainLoop()
 	Color TextLevelR,TextLevelG,TextLevelB
 	
 	If ShowObjectPositions=True
-		Text 200,520,"    SHOW"
+		Line1$="SHOW"
 	Else
-		Text 200,520,"    HIDE"
+		Line1$="HIDE"
 	EndIf
-	Text 200+4,535,"  MARKERS"
+	CenteredText(ToolbarShowMarkersX,ToolbarShowMarkersY,Line1$)
+	CenteredText(ToolbarShowMarkersX,ToolbarShowMarkersY+15,"MARKERS")
 	
 	If ShowObjectMesh=0
-		Text 200,565,"    HIDE"
+		Line1$="HIDE"
 	Else
-		Text 200,565,"    SHOW"
+		Line1$="SHOW"
 	EndIf
 	If ShowObjectMesh=ShowObjectMeshIndices
-		Text 200+4,580,"  INDICES"
+		Line2$="INDICES"
 	ElseIf ShowObjectMesh=ShowObjectMeshIds
-		Text 200+4,580,"    IDS"
+		Line2$="IDS"
 	ElseIf ShowObjectMesh=ShowObjectMeshCount
-		Text 200,580,"   COUNTS"
+		Line2$="COUNTS"
 	Else
-		Text 200+4,580,"  OBJECTS"
+		Line2$="OBJECTS"
 	EndIf
+	CenteredText(ToolbarShowObjectsX,ToolbarShowObjectsY,Line1$)
+	CenteredText(ToolbarShowObjectsX,ToolbarShowObjectsY+15,Line2$)
 
 	If ShowLogicMesh=True
-		Text 300,520,"    SHOW"
+		Line1$="SHOW"
 	Else
-		Text 300,520,"    HIDE"
+		Line1$="HIDE"
 	EndIf
-	Text 300+4,535,"   LOGIC"
+	CenteredText(ToolbarShowLogicX,ToolbarShowLogicY,Line1$)
+	CenteredText(ToolbarShowLogicX,ToolbarShowLogicY+15,"LOGIC")
 	
 	If ShowLevelMesh=True
-		Text 300,565,"    SHOW"
+		Line1$="SHOW"
 	Else
-		Text 300,565,"    HIDE"
+		Line1$="HIDE"
 	EndIf
-	Text 300+4,580,"   LEVEL"
+	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY,Line1$)
+	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY+15,"LEVEL")
 
 	
 ;	Text 400,520,"   RESIZE"
@@ -2472,8 +2506,8 @@ Function EditorMainLoop()
 	;	Text 400+4,580,LevelEdgeStyle
 	;EndIf
 	
-	Text 400,565," SIMULATION"
-	Text 400+4,580,"  LEVEL "+SimulationLevel
+	CenteredText(ToolbarSimulationLevelX,ToolbarSimulationLevelY,"SIMULATION")
+	CenteredText(ToolbarSimulationLevelX,ToolbarSimulationLevelY+15,"LEVEL "+SimulationLevel)
 	
 	;Text 500,520,"   WIDESCREEN"
 	;If WidescreenRangeLevel=0
@@ -2487,7 +2521,8 @@ Function EditorMainLoop()
 	;Text 500,520,"   BRUSH"
 	;Text 500,535,"   SIZE "+BrushSize
 	
-	Text 500,565,"   ELEVATE"
+	;Text 500,565,"   ELEVATE"
+	CenteredText(ToolbarElevateX,ToolbarElevateY,"ELEVATE")
 	
 	If IDFilterEnabled
 		Color 255,155,0
@@ -2507,8 +2542,8 @@ Function EditorMainLoop()
 	If PlacementDensity#<1.0
 		Color 255,155,0
 	EndIf
-	CenteredText(650,565,"DENSITY")
-	CenteredText(650,580,PlacementDensity#)
+	CenteredText(ToolbarDensityX,ToolbarDensityY,"DENSITY")
+	CenteredText(ToolbarDensityX,ToolbarDensityY+15,PlacementDensity#)
 	
 	Line1$="   EXIT   "
 	If MouseX()>700 And MouseY()>515 And MouseY()<555
@@ -5223,182 +5258,151 @@ Function EditorLocalControls()
 
 	EndIf
 	
-
-	If MX>=200 And MX<300
+	If IsMouseOverToolbarItem(ToolbarShowMarkersX,ToolbarShowMarkersY)
 		; show/hide markers
-		If my>520 And my<550
-			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
-				ShowObjectPositions=Not ShowObjectPositions
-				If ShowObjectPositions=True 
-					For j=0 To NofObjects-1
-						ShowEntity ObjectPositionMarker(j)
-					Next
-				EndIf
-				If ShowObjectPositions=False
-					For j=0 To NofObjects-1
-						HideEntity ObjectPositionMarker(j)
-					Next
-				EndIf
-	
-				
-				If MouseScroll=0 Then Delay 100
-			EndIf
-		; show/hide objects
-		Else If my>565 And my<595
-			NewValue=AdjustInt("Enter object mesh visibility level: ", ShowObjectMesh, 1, 10, 100)
-			If NewValue>ShowObjectMeshMax
-				NewValue=0
-			ElseIf NewValue<0
-				NewValue=ShowObjectMeshMax
-			EndIf
-			WasChanged=ShowObjectMesh<>NewValue
-			If WasChanged
-				ShowObjectMesh=NewValue
+		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
+			ShowObjectPositions=Not ShowObjectPositions
+			If ShowObjectPositions=True 
 				For j=0 To NofObjects-1
-					UpdateObjectVisibility(j)
+					ShowEntity ObjectPositionMarker(j)
 				Next
 			EndIf
-		EndIf
+			If ShowObjectPositions=False
+				For j=0 To NofObjects-1
+					HideEntity ObjectPositionMarker(j)
+				Next
+			EndIf
 
-	EndIf
-	
-	
-	If MX>=300 And MX<400
-		; show/hide logic
-		If my>520 And my<550
-			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
-				ShowLogicMesh=Not ShowLogicMesh
-				If ShowLogicMesh=True 
-					For j=0 To Levelheight-1
-						ShowEntity LogicMesh(j)
-					Next
-				EndIf
-				If ShowLogicMesh=False 
-					For j=0 To Levelheight-1
-						HideEntity LogicMesh(j)
-					Next
-				EndIf
-	
-				
-				If MouseScroll=0 Then Delay 100
-			EndIf
- 		 ; show/hide level
-		 Else If my>565 And my<595
-			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
-				ShowLevelMesh=Not ShowLevelMesh
-				If ShowLevelMesh=True 
-					For j=0 To Levelheight-1
-						ShowEntity LEvelMesh(j)
-					Next
-				EndIf
-				If ShowLevelMesh=False 
-					For j=0 To Levelheight-1
-						HideEntity LEvelMesh(j)
-					Next
-				EndIf
-	
-				
-				If MouseScroll=0 Then Delay 100
-			EndIf
+			
+			If MouseScroll=0 Then Delay 100
 		EndIf
 	EndIf
 	
-	If MX>=400 And MX<500
-		; border expand
-;		If my>520 And my<550
-;			If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
-;				BorderExpandOption=Not BorderExpandOption
-;				
-;				
-;				If MouseScroll=0 Then Delay 100
-;			EndIf
-;		EndIf
-		
-		; simulation level
-		If my>565 And my<595
-			NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, 150)
-			If NewValue>SimulationLevelMax
-				NewValue=0
-			ElseIf NewValue<0
-				NewValue=SimulationLevelMax
-			EndIf
-			WasChanged=NewValue<>SimulationLevel
-			SimulationLevel=NewValue
-			If WasChanged
-				; move objects back to their default positions
-				ResetSimulatedQuantities()
-				For i=0 To NofObjects-1
-					SimulateObjectPosition(i)
-					SimulateObjectRotation(i)
-					SimulateObjectScale(i)
-					
-					UpdateObjectVisibility(i)
-					UpdateObjectAnimation(i)
+	If IsMouseOverToolbarItem(ToolbarShowObjectsX,ToolbarShowObjectsY)
+		; show/hide objects
+		NewValue=AdjustInt("Enter object mesh visibility level: ", ShowObjectMesh, 1, 10, 100)
+		If NewValue>ShowObjectMeshMax
+			NewValue=0
+		ElseIf NewValue<0
+			NewValue=ShowObjectMeshMax
+		EndIf
+		WasChanged=ShowObjectMesh<>NewValue
+		If WasChanged
+			ShowObjectMesh=NewValue
+			For j=0 To NofObjects-1
+				UpdateObjectVisibility(j)
+			Next
+		EndIf
+	EndIf
+	
+	
+	If IsMouseOverToolbarItem(ToolbarShowLogicX,ToolbarShowLogicY)
+		; show/hide logic
+		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
+			ShowLogicMesh=Not ShowLogicMesh
+			If ShowLogicMesh=True 
+				For j=0 To Levelheight-1
+					ShowEntity LogicMesh(j)
 				Next
+			EndIf
+			If ShowLogicMesh=False 
+				For j=0 To Levelheight-1
+					HideEntity LogicMesh(j)
+				Next
+			EndIf
+
+			
+			If MouseScroll=0 Then Delay 100
+		EndIf
+	EndIf
+	
+	If IsMouseOverToolbarItem(ToolbarShowLevelX,ToolbarShowLevelY)
+ 		 ; show/hide level
+		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
+			ShowLevelMesh=Not ShowLevelMesh
+			If ShowLevelMesh=True 
+				For j=0 To Levelheight-1
+					ShowEntity LEvelMesh(j)
+				Next
+			EndIf
+			If ShowLevelMesh=False 
+				For j=0 To Levelheight-1
+					HideEntity LEvelMesh(j)
+				Next
+			EndIf
+
+			
+			If MouseScroll=0 Then Delay 100
+		EndIf
+	EndIf
+	
+	; simulation level
+	If IsMouseOverToolbarItem(ToolbarSimulationLevelX,ToolbarSimulationLevelY)
+		NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, 150)
+		If NewValue>SimulationLevelMax
+			NewValue=0
+		ElseIf NewValue<0
+			NewValue=SimulationLevelMax
+		EndIf
+		WasChanged=NewValue<>SimulationLevel
+		SimulationLevel=NewValue
+		If WasChanged
+			; move objects back to their default positions
+			ResetSimulatedQuantities()
+			For i=0 To NofObjects-1
+				SimulateObjectPosition(i)
+				SimulateObjectRotation(i)
+				SimulateObjectScale(i)
 				
-				If SimulationLevel>=3
-					For j=0 To LevelHeight-1
-						RecalculateNormals(j)
-					Next
-				EndIf
-				
-				LightingWasChanged()
+				UpdateObjectVisibility(i)
+				UpdateObjectAnimation(i)
+			Next
+			
+			If SimulationLevel>=3
+				For j=0 To LevelHeight-1
+					RecalculateNormals(j)
+				Next
 			EndIf
 			
-;			If LeftMouse=True And LeftMouseReleased=True
-;				LevelEdgeStyle = LevelEdgeStyle+1				
-;				Delay 100
-;			EndIf
-;			If RightMouse=True And RightMouseReleased=True
-;				LevelEdgeStyle = LevelEdgeStyle-1				
-;				Delay 100
-;			EndIf
+			LightingWasChanged()
 		EndIf
-
 	EndIf
 	
-	If MX>=500 And MX<600
-		; step per placement/tile
-		If my>520 And my<550
-			;
-		EndIf
-		
+	If IsMouseOverToolbarItem(ToolbarElevateX,ToolbarElevateY)
 		; elevate
-		If my>565 And my<595
-			If LeftMouse=True And LeftMouseReleased=True
-				SetupPrompt()
-				Print("Amount to shift level up/down (or type X to skip to Xtrude")
-				Amount$=Input$("Logics): ")
-				ReturnKeyReleased=False
-				Adjustment#=Amount
-				If Amount$="x" Or Amount$="X"
+		If LeftMouse=True And LeftMouseReleased=True
+			SetupPrompt()
+			Print("Amount to shift level up/down (or type X to skip to Xtrude")
+			Amount$=Input$("Logics): ")
+			ReturnKeyReleased=False
+			Adjustment#=Amount
+			If Amount$="x" Or Amount$="X"
+				XtrudeLogics()
+			ElseIf Adjustment#<>0.0
+				For i=0 To LevelWidth-1
+					For j=0 To LevelHeight-1
+						LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
+						WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
+						;UpdateLevelTile(i,j)
+						;UpdateWaterTile(i,j)
+					Next
+				Next
+				;ReBuildLevelModel()
+				For i=0 To LevelWidth-1
+					For j=0 To LevelHeight-1
+						UpdateTile(i,j)
+					Next
+				Next
+				For i=0 To NofObjects-1
+					ObjectZAdjust(i)=ObjectZAdjust(i)+Adjustment
+					UpdateObjectPosition(i)
+				Next
+				CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
+				BuildCurrentObjectModel()
+				SomeObjectWasChanged()
+				
+				If GetConfirmation("Do you want to set Xtrude logics?")
 					XtrudeLogics()
-				ElseIf Adjustment#<>0.0
-					For i=0 To LevelWidth-1
-						For j=0 To LevelHeight-1
-							LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
-							WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
-							;UpdateLevelTile(i,j)
-							;UpdateWaterTile(i,j)
-						Next
-					Next
-					;ReBuildLevelModel()
-					For i=0 To LevelWidth-1
-						For j=0 To LevelHeight-1
-							UpdateTile(i,j)
-						Next
-					Next
-					For i=0 To NofObjects-1
-						ObjectZAdjust(i)=ObjectZAdjust(i)+Adjustment
-						UpdateObjectPosition(i)
-					Next
-					CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
-					BuildCurrentObjectModel()
-					SomeObjectWasChanged()
-					
-					If GetConfirmation("Do you want to set Xtrude logics?")
-						XtrudeLogics()
-					EndIf
 				EndIf
 			EndIf
 		EndIf
@@ -5432,11 +5436,13 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 		
+		
+	EndIf
+	
+	If IsMouseOverToolbarItem(ToolbarDensityX,ToolbarDensityY)
 		; placement density
-		If my>565 And my<595
-			Value#=AdjustFloat#("Enter placement density (0.0 to 1.0): ",PlacementDensity#,0.05,0.2,100)
-			SetPlacementDensity(Value#)
-		EndIf
+		Value#=AdjustFloat#("Enter placement density (0.0 to 1.0): ",PlacementDensity#,0.05,0.2,100)
+		SetPlacementDensity(Value#)
 	EndIf
 	
 	If LeftMouse=True And LeftMouseReleased=True
