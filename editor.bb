@@ -5403,9 +5403,9 @@ Function EditorLocalControls()
 		; brush size
 		If my>520 And my<550
 			If ShiftDown()
-				Adj=20
+				Adj=10
 			Else
-				Adj=2
+				Adj=1
 			EndIf
 			ShouldChangeBrushWidth=my<535 Or mx<160
 			ShouldChangeBrushHeight=my<535 Or mx>140
