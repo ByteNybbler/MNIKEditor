@@ -36,6 +36,7 @@
 * Delete: Delete all objects covered by the cursor brush. If the mouse is hovering over the OBJECTS menu, this will only delete the currently-grabbed object. This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one. Pressing Delete while creating a block in block mode will delete all objects in the selected region. Pressing Delete in fill mode will delete all objects in the selected tile region.
 * Enter: Toggle custom brush mode. The cursor brush will be purple while a custom brush is active. Entering custom brush mode will copy all objects or tiles that are being hovered over by the brush, depending on whether the editor is in object mode or tile mode. This lets you paste those objects or tiles anywhere else. Press enter again to exit custom brush mode. Try it out with a large brush size!
 * R: Update the currently-grabbed object. This does the same thing as pressing the Update button.
+* Tab: Switch between object mode and tile mode.
 * G: Pressing G when hovering the cursor over a LevelExit follows that LevelExit to its destination. A yellow marker will briefly appear at the destination coordinates when the destination level loads. This also works with general commands and cuboids.
 * F6: Toggle orthographic projection.
 * F7: Toggle wireframe mode.

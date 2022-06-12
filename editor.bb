@@ -2021,6 +2021,8 @@ Function OnRegainFocus()
 	ForceKeyRelease(29,"left ctrl")
 	ForceKeyRelease(157,"right ctrl")
 	
+	;ForceKeyRelease(15,"tab")
+	
 	ReadColors()
 
 End Function
@@ -5175,6 +5177,14 @@ Function EditorLocalControls()
 				TryLevelGoto(i,BrushCursorX,BrushCursorY,3,4,5)
 			EndIf
 		Next
+	EndIf
+	
+	If KeyPressed(15) ; tab key
+		If EditorMode=EditorModeTile
+			SetEditorMode(EditorModeObject)
+		ElseIf EditorMode=EditorModeObject
+			SetEditorMode(EditorModeTile)
+		EndIf
 	EndIf
 	
 	If HotkeySave()
