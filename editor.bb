@@ -3164,19 +3164,10 @@ End Function
 
 Function FloodFillVisitLevelTile(nextx,nexty)
 
-;	If LevelTileVisited(nextx,nexty)=False And LevelTileMatchesTarget(nextx,nexty)
-;		LevelTileVisited(nextx,nexty)=True
-;		FloodStackX(FloodElementCount)=nextx
-;		FloodStackY(FloodElementCount)=nexty
-;		FloodElementCount=FloodElementCount+1
-;	EndIf
-
 	If LevelTileMatchesTarget(nextx,nexty)
 		If LevelTileVisited(nextx,nexty)=False
 			LevelTileVisited(nextx,nexty)=True
-			FloodStackX(FloodElementCount)=nextx
-			FloodStackY(FloodElementCount)=nexty
-			FloodElementCount=FloodElementCount+1
+			FloodFillPlanToVisitLevelTile(nextx,nexty)
 		EndIf
 	Else
 		FloodOutsideAdjacent=True
@@ -3187,16 +3178,23 @@ End Function
 
 Function FloodFillVisitLevelTileOutline(nextx,nexty)
 
-	If LevelTileMatchesTarget(nextx,nexty)
-		If LevelTileVisited(nextx,nexty)=False
-			LevelTileVisited(nextx,nexty)=True
-			FloodStackX(FloodElementCount)=nextx
-			FloodStackY(FloodElementCount)=nexty
-			FloodElementCount=FloodElementCount+1
+	If LevelTileVisited(nextx,nexty)=False
+		LevelTileVisited(nextx,nexty)=True
+		If LevelTileMatchesTarget(nextx,nexty)
+			FloodFillPlanToVisitLevelTile(nextx,nexty)
+		Else
+			AddToFloodedStack(nextx,nexty)
 		EndIf
-	Else
-		AddToFloodedStack(nextx,nexty)
 	EndIf
+
+End Function
+
+
+Function FloodFillPlanToVisitLevelTile(nextx,nexty)
+
+	FloodStackX(FloodElementCount)=nextx
+	FloodStackY(FloodElementCount)=nexty
+	FloodElementCount=FloodElementCount+1
 
 End Function
 
@@ -3274,18 +3272,10 @@ Function FloodFillOutline(StartX,StartY,IsHard)
 		FloodFillVisitLevelTileOutline(thisx,thisy+1)
 		
 		If IsHard
-			If Not LevelTileMatchesTarget(thisx-1,thisy-1)
-				AddToFloodedStack(thisx-1,thisy-1)
-			EndIf
-			If Not LevelTileMatchesTarget(thisx+1,thisy-1)
-				AddToFloodedStack(thisx+1,thisy-1)
-			EndIf
-			If Not LevelTileMatchesTarget(thisx-1,thisy+1)
-				AddToFloodedStack(thisx-1,thisy+1)
-			EndIf
-			If Not LevelTileMatchesTarget(thisx+1,thisy+1)
-				AddToFloodedStack(thisx+1,thisy+1)
-			EndIf
+			FloodFillVisitLevelTileOutline(thisx-1,thisy-1)
+			FloodFillVisitLevelTileOutline(thisx+1,thisy-1)
+			FloodFillVisitLevelTileOutline(thisx-1,thisy+1)
+			FloodFillVisitLevelTileOutline(thisx+1,thisy+1)
 		EndIf
 	Wend
 
