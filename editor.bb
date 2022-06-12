@@ -4164,7 +4164,7 @@ Function EditorLocalControls()
 	StartX=510
 	StartY=20
 	
-	If MX>=StartX And MX<StartX+200 And MY>=StartY And MY<StartY+220
+	If MX>=StartX And MX<StartX+200 And MY<StartY+220
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 			SetEditorMode(0)
 		EndIf
@@ -5099,6 +5099,17 @@ Function EditorLocalControls()
 	; OBJECTS
 	; *************************************
 	
+	If mx>500 And my>285 And my<455 ;my>305 ;my<430
+		If LeftMouse=True Or RightMouse=True
+			SetEditorMode(3)
+		EndIf
+		If DeleteKey=True And DeleteKeyReleased=True And CurrentGrabbedObject<>-1
+			DeleteKeyReleased=False
+			DeleteObject(CurrentGrabbedObject)
+			SetEditorMode(3)
+		EndIf
+	EndIf
+	
 	StartX=510
 	StartY=305
 	
@@ -5126,17 +5137,6 @@ Function EditorLocalControls()
 	
 	StartX=695
 	StartY=435
-
-	If mx>500 And my>305 And my<455 ;my<430
-		If LeftMouse=True Or RightMouse=True
-			SetEditorMode(3)
-		EndIf
-		If DeleteKey=True And DeleteKeyReleased=True And CurrentGrabbedObject<>-1
-			DeleteKeyReleased=False
-			DeleteObject(CurrentGrabbedObject)
-			SetEditorMode(3)
-		EndIf
-	EndIf
 	
 	; Placed in code before "More" to eat the click before it hits "More".
 	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
