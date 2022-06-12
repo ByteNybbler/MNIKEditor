@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/12/22"
+Global VersionDate$="06/13/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -3073,10 +3073,10 @@ Function BrushCursorOffMap()
 	
 End Function
 
-Function BrushCursorLeftMouseWasPressed()
+Function BrushCursorProbablyModifiedTiles()
 
 	ClearBrushSurface()
-	BrushCursorStateWaschanged()
+	BrushCursorStateWasChanged()
 
 End Function
 
@@ -4015,10 +4015,8 @@ Function EditorLocalControls()
 					EndIf
 					
 					If EditorMode=EditorModeTile
-						BrushCursorStateWasChanged()
+						BrushCursorProbablyModifiedTiles()
 					EndIf
-					
-					BrushCursorLeftMouseWasPressed()
 				EndIf
 				If RightMouse=True And RightMouseReleased=True
 					RightMouseReleased=False
@@ -8775,42 +8773,51 @@ End Function
 
 Function CalculateEffectiveID(Dest)
 
-	;ShowMessage("Calculating effective ID for "+Dest, 50)
-
-	Select ObjectType(Dest)
-	Case 10,20,45,210,281,410,424 ; gate, fire trap, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
-		If ObjectID(Dest)=-1
-			Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
-		EndIf
-	Case 40 ; stepping stone
-		Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)	   
-	Case 280 ; spring
-		Return 500+5*ObjectData(Dest,0)+ObjectData(Dest,1)
-	Case 301 ; rainbow float
-		If ObjectID(Dest)=-1
-			Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)
-		EndIf
-	Case 432 ; moobot
-		If ObjectTileTypeCollision(Dest)=0
-			Return 500+ObjectData(Dest,0)*5+ObjectData(Dest,1)
-		EndIf
-	End Select
-	
-	If ObjectModelName$(Dest)="!Cage" Or ObjectModelName$(Dest)="!FlipBridge" Or ObjectModelName$(Dest)="!Spring" Or ObjectModelName$(Dest)="!ColourGate" Or ObjectModelName$(Dest)="!Transporter" Or ObjectModelName$(Dest)="!Teleport" Or ObjectModelName$(Dest)="!Suctube"
-		If ObjectID(Dest)=-1
-			Return 500+ObjectData(Dest,0)*5+ObjectData(Dest,1)
-		EndIf
-	EndIf
-	If ObjectModelName$(Dest)="!SteppingStone"
-		If ObjectID(Dest)=-1
-			Return 500+(8+ObjectData(Dest,0))*5+ObjectData(Dest,1)
-		EndIf
-	EndIf
-	
-	Return ObjectID(Dest)
+	Return CalculateEffectiveIDWith(ObjectType(Dest),ObjectID(Dest),ObjectData(Dest,0),ObjectData(Dest,1),ObjectTileTypeCollision(Dest),ObjectModelName$(Dest))
 
 End Function
 
+Function CalculateCurrentObjectEffectiveID()
+
+	Return CalculateEffectiveIDWith(CurrentObjectType,CurrentObjectID,CurrentObjectData(0),CurrentObjectData(1),CurrentObjectTileTypeCollision,CurrentObjectModelName$)
+
+End Function
+
+Function CalculateEffectiveIDWith(TargetType,TargetID,Data0,Data1,TargetTileTypeCollision,ModelName$)
+
+	Select TargetType
+	Case 10,20,45,210,281,410,424 ; gate, fire trap, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
+		If TargetID=-1
+			Return 500+5*Data0+Data1
+		EndIf
+	Case 40 ; stepping stone
+		Return 500+(8+Data0)*5+Data1	   
+	Case 280 ; spring
+		Return 500+5*Data0+Data1
+	Case 301 ; rainbow float
+		If TargetID=-1
+			Return 500+(8+Data0)*5+Data1
+		EndIf
+	Case 432 ; moobot
+		If TargetTileTypeCollision=0
+			Return 500+Data0*5+Data1
+		EndIf
+	End Select
+	
+	If ModelName$="!Cage" Or ModelName$="!FlipBridge" Or ModelName$="!Spring" Or ModelName$="!ColourGate" Or ModelName$="!Transporter" Or ModelName$="!Teleport" Or ModelName$="!Suctube"
+		If TargetID=-1
+			Return 500+Data0*5+Data1
+		EndIf
+	EndIf
+	If ModelName$="!SteppingStone"
+		If TargetID=-1
+			Return 500+(8+Data0)*5+Data1
+		EndIf
+	EndIf
+	
+	Return TargetID
+
+End Function
 
 Function ShouldBeInvisibleInGame(Dest)
 
@@ -10342,6 +10349,11 @@ Function HoverOverObjectAdjuster(i)
 		Count=CountObjectTextureNames(CurrentObjectTextureName$)
 		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this TextureName.")
 		
+	Case "ID"
+		EffectiveID=CalculateCurrentObjectEffectiveID()
+		Count=CountObjectEffectiveIDs(EffectiveID)
+		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this effective ID, which is "+EffectiveID+".")
+		
 	End Select
 
 End Function
@@ -11093,7 +11105,12 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=434 ; mothership
 			tex2$="TimerMax"
-		EndIf	
+		EndIf
+		
+		If CurrentObjectType=460 ; BurstFlower
+			tex2$="TimeOffset"
+		EndIf
+		
 		If CurrentObjectType=470 Or CurrentObjectType=471 ; ghost or wraith
 			tex2$="Radius"
 		EndIf
@@ -11322,6 +11339,13 @@ Function DisplayObjectAdjuster(i)
 				tex$="Left"
 			Else If CurrentObjectData(1)=1
 				tex$="Right"
+			EndIf
+		EndIf
+		
+		If CurrentObjectType=460 ; BurstFlower
+			tex2$="BurstProgress"
+			If CurrentObjectData(1)=150
+				tex$="Fire"
 			EndIf
 		EndIf
 		
@@ -17293,6 +17317,20 @@ Function CountObjectTypes(TargetType)
 
 End Function
 
+
+Function CountObjectEffectiveIDs(EffectiveID)
+
+	Count=0
+	For i=0 To NofObjects-1
+		If CalculateEffectiveID(i)=EffectiveID
+			Count=Count+1
+		EndIf
+	Next
+	Return Count
+
+End Function
+
+
 Function CountObjectLogics(TargetType,TargetSubType)
 
 	Count=0
@@ -18171,6 +18209,7 @@ End Function
 Function AccessLevel(levelnumber)
 
 	FloodedElementsClear()
+	BrushCursorProbablyModifiedTiles()
 
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
@@ -26628,12 +26667,48 @@ Function ControlBurstFlower(i)
 	SimulatedObjectXScale(i)=0.3+0.02*Cos(SimulatedObjectData(i,0)*2)
 	SimulatedObjectYScale(i)=0.3+0.02*Cos(SimulatedObjectData(i,0)*2)
 
-	If SimulatedObjectData(i,1)>=0 And Rand(0,100)<2 And ObjectIndigo(i)=0 AddParticle(7,ObjectX(i),0.5,-ObjectY(i),Rand(0,360),0.4,0,0.02,0,Rnd(0,2),.01,0,0,0,50,4)
+	If SimulatedObjectData(i,1)>=0 And Rand(0,100)<2 And ObjectIndigo(i)=0 AddParticle(7,SimulatedObjectX(i),0.5,-SimulatedObjectY(i),Rand(0,360),0.4,0,0.02,0,Rnd(0,2),.01,0,0,0,50,4)
 
-	If SimulatedObjectData(i,1)<0 Then ObjectData(i,1)=ObjectData(i,1)+1
+	If SimulatedObjectData(i,1)<0 Then SimulatedObjectData(i,1)=SimulatedObjectData(i,1)+1
 	
-	;SimulateObjectRotation(i)
-	;SimulateObjectScale(i)
+	x=ObjectTileX(i)
+	y=ObjectTileY(i)
+	; player near or other stinkers near? increase burst timer
+	If ObjectIndigo(i)=0
+		flag=0
+		For j=0 To nofobjects-1
+			If (Objecttype(j)=1 Or ObjectType(j)=110 Or ObjectType(j)=120) And Abs(x-objectTileX(j))<4 And Abs(y-ObjectTileY(j))<4
+				; close enough
+				flag=1
+				Simulatedobjectdata(i,1)=SimulatedObjectData(i,1)+1
+				If SimulatedObjectData(i,1)>0 And SimulatedObjectData(i,1) Mod 3 =0
+					 AddParticle(8,SimulatedObjectX(i),0.8,-SimulatedObjectY(i),Rand(0,360),SimulatedObjectData(i,1)/200.0+.5,0,0,0,Rnd(0,2),0,0,0,0,30,4)
+				EndIf
+
+				If SimulatedObjectData(i,1)=150
+					SimulatedObjectData(i,1)=-1000
+					; fire spellballs
+				EndIf
+			EndIf
+		Next
+		If (Abs(x-PlayerTileX())<4 And Abs(y-PlayerTileY())<4)
+			; close enough
+			flag=1
+			Simulatedobjectdata(i,1)=SimulatedObjectData(i,1)+1
+			If SimulatedObjectData(i,1)>0 And SimulatedObjectData(i,1) Mod 3 =0
+				 AddParticle(8,SimulatedObjectX(i),0.8,-SimulatedObjectY(i),Rand(0,360),SimulatedObjectData(i,1)/200.0+.5,0,0,0,Rnd(0,2),0,0,0,0,30,4)
+			EndIf
+
+			If SimulatedObjectData(i,1)=150
+				SimulatedObjectData(i,1)=-1000
+				; fire spellballs
+			EndIf
+		EndIf
+		
+		If flag=0 And SimulatedObjectData(i,1)>0
+			SimulatedObjectData(i,1)=SimulatedObjectData(i,1)-1
+		EndIf
+	EndIf
 
 End Function
 
