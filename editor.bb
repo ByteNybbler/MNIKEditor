@@ -10267,6 +10267,14 @@ Function AdjusterAppearsInWop(adjuster$)
 End Function
 
 
+Function TargetsEffectiveID(StartX,StartY,EffectiveID)
+
+	Count=CountObjectEffectiveIDs(EffectiveID)
+	ShowTooltipRightAligned(StartX,StartY,"Targets effective ID "+EffectiveID+", which matches "+Count+" "+MaybePluralize$("object",Count)+" in this level.")
+
+End Function
+
+
 Function HoverOverObjectAdjuster(i)
 
 	StartX=510
@@ -10279,7 +10287,30 @@ Function HoverOverObjectAdjuster(i)
 	
 	Select ObjectAdjuster$(i)
 	
+	Case "Data0"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
+			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		EndIf
+	
+	Case "Data1"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
+			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		EndIf
+	
 	Case "Data2"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(2)+CurrentObjectData(6)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		EndIf
+	
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(2)>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(2))))
@@ -10287,6 +10318,11 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 		
 	Case "Data3"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(3)+CurrentObjectData(7)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		EndIf
+	
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(2)>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(2),CurrentObjectData(3))))
@@ -10294,6 +10330,11 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 		
 	Case "Data4"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		EndIf
+	
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(4)>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(4))))
@@ -10301,10 +10342,27 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 		
 	Case "Data5"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		EndIf
+	
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(4)>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(4),CurrentObjectData(5)+1)))
 			EndIf
+		EndIf
+		
+	Case "Data6"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(2)+CurrentObjectData(6)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		EndIf
+		
+	Case "Data7"
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			EffectiveID=500+5*CurrentObjectData(3)+CurrentObjectData(7)
+			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 		EndIf
 	
 	Case "TileTypeCollision"
@@ -10986,12 +11044,12 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="Colour1"
-			Else If (CurrentObjectSubType Mod 32)<10
+			Else If (CurrentObjectSubType Mod 32)<10 ; ColX2Y Button
 				tex2$="Col From"
-			Else If (CurrentObjectSubType Mod 32)=15
+			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
 				tex2$="CMD"
 				tex$=Str(CurrentObjectData(0))+"/"+GetCommandName$(CurrentObjectData(0))
-			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
+			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				tex2$="Colour"
 			Else If CurrentObjectSubType=13 ; Adventure Star
 				tex2$="Adventure ID"
