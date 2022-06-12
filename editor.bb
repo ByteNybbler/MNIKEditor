@@ -10303,6 +10303,11 @@ Function HoverOverObjectAdjuster(i)
 		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
 			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		Else If (CurrentObjectSubType Mod 32)=15 ; General Command
+			Select CurrentObjectData(0)
+			Case 1,2,3,4,5,51,52,61,62,63,64
+				TargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+			End Select
 		EndIf
 	
 	Case "Data2"
