@@ -2021,7 +2021,7 @@ Function OnRegainFocus()
 	ForceKeyRelease(29,"left ctrl")
 	ForceKeyRelease(157,"right ctrl")
 	
-	;ForceKeyRelease(15,"tab")
+	; Apparently Blitz doesn't pick up on the Tab key when alt-tabbing. That's pretty nice.
 	
 	ReadColors()
 
