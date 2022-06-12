@@ -3415,6 +3415,17 @@ Function DrawStepSize(x,y,StepSize#)
 End Function
 
 
+Function RunStepSize()
+
+	CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
+	CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
+	CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
+	CurrentWaterTileHeight#=CurrentWaterTileHeight#+StepSizeWaterTileHeight#
+	CurrentWaterTileTurbulence#=CurrentWaterTileTurbulence#+StepSizeWaterTileTurbulence#
+
+End Function
+
+
 Function SetUseStateOfAllTileAttributes(NewState)
 
 	CurrentTileTextureUse=NewState
@@ -3888,6 +3899,10 @@ Function EditorLocalControls()
 							thisx=FloodedStackX(i)
 							thisy=FloodedStackY(i)
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
+							
+							If EditorMode=EditorModeTile
+								RunStepSize()
+							EndIf
 						Next
 					ElseIf BrushMode=BrushModeCustom
 						If EditorMode=0
@@ -3934,11 +3949,7 @@ Function EditorLocalControls()
 					
 					If EditorMode=0
 						If IsAnyStepSizeActive() And BrushMode<>BrushModeBlock
-							CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
-							CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
-							CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
-							CurrentWaterTileHeight#=CurrentWaterTileHeight#+StepSizeWaterTileHeight#
-							CurrentWaterTileTurbulence#=CurrentWaterTileTurbulence#+StepSizeWaterTileTurbulence#
+							RunStepSize()
 						EndIf
 						
 						BrushCursorStateWasChanged()
@@ -15708,20 +15719,19 @@ Function FlipLevelY()
 End Function
 
 
-
 Function FlipLevelXY()
 
 	CopyLevel()
 	ResetLevel()
 	For i=0 To LevelWidth-1
 		For j=0 To LevelHeight-1
-			CopyTile(j,i,i,j)
-			
+			CopyTile(i,j,j,i)
 		Next
 	Next
 	x=LevelWidth
 	LevelWidth=LevelHeight
 	LevelHeight=x
+	
 	ReBuildLevelModel()
 	
 	For j=0 To LevelHeight-1
