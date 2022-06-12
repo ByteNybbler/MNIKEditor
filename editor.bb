@@ -10288,26 +10288,32 @@ Function HoverOverObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	
 	Case "Data0"
-		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
-		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
-			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+		If CurrentObjectType=90
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
+				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
+				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
+				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
+				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			EndIf
 		EndIf
 	
 	Case "Data1"
-		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
-		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
-			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
-		Else If (CurrentObjectSubType Mod 32)=15 ; General Command
-			Select CurrentObjectData(0)
-			Case 1,2,3,4,5,51,52,61,62,63,64
+		If CurrentObjectType=90
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
+				EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
+				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
+				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
+				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
+				Select CurrentObjectData(0)
+				Case 1,2,3,4,5,51,52,61,62,63,64
+					TargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+				End Select
+			Else If (CurrentObjectSubType Mod 32)=11 ; NPC Modifier
 				TargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
-			End Select
+			EndIf
 		EndIf
 	
 	Case "Data2"
