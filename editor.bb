@@ -343,7 +343,7 @@ Const BrushModeColumn=9
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
 Const BrushModeTestLevel=-2
 
-Const MaxBrushMode=7
+Const MaxBrushMode=9
 Global BrushMode=BrushModeNormal
 
 Const DupeModeNone=0
@@ -2116,8 +2116,6 @@ Function InitializeGraphicsEntities()
 		EntityAlpha CursorMeshTexturePicker,.3
 		EntityColor CursorMeshTexturePicker,255,255,200
 		HideEntity CursorMeshTexturePicker
-		;AddMesh CursorMeshRegion,CursorMeshPillar(i)
-		;FreeEntity CursorMeshRegion
 	Next
 	
 	BrushMesh=CreateMesh()
@@ -3109,6 +3107,22 @@ Function GenerateBrushSurface()
 				thisy=FloodedStackY(i)
 				AddTileToBrushSurface(thisx,thisy)
 			Next
+		ElseIf BrushMode=BrushModeRow
+			FloodFillRow(BrushCursorX,BrushCursorY)
+		
+			For i=0 To FloodedElementCount-1
+				thisx=FloodedStackX(i)
+				thisy=FloodedStackY(i)
+				AddTileToBrushSurface(thisx,thisy)
+			Next
+		ElseIf BrushMode=BrushModeColumn
+			FloodFillColumn(BrushCursorX,BrushCursorY)
+		
+			For i=0 To FloodedElementCount-1
+				thisx=FloodedStackX(i)
+				thisy=FloodedStackY(i)
+				AddTileToBrushSurface(thisx,thisy)
+			Next
 		ElseIf BrushMode=BrushModeNormal Or BrushMode=BrushModeCustom
 			BrushXStart=BrushCursorX-BrushWidth/2
 			BrushYStart=BrushCursorY-BrushHeight/2
@@ -3222,6 +3236,38 @@ Function FloodFill(StartX,StartY)
 		
 		FloodFillVisitLevelTile(thisx-1,thisy)
 		FloodFillVisitLevelTile(thisx+1,thisy)
+		FloodFillVisitLevelTile(thisx,thisy-1)
+		FloodFillVisitLevelTile(thisx,thisy+1)
+		
+		AddToFloodedStack(thisx,thisy)
+	Wend
+
+End Function
+
+Function FloodFillRow(StartX,StartY)
+
+	FloodFillInitializeState(BrushCursorX,BrushCursorY)
+	While FloodElementCount<>0
+		FloodElementCount=FloodElementCount-1
+		thisx=FloodStackX(FloodElementCount)
+		thisy=FloodStackY(FloodElementCount)
+		
+		FloodFillVisitLevelTile(thisx-1,thisy)
+		FloodFillVisitLevelTile(thisx+1,thisy)
+		
+		AddToFloodedStack(thisx,thisy)
+	Wend
+
+End Function
+
+Function FloodFillColumn(StartX,StartY)
+
+	FloodFillInitializeState(BrushCursorX,BrushCursorY)
+	While FloodElementCount<>0
+		FloodElementCount=FloodElementCount-1
+		thisx=FloodStackX(FloodElementCount)
+		thisy=FloodStackY(FloodElementCount)
+		
 		FloodFillVisitLevelTile(thisx,thisy-1)
 		FloodFillVisitLevelTile(thisx,thisy+1)
 		
@@ -3891,9 +3937,9 @@ Function EditorLocalControls()
 						EndIf
 						SetBrushMode(BrushModeBlock)
 						Delay 100
-					Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode()
+					Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
 						; flood fill
-						LeftMouseReleased=False
+						;LeftMouseReleased=False
 						
 						For i=0 To FloodedElementCount-1
 							thisx=FloodedStackX(i)
@@ -4003,7 +4049,7 @@ Function EditorLocalControls()
 					
 					SetBrushMode(BrushModeBlock)
 					Delay 100
-				Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode()
+				Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
 					; flood fill but it deletes
 					LeftMouseReleased=False
 					
@@ -15925,6 +15971,11 @@ Function GetBrushModeColor$(Value,index)
 		r=0
 		g=80
 		b=255
+	ElseIf Value=BrushModeRow Or Value=BrushModeColumn
+		; green
+		r=0
+		g=255
+		b=0
 	ElseIf Value=BrushModeCustom
 		; purple
 		r=255
