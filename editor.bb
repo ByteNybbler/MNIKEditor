@@ -3933,6 +3933,12 @@ Function EditorLocalControls()
 				
 				If LeftMouse=True And LeftMouseReleased=True And (EditorMode<>0 Or OnceTilePlacement=True)
 					OnceTilePlacement=False
+					
+					If EditorMode=EditorModeTile
+						If StepPer=StepPerPlacement And BrushMode<>BrushModeBlock ; Don't want to run a step size when just trying to select a block region.
+							RunStepSize()
+						EndIf
+					EndIf
 				
 					If BrushMode=BrushModeBlock
 						; place one corner of block
@@ -4004,15 +4010,11 @@ Function EditorLocalControls()
 						Next
 					EndIf
 						
-					If EditorMode=3
+					If EditorMode=EditorModeObject
 						LeftMouseReleased=False
 					EndIf
 					
-					If EditorMode=0
-						If StepPer=StepPerPlacement And BrushMode<>BrushModeBlock ; Don't want to run a step size when just trying to select a block region.
-							RunStepSize()
-						EndIf
-						
+					If EditorMode=EditorModeTile
 						BrushCursorStateWasChanged()
 					EndIf
 					
