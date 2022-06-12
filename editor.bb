@@ -290,6 +290,12 @@ Const ShowObjectMeshIds=2
 Const ShowObjectMeshIndices=3
 Const ShowObjectMeshCount=4
 
+Const StepPerPlacement=0
+Const StepPerTile=1
+
+Const StepPerMax=1
+Global StepPer=StepPerPlacement
+
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 
@@ -300,6 +306,9 @@ Const ToolbarDensityY=520
 
 Const ToolbarElevateX=250
 Const ToolbarElevateY=565
+
+Const ToolbarStepPerX=350
+Const ToolbarStepPerY=520
 
 Const ToolbarShowMarkersX=450
 Const ToolbarShowMarkersY=520
@@ -2626,6 +2635,14 @@ Function EditorMainLoop()
 	;Text 500,565,"   ELEVATE"
 	CenteredText(ToolbarElevateX,ToolbarElevateY,"ELEVATE")
 	
+	If StepPer=StepPerPlacement
+		Line1$="PLACEMENT"
+	ElseIf StepPer=StepPerTile
+		Line1$="TILE"
+	EndIf
+	CenteredText(ToolbarStepPerX,ToolbarStepPerY,"STEP PER")
+	CenteredText(ToolbarStepPerX,ToolbarStepPerY+15,Line1$)
+	
 	If IDFilterEnabled
 		Color 255,155,0
 	EndIf
@@ -3463,6 +3480,7 @@ End Function
 
 Function RunStepSize()
 
+	;If IsAnyStepSizeActive()
 	CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
 	CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
 	CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
@@ -3939,16 +3957,11 @@ Function EditorLocalControls()
 						Delay 100
 					Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
 						; flood fill
-						;LeftMouseReleased=False
 						
 						For i=0 To FloodedElementCount-1
 							thisx=FloodedStackX(i)
 							thisy=FloodedStackY(i)
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
-							
-							If EditorMode=EditorModeTile
-								RunStepSize()
-							EndIf
 						Next
 					ElseIf BrushMode=BrushModeCustom
 						If EditorMode=0
@@ -3994,7 +4007,7 @@ Function EditorLocalControls()
 					EndIf
 					
 					If EditorMode=0
-						If IsAnyStepSizeActive() And BrushMode<>BrushModeBlock
+						If StepPer=StepPerPlacement And BrushMode<>BrushModeBlock ; Don't want to run a step size when just trying to select a block region.
 							RunStepSize()
 						EndIf
 						
@@ -5613,6 +5626,16 @@ Function EditorLocalControls()
 			EndIf
 			
 			LightingWasChanged()
+		EndIf
+	EndIf
+	
+	If IsMouseOverToolbarItem(ToolbarStepPerX,ToolbarStepPerY)
+		; step per
+		StepPer=AdjustInt("Enter Step Per: ", StepPer, 1, 10, 150)
+		If StepPer>StepPerMax
+			StepPer=0
+		ElseIf StepPer<0
+			StepPer=StepPerMax
 		EndIf
 	EndIf
 	
@@ -7449,6 +7472,10 @@ Function BuildLevelModel()
 End Function
 
 Function ChangeLevelTile(i,j,update)
+
+	If StepPer=StepPerTile
+		RunStepSize()
+	EndIf
 
 	ChangeLevelTileActual(i,j,update)
 	
