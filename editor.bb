@@ -17899,11 +17899,15 @@ Function LoadLevel(levelnumber)
 	Next
 
 	file=ReadFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+levelnumber+".wlv")
-	LevelWidth=ReadInt(File)
-	If LevelWidth=-999
-		; MOFI level, skip the first int.
+	
+	LevelWidth=-999
+	; This loop will bypass the protection on MOFI and WA3 Beta1 level files.
+	; MOFI levels have only one extra -999 integer.
+	While LevelWidth=-999
 		LevelWidth=ReadInt(File)
-	ElseIf LevelWidth>121
+	Wend
+	
+	If LevelWidth>121
 		; WA3 VAULTS
 		LevelWidth=LevelWidth-121
 	EndIf
