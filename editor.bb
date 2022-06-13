@@ -20186,7 +20186,7 @@ Function UserSelectScreen()
 		EditorUserNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
-	If (KeyDown(28) Or KeyDown(156)) And ReturnKeyReleased=True
+	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
 		; Enter
 		
 		If EditorUserNameEntered$=""
@@ -20397,7 +20397,7 @@ Function AdventureSelectScreen()
 		AdventureNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
-	If KeyDown(28) Or KeyDown(156)
+	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
 		; Enter
 		If hubmode
 			If AdventureNameEntered$=""
@@ -22611,7 +22611,7 @@ Function HubAdventureSelectScreen()
 		AdventureNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
-	If KeyDown(28) Or KeyDown(156)
+	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
 		; Enter
 		
 		If AdventureNameEntered$=""
