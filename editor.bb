@@ -4678,13 +4678,15 @@ Function EditorLocalControls()
 			leftmousereleased=False
 			LevelWeather=LevelWeather+1
 			If levelweather=18 Then levelweather=0
-			LightingWasChanged()
+			LightingWasChanged() ; Necessary for if alarm weather was being used.
+			UnsavedChanges=True
 		EndIf
 		If my>=100 And my<115 And ((rightmouse=True And rightmousereleased=True) Or MouseScroll<0)
 			rightmousereleased=False
 			LevelWeather=LevelWeather-1
 			If levelweather=-1 Then levelweather=17
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 		OldValue=LevelMusic
 		If my>=115 And my<130 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
@@ -4944,11 +4946,13 @@ Function EditorLocalControls()
 				;If lightred>=256 Then lightred=lightred-256
 			EndIf
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightRed=LightRed-ChangeSpeed
 			;If lightred=-1 Then lightred=255
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 	EndIf
 	If mx>712+29 And my>215 And mx<736+29 And my<228
@@ -4960,11 +4964,13 @@ Function EditorLocalControls()
 				;If LightGreen=256 Then LightGreen=0
 			EndIf
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightGreen=LightGreen-ChangeSpeed
 			;If LightGreen=-1 Then LightGreen=255
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215 And mx<736+29+29 And my<228
@@ -4976,11 +4982,13 @@ Function EditorLocalControls()
 				;If LightBlue=256 Then LightBlue=0
 			EndIf
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightBlue=LightBlue-ChangeSpeed
 			;If LightBlue=-1 Then LightBlue=255
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 	EndIf
 	
@@ -4993,11 +5001,13 @@ Function EditorLocalControls()
 				;If Ambientred=256 Then ambientred=0
 			EndIf
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientRed=AmbientRed-ChangeSpeed
 			;If Ambientred=-1 Then ambientred=255
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 	EndIf
 	If mx>712+29 And my>215+13 And mx<736+29 And my<228+13
@@ -5009,11 +5019,13 @@ Function EditorLocalControls()
 				;If AmbientGreen=256 Then AmbientGreen=0
 			EndIf
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientGreen=AmbientGreen-ChangeSpeed
 			;If AmbientGreen=-1 Then AmbientGreen=255
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 	EndIf
 	If mx>712+29+29 And my>215+13 And mx<736+29+29 And my<228+13
@@ -5025,11 +5037,13 @@ Function EditorLocalControls()
 				;If AmbientBlue=256 Then AmbientBlue=0
 			EndIf
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientBlue=AmbientBlue-ChangeSpeed
 			;If AmbientBlue=-1 Then AmbientBlue=255
 			LightingWasChanged()
+			UnsavedChanges=True
 		EndIf
 	EndIf
 
@@ -9390,7 +9404,6 @@ End Function
 Function LightingWasChanged()
 
 	SetLightNow(LightRed,LightGreen,LightBlue,AmbientRed,AmbientGreen,AmbientBlue)
-	UnsavedChanges=True
 
 End Function
 
