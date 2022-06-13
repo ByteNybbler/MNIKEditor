@@ -2466,7 +2466,7 @@ Function EditorMainLoop()
 		MyEffectiveId=CalculateEffectiveId(i)
 		
 		HitTargetID=False
-		For j=0 To CurrentObjectTargetIDCount-1	
+		For j=0 To CurrentObjectTargetIDCount-1
 			If MyEffectiveId=CurrentObjectTargetID(j)
 				HitTargetID=True
 			
@@ -2483,8 +2483,8 @@ Function EditorMainLoop()
 		Next
 		
 		If Not HitTargetID
-			For j=0 To CurrentObjectActivateIDCount-1	
-				If MyEffectiveId=CurrentObjectActivateID(j)
+			For j=0 To CurrentObjectActivateIDCount-1
+				If MyEffectiveId=CurrentObjectActivateID(j) And CurrentObjectActivateID(j)>0
 					CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
 					x#=ProjectedX#()
 					y#=ProjectedY#()
