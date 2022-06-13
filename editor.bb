@@ -300,6 +300,15 @@ Const ShowObjectMeshCount=4
 Const ShowObjectMeshMax=4
 Global ShowObjectMesh=ShowObjectNormal
 
+Const BrushWrapRelative=0
+Const BrushWrapModulus=1
+Const BrushWrapMirrorX=2
+Const BrushWrapMirrorY=3
+Const BrushWrapMirrorXY=4
+
+Const BrushWrapMax=1
+Global BrushWrap=BrushWrapRelative
+
 Const StepPerPlacement=0
 Const StepPerTile=1
 
@@ -316,6 +325,9 @@ Const ToolbarDensityY=520
 
 Const ToolbarElevateX=250
 Const ToolbarElevateY=565
+
+Const ToolbarBrushWrapX=350
+Const ToolbarBrushWrapY=520
 
 Const ToolbarStepPerX=350
 Const ToolbarStepPerY=565
@@ -2692,6 +2704,21 @@ Function EditorMainLoop()
 	
 	;Text 500,565,"   ELEVATE"
 	CenteredText(ToolbarElevateX,ToolbarElevateY,"ELEVATE")
+	
+	Select BrushWrap
+	Case BrushWrapRelative
+		Line1$="RELATIVE"
+	Case BrushWrapModulus
+		Line1$="MODULUS"
+	Case BrushWrapMirrorX
+		Line1$="MIRROR X"
+	Case BrushWrapMirrorY
+		Line1$="MIRROR Y"
+	Case BrushWrapMirrorXY
+		Line1$="MIRROR XY"
+	End Select
+	CenteredText(ToolbarBrushWrapX,ToolbarBrushWrapY,"BRUSH WRAP")
+	CenteredText(ToolbarBrushWrapX,ToolbarBrushWrapY+15,Line1$)
 	
 	If StepPer=StepPerPlacement
 		Line1$="PLACEMENT"
@@ -5839,6 +5866,16 @@ Function EditorLocalControls()
 			EndIf
 			
 			LightingWasChanged()
+		EndIf
+	EndIf
+	
+	If IsMouseOverToolbarItem(ToolbarBrushWrapX,ToolbarBrushWrapY)
+		; brush wrap
+		BrushWrap=AdjustInt("Enter Brush Wrap: ", BrushWrap, 1, 10, 150)
+		If BrushWrap>BrushWrapMax
+			BrushWrap=0
+		ElseIf BrushWrap<0
+			BrushWrap=BrushWrapMax
 		EndIf
 	EndIf
 	
