@@ -2784,6 +2784,9 @@ Function SetEditorMode(NewMode)
 	EditorMode=NewMode
 	
 	UpdateCurrentGrabbedObjectMarkerVisibility()
+	
+	; Edge case: the mouse will be hidden when typing in the editor's real-time textboxes. This line accounts for that.
+	ShowPointer()
 
 End Function
 
@@ -5197,7 +5200,7 @@ Function EditorLocalControls()
 		SaveLevel()
 	ElseIf HotkeyOpen()
 		If AskToSaveLevelAndExit()
-			AccessLevelAtCenter(InputInt("Enter wlv number to open: "))
+			OpenTypedLevel()
 		EndIf
 	EndIf
 	
@@ -12590,9 +12593,9 @@ End Function
 
 Function InputFloat#(title$)
 	SetupPrompt()
-	Result$=Input$(title$)
+	Result#=Input$(title$)
 	ReturnKeyReleased=False
-	Return Result$
+	Return Result#
 End Function
 
 
@@ -18307,6 +18310,30 @@ Function AccessLevel(levelnumber)
 
 End Function
 
+Function OpenTypedLevel()
+
+	Typed$=InputString$("Enter wlv number to open: ")
+	If Typed$<>""
+		AccessLevelAtCenter(Typed$)
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
+
+Function OpenTypedDialog()
+
+	Typed$=InputString$("Enter dia number to open: ")
+	If Typed$<>""
+		AccessDialog(Typed$)
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
+
 Function GetAdventureDir$()
 
 	If AdventureCurrentArchive=1
@@ -19749,7 +19776,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	If (KeyDown(208) Or KeyDown(28) Or KeyDown(156))
+	If (KeyDown(208) Or KeyDown(28) Or KeyDown(156)) And ReturnKeyReleased=True
 		; down arrow or enter or numpad enter
 		i=GetNextMouseTextEntryLine(ScreenId,y)
 		MouseTextEntryMoveMouse(x,MouseTextEntryLineY(ScreenId,i),MouseTextEntryLineYAdjust(ScreenId,i))
@@ -21340,9 +21367,9 @@ Function MasterMainLoop()
 	
 	If MouseX()>700 And MouseX()<750
 		If CtrlDown() And mb>0
-			SelectedLevel=InputInt("Enter wlv number to open: ")
-			AccessLevelAtCenter(SelectedLevel)
-			StartEditorMainLoop()
+			If OpenTypedLevel()
+				StartEditorMainLoop()
+			EndIf
 		Else
 			For i=1 To 20
 				If MouseY()>62+i*20 And MouseY()<=82+i*20
@@ -21400,8 +21427,9 @@ Function MasterMainLoop()
 	; load dialog
 	If MouseX()>750 And MouseX()<800
 		If (CtrlDown() And mb>0) Or HotkeyOpen()
-			AccessDialog(InputInt("Enter dia number to open: "))
-			StartDialog()
+			If OpenTypedDialog()
+				StartDialog()
+			EndIf
 		Else
 			For i=1 To 20
 				If MouseY()>62+i*20 And MouseY()<=82+i*20
@@ -21457,8 +21485,9 @@ Function MasterMainLoop()
 	Else
 		; load level
 		If HotkeyOpen()
-			AccessLevelAtCenter(InputInt("Enter wlv number to open: "))
-			StartEditorMainLoop()
+			If OpenTypedLevel()
+				StartEditorMainLoop()
+			EndIf
 		EndIf
 	EndIf
 
@@ -23014,7 +23043,7 @@ Function DialogMainLoop()
 		SaveDialogFile()
 	ElseIf HotKeyOpen()
 		If AskToSaveDialogAndExit()
-			AccessDialog(InputInt("Enter dia number to open: "))
+			OpenTypedDialog()
 		EndIf
 	EndIf
 	
