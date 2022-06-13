@@ -10308,7 +10308,7 @@ Function AdjusterAppearsInWop(adjuster$)
 End Function
 
 
-Function TargetsEffectiveID(StartX,StartY,EffectiveID)
+Function TooltipTargetsEffectiveID(StartX,StartY,EffectiveID)
 
 	Count=CountObjectEffectiveIDs(EffectiveID)
 	ShowTooltipRightAligned(StartX,StartY,"Targets effective ID "+EffectiveID+", which matches "+Count+" "+MaybePluralize$("object",Count)+" in this level.")
@@ -10332,10 +10332,10 @@ Function HoverOverObjectAdjuster(i)
 		If CurrentObjectType=90
 			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
-				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
-				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 			EndIf
 		EndIf
 	
@@ -10343,24 +10343,34 @@ Function HoverOverObjectAdjuster(i)
 		If CurrentObjectType=90
 			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
-				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
-				TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
 				Select CurrentObjectData(0)
-				Case 1,2,3,4,5,51,52,61,62,63,64
-					TargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+				Case 1,2,3,4,5,51,52,61,62,63
+					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+				Case 64
+					If CurrentObjectData(1)<>-1 ; Ignore if targeting the player
+						TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+					EndIf
 				End Select
 			Else If (CurrentObjectSubType Mod 32)=11 ; NPC Modifier
-				TargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+				If CurrentObjectData(0)=2 ; NPC Exclamation
+					If CurrentObjectData(1)<>-1 ; Ignore if targeting the player
+						TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+					EndIf
+				Else
+					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+				EndIf
 			EndIf
 		EndIf
 	
 	Case "Data2"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			EffectiveID=500+5*CurrentObjectData(2)+CurrentObjectData(6)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10372,7 +10382,7 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data3"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			EffectiveID=500+5*CurrentObjectData(3)+CurrentObjectData(7)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10384,7 +10394,7 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data4"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10396,7 +10406,7 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data5"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10408,13 +10418,13 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data6"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			EffectiveID=500+5*CurrentObjectData(2)+CurrentObjectData(6)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 		EndIf
 		
 	Case "Data7"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			EffectiveID=500+5*CurrentObjectData(3)+CurrentObjectData(7)
-			TargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
 		EndIf
 	
 	Case "TileTypeCollision"
