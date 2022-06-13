@@ -1908,7 +1908,8 @@ Next
 
 Global hubmode
 Global HubFileName$, HubTitle$, HubDescription$, HubTotalAdventures, HubAdvStart, HubSelectedAdventure
-Dim HubAdventuresFilenames$(500)
+Const HubAdvMax=500
+Dim HubAdventuresFilenames$(HubAdvMax)
 
 Global NoOfShards=7
 Global CustomShardEnabled
@@ -22157,7 +22158,7 @@ Function HubMainLoop()
 	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
 	
 	adj=1
-	If KeyDown(42) Or KeyDown(54) Then adj=10
+	If ShiftDown() Then adj=10
 		
 	For i=0 To 43
 		AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -22324,27 +22325,44 @@ Function HubMainLoop()
 	mb=0
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
-	If mb>0
-		;If MouseY()<22 And  MouseX()>540
-		;	SetEditorMode(8)
-		;	Repeat
-		;	Until MouseDown(1)=0 And MouseDown(2)=0
-		;EndIf
-		If MouseX()<82 And MouseY()>202 And MouseY()<222
-			HubAdvStart=HubAdvStart-adj
-			Delay 150
-			If HubAdvStart<0
-				HubAdvStart=0
+	
+	;If MouseY()<22 And  MouseX()>540
+	;	SetEditorMode(8)
+	;	Repeat
+	;	Until MouseDown(1)=0 And MouseDown(2)=0
+	;EndIf
+	If MouseX()<82
+		If MouseScroll<>0
+			adj=-MouseScroll
+			If ShiftDown()
+				adj=adj*10
 			EndIf
+			HubAdvStart=HubAdvStart+adj
+		ElseIf mb>0
+			If MouseY()>202 And MouseY()<222
+				HubAdvStart=HubAdvStart-adj
+				Delay 150
+			EndIf
+		
+			If MouseY()>482 And MouseY()<502
+				HubAdvStart=HubAdvStart+adj
+				Delay 150
+			EndIf
+			
+			;If CtrlDown()
+			;	HubSelectedAdventure=InputInt("Enter adventure number to select: ")
+			;	LeftMouseReleased=False
+			;EndIf
 		EndIf
 		
-		If MouseX()<82 And MouseY()>482 And MouseY()<502
-			HubAdvStart=HubAdvStart+adj
-			Delay 150
-			If HubAdvStart+12>500
-				HubAdvStart=488
-			EndIf
+		If HubAdvStart<0
+			HubAdvStart=0
+		ElseIf HubAdvStart+12>HubAdvMax
+			HubAdvStart=HubAdvMax-12
 		EndIf
+	EndIf
+		
+	If mb>0 And LeftMouseReleased=True
 		For i=0 To 12
 			If MouseX()<82 And MouseY()>222+i*20 And MouseY()<=242+i*20
 				HubSelectedAdventure=HubAdvStart+i
