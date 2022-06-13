@@ -18575,8 +18575,8 @@ Function AccessLevel(levelnumber)
 
 	FloodedElementsClear()
 	BrushCursorProbablyModifiedTiles()
-
-	RestoreOriginalMaster()
+	
+	; Don't restore master here, because AccessLevel is used by StartTestModeAt.
 	RestoreOriginal1Wlv()
 
 	WhereWeEndedUpAlpha#=0.0
@@ -22759,8 +22759,10 @@ Function ReadTestFile()
 End Function
 
 Function StartTestMode()
+	
 	WaitFlag=True
 	SaveMasterFile()
+	
 	file=WriteFile(globaldirname$+"\temp\test.dat")
 	WriteString file,AdventureFileName$
 	If hubmode
@@ -22776,8 +22778,10 @@ Function StartTestMode()
 	EndIf
 	
 	CloseFile file
+	
 	ExecFile ("wg.exe")
 	EndApplication()
+	
 End Function
 
 Const OriginalMasterDat$="__master_ORIGINAL__.bak"
