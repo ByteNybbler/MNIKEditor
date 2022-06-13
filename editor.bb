@@ -284,11 +284,14 @@ Dim LogicMesh(100),LogicSurface(100)
 Global ShowLogicMesh=False
 Global ShowLevelMesh=True
 
-Global ShowObjectMesh=1 ; shows/hides objects: 0=hide objects, 1=show objects
-Const ShowObjectMeshMax=4
+Const ShowObjectHide=0
+Const ShowObjectNormal=1
 Const ShowObjectMeshIds=2
 Const ShowObjectMeshIndices=3
 Const ShowObjectMeshCount=4
+
+Const ShowObjectMeshMax=4
+Global ShowObjectMesh=ShowObjectNormal
 
 Const StepPerPlacement=0
 Const StepPerTile=1
@@ -870,6 +873,9 @@ Global CurrentObjectFlying,CurrentObjectFrozen,CurrentObjectIndigo,CurrentObject
 Global CurrentObjectScaleAdjust#,CurrentObjectScaleXAdjust#,CurrentObjectScaleYAdjust#,CurrentObjectScaleZAdjust#,CurrentObjectFutureFloat5#
 Global CurrentObjectFutureFloat6#,CurrentObjectFutureFloat7#,CurrentObjectFutureFloat8#,CurrentObjectFutureFloat9#,CurrentObjectFutureFloat10#
 Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
+
+Dim CurrentObjectTargetID(3)
+Global CurrentObjectTargetIDCount=0
 
 Global IDFilterEnabled=False
 Global IDFilterAllow=-1
@@ -2424,7 +2430,6 @@ Function EditorMainLoop()
 	
 	If ShowObjectMesh>=2
 		For i=0 To NofObjects-1
-			;CameraProject(Camera1,EntityX(ObjectEntity(i)),EntityY(ObjectEntity(i)),EntityZ(ObjectEntity(i)))
 			CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
 			x#=ProjectedX#()
 			y#=ProjectedY#()
@@ -2443,7 +2448,25 @@ Function EditorMainLoop()
 		Next
 	EndIf
 	
+	For i=0 To NofObjects-1
+		MyEffectiveId=CalculateEffectiveId(i)
+		For j=0 To CurrentObjectTargetIDCount-1
+			If MyEffectiveId=CurrentObjectTargetID(j)
+				CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
+				x#=ProjectedX#()
+				y#=ProjectedY#()
+				If x#<490 And y#<490
+					StringOnObject$=MyEffectiveId
+					x#=x#-4*Len(StringOnObject$)
+					
+					; Do text with an outline.
+					OutlinedText(x#,y#,StringOnObject$,255,255,0)
+				EndIf
+			EndIf
+		Next
+	Next
 	
+	Color TextLevelR,TextLevelG,TextLevelB
 		
 	StartX=510
 	StartY=20
@@ -2976,6 +2999,18 @@ End Function
 Function RightAlignedText(StartX,StartY,Message$)
 
 	Text StartX-GetTextPixelLength(Message$),StartY,Message$
+
+End Function
+
+Function OutlinedText(x#,y#,Message$,InsideColorR,InsideColorG,InsideColorB)
+
+	Color 0,0,0
+	Text x#+1,y#+1,Message$
+	Text x#+1,y#-1,Message$
+	Text x#-1,y#+1,Message$
+	Text x#-1,y#-1,Message$
+	Color InsideColorR,InsideColorG,InsideColorB
+	Text x#,y#,Message$
 
 End Function
 
@@ -10329,50 +10364,26 @@ Function HoverOverObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	
 	Case "Data0"
-		If CurrentObjectType=90
-			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
-				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
-			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
-				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
-			EndIf
+		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
 		EndIf
 	
 	Case "Data1"
-		If CurrentObjectType=90
-			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
-				EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
-			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
-				EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(1)
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
-			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
-				Select CurrentObjectData(0)
-				Case 1,2,3,4,5,51,52,61,62,63
-					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
-				Case 64
-					If CurrentObjectData(1)<>-1 ; Ignore if targeting the player
-						TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
-					EndIf
-				End Select
-			Else If (CurrentObjectSubType Mod 32)=11 ; NPC Modifier
-				If CurrentObjectData(0)=2 ; NPC Exclamation
-					If CurrentObjectData(1)<>-1 ; Ignore if targeting the player
-						TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
-					EndIf
-				Else
-					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectData(1))
+		If CurrentObjectTargetIDCount<>0
+			If CurrentObjectType=90
+				If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
+					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(1))
+				Else ; NPC Modifier and General Command
+					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
 				EndIf
 			EndIf
 		EndIf
 	
 	Case "Data2"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(2)+CurrentObjectData(6)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
 		EndIf
-	
+		
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(2)>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(2))))
@@ -10381,10 +10392,9 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data3"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(3)+CurrentObjectData(7)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(3))
 		EndIf
-	
+		
 		If CurrentObjectModelName$="!NPC"
 			If CurrentObjectData(2)>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(2),CurrentObjectData(3))))
@@ -10393,8 +10403,7 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data4"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(0)+CurrentObjectData(4)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10405,8 +10414,7 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data5"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(1)+CurrentObjectData(5)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(1))
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10417,14 +10425,12 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data6"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(2)+CurrentObjectData(6)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
 		EndIf
 		
 	Case "Data7"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			EffectiveID=500+5*CurrentObjectData(3)+CurrentObjectData(7)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,EffectiveID)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(3))
 		EndIf
 	
 	Case "TileTypeCollision"
@@ -15372,6 +15378,62 @@ Function FinalizeCurrentObject()
 
 	ShowCurrentObjectMoveXYGoal()
 	ShowWorldAdjusterPositions()
+	CalculateCurrentObjectTargetIDs()
+
+End Function
+
+
+Function ColorToID(Col,SubCol)
+
+	Return 500+5*Col+SubCol
+
+End Function
+
+
+Function CalculateCurrentObjectTargetIDs()	
+
+	If CurrentObjectType=90
+		If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
+			CurrentObjectTargetIDCount=4
+			For i=0 To 3
+				CurrentObjectTargetID(i)=ColorToID(CurrentObjectData(i),CurrentObjectData(i+4))
+			Next
+		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
+			CurrentObjectTargetIDCount=1
+			CurrentObjectTargetID(0)=ColorToID(CurrentObjectData(0),CurrentObjectData(1))
+		Else If (CurrentObjectSubType Mod 32)=15 ; General Command
+			Select CurrentObjectData(0)
+			Case 1,2,3,4,5,51,52,61,62,63
+				CurrentObjectTargetIDCount=1
+				CurrentObjectTargetID(0)=CurrentObjectData(1)
+			Case 64
+				If CurrentObjectData(1)=-1 ; Ignore if targeting the player
+					CurrentObjectTargetIDCount=0
+				Else
+					CurrentObjectTargetIDCount=1
+					CurrentObjectTargetID(0)=CurrentObjectData(1)
+				EndIf
+			Default
+				CurrentObjectTargetIDCount=0
+			End Select
+		Else If (CurrentObjectSubType Mod 32)=11 ; NPC Modifier
+			If CurrentObjectData(0)=2 ; NPC Exclamation
+				If CurrentObjectData(1)=-1 ; Ignore if targeting the player
+					CurrentObjectTargetIDCount=0
+				Else
+					CurrentObjectTargetIDCount=1
+					CurrentObjectTargetID(0)=CurrentObjectData(1)
+				EndIf
+			Else
+				CurrentObjectTargetIDCount=1
+				CurrentObjectTargetID(0)=CurrentObjectData(1)
+			EndIf
+		Else
+			CurrentObjectTargetIDCount=0
+		EndIf
+	Else
+		CurrentObjectTargetIDCount=0
+	EndIf
 
 End Function
 
@@ -15470,6 +15532,7 @@ Function SetCurrentObjectTargetLocation(x,y)
 		GenerateLevelExitTo(CurrentLevelNumber,x,y)
 	End Select
 	
+	; Necessary for if the changing Data values modify an object's appearance.
 	BuildCurrentObjectModel()
 
 End Function
