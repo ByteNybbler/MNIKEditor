@@ -18572,9 +18572,6 @@ Function CompileLevel()
 End Function
 
 Function AccessLevel(levelnumber)
-
-	FloodedElementsClear()
-	BrushCursorProbablyModifiedTiles()
 	
 	; Don't restore master here, because AccessLevel is used by StartTestModeAt.
 	RestoreOriginal1Wlv()
@@ -18586,6 +18583,9 @@ Function AccessLevel(levelnumber)
 	Else
 		NewLevel(levelnumber)
 	EndIf
+	
+	FloodedElementsClear()
+	BrushCursorProbablyModifiedTiles()
 
 End Function
 
