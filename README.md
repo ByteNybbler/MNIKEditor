@@ -16,7 +16,7 @@
 ## MASTER EDITOR
 
 * Scroll the mouse wheel: Navigate the LV and DG lists depending on where the mouse is hovering. Hold shift to scroll faster.
-* Ctrl+Click the LV or DG column: Type in the number of the wlv or dia you want to edit.
+* Ctrl+Click the LV or DG column: Type in the number of the wlv or dia to edit.
 * Right click: Right-clicking a wlv or dia number will copy the wlv or dia. Right-click the same wlv or dia again to cancel the copy, or left-click a nonexistent wlv or dia to copy to that wlv or dia.
 * Middle click: Middle-clicking a wlv or dia number will mark the wlv or dia for swapping. Middle-click the same wlv or dia again to cancel the swap, or left-click a different wlv or dia to swap with that wlv or dia. Swapping with nonexistent wlvs or dias is allowed.
 * PageUp: Page up on either the LV or DG column, depending on which one the mouse is hovering over.
@@ -24,7 +24,7 @@
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
 * Ctrl+S: Save master.dat.
-* Ctrl+O: Type in the number of the wlv you want to open.
+* Ctrl+O: Type in the number of the wlv to edit, unless the mouse is hovering over the dialogs column, in which case type in the number of the dia to edit.
 * Ctrl+T: Save+Test.
 
 ## LEVEL EDITOR
@@ -99,6 +99,9 @@
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
 * Ctrl+S: Save dialog.
+* Ctrl+O: Type in the number of the dialog you want to open.
+* Ctrl+PageDown: Go to the next numbered dialog.
+* Ctrl+PageUp: Go to the previous numbered dialog.
 * Ctrl+W: Toggle White.
 * Ctrl+E: Toggle Grey.
 * Ctrl+R: Toggle Red.

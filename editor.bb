@@ -36,7 +36,7 @@ Const EditorModeObject=3
 
 Global EditorModeBeforeMasterEdit=0
 
-; Whether or not the level or dialog has unsaved changes. Not implemented for dialogs yet.
+; Whether or not the level or dialog has unsaved changes.
 Global UnsavedChanges=False
 
 ; COLORS
@@ -5774,13 +5774,40 @@ Function EditorLocalControls()
 End Function
 
 
+; Returns True if the user chose to save.
+Function SaveLevelAndExit()
+
+	If CurrentObjectCanBeUpdated()
+		FlushKeys
+		SetupWarning()
+		Print("You have not hit the Update button on the selected object.")
+		Print("Type R to update the object and save and exit.")
+		Confirm$=Upper$(Input$("Type E to save and exit without updating: "))
+		ReturnKeyReleased=False
+		If Confirm="E"
+			SaveLevel()
+			Return True
+		ElseIf Confirm="R"
+			UpdateCurrentGrabbedObject()
+			SaveLevel()
+			Return True
+		Else
+			Return False
+		EndIf
+	Else
+		SaveLevel()
+		Return True
+	EndIf
+
+End Function
+
+
 ; Returns True if the user chooses to proceed, with or without saving.
 Function AskToSaveLevelAndExit()
 	
 	If UnsavedChanges
 		FlushKeys
 		SetupWarning()
-		ReturnKeyReleased=False
 		Print("This level has unsaved changes. Type R to save and exit.")
 		Typed$=Upper$(Input$("Type E to exit without saving: "))
 		ReturnKeyReleased=False
@@ -5818,31 +5845,36 @@ Function AskToSaveLevelAndExit()
 End Function
 
 
-; Returns True if the user chose to save.
-Function SaveLevelAndExit()
+Function SaveDialogAndExit()
 
-	If CurrentObjectCanBeUpdated()
+	SaveDialogFile()
+	ClearDialogFile()
+	ResumeMaster()
+
+End Function
+
+
+; Returns True if the user chooses to proceed, with or without saving.
+Function AskToSaveDialogAndExit()
+	
+	If UnsavedChanges
 		FlushKeys
 		SetupWarning()
-		Print("You have not hit the Update button on the selected object.")
-		Print("Type R to update the object and save and exit.")
-		Confirm$=Upper$(Input$("Type E to save and exit without updating: "))
+		Print("This dialog has unsaved changes. Type R to save and exit.")
+		Typed$=Upper$(Input$("Type E to exit without saving: "))
 		ReturnKeyReleased=False
-		If Confirm="E"
-			SaveLevel()
+		If Typed$="R"
+			SaveDialogFile()
 			Return True
-		ElseIf Confirm="R"
-			UpdateCurrentGrabbedObject()
-			SaveLevel()
+		ElseIf Typed$="E"
 			Return True
 		Else
 			Return False
 		EndIf
 	Else
-		SaveLevel()
 		Return True
 	EndIf
-
+	
 End Function
 
 
@@ -19670,7 +19702,7 @@ End Function
 Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 
 	If let>=32 And let<=122
-		; place letter
+		; place letter (let is the letter to place)
 		tex$=Left$(tex$,x)+Chr$(let)+Right$(tex$,Len(tex$)-x)
 		tex$=Left$(tex$,38)
 		; and advance cursor
@@ -19679,7 +19711,8 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		EndIf
 		ColEffect=-1
 		TxtEffect=-1
-
+		
+		UnsavedChanges=True
 	EndIf
 	If KeyDown(14)
 		; backspace
@@ -19690,6 +19723,8 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		EndIf
 		ColEffect=-1
 		TxtEffect=-1
+		
+		UnsavedChanges=True
 
 	EndIf
 	If KeyDown(211)
@@ -19701,7 +19736,8 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		EndIf
 		ColEffect=-1
 		TxtEffect=-1
-
+		
+		UnsavedChanges=True
 	EndIf
 	
 	; cursor movement
@@ -19712,7 +19748,6 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
-
 	EndIf
 	If (KeyDown(208) Or KeyDown(28) Or KeyDown(156))
 		; down arrow or enter or numpad enter
@@ -19721,7 +19756,6 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
-
 	EndIf
 	
 	If (KeyDown(203)) And x>0
@@ -19730,7 +19764,6 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
-
 	EndIf
 	If (KeyDown(205)) And x<Len(tex$)
 		; right arrow
@@ -19738,7 +19771,6 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		Delay 100
 		ColEffect=-1
 		TxtEffect=-1
-
 	EndIf
 	
 	If KeyDown(199) ; home
@@ -21305,11 +21337,6 @@ Function MasterMainLoop()
 	EndIf
 
 	
-	; load level
-	If HotkeyOpen()
-		AccessLevelAtCenter(InputInt("Enter wlv number to open: "))
-		StartEditorMainLoop()
-	EndIf
 	
 	If MouseX()>700 And MouseX()<750
 		If CtrlDown() And mb>0
@@ -21372,8 +21399,8 @@ Function MasterMainLoop()
 	
 	; load dialog
 	If MouseX()>750 And MouseX()<800
-		If CtrlDown() And mb>0
-			currentdialog=InputInt("Enter dia number to open: ")
+		If (CtrlDown() And mb>0) Or HotkeyOpen()
+			AccessDialog(InputInt("Enter dia number to open: "))
 			StartDialog()
 		Else
 			For i=1 To 20
@@ -21397,7 +21424,7 @@ Function MasterMainLoop()
 							SwapDialog(CopiedDialog,SelectedDialog)
 							CopyingDialog=StateNotSpecial
 						Else
-							Currentdialog=SelectedDialog
+							AccessDialog(SelectedDialog)
 							StartDialog()
 						EndIf
 						
@@ -21426,6 +21453,12 @@ Function MasterMainLoop()
 					EndIf
 				EndIf
 			Next
+		EndIf
+	Else
+		; load level
+		If HotkeyOpen()
+			AccessLevelAtCenter(InputInt("Enter wlv number to open: "))
+			StartEditorMainLoop()
 		EndIf
 	EndIf
 
@@ -22825,8 +22858,6 @@ End Function
 
 Function StartDialog()
 
-	UnsavedChanges=False
-
 	SetEditorMode(9)
 	
 	Camera1Proj=0
@@ -22836,21 +22867,11 @@ Function StartDialog()
 	CameraProj=1
 	UpdateCameraProj()
 
-	
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
-	
-	; check existence of this dialog file
-	
-	If FileType(globaldirname$+"\Custom\editing\"+ex$+AdventureFileName$+"\"+Str$(currentdialog)+".dia")=1
-		LoadDialogFile()
-	Else
-		ClearDialogFile()
-		
-	EndIf
+End Function
+
+Function AccessDialog(TargetDialog)
+
+	CurrentDialog=TargetDialog
 	
 	SetInterChange(0)
 	WhichAnswer=0
@@ -22858,7 +22879,21 @@ Function StartDialog()
 	
 	ColEffect=-1
 	TxtEffect=-1
+	
+	; check existence of this dialog file
+	If DialogExists(CurrentDialog)
+		LoadDialogFile()
+	Else
+		NewDialog()
+	EndIf
+	
+End Function
 
+Function NewDialog()
+
+	ClearDialogFile()
+	
+	UnsavedChanges=False
 
 End Function
 
@@ -22909,6 +22944,16 @@ Function AddDialogTextCommand(x,y,command$)
 	DialogTextCommandPos(WhichInterChange,NofTextCommands(WhichInterChange))=x+(y*CharactersPerLine)
 	DialogTextCommand$(WhichInterChange,NofTextCommands(WhichInterChange))=command$
 	NofTextCommands(WhichInterChange)=NofTextCommands(WhichInterChange)+1
+	
+	UnsavedChanges=True
+
+End Function
+
+Function ReplaceDialogTextCommand(k,NewEffect$)
+
+	DialogTextCommand$(WhichInterChange,k)=NewEffect$
+	
+	UnsavedChanges=True
 
 End Function
 
@@ -22967,6 +23012,22 @@ Function DialogMainLoop()
 	
 	If HotkeySave()
 		SaveDialogFile()
+	ElseIf HotKeyOpen()
+		If AskToSaveDialogAndExit()
+			AccessDialog(InputInt("Enter dia number to open: "))
+		EndIf
+	EndIf
+	
+	If CtrlDown()
+		If KeyPressed(209) ; Ctrl+PageDown
+			If AskToSaveDialogAndExit()
+				AccessDialog(CurrentDialog+1)
+			EndIf
+		ElseIf KeyPressed(201) ; Ctrl+PageUp
+			If AskToSaveDialogAndExit()
+				AccessDialog(CurrentDialog-1)
+			EndIf
+		EndIf
 	EndIf
 	
 	
@@ -23288,7 +23349,7 @@ Function DialogMainLoop()
 					If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsColor(k)
 						; yes, replace
 						flag7=True
-						DialogTextCommand$(WhichInterChange,k)=Effect$
+						ReplaceDialogTextCommand(k,Effect$)
 					EndIf
 				Next
 				If flag7=False
@@ -23303,7 +23364,7 @@ Function DialogMainLoop()
 					If DialogTextCommandPos(WhichInterChange,k)=x+(y*CharactersPerLine) And DialogTextCommandIsEffect(k)
 						; yes, replace
 						flag7=True
-						DialogTextCommand$(WhichInterChange,k)=TCommands(TxtEffect)
+						ReplaceDialogTextCommand(k,TCommands(TxtEffect))
 					EndIf
 				Next
 				If flag7=False
@@ -23383,16 +23444,16 @@ Function DialogMainLoop()
 		; Load/Save
 		
 		If MouseX()>690 And MouseY()>460 And MouseY()<505
-			ClearDialogFIle()
-			ResumeMaster()
+			If AskToSaveDialogAndExit()
+				ClearDialogFile()
+				ResumeMaster()
+			EndIf
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
 	
 		If MouseX()>590 And MouseY()>540
-			SaveDialogFile()
-			ClearDialogFile()
-			ResumeMaster()
+			SaveDialogAndExit()
 			Repeat
 			Until MouseDown(1)=0
 
@@ -23419,26 +23480,61 @@ Function DialogMainLoop()
 		TooltipX=MouseX()/100*100+50
 		TooltipY=385
 		Select MouseX()/100
-		Case 0			
+		Case 0
+			OldValue=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
 			InterChangeReplyFunction(WhichInterChange,WhichAnswer)=AdjustInt("FNC: ", InterChangeReplyFunction(WhichInterChange,WhichAnswer), 1, 10, 150)
-			ShowTooltipLeftAligned(TooltipX-50, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
-		Case 1			
+			If OldValue<>InterChangeReplyFunction(WhichInterChange,WhichAnswer)
+				UnsavedChanges=True
+			EndIf
+			
+			ShowTooltipCenterAligned(TooltipX-50, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
+		Case 1
+			OldValue=InterChangeReplyData(WhichInterChange,WhichAnswer)
 			InterChangeReplyData(WhichInterChange,WhichAnswer)=AdjustInt("Data: ", InterChangeReplyData(WhichInterChange,WhichAnswer), 1, 10, 150)
+			If OldValue<>InterChangeReplyData(WhichInterChange,WhichAnswer)
+				UnsavedChanges=True
+			EndIf
+			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToDataName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
 		Case 2
+			OldValue=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 			InterChangeReplyCommand(WhichInterChange,WhichAnswer)=AdjustInt("CMD: ", InterChangeReplyCommand(WhichInterChange,WhichAnswer), 1, 10, 150)
+			If OldValue<>InterChangeReplyCommand(WhichInterChange,WhichAnswer)
+				UnsavedChanges=True
+			EndIf
+			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCommandName$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 3
+			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=AdjustInt("Data1: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), 1, 10, 150)
+			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
+				UnsavedChanges=True
+			EndIf
+			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData1NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), ": "))
 		Case 4
+			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, 150)
+			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
+				UnsavedChanges=True
+			EndIf
+			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData2NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), ": "))
 		Case 5
+			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, 150)
+			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
+				UnsavedChanges=True
+			EndIf
+			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData3NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), ": "))
 		Case 6
+			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, 150)
+			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
+				UnsavedChanges=True
+			EndIf
+			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData4NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), ": "))
 		End Select
 		
@@ -23458,11 +23554,23 @@ Function DialogMainLoop()
 	; Change AskaboutData
 	If MouseY()>490 And MouseY()<520
 		If MouseX()<170
+			OldValue=AskAboutActive(WhichAskAbout)
 			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, 150)
+			If OldValue<>AskAboutActive(WhichAskAbout)
+				UnsavedChanges=True
+			EndIf
 		Else If MouseX()<400
+			OldValue=AskAboutInterChange(WhichAskAbout)
 			AskAboutInterChange(WhichAskAbout)=AdjustInt("Interchange: ", AskAboutInterChange(WhichAskAbout), 1, 10, 150)
+			If OldValue<>AskAboutInterChange(WhichAskAbout)
+				UnsavedChanges=True
+			EndIf
 		Else
+			OldValue=AskAboutRepeat(WhichAskAbout)
 			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, 150)
+			If OldValue<>AskAboutRepeat(WhichAskAbout)
+				UnsavedChanges=True
+			EndIf
 		EndIf
 		
 		If Modified
@@ -23632,6 +23740,8 @@ Function LoadDialogFile()
 		AskAboutRepeat(i)=ReadInt(file)
 	Next
 	CloseFile file
+	
+	UnsavedChanges=False
 
 End Function
 
@@ -23710,6 +23820,8 @@ Function SaveDialogFile()
 		WriteInt File,AskAboutRepeat(i)
 	Next
 	CloseFile file
+	
+	UnsavedChanges=False
 	
 End Function
 
