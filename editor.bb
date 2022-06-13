@@ -11226,20 +11226,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!NPC" 
 			tex2$="Expression"
-			
-			Select CurrentObjectData(1)
-			Case 0
-				tex$="Happy"
-			Case 1
-				tex$="Surprised"
-			Case 2
-				tex$="Sad"
-			Case 3
-				tex$="Asleep"
-			Case 4
-				tex$="Angry"
-			End Select
-			
+			tex$=GetStinkerExpressionName$(CurrentObjectData(1))
 		EndIf
 		
 		If CurrentObjectModelName$="!Sun Sphere1"
@@ -11279,18 +11266,18 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="Colour2"
-			Else If (CurrentObjectSubType Mod 32)<10
+			Else If (CurrentObjectSubType Mod 32)<10 ; Color Changer
 				tex2$="Col To"
-			Else If (CurrentObjectSubType Mod 32)=15
+			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
 				tex2$=GetCMDData1Name$(CurrentObjectData(0))
 				tex$=GetCmdData1ValueName$(CurrentObjectData(0),CurrentObjectData(1))
-			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
+			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				tex2$="SubColour"
-			Else If CurrentObjectSubType = 10
+			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="Dest Level"
-			Else If CurrentObjectSubType = 11
+			Else If CurrentObjectSubType = 11 ; NPC Modifier
 				tex2$="NPC ID"
 			EndIf
 			
@@ -11385,12 +11372,11 @@ Function DisplayObjectAdjuster(i)
 	
 
 		If CurrentObjectType=290 Or CurrentObjectType=380 ; Thwart or Ice Troll
-			tex2$="Anim"
+			tex2$="WalkAnim"
 			If CurrentObjectData(1)=0
 				tex$="Normal"
 			Else If CurrentObjectData(1)=1
 				tex$="Hands Up"
-			
 			EndIf
 		EndIf
 		
@@ -11543,7 +11529,7 @@ Function DisplayObjectAdjuster(i)
 				tex2$="X Goal"
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
 				tex2$="Dialog"
-				If CurrentObjectData(2)=0 Then	tex$="None"
+				If CurrentObjectData(2)=0 Then tex$="None"
 				If CurrentObjectData(2)=-1 Then	tex$="No Change"
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2
 				tex2$="Particle #"
@@ -11716,24 +11702,23 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="Colour4"
-			Else If (CurrentObjectSubType Mod 32)<10
+			Else If (CurrentObjectSubType Mod 32)<10 ; Color Changer
 				tex2$="SubCol To"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0 ; NPC Modifier: NPC Move
 				tex2$="Y Goal"
-			Else If CurrentObjectSubType = 10
+			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="Dest Y"
 
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
 				tex2$="Expression"
-				If CurrentObjectData(3)=0 Then tex$="Happy"
-				If CurrentObjectData(3)=1 Then tex$="Surprised"
-				If CurrentObjectData(3)=2 Then tex$="Sad"
-				If CurrentObjectData(3)=3 Then tex$="Asleep"
-				If CurrentObjectData(3)=4 Then tex$="Angry"
-				If CurrentObjectData(3)=-1 Then	tex$="No Change"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2
+				If CurrentObjectData(3)=-1
+					tex$="No Change"
+				Else
+					tex$=GetStinkerExpressionName$(CurrentObjectData(3))
+				EndIf
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2 ; NPC Modifier: NPC Exclamation
 				tex2$="How Many"
 			Else If (CurrentObjectSubType Mod 32)=15
 				tex2$=GetCMDData3Name$(CurrentObjectData(0))
@@ -11788,25 +11773,30 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="SubColour1"
 				
-			Else If CurrentObjectSubType = 10
+			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="PlayerYaw"
 				DisplayedRotation=(currentObjectData(4)+180) Mod 360
 				tex$=GetDirectionString$(DisplayedRotation)
 				
 				
-			Else If CurrentObjectSubType = 11 And (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2)
+			Else If CurrentObjectSubType = 11 And (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2) ; NPC Modifier: NPC Move or NPC Exclamation
 				tex2$="Repeatable"
 				If CurrentObjectData(4)=0
 					tex$="Yes"
 				Else
 					tex$="No"
 				EndIf
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
 				tex2$="Yaw"
-				If CurrentObjectData(4)=-1 Then	tex$="No Change"
+				If CurrentObjectData(4)=-1
+					tex$="No Change"
+				Else
+					;tex$=GetDirectionString$(CurrentObjectData(4))
+					tex$=CurrentObjectData(4)
+				EndIf
 			Else If (CurrentObjectSubType Mod 32)=15
 				tex2$=GetCMDData4Name$(CurrentObjectData(0))
 				tex$=GetCmdData4ValueName$(CurrentObjectData(0),CurrentObjectData(4))
@@ -11893,7 +11883,7 @@ Function DisplayObjectAdjuster(i)
 		
 
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="SubColour2"
 			Else If CurrentObjectSubType = 10
 				tex2$="FlyOver"
@@ -11963,15 +11953,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!NPC"
 			tex2$="WalkAnim"
-			
-			Select CurrentObjectData(6)
-			Case 0
-				tex$="Waddle"
-			Case 1
-				tex$="Walk"
-			Case 2
-				tex$="Run"
-			End Select
+			tex$=GetStinkerNPCWalkAnimName$(CurrentObjectData(6))
 		EndIf
 		
 		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
@@ -11979,20 +11961,17 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="SubColour3"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0 ; NPC Modifier: NPC Move
 				tex2$="DelayReset"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
 				tex2$="WalkAnim"
-				If CurrentObjectData(6)=0 tex$="Waddle"
-				If CurrentObjectData(6)=1 tex$=" Walk "
-				If CurrentObjectData(6)=2 tex$=" Run! "
-				If CurrentObjectData(6)=-1 Then	tex$="No Change"
-				
-				
-
-
+				If CurrentObjectData(6)=-1
+					tex$="No Change"
+				Else
+					tex$=GetStinkerNPCWalkAnimName$(CurrentObjectData(6))
+				EndIf
 			EndIf
 			
 		EndIf
@@ -12053,19 +12032,15 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="SubColour4"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
 				tex2$="Turn"
-				If (CurrentObjectData(7) Mod 10)=0 tex$="Fixed"
-				If (CurrentObjectData(7) Mod 10)=1 tex$="Player"
-				If (CurrentObjectData(7) Mod 10)=2 tex$="Clock Slow"
-				If (CurrentObjectData(7) Mod 10)=3 tex$="Clock Fast"
-				If (CurrentObjectData(7) Mod 10)=4 tex$="Count Slow"
-				If (CurrentObjectData(7) Mod 10)=5 tex$="Count Fast"
-				If CurrentObjectData(7) >=10 And CurrentObjectData(7)<20 tex$=tex$+"Bounce"
-				If CurrentObjectData(7) >=20 And CurrentObjectData(7)<30 tex$=tex$+"BouFas"
-				If CurrentObjectData(7)=-1 Then	tex$="No Change"
+				If CurrentObjectData(7)=-1
+					tex$="No Change"
+				Else
+					tex$=GetNPCTurningName$(CurrentObjectData(7))
+				EndIf
 				
 				
 			EndIf
@@ -12073,14 +12048,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=110 Or CurrentObjectType=390 ; Stinker NPC or Kaboom NPC
 		
 			tex2$="Turn"
-			If (CurrentObjectData(7) Mod 10)=0 tex$="Fixed"
-			If (CurrentObjectData(7) Mod 10)=1 tex$="Player"
-			If (CurrentObjectData(7) Mod 10)=2 tex$="Clock Slow"
-			If (CurrentObjectData(7) Mod 10)=3 tex$="Clock Fast"
-			If (CurrentObjectData(7) Mod 10)=4 tex$="Count Slow"
-			If (CurrentObjectData(7) Mod 10)=5 tex$="Count Fast"
-			If CurrentObjectData(7) >=10 And CurrentObjectData(7)<20 tex$=tex$+"Bounce"
-			If CurrentObjectData(7) >=20 And CurrentObjectData(7)<30 tex$=tex$+"BouFas"
+			tex$=GetNPCTurningName$(CurrentObjectData(7))
 		EndIf
 		
 		If CurrentObjectType=290 Or CurrentObjectType=380 Or CurrentObjectType=433 ; Thwart, Ice Troll, and Z-Bot NPC
@@ -12133,19 +12101,8 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectType=110 ; Stinker NPC
 			
-			tex2$="Anim"
-			If CurrentObjectData(8)=0 tex$="Sway"
-			If CurrentObjectData(8)=1 tex$="Wave Sometime"
-			If CurrentObjectData(8)=2 tex$="Wave Constant"
-			If CurrentObjectData(8)=3 tex$="Foot Sometime"
-			If CurrentObjectData(8)=4 tex$="Foot Constant"
-			If CurrentObjectData(8)=5 tex$="Dance"
-			If CurrentObjectData(8)=6 tex$="Sit Constant"
-			If CurrentObjectData(8)=7 tex$="Sit/Stand"
-			If CurrentObjectData(8)=8 tex$="Sit/Stand/Wave"
-			If CurrentObjectData(8)=9 tex$="Panic Sometime"
-			If CurrentObjectData(8)=10 tex$="Panic Constant"
-			
+			tex2$="IdleAnim"
+			tex$=GetStinkerNPCIdleAnimName$(CurrentObjectData(8))			
 			
 		EndIf
 		
@@ -12215,20 +12172,13 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectType=90 ; button
-			If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
-				tex2$="Anim"
-				If CurrentObjectData(9)=0 tex$="Sway"
-				If CurrentObjectData(9)=1 tex$="Wave Sometime"
-				If CurrentObjectData(9)=2 tex$="Wave Constant"
-				If CurrentObjectData(9)=3 tex$="Foot Sometime"
-				If CurrentObjectData(9)=4 tex$="Foot Constant"
-				If CurrentObjectData(9)=5 tex$="Dance"
-				If CurrentObjectData(9)=6 tex$="Sit Constant"
-				If CurrentObjectData(9)=7 tex$="Sit/Stand"
-				If CurrentObjectData(9)=8 tex$="Sit/Stand/Wave"
-				If CurrentObjectData(9)=9 tex$="Panic Sometime"
-				If CurrentObjectData(9)=10 tex$="Panic Constant"
-				If CurrentObjectData(9)=-1 Then	tex$="No Change"
+			If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
+				tex2$="IdleAnim"
+				If CurrentObjectData(9)=-1
+					tex$="No Change"
+				Else
+					tex$=GetStinkerNPCIdleAnimName$(CurrentObjectData(9))
+				EndIf
 			EndIf
 		EndIf
 		
@@ -12255,16 +12205,21 @@ Function DisplayObjectAdjuster(i)
 
 		
 	Case "Talkable"
-		tex$=Str$(CurrentObjectTalkable)
 		tex2$="Dialog"
+		If CurrentObjectTalkable=0
+			tex$="None"
+		Else
+			tex$=Str$(CurrentObjectTalkable)
+		EndIf
+		
 		Randomized=RandomTalkable
 		LeftAdj$=RandomTalkableMin
 		RightAdj$=RandomTalkableMax
 		
 	Case "MovementType"
-		;tex$=Str$(CurrentObjectMovementType)
 		tex$=CurrentObjectMovementType+"/"+GetMovementTypeString$(CurrentObjectMovementType)
 		tex2$="MvmtType"
+		
 		Randomized=RandomMovementType
 		LeftAdj$=RandomMovementTypeMin
 		RightAdj$=RandomMovementTypeMax
@@ -12272,6 +12227,7 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectMovementTypeData)
 	Case "MovementSpeed"
 		tex$=Str$(CurrentObjectMovementSpeed)
+		
 		Randomized=RandomMovementSpeed
 		LeftAdj$=RandomMovementSpeedMin
 		RightAdj$=RandomMovementSpeedMax
@@ -12296,7 +12252,12 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomScaleAdjustMin
 		RightAdj$=RandomScaleAdjustMax
 	Case "Exclamation"
-		tex$=Str$(CurrentObjectExclamation)
+		If CurrentObjectExclamation=-1
+			tex$="None"
+		Else
+			tex$=Str$(CurrentObjectExclamation)
+		EndIf
+		
 		Randomized=RandomExclamation
 		LeftAdj$=RandomExclamationMin
 		RightAdj$=RandomExclamationMax
@@ -16513,10 +16474,14 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 		End Select
 
 	Default
-		If ColorId=1 And IsAccessoryIdVanilla(AccessoryId)
-			tex$="Default"
+		If AccessoryId<1
+			tex$="None"
 		Else
-			tex$="NotVanilla"
+			If ColorId=1 And IsAccessoryIdVanilla(AccessoryId)
+				tex$="Default"
+			Else
+				tex$="NotVanilla"
+			EndIf
 		EndIf
 	End Select
 	
@@ -23849,7 +23814,7 @@ Function GetCMDData1Name$(id)
 	Case 61,62,63,64
 		Return "NPC ID"
 	Case 65
-		Return "Expr. No"
+		Return "Expression"
 	Default
 		Return "N/A (1)"
 	End Select
@@ -23915,9 +23880,9 @@ Function GetCMDData3Name$(id)
 	Case 52
 		Return "MvTpData"
 	Case 62
-		Return "Expr."
+		Return "Expression"
 	Case 63
-		Return "Turning"
+		Return "Turn"
 	Case 64
 		Return "Count"
 	Default
@@ -23927,6 +23892,8 @@ End Function
 
 Function GetCMDData4Name$(id)
 	Select id
+	Case 4
+		Return "Level?"
 	Case 7
 		Return "PlayerYaw"
 	Case 12
@@ -23957,6 +23924,8 @@ Function GetCmdData1ValueName$(Cmd, Data1)
 		EndIf
 	Case 13
 		Return GetWeatherName$(Data1)
+	Case 65
+		Return GetStinkerExpressionName$(Data1)
 	Default
 		Return Data1
 	End Select
@@ -23982,6 +23951,20 @@ Function GetCmdData2ValueName$(Cmd, Data2)
 		EndIf
 	Case 52
 		Return Data2+"/"+GetMovementTypeString$(Data2)
+	Case 62
+		If Data2=0
+			Return "None"
+		ElseIf Data2=-1
+			Return "No Change"
+		Else
+			Return Data2
+		EndIf
+	Case 63
+		If Data2=-1
+			Return "No Change"
+		Else
+			Return GetStinkerNPCWalkAnimName$(Data2)
+		EndIf
 	Default
 		Return Data2
 	End Select
@@ -24006,6 +23989,18 @@ Function GetCmdData3ValueName$(Cmd, Data2, Data3)
 		Else
 			Return Data3+" kHz"
 		EndIf
+	Case 62
+		If Data3=-1
+			Return "No Change"
+		Else
+			Return GetStinkerExpressionName$(Data3)
+		EndIf
+	Case 63
+		If Data3=-1
+			Return "No Change"
+		Else
+			Return GetNPCTurningName$(Data3)
+		EndIf
 	Default
 		Return Data3
 	End Select
@@ -24015,6 +24010,12 @@ End Function
 Function GetCmdData4ValueName$(Cmd, Data4)
 
 	Select Cmd
+	Case 4
+		If Data4=0
+			Return "Current"
+		Else
+			Return Data4+"/MAV?"
+		EndIf
 	Case 7
 		DisplayedRotation=(Data4+180) Mod 360
 		Return GetDirectionString$(DisplayedRotation)
@@ -24026,6 +24027,20 @@ Function GetCmdData4ValueName$(Cmd, Data4)
 		EndIf
 	Case 51
 		Return Data4+"/"+GetMovementTypeString$(Data4)
+	Case 62
+		If Data4=-1
+			Return "No Change"
+		Else
+			Return Data4
+			;DisplayedRotation=Data4 Mod 360
+			;Return GetDirectionString$(DisplayedRotation)
+		EndIf
+	Case 63
+		If Data4=-1
+			Return "No Change"
+		Else
+			Return GetStinkerNPCIdleAnimName$(Data4)
+		EndIf
 	Default
 		Return Data4
 	End Select
@@ -24600,6 +24615,86 @@ Function GetSoundName$(value)
 		Return "NPCNice2CU!"	
 	Default
 		Return "N/A"
+	End Select
+
+End Function
+
+Function GetStinkerExpressionName$(Value)
+
+	Select Value
+	Case 0
+		Return "Happy"
+	Case 1
+		Return "Surprised"
+	Case 2
+		Return "Sad"
+	Case 3
+		Return "Asleep"
+	Case 4
+		Return "Angry"
+	Default
+		Return Value+"/Unknown"
+	End Select
+
+End Function
+
+Function GetStinkerNPCWalkAnimName$(Value)
+
+	Select Value
+	Case 0
+		Return "Waddle"
+	Case 1
+		Return "Walk"
+	Case 2
+		Return "Run"
+	Default
+		Return Value+"/NotVanilla"
+	End Select
+
+End Function
+
+Function GetNPCTurningName$(Value)
+
+	tex$=Value+"/Unknown"
+	If (Value Mod 10)=0 tex$="Fixed"
+	If (Value Mod 10)=1 tex$="Player"
+	If (Value Mod 10)=2 tex$="Clock Slow"
+	If (Value Mod 10)=3 tex$="Clock Fast"
+	If (Value Mod 10)=4 tex$="Count Slow"
+	If (Value Mod 10)=5 tex$="Count Fast"
+	If Value>=10 And Value<20 tex$=tex$+"Bounce"
+	If Value>=20 And Value<30 tex$=tex$+"BouFas"
+	Return tex$
+
+End Function
+
+Function GetStinkerNPCIdleAnimName$(Value)
+
+	Select Value
+	Case 0
+		Return "Sway"
+	Case 1
+		Return "WaveSometime"
+	Case 2
+		Return "WaveConstant"
+	Case 3
+		Return "FootSometime"
+	Case 4
+		Return "FootConstant"
+	Case 5
+		Return "Dance"
+	Case 6
+		Return "SitConstant"
+	Case 7
+		Return "Sit/Stand"
+	Case 8
+		Return "Sit/StandWave"
+	Case 9
+		Return "PanicSometime"
+	Case 10
+		Return "PanicConstant"
+	Default
+		Return Value+"/NotVanilla"
 	End Select
 
 End Function
