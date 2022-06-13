@@ -11300,11 +11300,18 @@ Function DisplayObjectAdjuster(i)
 			tex$=GetMagicNameAndId(CurrentObjectData(0))
 		EndIf
 		
-		If CurrentObjectType=179
+		If CurrentObjectType=179 ; Custom Item
 			tex2$="Texture"
 		EndIf
 		
-		If CurrentObjectType=350
+		If CurrentObjectType=320 ; Void
+			tex2$="TimeOffset"
+			If CurrentObjectData(0)=0
+				tex$="Random"
+			EndIf
+		EndIf
+		
+		If CurrentObjectType=350 ; GrowFlower
 			tex2$="TileLogic"
 			tex$=LogicIdToLogicName$(CurrentObjectData(0))
 		EndIf
@@ -11829,6 +11836,10 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=260 ; Spikeyball
 			tex2$="Speed"
 			tex$="+"+Str$(CurrentObjectData(2))
+		EndIf
+		
+		If CurrentObjectType=320 ; Void
+			tex2$="SizeAdjust"
 		EndIf
 		
 		If CurrentObjectType=433 ; Z-Bot NPC
@@ -26664,9 +26675,34 @@ Function ControlWaterfall(i)
 End Function
 
 
-Function ControlVoidTexture(i)
+Function ControlVoid(i)
+
+	If SimulatedObjectData(i,0)=0
+		SimulatedObjectData(i,0)=Rand(1,360)
+	EndIf
+
+	SimulatedObjectZ(i)=-.2
 	
 	PositionTexture voidtexture,((leveltimer/10) Mod 100)/100.0,((leveltimer/10) Mod 100)/100.0
+	
+	SimulatedObjectXScale(i)=(.8+.4*Sin((leveltimer+SimulatedobjectData(i,0)) Mod 360))*(1.0+Float(SimulatedObjectData(i,2)))
+	SimulatedObjectYScale(i)=(.8+.4*Sin((leveltimer+SimulatedobjectData(i,0)) Mod 360))*(1.0+Float(SimulatedObjectData(i,2)))
+
+	SimulatedObjectZScale(i)=(1.3+.6*Sin((leveltimer*2+SimulatedobjectData(i,0)) Mod 360));*(1.0+Float(ObjectData(i,2)))
+
+		
+	TurnEntity ObjectENtity(i),0,.1,0
+	
+	If ObjectModelName$(i)="!Void"
+		surface=GetSurface(ObjectENtity(i),1)
+		For i=0 To 17
+			VertexCoords surface,i*2,VertexX(surface,i*2),(1+.6*Sin(i*80+((LevelTimer*4) Mod 360))),VertexZ(surface,i*2)
+		Next
+		For i=18 To 35
+			VertexCoords surface,i*2,VertexX(surface,i*2),(.5+.4*Sin(i*160+((LevelTimer*4) Mod 360))),VertexZ(surface,i*2)
+		Next
+	EndIf
+
 	
 End Function
 
@@ -29396,7 +29432,7 @@ Function ControlObjects()
 			Case 310
 				ControlRubberducky(i)
 			Case 320
-				ControlVoidTexture(i)
+				ControlVoid(i)
 			Case 330
 				ControlWisp(i)
 			Case 340
