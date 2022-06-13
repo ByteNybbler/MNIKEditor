@@ -5171,7 +5171,7 @@ Function EditorLocalControls()
 		EndIf
 	
 		; Formerly StartX,StartY+60
-		ShowTooltipRightAligned(800,StartY+105,"Resize "+ResizeName$+": Scroll the mouse wheel to change the resize setting.")
+		ShowTooltipRightAligned(800,StartY+105,"Scroll the mouse wheel to change the resize setting: Resize "+ResizeName$)
 	
 		If mx<StartX+40 And my<StartY+30 
 			If LeftMouse=True And LeftMouseReleased=True
