@@ -39,6 +39,13 @@ Global EditorModeBeforeMasterEdit=0
 ; Whether or not the level or dialog has unsaved changes.
 Global UnsavedChanges=False
 
+; KEYS
+
+Global KeyMoveNorth=17 ; W key
+Global KeyMoveWest=30 ; A key
+Global KeyMoveSouth=31 ; S key
+Global KeyMoveEast=32 ; D key
+
 ; COLORS
 
 Global RectOnR=255
@@ -311,7 +318,7 @@ Const ToolbarElevateX=250
 Const ToolbarElevateY=565
 
 Const ToolbarStepPerX=350
-Const ToolbarStepPerY=520
+Const ToolbarStepPerY=565
 
 Const ToolbarShowMarkersX=450
 Const ToolbarShowMarkersY=520
@@ -555,6 +562,8 @@ Global DisplayFullScreen=False
 ;	DisplayFullScreen=ReadInt(filed)
 ;	CloseFile filed
 ;EndIf
+
+Global EditorControls$=GlobalDirName$+"\editorcontrols.wdf"
 
 
 
@@ -876,6 +885,10 @@ Global CurrentObjectFutureString1$,CurrentObjectFutureString2$
 
 Dim CurrentObjectTargetID(3)
 Global CurrentObjectTargetIDCount=0
+
+Const PlayerActivateId=-2
+Dim CurrentObjectActivateId(2)
+Global CurrentObjectActivateIdCount=0
 
 Global IDFilterEnabled=False
 Global IDFilterAllow=-1
@@ -1960,7 +1973,7 @@ LoadObjectPreset()
 Global Mouseimg=LoadImage ("data\Mouseimg.bmp")
 
 
-StartupColors()
+StartupConfigs()
 
 TweenPeriod=1000/60;85
 TweenTime=MilliSecs()-TweenPeriod
@@ -2029,7 +2042,7 @@ Function OnRegainFocus()
 	
 	; Apparently Blitz doesn't pick up on the Tab key when alt-tabbing. That's pretty nice.
 	
-	ReadColors()
+	ReadConfigs()
 
 End Function
 
@@ -2450,20 +2463,39 @@ Function EditorMainLoop()
 	
 	For i=0 To NofObjects-1
 		MyEffectiveId=CalculateEffectiveId(i)
-		For j=0 To CurrentObjectTargetIDCount-1
+		
+		HitTargetID=False
+		For j=0 To CurrentObjectTargetIDCount-1	
 			If MyEffectiveId=CurrentObjectTargetID(j)
+				HitTargetID=True
+			
 				CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
 				x#=ProjectedX#()
 				y#=ProjectedY#()
 				If x#<490 And y#<490
 					StringOnObject$=MyEffectiveId
 					x#=x#-4*Len(StringOnObject$)
-					
-					; Do text with an outline.
+
 					OutlinedText(x#,y#,StringOnObject$,255,255,0)
 				EndIf
 			EndIf
 		Next
+		
+		If Not HitTargetID
+			For j=0 To CurrentObjectActivateIDCount-1	
+				If MyEffectiveId=CurrentObjectActivateID(j)
+					CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
+					x#=ProjectedX#()
+					y#=ProjectedY#()
+					If x#<490 And y#<490
+						StringOnObject$=MyEffectiveId
+						x#=x#-4*Len(StringOnObject$)
+		
+						OutlinedText(x#,y#,StringOnObject$,100,255,255)
+					EndIf
+				EndIf
+			Next
+		EndIf
 	Next
 	
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -2973,6 +3005,119 @@ Function StartupColors()
 
 	ReadColors()
 	WriteColors()
+
+End Function
+
+
+Function ReadControls()
+
+	file=ReadFile(EditorControls$)
+	KeyMoveNorth=ReadInt(file)
+	KeyMoveWest=ReadInt(file)
+	KeyMoveSouth=ReadInt(file)
+	KeyMoveEast=ReadInt(file)
+	CloseFile file
+
+End Function
+
+Function WriteControls()
+
+	file=WriteFile(EditorControls$)
+	WriteInt(file,KeyMoveNorth)
+	WriteInt(file,KeyMoveWest)
+	WriteInt(file,KeyMoveSouth)
+	WriteInt(file,KeyMoveEast)
+	CloseFile file
+
+End Function
+
+
+Function StartupControls()
+
+	If FileExists(EditorControls$)
+		ReadControls()
+	Else
+		WriteControls()
+	EndIf
+
+End Function
+
+
+Function StartupConfigs()
+
+	StartupColors()
+	StartupControls()
+
+End Function
+
+
+Function ReadConfigs()
+
+	ReadColors()
+	ReadControls()
+
+End Function
+
+
+Function GetKeyFromUser()
+	
+	While True
+		For i=0 To 237
+			If KeyDown(i)
+				Return i
+			EndIf
+		Next
+	Wend
+	
+	FlushKeys
+	
+End Function
+
+
+Function AnyKeyDown()
+
+	For i=0 To 237
+		If KeyDown(i)
+			Return True
+		EndIf
+	Next
+	Return False
+
+End Function
+
+
+Function ConfigureKeyboardKey(KeyName$)
+
+	PrintMessageForInstant("Press the key you want to use to "+KeyName$+".")
+	Result=GetKeyFromUser()
+	
+	Repeat
+	Until Not KeyDown(Result)
+	
+	Return Result
+
+End Function
+
+
+Function ConfigureControls()
+
+	If Not GetConfirmation("Do you want to configure your keyboard mappings?")
+		Return
+	EndIf
+	
+	Repeat
+	Until Not AnyKeyDown()
+	
+	FlushKeys
+
+	KeyMoveNorth=ConfigureKeyboardKey("MOVE NORTH")
+	KeyMoveWest=ConfigureKeyboardKey("MOVE WEST")
+	KeyMoveSouth=ConfigureKeyboardKey("MOVE SOUTH")
+	KeyMoveEast=ConfigureKeyboardKey("MOVE EAST")
+	
+	WriteControls()
+	
+	ShowMessage("Controls configured!",1000)
 
 End Function
 
@@ -5200,6 +5345,7 @@ Function EditorLocalControls()
 	
 	If KeyPressed(20) ; T key
 		If CtrlDown() ; Ctrl+T
+			UpdateCurrentGrabbedObjectIfExists()
 			SaveLevel()
 			SetBrushMode(BrushModeTestLevel)
 		Else
@@ -8333,14 +8479,21 @@ Function AddAdjuster(Name$)
 End Function
 
 
+Function PrintMessageForInstant(Message$)
+
+	Locate 0,0
+	Color 0,0,0
+	Rect 0,0,500,40,True
+	Color 255,255,255
+	Print message$
+
+End Function
+
+
 Function ShowMessage(message$, milliseconds)
 
-		Locate 0,0
-		Color 0,0,0
-		Rect 0,0,500,40,True
-		Color 255,255,255
-		Print message$
-		Delay milliseconds
+	PrintMessageForInstant(message$)
+	Delay milliseconds
 
 End Function
 
@@ -10157,6 +10310,15 @@ Function UpdateCurrentGrabbedObject()
 End Function
 
 
+Function UpdateCurrentGrabbedObjectIfExists()
+
+	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
+		UpdateCurrentGrabbedObject()
+	EndIf
+
+End Function
+
+
 Function PasteObjectData(Dest)
 
 	;FreeClothes(Dest)
@@ -10350,6 +10512,15 @@ Function TooltipTargetsEffectiveID(StartX,StartY,EffectiveID)
 
 End Function
 
+Function TooltipHasActivateID(StartX,StartY,ActivateID)
+
+	If ActivateID>0
+		Count=CountObjectEffectiveIDs(ActivateID)
+		ShowTooltipRightAligned(StartX,StartY,"Effective ID "+ActivateID+" matches "+Count+" "+MaybePluralize$("object",Count)+" in this level.")
+	EndIf
+
+End Function
+
 
 Function HoverOverObjectAdjuster(i)
 
@@ -10404,6 +10575,8 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data4"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+		ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(4))
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10415,6 +10588,8 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data5"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(1))
+		ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(5))
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
@@ -10426,11 +10601,18 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data6"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
+		ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(6))
 		EndIf
 		
 	Case "Data7"
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(3))
+		EndIf
+		
+	Case "Data8"
+		If CurrentObjectType=90
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(8))
 		EndIf
 	
 	Case "TileTypeCollision"
@@ -11898,7 +12080,7 @@ Function DisplayObjectAdjuster(i)
 				tex2$="ActivateID"
 			Else
 				tex2$="ActivateType"
-				tex$=Str$(-CurrentObjectData(4))
+				tex$=Str$(-CurrentObjectData(4))+"/"+GetTypeString$(-CurrentObjectData(4))
 			EndIf
 		EndIf
 
@@ -11988,7 +12170,7 @@ Function DisplayObjectAdjuster(i)
 				tex2$="ActivateID"
 			Else
 				tex2$="ActivateType"
-				tex$=Str$(-CurrentObjectData(5))
+				tex$=Str$(-CurrentObjectData(5))+"/"+GetTypeString$(-CurrentObjectData(5))
 			EndIf
 		EndIf
 		
@@ -12063,7 +12245,7 @@ Function DisplayObjectAdjuster(i)
 				tex2$="ActivateID"
 			Else
 				tex2$="ActivateType"
-				tex$=Str$(-CurrentObjectData(6))
+				tex$=Str$(-CurrentObjectData(6))+"/"+GetTypeString$(-CurrentObjectData(6))
 			EndIf
 		EndIf
 		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor (is tail relevant here?)
@@ -15379,6 +15561,7 @@ Function FinalizeCurrentObject()
 	ShowCurrentObjectMoveXYGoal()
 	ShowWorldAdjusterPositions()
 	CalculateCurrentObjectTargetIDs()
+	CalculateCurrentObjectActivateID()
 
 End Function
 
@@ -15435,6 +15618,22 @@ Function CalculateCurrentObjectTargetIDs()
 		CurrentObjectTargetIDCount=0
 	EndIf
 
+End Function
+
+Function CalculateCurrentObjectActivateID()
+	
+	If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
+		CurrentObjectActivateIdCount=1
+		CurrentObjectActivateId(0)=CurrentObjectData(8)
+	ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
+		CurrentObjectActivateIdCount=3
+		CurrentObjectActivateId(0)=CurrentObjectData(4)
+		CurrentObjectActivateId(1)=CurrentObjectData(5)
+		CurrentObjectActivateId(2)=CurrentObjectData(6)
+	Else
+		CurrentObjectActivateIdCount=0
+	EndIf
+	
 End Function
 
 
@@ -17538,6 +17737,12 @@ Function IsObjectLogicFourColorButton(TargetType,TargetSubType)
 
 End Function
 
+Function IsObjectLogicAutodoor(TargetType,TargetSubType)
+
+	Return TargetType=10 And TargetSubType=9
+
+End Function
+
 Function SetThreeOtherDataIfNotEqual(DTo1,DTo2,DTo3,DFrom,OldData)
 
 	If CurrentObjectData(DTo1)=OldData And CurrentObjectData(DTo2)=OldData And CurrentObjectData(DTo3)=OldData
@@ -17591,19 +17796,19 @@ Function CameraControls()
 		Return
 	EndIf
 
-	If KeyDown(75) Or KeyDown(203) Or KeyDown(30) ; numpad 4 or left arrow or A
+	If KeyDown(75) Or KeyDown(203) Or KeyDown(KeyMoveWest) ; numpad 4 or left arrow
 			
 		TranslateEntity Target,-Adj,0,0
 	EndIf
-	If KeyDown(77) Or KeyDown(205) Or KeyDown(32) ; numpad 6 or right arrow or D
+	If KeyDown(77) Or KeyDown(205) Or KeyDown(KeyMoveEast) ; numpad 6 or right arrow
 		
 		TranslateEntity Target,Adj,0,0
 	EndIf
-	If KeyDown(72) Or KeyDown(200) Or KeyDown(17) ; numpad 8 or up arrow or W
+	If KeyDown(72) Or KeyDown(200) Or KeyDown(KeyMoveNorth) ; numpad 8 or up arrow
 	
 		TranslateEntity Target,0,0,Adj
 	EndIf
-	If KeyDown(80) Or KeyDown(208) Or KeyDown(31) ; numpad 2 or down arrow or S
+	If KeyDown(80) Or KeyDown(208) Or KeyDown(KeyMoveSouth) ; numpad 2 or down arrow
 	
 		TranslateEntity Target,0,0,-Adj
 	EndIf
@@ -19981,7 +20186,7 @@ Function UserSelectScreen()
 		EditorUserNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
-	If KeyDown(28) Or KeyDown(156)
+	If (KeyDown(28) Or KeyDown(156)) And ReturnKeyReleased=True
 		; Enter
 		
 		If EditorUserNameEntered$=""
@@ -20086,9 +20291,14 @@ Function AdventureSelectScreen()
 
 
 	DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
+	
 	;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("            ====================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2("            ================================",0,1,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2("            ================================",0,1,TextMenusR,TextMenusG,TextMenusB)
+	
+	DisplayText2("            ======================",0,1,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("                                  (Controls)",0,1,255,255,255)
+	
 ;	If displayfullscreen=True
 ;		DisplayText2("                                (FullScreen)",0,1,255,255,255)
 ;	Else
@@ -20269,7 +20479,8 @@ Function AdventureSelectScreen()
 ;			Flip
 ;			Print "Note: Screenmode will be switched upon next restart."
 ;			Delay 4000
-			 
+			
+			ConfigureControls()
 			
 		EndIf
 
