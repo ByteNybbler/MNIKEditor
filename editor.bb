@@ -4956,6 +4956,12 @@ Function EditorLocalControls()
 	StartX=715
 	StartY=20
 	
+	If ShiftDown()
+		Adj=10
+	Else
+		Adj=1
+	EndIf
+	
 	If mx>=StartX And mx<StartX+80 And my>=StartY+15 And my<80
 	
 		If MouseScroll<>0
@@ -4969,7 +4975,7 @@ Function EditorLocalControls()
 		EndIf
 	
 		; Formerly StartX,StartY+60
-		ShowTooltipRightAligned(800,StartY+105,"Resize "+ResizeName$+": Scroll the mouse wheel to change.")
+		ShowTooltipRightAligned(800,StartY+105,"Resize "+ResizeName$+": Scroll the mouse wheel to change the resize setting.")
 	
 		If mx<StartX+40 And my<StartY+30 
 			If LeftMouse=True And LeftMouseReleased=True
@@ -4991,12 +4997,12 @@ Function EditorLocalControls()
 					WidthLeftChange=DeltaWidth
 					ReSizeLevel()
 				Else
-					WidthLeftChange=1
+					WidthLeftChange=Adj
 					ReSizeLevel()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				WidthLeftChange=-1
+				WidthLeftChange=-Adj
 				RightMouseReleased=False
 				ReSizeLevel()
 			EndIf
@@ -5021,12 +5027,12 @@ Function EditorLocalControls()
 					WidthRightChange=DeltaWidth
 					ReSizeLevel()
 				Else
-					WidthRightChange=1
+					WidthRightChange=Adj
 					ReSizeLevel()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				WidthRightChange=-1
+				WidthRightChange=-Adj
 				RightMouseReleased=False
 				ReSizeLevel()
 			EndIf
@@ -5054,12 +5060,12 @@ Function EditorLocalControls()
 					HeightTopChange=DeltaHeight
 					ResizeLevel()
 				Else
-					HeightTopChange=1
+					HeightTopChange=Adj
 					ReSizeLevel()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				HeightTopChange=-1
+				HeightTopChange=-Adj
 				RightMouseReleased=False
 				ReSizeLevel()
 			EndIf
@@ -5084,12 +5090,12 @@ Function EditorLocalControls()
 					HeightBottomChange=DeltaHeight
 					ResizeLevel()
 				Else
-					HeightBottomChange=1
+					HeightBottomChange=Adj
 					ReSizeLevel()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				HeightBottomChange=-1
+				HeightBottomChange=-Adj
 				RightMouseReleased=False
 				ReSizeLevel()
 			EndIf
