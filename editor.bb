@@ -10536,24 +10536,32 @@ Function HoverOverObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	
 	Case "Data0"
-		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+		If CurrentObjectType=90
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+			Else If (CurrentObjectSubType Mod 32)<10 Or (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; ColorX2Y or Rotator or ???
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+			EndIf
 		EndIf
-	
+		
 	Case "Data1"
 		If CurrentObjectTargetIDCount<>0
 			If CurrentObjectType=90
 				If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(1))
-				Else ; NPC Modifier and General Command
+				ElseIf (CurrentObjectSubType Mod 32)=11 Or (CurrentObjectSubType Mod 32)=15 Or (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; NPC Modifier, General Command, or Rotator
 					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
 				EndIf
 			EndIf
 		EndIf
 	
 	Case "Data2"
-		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
+		If CurrentObjectType=90
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
+			Else If (CurrentObjectSubType Mod 32)<10 ; ColorX2Y
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+			EndIf
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
@@ -15562,7 +15570,7 @@ Function FinalizeCurrentObject()
 	ShowCurrentObjectMoveXYGoal()
 	ShowWorldAdjusterPositions()
 	CalculateCurrentObjectTargetIDs()
-	CalculateCurrentObjectActivateID()
+	CalculateCurrentObjectActivateIDs()
 
 End Function
 
@@ -15575,13 +15583,16 @@ End Function
 
 
 Function CalculateCurrentObjectTargetIDs()	
-
+	
 	If CurrentObjectType=90
 		If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 			CurrentObjectTargetIDCount=4
 			For i=0 To 3
 				CurrentObjectTargetID(i)=ColorToID(CurrentObjectData(i),CurrentObjectData(i+4))
 			Next
+		Else If (CurrentObjectSubType Mod 32)<10 ; ColorX2Y
+			CurrentObjectTargetIDCount=1
+			CurrentObjectTargetID(0)=ColorToID(CurrentObjectData(0),CurrentObjectData(2))
 		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 			CurrentObjectTargetIDCount=1
 			CurrentObjectTargetID(0)=ColorToID(CurrentObjectData(0),CurrentObjectData(1))
@@ -15618,10 +15629,10 @@ Function CalculateCurrentObjectTargetIDs()
 	Else
 		CurrentObjectTargetIDCount=0
 	EndIf
-
+	
 End Function
 
-Function CalculateCurrentObjectActivateID()
+Function CalculateCurrentObjectActivateIDs()
 	
 	If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
 		CurrentObjectActivateIdCount=1
