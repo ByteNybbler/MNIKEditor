@@ -11284,7 +11284,14 @@ Function DisplayObjectAdjuster(i)
 			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="Dest Level"
 			Else If CurrentObjectSubType = 11 ; NPC Modifier
-				tex2$="NPC ID"
+				If CurrentObjectData(0)=2 ; NPC Exclamation
+					tex2$="Target ID"
+					If CurrentObjectData(1)=-1
+						tex$="Pla"
+					EndIf
+				Else
+					tex2$="NPC ID"
+				EndIf
 			EndIf
 			
 		EndIf
@@ -11520,25 +11527,25 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectType=90 ; button
-			If (CurrentObjectSubType Mod 32)<5
+			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="Colour3"
-			Else If (CurrentObjectSubType Mod 32)<10
+			Else If (CurrentObjectSubType Mod 32)<10 ; Color Changer
 				tex2$="SubCol From"
-			Else If (CurrentObjectSubType Mod 32)=15
+			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
 				tex2$=GetCMDData2Name$(CurrentObjectData(0))
 				tex$=GetCmdData2ValueName$(CurrentObjectData(0),CurrentObjectData(2))
-			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
+			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				tex2$="Direction"
-			Else If CurrentObjectSubType = 10
+			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="Dest X"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0 ; NPC Move
 				tex2$="X Goal"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Change
 				tex2$="Dialog"
 				If CurrentObjectData(2)=0 Then tex$="None"
 				If CurrentObjectData(2)=-1 Then	tex$="No Change"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2
-				tex2$="Particle #"
+			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2 ; NPC Exclamation
+				tex2$="Particle ID"
 
 
 
@@ -11725,7 +11732,7 @@ Function DisplayObjectAdjuster(i)
 					tex$=GetStinkerExpressionName$(CurrentObjectData(3))
 				EndIf
 			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2 ; NPC Modifier: NPC Exclamation
-				tex2$="How Many"
+				tex2$="Count"
 			Else If (CurrentObjectSubType Mod 32)=15
 				tex2$=GetCMDData3Name$(CurrentObjectData(0))
 				tex$=GetCmdData3ValueName$(CurrentObjectData(0),CurrentObjectData(2),CurrentObjectData(3))
@@ -23769,7 +23776,7 @@ Function GetCommandName$(id)
 	Case 63
 		Return "Change NPC 2"
 	Case 64
-		Return "NPC Exclamation"
+		Return "Exclamation"
 	Case 65
 		Return "(MOD) Plyr Face"
 	Case 102
@@ -23799,7 +23806,7 @@ End Function
 
 Function GetCMDData1Name$(id)
 	Select id
-	Case 1,2,3,4,5,51,52
+	Case 1,2,3,4,5,51,52,64
 		Return "Target ID"
 	Case 6
 		Return "Red"
@@ -23821,7 +23828,7 @@ Function GetCMDData1Name$(id)
 		Return "MstrAA"
 	Case 41,42
 		Return "Source X"
-	Case 61,62,63,64
+	Case 61,62,63
 		Return "NPC ID"
 	Case 65
 		Return "Expression"
@@ -23859,7 +23866,7 @@ Function GetCMDData2Name$(id)
 	Case 63
 		Return "WalkAnim"
 	Case 64
-		Return "Particle"
+		Return "Particle ID"
 	Default
 		Return "N/A (2)"
 	End Select
@@ -23934,6 +23941,12 @@ Function GetCmdData1ValueName$(Cmd, Data1)
 		EndIf
 	Case 13
 		Return GetWeatherName$(Data1)
+	Case 64
+		If Data1=-1
+			Return "Pla"
+		Else
+			Return Data1
+		EndIf
 	Case 65
 		Return GetStinkerExpressionName$(Data1)
 	Default
