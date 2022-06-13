@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/13/22"
+Global VersionDate$="06/14/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -3069,8 +3069,6 @@ Function GetKeyFromUser()
 			EndIf
 		Next
 	Wend
-	
-	FlushKeys
 	
 End Function
 
