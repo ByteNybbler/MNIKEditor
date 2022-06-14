@@ -954,6 +954,11 @@ Dim BrushObjectXOffset#(1000),BrushObjectYOffset#(1000)
 
 Global NofBrushObjects=0
 
+Global BrushCopyOriginX
+Global BrushCopyOriginY
+Global BrushCopyWidth
+Global BrushCopyHeight
+
 
 ; Object PRESETS
 ; ========================
@@ -4184,9 +4189,16 @@ Function EditorLocalControls()
 						If EditorMode=0
 							BrushXStart=BrushCursorX-BrushWidth/2
 							BrushYStart=BrushCursorY-BrushHeight/2
+							If BrushWrap=BrushWrapModulus
+								OffsetX=BrushCursorX-BrushCopyOriginX
+								OffsetY=BrushCursorY-BrushCopyOriginY
+							Else
+								OffsetX=0
+								OffsetY=0
+							EndIf
 							For i=0 To BrushWidth-1
 								For j=0 To BrushHeight-1
-									GrabLevelTileFromBrush(i,j)
+									GrabLevelTileFromBrush((i+OffsetX) Mod BrushCopyWidth,(j+OffsetY) Mod BrushCopyHeight)
 									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								Next
 							Next
@@ -4300,6 +4312,10 @@ Function EditorLocalControls()
 				Else
 					; set custom brush
 					NofBrushObjects=0
+					BrushCopyOriginX=BrushCursorX
+					BrushCopyOriginY=BrushCursorY
+					BrushCopyWidth=BrushWidth
+					BrushCopyHeight=BrushHeight
 					BrushXStart=BrushCursorX-BrushWidth/2
 					BrushYStart=BrushCursorY-BrushHeight/2
 					If EditorMode=0
