@@ -4266,26 +4266,26 @@ Function EditorLocalControls()
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Next
 					ElseIf BrushMode=BrushModeCustom
+						BrushXStart=BrushCursorX-BrushWidth/2
+						BrushYStart=BrushCursorY-BrushHeight/2
+						If BrushWrap=BrushWrapModulus
+							OffsetX=BrushCursorX-BrushCopyOriginX
+							OffsetY=BrushCursorY-BrushCopyOriginY
+						Else
+							OffsetX=0
+							OffsetY=0
+						EndIf
 						If EditorMode=0
-							BrushXStart=BrushCursorX-BrushWidth/2
-							BrushYStart=BrushCursorY-BrushHeight/2
-							If BrushWrap=BrushWrapModulus
-								OffsetX=BrushCursorX-BrushCopyOriginX
-								OffsetY=BrushCursorY-BrushCopyOriginY
-							Else
-								OffsetX=0
-								OffsetY=0
-							EndIf
 							For i=0 To BrushWidth-1
 								For j=0 To BrushHeight-1
-									GrabLevelTileFromBrush(EuclideanRemainder(i+OffsetX,BrushWidth),EuclideanRemainder(j+OffsetY,BrushHeight))
+									GrabLevelTileFromBrush(EuclideanRemainderInt(i+OffsetX,BrushWidth),EuclideanRemainderInt(j+OffsetY,BrushHeight))
 									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								Next
 							Next
 						ElseIf EditorMode=3
 							For k=0 To NofBrushObjects-1
 								GrabObjectFromBrush(k)
-								PlaceObject(BrushCursorX+BrushObjectXOffset#(k),BrushCursorY+BrushObjectYOffset#(k))
+								PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushHeight)))
 							Next
 						EndIf
 					ElseIf BrushMode=BrushModeTestLevel
@@ -4412,7 +4412,7 @@ Function EditorLocalControls()
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
 							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushWidth And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushHeight
-								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-BrushCursorX,ObjectY(k)-BrushCursorY)
+								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-BrushXStart,ObjectY(k)-BrushYStart)
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
 						Next
@@ -7563,13 +7563,23 @@ Function MirrorAcrossFloat#(MyPosition#, MirrorPosition#)
 	Return Delta#+MirrorPosition#
 End Function
 
-Function EuclideanRemainder(Value,Divisor)
+Function EuclideanRemainderInt(Value,Divisor)
 
 	Result=Value Mod Divisor
 	If Result<0
 		Result=Result+Divisor
 	EndIf
 	Return Result
+
+End Function
+
+Function EuclideanRemainderFloat#(Value#,Divisor#)
+
+	Result#=Value# Mod Divisor#
+	If Result#<0
+		Result#=Result#+Divisor#
+	EndIf
+	Return Result#
 
 End Function
 
