@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/15/22"
+Global VersionDate$="06/16/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -2920,6 +2920,8 @@ Function SetBrushWidth(NewBrushWidth)
 	
 	If BrushWidth<1
 		BrushWidth=1
+	ElseIf BrushWidth>100
+		BrushWidth=100
 	EndIf
 
 End Function
@@ -2930,6 +2932,8 @@ Function SetBrushHeight(NewBrushHeight)
 	
 	If BrushHeight<1
 		BrushHeight=1
+	ElseIf BrushHeight>100
+		BrushHeight=100
 	EndIf
 
 End Function
