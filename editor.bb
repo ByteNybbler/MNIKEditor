@@ -2915,10 +2915,6 @@ Function SetBrushWidth(NewBrushWidth)
 	If BrushWidth<1
 		BrushWidth=1
 	EndIf
-	
-	If BrushMode=BrushModeCustom
-		SetBrushMode(BrushModeNormal)
-	EndIf
 
 End Function
 
@@ -2928,10 +2924,6 @@ Function SetBrushHeight(NewBrushHeight)
 	
 	If BrushHeight<1
 		BrushHeight=1
-	EndIf
-	
-	If BrushMode=BrushModeCustom
-		SetBrushMode(BrushModeNormal)
 	EndIf
 
 End Function
@@ -4278,14 +4270,14 @@ Function EditorLocalControls()
 						If EditorMode=0
 							For i=0 To BrushWidth-1
 								For j=0 To BrushHeight-1
-									GrabLevelTileFromBrush(EuclideanRemainderInt(i+OffsetX,BrushWidth),EuclideanRemainderInt(j+OffsetY,BrushHeight))
+									GrabLevelTileFromBrush(EuclideanRemainderInt(i+OffsetX,BrushCopyWidth),EuclideanRemainderInt(j+OffsetY,BrushCopyHeight))
 									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								Next
 							Next
 						ElseIf EditorMode=3
 							For k=0 To NofBrushObjects-1
 								GrabObjectFromBrush(k)
-								PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushHeight)))
+								PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushCopyWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushCopyHeight)))
 							Next
 						EndIf
 					ElseIf BrushMode=BrushModeTestLevel
