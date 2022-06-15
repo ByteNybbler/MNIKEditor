@@ -318,7 +318,7 @@ Global StepPer=StepPerPlacement
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 
-Global PreventPlacingObjectsOutsideLevel=True
+Global PreventPlacingObjectsOutsideLevel=False
 
 Const ToolbarDensityX=250
 Const ToolbarDensityY=520
@@ -1167,12 +1167,21 @@ Function AddTileToBrushSurface(i,j)
 End Function
 
 ; MousePlane
+Const MouseSurfaceMinX=0
+Const MouseSurfaceMinY=0
+Const MouseSurfaceMaxX=100
+Const MouseSurfaceMaxY=100
+;Const MouseSurfaceMinX=-100
+;Const MouseSurfaceMinY=-100
+;Const MouseSurfaceMaxX=200
+;Const MouseSurfaceMaxY=200
+
 Global MousePlane=CreateMesh()
 MouseSurface=CreateSurface(MousePlane)
-AddVertex MouseSurface,0,0,0
-AddVertex MouseSurface,100,0,0
-AddVertex MouseSurface,0,0,-100
-AddVertex MouseSurface,100,0,-100
+AddVertex MouseSurface,MouseSurfaceMinX,0,MouseSurfaceMinY ;0,0,0
+AddVertex MouseSurface,MouseSurfaceMaxX,0,MouseSurfaceMinY ;100,0,0
+AddVertex MouseSurface,MouseSurfaceMinX,0,-MouseSurfaceMaxY ;0,0,-100
+AddVertex MouseSurface,MouseSurfaceMaxX,0,-MouseSurfaceMaxY ;100,0,-100
 AddTriangle MouseSurface,0,1,2
 AddTriangle MouseSurface,1,3,2
 EntityPickMode MousePlane,2
@@ -8805,13 +8814,11 @@ Function PlaceObject(x#,y#)
 	PlaceObjectActual(x#,y#)
 	
 	If DupeMode=DupeModeX
-		;TargetX#=LevelWidth-1-x#
 		TargetX#=MirrorAcrossFloat#(x#,MirrorPositionX)
 		If TargetX#<>x#
 			PlaceObjectActual(TargetX#,y#)
 		EndIf
 	ElseIf DupeMode=DupeModeY
-		;TargetY#=LevelHeight-1-y#
 		TargetY#=MirrorAcrossFloat#(y#,MirrorPositionY)
 		If TargetY#<>y#
 			PlaceObjectActual(x#,LevelHeight-1-y#)
