@@ -3336,6 +3336,9 @@ Function BrushCursorPositionWasChanged()
 		
 		PositionEntityInLevel(MirrorEntityX,BrushCursorX+0.5,0.5)
 		PositionEntityInLevel(MirrorEntityY,0.5,BrushCursorY+0.5)
+	ElseIf MirrorPositionX=-1 And MirrorPositionY=-1
+		HideEntity MirrorEntityX
+		HideEntity MirrorEntityY
 	EndIf
 
 End Function
