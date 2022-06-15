@@ -16188,25 +16188,29 @@ Function ReSizeLevel()
 	If WidthLeftChange<>0
 		For i=0 To NofObjects-1
 			ObjectX(i)=ObjectX(i)+WidthLeftChange
-			ChangeObjectTileX(i,ObjectTileX(i)+WidthLeftChange)
-			If Floor(ObjectX(i))<0 Or Floor(ObjectX(i))>=LevelWidth
-				DeleteObject(i)
-			Else
+			ChangeObjectTileX(i,ObjectTileX(i)+WidthLeftChange) ; Also handles spellballs etc.
+			ResizeLevelFixObjectTargets(i)
+			;If Floor(ObjectX(i))<0 Or Floor(ObjectX(i))>=LevelWidth
+			;	DeleteObject(i)
+			;Else
 				UpdateObjectPosition(i)
-			EndIf
+			;EndIf
 		Next
 	EndIf
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
 			ObjectY(i)=ObjectY(i)+HeightTopChange
 			ChangeObjectTileY(i,ObjectTileY(i)+HeightTopChange)
-			If Floor(ObjectY(i))<0 Or Floor(ObjectY(i))>=LevelHeight
-				DeleteObject(i)
-			Else
+			ResizeLevelFixObjectTargets(i)
+			;If Floor(ObjectY(i))<0 Or Floor(ObjectY(i))>=LevelHeight
+			;	DeleteObject(i)
+			;Else
 				UpdateObjectPosition(i)
-			EndIf
+			;EndIf
 		Next
 	EndIf
+	
+	ResizeLevelFixCurrentObjectTargets()
 
 	
 	WidthLeftChange=0
@@ -16217,6 +16221,133 @@ Function ReSizeLevel()
 	SomeObjectWasChanged()
 
 End Function
+
+Function ResizeLevelFixObjectTargets(i)
+
+	If ObjectMoveXGoal(i)<>0
+		ObjectMoveXGoal(i)=ObjectMoveXGoal(i)+WidthLeftChange
+	EndIf
+	If ObjectMoveYGoal(i)<>0
+		ObjectMoveYGoal(i)=ObjectMoveYGoal(i)+HeightTopChange
+	EndIf
+
+	Select ObjectType(i)
+	Case 90 ; button
+		If ObjectSubType(i)=10 ; levelexit
+			If ObjectData(i,1)=CurrentLevelNumber
+				ObjectData(i,2)=ObjectData(i,2)+WidthLeftChange
+				ObjectData(i,3)=ObjectData(i,3)+HeightTopChange
+			EndIf
+		ElseIf ObjectSubType(i)=11 And ObjectData(i,0)=0 ; NPC move
+			ObjectData(i,2)=ObjectData(i,2)+WidthLeftChange
+			ObjectData(i,3)=ObjectData(i,3)+HeightTopChange
+		ElseIf ObjectSubType(i)=15 ; general command
+			ResizeLevelFixObjectTargetsCmd(i,ObjectData(i,0),1,2,3,4)
+		EndIf
+	Case 51,52 ; magic shooter, meteor shooter
+		ObjectData(i,1)=ObjectData(i,1)+WidthLeftChange
+		ObjectData(i,2)=ObjectData(i,2)+HeightTopChange
+	Case 242 ; cuboid
+		ResizeLevelFixObjectTargetsCmd(i,ObjectData(i,2),3,4,5,6)
+	Case 434 ; mothership
+		ObjectData(i,2)=ObjectData(i,2)+WidthLeftChange
+		ObjectData(i,3)=ObjectData(i,3)+HeightTopChange
+		ObjectData(i,4)=ObjectData(i,4)+WidthLeftChange
+		ObjectData(i,5)=ObjectData(i,5)+HeightTopChange
+		ObjectData(i,6)=ObjectData(i,6)+WidthLeftChange
+		ObjectData(i,7)=ObjectData(i,7)+HeightTopChange
+		ObjectData(i,8)=ObjectData(i,8)+WidthLeftChange
+		ObjectData(i,9)=ObjectData(i,9)+HeightTopChange
+	End Select
+
+End Function
+
+Function ResizeLevelFixObjectTargetsCmd(i,Cmd,D1,D2,D3,D4)
+
+	Select Cmd
+	Case 7
+		If ObjectData(i,D1)=CurrentLevelNumber
+			ObjectData(i,D2)=ObjectData(i,D2)+WidthLeftChange
+			ObjectData(i,D3)=ObjectData(i,D3)+HeightTopChange
+		EndIf
+	Case 11
+		ObjectData(i,D2)=ObjectData(i,D2)+WidthLeftChange
+		ObjectData(i,D3)=ObjectData(i,D3)+HeightTopChange
+	Case 41,42
+		ObjectData(i,D1)=ObjectData(i,D1)+WidthLeftChange
+		ObjectData(i,D2)=ObjectData(i,D2)+HeightTopChange
+		ObjectData(i,D3)=ObjectData(i,D3)+WidthLeftChange
+		ObjectData(i,D4)=ObjectData(i,D4)+HeightTopChange
+	Case 61
+		ObjectData(i,D2)=ObjectData(i,D2)+WidthLeftChange
+		ObjectData(i,D3)=ObjectData(i,D3)+HeightTopChange
+	End Select
+
+End Function
+
+Function ResizeLevelFixCurrentObjectTargets()
+
+	If CurrentObjectMoveXGoal<>0
+		CurrentObjectMoveXGoal=CurrentObjectMoveXGoal+WidthLeftChange
+	EndIf
+	If CurrentObjectMoveYGoal<>0
+		CurrentObjectMoveYGoal=CurrentObjectMoveYGoal+HeightTopChange
+	EndIf
+
+	Select CurrentObjectType
+	Case 90 ; button
+		If CurrentObjectSubType=10 ; levelexit
+			If CurrentObjectData(1)=CurrentLevelNumber
+				CurrentObjectData(2)=CurrentObjectData(2)+WidthLeftChange
+				CurrentObjectData(3)=CurrentObjectData(3)+HeightTopChange
+			EndIf
+		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
+			CurrentObjectData(2)=CurrentObjectData(2)+WidthLeftChange
+			CurrentObjectData(3)=CurrentObjectData(3)+HeightTopChange
+		ElseIf CurrentObjectSubType=15 ; general command
+			ResizeLevelFixCurrentObjectTargetsCmd(CurrentObjectData(0),1,2,3,4)
+		EndIf
+	Case 51,52 ; magic shooter, meteor shooter
+		CurrentObjectData(1)=CurrentObjectData(1)+WidthLeftChange
+		CurrentObjectData(2)=CurrentObjectData(2)+HeightTopChange
+	Case 242 ; cuboid
+		ResizeLevelFixCurrentObjectTargetsCmd(CurrentObjectData(2),3,4,5,6)
+	Case 434 ; mothership
+		CurrentObjectData(2)=CurrentObjectData(2)+WidthLeftChange
+		CurrentObjectData(3)=CurrentObjectData(3)+HeightTopChange
+		CurrentObjectData(4)=CurrentObjectData(4)+WidthLeftChange
+		CurrentObjectData(5)=CurrentObjectData(5)+HeightTopChange
+		CurrentObjectData(6)=CurrentObjectData(6)+WidthLeftChange
+		CurrentObjectData(7)=CurrentObjectData(7)+HeightTopChange
+		CurrentObjectData(8)=CurrentObjectData(8)+WidthLeftChange
+		CurrentObjectData(9)=CurrentObjectData(9)+HeightTopChange
+	End Select
+
+End Function
+
+Function ResizeLevelFixCurrentObjectTargetsCmd(Cmd,D1,D2,D3,D4)
+
+	Select Cmd
+	Case 7
+		If CurrentObjectData(D1)=CurrentLevelNumber
+			CurrentObjectData(D2)=CurrentObjectData(D2)+WidthLeftChange
+			CurrentObjectData(D3)=CurrentObjectData(D3)+HeightTopChange
+		EndIf
+	Case 11
+		CurrentObjectData(D2)=CurrentObjectData(D2)+WidthLeftChange
+		CurrentObjectData(D3)=CurrentObjectData(D3)+HeightTopChange
+	Case 41,42
+		CurrentObjectData(D1)=CurrentObjectData(D1)+WidthLeftChange
+		CurrentObjectData(D2)=CurrentObjectData(D2)+HeightTopChange
+		CurrentObjectData(D3)=CurrentObjectData(D3)+WidthLeftChange
+		CurrentObjectData(D4)=CurrentObjectData(D4)+HeightTopChange
+	Case 61
+		CurrentObjectData(D2)=CurrentObjectData(D2)+WidthLeftChange
+		CurrentObjectData(D3)=CurrentObjectData(D3)+HeightTopChange
+	End Select
+
+End Function
+
 
 Function RawSetObjectTileX(i,tilex)
 
