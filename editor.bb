@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/14/22"
+Global VersionDate$="06/15/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -373,6 +373,7 @@ Const BrushModeColumn=9
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
 Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
 Const BrushModeTestLevel=-2
+Const BrushModeSetMirror=-3
 
 Const MaxBrushMode=9
 Global BrushMode=BrushModeNormal
@@ -384,6 +385,12 @@ Const DupeModeXPlusY=3
 
 Const DupeModeMax=3
 Global DupeMode=DupeModeNone
+
+Global MirrorPositionX=-1
+Global MirrorPositionY=-1
+
+Global MirrorEntityX
+Global MirrorEntityY
 
 Function IsBrushInBlockMode()
 	Return BrushMode=BrushModeBlock Or BrushMode=BrushModeBlockPlacing
@@ -1137,21 +1144,21 @@ End Function
 
 Function AddTileToBrushSurface(i,j)
 
-	If Not IsPositionInLevel(i,j)
+	If BrushMode=BrushModeSetMirror Or (Not IsPositionInLevel(i,j))
 		Return
 	EndIf
 
 	AddTileToBrushSurfaceActual(i,j)
 	
 	If DupeMode=DupeModeX
-		TargetX=LevelWidth-1-i
+		TargetX=MirrorAcrossInt(BrushCursorX,MirrorPositionX)
 		AddTileToBrushSurfaceActual(TargetX,j)
 	ElseIf DupeMode=DupeModeY
-		TargetY=LevelHeight-1-j
+		TargetY=MirrorAcrossInt(BrushCursorY,MirrorPositionY)
 		AddTileToBrushSurfaceActual(i,TargetY)
 	ElseIf DupeMode=DupeModeXPlusY
-		TargetX=LevelWidth-1-i
-		TargetY=LevelHeight-1-j
+		TargetX=MirrorAcrossInt(BrushCursorX,MirrorPositionX)
+		TargetY=MirrorAcrossInt(BrushCursorY,MirrorPositionY)
 		AddTileToBrushSurfaceActual(TargetX,j)
 		AddTileToBrushSurfaceActual(i,TargetY)
 		AddTileToBrushSurfaceActual(TargetX,TargetY)
@@ -2193,6 +2200,18 @@ Function InitializeGraphicsEntities()
 	WhereWeEndedUpMarker=CopyEntity(CurrentGrabbedObjectMarker)
 	EntityColor WhereWeEndedUpMarker,255,255,0
 	ShowEntity WhereWeEndedUpMarker
+	
+	MirrorEntityX=CreateCube()
+	ScaleMesh MirrorEntityX,0.1,0.3,200.0
+	EntityColor MirrorEntityX,GetBrushModeColor(BrushModeSetMirror,0),GetBrushModeColor(BrushModeSetMirror,1),GetBrushModeColor(BrushModeSetMirror,2)
+	EntityAlpha MirrorEntityX,0.3
+	HideEntity MirrorEntityX
+	
+	MirrorEntityY=CreateCube()
+	ScaleMesh MirrorEntityY,200.0,0.3,0.1
+	EntityColor MirrorEntityY,GetBrushModeColor(BrushModeSetMirror,0),GetBrushModeColor(BrushModeSetMirror,1),GetBrushModeColor(BrushModeSetMirror,2)
+	EntityAlpha MirrorEntityY,0.3
+	HideEntity MirrorEntityY
 	
 	BlockModeMesh=CreateMesh()
 	BlockModeSurface=CreateSurface(BlockModeMesh)
@@ -3250,6 +3269,40 @@ Function ShowTooltipCenterAligned(StartX,StartY,Message$)
 End Function
 
 
+Function SetDupeMode(NewDupeMode)
+
+	DupeMode=NewDupeMode
+	
+	If DupeMode<0
+		DupeMode=DupeModeMax
+	ElseIf DupeMode>DupeModeMax
+		DupeMode=0
+	EndIf
+	
+	Select DupeMode
+	Case DupeModeX
+		SetBrushMode(BrushModeSetMirror)
+		ShowEntity(MirrorEntityX)
+		HideEntity(MirrorEntityY)
+	Case DupeModeY
+		SetBrushMode(BrushModeSetMirror)
+		HideEntity(MirrorEntityX)
+		ShowEntity(MirrorEntityY)
+	Case DupeModeXPlusY
+		SetBrushMode(BrushModeSetMirror)
+		ShowEntity(MirrorEntityX)
+		ShowEntity(MirrorEntityY)
+	Default
+		If BrushMode=BrushModeSetMirror
+			SetBrushMode(BrushModeNormal)
+		EndIf
+		HideEntity(MirrorEntityX)
+		HideEntity(MirrorEntityY)
+	End Select
+
+End Function
+
+
 Function SetBrushMode(NewBrushMode)
 
 	FloodedElementsClear()
@@ -3276,6 +3329,14 @@ Function BrushCursorPositionWasChanged()
 
 	OnceTilePlacement=True
 	BrushCursorStateWasChanged()
+	
+	If BrushMode=BrushModeSetMirror
+		MirrorPositionX=BrushCursorX
+		MirrorPositionY=BrushCursorY
+		
+		PositionEntityInLevel(MirrorEntityX,BrushCursorX+0.5,0.5)
+		PositionEntityInLevel(MirrorEntityY,0.5,BrushCursorY+0.5)
+	EndIf
 
 End Function
 
@@ -4088,16 +4149,22 @@ Function EditorLocalControls()
 				Next
 				
 				PositionCursorEntity(0,BrushCursorX,BrushCursorY)
-				If DupeMode=DupeModeX
-					PositionCursorEntity(1,LevelWidth-1-BrushCursorX,BrushCursorY)
-				EndIf
-				If DupeMode=DupeModeY
-					PositionCursorEntity(1,BrushCursorX,LevelHeight-1-BrushCursorY)
-				EndIf
-				If DupeMode=DupeModeXPlusY
-					PositionCursorEntity(1,LevelWidth-1-BrushCursorX,BrushCursorY)
-					PositionCursorEntity(2,BrushCursorX,LevelHeight-1-BrushCursorY)
-					PositionCursorEntity(3,LevelWidth-1-BrushCursorX,LevelHeight-1-BrushCursorY)
+				If BrushMode<>BrushModeSetMirror
+					If DupeMode=DupeModeX
+						TargetX=MirrorAcrossInt(BrushCursorX,MirrorPositionX)
+						PositionCursorEntity(1,TargetX,BrushCursorY)
+					EndIf
+					If DupeMode=DupeModeY
+						TargetY=MirrorAcrossInt(BrushCursorY,MirrorPositionY)
+						PositionCursorEntity(1,BrushCursorX,TargetY)
+					EndIf
+					If DupeMode=DupeModeXPlusY
+						TargetX=MirrorAcrossInt(BrushCursorX,MirrorPositionX)
+						TargetY=MirrorAcrossInt(BrushCursorY,MirrorPositionY)
+						PositionCursorEntity(1,TargetX,BrushCursorY)
+						PositionCursorEntity(2,BrushCursorX,TargetY)
+						PositionCursorEntity(3,TargetX,TargetY)
+					EndIf
 				EndIf
 				
 				ShowBrushSurface()
@@ -4217,6 +4284,8 @@ Function EditorLocalControls()
 							
 							StartTestModeAt(CurrentLevelNumber,BrushCursorX,BrushCursorY)
 						EndIf
+					ElseIf BrushMode=BrushModeSetMirror
+						SetBrushMode(BrushModeNormal)
 					Else ; normal brush
 						BrushXStart=BrushCursorX-BrushWidth/2
 						BrushYStart=BrushCursorY-BrushHeight/2
@@ -5711,11 +5780,9 @@ Function EditorLocalControls()
 			;fill
 			;ToggleFillMode()
 			
-			DupeMode=AdjustInt("Enter dupe mode: ",DupeMode,1,1,100)
-			If DupeMode<0
-				DupeMode=DupeModeMax
-			ElseIf DupeMode>DupeModeMax
-				DupeMode=0
+			NewValue=AdjustInt("Enter dupe mode: ",DupeMode,1,1,100)
+			If NewValue<>DupeMode
+				SetDupeMode(NewValue)
 			EndIf
 		EndIf
 	
@@ -7470,6 +7537,19 @@ Function Maximum2#(x#,y#)
 	EndIf
 End Function
 
+Function DeltaTo(Start,Destination)
+	Return Destination-Start
+End Function
+
+Function MirrorAcrossInt(MyPosition, MirrorPosition)
+	Delta=DeltaTo(MyPosition,MirrorPosition)
+	Return Delta+MirrorPosition
+End Function
+Function MirrorAcrossFloat#(MyPosition#, MirrorPosition#)
+	Delta#=DeltaTo(MyPosition#,MirrorPosition#)
+	Return Delta#+MirrorPosition#
+End Function
+
 
 Function CreateLevelTileClassic(i,j)
 
@@ -7778,14 +7858,16 @@ Function ChangeLevelTile(i,j,update)
 	ChangeLevelTileActual(i,j,update)
 	
 	If DupeMode=DupeModeX
-		TargetX=LevelWidth-1-i
+		;TargetX=LevelWidth-1-i
+		TargetX=MirrorAcrossInt(i,MirrorPositionX)
 		ChangeLevelTileActual(TargetX,j,update)
 	ElseIf DupeMode=DupeModeY
-		TargetY=LevelHeight-1-j
+		;TargetY=LevelHeight-1-j
+		TargetY=MirrorAcrossInt(j,MirrorPositionY)
 		ChangeLevelTileActual(i,TargetY,update)
 	ElseIf DupeMode=DupeModeXPlusY
-		TargetX=LevelWidth-1-i
-		TargetY=LevelHeight-1-j
+		TargetX=MirrorAcrossInt(i,MirrorPositionX)
+		TargetY=MirrorAcrossInt(j,MirrorPositionY)
 		ChangeLevelTileActual(TargetX,j,update)
 		ChangeLevelTileActual(i,TargetY,update)
 		ChangeLevelTileActual(TargetX,TargetY,update)
@@ -8720,18 +8802,20 @@ Function PlaceObject(x#,y#)
 	PlaceObjectActual(x#,y#)
 	
 	If DupeMode=DupeModeX
-		TargetX#=LevelWidth-1-x#
+		;TargetX#=LevelWidth-1-x#
+		TargetX#=MirrorAcrossFloat#(x#,MirrorPositionX)
 		If TargetX#<>x#
 			PlaceObjectActual(TargetX#,y#)
 		EndIf
 	ElseIf DupeMode=DupeModeY
-		TargetY#=LevelHeight-1-y#
+		;TargetY#=LevelHeight-1-y#
+		TargetY#=MirrorAcrossFloat#(y#,MirrorPositionY)
 		If TargetY#<>y#
 			PlaceObjectActual(x#,LevelHeight-1-y#)
 		EndIf
 	ElseIf DupeMode=DupeModeXPlusY
-		TargetX#=LevelWidth-1-x#
-		TargetY#=LevelHeight-1-y#
+		TargetX#=MirrorAcrossFloat#(x#,MirrorPositionX)
+		TargetY#=MirrorAcrossFloat#(y#,MirrorPositionY)
 		If TargetX#<>x#
 			PlaceObjectActual(TargetX#,y#)
 		EndIf
@@ -16432,6 +16516,12 @@ Function GetBrushModeName$(Value)
 		Return "COLUMN"
 	Case BrushModeTestLevel
 		Return "TEST LEVEL"
+	Case BrushModeSetMirror
+		If DupeMode=DupeModeXPlusY
+			Return "SET AXES"
+		Else
+			Return "SET AXIS"
+		EndIf
 	Default
 		Return "UNKNOWN"
 	End Select
@@ -16486,6 +16576,11 @@ Function GetBrushModeColor$(Value,index)
 		r=GetAnimatedRainbowRed()
 		g=GetAnimatedRainbowGreen()
 		b=GetAnimatedRainbowBlue()
+	ElseIf Value=BrushModeSetMirror
+		; gray
+		r=140
+		g=140
+		b=140
 	Else ; normal brush mode, AKA BrushModeNormal
 		; white
 		r=255
