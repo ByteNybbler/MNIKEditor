@@ -958,7 +958,8 @@ Dim BrushObjectScaleAdjust#(1000),BrushObjectScaleXAdjust#(1000),BrushObjectScal
 Dim BrushObjectFutureFloat6#(1000),BrushObjectFutureFloat7#(1000),BrushObjectFutureFloat8#(1000),BrushObjectFutureFloat9#(1000),BrushObjectFutureFloat10#(1000)
 Dim BrushObjectFutureString1$(1000),BrushObjectFutureString2$(1000)
 
-Dim BrushObjectXOffset#(1000),BrushObjectYOffset#(1000)
+;Dim BrushObjectXOffset#(1000),BrushObjectYOffset#(1000)
+Dim BrushObjectTileXOffset(1000),BrushObjectTileYOffset(1000)
 
 Global NofBrushObjects=0
 
@@ -4275,9 +4276,20 @@ Function EditorLocalControls()
 								Next
 							Next
 						ElseIf EditorMode=3
-							For k=0 To NofBrushObjects-1
-								GrabObjectFromBrush(k)
-								PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushCopyWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushCopyHeight)))
+;							For k=0 To NofBrushObjects-1
+;								GrabObjectFromBrush(k)
+;								PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushCopyWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushCopyHeight)))
+;							Next
+							For i=0 To BrushWidth-1
+								For j=0 To BrushHeight-1
+									For k=0 To NofBrushObjects-1
+										If BrushObjectTileXOffset(k)=EuclideanRemainderInt(i+OffsetX,BrushCopyWidth) And BrushObjectTileYOffset(k)=EuclideanRemainderInt(j+OffsetY,BrushCopyHeight)
+											GrabObjectFromBrush(k)
+											;PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushCopyWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushCopyHeight)))
+											PlaceObject(BrushXStart+i,BrushYStart+j)
+										EndIf
+									Next
+								Next
 							Next
 						EndIf
 					ElseIf BrushMode=BrushModeTestLevel
@@ -4404,7 +4416,7 @@ Function EditorLocalControls()
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
 							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushWidth And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushHeight
-								CopyObjectDataToBrush(k,NofBrushObjects,ObjectX(k)-BrushXStart,ObjectY(k)-BrushYStart)
+								CopyObjectDataToBrush(k,NofBrushObjects,ObjectTileX(k)-BrushXStart,ObjectTileY(k)-BrushYStart)
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
 						Next
@@ -10344,10 +10356,12 @@ Function CopyObjectData(Source,Dest)
 End Function
 
 
-Function CopyObjectDataToBrush(Source,Dest,XOffset#,YOffset#)
+Function CopyObjectDataToBrush(Source,Dest,XOffset,YOffset)
 
-	BrushObjectXOffset#(Dest)=XOffset#-0.5
-	BrushObjectYOffset#(Dest)=YOffset#-0.5
+	;BrushObjectXOffset#(Dest)=XOffset#-0.5
+	;BrushObjectYOffset#(Dest)=YOffset#-0.5
+	BrushObjectTileXOffset(Dest)=XOffset
+	BrushObjectTileYOffset(Dest)=YOffset	
 
 	BrushObjectModelName$(Dest)=ObjectModelName$(Source)
 	BrushObjectTextureName$(Dest)=ObjectTextureName$(Source)
