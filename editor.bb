@@ -4278,7 +4278,7 @@ Function EditorLocalControls()
 							EndIf
 							For i=0 To BrushWidth-1
 								For j=0 To BrushHeight-1
-									GrabLevelTileFromBrush((i+OffsetX) Mod BrushCopyWidth,(j+OffsetY) Mod BrushCopyHeight)
+									GrabLevelTileFromBrush(EuclideanRemainder(i+OffsetX,BrushWidth),EuclideanRemainder(j+OffsetY,BrushHeight))
 									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								Next
 							Next
@@ -7561,6 +7561,16 @@ End Function
 Function MirrorAcrossFloat#(MyPosition#, MirrorPosition#)
 	Delta#=DeltaTo(MyPosition#,MirrorPosition#)
 	Return Delta#+MirrorPosition#
+End Function
+
+Function EuclideanRemainder(Value,Divisor)
+
+	Result=Value Mod Divisor
+	If Result<0
+		Result=Result+Divisor
+	EndIf
+	Return Result
+
 End Function
 
 
