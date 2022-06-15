@@ -356,8 +356,9 @@ Function IsMouseOverToolbarItem(x,y)
 End Function
 
 ; The position of the level editor cursor.
-Global BrushCursorX=-1
-Global BrushCursorY=-1
+Const BrushCursorInvalid=-100000
+Global BrushCursorX=BrushCursorInvalid
+Global BrushCursorY=BrushCursorInvalid
 
 Const BrushModeNormal=0
 Const BrushModeBlock=1
@@ -3345,7 +3346,7 @@ Function BrushCursorPositionWasChanged()
 		
 		PositionEntityInLevel(MirrorEntityX,BrushCursorX+0.5,0.5)
 		PositionEntityInLevel(MirrorEntityY,0.5,BrushCursorY+0.5)
-	ElseIf MirrorPositionX=-1 And MirrorPositionY=-1
+	ElseIf MirrorPositionX=BrushCursorInvalid And MirrorPositionY=BrushCursorInvalid
 		HideEntity MirrorEntityX
 		HideEntity MirrorEntityY
 	EndIf
@@ -3356,7 +3357,7 @@ Function BrushCursorOffMap()
 	
 	HideCursors()
 	HideBrushSurface()
-	SetBrushCursorPosition(-1,-1)
+	SetBrushCursorPosition(BrushCursorInvalid,BrushCursorInvalid)
 	
 End Function
 
@@ -3386,7 +3387,7 @@ Function GenerateBrushSurface()
 
 	ClearBrushSurface()
 
-	If BrushCursorX<>-1 And BrushCursorY<>-1
+	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid
 		If BrushMode=BrushModeFill
 			; recalculate flood fill region
 			
