@@ -4267,8 +4267,8 @@ Function EditorLocalControls()
 						BrushXStart=BrushCursorX-BrushWidth/2
 						BrushYStart=BrushCursorY-BrushHeight/2
 						If BrushWrap=BrushWrapModulus
-							OffsetX=BrushCursorX-BrushCopyOriginX
-							OffsetY=BrushCursorY-BrushCopyOriginY
+							OffsetX=BrushXStart-BrushCopyOriginX
+							OffsetY=BrushYStart-BrushCopyOriginY
 						Else
 							OffsetX=0
 							OffsetY=0
@@ -4403,12 +4403,12 @@ Function EditorLocalControls()
 				Else
 					; set custom brush
 					NofBrushObjects=0
-					BrushCopyOriginX=BrushCursorX
-					BrushCopyOriginY=BrushCursorY
-					BrushCopyWidth=BrushWidth
-					BrushCopyHeight=BrushHeight
 					BrushXStart=BrushCursorX-BrushWidth/2
 					BrushYStart=BrushCursorY-BrushHeight/2
+					BrushCopyOriginX=BrushXStart
+					BrushCopyOriginY=BrushYStart
+					BrushCopyWidth=BrushWidth
+					BrushCopyHeight=BrushHeight
 					If EditorMode=0
 						For i=0 To BrushWidth-1
 							For j=0 To BrushHeight-1
