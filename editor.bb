@@ -1146,7 +1146,12 @@ End Function
 
 Function AddTileToBrushSurface(i,j)
 
-	If BrushMode=BrushModeSetMirror Or (Not IsPositionInLevel(i,j))
+	If BrushMode=BrushModeSetMirror
+		Return
+	EndIf
+	
+	If (Not IsPositionInLevel(i,j))
+		AddSquareToBrushSurface(i,j,0.0)
 		Return
 	EndIf
 
