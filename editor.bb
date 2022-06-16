@@ -1035,6 +1035,7 @@ Global NofMyGfxModes, MyGfxMode
 Dim MyGfxModeWidth(1000),MyGfxModeHeight(1000),MyGfxModeDepth(1000)
 Global GfxWidth,GfxHeight
 Global GfxZoomScaling#
+Global TilePickerZoomScaling#
 
 file=ReadFile (globaldirname$+"\display.wdf")
 If file>0
@@ -1111,8 +1112,8 @@ If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
 EndIf
 
 OriginalRatio#=800.0/600.0
-AspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
-GfxZoomScaling#=OriginalRatio#/AspectRatio#
+Global GfxAspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
+GfxZoomScaling#=OriginalRatio#/GfxAspectRatio#
 
 Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 SetBuffer BackBuffer()
@@ -1175,6 +1176,7 @@ Const SidebarWidth=300
 
 Global LevelViewportWidth=GfxWidth-SidebarWidth
 Global LevelViewportHeight=GfxHeight-ToolbarHeight
+TilePickerZoomScaling#=Float#(LevelViewportHeight)/Float#(LevelViewportWidth) ; The numerator is 1 because the original 500x500 viewport is a 1:1 ratio.
 
 Global SidebarX=LevelViewportWidth
 Global SidebarY=0
@@ -1190,6 +1192,12 @@ Function LetterX(x#)
 
 	Return GfxWidth/2+LetterWidth*(x#-LettersCountX/2)
 
+End Function
+
+Function LevelViewportX(x#)
+
+	Return -LevelViewportWidth/2+250+x#
+	
 End Function
 
 
@@ -2291,13 +2299,13 @@ Function InitializeGraphicsCameras()
 	PositionEntity Camera2,4.9,109,-8
 	CameraZoom Camera2,5
 	
-	Camera3 = CreateCamera()
-	CameraClsColor camera3,255,0,0
+	Camera3 = CreateCamera() ; texture picker camera
+	CameraClsColor camera3,0,0,0 ;255,0,0
 	CameraViewport Camera3,0,0,LevelViewportWidth,LevelViewportHeight
 	CameraRange camera3,.1,1000
 	RotateEntity Camera3,90,0,0
 	PositionEntity Camera3,0.5,210,-0.5
-	CameraZoom Camera3,20
+	CameraZoom Camera3,20.0*TilePickerZoomScaling#
 	
 	Camera4 = CreateCamera() ; objects menu camera
 	CameraClsColor camera4,155,0,0
@@ -4535,26 +4543,29 @@ Function EditorLocalControls()
 	
 	
 	; *************************************
-	; Selecting A Texture
+	; Selecting A Texture / Picking a Texture
 	; *************************************
 	If EditorMode=1 Or EditorMode=2
 		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
-			QuotientX#=Float#(LevelViewportWidth)/8.0
-			QuotientY#=Float#(LevelViewportHeight)/8.0 
+			nmx=LevelViewportX(mx)
+			nmy=my
+			DivisorX#=Float#(LevelViewportHeight)/8.0 ; Formerly Width
+			DivisorY#=Float#(LevelViewportHeight)/8.0
+			StepSize#=1.0/8.0;*TilePickerZoomScaling#
 			ScaleEntity CursorMeshPillar(0),0.0325,0.01,0.0325
 			ScaleEntity CursorMeshTexturePicker,0.0325,0.01,0.0325
-			PositionEntity CursorMeshPillar(0),Floor(mx/QuotientX#)*0.125+0.0625,200,-Floor(my/QuotientY#)*0.125-0.0625
-			PositionEntity CursorMeshTexturePicker,Floor(mx/QuotientX#)*0.125+0.0625,200,-Floor(my/QuotientY#)*0.125-0.0625
+			PositionEntity CursorMeshPillar(0),Floor(nmx/DivisorX#)*StepSize#+StepSize#/2,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2,200
+			PositionEntity CursorMeshTexturePicker,Floor(nmx/DivisorX#)*StepSize#+StepSize#/2,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2,200
 			ShowEntity CursorMeshPillar(0)
 			ShowEntity CursorMeshOpaque(0)
 			ShowEntity CursorMeshTexturePicker
 			If LeftMouse=True
 				If editormode=1
 					; main texture
-					CurrentTileTexture=Floor(mx/QuotientX#)+Floor(my/QuotientY#)*8
+					CurrentTileTexture=Floor(nmx/DivisorX#)+Floor(nmy/DivisorY#)*8
 				Else If editormode=2
 					; main texture
-					CurrentTileSideTexture=Floor(mx/QuotientX#)+Floor(my/QuotientY#)*8
+					CurrentTileSideTexture=Floor(nmx/DivisorX#)+Floor(nmy/DivisorY#)*8
 				EndIf
 				SetEditorMode(0)
 				LeftMouseReleased=False
@@ -22677,7 +22688,7 @@ Function MasterAdvancedLoop()
 		
 		For i=0 To 5
 			For j=0 To 2
-				If MouseX()>LetterX(10)+LetterX(i*5) And MouseX()<LetterX(14)+LetterX(i*5) And MouseY()>LetterHeight*9+(j+2)*LetterHeight And MouseY()<LetterHeight*10+(j+2)*LetterHeight
+				If MouseX()>LetterX(10+i*5) And MouseX()<LetterX(14+i*5) And MouseY()>LetterHeight*9+(j+2)*LetterHeight And MouseY()<LetterHeight*10+(j+2)*LetterHeight
 					;Locate 0,0
 					;Print "j="+j+" i="+i
 					If j=0 And i=0
