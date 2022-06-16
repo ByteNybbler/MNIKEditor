@@ -23601,14 +23601,16 @@ Function SetInterChange(i)
 	EndIf
 	
 	If i<>WhichInterChange
-		WhichAnswer=0
+		SetAnswer(0)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
 	
 	WhichInterChange=i
 	
-	If WhichInterChange>=NofInterChanges NofInterChanges=WhichInterChange+1
+	If WhichInterChange>=NofInterChanges
+		NofInterChanges=WhichInterChange+1
+	EndIf
 	
 	DeduplicateDialogTextCommands() ; for old dialogs
 
@@ -24454,7 +24456,7 @@ End Function
 Function ClearDialogFile()
 	; first clear all data
 	NofInterchanges=1
-	For i=0 To MaxInterChanges-1
+	For i=0 To MaxInterChanges ;-1
 		NofInterChangeTextLines(i)=0	
 		For j=0 To 6
 			InterChangeTextLine$(i,j)=""
@@ -24467,8 +24469,11 @@ Function ClearDialogFile()
 		NofInterChangeReplies(i)=1
 		For j=0 To 7
 			InterChangeReplyText$(i,j)=""
-			InterChangeReplyFunction(i,j)=0
-			InterChangeReplyData(i,j)=0
+			
+			; Make the default FNC end the dialog and return to this Interchange.
+			InterChangeReplyFunction(i,j)=1
+			InterChangeReplyData(i,j)=i
+			
 			InterChangeReplyCommand(i,j)=0
 			For k=0 To 3
 				InterChangeReplyCommandData(i,j,k)=0
@@ -26892,7 +26897,7 @@ End Function
 Function PlayerTileY()
 
 	; Make player-facing objects turn approximately south when cursor is not present.
-	If BrushCursorY=-1
+	If BrushCursorY=BrushCursorInvalid
 		Return 100000000
 	Else
 		Return BrushCursorY
