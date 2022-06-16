@@ -6568,6 +6568,33 @@ Function ReplyFunctionToDataName$(Fnc)
 
 End Function
 
+Function GetAskAboutActiveName$(Active)
+
+	Select Active
+	Case -2
+		Return "Active"
+	Case -1
+		Return "Inactive (must be activated with CMD 23, 25, or 26)"
+	Default
+		If Active>-1
+			Return "Active if MasterAskAbout "+Active+" is active (modify with CMD 28, 29, or 30)"
+		EndIf
+	End Select
+
+End Function
+
+Function GetAskAboutRepeatName$(Value)
+
+	If Value<0
+		Return "Can be used infinitely"
+	ElseIf Value=0
+		Return "Never available"
+	Else
+		Return "Can be used "+Value+" "+MaybePluralize$("time",Value)
+	EndIf
+
+End Function
+
 Function ObjectTypeCollisionBitToName$(BitIndex)
 
 	Select BitIndex
@@ -23737,7 +23764,7 @@ Function DialogMainLoop()
 	DisplayText2("CLEAR",39,14,255,255,0)
 	
 	
-	If MouseX()>690 And MouseY()>460 And MouseY()<505
+	If MouseX()>LetterWidth*38 And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
 		DisplayText2("CANCEL",38.2,23,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("+EXIT",38.7,24,TextMenusR,TextMenusG,TextMenusB)
 	Else
@@ -23746,7 +23773,7 @@ Function DialogMainLoop()
 
 	EndIf
 	
-	If MouseX()>590 And MouseY()>540
+	If MouseX()>LetterWidth*38 And MouseY()>27*LetterHeight
 		DisplayText2("SAVE",39.2,27,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("+EXIT",38.7,28,TextMenusR,TextMenusG,TextMenusB)
 	Else
@@ -23958,11 +23985,11 @@ Function DialogMainLoop()
 
 			End Select
 			
-			x#=(i)+xoff
-			y#=YOffset/2.0+j+yoff
+			charx#=(i)+xoff
+			chary#=YOffset/2.0+j+yoff
 			
 			
-			AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,(-.97+x*.045*size*spacing)/1.0,(.5-y*.05*size*spacing)/1.0,1.0,rot,.04*size/1.0,0,0,0,0,0,0,0,0,0,dialogcurrentred,dialogcurrentgreen,dialogcurrentblue)
+			AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,(-.97+charx*.045*size*spacing)/1.0,(.5-chary*.05*size*spacing)/1.0,1.0,rot,.04*size/1.0,0,0,0,0,0,0,0,0,0,dialogcurrentred,dialogcurrentgreen,dialogcurrentblue)
 		
  				totalletters=totalletters+1
 		;	AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,DialogCurrentRed,DialogCurrentGreen,DialogCurrentBlue)
@@ -23988,20 +24015,20 @@ Function DialogMainLoop()
 	; Mouse Pos
 	Entering=0
 	
-	x=MouseX()/18
-	If MouseY()<284
-		y=(MouseY()-84)/21
-	Else If MouseY()<300
-		y=(MouseY()-76)/21
+	x=MouseX()/LetterWidth
+	If MouseY()<LetterHeight*14
+		y=(MouseY()-LetterHeight*5)/LetterHeight
+	Else If MouseY()<LetterHeight*15
+		y=(MouseY()-LetterHeight*4.8)/LetterHeight ; 4.5
 	Else 
-		y=(MouseY()-63)/21
-
+		y=(MouseY()-LetterHeight*4.6)/LetterHeight ; 4
 	EndIf
+	
 	debug1=MouseY()
 	debug2=y
 	
 	; cursor
-	If x<CharactersPerLine And MouseY()>=84 And y<7 
+	If x<CharactersPerLine And MouseY()>=LetterHeight*4 And y<7 And y>-1
 		Entering=1
 		If x>Len(InterChangeTextLine$(WhichInterChange,y)) Then x=Len(InterChangeTextLine$(WhichInterChange,y))
 		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
@@ -24122,7 +24149,7 @@ Function DialogMainLoop()
 		; Change Adventure
 		; Load/Save
 		
-		If MouseX()>690 And MouseY()>460 And MouseY()<505
+		If MouseX()>LetterWidth*38 And MouseY()>LetterHeight*23 And MouseY()<LetterHeight*25
 			If AskToSaveDialogAndExit()
 				ClearDialogFile()
 				ResumeMaster()
@@ -24131,7 +24158,7 @@ Function DialogMainLoop()
 			Until MouseDown(1)=0
 		EndIf
 	
-		If MouseX()>590 And MouseY()>540
+		If MouseX()>LetterWidth*38 And MouseY()>LetterHeight*27
 			SaveDialogAndExit()
 			Repeat
 			Until MouseDown(1)=0
@@ -24143,22 +24170,23 @@ Function DialogMainLoop()
 	RawInput=CtrlDown()
 
 	; Change InterChange
-	If MouseY()>60 And MouseY()<80 And MouseX()>100 And MouseX()<400		
+	If MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And MouseX()>LetterWidth*5 And MouseX()<LetterWidth*21
 		target=AdjustInt("Interchange: ", WhichInterChange, 1, 10, 150)
 		SetInterChange(target)
 	EndIf
 	
 	; Change Answer
-	If MouseY()>260 And MouseY()<280 And MouseX()>100 And MouseX()<400		
+	If MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And MouseX()>LetterWidth*5 And MouseX()<LetterWidth*21
 		target=AdjustInt("Answer: ", WhichAnswer, 1, 10, 150)
 		SetAnswer(target)
 	EndIf
 	; Change AnswerData
 	; thanks to tooltips this is now awesome
-	If MouseY()>305 And MouseY()<345
-		TooltipX=MouseX()/100*100+50
-		TooltipY=385
-		Select MouseX()/100
+	If MouseY()>LetterHeight*15 And MouseY()<LetterHeight*17
+		MouseXToUse=MouseX()/(LetterWidth*6)
+		TooltipX=MouseXToUse*(LetterWidth*6)
+		TooltipY=LetterHeight*19
+		Select MouseXToUse
 		Case 0
 			OldValue=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
 			InterChangeReplyFunction(WhichInterChange,WhichAnswer)=AdjustInt("FNC: ", InterChangeReplyFunction(WhichInterChange,WhichAnswer), 1, 10, 150)
@@ -24166,7 +24194,7 @@ Function DialogMainLoop()
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(TooltipX-50, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
+			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
 		Case 1
 			OldValue=InterChangeReplyData(WhichInterChange,WhichAnswer)
 			InterChangeReplyData(WhichInterChange,WhichAnswer)=AdjustInt("Data: ", InterChangeReplyData(WhichInterChange,WhichAnswer), 1, 10, 150)
@@ -24226,30 +24254,38 @@ Function DialogMainLoop()
 
 	
 	; Change Askabout
-	If MouseY()>441 And MouseY()<460 And MouseX()>100 And MouseX()<400
+	If MouseY()>LetterHeight*22 And MouseY()<LetterHeight*23 And MouseX()>LetterWidth*5 And MouseX()<LetterWidth*21
 		target=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, 150)
 		SetAskabout(target)
 	EndIf
 	; Change AskaboutData
-	If MouseY()>490 And MouseY()<520
-		If MouseX()<170
+	If MouseY()>LetterHeight*24.5 And MouseY()<LetterHeight*26.5
+		TooltipY=LetterHeight*28
+		If MouseX()<LetterWidth*8
 			OldValue=AskAboutActive(WhichAskAbout)
 			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, 150)
 			If OldValue<>AskAboutActive(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
-		Else If MouseX()<400
+			
+			ShowTooltipCenterAligned(LetterWidth*4,TooltipY,GetAskAboutActiveName$(AskAboutActive(WhichAskAbout)))
+
+		Else If MouseX()<LetterWidth*22.5
 			OldValue=AskAboutInterChange(WhichAskAbout)
 			AskAboutInterChange(WhichAskAbout)=AdjustInt("Interchange: ", AskAboutInterChange(WhichAskAbout), 1, 10, 150)
 			If OldValue<>AskAboutInterChange(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
-		Else
+			
+			ShowTooltipCenterAligned(LetterWidth*15.25,TooltipY,"Destination Interchange")
+		Else If MouseX()<LetterWidth*38
 			OldValue=AskAboutRepeat(WhichAskAbout)
 			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, 150)
 			If OldValue<>AskAboutRepeat(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
+			
+			ShowTooltipCenterAligned(LetterWidth*27.5,TooltipY,GetAskAboutRepeatName$(AskAboutRepeat(WhichAskAbout)))
 		EndIf
 		
 		If Modified
@@ -24261,17 +24297,18 @@ Function DialogMainLoop()
 	; Colours/Effects
 	If LeftMouse=True And LeftMouseReleased=True
 		LeftMouseReleased=False
+		StartX=LetterWidth*39
 		For i=0 To 11
-			If MouseX()>=706+(i Mod 3)*35 And MouseX()<=706+20+(i Mod 3)*35 And MouseY()>=65 + 20*(i/3) And MouseY()<85+20*(i/3)
+			If MouseX()>=StartX+(i Mod 3)*LetterWidth*2 And MouseX()<=StartX+LetterWidth+(i Mod 3)*LetterWidth*2 And MouseY()>=LetterHeight*3 + LetterHeight*(i/3) And MouseY()<LetterHeight*4+LetterHeight*(i/3)
 				ToggleColEffect(i)
 			EndIf
 		Next
 		For i=0 To 11
-			If MouseX()>=706+(i Mod 2)*60 And MouseX()<=706+40+(i Mod 2)*60 And MouseY()>=146 + 20*(i/2) And MouseY()<166+20*(i/2)
+			If MouseX()>=StartX+(i Mod 2)*LetterWidth*2.5 And MouseX()<=StartX+LetterWidth*2.5+(i Mod 2)*LetterWidth*2.5 And MouseY()>=LetterHeight*7 + LetterHeight*(i/2) And MouseY()<LetterHeight*8+LetterHeight*(i/2)
 				ToggleTxtEffect(i)
 			EndIf
 		Next
-		If MouseX()>706 And MouseY()>282 And MouseY()<302
+		If MouseX()>StartX And MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
 			;clear
 			For i=0 To NofTextCommands(WhichInterChange)-1
 				DialogTextCommand$(WhichInterChange,i)=""
