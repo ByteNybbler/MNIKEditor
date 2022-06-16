@@ -24226,7 +24226,7 @@ Function DialogMainLoop()
 	If MouseY()>LetterHeight*15 And MouseY()<LetterHeight*17
 		MouseXToUse=(MouseX()-LetterX(0))/(LetterWidth*6)
 		TooltipX=MouseXToUse*LetterWidth*6+LetterX(0)
-		TooltipY=LetterHeight*19
+		TooltipY=LetterHeight*19.5
 		Select MouseXToUse
 		Case 0
 			OldValue=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
@@ -24301,7 +24301,7 @@ Function DialogMainLoop()
 	EndIf
 	; Change AskaboutData
 	If MouseY()>LetterHeight*24.5 And MouseY()<LetterHeight*26.5
-		TooltipY=LetterHeight*28
+		TooltipY=LetterHeight*28.5
 		If MouseX()<LetterX(8)
 			OldValue=AskAboutActive(WhichAskAbout)
 			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, 150)
