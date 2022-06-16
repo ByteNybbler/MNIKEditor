@@ -1196,7 +1196,7 @@ End Function
 
 Function LevelViewportX(x#)
 
-	Return -LevelViewportWidth/2+250+x#
+	Return -(LevelViewportWidth-LevelViewportHeight)/2+x#
 	
 End Function
 
@@ -4549,13 +4549,14 @@ Function EditorLocalControls()
 		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
 			nmx=LevelViewportX(mx)
 			nmy=my
-			DivisorX#=Float#(LevelViewportHeight)/8.0 ; Formerly Width
-			DivisorY#=Float#(LevelViewportHeight)/8.0
+			DivisorNumerator=LevelViewportHeight
+			DivisorX#=Float#(DivisorNumerator)/8.0
+			DivisorY#=Float#(DivisorNumerator)/8.0
 			StepSize#=1.0/8.0;*TilePickerZoomScaling#
 			ScaleEntity CursorMeshPillar(0),0.0325,0.01,0.0325
 			ScaleEntity CursorMeshTexturePicker,0.0325,0.01,0.0325
-			PositionEntity CursorMeshPillar(0),Floor(nmx/DivisorX#)*StepSize#+StepSize#/2,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2,200
-			PositionEntity CursorMeshTexturePicker,Floor(nmx/DivisorX#)*StepSize#+StepSize#/2,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2,200
+			PositionEntity CursorMeshPillar(0),Floor(nmx/DivisorX#)*StepSize#+StepSize#/2.0,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2.0,200
+			PositionEntity CursorMeshTexturePicker,Floor(nmx/DivisorX#)*StepSize#+StepSize#/2.0,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2.0,200
 			ShowEntity CursorMeshPillar(0)
 			ShowEntity CursorMeshOpaque(0)
 			ShowEntity CursorMeshTexturePicker
