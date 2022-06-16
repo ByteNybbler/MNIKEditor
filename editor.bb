@@ -282,9 +282,6 @@ Global CustomMapName$
 Const DefaultCameraFocusX=7
 Const DefaultCameraFocusY=10
 
-Const FlStartX=706 ; formerly 715
-Const FlStartY=165
-
 Dim LevelMesh(100),LevelSurface(100) ; one for each row
 Dim WaterMesh(100),WaterSurface(100)
 Dim LogicMesh(100),LogicSurface(100)
@@ -320,32 +317,19 @@ Global BorderExpandOption=0 ;0-current, 1-duplicate
 
 Global PreventPlacingObjectsOutsideLevel=False
 
-Const ToolbarDensityX=250
-Const ToolbarDensityY=520
+Function ToolbarPositionX(StepsFromToolbarLeft)
+	
+	PartitionCount=8
+	Partition=GfxWidth/PartitionCount
+	Return Partition*(StepsFromToolbarLeft-1)+Partition/2
+	
+End Function
 
-Const ToolbarElevateX=250
-Const ToolbarElevateY=565
-
-Const ToolbarBrushWrapX=350
-Const ToolbarBrushWrapY=520
-
-Const ToolbarStepPerX=350
-Const ToolbarStepPerY=565
-
-Const ToolbarShowMarkersX=450
-Const ToolbarShowMarkersY=520
-
-Const ToolbarShowObjectsX=450
-Const ToolbarShowObjectsY=565
-
-Const ToolbarShowLogicX=550
-Const ToolbarShowLogicY=520
-
-Const ToolbarShowLevelX=550
-Const ToolbarShowLevelY=565
-
-Const ToolbarSimulationLevelX=650
-Const ToolbarSimulationLevelY=565
+Function ToolbarPositionY(StepsFromToolbarTop)
+	
+	Return GfxHeight-125+45*StepsFromToolbarTop
+	
+End Function
 
 Function IsMouseOverToolbarItem(x,y)
 
@@ -1035,14 +1019,170 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 
 ; Setup Graphics, Lights, Camera
 ; ================================
-If displayfullscreen=True
-	Graphics3D 800,600,16,1
-	SetBuffer BackBuffer()
+;If displayfullscreen=True
+;	Graphics3D 800,600,16,1
+;	SetBuffer BackBuffer()
+;Else
+;	Graphics3D 800,600,16,2
+;	SetBuffer BackBuffer()
+;	Graphics3D 800,600,16,3
+;EndIf
+
+
+
+
+Global NofMyGfxModes, MyGfxMode
+Dim MyGfxModeWidth(1000),MyGfxModeHeight(1000),MyGfxModeDepth(1000)
+Global GfxWidth,GfxHeight
+
+file=ReadFile (globaldirname$+"\display.wdf")
+If file>0
+
+	j=ReadInt(file)
+	For i=0 To j-1
+		MyGfxModeWidth(i)=ReadInt(file)
+		MyGfxModeHeight(i)=ReadInt(file)
+		MyGfxModeDepth(i)=ReadInt(file)
+	Next
+	mygfxmode=ReadInt(file)
+	GfxWindowed=ReadInt(file)
+	GfxWidth=MyGfxModeWidth(mygfxmode)
+	GfxHeight=MyGfxModeHeight(mygfxmode)
+	GfxDepth=MyGfxModeDepth(mygfxmode)
+	
+	
+	; something is wrong withe graphics mode: try different versions
+	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+		GfxWidth=800
+		GfxHeight=600
+		GfxDepth=16
+	EndIf
+	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+		GfxWidth=800
+		GfxHeight=600
+		GfxDepth=32
+	EndIf
+	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+		GfxWidth=640
+		GfxHeight=480
+		GfxDepth=16
+	EndIf
+	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+		GfxWidth=640
+		GfxHeight=480
+		GfxDepth=32
+	EndIf
+	
 Else
-	Graphics3D 800,600,16,2
-	SetBuffer BackBuffer()
-	Graphics3D 800,600,16,3
+	GfxWidth=800
+	GfxHeight=600
+	GfxWindowed=1
+	GfxDepth=16
+
+
+	
 EndIf
+
+;widescreen
+Global widescreen=False
+Global wideicons=True
+Global FitForWidescreenGlobal ;read from master.dat
+Global FitForWidescreenGlobalHub ;reserved when starting an adventure in a custom hub
+Global FitForWidescreen ;read from .wlv
+ratio#=Float(GfxWidth)/Float(GfxHeight)
+
+If ratio#>1.77 And ratio#<1.78 ;aspect ratio must be 16:9
+	widescreen=True
+EndIf 
+
+
+If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+	Print "Unable to set graphics mode!"
+	Print ""
+	Print "Please ensure that your video card drivers"
+	Print "are up-to-date, or use the graphic options"
+	Print "to select a different display mode."
+	Print ""
+	Print "Exiting... press any key."
+	WaitKey()
+	End
+	
+EndIf
+
+Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
+SetBuffer BackBuffer()
+
+;ShowMessage("Graphics3D: "+GfxWidth+" x "+GfxHeight+" with depth "+GfxDepth,1000)
+
+Global ToolbarBrushModeX=ToolbarPositionX(1)
+Global ToolbarBrushModeY=ToolbarPositionY(1)
+
+Global ToolbarBrushSizeX=ToolbarPositionX(2)
+Global ToolbarBrushSizeY=ToolbarPositionY(1)
+
+Global ToolbarTexPrefixX=ToolbarPositionX(2)
+Global ToolbarTexPrefixY=ToolbarPositionY(2)
+
+Global ToolbarDensityX=ToolbarPositionX(3)
+Global ToolbarDensityY=ToolbarPositionY(1)
+
+Global ToolbarElevateX=ToolbarPositionX(3)
+Global ToolbarElevateY=ToolbarPositionY(2)
+
+Global ToolbarBrushWrapX=ToolbarPositionX(4)
+Global ToolbarBrushWrapY=ToolbarPositionY(1)
+
+Global ToolbarStepPerX=ToolbarPositionX(4)
+Global ToolbarStepPerY=ToolbarPositionY(2)
+
+Global ToolbarShowMarkersX=ToolbarPositionX(5)
+Global ToolbarShowMarkersY=ToolbarPositionY(1)
+
+Global ToolbarShowObjectsX=ToolbarPositionX(5)
+Global ToolbarShowObjectsY=ToolbarPositionY(2)
+
+Global ToolbarShowLogicX=ToolbarPositionX(6)
+Global ToolbarShowLogicY=ToolbarPositionY(1)
+
+Global ToolbarShowLevelX=ToolbarPositionX(6)
+Global ToolbarShowLevelY=ToolbarPositionY(2)
+
+Global ToolbarIDFilterX=ToolbarPositionX(7)
+Global ToolbarIDFilterY=ToolbarPositionY(1)
+
+Global ToolbarSimulationLevelX=ToolbarPositionX(7)
+Global ToolbarSimulationLevelY=ToolbarPositionY(2)
+
+Global ToolbarExitX=ToolbarPositionX(8)
+Global ToolbarExitY=ToolbarPositionY(1)
+
+Global ToolbarSaveX=ToolbarPositionX(8)
+Global ToolbarSaveY=ToolbarPositionY(2)
+
+Const LettersCountX=44
+Const LettersCountY=30
+
+Global LetterWidth=GfxWidth/LettersCountX
+Global LetterHeight=GfxHeight/LettersCountY
+
+Const ToolbarHeight=100
+Const SidebarWidth=300
+
+Global LevelViewportWidth=GfxWidth-SidebarWidth
+Global LevelViewportHeight=GfxHeight-ToolbarHeight
+
+Global SidebarX=LevelViewportWidth
+Global SidebarY=0
+
+Global FlStartX=SidebarX+206 ; 706
+Global FlStartY=SidebarY+165
+
+;xzx
+
+
+
+
+
 
 Global Light
 AmbientLight 155,155,155
@@ -2124,15 +2264,15 @@ Function InitializeGraphicsCameras()
 	CameraPanning=False
 	GameCamera=False
 	
-	Camera1 = CreateCamera()
+	Camera1 = CreateCamera() ; level camera
 	TurnEntity Camera1,65,0,0
 	PositionEntity Camera1,7,Camera1StartY,-14
-	CameraViewport camera1,0,0,500,500
+	CameraViewport camera1,0,0,LevelViewportWidth,LevelViewportHeight
 	CameraRange camera1,.1,50
 	
 	Camera2 = CreateCamera()
 	CameraClsColor camera2,255,0,0
-	CameraViewport Camera2,510,20,200,220
+	CameraViewport Camera2,SidebarX+10,SidebarY+20,200,220
 	CameraRange camera2,.1,1000
 	RotateEntity Camera2,45,25,0
 	PositionEntity Camera2,4.9,109,-8
@@ -2140,7 +2280,7 @@ Function InitializeGraphicsCameras()
 	
 	Camera3 = CreateCamera()
 	CameraClsColor camera3,255,0,0
-	CameraViewport Camera3,0,0,500,500
+	CameraViewport Camera3,0,0,LevelViewportWidth,LevelViewportHeight
 	CameraRange camera3,.1,1000
 	RotateEntity Camera3,90,0,0
 	PositionEntity Camera3,0.5,210,-0.5
@@ -2148,7 +2288,7 @@ Function InitializeGraphicsCameras()
 	
 	Camera4 = CreateCamera() ; objects menu camera
 	CameraClsColor camera4,155,0,0
-	CameraViewport Camera4,695,305,100,125
+	CameraViewport Camera4,SidebarX+195,SidebarY+305,100,125
 	CameraRange camera4,.1,1000
 	RotateEntity Camera4,25,0,0
 	PositionEntity Camera4,0,303.8,-8
@@ -2498,14 +2638,18 @@ Function EditorMainLoop()
 	Else
 		Line1$="LEVEL: "+CurrentLevelNumber
 	EndIf
-	RightAlignedText(500,5,Line1$)
+	RightAlignedText(LevelViewportWidth,5,Line1$)
+	
+	; it's a bit less than the viewport size because the text would otherwise overlap with the x/y coordinate listing on the bottom bar as well as the right margin
+	ProjectedTextLimitX=LevelViewportWidth-10
+	ProjectedTextLimitY=LevelViewportHeight-10
 	
 	If ShowObjectMesh>=2
 		For i=0 To NofObjects-1
 			CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
 			x#=ProjectedX#()
 			y#=ProjectedY#()
-			If x#<490 And y#<490 ; it's not <500 because the text would overlap with the x/y coordinate listing on the bottom bar as well as the right margin
+			If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
 				If ShowObjectMesh=ShowObjectMeshIndices
 					; display object indices
 					StringOnObject$=i
@@ -2531,7 +2675,7 @@ Function EditorMainLoop()
 				CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
 				x#=ProjectedX#()
 				y#=ProjectedY#()
-				If x#<490 And y#<490
+				If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
 					StringOnObject$=MyEffectiveId
 					x#=x#-4*Len(StringOnObject$)
 
@@ -2546,7 +2690,7 @@ Function EditorMainLoop()
 					CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
 					x#=ProjectedX#()
 					y#=ProjectedY#()
-					If x#<490 And y#<490
+					If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
 						StringOnObject$=MyEffectiveId
 						x#=x#-4*Len(StringOnObject$)
 		
@@ -2559,7 +2703,7 @@ Function EditorMainLoop()
 	
 	Color TextLevelR,TextLevelG,TextLevelB
 		
-	StartX=510
+	StartX=SidebarX+10
 	StartY=20
 	If CurrentTileTextureUse=False Text StartX+10,StartY+70,"Not Used"
 	If CurrentTileSideTextureUse=False Text StartX+10,StartY+130,"Not Used"
@@ -2611,62 +2755,33 @@ Function EditorMainLoop()
 	;Rect 0,520,800,80,True
 	;Rect 0,500,800,100,True
 	
-	Color TextLevelR,TextLevelG,TextLevelB
-	
-;	If BrushMode=BrushModeBlock
-;		Text 0+4,520,"  >BLOCK<"
-;	Else If BrushMode=BrushModeBlockPlacing
-;		Text 0+4,520," >>BLOCK<<"
-;	Else
-;		Text 0+4,520,"   BLOCK"
-;	EndIf
-
 	Color GetBrushModeColor(BrushMode,0),GetBrushModeColor(BrushMode,1),GetBrushModeColor(BrushMode,2)
 	
-	CenteredText(50,520,GetBrushModeName$(BrushMode))
+	CenteredText(ToolbarBrushModeX,ToolbarBrushModeY,GetBrushModeName$(BrushMode))
 	
 	Color TextLevelR,TextLevelG,TextLevelB
 	
 	
-	;Text 0,550,"    WIPE"
-	CenteredText(50,550,"WIPE/FLIP")
+	CenteredText(ToolbarBrushModeX,GfxHeight-50,"WIPE/FLIP")
 	
 	
-;	If BrushMode=BrushModeInline
-;		Text 0,550,"  >INLINE<"
-;	Else
-;		Text 0,550,"   INLINE"
-;	EndIf
-	
-	
-;	If BrushMode=BrushModeFill
-;		Text 0,580,"   >FILL<"
-;	Else
-;		Text 0,580,"    FILL"
-;	EndIf
 
 	If DupeMode<>DupeModeNone
 		Color 255,155,0
 	EndIf
 	
-	CenteredText(50,580,GetDupeModeName$(DupeMode))
+	CenteredText(ToolbarBrushModeX,GfxHeight-20,GetDupeModeName$(DupeMode))
 
 	Color TextLevelR,TextLevelG,TextLevelB
-
 	
-	;Text 100,520,"   FLIP"
-	;Text 100,520,"   FLIP X"
-	;Text 100,550,"   FLIP Y"
-	;Text 100+4,580,"  FLIP XY"
-	
-	CenteredText(150,520,"BRUSH SIZE")
-	CenteredText(150,535,BrushWidth+" x "+BrushHeight)
+	CenteredText(ToolbarBrushSizeX,ToolbarBrushSizeY,"BRUSH SIZE")
+	CenteredText(ToolbarBrushSizeX,ToolbarBrushSizeY+15,BrushWidth+" x "+BrushHeight)
 	
 	If TexturePrefix<>""
 		Color 255,155,0
 	EndIf
-	CenteredText(150,565,"TEX PREFIX")
-	CenteredText(150,580,TexturePrefix$)
+	CenteredText(ToolbarTexPrefixX,ToolbarTexPrefixY,"TEX PREFIX")
+	CenteredText(ToolbarTexPrefixX,ToolbarTexPrefixY+15,TexturePrefix$)
 	;Text 90,565,"  TEX PREFIX"
 	;Text 100,580,TexturePrefix$
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -2711,44 +2826,10 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY,Line1$)
 	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY+15,"LEVEL")
-
-	
-;	Text 400,520,"   RESIZE"
-;	If BorderExpandOption=0
-;		Text 400+4,535,"  CURRENT"
-;	Else BorderExpandOption=1
-;		Text 400+4,535," DUPLICATE"
-;	EndIf
-	
-	;Text 400,565," LEVEL BORDER"
-	;If LevelEdgeStyle=1
-	;	Text 400+4,580,"   DEFAULT"
-	;ElseIf LevelEdgeStyle=2
-	;	Text 400+4,580,"   BORDER"
-	;ElseIf LevelEdgeStyle=3
-	;	Text 400+4,580,"   BORDER X"
-	;ElseIf LevelEdgeStyle=4
-	;	Text 400+4,580,"   NONE"
-	;Else
-	;	Text 400+4,580,LevelEdgeStyle
-	;EndIf
 	
 	CenteredText(ToolbarSimulationLevelX,ToolbarSimulationLevelY,"SIMULATION")
 	CenteredText(ToolbarSimulationLevelX,ToolbarSimulationLevelY+15,"LEVEL "+SimulationLevel)
 	
-	;Text 500,520,"   WIDESCREEN"
-	;If WidescreenRangeLevel=0
-	;	Text 500,535,"   RANGE: OFF"
-	;ElseIf WidescreenRangeLevel=1
-	;	Text 500,535,"   RANGE: ON"
-	;Else
-	;	Text 500,535,"   RANGE: MASTER"
-	;EndIf
-	
-	;Text 500,520,"   BRUSH"
-	;Text 500,535,"   SIZE "+BrushSize
-	
-	;Text 500,565,"   ELEVATE"
 	CenteredText(ToolbarElevateX,ToolbarElevateY,"ELEVATE")
 	
 	Select BrushWrap
@@ -2777,13 +2858,13 @@ Function EditorMainLoop()
 	If IDFilterEnabled
 		Color 255,155,0
 	EndIf
-	CenteredText(650,520,"ID FILTER")
+	CenteredText(ToolbarIDFilterX,ToolbarIDFilterY,"ID FILTER")
 	If IDFilterEnabled
 		Line1$=IDFilterAllow
 	Else
 		Line1$="OFF"
 	EndIf
-	CenteredText(650,535,Line1$)
+	CenteredText(ToolbarIDFilterX,ToolbarIDFilterY+15,Line1$)
 	Color TextLevelR,TextLevelG,TextLevelB
 	
 	;Text 600,565,"  XTRUDE"
@@ -2796,13 +2877,13 @@ Function EditorMainLoop()
 	CenteredText(ToolbarDensityX,ToolbarDensityY+15,PlacementDensity#)
 	
 	Line1$="   EXIT   "
-	If MouseX()>700 And MouseY()>515 And MouseY()<555
+	If IsMouseOverToolbarItem(ToolbarExitX,ToolbarExitY) ;MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
 		Line1$=">"+Line1$+"<"
 	Else
 		Color TextLevelR,TextLevelG,TextLevelB
 	EndIf
-	CenteredText(750,520,Line1$)
+	CenteredText(ToolbarExitX,ToolbarExitY,Line1$)
 	
 	UsingCarrots=False
 	If UnsavedChanges
@@ -2819,19 +2900,19 @@ Function EditorMainLoop()
 		EndIf
 	EndIf
 	
-	If MouseX()>700 And MouseY()>560 And MouseY()<600
+	If IsMouseOverToolbarItem(ToolbarSaveX,ToolbarSaveY)
 		Color 255,255,0
 		UsingCarrots=True
 	Else
 		Color TextLevelR,TextLevelG,TextLevelB
 	EndIf
-	CenteredText(750,565,Line1$)
-	CenteredText(750,580,Line2$)
+	CenteredText(ToolbarSaveX,ToolbarSaveY,Line1$)
+	CenteredText(ToolbarSaveX,ToolbarSaveY+15,Line2$)
 	If UsingCarrots
 		Line1$=">          <"
-		CenteredText(750,565,Line1$)
+		CenteredText(ToolbarSaveX,ToolbarSaveY,Line1$)
 		If Line2$<>""
-			CenteredText(750,580,Line1$)
+			CenteredText(ToolbarSaveX,ToolbarSaveY+15,Line1$)
 		EndIf
 	EndIf
 
@@ -2852,9 +2933,9 @@ Function EditorMainLoop()
 	For i = 0 To 1000
 		For j=0 To 3
 			If ObjectType(i)=200 And ObjectData(i, 0)=8 Then
-				red=128+120*Sin(Leveltimer Mod 360)
-			    green=128+120*Cos(Leveltimer Mod 360)
-			    blue=128-120*Sin(Leveltimer Mod 360)
+				red=GetAnimatedRainbowRed()
+			    green=GetAnimatedRainbowGreen()
+			    blue=GetAnimatedRainbowBlue()
 				
 				If ObjectEntity(i)>0 Then
 			    	VertexColor GetSurface(ObjectEntity(i),1),j,red,green,blue
@@ -2872,8 +2953,8 @@ Function EditorMainLoop()
 	
 	If MaxParticleWarningTimer<>0
 		MaxParticleWarningTimer=MaxParticleWarningTimer-1
-		StartX=250
-		StartY=250
+		StartX=LevelViewportWidth/2
+		StartY=LevelViewportHeight/2
 		Message$="WARNING! Too many particles! This will most likely MAV in-game!"
 		TextOffset=GetCenteredTextOffset(Message$)
 		Color RectToolbarR,RectToolbarG,RectToolbarB
@@ -3238,8 +3319,8 @@ Function DrawTextRectangle(StartX,StartY,Message$,RectR,RectG,RectB,TextR,TextG,
 	StartX=StartX-TotalHorizontalPadding
 	
 	; clamp the rectangle position so that the rectangle doesn't spill outside the window
-	If StartX+RectangleWidth>800
-		StartX=800-RectangleWidth
+	If StartX+RectangleWidth>GfxWidth
+		StartX=GfxWidth-RectangleWidth
 	ElseIf StartX<0
 		StartX=0
 	EndIf
@@ -3764,7 +3845,7 @@ Function RenderToolbar()
 
 	Color RectToolbarR,RectToolbarG,RectToolbarB
 	;Rect 0,500,500,12,True
-	Rect 0,500,800,100,True
+	Rect 0,LevelViewportHeight,GfxWidth,100,True
 
 End Function
 
@@ -3896,15 +3977,15 @@ Function EditorLocalRendering()
 	; full window size is 800x600, whereas the level camera viewport is 500x500
 	; draw black regions so stray text doesn't linger there
 	Color RectMarginR,RectMarginG,RectMarginB
-	Rect 500,0,10,500,True ; between level camera and object/tile editors
-	Rect 510,0,290,20,True ; backdrop for the labels of TILES and GLOBALS
-	Rect 710,20,5,220,True ; between TILES and GLOBALS
-	Rect 715,85,80,15 ; between level dimensions and the rest of GLOBALS
-	Rect 795,20,5,500,True ; to the right of GLOBALS
-	Rect 510,240,205,5,True ; beneath TILES and to the left of GLOBALS
-	Rect 510,285,285,20,True ; backdrop for the label of OBJECTS
-	Rect 510,455,285,5,True ; between the object adjusters and object categories
-	Rect 695,430,100,5,True ; between object camera and More button
+	Rect SidebarX,SidebarY,10,LevelViewportHeight,True ; between level camera and object/tile editors
+	Rect SidebarX+10,SidebarY,290,20,True ; backdrop for the labels of TILES and GLOBALS
+	Rect SidebarX+210,SidebarY+20,5,220,True ; between TILES and GLOBALS
+	Rect SidebarX+215,SidebarY+85,80,15 ; between level dimensions and the rest of GLOBALS
+	Rect SidebarX+295,SidebarY+20,5,LevelViewportHeight,True ; to the right of GLOBALS
+	Rect SidebarX+10,SidebarY+240,205,5,True ; beneath TILES and to the left of GLOBALS
+	Rect SidebarX+10,SidebarY+285,285,20,True ; backdrop for the label of OBJECTS
+	Rect SidebarX+10,SidebarY+455,285,5,True ; between the object adjusters and object categories
+	Rect SidebarX+195,SidebarY+430,100,5,True ; between object camera and More button
 
 	If EditorMode=0
 		TileColorR=RectOnR
@@ -3925,10 +4006,10 @@ Function EditorLocalRendering()
 	EndIf
 	
 	Color TextLevelR,TextLevelG,TextLevelB
-	Text 590,5,"TILES"
+	Text SidebarX+90,SidebarY+5,"TILES"
 	
 	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
-	Rect 714,100,81,145,True
+	Rect SidebarX+214,SidebarY+100,81,145,True
 	Color TextLevelR,TextLevelG,TextLevelB
 
 
@@ -3938,95 +4019,83 @@ Function EditorLocalRendering()
 	;Else
 	;	Text 719,100,LevelWeatherString$
 	;EndIf
-	CenteredText(754,100,LevelWeatherString$)
+	CenteredText(SidebarX+254,SidebarY+100,LevelWeatherString$)
 
 
 	Select LevelMusic
 	Case -1
-		Text 715,115,"  Beach  "
+		Line1$="  Beach  "
 	Case 0
-		Text 715,115," No Music"
+		Line1$=" No Music"
 	Case 1
-		Text 715,115," WA Intro"
+		Line1$=" WA Intro"
 	Case 2
-		Text 715,115," Pastoral"
+		Line1$=" Pastoral"
 	Case 3
-		Text 715,115,"WonderTown"
+		Line1$="WonderTown"
 	Case 4
-		Text 715,115,"Dark/Sewer"
+		Line1$="Dark/Sewer"
 	Case 5
-		Text 715,115,"Cave/Woods"
+		Line1$="Cave/Woods"
 	Case 6
-		Text 715,115,"Scary/Void"
+		Line1$="Scary/Void"
 	Case 7
-		Text 715,115,"WondrFalls"
+		Line1$="WondrFalls"
 	Case 8
-		Text 715,115,"  Jungle  "
+		Line1$="  Jungle  "
 	Case 9
-		Text 715,115,"KaboomTown"
+		Line1$="KaboomTown"
 	Case 10
-		Text 715,115,"Acid Pools"
+		Line1$="Acid Pools"
 	Case 11
-		Text 719,115,"  Retro  "
+		Line1$="  Retro  "
 	Case 12
-		Text 719,115,"  Cave  "
+		Line1$="  Cave  "
 	Case 13
-		Text 719,115,"POTZ Intro"
+		Line1$="POTZ Intro"
 	Case 14
-		Text 719,115," Uo Sound"
+		Line1$=" Uo Sound"
 	Case 15
-		Text 719,115,"Z-Ambience"
+		Line1$="Z-Ambience"
 	Case 16
-		Text 719,115,"Z-Synchron"
+		Line1$="Z-Synchron"
 	Case 17
-		Text 719,115,"RetroScary"
+		Line1$="RetroScary"
 	Case 18
-		Text 719,115,"DesertWind"
+		Line1$="DesertWind"
 	Case 19
-		Text 719,115,"DesertCave"
+		Line1$="DesertCave"
 	Case 20
-		Text 719,115,"Star World"
+		Line1$="Star World"
 	Case 21
-		Text 719,115,"  Piano   "
+		Line1$="  Piano   "
 	Default
-		Text 719,115,LevelMusic
-
-
-
-
-
-
-
-
-
-
-
-	
-
+		Line1$=LevelMusic
 	End Select
+	Text SidebarX+219,SidebarY+115,Line1$
 	
 	
 	LevelEdgeStyleString$=GetLevelEdgeStyleChar$(LevelEdgeStyle)
 
 
-	Text 715,133,"<LevelTex>"
-	Text 715,150,"<WaterTex>"
+	Text SidebarX+215,SidebarY+133,"<LevelTex>"
+	Text SidebarX+215,SidebarY+150,"<WaterTex>"
 	Text FlStartX,FlStartY," Fl Tr Gl B"
-	Text FlStartX+12,180,Str$(WaterFlow)
-	Text FlStartX+36,180,Str$(WaterTransparent)
-	Text FlStartX+60,180,Str$(WaterGlow)
-	Text FlStartX+80,180,LevelEdgeStyleString$
-	Text 723,200,"  Light  "
-	Text 712,215,Str$(LightRed)
-	Text 741,215,Str$(LightGreen)
-	Text 770,215,Str$(LightBlue)
-	Text 712,228,Str$(AmbientRed)
-	Text 741,228,Str$(AmbientGreen)
-	Text 770,228,Str$(AmbientBlue)
+	Text FlStartX+12,SidebarY+180,Str$(WaterFlow)
+	Text FlStartX+36,SidebarY+180,Str$(WaterTransparent)
+	Text FlStartX+60,SidebarY+180,Str$(WaterGlow)
+	Text FlStartX+80,SidebarY+180,LevelEdgeStyleString$
+	Text SidebarX+223,SidebarY+200,"  Light  "
+	Text SidebarX+212,SidebarY+215,Str$(LightRed)
+	Text SidebarX+241,SidebarY+215,Str$(LightGreen)
+	Text SidebarX+270,SidebarY+215,Str$(LightBlue)
+	Text SidebarX+212,SidebarY+228,Str$(AmbientRed)
+	Text SidebarX+241,SidebarY+228,Str$(AmbientGreen)
+	Text SidebarX+270,SidebarY+228,Str$(AmbientBlue)
 	
 	
-	StartX=510
-	StartY=245
+	StartX=SidebarX+10
+	StartY=SidebarY+245
 	Color TileColorR,TileColorG,TileColorB
 	Rect StartX,StartY,285,40,True
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -4036,8 +4105,8 @@ Function EditorLocalRendering()
 	Text StartX+2+285/2-4*(Len(TilePresetTileName$(CurrentTilePresetTile))+2),StartY+22,"Tile: "+Left$(TilePresetTileName$(CurrentTilePresetTile),Len(TilePresetTileName$(CurrentTilePresetTile))-4)
 	
 	
-	StartX=695
-	StartY=435
+	StartX=SidebarX+195 ;695
+	StartY=SidebarY+435
 	
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,100,20,True
@@ -4053,8 +4122,8 @@ Function EditorLocalRendering()
 		Text StartX,StartY+2,"Pg"+(ObjectAdjusterStart/9+1)+"/"+((NofObjectAdjusters-1)/9+1)
 	EndIf
 	
-	StartX=510
-	StartY=460
+	StartX=SidebarX+10 ;510
+	StartY=SidebarY+460
 	
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,285,40,True
@@ -4064,9 +4133,9 @@ Function EditorLocalRendering()
 	Text StartX+2,StartY+22,"                                   "
 	Text StartX+2+285/2-4*(Len(ObjectPresetObjectName$(CurrentObjectPresetObject))+4),StartY+22,"Object: "+Left$(ObjectPresetObjectName$(CurrentObjectPresetObject),Len(ObjectPresetObjectName$(CurrentObjectPresetObject))-4)
 	
-	Text 719,5," GLOBALS"
-	StartX=715
-	StartY=20
+	StartX=SidebarX+215 ;715
+	StartY=SidebarY+20
+	Text StartX+4,StartY-15," GLOBALS" ;719,5," GLOBALS"
 	Color RectOnR,RectOnG,RectOnB
 	Rect StartX,StartY,80,35,True
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -4094,9 +4163,9 @@ Function EditorLocalRendering()
 	
 	
 	Color TextLevelR,TextLevelG,TextLevelB
-	Text 650-7*4,290,"OBJECTS"
-	StartX=510
-	StartY=305
+	Text SidebarX+150-7*4,SidebarY+290,"OBJECTS"
+	StartX=SidebarX+10
+	StartY=SidebarY+305
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,185,150
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -4157,7 +4226,7 @@ Function EditorLocalControls()
 	; *************************************
 	
 	If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
-		If mx>=0 And mx<500 And my>=0 And my<500
+		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
 			Entity=CameraPick(camera1,MouseX(),MouseY())
 			If Entity>0
 				
@@ -4202,7 +4271,7 @@ Function EditorLocalControls()
 				Next
 				
 				Color TextLevelR,TextLevelG,TextLevelB
-				Text 250-4.5*8,500,"X:"+Str$(BrushCursorX)+", Y:"+Str$(BrushCursorY)
+				Text LevelViewportWidth/2-4.5*8,LevelViewportHeight,"X:"+Str$(BrushCursorX)+", Y:"+Str$(BrushCursorY)
 				
 				HideEntity BlockModeMesh
 				If BrushMode=BrushModeBlockPlacing
@@ -4457,21 +4526,23 @@ Function EditorLocalControls()
 	; Selecting A Texture
 	; *************************************
 	If EditorMode=1 Or EditorMode=2
-		If mx>=0 And mx<500 And my>=0 And my<500 
+		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
+			QuotientX#=Float#(LevelViewportWidth)/8.0
+			QuotientY#=Float#(LevelViewportHeight)/8.0 
 			ScaleEntity CursorMeshPillar(0),0.0325,0.01,0.0325
 			ScaleEntity CursorMeshTexturePicker,0.0325,0.01,0.0325
-			PositionEntity CursorMeshPillar(0),Floor(mx/62.5)*0.125+0.0625,200,-Floor(my/62.5)*0.125-0.0625
-			PositionEntity CursorMeshTexturePicker,Floor(mx/62.5)*0.125+0.0625,200,-Floor(my/62.5)*0.125-0.0625
+			PositionEntity CursorMeshPillar(0),Floor(mx/QuotientX#)*0.125+0.0625,200,-Floor(my/QuotientY#)*0.125-0.0625
+			PositionEntity CursorMeshTexturePicker,Floor(mx/QuotientX#)*0.125+0.0625,200,-Floor(my/QuotientY#)*0.125-0.0625
 			ShowEntity CursorMeshPillar(0)
 			ShowEntity CursorMeshOpaque(0)
 			ShowEntity CursorMeshTexturePicker
 			If LeftMouse=True
 				If editormode=1
 					; main texture
-					CurrentTileTexture=Floor(mx/62.5)+Floor(my/62.5)*8
+					CurrentTileTexture=Floor(mx/QuotientX#)+Floor(my/QuotientY#)*8
 				Else If editormode=2
 					; main texture
-					CurrentTileSideTexture=Floor(mx/62.5)+Floor(my/62.5)*8
+					CurrentTileSideTexture=Floor(mx/QuotientX#)+Floor(my/QuotientY#)*8
 				EndIf
 				SetEditorMode(0)
 				LeftMouseReleased=False
@@ -4489,8 +4560,8 @@ Function EditorLocalControls()
 	; Change the CurrentTile
 	; *************************************
 		
-	StartX=510
-	StartY=20
+	StartX=SidebarX+10
+	StartY=SidebarY+20
 	
 	If MX>=StartX And MX<StartX+200 And MY<StartY+220
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
@@ -4814,7 +4885,7 @@ Function EditorLocalControls()
 	; *************************************
 	
 
-	If mx>=715 
+	If mx>=SidebarX+215 
 				
 		If my>=100 And my<115 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
 			leftmousereleased=False
@@ -4862,7 +4933,7 @@ Function EditorLocalControls()
 
 		; level/water textures
 		If my>133 And my<148
-			If mx>755 And leftmouse=True And leftmousereleased=True
+			If mx>SidebarX+255 And leftmouse=True And leftmousereleased=True
 				CurrentLevelTexture=CurrentLevelTexture+1
 				If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
 				
@@ -4877,7 +4948,7 @@ Function EditorLocalControls()
 				buildcurrenttilemodel()
 				UnsavedChanges=True
 			EndIf
-			If mx<=755 And leftmouse=True And leftmousereleased=True
+			If mx<=SidebarX+255 And leftmouse=True And leftmousereleased=True
 				CurrentLevelTexture=CurrentLevelTexture-1
 				If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
 				
@@ -4892,11 +4963,11 @@ Function EditorLocalControls()
 				buildcurrenttilemodel()
 				UnsavedChanges=True
 			EndIf
-			ShowTooltipRightAligned(710,163,CurrentLevelTextureName$())
+			ShowTooltipRightAligned(SidebarX+210,163,CurrentLevelTextureName$())
 		EndIf
 
 		If my>150 And my<163 
-			If mx>755 And leftmouse=True And leftmousereleased=True
+			If mx>SidebarX+255 And leftmouse=True And leftmousereleased=True
 				CurrentWaterTexture=CurrentWaterTexture+1
 				
 				If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
@@ -4911,7 +4982,7 @@ Function EditorLocalControls()
 				buildcurrenttilemodel()
 				UnsavedChanges=True
 			EndIf
-			If mx<=755 And leftmouse=True And leftmousereleased=True
+			If mx<=SidebarX+255 And leftmouse=True And leftmousereleased=True
 				CurrentWaterTexture=CurrentWaterTexture-1
 				
 				If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
@@ -4926,7 +4997,7 @@ Function EditorLocalControls()
 				buildcurrenttilemodel()
 				UnsavedChanges=True
 			EndIf
-			ShowTooltipRightAligned(710,180,CurrentWaterTextureName$())
+			ShowTooltipRightAligned(SidebarX+210,180,CurrentWaterTextureName$())
 		EndIf
 
 		; custom level/water
@@ -5079,7 +5150,9 @@ Function EditorLocalControls()
 		ChangeSpeed=1
 	EndIf
 	
-	If mx>712 And my>215 And mx<736 And my<228
+	StartX=SidebarX+212
+	
+	If mx>StartX And my>215 And mx<StartX+24 And my<228
 		If leftmouse=True Or MouseScroll>0
 			If CtrlDown()
 				LightRed=InputInt("Enter LightRed: ")
@@ -5097,7 +5170,7 @@ Function EditorLocalControls()
 			UnsavedChanges=True
 		EndIf
 	EndIf
-	If mx>712+29 And my>215 And mx<736+29 And my<228
+	If mx>StartX+29 And my>215 And mx<StartX+24+29 And my<228
 		If leftmouse=True Or MouseScroll>0
 			If CtrlDown()
 				LightGreen=InputInt("Enter LightGreen: ")
@@ -5115,7 +5188,7 @@ Function EditorLocalControls()
 			UnsavedChanges=True
 		EndIf
 	EndIf
-	If mx>712+29+29 And my>215 And mx<736+29+29 And my<228
+	If mx>StartX+29+29 And my>215 And mx<StartX+24+29+29 And my<228
 		If leftmouse=True  Or MouseScroll>0
 			If CtrlDown()
 				LightBlue=InputInt("Enter LightBlue: ")
@@ -5134,7 +5207,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-		If mx>712 And my>215+13 And mx<736 And my<228+13
+	If mx>StartX And my>215+13 And mx<StartX+24 And my<228+13
 		If leftmouse=True Or MouseScroll>0
 			If CtrlDown()
 				AmbientRed=InputInt("Enter AmbientRed: ")
@@ -5152,7 +5225,7 @@ Function EditorLocalControls()
 			UnsavedChanges=True
 		EndIf
 	EndIf
-	If mx>712+29 And my>215+13 And mx<736+29 And my<228+13
+	If mx>StartX+29 And my>215+13 And mx<StartX+24+29 And my<228+13
 		If leftmouse=True Or MouseScroll>0
 			If CtrlDown()
 				AmbientGreen=InputInt("Enter AmbientGreen: ")
@@ -5170,7 +5243,7 @@ Function EditorLocalControls()
 			UnsavedChanges=True
 		EndIf
 	EndIf
-	If mx>712+29+29 And my>215+13 And mx<736+29+29 And my<228+13
+	If mx>StartX+29+29 And my>215+13 And mx<StartX+24+29+29 And my<228+13
 		If leftmouse=True Or MouseScroll>0
 			If CtrlDown()
 				AmbientBlue=InputInt("Enter AmbientBlue: ")
@@ -5201,8 +5274,8 @@ Function EditorLocalControls()
 	; Preset Tiles
 	; *************************************
 	
-	StartX=510
-	StartY=245
+	StartX=SidebarX+10
+	StartY=SidebarY+245
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
@@ -5293,8 +5366,8 @@ Function EditorLocalControls()
 	; LevelSize
 	; *************************************
 	
-	StartX=715
-	StartY=20
+	StartX=SidebarX+215 ;715
+	StartY=SidebarY+20
 	
 	If ShiftDown()
 		Adj=10
@@ -5315,7 +5388,7 @@ Function EditorLocalControls()
 		EndIf
 	
 		; Formerly StartX,StartY+60
-		ShowTooltipRightAligned(800,StartY+105,"Scroll the mouse wheel to change the resize setting: Resize "+ResizeName$)
+		ShowTooltipRightAligned(GfxWidth,StartY+105,"Scroll the mouse wheel to change the resize setting: Resize "+ResizeName$)
 	
 		If mx<StartX+40 And my<StartY+30 
 			If LeftMouse=True And LeftMouseReleased=True
@@ -5458,8 +5531,8 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	StartX=510
-	StartY=305
+	StartX=SidebarX+10 ;510
+	StartY=SidebarY+305
 	
 	If mx>=StartX And mx<=StartX+185
 		If my>=StartY And my<StartY+15
@@ -5483,10 +5556,10 @@ Function EditorLocalControls()
 	; Preset Objects
 	; *************************************
 	
-	StartX=695
-	StartY=435
+	StartX=SidebarX+195 ;695
+	StartY=SidebarY+435
 	
-	; Placed in code before "More" to eat the click before it hits "More".
+	; Placed in code before the adjuster page switch button to eat the click before that.
 	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
 		; Update button
 		If mx>=StartX+44 And Mx<StartX+100 And my>=StartY And my<StartY+20
@@ -5578,8 +5651,8 @@ Function EditorLocalControls()
 	EndIf
 
 	
-	StartX=510
-	StartY=460
+	StartX=SidebarX+10
+	StartY=SidebarY+460
 
 	
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20	
@@ -5751,127 +5824,97 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If MX>=00 And Mx<100
-		If my>=510 And my<540
-			; brush mode
-			BrushChange=0
-			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
-				LeftMouseReleased=False
+	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY-10)
+		; brush mode
+		BrushChange=0
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
+			LeftMouseReleased=False
 
-				ChangeBrushModeByDelta(1)
-			EndIf
-			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-				RightMouseReleased=False
-
-				ChangeBrushModeByDelta(-1)
-			EndIf
+			ChangeBrushModeByDelta(1)
 		EndIf
+		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
+			RightMouseReleased=False
+
+			ChangeBrushModeByDelta(-1)
+		EndIf
+	EndIf
 	
-		If my>=540 And my<570
-			If LeftMouse=True And LeftMouseReleased=True
-				LeftMouseReleased=False
-				;wipe ;flip
-
-				;Flipped=False
-				
-				;If GetConfirmation("Are you sure you want to wipe?")
-				SetupPrompt()
-				ReturnKeyReleased=False
-				Print("Type W to wipe, or type X, Y, or XY to flip across the chosen")
-				DesiredAction$=Upper$(Input$("axes: "))
-				
-				If DesiredAction$="W"
-					For i=0 To LevelWidth-1
-						For j=0 To LevelHeight-1
-							ChangeLevelTile(i,j,True)
-						Next
-					Next
-				ElseIf DesiredAction$="X"
-					FlipLevelX()
-					Flipped=True
-				ElseIf DesiredAction="Y"
-					FlipLevelY()
-					Flipped=True
-				ElseIf DesiredAction="XY"
-					FlipLevelXY()
-					Flipped=True
-				EndIf
-				
-				;If Flipped
-				;	Locate 0,0
-				;	Color 0,0,0
-				;	Rect 0,0,500,40,True
-				;	Color 255,255,255
-				;	Print "Flipped"
-				;	Delay 1000
-				;EndIf
-			EndIf
-		EndIf
-		
-		If my>=570 And my<600
-			;fill
-			;ToggleFillMode()
+	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY+20)
+		If LeftMouse=True And LeftMouseReleased=True
+			LeftMouseReleased=False
+			;wipe ;flip
 			
-			NewValue=AdjustInt("Enter dupe mode: ",DupeMode,1,1,100)
-			If NewValue<>DupeMode
-				SetDupeMode(NewValue)
+			SetupPrompt()
+			ReturnKeyReleased=False
+			Print("Type W to wipe, or type X, Y, or XY to flip across the chosen")
+			DesiredAction$=Upper$(Input$("axes: "))
+			
+			If DesiredAction$="W"
+				For i=0 To LevelWidth-1
+					For j=0 To LevelHeight-1
+						ChangeLevelTile(i,j,True)
+					Next
+				Next
+			ElseIf DesiredAction$="X"
+				FlipLevelX()
+			ElseIf DesiredAction="Y"
+				FlipLevelY()
+			ElseIf DesiredAction="XY"
+				FlipLevelXY()
 			EndIf
 		EndIf
-	
+	EndIf
+		
+	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY+50)
+		; dupe mode
+		
+		NewValue=AdjustInt("Enter dupe mode: ",DupeMode,1,1,100)
+		If NewValue<>DupeMode
+			SetDupeMode(NewValue)
+		EndIf
 	EndIf
 
-	If MX>=100 And Mx<200
+	If IsMouseOverToolbarItem(ToolbarBrushSizeX,ToolbarBrushSizeY)
 		; brush size
-		If my>520 And my<550
-			If ShiftDown()
-				Adj=10
-			Else
-				Adj=1
-			EndIf
-			ShouldChangeBrushWidth=my<535 Or mx<160
-			ShouldChangeBrushHeight=my<535 Or mx>140
-			If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
-				;BorderExpandOption=Not BorderExpandOption
-				;WidescreenRangeLevel=WidescreenRangeLevel+1
-				;If WidescreenRangeLevel>1
-				;	WidescreenRangeLevel=-1
-				;ElseIf WidescreenRangeLevel<-1
-				;	WidescreenRangeLevel=1
-				;EndIf
-				
-				If ShouldChangeBrushWidth
-					SetBrushWidth(BrushWidth+Adj)
-				EndIf
-				If ShouldChangeBrushHeight
-					SetBrushHeight(BrushHeight+Adj)
-				EndIf
-				If MouseScroll=0 Then Delay 100
-			EndIf
-			If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-				If ShouldChangeBrushWidth
-					SetBrushWidth(BrushWidth-Adj)
-				EndIf
-				If ShouldChangeBrushHeight
-					SetBrushHeight(BrushHeight-Adj)
-				EndIf
-				If MouseScroll=0 Then Delay 100
-			EndIf
+		If ShiftDown()
+			Adj=10
+		Else
+			Adj=1
 		EndIf
+		ShouldChangeBrushWidth=my<ToolbarBrushSizeY+15 Or mx<ToolbarBrushSizeX+10
+		ShouldChangeBrushHeight=my<ToolbarBrushSizeY+15 Or mx>ToolbarBrushSizeX-10
+		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
+			If ShouldChangeBrushWidth
+				SetBrushWidth(BrushWidth+Adj)
+			EndIf
+			If ShouldChangeBrushHeight
+				SetBrushHeight(BrushHeight+Adj)
+			EndIf
+			If MouseScroll=0 Then Delay 100
+		EndIf
+		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
+			If ShouldChangeBrushWidth
+				SetBrushWidth(BrushWidth-Adj)
+			EndIf
+			If ShouldChangeBrushHeight
+				SetBrushHeight(BrushHeight-Adj)
+			EndIf
+			If MouseScroll=0 Then Delay 100
+		EndIf
+	EndIf
 		
-		If my>=565 And my<595
-			If LeftMouse=True And LeftMouseReleased=True
-				;texture prefix
-				FlushKeys
-				Locate 0,0
-				Color 0,0,0
-				Rect 0,0,500,40,True
-				Color 255,255,255
-				Print "Enter texture prefix (leave blank to disable texture prefix): "
-				TexturePrefix$=Input$("")
-				ReturnKeyReleased=False
-			EndIf
+	If IsMouseOverToolbarItem(ToolbarTexPrefixX,ToolbarTexPrefixY)
+		If LeftMouse=True And LeftMouseReleased=True
+			;texture prefix
+			FlushKeys
+			Locate 0,0
+			Color 0,0,0
+			Rect 0,0,500,40,True
+			Color 255,255,255
+			Print "Enter texture prefix (leave blank to disable texture prefix): "
+			TexturePrefix$=Input$("")
+			ReturnKeyReleased=False
 		EndIf
-
 	EndIf
 	
 	If IsMouseOverToolbarItem(ToolbarShowMarkersX,ToolbarShowMarkersY)
@@ -5952,8 +5995,8 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	; simulation level
 	If IsMouseOverToolbarItem(ToolbarSimulationLevelX,ToolbarSimulationLevelY)
+		; simulation level
 		NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, 150)
 		If NewValue>SimulationLevelMax
 			NewValue=0
@@ -6044,35 +6087,30 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If MX>=600 And MX<700
-		; ID filter
-		If my>520 And my<550
-			If LeftMouse=True And LeftMouseReleased=True
-				If IDFilterEnabled=False Or CtrlDown()
-					IDFilterAllow=InputInt("Enter the ID to filter for: ")
-					IDFilterEnabled=True
-				Else
-					IDFilterEnabled=False
-				EndIf
-				For j=0 To NofObjects-1
-					UpdateObjectVisibility(j)
-				Next
-				Delay 100
+	If IsMouseOverToolbarItem(ToolbarIDFilterX,ToolbarIDFilterY)
+		If LeftMouse=True And LeftMouseReleased=True
+			If IDFilterEnabled=False Or CtrlDown()
+				IDFilterAllow=InputInt("Enter the ID to filter for: ")
+				IDFilterEnabled=True
+			Else
+				IDFilterEnabled=False
 			EndIf
-			If IDFilterEnabled And MouseScroll<>0
-				If ShiftDown()
-					Adj=50
-				Else
-					Adj=1
-				EndIf
-				IDFilterAllow=IDFilterAllow+Adj*MouseScroll
-				For j=0 To NofObjects-1
-					UpdateObjectVisibility(j)
-				Next
-			EndIf
+			For j=0 To NofObjects-1
+				UpdateObjectVisibility(j)
+			Next
+			Delay 100
 		EndIf
-		
-		
+		If IDFilterEnabled And MouseScroll<>0
+			If ShiftDown()
+				Adj=50
+			Else
+				Adj=1
+			EndIf
+			IDFilterAllow=IDFilterAllow+Adj*MouseScroll
+			For j=0 To NofObjects-1
+				UpdateObjectVisibility(j)
+			Next
+		EndIf
 	EndIf
 	
 	If IsMouseOverToolbarItem(ToolbarDensityX,ToolbarDensityY)
@@ -6082,44 +6120,37 @@ Function EditorLocalControls()
 	EndIf
 	
 	If LeftMouse=True And LeftMouseReleased=True
-
-		If MX>700
-			If my>515 And my<555
-				; exit ; cancel and exit
-				If AskToSaveLevelAndExit()
-					ResumeMaster()
-				EndIf
-				
-				Repeat
-				Until MouseDown(1)=False	
-				
-			Else If my>560 And my<600
-				; save ; save and exit
-				;If SaveLevelAndExit()
-				;	ResumeMaster()
-				;EndIf
-				If UnsavedChanges
-					SaveLevel()
-				Else
-					If BrushMode=BrushModeTestLevel
-						SetBrushMode(BrushModeNormal)
-					Else
-						SetBrushMode(BrushModeTestLevel)
-					EndIf
-				EndIf
-				
-				Repeat
-				Until MouseDown(1)=False
-			
+		If IsMouseOverToolbarItem(ToolbarExitX,ToolbarExitY)
+			; exit ; cancel and exit
+			If AskToSaveLevelAndExit()
+				ResumeMaster()
 			EndIf
+			
+			Repeat
+			Until MouseDown(1)=False
+		EndIf
+		
+		If IsMouseOverToolbarItem(ToolbarSaveX,ToolbarSaveY)
+			; save ; save and exit
+			;If SaveLevelAndExit()
+			;	ResumeMaster()
+			;EndIf
+			If UnsavedChanges
+				SaveLevel()
+			Else
+				If BrushMode=BrushModeTestLevel
+					SetBrushMode(BrushModeNormal)
+				Else
+					SetBrushMode(BrushModeTestLevel)
+				EndIf
+			EndIf
+			
+			Repeat
+			Until MouseDown(1)=False
+		
 		EndIf
 	EndIf
-
 	
-
-
-	
-
 End Function
 
 
@@ -10725,8 +10756,8 @@ End Function
 
 Function HoverOverObjectAdjuster(i)
 
-	StartX=510
-	StartY=305
+	StartX=SidebarX+10
+	StartY=SidebarY+305
 	StartY=StartY+15+(i-ObjectAdjusterStart)*15
 	
 	CenterX=StartX+92
@@ -10880,8 +10911,8 @@ Function DisplayObjectAdjuster(i)
 
 	tex2$=ObjectAdjuster$(i)
 	Randomized=False
-	StartX=510
-	StartY=305
+	StartX=SidebarX+10
+	StartY=SidebarY+305
 	StartY=StartY+15+(i-ObjectAdjusterStart)*15
 
 	Select ObjectAdjuster$(i)
@@ -14489,8 +14520,8 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "TileTypeCollision"
 		If (Not RandomTTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0)
-			StartX=510
-			StartY=305
+			StartX=SidebarX+10
+			StartY=SidebarY+305
 			StartY=StartY+15+(i-ObjectAdjusterStart)*15
 			tex2$="TTC"
 			tex$="00000 00000 00000"
@@ -14514,8 +14545,8 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "ObjectTypeCollision"
 		If (Not RandomOTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0)
-			StartX=510
-			StartY=305
+			StartX=SidebarX+10
+			StartY=SidebarY+305
 			StartY=StartY+15+(i-ObjectAdjusterStart)*15
 			tex2$="OTC"
 			tex$="00000 00000 00000"
@@ -18238,7 +18269,7 @@ Function CameraControls()
 	
 	Target=-1
 	
-	If EditorMode=3 And mx>=695 And my>=305 And mx<=795 And my<=430 ; camera4 viewport space
+	If EditorMode=3 And mx>=SidebarX+195 And my>=SidebarY+305 And mx<=SidebarX+295 And my<=SidebarY+430 ; camera4 viewport space
 		Target=Camera4 ; object camera
 	;ElseIf EditorMode=0 And mx>=510 And mx<710 And my>=20 And my<240
 	;	Target=-1 ; tile camera
@@ -18308,7 +18339,8 @@ Function CameraControls()
 	EndIf
 	
 	If MouseScroll<>0
-		If Target=Camera1 And mx<510 And my>=0 And my<500 ; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
+		; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
+		If Target=Camera1 And mx<LevelViewportWidth+10 And my>=0 And my<LevelViewportHeight
 			; level camera
 			If Camera1Proj=1 ; perspective
 				SpeedFactor#=3.0*Adj
