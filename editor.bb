@@ -11221,7 +11221,7 @@ Function DisplayObjectAdjuster(i)
 			End Select
 		EndIf
 		
-		If CurrentObjectType=120
+		If CurrentObjectType=120 ; Wee Stinker
 			Select CurrentObjectSubType
 			Case -2
 				tex$="Dying?"
@@ -11238,6 +11238,10 @@ Function DisplayObjectAdjuster(i)
 			Case 4
 				tex$="Caged"
 			End Select
+		EndIf
+		
+		If CurrentObjectType=434 ; Mothership
+			tex2$="AudioTimeOffset"
 		EndIf
 
 
@@ -11622,7 +11626,10 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectType=434 ; mothership
-			tex2$="TimerMax"
+			tex2$="SpawnTimer" ; Formerly TimerMax
+			If CurrentObjectData(0)=0
+				tex$="No Spawns"
+			EndIf
 		EndIf
 		
 		If CurrentObjectType=460 ; BurstFlower
@@ -12822,6 +12829,20 @@ Function DisplayObjectAdjuster(i)
 			tex2$="FromPlayer"
 			If CurrentObjectStatus=0 tex$="No"
 			If CurrentObjectStatus=1 tex$="Yes"
+		EndIf
+		
+		If CurrentObjectType=434 ; Mothership
+			If CurrentObjectStatus=0
+				tex$="Goal 1"
+			ElseIf CurrentObjectStatus=1
+				tex$="Goal 2"
+			ElseIf CurrentObjectStatus=2
+				tex$="Goal 3"
+			ElseIf CurrentObjectStatus<-199
+				tex$=CurrentObjectStatus+"/Eversplode"
+			ElseIf CurrentObjectStatus<0
+				tex$="Exploding "+Str$(-CurrentObjectStatus);+"/200"
+			EndIf
 		EndIf
 		
 		If CurrentObjectType=470 Or CurrentObjectType=471 ; Wraith or Ghost
@@ -27583,12 +27604,29 @@ Function ControlMothership(i)
 		SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectZ(i)=4
 		
-		SimulateObjectPosition(i)
-		
 		;CreateShadow(i,ObjectScaleAdjust(i)*5)
 	EndIf
 	
-	;SimulateObjectRotation(i)
+	
+	If SimulatedObjectStatus(i)<0
+		
+		SimulatedObjectRoll(i)=((SimulatedObjectRoll(i)+.3) Mod 360)
+
+		SimulatedObjectPitch(i)=((SimulatedObjectPitch(i)-.1) Mod 360)
+		
+		AddParticle(Rand(0,3),SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.1,.1),Rnd(-.01,.01),Rnd(-.1,.1),3,.02,0,0,0,125,3)
+
+		;If SimulatedObjectStatus(i) Mod 30 = 0
+		;	PlaySoundFX(96,ObjectX(i),ObjectY(i))
+		;EndIf
+	
+		SimulatedObjectStatus(i)=SimulatedObjectStatus(i)-1
+		;If ObjectStatus(i)=-200
+		;	destroyobject(i,0)
+		;	NofZBotsInAdventure=NofZBotsInAdventure-1
+		;EndIf
+		
+	EndIf
 	
 End Function
 
