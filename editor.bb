@@ -2545,7 +2545,7 @@ Function UpdateEditor()
 		EditorMainLoop()
 	Case 4
 		UserSelectScreen()
-	Case 5
+	Case 5,12
 		AdventureSelectScreen()
 	Case 6
 		AdventureSelectScreen2()
@@ -2559,8 +2559,6 @@ Function UpdateEditor()
 		MasterAdvancedLoop()
 	Case 11
 		HubMainLoop()
-	Case 12
-		HubAdventureSelectScreen()
 	End Select
 
 End Function
@@ -20783,37 +20781,69 @@ Function AdventureSelectScreen()
 	EndIf
 
 
-	DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
-	
-	;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	;DisplayText2("            ====================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	;DisplayText2("            ================================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	
-	DisplayText2("            ======================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2("                                  (Controls)",0,1,255,255,255)
-	
-;	If displayfullscreen=True
-;		DisplayText2("                                (FullScreen)",0,1,255,255,255)
-;	Else
-;		DisplayText2("                                ( Windowed )",0,1,255,255,255)
-;	EndIf
-	;hubmode=True
-	If hubmode=True
-		DisplayText2("(   Hubs   )",0,1,255,255,255)
-		DisplayText2("Enter New Hub Filename (e.g. 'TestHub12345')",0,3,TextMenusR,TextMenusG,TextMenusB)
-	Else
-		DisplayText2("(Adventures)",0,1,255,255,255)
+	If EditorMode=5
+		DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
+		
+		;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
+		;DisplayText2("            ====================",0,1,TextMenusR,TextMenusG,TextMenusB)
+		;DisplayText2("            ================================",0,1,TextMenusR,TextMenusG,TextMenusB)
+		
+		DisplayText2("            ======================",0,1,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2("                                  (Controls)",0,1,255,255,255)
+		
+	;	If displayfullscreen=True
+	;		DisplayText2("                                (FullScreen)",0,1,255,255,255)
+	;	Else
+	;		DisplayText2("                                ( Windowed )",0,1,255,255,255)
+	;	EndIf
+		;hubmode=True
+		If hubmode=True
+			DisplayText2("(   Hubs   )",0,1,255,255,255)
+			DisplayText2("Enter New Hub Filename (e.g. 'TestHub12345')",0,3,TextMenusR,TextMenusG,TextMenusB)
+		Else
+			DisplayText2("(Adventures)",0,1,255,255,255)
+			DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,TextMenusR,TextMenusG,TextMenusB)
+		EndIf
+		
+		DisplayText2("Or Select Existing To Edit:                 ",0,6,TextMenusR,TextMenusG,TextMenusB)
+		
+		
+		DisplayText2("User:",0,28,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2(EditorUserName$,6,28,255,255,255)
+		DisplayText2("(CHANGE)",36,28,TextMenusR,TextMenusG,TextMenusB)
+	ElseIf EditorMode=12
+		DisplayText2("Hub File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
+		DisplayText2(HubFileName$,0,1,255,255,255)
+		DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
+		If HubSelectedAdventure<10
+			x=2
+		ElseIf HubSelectedAdventure<100
+			x=1
+		Else
+			x=0
+		EndIf
+		If HubSelectedAdventure=0
+			DisplayText2("Hub",41,0,TextMenusR,TextMenusG,TextMenusB)
+		Else
+			DisplayText2("Adventure"+HubSelectedAdventure,32+x,0,TextMenusR,TextMenusG,TextMenusB)
+		EndIf
+		
 		DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,TextMenusR,TextMenusG,TextMenusB)
+		
+		DisplayText2("Or Select Existing To Add:                 ",0,6,TextMenusR,TextMenusG,TextMenusB)
+		
+		DisplayText2("(BACK)",0,28,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
+	
+	DisplayText2("============================================",0,27,TextMenusR,TextMenusG,TextMenusB)
 	
 	
 	If leveltimer Mod 100 <50
 		DisplayText2(":",Len(AdventureNameEntered$),4,255,255,255)
 	EndIf
 	DisplayText2(AdventureNameEntered$,0,4,255,255,255)
-
 	
-	DisplayText2("Or Select Existing To Edit:                 ",0,6,TextMenusR,TextMenusG,TextMenusB)
+	
 	If hubmode=True
 		DisplayText2("===================================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	Else
@@ -20865,12 +20895,6 @@ Function AdventureSelectScreen()
 			EndIf
 		EndIf
 	Next
-
-
-	DisplayText2("============================================",0,27,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2("User:",0,28,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2(EditorUserName$,6,28,255,255,255)
-	DisplayText2("(CHANGE)",36,28,TextMenusR,TextMenusG,TextMenusB)
 	
 	
 	; Entering New Name
@@ -20892,7 +20916,7 @@ Function AdventureSelectScreen()
 	EndIf
 	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
 		; Enter
-		If hubmode
+		If hubmode And EditorMode=5
 			If AdventureNameEntered$=""
 				DisplayText2(" INVALID HUB NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else If FileType(GlobalDirName$+"\Custom\Editing\Hubs\"+AdventureNameEntered$)=2 
@@ -20932,10 +20956,19 @@ Function AdventureSelectScreen()
 				
 				For i=0 To NofAdventureFileNames-1	
 					If AdventureFileName$=AdventureFileNamesListed$(i)
+						ThisEditorMode=EditorMode
+					
 						AdventureNameSelected=i	
 						Repeat
 						Until MouseDown(1)=0
 						StartMaster()
+						
+						If ThisEditorMode=12
+							HubAdventuresFilenames$(HubSelectedAdventure)=AdventureFileNamesListed$(AdventureNameSelected)
+							If HubSelectedAdventure>HubTotalAdventures
+								HubTotalAdventures=HubSelectedAdventure
+							EndIf
+						EndIf
 					EndIf
 				Next
 			
@@ -20950,58 +20983,81 @@ Function AdventureSelectScreen()
 	
 	
 	If MouseDown(1)
-		If mx>LetterWidth*36 And my>LetterHeight*28
-			; change user
-			StartUserSelectScreen()
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-		
-		If mx>LetterWidth*34 And my<LetterHeight*2
-			; switch window/fullscreen
-;			DisplayFullScreen = Not DisplayFullScreen
-;			filed=WriteFile (globaldirname$+"\display-ed.wdf")
-;			If filed>0
-;			
-;				WriteInt filed,DisplayFullScreen
-;				CloseFile filed
-;			EndIf
-;			
-;			; and restart
-;			Cls
-;			Flip
-;			Print "Note: Screenmode will be switched upon next restart."
-;			Delay 4000
+		If EditorMode=5
+			If mx>LetterWidth*36 And my>LetterHeight*28
+				; change user
+				StartUserSelectScreen()
+				Repeat
+				Until MouseDown(1)=0
+			EndIf
 			
-			ConfigureControls()
-			
-		EndIf
+			If mx>LetterWidth*34 And my<LetterHeight*2
+				; switch window/fullscreen
+	;			DisplayFullScreen = Not DisplayFullScreen
+	;			filed=WriteFile (globaldirname$+"\display-ed.wdf")
+	;			If filed>0
+	;			
+	;				WriteInt filed,DisplayFullScreen
+	;				CloseFile filed
+	;			EndIf
+	;			
+	;			; and restart
+	;			Cls
+	;			Flip
+	;			Print "Note: Screenmode will be switched upon next restart."
+	;			Delay 4000
+				
+				ConfigureControls()
+				
+			EndIf
 
 		
-		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*28 And mx<LetterWidth*36 And AdventureCurrentArchive=1 And hubmode=False
-			GetCurrentAdventures()
-		EndIf
-		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*36 And AdventureCurrentArchive=0 And hubmode=False
-			GetArchiveAdventures()
-		EndIf
-
-		If mx<LetterWidth*12 And my>LetterHeight And my<LetterHeight*2 ;hubmode
-			hubmode=Not hubmode
-			If hubmode
-				GetHubs()
-			Else
+			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*28 And mx<LetterWidth*36 And AdventureCurrentArchive=1 And hubmode=False
 				GetCurrentAdventures()
 			EndIf
-			Repeat
-			Until MouseDown(1)=0
+			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*36 And AdventureCurrentArchive=0 And hubmode=False
+				GetArchiveAdventures()
+			EndIf
+
+			If mx<LetterWidth*12 And my>LetterHeight And my<LetterHeight*2 ;hubmode
+				hubmode=Not hubmode
+				If hubmode
+					GetHubs()
+				Else
+					GetCurrentAdventures()
+				EndIf
+				Repeat
+				Until MouseDown(1)=0
+			EndIf
+			
+			If AdventureNameSelected>=0
+				Repeat
+				Until MouseDown(1)=0
+				SetEditorMode(6)
+			EndIf
+		ElseIf EditorMode=12
+			If mx<LetterWidth*7 And my>LetterHeight*28
+				; go back to hub menu
+				SetEditorMode(11)
+				If HubAdventuresFilenames$(HubSelectedAdventure)=""
+					HubSelectedAdventure=-1
+				EndIf
+				Repeat
+				Until MouseDown(1)=0
+			EndIf
+			
+			If AdventureNameSelected>=0
+				Repeat
+				Until MouseDown(1)=0
+				SetEditorMode(11)
+				HubAdventuresFilenames$(HubSelectedAdventure)=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+				If HubSelectedAdventure>HubTotalAdventures
+					HubTotalAdventures=HubSelectedAdventure
+				EndIf
+			EndIf
 		EndIf
 		
-		If AdventureNameSelected>=0
 		
-			Repeat
-			Until MouseDown(1)=0
-			SetEditorMode(6)
-		EndIf
 
 	EndIf
 
@@ -22686,7 +22742,7 @@ Function HubMainLoop()
 	For i=0 To 12
 		c=HubAdvStart+i
 		flag=False
-		If MouseX()<82 And MouseY()>222+i*20 And MouseY()<=242+i*20
+		If MouseX()<82 And MouseY()>11*LetterHeight+i*LetterHeight And MouseY()<=12*LetterHeight+i*LetterHeight
 			flag=True
 		EndIf
 		
@@ -22732,17 +22788,17 @@ Function HubMainLoop()
 		EndIf
 	EndIf
 	If flag2
-		If MouseX()>632 And MouseX()<722 And MouseY()>262 And MouseY()<282
+		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14
 			DisplayText2("                                   EDIT",0.5,13,255,255,255)
 		Else
 			DisplayText2("                                   EDIT",0.5,13,180,180,180)
 		EndIf
-		If MouseX()>607 And MouseX()<745 And MouseY()>342 And MouseY()<362
+		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18
 			DisplayText2("                                  REPLACE",0,17,255,255,255)
 		Else
 			DisplayText2("                                  REPLACE",0,17,180,180,180)
 		EndIf
-		If MouseX()>612 And MouseX()<732 And MouseY()>422 And MouseY()<442
+		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*21 And MouseY()<LetterHeight*22
 			DisplayText2("                                  REMOVE",0.5,21,255,255,255)
 		Else
 			DisplayText2("                                  REMOVE",0.5,21,180,180,180)
@@ -22752,12 +22808,12 @@ Function HubMainLoop()
 	DisplayText2("                                  REPLACE",0,17,100,100,100)
 	DisplayText2("                                  REMOVE",0.5,21,100,100,100)
 	EndIf
-	If MouseX()<82 And MouseY()>202 And MouseY()<222
+	If MouseX()<LetterWidth*4 And MouseY()>LetterHeight*10 And MouseY()<LetterHeight*11
 		DisplayText2(" -",0.5,10,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2(" -",0.5,10,TextMenuXR,TextMenuXG,TextMenuXB)
 	EndIf
-	If MouseX()<82 And MouseY()>482 And MouseY()<502
+	If MouseX()<LetterWidth*4 And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 		DisplayText2(" +",0.5,24,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2(" +",0.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -22784,7 +22840,7 @@ Function HubMainLoop()
 	DisplayText2("========== ========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	
 	
-	If MouseY()>550 And MouseX()<200
+	If MouseY()>LowerButtonsCutoff And MouseX()<LetterWidth*11
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
 	Else
@@ -22792,7 +22848,7 @@ Function HubMainLoop()
 		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
-	If MouseY()>550 And MouseX()>200 And MouseX()<400		
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*11 And MouseX()<LetterWidth*22		
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
@@ -22801,7 +22857,7 @@ Function HubMainLoop()
 
 	EndIf
 	
-	If MouseY()>550 And MouseX()>400 And MouseX()<600		
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*22 And MouseX()<LetterWidth*33		
 		DisplayText2("BUILD",25,27,255,255,255)
 		DisplayText2("+EXIT",25,28,255,255,255)
 	Else
@@ -22810,7 +22866,7 @@ Function HubMainLoop()
 
 	EndIf
 	
-	If MouseY()>550 And MouseX()>600
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*33
 		DisplayText2("COMPILE",35,27,255,255,255)
 		DisplayText2("+EXIT",36,28,255,255,255)
 	Else
@@ -22827,7 +22883,7 @@ Function HubMainLoop()
 	;	Repeat
 	;	Until MouseDown(1)=0 And MouseDown(2)=0
 	;EndIf
-	If MouseX()<82
+	If MouseX()<LetterWidth*4
 		If MouseScroll<>0
 			adj=-MouseScroll
 			If ShiftDown()
@@ -22835,12 +22891,12 @@ Function HubMainLoop()
 			EndIf
 			HubAdvStart=HubAdvStart+adj
 		ElseIf mb>0
-			If MouseY()>202 And MouseY()<222
+			If MouseY()>LetterHeight*10 And MouseY()<LetterHeight*11
 				HubAdvStart=HubAdvStart-adj
 				Delay 150
 			EndIf
 		
-			If MouseY()>482 And MouseY()<502
+			If MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 				HubAdvStart=HubAdvStart+adj
 				Delay 150
 			EndIf
@@ -22860,7 +22916,7 @@ Function HubMainLoop()
 		
 	If mb>0 And LeftMouseReleased=True
 		For i=0 To 12
-			If MouseX()<82 And MouseY()>222+i*20 And MouseY()<=242+i*20
+			If MouseX()<LetterWidth*4 And MouseY()>LetterHeight*11+i*LetterHeight And MouseY()<=LetterHeight*12+i*LetterHeight
 				HubSelectedAdventure=HubAdvStart+i
 				If HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
 					GetCurrentAdventures()
@@ -22873,7 +22929,7 @@ Function HubMainLoop()
 		Next
 		
 		; edit
-		If MouseX()>632 And MouseX()<722 And MouseY()>262 And MouseY()<282 And HubSelectedAdventure>=0
+		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And HubSelectedAdventure>=0
 			AdventureFileName$=HubAdventuresFilenames$(HubSelectedAdventure)
 			MasterDialogListStart=0
 			MasterLevelListStart=0
@@ -22883,7 +22939,7 @@ Function HubMainLoop()
 		EndIf
 		
 		; replace
-		If MouseX()>607 And MouseX()<745 And MouseY()>342 And MouseY()<362 And HubSelectedAdventure>=0
+		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And HubSelectedAdventure>=0
 			GetCurrentAdventures()
 			SetEditorMode(12)
 			Repeat
@@ -22891,7 +22947,7 @@ Function HubMainLoop()
 		EndIf
 		
 		; remove
-		If MouseX()>612 And MouseX()<732 And MouseY()>422 And MouseY()<442 And HubSelectedAdventure>=0
+		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*21 And MouseY()<LetterHeight*22 And HubSelectedAdventure>=0
 			HubAdventuresFilenames$(HubSelectedAdventure)=""
 			;also check if this is the bigest number and update HubTotalAdventures
 			If HubTotalAdventures=HubSelectedAdventure
@@ -22907,7 +22963,7 @@ Function HubMainLoop()
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
-		If MouseY()>550 And MouseX()<200	
+		If MouseY()>LowerButtonsCutoff And MouseX()<LetterWidth*11	
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -22915,7 +22971,7 @@ Function HubMainLoop()
 			StartAdventureSelectScreen()
 		EndIf
 		
-		If MouseY()>550 And MouseX()>200 And MouseX()<400
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*11 And MouseX()<LetterWidth*22
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -22925,7 +22981,7 @@ Function HubMainLoop()
 
 		EndIf
 		
-		If MouseY()>550 And MouseX()>400 And MouseX()<600
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*22 And MouseX()<LetterWidth*33
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			;WaitFlag=True
@@ -22938,7 +22994,7 @@ Function HubMainLoop()
 			Until MouseDown(1)=False
 		EndIf
 		
-		If MouseY()>550 And MouseX()>600
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*33
 			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
 			If KeyDown(46)
@@ -22961,8 +23017,8 @@ Function HubMainLoop()
 	MouseTextEntryTrackMouseMovement()
 	
 	Entering=0
-	x=MouseX()/18
-	y=(MouseY()-84)/21
+	x=MouseX()/LetterWidth
+	y=(MouseY()-LetterHeight*5)/LetterHeight
 	If x<38 And MouseY()>=84 And y=3
 		Entering=1
 		If x>Len(HubDescription$) Then x=Len(HubDescription$)
@@ -23016,216 +23072,6 @@ Function HubMainLoop()
 	FinishDrawing()
 	
 	If waitflag=True Delay 1000
-End Function
-
-Function HubAdventureSelectScreen()
-
-	leveltimer=leveltimer+1
-
-	mx=MouseX()
-	my=MouseY()
-	If mY>=165 And my<544 And mx>50 And mx<748
-		AdventureNameSelected=(my-165)/20
-	Else
-		AdventureNameSelected=-1
-	EndIf
-
-
-	;DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
-	;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	
-	DisplayText2("Hub File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2(HubFileName$,0,1,255,255,255)
-	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
-	If HubSelectedAdventure<10
-		x=2
-	ElseIf HubSelectedAdventure<100
-		x=1
-	Else
-		x=0
-	EndIf
-	If HubSelectedAdventure=0
-		DisplayText2("Hub",41,0,TextMenusR,TextMenusG,TextMenusB)
-	Else
-		DisplayText2("Adventure"+HubSelectedAdventure,32+x,0,TextMenusR,TextMenusG,TextMenusB)
-	EndIf
-	
-	DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,TextMenusR,TextMenusG,TextMenusB)
-
-	
-	If leveltimer Mod 100 <50
-		DisplayText2(":",Len(AdventureNameEntered$),4,255,255,255)
-	EndIf
-	DisplayText2(AdventureNameEntered$,0,4,255,255,255)
-
-	
-	DisplayText2("Or Select Existing To Add:",0,6,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2("===================================================",0,7,TextMenusR,TextMenusG,TextMenusB)
-
-	If NofAdventureFileNames>19
-		For i=0 To 18
-			displaytext2(":",2,8+i,TextMenusR,TextMenusG,TextMenusB)
-			displaytext2(":",41,8+i,TextMenusR,TextMenusG,TextMenusB)
-		Next
-		DisplayText2("--",0,8,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Pg",0,9,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Up",0,10,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("--",0,11,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("--",0,23,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Pg",0,24,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Dn",0,25,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("--",0,26,TextMenusR,TextMenusG,TextMenusB)
-		
-		DisplayText2("--",42,8,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Pg",42,9,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Up",42,10,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("--",42,11,TextMenusR,TextMenusG,TextMenusB)
-		
-		DisplayText2("--",42,23,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Pg",42,24,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("Dn",42,25,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("--",42,26,TextMenusR,TextMenusG,TextMenusB)
-	EndIf
-
-	If AdventureNameSelected>=AdventureFileNamesListedStart+NofAdventureFileNames
-		AdventureNameSelected=-1
-	EndIf
-
-	For i=0 To 18
-		If AdventureFileNamesListedStart+i<NofAdventureFileNames
-			If i=AdventureNameSelected
-				DisplayText2(AdventureFileNamesListed$(AdventureFileNamesListedStart+i),22-Len(AdventureFileNamesListed$(AdventureFileNamesListedStart+i))/2,8+i,255,255,255)
-			Else
-				DisplayText2(AdventureFileNamesListed$(AdventureFileNamesListedStart+i),22-Len(AdventureFileNamesListed$(AdventureFileNamesListedStart+i))/2,8+i,155,155,155)
-			EndIf
-		EndIf
-	Next
-
-
-	DisplayText2("============================================",0,27,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2("(BACK)",0,28,TextMenusR,TextMenusG,TextMenusB)
-	;DisplayText2(EditorUserName$,6,28,255,255,255)
-	;DisplayText2("(CHANGE)",36,28,TextMenusR,TextMenusG,TextMenusB)
-	
-	
-	; Entering New Name
-	let=GetKey()
-	If let>=32 And let<=122 And Len(AdventureNameEntered$)<38
-		AdventureNameEntered$=AdventureNameEntered$+Chr$(let)
-	EndIf
-	If KeyDown(14)
-		; backspace
-		If Len(AdventureNameEntered$)>0
-			AdventureNameEntered$=Left$(AdventureNameEntered$,Len(AdventureNameEntered$)-1)
-			Delay CharacterDeleteDelay
-		EndIf
-	EndIf
-	If KeyDown(211)
-		; delete
-		AdventureNameEntered$=""
-		Delay CharacterDeleteDelay
-	EndIf
-	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
-		; Enter
-		
-		If AdventureNameEntered$=""
-			DisplayText2(" INVALID ADVENTURE NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
-		Else If FileType(GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$)=2 
-			DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
-		Else If FileType(GlobalDirName$+"\Custom\Editing\Archive\"+AdventureNameEntered$)=2
-			DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,TextMenusR,TextMenusG,TextMenusB)
-		Else
-			DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
-			CreateDir GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$
-
-			AdventureFileName$=AdventureNameEntered$
-			
-			GetCurrentAdventures()
-			
-			For i=0 To NofAdventureFileNames-1	
-				If AdventureFileName$=AdventureFileNamesListed$(i)
-					AdventureNameSelected=i	
-					Repeat
-					Until MouseDown(1)=0
-					StartMaster()
-					HubAdventuresFilenames$(HubSelectedAdventure)=AdventureFileNamesListed$(AdventureNameSelected)
-					If HubSelectedAdventure>HubTotalAdventures
-						HubTotalAdventures=HubSelectedAdventure
-					EndIf
-				EndIf
-			Next
-		
-		
-			
-		EndIf
-		waitflag=True
-	EndIf
-	
-	
-	If KeyPressed(201) ; page up
-		AdventureFileNamesListPageUp()
-	EndIf
-	If KeyPressed(209) ; page down
-		AdventureFileNamesListPageDown()
-	EndIf
-	
-	
-	If MouseDown(1)
-		If mx<130 And my>560
-			; go back to hub menu
-			SetEditorMode(11)
-			If HubAdventuresFilenames$(HubSelectedAdventure)=""
-				HubSelectedAdventure=-1
-			EndIf
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-				
-		;If my>123 And my<143 And mx>507 And mx<650 ;And AdventureCurrentArchive=1
-		;	GetCurrentAdventures()
-		;EndIf
-		;If my>123 And my<143 And mx>650 And AdventureCurrentArchive=0
-		;	GetArchiveAdventures()
-		;EndIf
-		
-		If (mx<50 Or mx>748) And my>175 And my<235
-			; Page Up
-			AdventureFileNamesListedStart=AdventureFileNamesListedStart-19
-			If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-		If (mx<50 Or mx>748) And my>475 And my<535
-			; Page Down
-			AdventureFileNamesListedStart=AdventureFileNamesListedStart+19
-			If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-		
-		If AdventureNameSelected>=0
-		
-			Repeat
-			Until MouseDown(1)=0
-			SetEditorMode(11)
-			HubAdventuresFilenames$(HubSelectedAdventure)=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
-			If HubSelectedAdventure>HubTotalAdventures
-				HubTotalAdventures=HubSelectedAdventure
-			EndIf
-		EndIf
-
-	EndIf
-		
-	
-	RenderLetters()
-	UpdateWorld 
-	RenderWorld
-	
-	FinishDrawing()
-	If waitflag=True Delay 2000
-	
-
-	
 End Function
 
 Function ReadTestFile()
