@@ -5544,14 +5544,16 @@ Function EditorLocalControls()
 	; OBJECTS
 	; *************************************
 	
-	If mx>500 And my>285 And my<455 ;my>305 ;my<430
-		If LeftMouse=True Or RightMouse=True
+	If mx>LevelViewportWidth And my>SidebarY+285
+		If (LeftMouse=True Or RightMouse=True) And my<LevelViewportHeight
 			SetEditorMode(3)
 		EndIf
-		If DeleteKey=True And DeleteKeyReleased=True And CurrentGrabbedObject<>-1
-			DeleteKeyReleased=False
-			DeleteObject(CurrentGrabbedObject)
-			SetEditorMode(3)
+		If my<SidebarY+455
+			If DeleteKey=True And DeleteKeyReleased=True And CurrentGrabbedObject<>-1
+				DeleteKeyReleased=False
+				DeleteObject(CurrentGrabbedObject)
+				SetEditorMode(3)
+			EndIf
 		EndIf
 	EndIf
 	
