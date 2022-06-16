@@ -21701,6 +21701,8 @@ Function MasterMainLoop()
 		DisplayText2("                        (Adv. Options)",0,0,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	
+	WlvColumnLeft=LetterX(38.5)
+	
 	If MOdified>=0
 	
 		For i=0 To 37
@@ -21722,7 +21724,7 @@ Function MasterMainLoop()
 		DisplayText2("LV DG",39,1,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("-----",39,2,TextMenusR,TextMenusG,TextMenusB)
 		
-		If MouseX()>LetterX(39) And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 ; X: 700 to 750
+		If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 ; X: 700 to 750
 			DisplayText2("-",39.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("-",39.5,3,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -21737,7 +21739,7 @@ Function MasterMainLoop()
 		DigitSpaceMult#=0.8
 		For i=1 To 20
 			flag=False
-			If MouseX()>LetterX(39) And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
+			If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
 				flag=True
 			EndIf
 			
@@ -21810,7 +21812,7 @@ Function MasterMainLoop()
 	
 		Next
 		
-		If MouseX()>LetterX(39) And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
+		If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 			DisplayText2("+",39.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("+",39.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -22062,7 +22064,7 @@ Function MasterMainLoop()
 	If MouseDown(3) mb=3
 	
 	; level list start
-	If MouseX()>LetterX(39) And MouseX()<LetterX(41.5)
+	If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5)
 		If (MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25 And mb>0) Or MouseScroll<0
 			MasterLevelListStart=MasterLevelListStart+adj
 			If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
@@ -22107,7 +22109,7 @@ Function MasterMainLoop()
 	If mb>0
 	
 		;new advanced mode 2019
-		If MouseY()<LetterHeight And  MouseX()>LetterX(24) And MouseX()<LetterX(39)
+		If MouseY()<LetterHeight And  MouseX()>LetterX(24) And MouseX()<WlvColumnLeft
 			SetEditorMode(10)
 			Repeat
 			Until MouseDown(1)=0 And MouseDown(2)=0
@@ -22261,7 +22263,7 @@ Function MasterMainLoop()
 
 	
 	
-	If MouseX()>LetterX(39) And MouseX()<LetterX(41.5)
+	If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5)
 		If CtrlDown() And mb>0
 			If OpenTypedLevel()
 				StartEditorMainLoop()
