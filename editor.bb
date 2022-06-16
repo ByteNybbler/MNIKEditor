@@ -1122,6 +1122,12 @@ End Function
 
 Function AddSquareToBrushSurface(i,j,y#)
 
+	; Stupid hack to prevent MAVs from too many vertices at immense brush sizes.
+	; It's meant to be a temporary solution but I might also just keep this forever. That's the nature of software engineering.
+	If BrushSurfaceVertexCount=32000
+		Return
+	EndIf
+
 	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j
 	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j
 	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j-1
