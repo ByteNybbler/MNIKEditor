@@ -10828,7 +10828,7 @@ Function HoverOverObjectAdjuster(i)
 		BitPositionIndex=GetBitPositionIndex(BitStartX)
 		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
 		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,TooltipAboveY,LogicIdToLogicName$(BitIndex))
+			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,LogicIdToLogicName$(BitIndex))
 		EndIf
 		
 	Case "ObjectTypeCollision"
@@ -10841,7 +10841,7 @@ Function HoverOverObjectAdjuster(i)
 		BitPositionIndex=GetBitPositionIndex(BitStartX)
 		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
 		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+4,TooltipAboveY,ObjectTypeCollisionBitToName$(BitIndex))
+			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,ObjectTypeCollisionBitToName$(BitIndex))
 		EndIf
 		
 	Case "Type"
