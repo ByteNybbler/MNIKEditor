@@ -11119,6 +11119,15 @@ Function DisplayObjectAdjuster(i)
 			
 		
 		EndIf
+		If CurrentObjectType=200 ; Magic charger
+			If CurrentObjectSubType=0
+				tex$=CurrentObjectSubType+"/Regular"
+			ElseIf CurrentObjectSubType=1
+				tex$=CurrentObjectSubType+"/Faint"
+			Else
+				tex$=CurrentObjectSubType+"/OneByOne"
+			EndIf
+		EndIf
 		If CurrentObjectType=230 ; FireFlower
 			tex2$="Turning"
 			If CurrentObjectSubType=0
@@ -11749,12 +11758,23 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=50 ; spellball
 			tex2$="GoalY"
 		EndIf
-		If CurrentObjectType=190
+		If CurrentObjectType=190 ; Particle Emitter
 			tex2$="Intensity"
 			If CurrentObjectData(1)=1 tex$="Low"
 			If CurrentObjectData(1)=2 tex$="Reg"
 			If CurrentObjectData(1)=3 tex$="High"
 			
+		EndIf
+		If CurrentObjectType=200 ; Glovecharge
+			tex2$="Usability"
+			If CurrentObjectData(1)<1
+				tex$="Always"
+			ElseIf CurrentObjectData(1)=1
+				tex$="Once"
+			ElseIf CurrentObjectData(1)>1
+				tex$="Unusable"
+			EndIf
+			tex$=CurrentObjectData(1)+"/"+tex$
 		EndIf
 		If CurrentObjectType=11 ; TollGate
 			tex2$="Type"
@@ -12651,6 +12671,11 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor head (or conveyor tail, assuming this is needed?)
 			tex2$="Tail Length"
+		EndIf
+		
+		If CurrentObjectType=200
+			tex2$="ReadyForSound"
+			tex$=CurrentObjectData(9)+"/"+ZeroToYes$(CurrentObjectData(9))
 		EndIf
 		
 				
