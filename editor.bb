@@ -1168,7 +1168,7 @@ Const LettersCountX=44
 Const LettersCountY=30
 
 Global LetterWidth#=Float#(GfxWidth)/Float#(LettersCountX)*GfxZoomScaling#
-Global LetterHeight#=Float#(GfxHeight)/Float#(LettersCountY);*GfxZoomScaling#
+Global LetterHeight#=Float#(GfxHeight)/Float#(LettersCountY) ;*GfxZoomScaling#
 
 Const ToolbarHeight=100
 Const SidebarWidth=300
@@ -1185,6 +1185,12 @@ Global FlStartY=SidebarY+165
 Global LowerButtonsCutoff=LetterHeight*26
 
 ;ahaha goodness...
+
+Function LetterX(x#)
+
+	Return GfxWidth/2+LetterWidth*(x#-LettersCountX/2)
+
+End Function
 
 
 
@@ -20509,7 +20515,7 @@ End Function
 
 Function MouseTextEntryGetMoveX(x)
 
-	Return x*LetterWidth+LetterWidth/3 ;x*18+9
+	Return LetterX(x)+LetterWidth/3 ;x*18+9
 
 End Function
 
@@ -20810,7 +20816,7 @@ Function AdventureSelectScreen()
 
 	mx=MouseX()
 	my=MouseY()
-	If mY>=LetterHeight*8 And my<LetterHeight*28 And mx>LetterWidth*2.5 And mx<LetterWidth*41.5
+	If mY>=LetterHeight*8 And my<LetterHeight*28 And mx>LetterX(2.5) And mx<LetterX(41.5)
 		AdventureNameSelected=(my-LetterHeight*8.5)/LetterHeight
 	Else
 		AdventureNameSelected=-1
@@ -21020,14 +21026,14 @@ Function AdventureSelectScreen()
 	
 	If MouseDown(1)
 		If EditorMode=5
-			If mx>LetterWidth*36 And my>LetterHeight*28
+			If mx>LetterX(36) And my>LetterHeight*28
 				; change user
 				StartUserSelectScreen()
 				Repeat
 				Until MouseDown(1)=0
 			EndIf
 			
-			If mx>LetterWidth*34 And my<LetterHeight*2
+			If mx>LetterX(34) And my<LetterHeight*2
 				; switch window/fullscreen
 	;			DisplayFullScreen = Not DisplayFullScreen
 	;			filed=WriteFile (globaldirname$+"\display-ed.wdf")
@@ -21048,14 +21054,14 @@ Function AdventureSelectScreen()
 			EndIf
 
 		
-			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*28 And mx<LetterWidth*36 And AdventureCurrentArchive=1 And hubmode=False
+			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(36) And AdventureCurrentArchive=1 And hubmode=False
 				GetCurrentAdventures()
 			EndIf
-			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*36 And AdventureCurrentArchive=0 And hubmode=False
+			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(36) And AdventureCurrentArchive=0 And hubmode=False
 				GetArchiveAdventures()
 			EndIf
 
-			If mx<LetterWidth*12 And my>LetterHeight And my<LetterHeight*2 ;hubmode
+			If mx<LetterX(12) And my>LetterHeight And my<LetterHeight*2 ;hubmode
 				hubmode=Not hubmode
 				If hubmode
 					GetHubs()
@@ -21072,7 +21078,7 @@ Function AdventureSelectScreen()
 				SetEditorMode(6)
 			EndIf
 		ElseIf EditorMode=12
-			If mx<LetterWidth*7 And my>LetterHeight*28
+			If mx<LetterX(7) And my>LetterHeight*28
 				; go back to hub menu
 				SetEditorMode(11)
 				If HubAdventuresFilenames$(HubSelectedAdventure)=""
@@ -21105,7 +21111,7 @@ Function AdventureSelectScreen()
 			EndIf
 			SetAdventureFileNamesListedStart(AdventureFileNamesListedStart-MouseScroll*Speed)
 		EndIf
-		If (mx<LetterWidth*2.5 Or mx>LetterWidth*41.5) And MouseDown(1)
+		If (mx<LetterX(2.5) Or mx>LetterX(41.5)) And MouseDown(1)
 			If my>LetterHeight*8 And my<LetterHeight*12
 				; Page Up
 				AdventureFileNamesListPageUp()
@@ -21143,7 +21149,7 @@ Function AdventureSelectScreen2()
 	MX=MouseX()
 	my=MouseY()
 	StartY=LetterHeight*9
-	If mx>LetterWidth*15 And mx<LetterWidth*29 And my>StartY And my<StartY+LetterHeight*8
+	If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
 		Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
 	Else 
 		Selected=-1
@@ -21286,7 +21292,7 @@ Function AdventureSelectScreen3()
 	MX=MouseX()
 	my=MouseY()
 	StartY=LetterHeight*9
-	If mx>LetterWidth*15 And mx<LetterWidth*29 And my>StartY And my<StartY+LetterHeight*8
+	If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
 		Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
 	Else 
 		Selected=-1
@@ -21675,7 +21681,7 @@ Function MasterMainLoop()
 	
 	DisplayText2("Adventure File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
-	If MouseY()<LetterHeight And MouseX()>LetterWidth*24 And MouseX()<LetterWidth*38 ; x: 430 to 700
+	If MouseY()<LetterHeight And MouseX()>LetterX(24) And MouseX()<LetterX(38) ; x: 430 to 700
 		DisplayText2("                        (Adv. Options)",0,0,255,255,255)
 	Else
 		DisplayText2("                        (Adv. Options)",0,0,TextMenusR,TextMenusG,TextMenusB)
@@ -21702,12 +21708,12 @@ Function MasterMainLoop()
 		DisplayText2("LV DG",39,1,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("-----",39,2,TextMenusR,TextMenusG,TextMenusB)
 		
-		If MouseX()>LetterWidth*39 And MouseX()<LetterWidth*41.5 And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 ; X: 700 to 750
+		If MouseX()>LetterX(39) And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 ; X: 700 to 750
 			DisplayText2("-",39.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("-",39.5,3,TextMenuXR,TextMenuXG,TextMenuXB)
 		EndIf 
-		If MouseX()>LetterWidth*41.5 And MouseX()<GfxWidth And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4
+		If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4
 			DisplayText2("-",42.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("-",42.5,3,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -21717,7 +21723,7 @@ Function MasterMainLoop()
 		DigitSpaceMult#=0.8
 		For i=1 To 20
 			flag=False
-			If MouseX()>LetterWidth*39 And MouseX()<LetterWidth*41.5 And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
+			If MouseX()>LetterX(39) And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
 				flag=True
 			EndIf
 			
@@ -21753,7 +21759,7 @@ Function MasterMainLoop()
 			DisplayText2(ex$,38.7,3+i,r,g,b,DigitSpaceMult) ; previously, x=39
 			
 			flag=False
-			If MouseX()>LetterWidth*41.5 And MouseX()<GfxWidth And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
+			If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
 				flag=True
 			EndIf
 			
@@ -21790,12 +21796,12 @@ Function MasterMainLoop()
 	
 		Next
 		
-		If MouseX()>LetterWidth*39 And MouseX()<LetterWidth*41.5 And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
+		If MouseX()>LetterX(39) And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 			DisplayText2("+",39.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("+",39.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
 		EndIf 
-		If MouseX()>LetterWidth*41.5 And MouseX()<GfxWidth And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
+		If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 			DisplayText2("+",42.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("+",42.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -21883,7 +21889,7 @@ Function MasterMainLoop()
 	
 
 	
-	If MouseY()>LowerButtonsCutoff And MouseX()<11*LetterWidth
+	If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
 	Else
@@ -21891,7 +21897,7 @@ Function MasterMainLoop()
 		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
-	If MouseY()>LowerButtonsCutoff And MouseX()>11*LetterWidth And MouseX()<22*LetterWidth	
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
@@ -21900,7 +21906,7 @@ Function MasterMainLoop()
 
 	EndIf
 	
-	If MouseY()>LowerButtonsCutoff And MouseX()>22*LetterWidth And MouseX()<33*LetterWidth	
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 		DisplayText2(" SAVE",24.5,27,255,255,255)
 		DisplayText2("+TEST",25,28,255,255,255)
 	Else
@@ -21912,7 +21918,7 @@ Function MasterMainLoop()
 		DisplayText2("COMPILE",35,27,50,50,0)
 		DisplayText2("+EXIT",36,28,50,50,0)
 	Else
-		If MouseY()>LowerButtonsCutoff And MouseX()>33*LetterWidth
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
 			DisplayText2("COMPILE",35,27,255,255,255)
 			DisplayText2("+EXIT",36,28,255,255,255)
 		Else
@@ -21921,8 +21927,8 @@ Function MasterMainLoop()
 		EndIf
 	EndIf
 	
-	AdventureExitButtonsMinX=LetterWidth*24
-	AdventureExitButtonsMaxX=LetterWidth*38
+	AdventureExitButtonsMinX=LetterX(24)
+	AdventureExitButtonsMaxX=LetterX(38)
 	AdventureExitButtonsStartY=LetterHeight*20
 	AdventureExitButtonsGapY=LetterHeight ;20
 	If MouseX()>AdventureExitButtonsMinX And MouseX()<AdventureExitButtonsMaxX And MouseY()>AdventureExitButtonsStartY And MouseY()<AdventureExitButtonsStartY+AdventureExitButtonsGapY
@@ -21965,7 +21971,10 @@ Function MasterMainLoop()
 		; Mouse Pos
 		Entering=0
 		
-		x=MouseX()/LetterWidth
+		x=(MouseX()-LetterX(0))/LetterWidth
+		If x<0
+			x=0
+		EndIf
 		y=(MouseY()-LetterHeight*5)/LetterHeight
 	
 		debug1=MouseY()
@@ -22039,7 +22048,7 @@ Function MasterMainLoop()
 	If MouseDown(3) mb=3
 	
 	; level list start
-	If MouseX()>LetterWidth*39 And MouseX()<LetterWidth*41.5
+	If MouseX()>LetterX(39) And MouseX()<LetterX(41.5)
 		If (MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25 And mb>0) Or MouseScroll<0
 			MasterLevelListStart=MasterLevelListStart+adj
 			If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
@@ -22060,7 +22069,7 @@ Function MasterMainLoop()
 	EndIf
 	
 	; dialog list start
-	If MouseX()>LetterWidth*41.5 And MouseX()<GfxWidth
+	If MouseX()>LetterX(41.5) And MouseX()<GfxWidth
 		If (MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25 And mb>0) Or MouseScroll<0
 			MasterDialogListStart=MasterDialogListStart+adj
 			If MasterDialogListStart>MaxDialog-20 Then MasterDialogListStart=MaxDialog-20
@@ -22084,7 +22093,7 @@ Function MasterMainLoop()
 	If mb>0
 	
 		;new advanced mode 2019
-		If MouseY()<LetterHeight And  MouseX()>LetterWidth*24 And MouseX()<LetterWidth*39
+		If MouseY()<LetterHeight And  MouseX()>LetterX(24) And MouseX()<LetterX(39)
 			SetEditorMode(10)
 			Repeat
 			Until MouseDown(1)=0 And MouseDown(2)=0
@@ -22098,13 +22107,13 @@ Function MasterMainLoop()
 
 	; startpos
 	If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
-		If MouseX()>00 And MouseX()<LetterWidth*7
+		If MouseX()>LetterX(0) And MouseX()<LetterX(7)
 			adventurestartx=AdjustInt("Adventure start X: ", adventurestartx, 1, 10, 150)
 		EndIf
-		If MouseX()>LetterWidth*8 And MouseX()<LetterWidth*15
+		If MouseX()>LetterX(8) And MouseX()<LetterX(15)
 			adventurestarty=AdjustInt("Adventure start Y: ", adventurestarty, 1, 10, 150)
 		EndIf
-		If MouseX()>LetterWidth*16 And MouseX()<LetterWidth*23
+		If MouseX()>LetterX(16) And MouseX()<LetterX(23)
 			adventurestartdir=AdjustInt("Adventure start direction: ", adventurestartdir, 45, 45, 150)
 			adventurestartdir=adventurestartdir Mod 360
 			; this if block is necessary because Mod can return negative numbers for some terrible reason
@@ -22122,8 +22131,8 @@ Function MasterMainLoop()
 		; change hub data
 		For i=0 To 5
 			For j=0 To 4
-				XMin=LetterWidth*7.5+i*LetterWidth*5
-				XMax=LetterWidth*12.5+i*LetterWidth*5
+				XMin=LetterX(7.5+i*5)
+				XMax=LetterX(12.5+i*5)
 				YMin=LetterHeight*18+(j+2)*LetterHeight
 				YMax=LetterHeight*19+(j+2)*LetterHeight
 				TooltipX=XMin+LetterWidth*2.5
@@ -22181,14 +22190,14 @@ Function MasterMainLoop()
 	
 	
 	; adventure goal
-	If MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And MouseX()<LetterWidth*25
+	If MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And MouseX()<LetterX(25)
 		AdventureGoal=AdjustInt("Adventure goal: ", AdventureGoal, 1, 10, 150)
 		If AdventureGoal<=-1 Then AdventureGoal=nofwinningconditions-1
 		If AdventureGoal>=Nofwinningconditions Then adventuregoal=0
 	EndIf
 	
 	; GateKeyVersion
-	If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15 And MouseX()>LetterWidth*26 And MouseX()<LetterWidth*38
+	If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15 And MouseX()>LetterX(26) And MouseX()<LetterX(38)
 		GateKeyVersion=AdjustInt("Gate/key version: ", GateKeyVersion, 1, 10, 150)
 		If GateKeyVersion<=0 Then GateKeyVersion=3
 		If GateKeyVersion>=4 Then GateKeyVersion=1
@@ -22201,7 +22210,7 @@ Function MasterMainLoop()
 	
 		
 	; custom icon
-	If mb>0 And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And MouseX()>LetterWidth*26 And MouseX()<LetterWidth*38
+	If mb>0 And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And MouseX()>LetterX(26) And MouseX()<LetterX(38)
 		
 		FreeTexture IconTextureCustom
 		IconTextureCustom=0
@@ -22238,7 +22247,7 @@ Function MasterMainLoop()
 
 	
 	
-	If MouseX()>LetterWidth*39 And MouseX()<LetterWidth*41.5
+	If MouseX()>LetterX(39) And MouseX()<LetterX(41.5)
 		If CtrlDown() And mb>0
 			If OpenTypedLevel()
 				StartEditorMainLoop()
@@ -22298,7 +22307,7 @@ Function MasterMainLoop()
 	EndIf
 	
 	; load dialog
-	If MouseX()>LetterWidth*41.5 And MouseX()<GfxWidth
+	If MouseX()>LetterX(41.5) And MouseX()<GfxWidth
 		If (CtrlDown() And mb>0) Or HotkeyOpen()
 			If OpenTypedDialog()
 				StartDialog()
@@ -22369,7 +22378,7 @@ Function MasterMainLoop()
 	If mb>0
 		
 
-		If MouseY()>LowerButtonsCutoff And MouseX()<LetterWidth*11	
+		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -22380,7 +22389,7 @@ Function MasterMainLoop()
 			EndIf
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*11 And MouseX()<LetterWidth*22
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -22394,12 +22403,12 @@ Function MasterMainLoop()
 		EndIf
 		
 		; SAVE+TEST
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*22 And MouseX()<LetterWidth*33
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			StartTestMode()
 		EndIf
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*33 And hubmode=False
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33) And hubmode=False
 			If KeyDown(46) 
 				PackContent=True
 			Else
@@ -22455,7 +22464,7 @@ Function MasterAdvancedLoop()
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
 	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
 	
-	If MouseY()<LetterHeight And  MouseX()>LetterWidth*30
+	If MouseY()<LetterHeight And  MouseX()>LetterX(30)
 		DisplayText2("                              (Main Options)",0,0,255,255,255)
 	Else
 		DisplayText2("                              (Main Options)",0,0,TextMenusR,TextMenusG,TextMenusB)
@@ -22540,7 +22549,7 @@ Function MasterAdvancedLoop()
 	
 	
 	
-	If MouseY()>LowerButtonsCutoff And MouseX()<LetterWidth*11
+	If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
 	Else
@@ -22548,7 +22557,7 @@ Function MasterAdvancedLoop()
 		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*11 And MouseX()<LetterWidth*22		
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)		
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
@@ -22557,7 +22566,7 @@ Function MasterAdvancedLoop()
 
 	EndIf
 	
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*22 And MouseX()<LetterWidth*33		
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)		
 		DisplayText2(" SAVE",24.5,27,255,255,255)
 		DisplayText2("+TEST",25,28,255,255,255)
 	Else
@@ -22569,7 +22578,7 @@ Function MasterAdvancedLoop()
 		DisplayText2("COMPILE",35,27,50,50,0)
 		DisplayText2("+EXIT",36,28,50,50,0)
 	Else
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*33
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
 			DisplayText2("COMPILE",35,27,255,255,255)
 			DisplayText2("+EXIT",36,28,255,255,255)
 		Else
@@ -22582,26 +22591,26 @@ Function MasterAdvancedLoop()
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
 	If mb>0
-		If MouseY()<LetterHeight And MouseX()>LetterWidth*30
+		If MouseY()<LetterHeight And MouseX()>LetterX(30)
 			SetEditorMode(8)
 			Repeat
 			Until MouseDown(1)=0 And MouseDown(2)=0
 		EndIf
 		
 		If MouseY()>LetterHeight*7 And MouseY()<LetterHeight*8
-			If MouseX()<LetterWidth*14.6
+			If MouseX()<LetterX(14.6)
 				StarterItems=StarterItems Xor 1
 				Repeat
 				Until MouseDown(1)=0 And MouseDown(2)=0
 			EndIf
 			
-			If MouseX()>LetterWidth*14.6 And MouseX()<LetterWidth*29.2
+			If MouseX()>LetterX(14.6) And MouseX()<LetterX(29.2)
 				StarterItems=StarterItems Xor 2
 				Repeat
 				Until MouseDown(1)=0 And MouseDown(2)=0
 			EndIf
 			
-			If MouseX()>LetterWidth*29.2
+			If MouseX()>LetterX(29.2)
 				StarterItems=StarterItems Xor 4
 				Repeat
 				Until MouseDown(1)=0 And MouseDown(2)=0
@@ -22609,13 +22618,13 @@ Function MasterAdvancedLoop()
 			
 		EndIf 
 		
-		If MouseY()>LetterHeight*9 And MouseY()<LetterHeight*10 And MouseX()<LetterWidth*24
+		If MouseY()>LetterHeight*9 And MouseY()<LetterHeight*10 And MouseX()<LetterX(24)
 			WidescreenRange=Not WidescreenRange
 			Repeat
 			Until MouseDown(1)=0 And MouseDown(2)=0
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()<LetterWidth*11	
+		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -22626,7 +22635,7 @@ Function MasterAdvancedLoop()
 			EndIf
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*11 And MouseX()<LetterWidth*22
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -22639,13 +22648,13 @@ Function MasterAdvancedLoop()
 
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*22 And MouseX()<LetterWidth*33
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			StartTestMode()
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*33 And hubmode=False
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33) And hubmode=False
 			If KeyDown(46)
 				PackContent=True
 			Else
@@ -22668,7 +22677,7 @@ Function MasterAdvancedLoop()
 		
 		For i=0 To 5
 			For j=0 To 2
-				If MouseX()>LetterWidth*10+i*LetterWidth*5 And MouseX()<LetterWidth*14+i*LetterWidth*5 And MouseY()>LetterHeight*9+(j+2)*LetterHeight And MouseY()<LetterHeight*10+(j+2)*LetterHeight
+				If MouseX()>LetterX(10)+LetterX(i*5) And MouseX()<LetterX(14)+LetterX(i*5) And MouseY()>LetterHeight*9+(j+2)*LetterHeight And MouseY()<LetterHeight*10+(j+2)*LetterHeight
 					;Locate 0,0
 					;Print "j="+j+" i="+i
 					If j=0 And i=0
@@ -22698,7 +22707,7 @@ Function MasterAdvancedLoop()
 			Next
 		Next
 		
-		If MouseY()>LetterHeight*15 And MouseY()<LetterHeight*16 And MouseX()>LetterWidth*16
+		If MouseY()>LetterHeight*15 And MouseY()<LetterHeight*16 And MouseX()>LetterX(16)
 			FlushKeys
 			Locate 0,0
 			Color 0,0,0
@@ -22778,7 +22787,7 @@ Function HubMainLoop()
 	For i=0 To 12
 		c=HubAdvStart+i
 		flag=False
-		If MouseX()<82 And MouseY()>11*LetterHeight+i*LetterHeight And MouseY()<=12*LetterHeight+i*LetterHeight
+		If MouseX()<LetterX(4) And MouseY()>11*LetterHeight+i*LetterHeight And MouseY()<=12*LetterHeight+i*LetterHeight
 			flag=True
 		EndIf
 		
@@ -22824,17 +22833,17 @@ Function HubMainLoop()
 		EndIf
 	EndIf
 	If flag2
-		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14
+		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14
 			DisplayText2("                                   EDIT",0.5,13,255,255,255)
 		Else
 			DisplayText2("                                   EDIT",0.5,13,180,180,180)
 		EndIf
-		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18
+		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18
 			DisplayText2("                                  REPLACE",0,17,255,255,255)
 		Else
 			DisplayText2("                                  REPLACE",0,17,180,180,180)
 		EndIf
-		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*21 And MouseY()<LetterHeight*22
+		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*21 And MouseY()<LetterHeight*22
 			DisplayText2("                                  REMOVE",0.5,21,255,255,255)
 		Else
 			DisplayText2("                                  REMOVE",0.5,21,180,180,180)
@@ -22844,12 +22853,12 @@ Function HubMainLoop()
 	DisplayText2("                                  REPLACE",0,17,100,100,100)
 	DisplayText2("                                  REMOVE",0.5,21,100,100,100)
 	EndIf
-	If MouseX()<LetterWidth*4 And MouseY()>LetterHeight*10 And MouseY()<LetterHeight*11
+	If MouseX()<LetterX(4) And MouseY()>LetterHeight*10 And MouseY()<LetterHeight*11
 		DisplayText2(" -",0.5,10,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2(" -",0.5,10,TextMenuXR,TextMenuXG,TextMenuXB)
 	EndIf
-	If MouseX()<LetterWidth*4 And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
+	If MouseX()<LetterX(4) And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 		DisplayText2(" +",0.5,24,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2(" +",0.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -22876,7 +22885,7 @@ Function HubMainLoop()
 	DisplayText2("========== ========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	
 	
-	If MouseY()>LowerButtonsCutoff And MouseX()<LetterWidth*11
+	If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
 	Else
@@ -22884,7 +22893,7 @@ Function HubMainLoop()
 		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*11 And MouseX()<LetterWidth*22		
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
@@ -22893,7 +22902,7 @@ Function HubMainLoop()
 
 	EndIf
 	
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*22 And MouseX()<LetterWidth*33		
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)		
 		DisplayText2("BUILD",25,27,255,255,255)
 		DisplayText2("+EXIT",25,28,255,255,255)
 	Else
@@ -22902,7 +22911,7 @@ Function HubMainLoop()
 
 	EndIf
 	
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*33
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
 		DisplayText2("COMPILE",35,27,255,255,255)
 		DisplayText2("+EXIT",36,28,255,255,255)
 	Else
@@ -22919,7 +22928,7 @@ Function HubMainLoop()
 	;	Repeat
 	;	Until MouseDown(1)=0 And MouseDown(2)=0
 	;EndIf
-	If MouseX()<LetterWidth*4
+	If MouseX()<LetterX(4)
 		If MouseScroll<>0
 			adj=-MouseScroll
 			If ShiftDown()
@@ -22952,7 +22961,7 @@ Function HubMainLoop()
 		
 	If mb>0 And LeftMouseReleased=True
 		For i=0 To 12
-			If MouseX()<LetterWidth*4 And MouseY()>LetterHeight*11+i*LetterHeight And MouseY()<=LetterHeight*12+i*LetterHeight
+			If MouseX()<LetterX(4) And MouseY()>LetterHeight*11+i*LetterHeight And MouseY()<=LetterHeight*12+i*LetterHeight
 				HubSelectedAdventure=HubAdvStart+i
 				If HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
 					GetCurrentAdventures()
@@ -22965,7 +22974,7 @@ Function HubMainLoop()
 		Next
 		
 		; edit
-		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And HubSelectedAdventure>=0
+		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And HubSelectedAdventure>=0
 			AdventureFileName$=HubAdventuresFilenames$(HubSelectedAdventure)
 			MasterDialogListStart=0
 			MasterLevelListStart=0
@@ -22975,7 +22984,7 @@ Function HubMainLoop()
 		EndIf
 		
 		; replace
-		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And HubSelectedAdventure>=0
+		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And HubSelectedAdventure>=0
 			GetCurrentAdventures()
 			SetEditorMode(12)
 			Repeat
@@ -22983,7 +22992,7 @@ Function HubMainLoop()
 		EndIf
 		
 		; remove
-		If MouseX()>LetterWidth*33 And MouseX()<LetterWidth*41 And MouseY()>LetterHeight*21 And MouseY()<LetterHeight*22 And HubSelectedAdventure>=0
+		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*21 And MouseY()<LetterHeight*22 And HubSelectedAdventure>=0
 			HubAdventuresFilenames$(HubSelectedAdventure)=""
 			;also check if this is the bigest number and update HubTotalAdventures
 			If HubTotalAdventures=HubSelectedAdventure
@@ -22999,7 +23008,7 @@ Function HubMainLoop()
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
-		If MouseY()>LowerButtonsCutoff And MouseX()<LetterWidth*11	
+		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -23007,7 +23016,7 @@ Function HubMainLoop()
 			StartAdventureSelectScreen()
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*11 And MouseX()<LetterWidth*22
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -23017,7 +23026,7 @@ Function HubMainLoop()
 
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*22 And MouseX()<LetterWidth*33
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			;WaitFlag=True
@@ -23030,7 +23039,7 @@ Function HubMainLoop()
 			Until MouseDown(1)=False
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterWidth*33
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
 			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
 			If KeyDown(46)
@@ -23053,7 +23062,11 @@ Function HubMainLoop()
 	MouseTextEntryTrackMouseMovement()
 	
 	Entering=0
-	x=MouseX()/LetterWidth
+	x=(MouseX()-LetterX(0))/LetterWidth
+	If x<0
+		x=0
+	EndIf
+	
 	y=(MouseY()-LetterHeight*5)/LetterHeight
 	If x<38 And MouseY()>=84 And y=3
 		Entering=1
@@ -23773,7 +23786,7 @@ Function DialogMainLoop()
 	DisplayText2("CLEAR",39,14,255,255,0)
 	
 	
-	If MouseX()>LetterWidth*38 And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
+	If MouseX()>LetterX(38) And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
 		DisplayText2("CANCEL",38.2,23,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("+EXIT",38.7,24,TextMenusR,TextMenusG,TextMenusB)
 	Else
@@ -23782,7 +23795,7 @@ Function DialogMainLoop()
 
 	EndIf
 	
-	If MouseX()>LetterWidth*38 And MouseY()>27*LetterHeight
+	If MouseX()>LetterX(38) And MouseY()>27*LetterHeight
 		DisplayText2("SAVE",39.2,27,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("+EXIT",38.7,28,TextMenusR,TextMenusG,TextMenusB)
 	Else
@@ -24024,7 +24037,10 @@ Function DialogMainLoop()
 	; Mouse Pos
 	Entering=0
 	
-	x=MouseX()/LetterWidth
+	x=(MouseX()-LetterX(0))/LetterWidth
+	If x<0
+		x=0
+	EndIf
 	If MouseY()<LetterHeight*14
 		y=(MouseY()-LetterHeight*5)/LetterHeight
 	Else If MouseY()<LetterHeight*15
@@ -24158,7 +24174,7 @@ Function DialogMainLoop()
 		; Change Adventure
 		; Load/Save
 		
-		If MouseX()>LetterWidth*38 And MouseY()>LetterHeight*23 And MouseY()<LetterHeight*25
+		If MouseX()>LetterX(38) And MouseY()>LetterHeight*23 And MouseY()<LetterHeight*25
 			If AskToSaveDialogAndExit()
 				ClearDialogFile()
 				ResumeMaster()
@@ -24167,7 +24183,7 @@ Function DialogMainLoop()
 			Until MouseDown(1)=0
 		EndIf
 	
-		If MouseX()>LetterWidth*38 And MouseY()>LetterHeight*27
+		If MouseX()>LetterX(38) And MouseY()>LetterHeight*27
 			SaveDialogAndExit()
 			Repeat
 			Until MouseDown(1)=0
@@ -24179,21 +24195,21 @@ Function DialogMainLoop()
 	RawInput=CtrlDown()
 
 	; Change InterChange
-	If MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And MouseX()>LetterWidth*5 And MouseX()<LetterWidth*21
+	If MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
 		target=AdjustInt("Interchange: ", WhichInterChange, 1, 10, 150)
 		SetInterChange(target)
 	EndIf
 	
 	; Change Answer
-	If MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And MouseX()>LetterWidth*5 And MouseX()<LetterWidth*21
+	If MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
 		target=AdjustInt("Answer: ", WhichAnswer, 1, 10, 150)
 		SetAnswer(target)
 	EndIf
 	; Change AnswerData
 	; thanks to tooltips this is now awesome
 	If MouseY()>LetterHeight*15 And MouseY()<LetterHeight*17
-		MouseXToUse=MouseX()/(LetterWidth*6)
-		TooltipX=MouseXToUse*(LetterWidth*6)
+		MouseXToUse=(MouseX()-LetterX(0))/(LetterWidth*6)
+		TooltipX=MouseXToUse*LetterWidth*6+LetterX(0)
 		TooltipY=LetterHeight*19
 		Select MouseXToUse
 		Case 0
@@ -24263,38 +24279,38 @@ Function DialogMainLoop()
 
 	
 	; Change Askabout
-	If MouseY()>LetterHeight*22 And MouseY()<LetterHeight*23 And MouseX()>LetterWidth*5 And MouseX()<LetterWidth*21
+	If MouseY()>LetterHeight*22 And MouseY()<LetterHeight*23 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
 		target=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, 150)
 		SetAskabout(target)
 	EndIf
 	; Change AskaboutData
 	If MouseY()>LetterHeight*24.5 And MouseY()<LetterHeight*26.5
 		TooltipY=LetterHeight*28
-		If MouseX()<LetterWidth*8
+		If MouseX()<LetterX(8)
 			OldValue=AskAboutActive(WhichAskAbout)
 			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, 150)
 			If OldValue<>AskAboutActive(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(LetterWidth*4,TooltipY,GetAskAboutActiveName$(AskAboutActive(WhichAskAbout)))
+			ShowTooltipCenterAligned(LetterX(4),TooltipY,GetAskAboutActiveName$(AskAboutActive(WhichAskAbout)))
 
-		Else If MouseX()<LetterWidth*22.5
+		Else If MouseX()<LetterX(22.5)
 			OldValue=AskAboutInterChange(WhichAskAbout)
 			AskAboutInterChange(WhichAskAbout)=AdjustInt("Interchange: ", AskAboutInterChange(WhichAskAbout), 1, 10, 150)
 			If OldValue<>AskAboutInterChange(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(LetterWidth*15.25,TooltipY,"Destination Interchange")
-		Else If MouseX()<LetterWidth*38
+			ShowTooltipCenterAligned(LetterX(15.25),TooltipY,"Destination Interchange")
+		Else If MouseX()<LetterX(38)
 			OldValue=AskAboutRepeat(WhichAskAbout)
 			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, 150)
 			If OldValue<>AskAboutRepeat(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(LetterWidth*27.5,TooltipY,GetAskAboutRepeatName$(AskAboutRepeat(WhichAskAbout)))
+			ShowTooltipCenterAligned(LetterX(27.5),TooltipY,GetAskAboutRepeatName$(AskAboutRepeat(WhichAskAbout)))
 		EndIf
 		
 		If Modified
@@ -24306,14 +24322,14 @@ Function DialogMainLoop()
 	; Colours/Effects
 	If LeftMouse=True And LeftMouseReleased=True
 		LeftMouseReleased=False
-		StartX=LetterWidth*39
+		StartX=39
 		For i=0 To 11
-			If MouseX()>=StartX+(i Mod 3)*LetterWidth*2 And MouseX()<=StartX+LetterWidth+(i Mod 3)*LetterWidth*2 And MouseY()>=LetterHeight*3 + LetterHeight*(i/3) And MouseY()<LetterHeight*4+LetterHeight*(i/3)
+			If MouseX()>=LetterX(StartX+(i Mod 3)*2) And MouseX()<=LetterX(StartX+1+(i Mod 3)*2) And MouseY()>=LetterHeight*3 + LetterHeight*(i/3) And MouseY()<LetterHeight*4+LetterHeight*(i/3)
 				ToggleColEffect(i)
 			EndIf
 		Next
 		For i=0 To 11
-			If MouseX()>=StartX+(i Mod 2)*LetterWidth*2.5 And MouseX()<=StartX+LetterWidth*2.5+(i Mod 2)*LetterWidth*2.5 And MouseY()>=LetterHeight*7 + LetterHeight*(i/2) And MouseY()<LetterHeight*8+LetterHeight*(i/2)
+			If MouseX()>=LetterX(StartX+(i Mod 2)*2.5) And MouseX()<=LetterX(StartX+2.5+(i Mod 2)*2.5) And MouseY()>=LetterHeight*7 + LetterHeight*(i/2) And MouseY()<LetterHeight*8+LetterHeight*(i/2)
 				ToggleTxtEffect(i)
 			EndIf
 		Next
@@ -24328,7 +24344,7 @@ Function DialogMainLoop()
 	EndIf
 		
 			
-	If CtrlDown()
+	If CtrlDown() ; ctrl+...
 		If KeyPressed(17) Then ToggleColEffect(0) ; w: white
 		If KeyPressed(18) Then ToggleColEffect(1) ; e: grey
 		If KeyPressed(19) Then ToggleColEffect(2) ; r: red
