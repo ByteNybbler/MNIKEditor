@@ -13141,6 +13141,36 @@ Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
 	EndIf
 	If ReturnPressed()
 		RandomData(i)=Not RandomData(i)
+		RandomDataMin(i)=0
+		RandomDataMax(i)=10
+		
+		If CurrentObjectModelName$="!NPC"
+			Select i
+			Case 2
+				; Use vanilla ranges
+				; Hats
+				RandomDataMin(2)=0
+				RandomDataMax(2)=56
+			Case 4
+				; Glasses
+				RandomDataMin(4)=101
+				RandomDataMax(4)=116
+			End Select
+		EndIf
+		
+		Select CurrentObjectType
+		Case 110 ; Stinker NPC
+			Select i
+			Case 7
+				; Turn
+				RandomDataMin(7)=0
+				RandomDataMax(7)=30
+			Case 8
+				; IdleAnim
+				RandomDataMin(8)=0
+				RandomDataMax(8)=10
+			End Select
+		End Select
 	EndIf
 
 End Function
@@ -13286,6 +13316,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomDefensePower=Not RandomDefensePower
+			RandomDefensePowerMin=0
+			RandomDefensePowerMax=33
 		EndIf
 		
 		If CurrentObjectDefensePower>=34 Then CurrentObjectDefensePower=0
@@ -13312,6 +13344,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomYawAdjust=Not RandomYawAdjust
+			RandomYawAdjustMin#=0.0
+			RandomYawAdjustMax#=360.0
 		EndIf
 		
 		If CurrentObjectYawAdjust>=360 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust-360
@@ -13331,6 +13365,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomPitchAdjust=Not RandomPitchAdjust
+			RandomPitchAdjustMin#=0.0
+			RandomPitchAdjustMax#=360.0
 		EndIf
 		
 		If CurrentObjectPitchAdjust>=360 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust-360
@@ -13350,6 +13386,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomRollAdjust=Not RandomRollAdjust
+			RandomRollAdjustMin#=0.0
+			RandomRollAdjustMax#=360.0
 		EndIf
 		
 		If CurrentObjectRollAdjust>=360 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust-360
@@ -13369,6 +13407,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomXAdjust=Not RandomXAdjust
+			RandomXAdjustMin#=-0.5
+			RandomXAdjustMax#=0.5
 		EndIf
 	Case "YAdjust"
 		If RandomYAdjust
@@ -13382,6 +13422,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomYAdjust=Not RandomYAdjust
+			RandomYAdjustMin#=-0.5
+			RandomYAdjustMax#=0.5
 		EndIf
 	Case "ZAdjust"
 		If RandomZAdjust
@@ -13395,6 +13437,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomZAdjust=Not RandomZAdjust
+			RandomZAdjustMin#=-0.5
+			RandomZAdjustMax#=0.5
 		EndIf
 		
 		
@@ -13411,6 +13455,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomXScale=Not RandomXScale
+			RandomXScaleMin#=0.5
+			RandomXScaleMax#=1.5
 		EndIf
 	Case "YScale"
 		SlowFloat#=SlowScale#
@@ -13425,6 +13471,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomYScale=Not RandomYScale
+			RandomYScaleMin#=0.5
+			RandomYScaleMax#=1.5
 		EndIf
 	Case "ZScale"
 		SlowFloat#=SlowScale#
@@ -13439,6 +13487,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomZScale=Not RandomZScale
+			RandomZScaleMin#=0.5
+			RandomZScaleMax#=1.5
 		EndIf
 
 
@@ -13455,6 +13505,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomID=Not RandomID
+			RandomIDMin=100
+			RandomIDMax=200
 		EndIf
 
 	Case "Type"
@@ -13469,6 +13521,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomType=Not RandomType
+			RandomTypeMin=170
+			RandomTypeMax=173
 		EndIf
 	Case "SubType"
 		If RandomSubType
@@ -13482,6 +13536,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomSubType=Not RandomSubType
+			RandomSubTypeMin=0
+			RandomSubTypeMax=8
 		EndIf
 				
 		If CurrentObjectType=179 ; Custom Item
@@ -13552,6 +13608,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomActive=Not RandomActive
+			RandomActiveMin=0
+			RandomActiveMax=1001
 		EndIf
 	Case "ActivationSpeed"
 		SlowInt=SlowInt*2
@@ -13567,6 +13625,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomActivationSpeed=Not RandomActivationSpeed
+			RandomActivationSpeedMin=2
+			RandomActivationSpeedMax=40
 		EndIf
 	Case "ActivationType"
 		If RandomActivationType
@@ -13580,6 +13640,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomActivationType=Not RandomActivationType
+			RandomActivationTypeMin=12
+			RandomActivationTypeMax=16
 		EndIf
 			
 		;If CurrentObjectModelName$="!SteppingStone"
@@ -13634,6 +13696,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomTimerMax1=Not RandomTimerMax1
+			RandomTimerMax1Min=1
+			RandomTimerMax1Max=100
 		EndIf
 	Case "TimerMax2"
 		FastInt=FastTimer
@@ -13648,6 +13712,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomTimerMax2=Not RandomTimerMax2
+			RandomTimerMax2Min=1
+			RandomTimerMax2Max=100
 		EndIf
 	Case "Timer"
 		FastInt=FastTimer
@@ -13662,6 +13728,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomTimer=Not RandomTimer
+			RandomTimerMin=1
+			RandomTimerMax=100
 		EndIf
 		
 	Case "ButtonPush"
@@ -13771,7 +13839,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
-
+			; texture
 			If CurrentObjectData(0)>8 CurrentObjectData(0)=1
 			If CurrentObjectData(0)<1 CurrentObjectData(0)=8
 		EndIf
@@ -13788,6 +13856,12 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObjectData(0)>5 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=5
 		EndIf
+		
+		If CurrentObjectModelName$="!WaterFall"
+			; liquid type
+			If CurrentObjectData(0)>2 CurrentObjectData(0)=0
+			If CurrentObjectData(0)<0 CurrentObjectData(0)=2
+		EndIf
 
 		
 
@@ -13797,15 +13871,9 @@ Function AdjustObjectAdjuster(i)
 		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=1
 		;EndIf
 		
-		If CurrentObjectType=51
+		If CurrentObjectType=51 ; Magic Shooter
 			If CurrentObjectData(0)>9 CurrentObjectData(0)=0
 			If CurrentObjectData(0)<0 CurrentObjectData(0)=9
-		EndIf
-		
-		If CurrentObjectModelName$="!WaterFall"
-			; liquid type
-			If CurrentObjectData(0)>2 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=2
 		EndIf
 		
 		If CurrentObjectType=470 Or CurrentObjectType=471 ; ghost or wraith
@@ -13897,11 +13965,11 @@ Function AdjustObjectAdjuster(i)
 		
 
 		If CurrentObjectModelName$="!NPC"
+			; Expression
 			If CurrentObjectData(1)>4 CurrentObjectData(1)=0
 			If CurrentObjectData(1)<0 CurrentObjectData(1)=4
-			
-
 		EndIf
+		
 		;If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate")  Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot" Or CurrentObjectModelname$="!Portal Warp"
 		If CurrentObjectType=290 Or CurrentObjectType=380 ; Thwart or Ice Troll
 			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
@@ -14069,45 +14137,7 @@ Function AdjustObjectAdjuster(i)
 			; hitpoints
 			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
 		EndIf
-;		If CurrentObjectModelName$="!NPC"
-;
-;			Select CurrentObjectData(2)
-;			Case 1,5			
-;				If CurrentObjectData(3)>7 CurrentObjectData(3)=1
-;				If CurrentObjectData(3)<1 CurrentObjectData(3)=7
-;			Case 2			
-;				If CurrentObjectData(3)>5 CurrentObjectData(3)=1
-;				If CurrentObjectData(3)<1 CurrentObjectData(3)=5
-;			Case 3,6,7			
-;				If CurrentObjectData(3)>3 CurrentObjectData(3)=1
-;				If CurrentObjectData(3)<1 CurrentObjectData(3)=3
-;			Case 10			
-;				If CurrentObjectData(3)>2 CurrentObjectData(3)=1
-;				If CurrentObjectData(3)<1 CurrentObjectData(3)=2
-;			Case 27
-;				If CurrentObjectData(3)>4 CurrentObjectData(3)=1
-;				If CurrentObjectData(3)<1 CurrentObjectData(3)=4
-;			Case 28
-;				If CurrentObjectData(3)>4 CurrentObjectData(3)=1
-;				If CurrentObjectData(3)<1 CurrentObjectData(3)=4
-;			Case 46
-;				If CurrentObjectData(3)>6 CurrentObjectData(3)=1
-;				If CurrentObjectData(3)<1 CurrentObjectData(3)=6
-;
-;
-;
-;			Default
-;				CurrentObjectData(3)=1
-;			End Select
-;
-;
-;
-;		EndIf
-		;If  Currentobjectmodelname$="!Zapbot"
-			; zapbot range
-		;	If CurrentobjectData(3)<4 CurrentObjectData(3)=4
-		;	If CurrentobjectData(3)>30 CurrentObjectData(3)=30
-		;EndIf
+
 		If  CurrentObjectType=432 ; moobot
 			; pushbot left/right turn,
 			If CurrentobjectData(3)<0 CurrentObjectData(3)=2
@@ -14428,6 +14458,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomMovementSpeed=Not RandomMovementSpeed
+			RandomMovementSpeedMin=10
+			RandomMovementSpeedMax=40
 		EndIf
 		
 	Case "MovementType"
@@ -14442,6 +14474,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomMovementType=Not RandomMovementType
+			RandomMovementTypeMin=41
+			RandomMovementTypeMax=48
 		EndIf
 		
 	Case "MovementTypeData"
@@ -14510,6 +14544,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomScaleAdjust=Not RandomScaleAdjust
+			RandomScaleAdjustMin#=0.5
+			RandomScaleAdjustMax#=1.5
 		EndIf
 
 	Case "Exclamation"
@@ -14524,6 +14560,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomExclamation=Not RandomExclamation
+			RandomExclamationMin=0
+			RandomExclamationMax=99
 		EndIf
 	
 	Case "Linked"
@@ -14555,6 +14593,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomMoveXGoal=Not RandomMoveXGoal
+			RandomMoveXGoalMin=0
+			RandomMoveXGoalMax=LevelWidth-1
 		EndIf
 	Case "MoveYGoal"
 		If RandomMoveYGoal
@@ -14568,6 +14608,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomMoveYGoal=Not RandomMoveYGoal
+			RandomMoveYGoalMin=0
+			RandomMoveYGoalMax=LevelHeight-1
 		EndIf
 		
 	Case "Data10"
@@ -14587,6 +14629,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomDead=Not RandomDead
+			RandomDeadMin=0
+			RandomDeadMax=3
 		EndIf
 	Case "DeadTimer"
 		CurrentObjectDeadTimer=AdjustInt("DeadTimer: ", CurrentObjectDeadTimer, 1, 25, 150)
@@ -14616,6 +14660,8 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		If ReturnPressed()
 			RandomStatus=Not RandomStatus
+			RandomStatusMin=0
+			RandomStatusMax=10
 		EndIf
 
 
@@ -15822,6 +15868,7 @@ Function FinalizeCurrentObject()
 	ShowWorldAdjusterPositions()
 	CalculateCurrentObjectTargetIDs()
 	CalculateCurrentObjectActivateIDs()
+	;SetDefaultRandomRangeValues()
 
 End Function
 
