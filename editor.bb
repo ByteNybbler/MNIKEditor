@@ -1034,6 +1034,7 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 Global NofMyGfxModes, MyGfxMode
 Dim MyGfxModeWidth(1000),MyGfxModeHeight(1000),MyGfxModeDepth(1000)
 Global GfxWidth,GfxHeight
+Global GfxZoomScaling#
 
 file=ReadFile (globaldirname$+"\display.wdf")
 If file>0
@@ -1109,6 +1110,10 @@ If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
 	
 EndIf
 
+OriginalRatio#=800.0/600.0
+AspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
+GfxZoomScaling#=OriginalRatio#/AspectRatio#
+
 Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 SetBuffer BackBuffer()
 
@@ -1162,8 +1167,8 @@ Global ToolbarSaveY=ToolbarPositionY(2)
 Const LettersCountX=44
 Const LettersCountY=30
 
-Global LetterWidth#=Float#(GfxWidth)/Float#(LettersCountX)
-Global LetterHeight#=Float#(GfxHeight)/Float#(LettersCountY)
+Global LetterWidth#=Float#(GfxWidth)/Float#(LettersCountX)*GfxZoomScaling#
+Global LetterHeight#=Float#(GfxHeight)/Float#(LettersCountY);*GfxZoomScaling#
 
 Const ToolbarHeight=100
 Const SidebarWidth=300
@@ -2296,6 +2301,7 @@ Function InitializeGraphicsCameras()
 	PositionEntity Camera4,0,303.8,-8
 	
 	Camera = CreateCamera() ; Text Screen Camera
+	CameraZoom Camera,GfxZoomScaling#
 	
 	UpdateCameraProj()
 	UpdateCameraClsColor()
@@ -20445,9 +20451,12 @@ End Function
 
 Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
+	CharWidth#=0.045 ;1/LetterWidth
+	CharHeight#=0.05 ;1/LetterHeight
 	For i=1 To Len(mytext$)
 		let=Asc(Mid$(mytext$,i,1))-32
-		AddLetter(let,-.97+(x+(i-1)*widthmult)*.045,.5-(y-4+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
+		;AddLetter(let,-.97+(x+(i-1)*widthmult)*.045,.5-(y-4+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
+		AddLetter(let,-.97+(x+(i-1)*widthmult)*CharWidth#,.5-(y-4+j)*CharHeight#,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
 	Next
 	
 End Function
