@@ -20620,8 +20620,9 @@ Function UserSelectScreen()
 	leveltimer=leveltimer+1
 	
 	my=MouseY()
-	If mY>=306
-		EditorUserNameSelected=(my-306)/20
+	StartY=LetterHeight*15
+	If mY>=StartY
+		EditorUserNameSelected=(my-StartY-LetterHeight*0.5)/LetterHeight
 	Else
 		EditorUserNameSelected=-1
 	EndIf
@@ -20773,8 +20774,8 @@ Function AdventureSelectScreen()
 
 	mx=MouseX()
 	my=MouseY()
-	If mY>=165 And my<544 And mx>50 And mx<748
-		AdventureNameSelected=(my-165)/20
+	If mY>=LetterHeight*8 And my<LetterHeight*28 And mx>LetterWidth*2.5 And mx<LetterWidth*41.5
+		AdventureNameSelected=(my-LetterHeight*8.5)/LetterHeight
 	Else
 		AdventureNameSelected=-1
 	EndIf
@@ -20947,14 +20948,14 @@ Function AdventureSelectScreen()
 	
 	
 	If MouseDown(1)
-		If mx>650 And my>560
+		If mx>LetterWidth*36 And my>LetterHeight*28
 			; change user
 			StartUserSelectScreen()
 			Repeat
 			Until MouseDown(1)=0
 		EndIf
 		
-		If my<50 And mx>650
+		If mx>LetterWidth*34 And my<LetterHeight*2
 			; switch window/fullscreen
 ;			DisplayFullScreen = Not DisplayFullScreen
 ;			filed=WriteFile (globaldirname$+"\display-ed.wdf")
@@ -20975,14 +20976,14 @@ Function AdventureSelectScreen()
 		EndIf
 
 		
-		If my>123 And my<143 And mx>507 And mx<650 And AdventureCurrentArchive=1 And hubmode=False
+		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*28 And mx<LetterWidth*36 And AdventureCurrentArchive=1 And hubmode=False
 			GetCurrentAdventures()
 		EndIf
-		If my>123 And my<143 And mx>650 And AdventureCurrentArchive=0 And hubmode=False
+		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterWidth*36 And AdventureCurrentArchive=0 And hubmode=False
 			GetArchiveAdventures()
 		EndIf
 
-		If mx<220 And my>23 And my<43 ;hubmode
+		If mx<LetterWidth*12 And my>LetterHeight And my<LetterHeight*2 ;hubmode
 			hubmode=Not hubmode
 			If hubmode
 				GetHubs()
@@ -21002,7 +21003,7 @@ Function AdventureSelectScreen()
 
 	EndIf
 
-	If my>165 And my<545
+	If my>LetterHeight*8 And my<LetterHeight*28
 		If MouseScroll<>0
 			Speed=1
 			If ShiftDown()
@@ -21010,13 +21011,13 @@ Function AdventureSelectScreen()
 			EndIf
 			SetAdventureFileNamesListedStart(AdventureFileNamesListedStart-MouseScroll*Speed)
 		EndIf
-		If (mx<50 Or mx>748) And MouseDown(1)
-			If my>175 And my<235
+		If (mx<LetterWidth*2.5 Or mx>LetterWidth*41.5) And MouseDown(1)
+			If my>LetterHeight*8 And my<LetterHeight*12
 				; Page Up
 				AdventureFileNamesListPageUp()
 				Repeat
 				Until MouseDown(1)=0
-			ElseIf my>475 And my<535
+			ElseIf my>LetterHeight*24 And my<LetterHeight*28
 				; Page Down
 				AdventureFileNamesListPageDown()
 				Repeat
@@ -21047,8 +21048,9 @@ Function AdventureSelectScreen2()
 
 	MX=MouseX()
 	my=MouseY()
-	If mx>300 And mx<500 And my>175 And my<175+160
-		Selected=(my-175)/40
+	StartY=LetterHeight*9
+	If mx>LetterWidth*15 And mx<LetterWidth*29 And my>StartY And my<StartY+LetterHeight*8
+		Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
 	Else 
 		Selected=-1
 	EndIf
@@ -21185,6 +21187,7 @@ Function AdventureSelectScreen2()
 End Function
 
 Function AdventureSelectScreen3()
+	;ShowMessage("The third.",1000)
 
 	MX=MouseX()
 	my=MouseY()
