@@ -13251,6 +13251,10 @@ Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
 		Select CurrentObjectType
 		Case 110 ; Stinker NPC
 			Select i
+			Case 6
+				; WalkAnim
+				RandomDataMin(6)=0
+				RandomDataMax(6)=2
 			Case 7
 				; Turn
 				RandomDataMin(7)=0
