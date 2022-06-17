@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/16/22"
+Global VersionDate$="06/17/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -12015,7 +12015,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
-			tex2$="Hat"
+			tex2$="Acc1"
 			
 			tex$=GetAccessoryName$(CurrentObjectData(2))
 			
@@ -12220,7 +12220,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
-			tex2$="Colour"
+			tex2$="Colour1"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObjectData(2),CurrentObjectData(3))
 		EndIf
 		
@@ -12350,7 +12350,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
-			tex2$="Acc" ;"Glasses"
+			tex2$="Acc2" ;"Glasses"
 			
 			tex$=GetAccessoryName$(CurrentObjectData(4))
 			
@@ -12440,7 +12440,7 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=RandomDataMax(5)
 		
 		If CurrentObjectModelName$="!NPC"
-			tex2$="Colour"
+			tex2$="Colour2"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObjectData(4),CurrentObjectData(5)+1)
 		EndIf
 		
