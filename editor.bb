@@ -1115,8 +1115,16 @@ OriginalRatio#=800.0/600.0
 Global GfxAspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
 GfxZoomScaling#=OriginalRatio#/GfxAspectRatio#
 
+GfxWindowed=2 ; Force windowed mode
+
 Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 SetBuffer BackBuffer()
+
+If GfxWindowed=1
+	displayfullscreen=True
+Else
+	displayfullscreen=False
+EndIf
 
 ;ShowMessage("Graphics3D: "+GfxWidth+" x "+GfxHeight+" with depth "+GfxDepth,1000)
 
