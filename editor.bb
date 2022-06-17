@@ -1232,10 +1232,12 @@ Global CameraProj=0
 Global CameraPanning=False
 Global GameCamera=False ; whether "game camera mode" is active (simulates the in-game camera)
 
-Global Camera1Zoom#=1.0
+Global Camera1PerspectiveZoom#=1.0*GfxZoomScaling#
+Global Camera1OrthographicZoom#=0.015*GfxZoomScaling#
+Global Camera1Zoom#=Camera1PerspectiveZoom#
 Global Camera4Zoom#=8.0
 
-Global Camera1StartY=6
+Global Camera1StartY=6 ;/GfxZoomScaling# ;*GfxAspectRatio#
 ; saved when entering orthographic mode since orthographic mode mouse wheel scrolling does not change the height, unlike perspective mode mouse wheel scrolling
 Global Camera1PerspectiveY#=Camera1StartY
 Global Camera1SavedProjMode=1 ; the projection mode to return to after being in projection mode 0 (which means the camera is disabled)
@@ -4222,13 +4224,13 @@ Function EditorLocalControls()
 		If Camera1Proj=1
 			; to orthographic
 			Camera1Proj=2
-			Camera1Zoom#=0.015
+			Camera1Zoom#=Camera1OrthographicZoom#
 			Camera1PerspectiveY#=EntityY(Camera1) ; save to return to it later
 			PositionEntity Camera1,EntityX(Camera1),Camera1StartY*2,EntityZ(Camera1)
 		Else
 			; to perspective
 			Camera1Proj=1
-			Camera1Zoom#=1.0
+			Camera1Zoom#=Camera1PerspectiveZoom#
 			PositionEntity Camera1,EntityX(Camera1),Camera1PerspectiveY#,EntityZ(Camera1)
 		EndIf
 		UpdateCameraProj()
