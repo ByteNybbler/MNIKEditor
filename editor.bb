@@ -6123,7 +6123,7 @@ Function EditorLocalControls()
 				SimulateObjectScale(i)
 				
 				UpdateObjectVisibility(LevelObjects(i))
-				UpdateObjectAnimation(i)
+				UpdateObjectAnimation(LevelObjects(i))
 			Next
 			
 			If SimulationLevel>=3
@@ -6514,7 +6514,7 @@ Function UpdateCurrentGrabbedObjectMarkerVisibility()
 		HideEntity CurrentGrabbedObjectMarker
 	Else
 		ShowEntity CurrentGrabbedObjectMarker
-		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
+		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,LevelObjects(CurrentGrabbedObject),0.0)
 	EndIf
 
 End Function
@@ -9268,7 +9268,7 @@ Function PlaceObjectActual(x#,y#)
 	CreateObjectPositionMarker(ThisObject)
 	
 	
-	UpdateObjectEntityToCurrent(ThisObject)
+	UpdateObjectEntityToCurrent(LevelObjects(ThisObject))
 	
 	
 	SetCurrentGrabbedObject(ThisObject)
@@ -9323,15 +9323,15 @@ Function CalculateEffectiveIDWith(TargetType,TargetID,Data0,Data1,TargetTileType
 
 End Function
 
-Function ShouldBeInvisibleInGame(Dest)
+Function ShouldBeInvisibleInGame(Attributes.GameObjectAttributes)
 
-	If ObjectModelName$(Dest)="!None" Or ObjectModelName$(Dest)="!FloingOrb"
+	If Attributes\ModelName$="!None" Or Attributes\ModelName$="!FloingOrb"
 		Return True
-	ElseIf ObjectModelName$(Dest)="!Button" And (ObjectSubType(Dest)=11 Or ObjectSubType(Dest)>=32 Or ObjectSubType(Dest)=15) ; NPC move, invisible buttons, general command
+	ElseIf Attributes\ModelName$="!Button" And (Attributes\LogicSubType=11 Or Attributes\LogicSubType>=32 Or Attributes\LogicSubType=15) ; NPC move, invisible buttons, general command
 		Return True
-	ElseIf ObjectModelName$(Dest)="!IceBlock" And ObjectData(Dest,3)<>0 And ObjectData(Dest,3)<>1
+	ElseIf Attributes\ModelName$="!IceBlock" And Attributes\Data3<>0 And Attributes\Data3<>1
 		Return True
-	ElseIf ObjectActive(Dest)=0 And (ObjectModelName$(Dest)="!NPC" Or ObjectType(Dest)=424) ; NPCs, OpenWA retro laser gates
+	ElseIf Attributes\Active=0 And (Attributes\ModelName$="!NPC" Or Attributes\LogicType=424) ; NPCs, OpenWA retro laser gates
 		Return True
 	Else
 		Return False
@@ -9340,34 +9340,34 @@ Function ShouldBeInvisibleInGame(Dest)
 End Function
 
 
-Function HideEntityAndAccessories(Dest)
+Function HideEntityAndAccessories(Obj.GameObject)
 
-	If ObjectEntity(Dest)>0
-		HideEntity ObjectEntity(Dest)
+	If Obj\Entity>0
+		HideEntity Obj\Entity
 	EndIf
-	If ObjectHatEntity(Dest)>0
-		HideEntity ObjectHatEntity(Dest)
+	If Obj\HatEntity>0
+		HideEntity Obj\HatEntity
 	EndIf
-	If ObjectAccEntity(Dest)>0
-		HideEntity ObjectAccEntity(Dest)
+	If Obj\AccEntity>0
+		HideEntity Obj\AccEntity
 	EndIf
 
 End Function
 
 
-Function ShowEntityAndAccessories(Dest)
+Function ShowEntityAndAccessories(Obj.GameObject)
 
-	If ObjectEntity(Dest)>0
-		ShowEntity ObjectEntity(Dest)
+	If Obj\Entity>0
+		ShowEntity Obj\Entity
 	EndIf
-	If ObjectHatEntity(Dest)>0
-		ShowEntity ObjectHatEntity(Dest)
+	If Obj\HatEntity>0
+		ShowEntity Obj\HatEntity
 	EndIf
-	If ObjectAccEntity(Dest)>0
-		ShowEntity ObjectAccEntity(Dest)
+	If Obj\AccEntity>0
+		ShowEntity Obj\AccEntity
 	EndIf
 	
-	UpdateObjectAlpha(Dest)
+	UpdateObjectAlpha(Obj)
 
 End Function
 
@@ -9402,9 +9402,9 @@ Function UpdateObjectVisibility(Obj.GameObject)
 End Function
 
 
-Function UpdateObjectAlpha(Obj)
+Function UpdateObjectAlpha(Obj.GameObject)
 
-	If Obj\ModelName$="!NPC" Or Obj\ModelName$="!Tentacle"
+	If Obj\Attributes\ModelName$="!NPC" Or Obj\Attributes\ModelName$="!Tentacle"
 		Entity=GetChild(Obj\Entity,3)
 	Else
 		Entity=Obj\Entity
@@ -9415,7 +9415,7 @@ Function UpdateObjectAlpha(Obj)
 End Function
 
 
-Function BaseObjectAlpha#(Attributes)
+Function BaseObjectAlpha#(Attributes.GameObjectAttributes)
 
 	If Attributes\ModelName$="!FloingBubble"
 		Return 0.5
@@ -9444,20 +9444,20 @@ Function BaseObjectAlpha#(Attributes)
 End Function
 
 
-Function ObjectSumX#(Obj)
+Function ObjectSumX#(Obj.GameObject)
 	Return Obj\Position\X#+Obj\Attributes\XAdjust#
 End Function
 
-Function ObjectSumY#(Obj)
+Function ObjectSumY#(Obj.GameObject)
 	Return Obj\Position\Y#+Obj\Attributes\YAdjust#
 End Function
 
-Function ObjectSumZ#(Obj)
+Function ObjectSumZ#(Obj.GameObject)
 	Return Obj\Position\Z#+Obj\Attributes\ZAdjust#
 End Function
 
-Function ObjectSumYaw#(Obj)
-	Return Obj\Position\Yaw#+Obj\Attributes\YawAdjust#
+Function ObjectSumYaw#(Obj.GameObject)
+	Return Obj\Attributes\Yaw#+Obj\Attributes\YawAdjust#
 End Function
 
 
@@ -9481,7 +9481,7 @@ Function SetEntityPositionToWorldPosition(entity,XP#,YP#,ZP#,TargetType,Yaw#,XSc
 End Function
 
 
-Function SetEntityPositionToObjectPosition(entity, Obj)
+Function SetEntityPositionToObjectPosition(entity, Obj.GameObject)
 
 	TheX#=ObjectSumX#(Obj)
 	TheY#=ObjectSumY#(Obj)
@@ -9492,7 +9492,7 @@ Function SetEntityPositionToObjectPosition(entity, Obj)
 End Function
 
 
-Function SetEntityPositionToObjectPositionWithoutZ(entity, Obj, z#)
+Function SetEntityPositionToObjectPositionWithoutZ(entity, Obj.GameObject, z#)
 
 	SetEntityPositionInWorld(entity,ObjectSumX#(Obj),ObjectSumY#(Obj),z#)
 
@@ -9508,9 +9508,9 @@ End Function
 
 Function UpdateObjectPosition(Dest)
 
-	Obj=LevelObjects(Dest)
+	Obj.GameObject=LevelObjects(Dest)
 
-	SetEntityPositionToObjectPosition(Obj\Entity, Dest)
+	SetEntityPositionToObjectPosition(Obj\Entity, Obj)
 	
 	;PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
 	
@@ -9538,13 +9538,13 @@ Function UpdateObjectPosition(Dest)
 End Function
 
 
-Function UpdateObjectEntityToCurrent(Obj)
+Function UpdateObjectEntityToCurrent(Obj.GameObject)
 	
-	Obj\Entity=CopyEntity(CurrentObject\Model)
+	Obj\Entity=CopyEntity(CurrentObject\Entity)
 	
 	UpdateObjectVisibility(Obj)
 	
-	If CurrentObject\HatModel>0
+	If CurrentObject\HatEntity>0
 	
 		Obj\Entity=CreateAccEntity(CurrentObject\Attributes\Data2)
 		Obj\HatTexture=CreateHatTexture(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
@@ -9563,8 +9563,8 @@ Function UpdateObjectEntityToCurrent(Obj)
 	EndIf
 	
 	If CurrentObject\AccEntity>0
-		ObjectAccEntity(Dest)=CreateAccEntity(CurrentObject\Attributes\Data4)
-		ObjectAccTexture(Dest)=CreateGlassesTexture(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
+		Obj\AccEntity=CreateAccEntity(CurrentObject\Attributes\Data4)
+		Obj\AccTexture=CreateGlassesTexture(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
 	
 	
 		ScaleEntity Obj\AccEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
@@ -9580,20 +9580,20 @@ Function UpdateObjectEntityToCurrent(Obj)
 		EndIf
 	EndIf
 	
-	UpdateObjectAnimation(Dest)
+	UpdateObjectAnimation(Obj)
 	
 	UpdateObjectPosition(Dest)
 
 End Function
 
 
-Function UpdateObjectAnimation(i)
+Function UpdateObjectAnimation(Obj.GameObject)
 
-	ModelName$=ObjectModelName$(i)
-	Entity=ObjectEntity(i)
+	ModelName$=Obj\Attributes\ModelName$
+	Entity=Obj\Entity
 
 	If ModelName$="!BabyBoomer"
-		AnimateMD2 ObjectEntity(i),0,.2,1,2
+		AnimateMD2 Entity,0,.2,1,2
 	ElseIf ModelName$="!Busterfly"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
@@ -9604,13 +9604,13 @@ Function UpdateObjectAnimation(i)
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
-			AnimateMD2 ObjectEntity(i),1,.6,1,29
+			AnimateMD2 Entity,1,.6,1,29
 		EndIf
 	ElseIf ModelName$="!Crab"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
-			Select ObjectData(i,1)
+			Select Obj\Attributes\Data1
 			Case 2,3
 				; asleep
 				AnimateMD2 Entity,3,1,48,49
@@ -9640,7 +9640,7 @@ Function UpdateObjectAnimation(i)
 		Else
 			Animate GetChild(Entity,3),1,.1,1,0
 		EndIf
-	ElseIf ObjectType(i)=290 And ModelName$="!Thwart"
+	ElseIf Obj\Attributes\LogicType=290 And ModelName$="!Thwart"
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		Else
@@ -10069,7 +10069,8 @@ End Function
 
 Function PositionObjectPositionMarker(i)
 
-	PositionEntityInLevel(ObjectPositionMarker(i),ObjectX(i),ObjectY(i))
+	Obj.GameObject=LevelObjects(i)
+	PositionEntityInLevel(ObjectPositionMarker(i),Obj\Position\X,Obj\Position\Y)
 
 End Function
 
