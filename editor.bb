@@ -4031,14 +4031,14 @@ End Function
 Function TryLevelGoto(i,x,y,D1,D2,D3)
 
 	If LevelObjects(i)\Position\TileX=x And LevelObjects(i)\Position\TileY=y
-		xzx
-		ToLevel=ObjectData(i,D1)
+		Attributes=LevelObjects(i)\Attributes
+		ToLevel=GetDataByIndex(Attributes,D1)
 		If ToLevel=CurrentLevelNumber
-			PositionCameraInLevel(ObjectData(i,D2),ObjectData(i,D3))
-			SetWhereWeEndedUpMarker(ObjectData(i,D2),ObjectData(i,D3))
+			PositionCameraInLevel(GetDataByIndex(Attributes,D2),GetDataByIndex(Attributes,D3))
+			SetWhereWeEndedUpMarker(GetDataByIndex(Attributes,D2),GetDataByIndex(Attributes,D3))
 		ElseIf AskToSaveLevelAndExit()
 			; Destination level might have changed from possible object update event, so we read from Data1 again.
-			EndUpAt(ObjectData(i,D1),ObjectData(i,D2),ObjectData(i,D3))
+			EndUpAt(GetDataByIndex(Attributes,D1),GetDataByIndex(Attributes,D2),GetDataByIndex(Attributes,D3))
 		EndIf
 	EndIf
 
@@ -4226,8 +4226,8 @@ Function EditorLocalRendering()
 	Rect StartX,StartY,80,35,True
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+16,StartY+2,"Height"
-	Text StartX,StartY+15,"<<"
-	Text StartX+80-16,StartY+15,">>"
+	Text StartX,StartY+15,"^^"
+	Text StartX+80-16,StartY+15,"vv"
 	If LevelHeight>9
 		Text StartX+40-8,StartY+15,Str$(LevelHeight)
 	Else 
@@ -12084,12 +12084,18 @@ Function DisplayObjectAdjuster(i)
 				tex$=Str$(-CurrentObject\Attributes\Data4)+"/"+GetTypeString$(-CurrentObject\Attributes\Data4)
 			EndIf
 		EndIf
+		
+		If CurrentObject\Attributes\LogicType=200 ; Glovecharge
+			tex2$="(MOD) Homing"
+			tex$=CurrentObject\Attributes\Data4+"/"+OneToYes$(CurrentObject\Attributes\Data4)
+		EndIf
 
-		If  CurrentObject\Attributes\LogicType=242 ; Cuboid
+		If CurrentObject\Attributes\LogicType=242 ; Cuboid
 			;tex2$="Cmd Data2"
 			tex2$=GetCMDData2Name$(CurrentObject\Attributes\Data2)
 			tex$=GetCmdData2ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data4)
 		EndIf
+		
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalX1"
 		EndIf
@@ -15546,13 +15552,9 @@ Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,D4,x,y)
 	Case 7
 		CalculateLevelExitTo(D1,D2,D3,D4,CurrentLevelNumber,x,y)
 		CurrentGrabbedObjectModified=True
-	Case 11
-		CurrentObjectData(D2)=x
-		CurrentObjectData(D3)=y
-		CurrentGrabbedObjectModified=True
-	Case 61
-		CurrentObjectData(D2)=x
-		CurrentObjectData(D3)=y
+	Case 11,61
+		SetDataByIndex(CurrentObject\Attributes,D2,x)
+		SetDataByIndex(CurrentObject\Attributes,D3,y)
 		CurrentGrabbedObjectModified=True
 	Default
 		GenerateLevelExitTo(CurrentLevelNumber,x,y)
@@ -15562,9 +15564,10 @@ End Function
 
 Function CalculateLevelExitTo(D1,D2,D3,D4,level,x,y)
 
-	CurrentObjectData(D1)=level
-	CurrentObjectData(D2)=x
-	CurrentObjectData(D3)=y
+	SetDataByIndex(CurrentObject\Attributes,D1,level)
+	SetDataByIndex(CurrentObject\Attributes,D2,x)
+	SetDataByIndex(CurrentObject\Attributes,D3,y)
+	
 	StartingYaw=0 ; south
 	; examine surroundings to infer player facing direction
 	For i=0 To NofObjects-1
@@ -15600,7 +15603,7 @@ Function CalculateLevelExitTo(D1,D2,D3,D4,level,x,y)
 		EndIf
 	Next
 	
-	CurrentObjectData(D4)=StartingYaw
+	SetDataByIndex(CurrentObject\Attributes,D4,StartingYaw)
 	
 	If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=10 ; LevelExit
 		CurrentObject\Attributes\YawAdjust=180-StartingYaw
@@ -25981,17 +25984,21 @@ End Function
 Function ControlGoldStar(i)
 
 	SimulatedObjectZ(i)=.8
+;	If AdventureCurrentStatus=0
+;		ObjectXScale(i)=.5
+;		ObjectYScale(i)=.5
+;		ObjectZScale(i)=.5
+;		ObjectZ(i)=.4
+;	EndIf
 
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
 
-	a=Rand(0,300)
+	If SimulatedObjectActive(i)<1001 And (SimulatedObjectActive(i)<>0 Or SimulationLevel>=2) Then Return
 
+	a=Rand(0,300)
 	If a<50
 		AddParticle(19,ObjectTileX(i)+0.5,.7+ObjectZAdjust(i),-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
 	EndIf
-	
-	;SimulateObjectPosition(i)
-	;SimulateObjectRotation(i)
 
 End Function
 
@@ -26003,7 +26010,7 @@ Function ControlGoldCoin(i)
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
 		
 		If ObjectActive(i)>600
-			SimulatedObjectZ(i)=.2+Float(1000-ObjectActive(i))/400.0
+			SimulatedObjectZ(i)=.2+Float(1000-SimulatedObjectActive(i))/400.0
 		Else
 			SimulatedObjectZ(i)=1.2
 		EndIf
