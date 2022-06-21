@@ -10033,7 +10033,7 @@ End Function
 
 Function GrabObjectFromBrush(i)	
 
-	CopyObjectAttributes(BrushObjects(i)\Attributes,CurrentObject\Attributes)
+	CopyObjectAttributes(BrushObjects(i),CurrentObject\Attributes)
 		
 	BuildCurrentObjectModel()
 
@@ -10047,7 +10047,7 @@ Function CreateObjectPositionMarker(i)
 	EntityAlpha ObjectPositionMarker(i),.8
 	PositionObjectPositionMarker(i)
 
-	UpdateObjectPositionMarkersAtTile(LevelObjects(i)\Attributes\TileX,LevelObjects(i)\Attributes\TileY)
+	UpdateObjectPositionMarkersAtTile(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
 	
 	If ShowObjectPositions=False
 		HideEntity ObjectPositionMarker(i)
@@ -10069,13 +10069,13 @@ Function DecrementLevelTileObjectCount(x,y)
 
 End Function
 
-Function IncrementLevelTileObjectCountFor(Attributes)
+Function IncrementLevelTileObjectCountFor(Attributes.GameObjectPosition)
 
 	IncrementLevelTileObjectCount(Attributes\TileX,Attributes\TileY)
 
 End Function
 
-Function DecrementLevelTileObjectCountFor(Attributes)
+Function DecrementLevelTileObjectCountFor(Attributes.GameObjectPosition)
 
 	DecrementLevelTileObjectCount(Attributes\TileX,Attributes\TileY)
 
@@ -10101,7 +10101,7 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 	;LevelTileObjectCount(tilex,tiley)=0
 
 	For i=0 To NofObjects-1
-		If ObjectTileX(i)=tilex And ObjectTileY(i)=tiley
+		If LevelObjects(i)\Position\TileX=tilex And LevelObjects(i)\Position\TileY=tiley
 		;If ObjectIsAtInt(i,tilex,tiley)
 			If LevelTileObjectCount(tilex,tiley)=1
 				EntityColor ObjectPositionMarker(i),255,100,100
@@ -10117,50 +10117,52 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 
 End Function
 
-Function FreeModel(i)
+Function FreeModel(Obj.GameObject)
 
-	If ObjectEntity(i)>0
-		FreeEntity ObjectEntity(i)
-		ObjectEntity(i)=0
+	If Obj\Entity>0
+		FreeEntity Obj\Entity
+		Obj\Entity=0
 	EndIf
 	
-	If ObjectTexture(i)>0
-		FreeTexture ObjectTexture(i)
-		ObjectTexture(i)=0
+	If Obj\Texture>0
+		FreeTexture Obj\Texture
+		Obj\Texture=0
 	EndIf
 
-	;ShowMessage("Checking ObjectHatEntity for freeing on "+i+": "+ObjectHatEntity(i), 1000)
-	If ObjectHatEntity(i)>0
-		FreeEntity ObjectHatEntity(i)
-		ObjectHatEntity(i)=0
+	;ShowMessage("Checking ObjectHatEntity for freeing on "+i+": "+ObjectHatEntity, 1000)
+	If Obj\HatEntity>0
+		FreeEntity Obj\HatEntity
+		Obj\HatEntity=0
 	EndIf
 
-	;ShowMessage("Checking ObjectAccEntity for freeing on "+i+": "+ObjectAccEntity(i), 1000)
-	If ObjectAccEntity(i)>0
-		FreeEntity ObjectAccEntity(i)
-		ObjectAccEntity(i)=0
+	;ShowMessage("Checking ObjectAccEntity for freeing on "+i+": "+ObjectAccEntity, 1000)
+	If Obj\AccEntity>0
+		FreeEntity Obj\AccEntity
+		Obj\AccEntity=0
 	EndIf
 	
-	;ShowMessage("Checking ObjectHatTexture for freeing on "+i+": "+ObjectHatTexture(i), 1000)
-	If ObjectHatTexture(i)>0
-		FreeTexture ObjectHatTexture(i)
-		ObjectHatTexture(i)=0
+	;ShowMessage("Checking ObjectHatTexture for freeing on "+i+": "+ObjectHatTexture, 1000)
+	If Obj\HatTexture>0
+		FreeTexture Obj\HatTexture
+		Obj\HatTexture=0
 	EndIf
 
-	;ShowMessage("Checking ObjectAccTexture for freeing on "+i+": "+ObjectAccTexture(i), 1000)
-	If ObjectAccTexture(i)>0
-		FreeTexture ObjectAccTexture(i)
-		ObjectAccTexture(i)=0
+	;ShowMessage("Checking ObjectAccTexture for freeing on "+i+": "+ObjectAccTexture, 1000)
+	If Obj\AccTexture>0
+		FreeTexture Obj\AccTexture
+		Obj\AccTexture=0
 	EndIf
 
 End Function
 
 Function FreeObject(i)
 
-	FreeModel(i)
+	Obj.GameObject=LevelObjects(i)
+
+	FreeModel(Obj)
 	
-	tilex=ObjectTileX(i)
-	tiley=ObjectTileY(i)
+	tilex=Obj\Position\TileX
+	tiley=Obj\Position\TileY
 	LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)-1
 
 	If ObjectPositionMarker(i)>0
@@ -10193,28 +10195,30 @@ Function DeleteObject(i)
 	NofObjects=NofObjects-1
 	
 	For j=0 To NofObjects-1
-		If ObjectLinked(j)=i
-			ObjectLinked(j)=-1
-		Else If ObjectLinked(j)>i
-			ObjectLinked(j)=ObjectLinked(j)-1
+		Obj.GameObject=LevelObjects(j)
+		
+		If Obj\Attributes\Linked=i
+			Obj\Attributes\Linked=-1
+		Else If Obj\Attributes\Linked>i
+			Obj\Attributes\Linked=Obj\Attributes\Linked-1
 		EndIf
 		
-		If ObjectLinkBack(j)=i
-			ObjectLinkBack(j)=-1
-		Else If ObjectLinkBack(j)>i
-			ObjectLinkBack(j)=ObjectLinkBack(j)-1
+		If Obj\Attributes\LinkBack=i
+			Obj\Attributes\LinkBack=-1
+		Else If Obj\Attributes\LinkBack>i
+			Obj\Attributes\LinkBack=Obj\Attributes\LinkBack-1
 		EndIf
 		
-		If ObjectParent(j)=i
-			ObjectParent(j)=-1
-		Else If ObjectParent(j)>i
-			ObjectParent(j)=ObjectParent(j)-1
+		If Obj\Attributes\Parent=i
+			Obj\Attributes\Parent=-1
+		Else If Obj\Attributes\Parent>i
+			Obj\Attributes\Parent=Obj\Attributes\Parent-1
 		EndIf
 		
-		If ObjectChild(j)=i
-			ObjectChild(j)=-1
-		Else If ObjectChild(j)>i
-			ObjectChild(j)=ObjectChild(j)-1
+		If Obj\Attributes\Child=i
+			Obj\Attributes\Child=-1
+		Else If Obj\Attributes\Child>i
+			Obj\Attributes\Child=Obj\Attributes\Child-1
 		EndIf
 	Next
 	
@@ -10257,7 +10261,8 @@ Function DeleteObjectAt(x,y)
 
 	DeleteCount=0
 	For i=0 To NofObjects-1
-		If Floor(ObjectX(i))=x And Floor(ObjectY(i))=y
+		Pos.GameObjectPosition=LevelObjects(i)\Position
+		If Floor(Pos\X)=x And Floor(Pos\Y)=y
 			DeleteObject(i)
 			SetEditorMode(3)
 			i=i-1
@@ -10271,23 +10276,26 @@ End Function
 
 Function CopyObjectData(Source,Dest)
 
-	ObjectEntity(Dest)=ObjectEntity(Source)
-	ObjectTexture(Dest)=ObjectTexture(Source)
-	ObjectHatEntity(Dest)=ObjectHatEntity(Source)
-	ObjectAccEntity(Dest)=ObjectAccEntity(Source)
-	ObjectHatTexture(Dest)=ObjectHatTexture(Source)
-	ObjectAccTexture(Dest)=ObjectAccTexture(Source)
+	ObjSource.GameObject=LevelObjects(Source)
+	ObjDest.GameObject=LevelObjects(Dest)
+
+	ObjDest\Entity=ObjSource\Entity
+	ObjDest\Texture=ObjSource\Texture
+	ObjDest\HatEntity=ObjSource\HatEntity
+	ObjDest\AccEntity=ObjSource\AccEntity
+	ObjDest\HatTexture=ObjSource\HatTexture
+	ObjDest\AccTexture=ObjSource\AccTexture
 	; making sure there is no aliasing since that previously caused occasional MAVs
-	ObjectEntity(Source)=0
-	ObjectTexture(Source)=0
-	ObjectHatEntity(Source)=0
-	ObjectAccEntity(Source)=0
-	ObjectHatTexture(Source)=0
-	ObjectAccTexture(Source)=0
+	ObjSource\Entity=0
+	ObjSource\Texture=0
+	ObjSource\HatEntity=0
+	ObjSource\AccEntity=0
+	ObjSource\HatTexture=0
+	ObjSource\AccTexture=0
 	
 	
-	CopyObjectAttributes(LevelObjects(Source)\Attributes,LevelObjects(Dest)\Attributes)
-	CopyObjectPositions(LevelObjects(Source)\Position,LevelObjects(Dest)\Position)
+	CopyObjectAttributes(ObjSource\Attributes,ObjDest\Attributes)
+	CopyObjectPosition(ObjSource\Position,ObjDest\Position)
 		
 	;For i=0 To 30
 	;	ObjectAdjusterString$(Dest,i)=ObjectAdjusterString$(Source,i)
@@ -10304,128 +10312,17 @@ Function CopyObjectDataToBrush(Source,Dest,XOffset,YOffset)
 	;BrushObjectXOffset#(Dest)=XOffset#-0.5
 	;BrushObjectYOffset#(Dest)=YOffset#-0.5
 	BrushObjectTileXOffset(Dest)=XOffset
-	BrushObjectTileYOffset(Dest)=YOffset	
-
-	BrushObjectModelName$(Dest)=ObjectModelName$(Source)
-	BrushObjectTextureName$(Dest)=ObjectTextureName$(Source)
-	BrushObjectXScale#(Dest)=ObjectXScale#(Source)
-	BrushObjectZScale#(Dest)=ObjectZScale#(Source)
-	BrushObjectYScale#(Dest)=ObjectYScale#(Source)
-	BrushObjectXAdjust#(Dest)=ObjectXAdjust#(Source)
-	BrushObjectZAdjust#(Dest)=ObjectZAdjust#(Source)
-	BrushObjectYAdjust#(Dest)=ObjectYAdjust#(Source)
-	BrushObjectPitchAdjust#(Dest)=ObjectPitchAdjust#(Source)
-	BrushObjectYawAdjust#(Dest)=ObjectYawAdjust#(Source)
-	BrushObjectRollAdjust#(Dest)=ObjectRollAdjust#(Source)
-		
-	BrushObjectX(Dest)=0.5 ;ObjectX(Source)
-	BrushObjectY(Dest)=0.5 ;ObjectY(Source)
-	BrushObjectZ(Dest)=ObjectZ(Source)
-	;oldxyz is not copied
-	BrushObjectDX(Dest)=ObjectDX(Source)
-	BrushObjectDY(Dest)=ObjectDY(Source)
-	BrushObjectDZ(Dest)=ObjectDZ(Source)
+	BrushObjectTileYOffset(Dest)=YOffset
 	
-	BrushObjectPitch(Dest)=ObjectPitch(Source)
-	BrushObjectYaw(Dest)=ObjectYaw(Source)
-	BrushObjectRoll(Dest)=ObjectRoll(Source)
-	BrushObjectPitch2(Dest)=ObjectPitch2(Source)
-	BrushObjectYaw2(Dest)=ObjectYaw2(Source)
-	BrushObjectRoll2(Dest)=ObjectRoll2(Source)
-
-
-	BrushObjectXGoal(Dest)=ObjectXGoal(Source)
-	BrushObjectYGoal(Dest)=ObjectYGoal(Source)
-	BrushObjectZGoal(Dest)=ObjectZGoal(Source)
+	;BrushObjects(Dest)\X=0.5 ;ObjectX(Source)
+	;BrushObjects(Dest)\Y=0.5 ;ObjectY(Source)
+	;BrushObjects(Dest)\Z=LevelObjects(Source)\Attributes\Z
+	;BrushObjectTileX(Dest)=ObjectTileX(Source)
+	;BrushObjectTileY(Dest)=ObjectTileY(Source)
+	;BrushObjectTileX2(Dest)=ObjectTileX2(Source)
+	;BrushObjectTileY2(Dest)=ObjectTileY2(Source)
 	
-	BrushObjectMovementType(Dest)=ObjectMovementType(Source)
-	BrushObjectMovementTypeData(Dest)=ObjectMovementTypeData(Source)
-	BrushObjectSpeed(Dest)=ObjectSpeed(Source)
-	BrushObjectRadius(Dest)=ObjectRadius(Source)
-	BrushObjectRadiusType(Dest)=ObjectRadiusType(Source)
-	
-	BrushObjectData10(Dest)=ObjectData10(Source)
-	
-	BrushObjectPushDX(Dest)=ObjectPushDX(Source)
-	BrushObjectPushDY(Dest)=ObjectPushDY(Source)
-
-	
-	BrushObjectAttackPower(Dest)=ObjectAttackPower(Source)
-	BrushObjectDefensePower(Dest)=ObjectDefensePower(Source)
-	BrushObjectDestructionType(Dest)=ObjectDestructionType(Source)
-	
-
-	BrushObjectID(Dest)=ObjectID(Source)
-	BrushObjectType(Dest)=ObjectType(Source)
-	BrushObjectSubType(Dest)=ObjectSubType(Source)
-	
-	BrushObjectActive(Dest)=ObjectActive(Source)
-	BrushObjectLastActive(Dest)=ObjectLastActive(Source)
-	BrushObjectActivationType(Dest)=ObjectActivationType(Source)
-	BrushObjectActivationSpeed(Dest)=ObjectActivationSpeed(Source)
-	
-	BrushObjectStatus(Dest)=ObjectStatus(Source)
-	BrushObjectTimer(Dest)=ObjectTimer(Source)
-	BrushObjectTimerMax1(Dest)=ObjectTimerMax1(Source)
-	BrushObjectTimerMax2(Dest)=ObjectTimerMax2(Source)
-	
-	BrushObjectTeleportable(Dest)=ObjectTeleportable(Source)
-	BrushObjectButtonPush(Dest)=ObjectButtonPush(Source)
-	BrushObjectWaterReact(Dest)=ObjectWaterReact(Source)
-	
-	BrushObjectTelekinesisable(Dest)=ObjectTelekinesisable(Source)
-	BrushObjectFreezable(Dest)=ObjectFreezable(Source)
-	
-	BrushObjectReactive(Dest)=ObjectReactive(Source)
-	
-	BrushObjectChild(Dest)=ObjectChild(Source)
-	BrushObjectParent(Dest)=ObjectParent(Source)
-
-	
-	For k=0 To 9
-		BrushObjectData(Dest,k)=ObjectData(Source,k)
-	Next
-	For k=0 To 3
-		BrushObjectTextData$(Dest,k)=ObjectTextData$(Source,k)
-	Next
-	
-	BrushObjectTalkable(Dest)=ObjectTalkable(Source)
-	BrushObjectCurrentAnim(Dest)=ObjectCurrentAnim(Source)
-	BrushObjectStandardAnim(Dest)=ObjectStandardAnim(Source)
-	BrushObjectTileX(Dest)=ObjectTileX(Source)
-	BrushObjectTileY(Dest)=ObjectTileY(Source)
-	BrushObjectTileX2(Dest)=ObjectTileX2(Source)
-	BrushObjectTileY2(Dest)=ObjectTileY2(Source)
-	BrushObjectMovementTimer(Dest)=ObjectMovementTimer(Source)
-	BrushObjectMovementSpeed(Dest)=ObjectMovementSpeed(Source)
-	BrushObjectMoveXGoal(Dest)=ObjectMoveXGoal(Source)
-	BrushObjectMoveYGoal(Dest)=ObjectMoveYGoal(Source)
-	BrushObjectTileTypeCollision(Dest)=ObjectTileTypeCollision(Source)
-	BrushObjectObjectTypeCollision(Dest)=ObjectObjectTypeCollision(Source)
-	BrushObjectCaged(Dest)=ObjectCaged(Source)
-	BrushObjectDead(Dest)=ObjectDead(Source)
-	BrushObjectDeadTimer(Dest)=ObjectDeadTimer(Source)
-	BrushObjectExclamation(Dest)=ObjectExclamation(Source)
-	BrushObjectShadow(Dest)=ObjectShadow(Source)
-	BrushObjectLinked(Dest)=ObjectLinked(Source)
-	BrushObjectLinkBack(Dest)=ObjectLinkBack(Source)
-	BrushObjectFlying(Dest)=ObjectFlying(Source)
-	BrushObjectFrozen(Dest)=ObjectFrozen(Source)
-	BrushObjectIndigo(Dest)=ObjectIndigo(Source)
-	BrushObjectFutureInt24(Dest)=ObjectFutureInt24(Source)
-	BrushObjectFutureInt25(Dest)=ObjectFutureInt25(Source)
-	BrushObjectScaleAdjust(Dest)=ObjectScaleAdjust(Source)
-	BrushObjectScaleXAdjust(Dest)=ObjectScaleXAdjust(Source)
-	BrushObjectScaleYAdjust(Dest)=ObjectScaleYAdjust(Source)
-	BrushObjectScaleZAdjust(Dest)=ObjectScaleZAdjust(Source)
-	BrushObjectFutureFloat5(Dest)=ObjectFutureFloat5(Source)
-	BrushObjectFutureFloat6(Dest)=ObjectFutureFloat6(Source)
-	BrushObjectFutureFloat7(Dest)=ObjectFutureFloat7(Source)
-	BrushObjectFutureFloat8(Dest)=ObjectFutureFloat8(Source)
-	BrushObjectFutureFloat9(Dest)=ObjectFutureFloat9(Source)
-	BrushObjectFutureFloat10(Dest)=ObjectFutureFloat10(Source)
-	BrushObjectFutureString1$(Dest)=ObjectFutureString1$(Source)
-	BrushObjectFutureString2$(Dest)=ObjectFutureString1$(Source)
+	CopyObjectAttributes(LevelObjects(Source)\Attributes,BrushObjects(Dest))
 
 End Function
 
@@ -10455,7 +10352,7 @@ Function PasteObjectData(Dest)
 	;ObjectTileY(Dest)=CurrentObject\Position\TileY
 	;ObjectTileX2(Dest)=CurrentObject\Position\TileX2
 	;ObjectTileY2(Dest)=CurrentObject\Position\TileY2
-	CopyObjectAttributes(CurrentObject/Attributes,LevelObjects(Dest)/Attributes)
+	CopyObjectAttributes(CurrentObject\Attributes,LevelObjects(Dest)\Attributes)
 
 	;FreeClothes(Dest)
 	
@@ -10468,9 +10365,9 @@ Function PasteObjectData(Dest)
 	;	ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
 	;Next
 	
-	FreeModel(Dest)
+	FreeModel(LevelObjects(Dest))
 	
-	UpdateObjectEntityToCurrent(Dest)
+	UpdateObjectEntityToCurrent(LevelObjects(Dest))
 	
 	UpdateCurrentGrabbedObjectMarkerPosition()
 	
@@ -10481,7 +10378,7 @@ End Function
 
 Function UpdateCurrentGrabbedObjectMarkerPosition()
 
-	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,CurrentGrabbedObject,0.0)
+	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,LevelObjects(CurrentGrabbedObject),0.0)
 
 End Function
 
@@ -10683,7 +10580,7 @@ Function HoverOverObjectAdjuster(i)
 		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this TextureName.")
 		
 	Case "ID"
-		EffectiveID=CalculateCurrentObjectEffectiveID()
+		EffectiveID=CalculateEffectiveID(CurrentObject\Attributes)
 		Count=CountObjectEffectiveIDs(EffectiveID)
 		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this effective ID, which is "+EffectiveID+".")
 		
@@ -10831,9 +10728,9 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "DestructionType"
 		tex$=Str$(CurrentObject\Attributes\DestructionType)
-		Randomized=ObjectAdjuster\RandomEnabled
-		LeftAdj$=ObjectAdjuster\RandomMin
-		RightAdj$=ObjectAdjuster\RandomMax
+		Randomized=ObjectAdjusterDestructionType\RandomEnabled
+		LeftAdj$=ObjectAdjusterDestructionType\RandomMin
+		RightAdj$=ObjectAdjusterDestructionType\RandomMax
 		
 		Select CurrentObject\Attributes\DestructionType
 			Case 0
@@ -12106,21 +12003,23 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObject\Attributes\Data4+"/"+tex$
 		EndIf
 
-		If CurCurrentObject\Attributes\LogicTyperentObjectType=90 ; button
+		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
-				tex2$="SubColourCurrentObject\Attributes\LogicType If CurrentObjecCurrentObject\Attributes\LogicTypeevelExit
+				tex2$="SubColour1"
+
+			Else If CurrentObject\Attributes\LogicType=10 ; LevelExit
 				tex2$="PlayerYaw"
 				DisplayedRotation=(CurrentObject\Attributes\Data4+180) Mod 360
-				tex$=GetDirectionString$(DisplayedRotation, CurrentObject\Attributes\LogicType)
+				tex$=GetDirectionString$(DisplayedRotation)
 				
-			Else If CurrentObject\Attributes\LogicSubType = 11 And CurrentObject\Attributes\LogicTypetributes\Data0=0 Or CurrentObject\AttCurrentObject\Attributes\LogicType; NPC Modifier: NPC Move or NPC Exclamation
+			Else If CurrentObject\Attributes\LogicSubType=11 And (CurrentObject\Attributes\Data0=0 Or CurrentObject\Attributes\Data0=2) ; NPC Modifier: NPC Move or NPC Exclamation
 				tex2$="Repeatable"
 				If CurrentObject\Attributes\Data4=0
 					tex$="Yes"
 				Else
 					tex$="No"
 				EndIf
-			Else If CurrentObject\Attributes\LogicSubType = 11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier: NPC Change
+			Else If CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier: NPC Change
 				tex2$="Yaw"
 				If CurrentObject\Attributes\Data4=-1
 					tex$="No Change"
@@ -12202,7 +12101,9 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\ModelName$="!GlowWorm" Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Red"
-		EndCurrentObject\Attributes\LogicTypeentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="ZAnim"
 		EndIf
 		
@@ -12213,7 +12114,6 @@ Function DisplayObjectAdjuster(i)
 			Else
 				tex$="No"
 			EndIf
-			
 		EndIf
 		
 
@@ -13041,7 +12941,7 @@ Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
 			RandomDataMax(i)=AdjustInt("Data"+i+" Max: ", RandomDataMax(i), NormalSpeed, FastSpeed, DelayTime)
 		EndIf
 	Else
-		CurrentObjectData(i)=AdjustInt("Data"+i+": ", CurrentObjectData(i), NormalSpeed, FastSpeed, DelayTime)
+		SetDataByIndex(CurrentObject\Attributes,i,AdjustInt("Data"+i+": ", GetDataByIndex(CurrentObject\Attributes,i), NormalSpeed, FastSpeed, DelayTime))
 	EndIf
 	If ReturnPressed()
 		RandomData(i)=Not RandomData(i)
@@ -13146,10 +13046,10 @@ Function AdjustObjectAdjuster(i)
 					Target$=CurrentObject\Attributes\TextData0
 					CurrentObjectTextData0=InputString$("Replacement TextData0: ")
 					For j=0 To NofObjects-1
-						LevelObject=LevelObjects(j)
+						LevelObject.GameObject=LevelObjects(j)
 						If LevelObject\Attributes\TextData0$=Target$
 							LevelObject\Attributes\TextData0$=CurrentObject\Attributes\TextData0$
-							UpdateObjectModel(LevelObject)
+							UpdateLevelObjectModel(j)
 						EndIf
 					Next
 				EndIf
@@ -13164,10 +13064,10 @@ Function AdjustObjectAdjuster(i)
 					Target$=CurrentObject\Attributes\TextData1$
 					CurrentObjectTextData1$=InputString$("Replacement TextData1: ")
 					For j=0 To NofObjects-1
-						LevelObject=LevelObjects(j)
+						LevelObject.GameObject=LevelObjects(j)
 						If LevelObject\Attributes\TextData1$=Target$
 							LevelObject\Attributes\TextData1$=CurrentObject\Attributes\TextData1$
-							UpdateObjectModel(LevelObject)
+							UpdateLevelObjectModel(j)
 						EndIf
 					Next
 				EndIf
@@ -13182,10 +13082,10 @@ Function AdjustObjectAdjuster(i)
 					Target$=CurrentObject\Attributes\TexName$
 					InputTextureName("Replacement TextureName: ")
 					For j=0 To NofObjects-1
-						LevelObject=LevelObjects(j)
+						LevelObject.GameObject=LevelObjects(j)
 						If LevelObject\Attributes\TexName$=Target$
 							LevelObject\Attributes\TexName$=CurrentObject\Attributes\TexName$
-							UpdateObjectModel(LevelObject)
+							UpdateLevelObjectModel(j)
 						EndIf
 					Next
 				EndIf
@@ -13201,13 +13101,13 @@ Function AdjustObjectAdjuster(i)
 					Target$=CurrentObject\Attributes\ModelName$
 					InputModelName("Replacement ModelName: ")
 					For j=0 To NofObjects-1
-						LevelObject=LevelObjects(j)
+						LevelObject.GameObject=LevelObjects(j)
 						If LevelObject\Attributes\ModelName$=Target$
 							LevelObject\Attributes\ModelName$=CurrentObject\Attributes\ModelName$
 							If CurrentObject\Attributes\ModelName$="!CustomModel"
 								LevelObject\Attributes\TextData0$=CurrentObject\Attributes\TextData0$
 							EndIf
-							UpdateObjectModel(j)
+							UpdateLevelObjectModel(j)
 						EndIf
 					Next
 				EndIf
@@ -14851,7 +14751,7 @@ Function BuildCurrentObjectModel()
 
 End Function
 
-Function BuildObjectModel(Obj)
+Function BuildObjectModel(Obj.GameObject)
 	
 	If CurrentObject\Entity>0 
 		FreeEntity Obj\Entity
@@ -14896,15 +14796,15 @@ Function BuildObjectModel(Obj)
 		
 	Else If Obj\Attributes\ModelName$="!CustomModel"
 		
-		If FileType("UserData\Custom\Models\"+ObjTextData(0)+".3ds")<>1 Or FileType("UserData\Custom\Models\"+ObjTextData(0)+".jpg")<>1
+		If FileType("UserData\Custom\Models\"+Obj\Attributes\TextData0+".3ds")<>1 Or FileType("UserData\Custom\Models\"+Obj\Attributes\TextData0+".jpg")<>1
 			Print "Couldn't Load 3ds/jpg."
 			Print "Reverting to 'Default' Custom Model."
  			Delay 2000
 			
-			ObjTextData(0)="Default"
+			Obj\Attributes\TextData0="Default"
 		EndIf
-		Obj\Entity=LoadMesh("UserData\Custom\Models\"+ObjTextData(0)+".3ds")
-		Obj\Texture=LoadTexture("UserData\Custom\Models\"+ObjTextData(0)+".jpg")
+		Obj\Entity=LoadMesh("UserData\Custom\Models\"+Obj\Attributes\TextData0+".3ds")
+		Obj\Texture=LoadTexture("UserData\Custom\Models\"+Obj\Attributes\TextData0+".jpg")
 		EntityTexture Obj\Entity,Obj\Texture
 
 		
@@ -15317,11 +15217,12 @@ Function BuildObjectModel(Obj)
 		Obj\Entity=CreateCube()
 		ScaleMesh Obj\Entity,2.5,.01,2.5
 		PositionMesh Obj\Entity,0,0,-1
-		EntityTexture Obj\Entity,SObj\Attributes\YawAdjust	EntityBlend Obj\Entity,3
+		EntityTexture Obj\Entity,SkyMachineMapTexture
+		EntityBlend Obj\Entity,3
 		
 	
 	Else If Obj\Attributes\ModelName$="!GrowFlower"
-		Obj\Entity=CreateGrowFlowerMesh(CurrObj\Attributes\YawAdjustata0)
+		Obj\Entity=CreateGrowFlowerMesh(Obj\Attributes\Data0)
 
 	Else If Obj\Attributes\ModelName$="!FloingBubble"
 		Obj\Entity=CreateFloingBubbleMesh()
@@ -17043,7 +16944,7 @@ Function IsObjectLogicAutodoor(TargetType,TargetSubType)
 End Function
 
 ; i hate blitz because it won't let me have arrays in custom types
-Function SetDataByIndex(Attributes,i,Value)
+Function SetDataByIndex(Attributes.GameObjectAttributes,i,Value)
 	Select i
 	Case 0
 		Attributes\Data0=Value
