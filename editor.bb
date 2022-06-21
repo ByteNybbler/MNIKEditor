@@ -6707,9 +6707,9 @@ Function ObjectTypeCollisionBitToName$(BitIndex)
 	Case 6
 		Return "Sunken Turtles and (if TTC has Bridge) Transporters"
 	Case 7
-		Return "Untalkable NPCs, Signs, Unsunken Turtles, GrowFlowers, FireFlowers, Ducks"
+		Return "Untalkable NPCs, Signs, Unsunken Turtles, FireFlowers, Ducks, Moobots, Burstflowers"
 	Case 8
-		Return "Chompers, Spikeyballs, Ghosts, Retro Monsters"
+		Return "Chompers, Spikeyballs, Ghosts, and Retro Monsters"
 	Case 9
 		Return "Barrels, Cuboids, Boxes, and GrowFlowers"
 	Case 10
