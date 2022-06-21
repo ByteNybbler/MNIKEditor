@@ -9708,51 +9708,61 @@ End Function
 Function ResetSimulatedQuantities()
 
 	For i=0 To NofObjects-1
-		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)
-		SimulatedObjectYAdjust(i)=ObjectYAdjust(i)
-		SimulatedObjectZAdjust(i)=ObjectZAdjust(i)
-		SimulatedObjectX(i)=ObjectX(i)
-		SimulatedObjectY(i)=ObjectY(i)
-		SimulatedObjectZ(i)=ObjectZ(i)
-		SimulatedObjectYaw(i)=ObjectYaw(i)
-		SimulatedObjectPitch(i)=ObjectPitch(i)
-		SimulatedObjectRoll(i)=ObjectRoll(i)
-		SimulatedObjectYawAdjust(i)=ObjectYawAdjust(i)
-		SimulatedObjectPitchAdjust(i)=ObjectPitchAdjust(i)
-		SimulatedObjectRollAdjust(i)=ObjectRollAdjust(i)
-		SimulatedObjectYaw2(i)=ObjectYaw2(i)
-		SimulatedObjectPitch2(i)=ObjectPitch2(i)
-		SimulatedObjectRoll2(i)=ObjectRoll2(i)
-		SimulatedObjectActive(i)=ObjectActive(i)
-		SimulatedObjectLastActive(i)=ObjectLastActive(i)
-		SimulatedObjectXScale(i)=ObjectXScale(i)
-		SimulatedObjectYScale(i)=ObjectYScale(i)
-		SimulatedObjectZScale(i)=ObjectZScale(i)
-		SimulatedObjectStatus(i)=ObjectStatus(i)
-		SimulatedObjectTimer(i)=ObjectTimer(i)
-		For j=0 To 10
-			SimulatedObjectData(i,j)=ObjectData(i,j)
-		Next
-		SimulatedObjectCurrentAnim(i)=ObjectCurrentAnim(i)
-		SimulatedObjectMovementSpeed(i)=ObjectMovementSpeed(i)
-		SimulatedObjectMoveXGoal(i)=ObjectMoveXGoal(i)
-		SimulatedObjectMoveYGoal(i)=ObjectMoveYGoal(i)
-		SimulatedObjectData10(i)=ObjectData10(i)
-		SimulatedObjectSubType(i)=ObjectSubType(i)
-		SimulatedObjectTileTypeCollision(i)=ObjectTileTypeCollision(i)
-		SimulatedObjectExclamation(i)=ObjectExclamation(i)
-		SimulatedObjectFrozen(i)=ObjectFrozen(i)
-		If ObjectScaleAdjust(i)<>0.0
-			SimulatedObjectXScale(i)=SimulatedObjectXScale(i)*ObjectScaleAdjust(i)
-			SimulatedObjectYScale(i)=SimulatedObjectYScale(i)*ObjectScaleAdjust(i)
-			SimulatedObjectZScale(i)=SimulatedObjectZScale(i)*ObjectScaleAdjust(i)
+		Obj.GameObject=LevelObjects(i)
+		SimulatedObjectXAdjust(i)=Obj\Attributes\XAdjust
+		SimulatedObjectYAdjust(i)=Obj\Attributes\YAdjust
+		SimulatedObjectZAdjust(i)=Obj\Attributes\ZAdjust
+		SimulatedObjectX(i)=Obj\Position\X
+		SimulatedObjectY(i)=Obj\Position\Y
+		SimulatedObjectZ(i)=Obj\Position\Z
+		SimulatedObjectYaw(i)=Obj\Attributes\Yaw
+		SimulatedObjectPitch(i)=Obj\Attributes\Pitch
+		SimulatedObjectRoll(i)=Obj\Attributes\Roll
+		SimulatedObjectYawAdjust(i)=Obj\Attributes\YawAdjust
+		SimulatedObjectPitchAdjust(i)=Obj\Attributes\PitchAdjust
+		SimulatedObjectRollAdjust(i)=Obj\Attributes\RollAdjust
+		SimulatedObjectYaw2(i)=Obj\Attributes\Yaw2
+		SimulatedObjectPitch2(i)=Obj\Attributes\Pitch2
+		SimulatedObjectRoll2(i)=Obj\Attributes\Roll2
+		SimulatedObjectActive(i)=Obj\Attributes\Active
+		SimulatedObjectLastActive(i)=Obj\Attributes\LastActive
+		SimulatedObjectXScale(i)=Obj\Attributes\XScale
+		SimulatedObjectYScale(i)=Obj\Attributes\YScale
+		SimulatedObjectZScale(i)=Obj\Attributes\ZScale
+		SimulatedObjectStatus(i)=Obj\Attributes\Status
+		SimulatedObjectTimer(i)=Obj\Attributes\Timer
+		
+		SimulatedObjectData(i,0)=Obj\Attributes\Data0
+		SimulatedObjectData(i,1)=Obj\Attributes\Data1
+		SimulatedObjectData(i,2)=Obj\Attributes\Data2
+		SimulatedObjectData(i,3)=Obj\Attributes\Data3
+		SimulatedObjectData(i,4)=Obj\Attributes\Data4
+		SimulatedObjectData(i,5)=Obj\Attributes\Data5
+		SimulatedObjectData(i,6)=Obj\Attributes\Data6
+		SimulatedObjectData(i,7)=Obj\Attributes\Data7
+		SimulatedObjectData(i,8)=Obj\Attributes\Data8
+		SimulatedObjectData(i,9)=Obj\Attributes\Data9
+		
+		SimulatedObjectCurrentAnim(i)=Obj\Attributes\CurrentAnim
+		SimulatedObjectMovementSpeed(i)=Obj\Attributes\MovementSpeed
+		SimulatedObjectMoveXGoal(i)=Obj\Attributes\MoveXGoal
+		SimulatedObjectMoveYGoal(i)=Obj\Attributes\MoveYGoal
+		SimulatedObjectData10(i)=Obj\Attributes\Data10
+		SimulatedObjectSubType(i)=Obj\Attributes\LogicSubType
+		SimulatedObjectTileTypeCollision(i)=Obj\Attributes\TileTypeCollision
+		SimulatedObjectExclamation(i)=Obj\Attributes\Exclamation
+		SimulatedObjectFrozen(i)=Obj\Attributes\Frozen
+		If Obj\Attributes\ScaleAdjust<>0.0
+			SimulatedObjectXScale(i)=SimulatedObjectXScale(i)*Obj\Attributes\ScaleAdjust
+			SimulatedObjectYScale(i)=SimulatedObjectYScale(i)*Obj\Attributes\ScaleAdjust
+			SimulatedObjectZScale(i)=SimulatedObjectZScale(i)*Obj\Attributes\ScaleAdjust
 		EndIf
-		SimulatedObjectScaleXAdjust(i)=ObjectScaleXAdjust(i)
-		SimulatedObjectScaleYAdjust(i)=ObjectScaleYAdjust(i)
-		SimulatedObjectScaleZAdjust(i)=ObjectScaleZAdjust(i)
+		SimulatedObjectScaleXAdjust(i)=Obj\Attributes\ScaleXAdjust
+		SimulatedObjectScaleYAdjust(i)=Obj\Attributes\ScaleYAdjust
+		SimulatedObjectScaleZAdjust(i)=Obj\Attributes\ScaleZAdjust
 		
 		; make sure flipbridges are scaled properly
-		If ObjectType(i)=410
+		If Obj\Attributes\LogicType=410
 			ControlFlipbridge(i)
 		EndIf
 	Next
@@ -9771,7 +9781,10 @@ Function SimulateObjectPosition(Dest)
 	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
 	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
 	
-	SetEntityPositionToWorldPosition(ObjectEntity(Dest),XP#,YP#,ZP#,ObjectType(Dest),SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest),SimulatedObjectXScale(Dest),SimulatedObjectYScale(Dest))
+	Entity=LevelObjects(Dest)\Entity
+	TheType=LevelObjects(Dest)\Attributes\LogicType
+	
+	SetEntityPositionToWorldPosition(Entity,XP#,YP#,ZP#,TheType,SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest),SimulatedObjectXScale(Dest),SimulatedObjectYScale(Dest))
 
 End Function
 
@@ -9781,11 +9794,13 @@ Function SimulateObjectRotation(Dest)
 	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
 	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
 	
-	GameLikeRotation(ObjectEntity(Dest),Yaw#,Pitch#,Roll#)
-	TurnEntity ObjectEntity(Dest),SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
+	Entity=LevelObjects(Dest)\Entity
+	GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
+	TurnEntity Entity,SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
 	
-	If ObjectModelName$(Dest)="!Troll" Or ObjectModelName$(Dest)="!Crab" Then TurnEntity ObjectEntity(Dest),0,-90,0
-	If ObjectModelName$(Dest)="!Kaboom" Or ObjectModelName$(Dest)="!BabyBoomer" Then TurnEntity ObjectEntity(Dest),0,90,0
+	ModelName$=LevelObjects(Dest)\Attributes\ModelName$
+	If ModelName$="!Troll" Or ModelName$="!Crab" Then TurnEntity Entity,0,-90,0
+	If ModelName$="!Kaboom" Or ModelName$="!BabyBoomer" Then TurnEntity Entity,0,90,0
 
 End Function
 
@@ -9795,7 +9810,8 @@ Function SimulateObjectScale(Dest)
 	YS#=SimulatedObjectYScale(Dest)
 	ZS#=SimulatedObjectZScale(Dest)
 	
-	ScaleEntity ObjectEntity(Dest),XS#,ZS#,YS#
+	Entity=LevelObjects(Dest)\Entity
+	ScaleEntity Entity,XS#,ZS#,YS#
 	
 End Function
 
@@ -9808,9 +9824,12 @@ Function GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
 End Function
 
 
-Function CopyObjectPosition(SourceAttributes,DestAttributes)
+Function CopyObjectPosition(SourceAttributes.GameObjectPosition,DestAttributes.GameObjectPosition)
 
 	; oldxyz is not grabbed
+	DestAttributes\X#=SourceAttributes\X#
+	DestAttributes\Y#=SourceAttributes\Y#
+	DestAttributes\Z#=SourceAttributes\Z#
 	DestAttributes\TileX=SourceAttributes\TileX
 	DestAttributes\TileY=SourceAttributes\TileY
 	DestAttributes\TileX2=SourceAttributes\TileX2
@@ -9832,9 +9851,6 @@ Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttribut
 	DestAttributes\PitchAdjust#=SourceAttributes\PitchAdjust#
 	DestAttributes\YawAdjust#=SourceAttributes\YawAdjust#
 	DestAttributes\RollAdjust#=SourceAttributes\RollAdjust#
-	DestAttributes\X#=SourceAttributes\X#
-	DestAttributes\Y#=SourceAttributes\Y#
-	DestAttributes\Z#=SourceAttributes\Z#
 	DestAttributes\DX#=SourceAttributes\DX#
 	DestAttributes\DY#=SourceAttributes\DY#
 	DestAttributes\DZ#=SourceAttributes\DZ#
@@ -9893,7 +9909,6 @@ Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttribut
 	DestAttributes\TextData1$=SourceAttributes\TextData1$
 	DestAttributes\TextData2$=SourceAttributes\TextData2$
 	DestAttributes\TextData3$=SourceAttributes\TextData3$
-	DestAttributes\TextData4$=SourceAttributes\TextData4$
 	
 	DestAttributes\Talkable=SourceAttributes\Talkable
 	DestAttributes\CurrentAnim=SourceAttributes\CurrentAnim
@@ -9903,7 +9918,7 @@ Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttribut
 	DestAttributes\MoveXGoal=SourceAttributes\MoveXGoal
 	DestAttributes\MoveYGoal=SourceAttributes\MoveYGoal
 	DestAttributes\TileTypeCollision=SourceAttributes\TileTypeCollision
-	DestAttributes\SourceAttributes\TypeCollision=SourceAttributes\SourceAttributes\TypeCollision
+	DestAttributes\ObjectTypeCollision=SourceAttributes\ObjectTypeCollision
 	DestAttributes\Caged=SourceAttributes\Caged
 	DestAttributes\Dead=SourceAttributes\Dead
 	DestAttributes\DeadTimer=SourceAttributes\DeadTimer
@@ -9933,24 +9948,23 @@ Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttribut
 End Function
 
 
-Function ObjectIsAtInt(i,x,y)
+Function ObjectIsAtInt(Obj.GameObject,x,y)
 
-	MyX#=ObjectX(i)-GetObjectOffset#(i,0)
-	MyY#=ObjectY(i)-GetObjectOffset#(i,1)
+	MyX#=Obj\Position\X-GetObjectOffset#(Obj\Attributes,0)
+	MyY#=Obj\Position\Y-GetObjectOffset#(Obj\Attributes,1)
 	Return Floor(MyX#)=x And Floor(MyY#)=y
 
 End Function
 
-Function ObjectIsAtFloat(i,x#,y#)
+Function ObjectIsAtFloat(Obj.GameObject,x#,y#)
 
-	Return ObjectIsAtInt(i,Floor(x),Floor(y))
-	;Return Floor(ObjectX(i))=Floor(x) And Floor(ObjectY(i))=Floor(y)
+	Return ObjectIsAtInt(Obj,Floor(x),Floor(y))
 
 End Function
 
 Function TryGrabObjectLoop(x#,y#,Target)
 	For i=0 To NofObjects-1
-		If ObjectIsAtFloat(i,x#,y#) And i>Target
+		If ObjectIsAtFloat(LevelObjects(i),x#,y#) And i>Target
 			SetCurrentGrabbedObject(i)
 			Return True
 		EndIf
@@ -9979,8 +9993,8 @@ Function GrabObject(x#,y#)
 	CopyObjectAttributes(LevelObjects(Dest)\Attributes,CurrentObject\Attributes)
 	CopyObjectPosition(LevelObjects(Dest)\Position,CurrentObject\Position)
 	
-	CurrentObject\Attributes\X#=CurrentObject\Attributes\X#-x-0.5
-	CurrentObject\Attributes\Y#=CurrentObject\Attributes\Y#-y-0.5
+	CurrentObject\Position\X#=CurrentObject\Position\X#-x-0.5
+	CurrentObject\Position\Y#=CurrentObject\Position\Y#-y-0.5
 		
 	;NofObjectAdjusters=0
 	;ObjectAdjusterStart=0
