@@ -761,6 +761,10 @@ Until NofTilePresetTiles>0
 Global NofObjects=0
 Const MaxNofObjects=1000
 
+Global CurrentObjectModel,CurrentObjectTexture
+Global CurrentHatModel,CurrentHatTexture
+Global CurrentAccModel,CurrentAccTexture
+
 Dim ObjectEntity(1000),ObjectTexture(1000)
 Dim ObjectHatEntity(1000),ObjectHatTexture(1000)
 Dim ObjectAccEntity(1000),ObjectAccTexture(1000)
@@ -843,51 +847,6 @@ Dim SimulatedObjectExclamation(1000)
 Dim SimulatedObjectFrozen(1000)
 ;Dim SimulatedObjectScaleAdjust#(1000) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
 Dim SimulatedObjectScaleXAdjust#(1000),SimulatedObjectScaleYAdjust#(1000),SimulatedObjectScaleZAdjust#(1000)
-
-Type GameObject
-
-Field Entity,Texture,HatEntity,HatTexture,AccEntity,AccTexture
-Field Attributes.GameObjectAttributes
-
-End Type
-
-Type GameObjectAttributes
-
-Field ModelName$,TexName$ ; Formerly TextureName$, but that's a Blitz3d keyword.
-Field XScale#,YScale#,ZScale#
-Field XAdjust#,YAdjust#,ZAdjust#
-Field PitchAdjust#,YawAdjust#,RollAdjust#
-Field X#,Y#,Z#
-Field OldX#,OldY#,OldZ#
-Field DX#,DY#,DZ#
-Field Pitch#,Yaw#,Roll#
-Field Pitch2#,Yaw2#,Roll2#
-Field XGoal#,YGoal#,ZGoal#
-Field MovementType,MovementTypeData,Speed#,Radius#,RadiusType
-Field Data10
-Field PushDX#,PushDY#,AttackPower,DefensePower,DestructionType
-Field ID,LogicType,LogicSubType ; Again, Type is a Blitz3d keyword.
-Field Active,LastActive,ActivationType,ActivationSpeed
-Field Status,Timer,TimerMax1,TimerMax2
-Field Teleportable,ButtonPush,WaterReact
-Field Telekinesisable,Freezable,Reactive,Child,Parent
-Field Data0,Data1,Data2,Data3,Data4,Data5,Data6,Data7,Data8,Data9,DataExtra ; Oh my god. I guess even the slightest convenience has a price.
-Field TextData1$,TextData2$,TextData3$,TextData4$
-Field Talkable,CurrentAnim,StandardAnim
-Field TileX,TileY,TileX2,TileY2,MovementTimer,MovementSpeed,MoveXGoal,MoveYGoal,TileTypeCollision,ObjectTypeCollision
-Field Caged,Dead,DeadTimer,Exclamation,Shadow,Linked,LinkBack,Flying,Frozen,Indigo,FutureInt24,FutureInt25
-Field ScaleAdjust#,ScaleXAdjust#,ScaleYAdjust#,ScaleZAdjust#
-Field FutureFloat5#,FutureFloat6#,FutureFloat7#,FutureFloat8#,FutureFloat9#,FutureFloat10#,FutureString1$,FutureString2$
-
-End Type
-
-Global CurrentObject.GameObject
-
-Dim LevelObjects.GameObject(1000)
-
-Global CurrentObjectModel,CurrentObjectTexture
-Global CurrentHatModel,CurrentHatTexture
-Global CurrentAccModel,CurrentAccTexture
 
 Global CurrentObjectModelName$
 Global CurrentObjectTextureName$
