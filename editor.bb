@@ -2712,66 +2712,70 @@ Function EditorMainLoop()
 	EndIf
 	RightAlignedText(LevelViewportWidth,5,Line1$)
 	
-	; it's a bit less than the viewport size because the text would otherwise overlap with the x/y coordinate listing on the bottom bar as well as the right margin
-	ProjectedTextLimitX=LevelViewportWidth-10
-	ProjectedTextLimitY=LevelViewportHeight-10
-	
-	If ShowObjectMesh>=2
-		For i=0 To NofObjects-1
-			CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
-			x#=ProjectedX#()
-			y#=ProjectedY#()
-			If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
-				If ShowObjectMesh=ShowObjectMeshIndices
-					; display object indices
-					StringOnObject$=i
-				ElseIf ShowObjectMesh=ShowObjectMeshIds
-					; display object IDs
-					StringOnObject$=CalculateEffectiveId(i)
-				ElseIf ShowObjectMesh=ShowObjectMeshCount
-					StringOnObject$=LevelTileObjectCount(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
-				EndIf
-				Text x#-4*Len(StringOnObject$),y#,StringOnObject$
-			EndIf
-		Next
-	EndIf
-	
-	For i=0 To NofObjects-1
-		MyEffectiveId=CalculateEffectiveId(i)
+	If EditorMode=0 Or EditorMode=3
 		
-		HitTargetID=False
-		For j=0 To CurrentObjectTargetIDCount-1
-			If MyEffectiveId=CurrentObjectTargetID(j)
-				HitTargetID=True
-			
+		; it's a bit less than the viewport size because the text would otherwise overlap with the x/y coordinate listing on the bottom bar as well as the right margin
+		ProjectedTextLimitX=LevelViewportWidth-10
+		ProjectedTextLimitY=LevelViewportHeight-10
+		
+		If ShowObjectMesh>=2
+			For i=0 To NofObjects-1
 				CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 				x#=ProjectedX#()
 				y#=ProjectedY#()
 				If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
-					StringOnObject$=MyEffectiveId
-					x#=x#-4*Len(StringOnObject$)
-
-					OutlinedText(x#,y#,StringOnObject$,255,255,0)
+					If ShowObjectMesh=ShowObjectMeshIndices
+						; display object indices
+						StringOnObject$=i
+					ElseIf ShowObjectMesh=ShowObjectMeshIds
+						; display object IDs
+						StringOnObject$=CalculateEffectiveId(i)
+					ElseIf ShowObjectMesh=ShowObjectMeshCount
+						StringOnObject$=LevelTileObjectCount(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
+					EndIf
+					Text x#-4*Len(StringOnObject$),y#,StringOnObject$
 				EndIf
-			EndIf
-		Next
+			Next
+		EndIf
 		
-		If Not HitTargetID
-			For j=0 To CurrentObjectActivateIDCount-1
-				If MyEffectiveId=CurrentObjectActivateID(j) And CurrentObjectActivateID(j)>0
+		For i=0 To NofObjects-1
+			MyEffectiveId=CalculateEffectiveId(i)
+			
+			HitTargetID=False
+			For j=0 To CurrentObjectTargetIDCount-1
+				If MyEffectiveId=CurrentObjectTargetID(j)
+					HitTargetID=True
+				
 					CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 					x#=ProjectedX#()
 					y#=ProjectedY#()
 					If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
 						StringOnObject$=MyEffectiveId
 						x#=x#-4*Len(StringOnObject$)
-		
-						OutlinedText(x#,y#,StringOnObject$,100,255,255)
+	
+						OutlinedText(x#,y#,StringOnObject$,255,255,0)
 					EndIf
 				EndIf
 			Next
-		EndIf
-	Next
+			
+			If Not HitTargetID
+				For j=0 To CurrentObjectActivateIDCount-1
+					If MyEffectiveId=CurrentObjectActivateID(j) And CurrentObjectActivateID(j)>0
+						CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
+						x#=ProjectedX#()
+						y#=ProjectedY#()
+						If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
+							StringOnObject$=MyEffectiveId
+							x#=x#-4*Len(StringOnObject$)
+			
+							OutlinedText(x#,y#,StringOnObject$,100,255,255)
+						EndIf
+					EndIf
+				Next
+			EndIf
+		Next
+		
+	EndIf
 	
 	Color TextLevelR,TextLevelG,TextLevelB
 		
