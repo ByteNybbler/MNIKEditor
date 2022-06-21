@@ -2662,7 +2662,9 @@ Function EditorMainLoop()
 
 	If displayfullscreen=True Cls
 
-	CameraControls()
+	If EditorMode=0 Or EditorMode=3
+		CameraControls()
+	EndIf
 	
 	RenderToolbar()
 	If CameraPanning=False
@@ -17135,21 +17137,28 @@ Function CameraControls()
 	If MouseScroll<>0
 		; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
 		If Target=Camera1 And mx<LevelViewportWidth+10 And my>=0 And my<LevelViewportHeight
-			; level camera
-			If Camera1Proj=1 ; perspective
-				SpeedFactor#=3.0*Adj
-				TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
-			ElseIf Camera1Proj=2 ; orthographic
-				ZoomSpeed#=12.0*Adj
-				If MouseScroll>0
-					Camera1Zoom#=Camera1Zoom#*ZoomSpeed
-				ElseIf MouseScroll<0
-					Camera1Zoom#=Camera1Zoom#/ZoomSpeed
+			If ShiftDown()
+				SetBrushWidth(BrushWidth+MouseScroll)
+			Else
+				; level camera
+				If Camera1Proj=1 ; perspective
+					SpeedFactor#=3.0*Adj
+					TranslateEntity Camera1,0,-MouseScroll * SpeedFactor,0
+				ElseIf Camera1Proj=2 ; orthographic
+					ZoomSpeed#=12.0*Adj
+					If MouseScroll>0
+						Camera1Zoom#=Camera1Zoom#*ZoomSpeed
+					ElseIf MouseScroll<0
+						Camera1Zoom#=Camera1Zoom#/ZoomSpeed
+					EndIf
+					If Camera1Zoom#<0.001
+						Camera1Zoom#=0.001
+					EndIf
+					CameraZoom Camera1,Camera1Zoom#
 				EndIf
-				If Camera1Zoom#<0.001
-					Camera1Zoom#=0.001
-				EndIf
-				CameraZoom Camera1,Camera1Zoom#
+			EndIf
+			If CtrlDown()
+				SetBrushHeight(BrushHeight+MouseScroll)
 			EndIf
 		ElseIf Target=Camera4
 			; object camera
