@@ -17216,129 +17216,137 @@ Function SaveLevel()
 	For i=0 To NofObjects-1
 		Obj.GameObject=LevelObjects(i)
 		
-		WriteString file,ObjectModelName$(i)
-		WriteString file,ObjectTextureName$(i)
-		WriteFloat file,ObjectXScale(i)
-		WriteFloat file,ObjectYScale(i)
-		WriteFloat file,ObjectZScale(i)
-		WriteFloat file,ObjectXAdjust(i)
-		WriteFloat file,ObjectYAdjust(i)
-		WriteFloat file,ObjectZAdjust(i)
-		WriteFloat file,ObjectPitchAdjust(i)
-		WriteFloat file,ObjectYawAdjust(i)
-		WriteFloat file,ObjectRollAdjust(i)
+		WriteString file,Obj\Attributes\ModelName$
+		WriteString file,Obj\Attributes\TexName$
+		WriteFloat file,Obj\Attributes\XScale
+		WriteFloat file,Obj\Attributes\YScale
+		WriteFloat file,Obj\Attributes\ZScale
+		WriteFloat file,Obj\Attributes\XAdjust
+		WriteFloat file,Obj\Attributes\YAdjust
+		WriteFloat file,Obj\Attributes\ZAdjust
+		WriteFloat file,Obj\Attributes\PitchAdjust
+		WriteFloat file,Obj\Attributes\YawAdjust
+		WriteFloat file,Obj\Attributes\RollAdjust
 	
-		WriteFloat file,ObjectX(Dest)
-		WriteFloat file,ObjectY(Dest)
-		WriteFloat file,ObjectZ(Dest)
-		WriteFloat file,ObjectOldX(Dest)
-		WriteFloat file,ObjectOldY(Dest)
-		WriteFloat file,ObjectOldZ(Dest)
+		WriteFloat file,Obj\Position\X
+		WriteFloat file,Obj\Position\Y
+		WriteFloat file,Obj\Position\Z
+		WriteFloat file,Obj\Position\OldX
+		WriteFloat file,Obj\Position\OldY
+		WriteFloat file,Obj\Position\OldZ
 
-		WriteFloat file,ObjectDX(Dest)
-		WriteFloat file,ObjectDY(Dest)
-		WriteFloat file,ObjectDZ(Dest)
+		WriteFloat file,Obj\Attributes\DX
+		WriteFloat file,Obj\Attributes\DY
+		WriteFloat file,Obj\Attributes\DZ
 	
-		WriteFloat file,ObjectPitch(Dest)
-		WriteFloat file,ObjectYaw(Dest)
-		WriteFloat file,ObjectRoll(Dest)
-		WriteFloat file,ObjectPitch2(Dest)
-		WriteFloat file,ObjectYaw2(Dest)
-		WriteFloat file,ObjectRoll2(Dest)
+		WriteFloat file,Obj\Attributes\Pitch
+		WriteFloat file,Obj\Attributes\Yaw
+		WriteFloat file,Obj\Attributes\Roll
+		WriteFloat file,Obj\Attributes\Pitch2
+		WriteFloat file,Obj\Attributes\Yaw2
+		WriteFloat file,Obj\Attributes\Roll2
 
-		WriteFloat file,ObjectXGoal(Dest)
-		WriteFloat file,ObjectYGoal(Dest)
-		WriteFloat file,ObjectZGoal(Dest)
+		WriteFloat file,Obj\Attributes\XGoal
+		WriteFloat file,Obj\Attributes\YGoal
+		WriteFloat file,Obj\Attributes\ZGoal
 	
-		WriteInt file,ObjectMovementType(Dest)
-		WriteInt file,ObjectMovementTypeData(Dest)
-		WriteFloat file,ObjectSpeed(Dest)
-		WriteFloat file,ObjectRadius(Dest)
-		WriteInt file,ObjectRadiusType(Dest)
+		WriteInt file,Obj\Attributes\MovementType
+		WriteInt file,Obj\Attributes\MovementTypeData
+		WriteFloat file,Obj\Attributes\Speed
+		WriteFloat file,Obj\Attributes\Radius
+		WriteInt file,Obj\Attributes\RadiusType
 	
-		WriteInt file,ObjectData10(Dest)
+		WriteInt file,Obj\Attributes\Data10
 	
-		WriteFloat file,ObjectPushDX(Dest)
-		WriteFloat file,ObjectPushDY(Dest)
+		WriteFloat file,Obj\Attributes\PushDX
+		WriteFloat file,Obj\Attributes\PushDY
 	
-		WriteInt file,ObjectAttackPower(Dest)
-		WriteInt file,ObjectDefensePower(Dest)
-		WriteInt file,ObjectDestructionType(Dest)
+		WriteInt file,Obj\Attributes\AttackPower
+		WriteInt file,Obj\Attributes\DefensePower
+		WriteInt file,Obj\Attributes\DestructionType
 	
-		WriteInt file,ObjectID(Dest)
-		WriteInt file,ObjectType(Dest)
-		WriteInt file,ObjectSubType(Dest)
+		WriteInt file,Obj\Attributes\ID
+		WriteInt file,Obj\Attributes\LogicType
+		WriteInt file,Obj\Attributes\LogicSubType
 	
-		WriteInt file,ObjectActive(Dest)
-		WriteInt file,ObjectLastActive(Dest)
-		WriteInt file,ObjectActivationType(Dest)
-		WriteInt file,ObjectActivationSpeed(Dest)
+		WriteInt file,Obj\Attributes\Active
+		WriteInt file,Obj\Attributes\LastActive
+		WriteInt file,Obj\Attributes\ActivationType
+		WriteInt file,Obj\Attributes\ActivationSpeed
 	
-		WriteInt file,ObjectStatus(Dest)
-		WriteInt file,ObjectTimer(Dest)
-		WriteInt file,ObjectTimerMax1(Dest)
-		WriteInt file,ObjectTimerMax2(Dest)
+		WriteInt file,Obj\Attributes\Status
+		WriteInt file,Obj\Attributes\Timer
+		WriteInt file,Obj\Attributes\TimerMax1
+		WriteInt file,Obj\Attributes\TimerMax2
 	
-		WriteInt file,ObjectTeleportable(Dest)
-		WriteInt file,ObjectButtonPush(Dest)
-		WriteInt file,ObjectWaterReact(Dest)
+		WriteInt file,Obj\Attributes\Teleportable
+		WriteInt file,Obj\Attributes\ButtonPush
+		WriteInt file,Obj\Attributes\WaterReact
 	
-		WriteInt file,ObjectTelekinesisable(Dest)
-		WriteInt file,ObjectFreezable(Dest)
+		WriteInt file,Obj\Attributes\Telekinesisable
+		WriteInt file,Obj\Attributes\Freezable
 	
-		WriteInt file,ObjectReactive(Dest)
+		WriteInt file,Obj\Attributes\Reactive
 
-		;WriteInt file,ObjectChild(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectChild(Dest), PlayerIndex)
-		;WriteInt file,ObjectParent(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectParent(Dest), PlayerIndex)
+		;WriteInt file,ObjectChild
+		WriteInt file,ObjectIndexEditorToGame(Obj\Attributes\Child, PlayerIndex)
+		;WriteInt file,ObjectParent
+		WriteInt file,ObjectIndexEditorToGame(Obj\Attributes\Parent, PlayerIndex)
 	
-		For k=0 To 9
-			WriteInt file,ObjectData(Dest,k)
-		Next
-		For k=0 To 3
-			WriteString file,ObjectTextData(Dest,k)
-		Next
+		WriteInt file,Obj\Attributes\Data0
+		WriteInt file,Obj\Attributes\Data1
+		WriteInt file,Obj\Attributes\Data2
+		WriteInt file,Obj\Attributes\Data3
+		WriteInt file,Obj\Attributes\Data4
+		WriteInt file,Obj\Attributes\Data5
+		WriteInt file,Obj\Attributes\Data6
+		WriteInt file,Obj\Attributes\Data7
+		WriteInt file,Obj\Attributes\Data8
+		WriteInt file,Obj\Attributes\Data9
+		WriteString file,Obj\Attributes\TextData0
+		WriteString file,Obj\Attributes\TextData1
+		WriteString file,Obj\Attributes\TextData2
+		WriteString file,Obj\Attributes\TextData3
 		
-		WriteInt file,ObjectTalkable(Dest)
-		WriteInt file,ObjectCurrentAnim(Dest)
-		WriteInt file,ObjectStandardAnim(Dest)
-		WriteInt file,ObjectTileX(Dest)
-		WriteInt file,ObjectTileY(Dest)
-		WriteInt file,ObjectTileX2(Dest)
-		WriteInt file,ObjectTileY2(Dest)
-		WriteInt file,ObjectMovementTimer(Dest)
-		WriteInt file,ObjectMovementSpeed(Dest)
-		WriteInt file,ObjectMoveXGoal(Dest)
-		WriteInt file,ObjectMoveYGoal(Dest)
-		WriteInt file,ObjectTileTypeCollision(Dest)
-		WriteInt file,ObjectObjectTypeCollision(Dest)
-		WriteInt file,ObjectCaged(Dest)
-		WriteInt file,ObjectDead(Dest)
-		WriteInt file,ObjectDeadTimer(Dest)
-		WriteInt file,ObjectExclamation(Dest)
-		WriteInt file,ObjectShadow(Dest)
-		;WriteInt file,-1;ObjectLinked(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectLinked(Dest), PlayerIndex)
-		;WriteInt file,-1;ObjectLinkBack(Dest)
-		WriteInt file,ObjectIndexEditorToGame(ObjectLinkBack(Dest), PlayerIndex)
-		WriteInt file,ObjectFlying(Dest)
-		WriteInt file,ObjectFrozen(Dest)
-		WriteInt file,ObjectIndigo(Dest)
-		WriteInt file,ObjectFutureInt24(Dest)
-		WriteInt file,ObjectFutureInt25(Dest)
-		WriteFloat file,ObjectScaleAdjust(Dest)
-		WriteFloat file,ObjectScaleXAdjust(Dest)
-		WriteFloat file,ObjectScaleYAdjust(Dest)
-		WriteFloat file,ObjectScaleZAdjust(Dest)
-		WriteFloat file,ObjectFutureFloat5(Dest)
-		WriteFloat file,ObjectFutureFloat6(Dest)
-		WriteFloat file,ObjectFutureFloat7(Dest)
-		WriteFloat file,ObjectFutureFloat8(Dest)
-		WriteFloat file,ObjectFutureFloat9(Dest)
-		WriteFloat file,ObjectFutureFloat10(Dest)
-		WriteString file,ObjectFutureString1$(Dest)
-		WriteString file,ObjectFutureString2$(Dest)
+		WriteInt file,Obj\Attributes\Talkable
+		WriteInt file,Obj\Attributes\CurrentAnim
+		WriteInt file,Obj\Attributes\StandardAnim
+		WriteInt file,Obj\Position\TileX
+		WriteInt file,Obj\Position\TileY
+		WriteInt file,Obj\Position\TileX2
+		WriteInt file,Obj\Position\TileY2
+		WriteInt file,Obj\Attributes\MovementTimer
+		WriteInt file,Obj\Attributes\MovementSpeed
+		WriteInt file,Obj\Attributes\MoveXGoal
+		WriteInt file,Obj\Attributes\MoveYGoal
+		WriteInt file,Obj\Attributes\TileTypeCollision
+		WriteInt file,Obj\Attributes\ObjectTypeCollision
+		WriteInt file,Obj\Attributes\Caged
+		WriteInt file,Obj\Attributes\Dead
+		WriteInt file,Obj\Attributes\DeadTimer
+		WriteInt file,Obj\Attributes\Exclamation
+		WriteInt file,Obj\Attributes\Shadow
+		;WriteInt file,-1;ObjectLinked
+		WriteInt file,ObjectIndexEditorToGame(Obj\Attributes\Linked, PlayerIndex)
+		;WriteInt file,-1;ObjectLinkBack
+		WriteInt file,ObjectIndexEditorToGame(Obj\Attributes\LinkBack, PlayerIndex)
+		WriteInt file,Obj\Attributes\Flying
+		WriteInt file,Obj\Attributes\Frozen
+		WriteInt file,Obj\Attributes\Indigo
+		WriteInt file,Obj\Attributes\FutureInt24
+		WriteInt file,Obj\Attributes\FutureInt25
+		WriteFloat file,Obj\Attributes\ScaleAdjust
+		WriteFloat file,Obj\Attributes\ScaleXAdjust
+		WriteFloat file,Obj\Attributes\ScaleYAdjust
+		WriteFloat file,Obj\Attributes\ScaleZAdjust
+		WriteFloat file,Obj\Attributes\FutureFloat5
+		WriteFloat file,Obj\Attributes\FutureFloat6
+		WriteFloat file,Obj\Attributes\FutureFloat7
+		WriteFloat file,Obj\Attributes\FutureFloat8
+		WriteFloat file,Obj\Attributes\FutureFloat9
+		WriteFloat file,Obj\Attributes\FutureFloat10
+		WriteString file,Obj\Attributes\FutureString1$
+		WriteString file,Obj\Attributes\FutureString2$
 		
 		For k=0 To 30
 			;WriteString file,ObjectAdjusterString$(Dest,k)
@@ -17571,12 +17579,12 @@ Function LoadLevel(levelnumber)
 	NofObjects=0
 	ReadObjectCount=ReadInt(file)
 	For i=0 To ReadObjectCount-1
-		LevelObject=LevelObjects(i)
-		Attributes=LevelObject\Attributes
-		Position=LevelObject\Position
+		LevelObject.GameObject=LevelObjects(i)
+		Attributes.GameObjectAttributes=LevelObject\Attributes
+		Position.GameObjectPosition=LevelObject\Position
 		
 		Attributes\ModelName$=ReadString$(file)
-		Attributes\TextureName$=ReadString$(file)
+		Attributes\TexName$=ReadString$(file)
 		Attributes\XScale=ReadFloat(file)
 		Attributes\YScale=ReadFloat(file)
 		Attributes\ZScale=ReadFloat(file)
@@ -17662,10 +17670,10 @@ Function LoadLevel(levelnumber)
 		Attributes\Data8=ReadInt(file)
 		Attributes\Data9=ReadInt(file)
 	
-		Attributes\ObjectTextData0=ReadString$(file)
-		Attributes\ObjectTextData1=ReadString$(file)
-		Attributes\ObjectTextData2=ReadString$(file)
-		Attributes\ObjectTextData3=ReadString$(file)
+		Attributes\TextData0=ReadString$(file)
+		Attributes\TextData1=ReadString$(file)
+		Attributes\TextData2=ReadString$(file)
+		Attributes\TextData3=ReadString$(file)
 		
 		Attributes\Talkable=ReadInt(file)
 		Attributes\CurrentAnim=ReadInt(file)
@@ -17716,13 +17724,13 @@ Function LoadLevel(levelnumber)
 			ReadString(file)
 		Next
 		
-		CreateObjectModel
+		CreateLevelObjectModel(i)
 
 
 		NofObjects=NofObjects+1
 		
 
-		CreateObjectPositionMarker(Dest)
+		CreateObjectPositionMarker(i)
 	Next
 	
 	
@@ -17730,7 +17738,7 @@ Function LoadLevel(levelnumber)
 	; finalize object data
 	PlayerIndex=NofObjects
 	For j=0 To NofObjects-1
-		LevelObject=LevelObjects
+		LevelObject.GameObject=LevelObjects(i)
 		LevelObject\Attributes\Linked=ObjectIndexGameToEditor(LevelObject\Attributes\Linked, PlayerIndex)
 		LevelObject\Attributes\LinkBack=ObjectIndexGameToEditor(LevelObject\Attributes\LinkBack, PlayerIndex)
 		LevelObject\Attributes\Parent=ObjectIndexGameToEditor(LevelObject\Attributes\Parent, PlayerIndex)
@@ -25081,8 +25089,8 @@ Function SearchForCustomContent(ex$,ishub=False)
 	For i=0 To NofObjects-1
 		
 		Dest=i
-		ObjectModelName$(i)=ReadString$(file)
-		ObjectTextureName$(i)=ReadString$(file)
+		LevelObjects(i)\Attributes\ModelName$=ReadString$(file)
+		LevelObjects(i)\Attributes\TexName$=ReadString$(file)
 		
 		; skip unused adjusters
 		SeekFile file,FilePos(file)+((57+10)*4)
@@ -25102,22 +25110,22 @@ Function SearchForCustomContent(ex$,ishub=False)
 			ReadString(file)
 		Next
 		
-		If Left$(ObjectTextureName$(Dest),1)<>"!"
+		If Left$(LevelObjects(i)\Attributes\TexName$,1)<>"!"
 			For ii=0 To cc
-				If CustomContentFile$(ii)=ObjectTextureName$(Dest)
+				If CustomContentFile$(ii)=LevelObjects(i)\Attributes\TexName$
 					isthere=True
 				EndIf
 			Next
-			If FileType(ObjectTextureName$(Dest))=1 And isthere=False
-				CustomContentFile$(cc) = ObjectTextureName$(Dest)
+			If FileType(LevelObjects(i)\Attributes\TexName$)=1 And isthere=False
+				CustomContentFile$(cc)=LevelObjects(i)\Attributes\TexName$
 				cc=cc+1
 			EndIf
 			isthere=False
-		ElseIf Left$(ObjectTextureName$(Dest),1)="?"
-			If Lower(Right(ObjectTextureName$(Dest),4))=".jpg" Or Lower(Right(ObjectTextureName$(Dest),4))=".bmp" Or Lower(Right(ObjectTextureName$(Dest),4))=".png"
-				tname$="UserData\Custom\Objecttextures\"+Right(ObjectTextureName$(Dest),Len(ObjectTextureName$(Dest))-1)
+		ElseIf Left$(LevelObjects(i)\Attributes\TexName$,1)="?"
+			If Lower(Right(LevelObjects(i)\Attributes\TexName$,4))=".jpg" Or Lower(Right(LevelObjects(i)\Attributes\TexName$,4))=".bmp" Or Lower(Right(LevelObjects(i)\Attributes\TexName$,4))=".png"
+				tname$="UserData\Custom\Objecttextures\"+Right(LevelObjects(i)\Attributes\TexName$,Len(LevelObjects(i)\Attributes\TexName$)-1)
 			Else
-				tname$="UserData\Custom\Objecttextures\"+Right(ObjectTextureName$(Dest),Len(ObjectTextureName$(Dest))-1)+".jpg"
+				tname$="UserData\Custom\Objecttextures\"+Right(LevelObjects(i)\Attributes\TexName$,Len(LevelObjects(i)\Attributes\TexName$)-1)+".jpg"
 			EndIf
 			For ii=0 To cc
 				If CustomContentFile$(ii)=tname$
@@ -25131,18 +25139,18 @@ Function SearchForCustomContent(ex$,ishub=False)
 			isthere=False				
 		EndIf
 		
-		If ObjectModelName$(Dest)="!CustomModel"
+		If LevelObjects(i)\Attributes\ModelName$="!CustomModel"
 			;If FileType("UserData\Custom\Models\"+ObjectTextData(Dest,0)+".3ds")<>1 Or FileType("UserData\Custom\Models\"+ObjectTextData(Dest,0)+".jpg")<>1
 			;	ObjectTextData(Dest,0)="Default"
 			;EndIf
 			For ii=0 To cc
-				If CustomContentFile$(ii)="UserData\Custom\Models\"+ObjectTextData(Dest,0)+".3ds"
+				If CustomContentFile$(ii)="UserData\Custom\Models\"+LevelObjects(i)\Attributes\TextData0+".3ds"
 					isthere=True
 				EndIf
 			Next
 			If isthere=False
-			CustomContentFile$(cc)="UserData\Custom\Models\"+ObjectTextData(Dest,0)+".3ds"
-			CustomContentFile$(cc+1)="UserData\Custom\Models\"+ObjectTextData(Dest,0)+".jpg"
+			CustomContentFile$(cc)="UserData\Custom\Models\"+LevelObjects(i)\Attributes\TextData0+".3ds"
+			CustomContentFile$(cc+1)="UserData\Custom\Models\"+LevelObjects(i)\Attributes\TextData0+".jpg"
 			cc=cc+2
 			EndIf
 			isthere=False
@@ -25219,10 +25227,10 @@ Function ObjectIndexEditorToGameInner(Index)
 	Result=Index
 	
 	For i=0 To Index-1
-		If ObjectHasShadow(i)
+		If ObjectHasShadow(LevelObjects(i)\Attributes\ModelName$)
 			Result=Result+1
 		EndIf
-		Result=Result+ObjectCountAccessories(i)
+		Result=Result+ObjectCountAccessories(LevelObjects(i)\Attributes)
 	Next
 	
 	Return Result
@@ -25244,10 +25252,10 @@ Function ObjectIndexGameToEditorInner(Index)
 	Result=Index
 	
 	For i=0 To Result-1
-		If ObjectHasShadow(i)
+		If ObjectHasShadow(LevelObjects(i)\Attributes\ModelName$)
 			Result=Result-1
 		EndIf
-		Result=Result-ObjectCountAccessories(i)
+		Result=Result-ObjectCountAccessories(LevelObjects(i)\Attributes)
 	Next
 	
 	Return Result
@@ -25272,9 +25280,9 @@ Function ObjectIndexGameToEditor(Index, PlayerIndex)
 End Function
 
 ; Reflects the in-game logic for spawning shadows (see CreateObjectShadow in adventures.bb).
-Function ObjectHasShadow(Dest)
+Function ObjectHasShadow(ModelName$)
 
-	Select ObjectModelName$(Dest)
+	Select ModelName$
 
 	Case "!StinkerWee","!Scritter","!BabyBoomer","!RainbowBubble"
 		Return True
@@ -25295,38 +25303,38 @@ Function ObjectHasShadow(Dest)
 End Function
 
 
-Function ObjectCountAccessories(Dest)
+Function ObjectCountAccessories(Attributes.GameObjectAttributes)
 
-	If ObjectModelName$(Dest)="!NPC"
+	If Attributes\ModelName$="!NPC"
 		Code$="!T"
-		If ObjectData(Dest,0)<10
-			Code$=Code$+"00"+Str$(ObjectData(Dest,0))
-		Else If ObjectData(Dest,0)<100
-			Code$=Code$+"0"+Str$(ObjectData(Dest,0))
+		If Attributes\Data0<10
+			Code$=Code$+"00"+Str$(Attributes\Data0)
+		Else If Attributes\Data0<100
+			Code$=Code$+"0"+Str$(Attributes\Data0)
 		Else
-			Code$=Code$+Str$(ObjectData(Dest,0))
+			Code$=Code$+Str$(Attributes\Data0)
 		EndIf
-		Code$=Code$+Chr$(65+ObjectData(Dest,1))
-		If ObjectData(Dest,2)>0
-			If ObjectData(Dest,2)<10
-				 Code$=Code$+"00"+Str$(ObjectData(Dest,2))
-			Else If ObjectData(Dest,2)<100
-				 Code$=Code$+"0"+Str$(ObjectData(Dest,2))
+		Code$=Code$+Chr$(65+Attributes\Data1)
+		If Attributes\Data2>0
+			If Attributes\Data2<10
+				 Code$=Code$+"00"+Str$(Attributes\Data2)
+			Else If Attributes\Data2<100
+				 Code$=Code$+"0"+Str$(Attributes\Data2)
 			Else
-				 Code$=Code$+""+Str$(ObjectData(Dest,2))
+				 Code$=Code$+""+Str$(Attributes\Data2)
 			EndIf
-			Code$=Code$+Chr$(64+ObjectData(dest,3))+"0"
+			Code$=Code$+Chr$(64+Attributes\Data3)+"0"
 		EndIf
-		If ObjectData(Dest,4)>0 And ObjectData(Dest,2)>0 Then Code$=Code$+" "
-		If ObjectData(Dest,4)>0
-			If ObjectData(Dest,4)<10
-				 Code$=Code$+"00"+Str$(ObjectData(Dest,4))
-			Else If ObjectData(Dest,4)<100
-				 Code$=Code$+"0"+Str$(ObjectData(Dest,4))
+		If Attributes\Data4>0 And Attributes\Data2>0 Then Code$=Code$+" "
+		If Attributes\Data4>0
+			If Attributes\Data4<10
+				 Code$=Code$+"00"+Str$(Attributes\Data4)
+			Else If Attributes\Data4<100
+				 Code$=Code$+"0"+Str$(Attributes\Data4)
 			Else
-				 Code$=Code$+""+Str$(ObjectData(Dest,4))
+				 Code$=Code$+""+Str$(Attributes\Data4)
 			EndIf
-			Code$=Code$+Chr$(65+ObjectData(dest,5))+"0"
+			Code$=Code$+Chr$(65+Attributes\Data5)+"0"
 		EndIf
 		
 		Return CodeCountAccessories(Code$)
@@ -25476,7 +25484,7 @@ Function RetrieveDefaultTrueMovement()
 		
 		If CurrentObject\Attributes\LogicSubType=0 ; green
 			CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
-			Select ObjectData(i,1)
+			Select CurrentObject\Attributes\Data1
 			Case 0
 				; normal
 				CurrentObject\Attributes\MovementType=0
@@ -25493,7 +25501,7 @@ Function RetrieveDefaultTrueMovement()
 			CurrentObject\Attributes\ZScale=0.006
 		Else ; red
 			CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
-			Select ObjectData(i,1)
+			Select CurrentObject\Attributes\Data1
 			Case 0
 				; normal
 				CurrentObject\Attributes\MovementType=32
