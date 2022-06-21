@@ -15369,12 +15369,13 @@ Function CalculateCurrentObjectTargetIDs()
 	If CurrentObject\Attributes\LogicType=90
 		If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 			CurrentObjectTargetIDCount=4
-			For i=0 To 3
-				CurrentObjectTargetID(i)=ColorToID(CurrentObjectData(i),CurrentObjectData(i+4))
-			Next
+			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
+			CurrentObjectTargetID(1)=ColorToID(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data5)
+			CurrentObjectTargetID(2)=ColorToID(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data6)
+			CurrentObjectTargetID(3)=ColorToID(CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data7)
 		Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
 			CurrentObjectTargetIDCount=1
-			CurrentObjectTargetID(0)=ColorToID(CurrentObjectCurrentObject\Attributes\YawAdjustentObject\Attributes\Data2)
+			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
 		Else If (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; Rotator or ???
 			CurrentObjectTargetIDCount=1
 			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
@@ -15555,31 +15556,33 @@ Function CalculateLevelExitTo(D1,D2,D3,D4,level,x,y)
 	StartingYaw=0 ; south
 	; examine surroundings to infer player facing direction
 	For i=0 To NofObjects-1
-		If ObjectType(i)=90 And ObjectSubType(i)=10 ; LevelExit
-			If x=ObjectTileX(i)
-				If y+1=ObjectTileY(i)
+		If LevelObjects(i)\Attributes\LogicType=90 And LevelObjects(i)\Attributes\LogicSubType=10 ; LevelExit
+			TileX=LevelObjects(i)\Position\TileX
+			TileY=LevelObjects(i)\Position\TileY
+			If x=TileX
+				If y+1=TileY
 					; player face north
 					StartingYaw=180
 				EndIf
-			ElseIf x+1=ObjectTileX(i)
-				If y-1=ObjectTileY(i)
+			ElseIf x+1=TileX
+				If y-1=TileY
 					; player face southwest
 					StartingYaw=45
-				ElseIf y=ObjectTileY(i)
+				ElseIf y=TileY
 					; player face west
 					StartingYaw=90
-				ElseIf y+1=ObjectTileY(i)
+				ElseIf y+1=TileY
 					; player face northwest
 					StartingYaw=135
 				EndIf
-			ElseIf x-1=ObjectTileX(i)
-				If y-1=ObjectTileY(i)
+			ElseIf x-1=TileX
+				If y-1=TileY
 					; player face southeast
 					StartingYaw=315
-				ElseIf y=ObjectTileY(i)
+				ElseIf y=TileY
 					; player face east
 					StartingYaw=270
-				ElseIf y+1=ObjectTileY(i)
+				ElseIf y+1=TileY
 					; player face northeast
 					StartingYaw=225
 				EndIf
@@ -15796,9 +15799,9 @@ Function ReSizeLevel()
 	; and move the object
 	If WidthLeftChange<>0
 		For i=0 To NofObjects-1
-			ObjectX(i)=ObjectX(i)+WidthLeftChange
-			ChangeObjectTileX(i,ObjectTileX(i)+WidthLeftChange) ; Also handles spellballs etc.
-			ResizeLevelFixObjectTargets(i)
+			LevelObjects(i)\Position\X=LevelObjects(i)\Position\X+WidthLeftChange
+			ChangeObjectTileX(i,LevelObjects(i)\Position\TileX+WidthLeftChange) ; Also handles spellballs etc.
+			ResizeLevelFixObjectTargets(LevelObjects(i))
 			;If Floor(ObjectX(i))<0 Or Floor(ObjectX(i))>=LevelWidth
 			;	DeleteObject(i)
 			;Else
@@ -15808,9 +15811,9 @@ Function ReSizeLevel()
 	EndIf
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
-			ObjectY(i)=ObjectY(i)+HeightTopChange
-			ChangeObjectTileY(i,ObjectTileY(i)+HeightTopChange)
-			ResizeLevelFixObjectTargets(i)
+			LevelObjects(i)\Position\Y=LevelObjects(i)\Position\Y+HeightTopChange
+			ChangeObjectTileY(i,LevelObjects(i)\Position\TileY+HeightTopChange)
+			ResizeLevelFixObjectTargets(LevelObjects(i))
 			;If Floor(ObjectY(i))<0 Or Floor(ObjectY(i))>=LevelHeight
 			;	DeleteObject(i)
 			;Else
@@ -15819,7 +15822,7 @@ Function ReSizeLevel()
 		Next
 	EndIf
 	
-	ResizeLevelFixCurrentObjectTargets()
+	ResizeLevelFixObjectTargets(CurrentObject)
 
 	
 	WidthLeftChange=0
@@ -15831,7 +15834,7 @@ Function ReSizeLevel()
 
 End Function
 
-Function ResizeLevelFixObjectTargets(Obj)
+Function ResizeLevelFixObjectTargets(Obj.GameObject)
 
 	If Obj\Attributes\MoveXGoal<>0
 		Obj\Attributes\MoveXGoal=Obj\Attributes\MoveXGoal+WidthLeftChange
@@ -15851,13 +15854,13 @@ Function ResizeLevelFixObjectTargets(Obj)
 			Obj\Attributes\Data2=Obj\Attributes\Data2+WidthLeftChange
 			Obj\Attributes\Data3=Obj\Attributes\Data3+HeightTopChange
 		ElseIf CurrentObject\Attributes\LogicSubType=15 ; general command
-			ResizeLevelFixCurrentObjectTargetsCmd(Obj,Obj\Attributes\Data0,1,2,3,4)
+			ResizeLevelFixObjectTargetsCmd(Obj\Attributes,Obj\Attributes\Data0,1,2,3,4)
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
 		Obj\Attributes\Data1=Obj\Attributes\Data1+WidthLeftChange
 		Obj\Attributes\Data2=Obj\Attributes\Data2+HeightTopChange
 	Case 242 ; cuboid
-		ResizeLevelFixCurrentObjectTargetsCmd(Obj,Obj\Attributes\Data2,3,4,5,6)
+		ResizeLevelFixObjectTargetsCmd(Obj\Attributes,Obj\Attributes\Data2,3,4,5,6)
 	Case 434 ; mothership
 		Obj\Attributes\Data2=Obj\Attributes\Data2+WidthLeftChange
 		Obj\Attributes\Data3=Obj\Attributes\Data3+HeightTopChange
@@ -15871,25 +15874,22 @@ Function ResizeLevelFixObjectTargets(Obj)
 
 End Function
 
-Function ResizeLevelFixObjectTargetsCmd(Obj,Cmd,D1,D2,D3,D4)
+Function ResizeLevelFixObjectTargetsCmd(Attributes.GameObjectAttributes,Cmd,D1,D2,D3,D4)
 
 	Select Cmd
 	Case 7
-		If CurrentObjectData(D1)=CurrentLevelNumber
-			CurrentObjectData(D2)=CurrentObjectData(D2)+WidthLeftChange
-			CurrentObjectData(D3)=CurrentObjectData(D3)+HeightTopChange
+		If GetDataByIndex(Attributes,D1)=CurrentLevelNumber
+			SetDataByIndex(Attributes,D2,GetDataByIndex(Attributes,D2)+WidthLeftChange)
+			SetDataByIndex(Attributes,D3,GetDataByIndex(Attributes,D3)+HeightTopChange)
 		EndIf
-	Case 11
-		CurrentObjectData(D2)=CurrentObjectData(D2)+WidthLeftChange
-		CurrentObjectData(D3)=CurrentObjectData(D3)+HeightTopChange
+	Case 11,61
+		SetDataByIndex(Attributes,D2,GetDataByIndex(Attributes,D2)+WidthLeftChange)
+		SetDataByIndex(Attributes,D3,GetDataByIndex(Attributes,D3)+HeightTopChange)
 	Case 41,42
-		CurrentObjectData(D1)=CurrentObjectData(D1)+WidthLeftChange
-		CurrentObjectData(D2)=CurrentObjectData(D2)+HeightTopChange
-		CurrentObjectData(D3)=CurrentObjectData(D3)+WidthLeftChange
-		CurrentObjectData(D4)=CurrentObjectData(D4)+HeightTopChange
-	Case 61
-		CurrentObjectData(D2)=CurrentObjectData(D2)+WidthLeftChange
-		CurrentObjectData(D3)=CurrentObjectData(D3)+HeightTopChange
+		SetDataByIndex(Attributes,D1,GetDataByIndex(Attributes,D1)+WidthLeftChange)
+		SetDataByIndex(Attributes,D2,GetDataByIndex(Attributes,D2)+HeightTopChange)
+		SetDataByIndex(Attributes,D3,GetDataByIndex(Attributes,D3)+WidthLeftChange)
+		SetDataByIndex(Attributes,D4,GetDataByIndex(Attributes,D4)+HeightTopChange)
 	End Select
 
 End Function
@@ -15897,7 +15897,7 @@ End Function
 
 Function RawSetObjectTileX(i,tilex)
 
-	Obj=LevelObjects(i)
+	Obj.GameObject=LevelObjects(i)
 	Obj\Position\TileX=tilex
 	Obj\Position\TileX2=tilex
 	
@@ -15914,7 +15914,7 @@ End Function
 
 Function RawSetObjectTileY(i,tiley)
 
-	Obj=LevelObjects(i)
+	Obj.GameObject=LevelObjects(i)
 	Obj\Position\TileY=tiley
 	Obj\Position\TileY2=tiley
 	
@@ -15932,14 +15932,14 @@ End Function
 Function SetObjectTileX(i,tilex)
 
 	RawSetObjectTileX(i,tilex)
-	IncrementLevelTileObjectCountFor(LevelObjects(i))
+	IncrementLevelTileObjectCountFor(LevelObjects(i)\Position)
 
 End Function
 
 Function SetObjectTileY(i,tiley)
 
 	RawSetObjectTileY(i,tiley)
-	IncrementLevelTileObjectCountFor(LevelObjects(i))
+	IncrementLevelTileObjectCountFor(LevelObjects(i)\Position)
 
 End Function
 
@@ -15947,27 +15947,27 @@ Function SetObjectTileXY(i,tilex,tiley)
 
 	RawSetObjectTileX(i,tilex)
 	RawSetObjectTileY(i,tiley)
-	IncrementLevelTileObjectCountFor(LevelObjects(i))
+	IncrementLevelTileObjectCountFor(LevelObjects(i)\Position)
 
 End Function
 
 Function ChangeObjectTileX(i,tilex)
 
-	DecrementLevelTileObjectCountFor(LevelObjects(i))
+	DecrementLevelTileObjectCountFor(LevelObjects(i)\Position)
 	SetObjectTileX(i,tilex)
 
 End Function
 
 Function ChangeObjectTileY(i,tiley)
 
-	DecrementLevelTileObjectCountFor(LevelObjects(i))
+	DecrementLevelTileObjectCountFor(LevelObjects(i)\Position)
 	SetObjectTileY(i,tiley)
 
 End Function
 
 Function ChangeObjectTileXY(i,tilex,tiley)
 
-	DecrementLevelTileObjectCountFor(LevelObjects(i))
+	DecrementLevelTileObjectCountFor(LevelObjects(i)\Position)
 	SetObjectTileXY(i,tilex,tiley)
 
 End Function
