@@ -1075,11 +1075,13 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 
 Global NofMyGfxModes, MyGfxMode
 Dim MyGfxModeWidth(1000),MyGfxModeHeight(1000),MyGfxModeDepth(1000)
-Global GfxWidth,GfxHeight
+Global GfxWidth,GfxHeight,GfxDepth
 Global GfxZoomScaling#
 Global TilePickerZoomScaling#
 
-file=ReadFile (globaldirname$+"\display.wdf")
+Const EditorDisplayFile$="displaymnikeditor.wdf"
+
+file=ReadFile (globaldirname$+"\"+EditorDisplayFile$)
 If file>0
 
 	j=ReadInt(file)
@@ -1157,7 +1159,7 @@ OriginalRatio#=800.0/600.0
 Global GfxAspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
 GfxZoomScaling#=OriginalRatio#/GfxAspectRatio#
 
-GfxWindowed=2 ; Force windowed mode
+Global GfxWindowed=2 ; Force windowed mode
 
 Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 SetBuffer BackBuffer()
@@ -2631,6 +2633,8 @@ Function UpdateEditor()
 		MasterAdvancedLoop()
 	Case 11
 		HubMainLoop()
+	Case 13
+		SettingsMainLoop()
 	End Select
 
 End Function
@@ -19607,7 +19611,7 @@ Function AdventureSelectScreen()
 		;DisplayText2("            ================================",0,1,TextMenusR,TextMenusG,TextMenusB)
 		
 		DisplayText2("            ======================",0,1,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("                                  (Controls)",0,1,255,255,255)
+		DisplayText2("                                  (Settings)",0,1,255,255,255)
 		
 	;	If displayfullscreen=True
 	;		DisplayText2("                                (FullScreen)",0,1,255,255,255)
@@ -19825,7 +19829,9 @@ Function AdventureSelectScreen()
 	;			Print "Note: Screenmode will be switched upon next restart."
 	;			Delay 4000
 				
-				ConfigureControls()
+				SetEditorMode(13)
+				Repeat
+				Until MouseDown(1)=0
 				
 			EndIf
 
@@ -20063,7 +20069,6 @@ Function AdventureSelectScreen2()
 End Function
 
 Function AdventureSelectScreen3()
-	;ShowMessage("The third.",1000)
 
 	MX=MouseX()
 	my=MouseY()
@@ -20164,6 +20169,83 @@ Function AdventureSelectScreen3()
 
 	
 End Function
+
+Function SettingsMainLoop()
+	MX=MouseX()
+	my=MouseY()
+	StartY=LetterHeight*9
+	If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
+		Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
+	Else 
+		Selected=-1
+	EndIf
+
+
+	DisplayText2("Settings",0,0,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("============================================",0,1,TextMenusR,TextMenusG,TextMenusB)
+	
+	If Selected=0
+		DisplayText2("Controls",18,9,255,255,255)
+	Else
+		DisplayText2("Controls",18,9,155,155,155)
+	EndIf
+	ex$=Str$(MyGfxModeWidth(GfxMode))+"x"+Str$(MyGfxModeHeight(GfxMode))+"x"+Str$(MyGfxModeDepth(GfxMode))
+	If Selected=1
+		DisplayText2("Resolution "+ex$,8,11,255,255,255)
+	Else
+		DisplayText2("Resolution "+ex$,8,11,155,155,155)
+	EndIf
+	If Selected=2
+		DisplayText2("Apply Resolution",8,13,255,255,255)
+	Else
+		DisplayText2("Apply Resolution",8,13,155,155,155)
+	EndIf
+	If Selected=3
+		DisplayText2("Back",20,15,255,255,255)
+	Else
+		DisplayText2("Back",20,15,155,155,155)
+	EndIf
+	
+	If MouseDown(1)
+		If selected=0			
+			ConfigureControls()
+			
+			Repeat
+			Until MouseDown(1)=0
+		EndIf
+		If selected=1
+			GfxMode=GfxMode+1
+			If GfxMode=NofMyGfxModes Then GfxMode=0
+			
+			Repeat
+			Until MouseDown(1)=0
+		EndIf
+		If selected=2
+			GfxWidth=MyGfxModeWidth(gfxmode)
+			GfxHeight=MyGfxModeHeight(gfxmode)
+			GfxDepth=MyGfxModeDepth(gfxmode)
+			Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
+			
+			Repeat
+			Until MouseDown(1)=0
+		EndIf
+		If selected=3
+			SetEditorMode(5)
+			
+			Repeat
+			Until MouseDown(1)=0
+		EndIf
+	EndIf
+	If MouseDown(2)
+		If selected=1
+			GfxMode=GfxMode-1
+			If GfxMode=-1 Then GfxMode=NofMyGfxModes-1
+			
+			Repeat
+			Until MouseDown(2)=0
+		EndIf
+	EndIf
+
 
 
 Function GetCurrentAdventures()
