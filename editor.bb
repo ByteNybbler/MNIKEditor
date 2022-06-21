@@ -760,7 +760,7 @@ Field Status,Timer,TimerMax1,TimerMax2
 Field Teleportable,ButtonPush,WaterReact
 Field Telekinesisable,Freezable,Reactive,Child,Parent
 Field Data0,Data1,Data2,Data3,Data4,Data5,Data6,Data7,Data8,Data9 ; Oh my god. I guess even the slightest convenience has a price.
-Field TextData1$,TextData2$,TextData3$,TextData4$
+Field TextData0$,TextData1$,TextData2$,TextData3$
 Field Talkable,CurrentAnim,StandardAnim
 Field MovementTimer,MovementSpeed,MoveXGoal,MoveYGoal,TileTypeCollision,ObjectTypeCollision
 Field Caged,Dead,DeadTimer,Exclamation,Shadow,Linked,LinkBack,Flying,Frozen,Indigo,FutureInt24,FutureInt25
@@ -1076,7 +1076,7 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 
 Global NofMyGfxModes, MyGfxMode
 Dim MyGfxModeWidth(1000),MyGfxModeHeight(1000),MyGfxModeDepth(1000)
-Global GfxWidth,GfxHeight,GfxDepth
+Global GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 Global GfxZoomScaling#
 Global TilePickerZoomScaling#
 
@@ -1160,7 +1160,7 @@ OriginalRatio#=800.0/600.0
 Global GfxAspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
 GfxZoomScaling#=OriginalRatio#/GfxAspectRatio#
 
-Global GfxWindowed=2 ; Force windowed mode
+GfxWindowed=2 ; Force windowed mode
 
 Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 SetBuffer BackBuffer()
@@ -2736,7 +2736,7 @@ Function EditorMainLoop()
 						StringOnObject$=i
 					ElseIf ShowObjectMesh=ShowObjectMeshIds
 						; display object IDs
-						StringOnObject$=CalculateEffectiveId(i)
+						StringOnObject$=CalculateEffectiveId(LevelObjects(i)\Attributes)
 					ElseIf ShowObjectMesh=ShowObjectMeshCount
 						StringOnObject$=LevelTileObjectCount(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
 					EndIf
@@ -2746,7 +2746,7 @@ Function EditorMainLoop()
 		EndIf
 		
 		For i=0 To NofObjects-1
-			MyEffectiveId=CalculateEffectiveId(i)
+			MyEffectiveId=CalculateEffectiveId(LevelObjects(i)\Attributes)
 			
 			HitTargetID=False
 			For j=0 To CurrentObjectTargetIDCount-1
@@ -4045,7 +4045,7 @@ End Function
 Function TryLevelGoto(i,x,y,D1,D2,D3)
 
 	If LevelObjects(i)\Position\TileX=x And LevelObjects(i)\Position\TileY=y
-		Attributes=LevelObjects(i)\Attributes
+		Attributes.GameObjectAttributes=LevelObjects(i)\Attributes
 		ToLevel=GetDataByIndex(Attributes,D1)
 		If ToLevel=CurrentLevelNumber
 			PositionCameraInLevel(GetDataByIndex(Attributes,D2),GetDataByIndex(Attributes,D3))
@@ -4512,8 +4512,11 @@ Function EditorLocalControls()
 				If EditorMode=3
 					; object dragging
 					If RightMouse
-						If CurrentDraggedObject<>-1 And (ObjectTileX(CurrentDraggedObject)<>BrushCursorX Or ObjectTileY(CurrentDraggedObject)<>BrushCursorY)
-							DecrementLevelTileObjectCount(ObjectTileX(CurrentDraggedObject),ObjectTileY(CurrentGrabbedObject))
+						DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
+						TileX=DraggedPosition\TileX
+						TileY=DraggedPosition\TileY
+						If CurrentDraggedObject<>-1 And (TileX<>BrushCursorX Or TileY<>BrushCursorY)
+							DecrementLevelTileObjectCount(TileX,TileY)
 							SetObjectPosition(CurrentDraggedObject,BrushCursorX,BrushCursorY);,0,0)
 							UpdateObjectPosition(CurrentDraggedObject)
 							SomeObjectWasChanged()
@@ -4586,8 +4589,12 @@ Function EditorLocalControls()
 						CustomBrushEditorMode=EditorMode
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
-							If ObjectX(k)>BrushXStart And ObjectX(k)<BrushXStart+BrushWidth And ObjectY(k)>BrushYStart And ObjectY(k)<BrushYStart+BrushHeight
-								CopyObjectDataToBrush(k,NofBrushObjects,ObjectTileX(k)-BrushXStart,ObjectTileY(k)-BrushYStart)
+							ObjX=LevelObjects(k)\Position\X
+							ObjY=LevelObjects(k)\Position\Y
+							ObjTileX=LevelObjects(k)\Position\TileX
+							ObjTileY=LevelObjects(k)\Position\TileY
+							If ObjX>BrushXStart And ObjX<BrushXStart+BrushWidth And ObjY>BrushYStart And ObjY<BrushYStart+BrushHeight
+								CopyObjectDataToBrush(k,NofBrushObjects,TileX-BrushXStart,TileY-BrushYStart)
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
 						Next
@@ -5691,9 +5698,11 @@ Function EditorLocalControls()
 	
 	If KeyDown(34) ; G key
 		For i=0 To NofObjects-1
-			If ObjectType(i)=90 And (ObjectSubType(i)=10 Or (ObjectSubType(i)=15 And ObjectData(i,0)=7)) ; LevelExit or CMD 7
+			TheType=LevelObjects(i)\Attributes\LogicType
+			TheSubType=LevelObjects(i)\Attributes\LogicSubType
+			If TheType=90 And (TheSubType=10 Or (TheSubType=15 And LevelObjects(i)\Attributes\Data0=7)) ; LevelExit or CMD 7
 				TryLevelGoto(i,BrushCursorX,BrushCursorY,1,2,3)
-			ElseIf ObjectType(i)=242 And ObjectData(i,2)=7 ; Cuboid
+			ElseIf TheType=242 And LevelObjects(i)\Attributes\Data2=7 ; Cuboid
 				TryLevelGoto(i,BrushCursorX,BrushCursorY,3,4,5)
 			EndIf
 		Next
@@ -6049,7 +6058,7 @@ Function EditorLocalControls()
 		If WasChanged
 			ShowObjectMesh=NewValue
 			For j=0 To NofObjects-1
-				UpdateObjectVisibility(j)
+				UpdateObjectVisibility(LevelObjects(j))
 			Next
 		EndIf
 	EndIf
@@ -6113,7 +6122,7 @@ Function EditorLocalControls()
 				SimulateObjectRotation(i)
 				SimulateObjectScale(i)
 				
-				UpdateObjectVisibility(i)
+				UpdateObjectVisibility(LevelObjects(i))
 				UpdateObjectAnimation(i)
 			Next
 			
@@ -6173,7 +6182,7 @@ Function EditorLocalControls()
 					Next
 				Next
 				For i=0 To NofObjects-1
-					ObjectZAdjust(i)=ObjectZAdjust(i)+Adjustment
+					LevelObjects(i)\Attributes\ZAdjust=LevelObjects(i)\Attributes\ZAdjust+Adjustment
 					UpdateObjectPosition(i)
 				Next
 				CurrentObject\Attributes\ZAdjust=CurrentObject\Attributes\ZAdjust+Adjustment
@@ -6197,7 +6206,7 @@ Function EditorLocalControls()
 				IDFilterInverted=False
 			EndIf
 			For j=0 To NofObjects-1
-				UpdateObjectVisibility(j)
+				UpdateObjectVisibility(LevelObjects(j))
 			Next
 			Delay 100
 		EndIf
@@ -6215,7 +6224,7 @@ Function EditorLocalControls()
 			EndIf
 			IDFilterAllow=IDFilterAllow+Adj*MouseScroll
 			For j=0 To NofObjects-1
-				UpdateObjectVisibility(j)
+				UpdateObjectVisibility(LevelObjects(j))
 			Next
 		EndIf
 	EndIf
@@ -8538,7 +8547,7 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObject\Attributes\Roll2#=0
 	CurrentObject\Attributes\XGoal#=0
 	CurrentObject\Attributes\YGoal#=0
-	CurrentObject\Position\ZGoal#=0
+	CurrentObject\Attributes\ZGoal#=0
 	CurrentObject\Attributes\MovementType=0
 	CurrentObject\Attributes\MovementTypeData=0
 	CurrentObject\Attributes\Speed#=0
@@ -8569,12 +8578,20 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObject\Attributes\Reactive=True
 	CurrentObject\Attributes\Child=-1
 	CurrentObject\Attributes\Parent=-1
-	For i=0 To 9
-		CurrentObjectData(i)=0
-	Next
-	For i=0 To 3
-		CurrentObjectTextData$(i)=""
-	Next
+	CurrentObject\Attributes\Data0=0
+	CurrentObject\Attributes\Data1=0
+	CurrentObject\Attributes\Data2=0
+	CurrentObject\Attributes\Data3=0
+	CurrentObject\Attributes\Data4=0
+	CurrentObject\Attributes\Data5=0
+	CurrentObject\Attributes\Data6=0
+	CurrentObject\Attributes\Data7=0
+	CurrentObject\Attributes\Data8=0
+	CurrentObject\Attributes\Data9=0
+	CurrentObject\Attributes\TextData0=""
+	CurrentObject\Attributes\TextData1=""
+	CurrentObject\Attributes\TextData2=""
+	CurrentObject\Attributes\TextData3=""
 	CurrentObject\Attributes\Talkable=0
 	CurrentObject\Attributes\CurrentAnim=0
 	CurrentObject\Attributes\StandardAnim=0
@@ -8650,7 +8667,7 @@ Function LoadObjectPreset()
 	CurrentObject\Attributes\Roll2#=ReadFloat(file)
 	CurrentObject\Attributes\XGoal#=ReadFloat(file)
 	CurrentObject\Attributes\YGoal#=ReadFloat(file)
-	CurrentObject\Position\ZGoal#=ReadFloat(file)
+	CurrentObject\Attributes\ZGoal#=ReadFloat(file)
 	CurrentObject\Attributes\MovementType=ReadInt(file)
 	CurrentObject\Attributes\MovementTypeData=ReadInt(file)
 	CurrentObject\Attributes\Speed#=ReadFloat(file)
@@ -8681,12 +8698,20 @@ Function LoadObjectPreset()
 	CurrentObject\Attributes\Reactive=ReadInt(file)
 	CurrentObject\Attributes\Child=ReadInt(file)
 	CurrentObject\Attributes\Parent=ReadInt(file)
-	For i=0 To 9
-		CurrentObjectData(i)=ReadInt(file)
-	Next
-	For i=0 To 3
-		CurrentObjectTextData$(i)=ReadString$(file)
-	Next
+	CurrentObject\Attributes\Data0=ReadInt(file)
+	CurrentObject\Attributes\Data1=ReadInt(file)
+	CurrentObject\Attributes\Data2=ReadInt(file)
+	CurrentObject\Attributes\Data3=ReadInt(file)
+	CurrentObject\Attributes\Data4=ReadInt(file)
+	CurrentObject\Attributes\Data5=ReadInt(file)
+	CurrentObject\Attributes\Data6=ReadInt(file)
+	CurrentObject\Attributes\Data7=ReadInt(file)
+	CurrentObject\Attributes\Data8=ReadInt(file)
+	CurrentObject\Attributes\Data9=ReadInt(file)
+	CurrentObject\Attributes\TextData0$=ReadString$(file)
+	CurrentObject\Attributes\TextData1$=ReadString$(file)
+	CurrentObject\Attributes\TextData2$=ReadString$(file)
+	CurrentObject\Attributes\TextData3$=ReadString$(file)
 	CurrentObject\Attributes\Talkable=ReadInt(file)
 	CurrentObject\Attributes\CurrentAnim=ReadInt(file)
 	CurrentObject\Attributes\StandardAnim=ReadInt(file)
@@ -8873,7 +8898,7 @@ Function ShowMessageOnce(message$, milliseconds)
 
 End Function
 
-Function GetObjectOffset#(Attributes,index)
+Function GetObjectOffset#(Attributes.GameObjectAttributes,index)
 
 	; Type-specific placements
 	If Attributes\LogicType=10 And Attributes\LogicSubType=1 ; house-door
@@ -8974,18 +8999,18 @@ Function IsPositionInLevel(x,y)
 
 End Function
 
-Function SetObjectPosition(Attributes,x#,y#)
+Function SetObjectPosition(i,x#,y#)
 
 	floorx=Floor(x)
 	floory=Floor(y)
 	
-	SetObjectTileXY(Attributes,floorx,floory)
+	SetObjectTileXY(i,floorx,floory)
 	
-	xoffset#=GetObjectOffset#(Attributes,0)
-	yoffset#=GetObjectOffset#(Attributes,1)
+	xoffset#=GetObjectOffset#(LevelObjects(i)\Attributes,0)
+	yoffset#=GetObjectOffset#(LevelObjects(i)\Attributes,1)
 	
-	Attributes\X#=x#+xoffset#
-	Attributes\Y#=y#+yoffset#
+	LevelObjects(i)\Position\X#=x#+xoffset#
+	LevelObjects(i)\Position\Y#=y#+yoffset#
 	
 	Return True
 
@@ -9051,7 +9076,7 @@ Function PlaceObjectActual(x#,y#)
 		Return
 	EndIf
 	
-	SourceAttributes=CurrentObject\Attributes
+	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
 
 	If RandomType
 		SourceAttributes\LogicType=Rand(RandomTypeMin,RandomTypeMax)
@@ -9213,20 +9238,20 @@ Function PlaceObjectActual(x#,y#)
 	EndIf
 	
 	
-	NewObject=LevelObjects(NofObjects)
+	NewObject.GameObject=LevelObjects(NofObjects)
 	
 	CopyObjectAttributes(SourceAttributes,NewObject\Attributes)
 	
-	SetObjectPosition(NewObject\Attributes,x#,y#)
+	SetObjectPosition(NofObjects,x#,y#)
 	
 	NewObject\HatEntity=0
 	NewObject\HatTexture=0
 	NewObject\AccEntity=0
 	NewObject\AccTexture=0
 
-	NewObject\Attributes\OldX#=-999
-	NewObject\Attributes\OldY#=-999
-	NewObject\Attributes\OldZ#=-999
+	NewObject\Position\OldX#=-999
+	NewObject\Position\OldY#=-999
+	NewObject\Position\OldZ#=-999
 	
 	;For i=0 To 30
 	;	ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
@@ -9256,7 +9281,7 @@ Function PlaceObjectActual(x#,y#)
 End Function
 
 
-Function CalculateEffectiveID(Attributes)
+Function CalculateEffectiveID(Attributes.GameObjectAttributes)
 
 	Return CalculateEffectiveIDWith(Attributes\LogicType,Attributes\ID,Attributes\Data0,Attributes\Data1,Attributes\TileTypeCollision,Attributes\ModelName$)
 
@@ -9794,7 +9819,7 @@ Function CopyObjectPosition(SourceAttributes,DestAttributes)
 End Function
 
 
-Function CopyObjectAttributes(SourceAttributes,DestAttributes)
+Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttributes.GameObjectAttributes)
 
 	DestAttributes\ModelName$=SourceAttributes\ModelName$
 	DestAttributes\TexName$=SourceAttributes\TexName$
@@ -17029,7 +17054,7 @@ Function SetDataByIndex(Attributes,i,Value)
 End Function
 
 ; screw blitzard
-Function GetDataByIndex(Attributes,i)
+Function GetDataByIndex(Attributes.GameObjectAttributes,i)
 
 	Select i
 	Case 0
@@ -20272,6 +20297,7 @@ Function SettingsMainLoop()
 		EndIf
 	EndIf
 
+End Function
 
 
 Function GetCurrentAdventures()
