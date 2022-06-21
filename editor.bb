@@ -15993,9 +15993,9 @@ Function FlipLevelX()
 	; and move the object
 	
 	For i=0 To NofObjects-1
-		ObjectX(i)=Float(LevelWidth)-ObjectX(i)
+		LevelObjects(i)\Position\X=Float(LevelWidth)-LevelObjects(i)\Position\X
 		
-		ChangeObjectTileX(i,LevelWidth-1-ObjectTileX(i))
+		ChangeObjectTileX(i,LevelWidth-1-LevelObjects(i)\Position\TileX)
 		
 		UpdateObjectPosition(i)
 	Next
@@ -16026,9 +16026,9 @@ Function FlipLevelY()
 	; and move the object
 	
 	For i=0 To NofObjects-1
-		ObjectY(i)=Float(LevelHeight)-ObjectY(i)
+		LevelObjects(i)\Position\Y=Float(LevelHeight)-LevelObjects(i)\Position\Y
 		
-		ChangeObjectTileY(i,LevelHeight-1-ObjectTileY(i))
+		ChangeObjectTileY(i,LevelHeight-1-LevelObjects(i)\Position\TileY)
 		
 		UpdateObjectPosition(i)
 	Next
@@ -16063,10 +16063,10 @@ Function FlipLevelXY()
 	; and move the object
 	
 	For i=0 To NofObjects-1
-		x2#=ObjectX(i)
-		ObjectX(i)=ObjectY(i)
-		ObjectY(i)=x2#
-		ChangeObjectTileXY(i,ObjectTileY(i),ObjectTileX(i))
+		x2#=LevelObjects(i)\Position\X
+		LevelObjects(i)\Position\X=LevelObjects(i)\Position\Y
+		LevelObjects(i)\Position\Y=x2#
+		ChangeObjectTileXY(i,LevelObjects(i)\Position\TileY,LevelObjects(i)\Position\TileX)
 		
 		
 		UpdateObjectPosition(i)
@@ -16783,36 +16783,6 @@ Function TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Pit
 
 End Function
 
-Function TransformAccessoryEntity(Entity,Dest)
-
-	XScale#=ObjectXScale(Dest)*ObjectScaleAdjust(Dest)
-	YScale#=ObjectYScale(Dest)*ObjectScaleAdjust(Dest)
-	ZScale#=ObjectZScale(Dest)*ObjectScaleAdjust(Dest)
-	Yaw#=ObjectYaw(Dest)+ObjectYawAdjust(Dest)
-	Pitch#=ObjectPitch(Dest)+ObjectPitchAdjust(Dest)
-	Roll#=ObjectRoll(Dest)+ObjectRollAdjust(Dest)
-	X#=ObjectX(Dest)+ObjectXAdjust(Dest)
-	Y#=ObjectY(Dest)+ObjectYAdjust(Dest)
-	Z#=ObjectZ(Dest)+ObjectZAdjust(Dest)
-	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Pitch#,Roll#,X#,Y#,Z#)
-
-End Function
-
-Function SimulatedTransformAccessoryEntity(Entity,Dest)
-
-	XScale#=SimulatedObjectXScale(Dest)*ObjectScaleAdjust(Dest)
-	YScale#=SimulatedObjectYScale(Dest)*ObjectScaleAdjust(Dest)
-	ZScale#=SimulatedObjectZScale(Dest)*ObjectScaleAdjust(Dest)
-	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
-	Pitch#=SimulatedObjectPitch(Dest)+SimulatedObjectPitchAdjust(Dest)
-	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
-	X#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)
-	Y#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
-	Z#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
-	TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Pitch#,Roll#,X#,Y#,Z#)
-
-End Function
-
 Function TransformAccessoryEntityOntoBone(Entity,BoneHaver)
 
 	bone=FindChild(BoneHaver,"hat_bone")
@@ -16829,18 +16799,20 @@ End Function
 Function CreateLevelObjectModel(Dest)
 
 	BuildObjectModel(LevelObjects(Dest))		
-		
-	UpdateObjectAnimation(Dest)
 	
-	UpdateObjectVisibility(Dest)
-
-	PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
+	Obj.GameObject=LevelObjects(Dest)
 	
-	If ObjectHatEntity(Dest)>0
-		TransformAccessoryEntityOntoBone(ObjectHatEntity(Dest),ObjectEntity(Dest))
+	UpdateObjectAnimation(Obj)
+	
+	UpdateObjectVisibility(Obj)
+	
+	PositionEntity Obj\Entity,ObjectSumX#(Obj),ObjectSumZ#(Obj),-ObjectSumY#(Obj)
+	
+	If Obj\HatEntity>0
+		TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
 	EndIf
-	If ObjectAccEntity(Dest)>0
-		TransformAccessoryEntityOntoBone(ObjectAccEntity(Dest),ObjectEntity(Dest))
+	If Obj\AccEntity>0
+		TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
 	EndIf
 
 End Function
@@ -16850,7 +16822,7 @@ Function UpdateLevelObjectModel(Dest)
 
 	;ShowMessage("Freeing object model "+Dest+": "+ObjectModelName$(Dest),10)
 
-	FreeModel(Dest)
+	FreeModel(LevelObjects(Dest))
 	
 	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),10)
 	
@@ -16863,7 +16835,7 @@ Function CountObjectTypes(TargetType)
 
 	Count=0
 	For i=0 To NofObjects-1
-		If ObjectType(i)=TargetType
+		If LevelObjects(i)\Attributes\LogicType=TargetType
 			Count=Count+1
 		EndIf
 	Next
@@ -16876,7 +16848,7 @@ Function CountObjectEffectiveIDs(EffectiveID)
 
 	Count=0
 	For i=0 To NofObjects-1
-		If CalculateEffectiveID(i)=EffectiveID
+		If CalculateEffectiveID(LevelObjects(i)\Attributes)=EffectiveID
 			Count=Count+1
 		EndIf
 	Next
@@ -16889,7 +16861,7 @@ Function CountObjectLogics(TargetType,TargetSubType)
 
 	Count=0
 	For i=0 To NofObjects-1
-		If ObjectType(i)=TargetType And ObjectSubType(i)=TargetSubType
+		If LevelObjects(i)\Attributes\LogicType=TargetType And LevelObjects(i)\Attributes\LogicSubType=TargetSubType
 			Count=Count+1
 		EndIf
 	Next
@@ -16901,7 +16873,7 @@ Function CountObjectModelNames(TargetModelName$)
 
 	Count=0
 	For i=0 To NofObjects-1
-		If ObjectModelName$(i)=TargetModelName$
+		If LevelObjects(i)\Attributes\ModelName$=TargetModelName$
 			Count=Count+1
 		EndIf
 	Next
@@ -16913,7 +16885,7 @@ Function CountObjectTextureNames(TargetTextureName$)
 
 	Count=0
 	For i=0 To NofObjects-1
-		If ObjectTextureName$(i)=TargetTextureName$
+		If LevelObjects(i)\Attributes\TexName$=TargetTextureName$
 			Count=Count+1
 		EndIf
 	Next
@@ -16999,7 +16971,7 @@ End Function
 
 Function SetThreeOtherDataIfNotEqual(DTo1,DTo2,DTo3,DFrom,OldData)
 
-	Attributes=CurrentObject\Attributes
+	Attributes.GameObjectAttributes=CurrentObject\Attributes
 	If GetDataByIndex(Attributes,DTo1)=OldData And GetDataByIndex(Attributes,DTo2)=OldData And GetDataByIndex(Attributes,DTo3)=OldData
 		NewValue=GetDataByIndex(Attributes,DFrom)
 		SetDataByIndex(Attributes,DTo1,NewValue)
@@ -17242,7 +17214,7 @@ Function SaveLevel()
 	
 	WriteInt file,NofObjects
 	For i=0 To NofObjects-1
-		Dest=i
+		Obj.GameObject=LevelObjects(i)
 		
 		WriteString file,ObjectModelName$(i)
 		WriteString file,ObjectTextureName$(i)
