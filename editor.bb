@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/17/22"
+Global VersionDate$="06/21/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -761,48 +761,6 @@ Until NofTilePresetTiles>0
 Global NofObjects=0
 Const MaxNofObjects=1000
 
-Dim ObjectEntity(1000),ObjectTexture(1000)
-Dim ObjectHatEntity(1000),ObjectHatTexture(1000)
-Dim ObjectAccEntity(1000),ObjectAccTexture(1000)
-Dim ObjectModelName$(1000)
-Dim ObjectTextureName$(1000)
-Dim ObjectXScale#(1000)
-Dim ObjectZScale#(1000)
-Dim ObjectYScale#(1000)
-Dim ObjectXAdjust#(1000)
-Dim ObjectZAdjust#(1000)
-Dim ObjectYAdjust#(1000)
-Dim ObjectPitchAdjust#(1000)
-Dim ObjectYawAdjust#(1000)
-Dim ObjectRollAdjust#(1000)
-Dim ObjectX#(1000),ObjectY#(1000),ObjectZ#(1000)
-Dim ObjectOldX#(1000),ObjectOldY#(1000),ObjectOldZ#(1000)
-Dim ObjectDX#(1000),ObjectDY#(1000),ObjectDZ#(1000)
-Dim ObjectPitch#(1000),ObjectYaw#(1000),ObjectRoll#(1000)
-Dim ObjectPitch2#(1000),ObjectYaw2#(1000),ObjectRoll2#(1000)
-Dim ObjectXGoal#(1000),ObjectYGoal#(1000),ObjectZGoal#(1000)
-Dim ObjectMovementType(1000),ObjectMovementTypeData(1000),ObjectSpeed#(1000)
-Dim ObjectRadius#(1000),ObjectRadiusType(1000)
-Dim ObjectData10(1000)
-Dim ObjectPushDX#(1000),ObjectPushDY#(1000)
-Dim ObjectAttackPower(1000),ObjectDefensePower(1000),ObjectDestructionType(1000)
-Dim ObjectID(1000),ObjectType(1000),ObjectSubType(1000)
-Dim ObjectActive(1000),ObjectLastActive(1000),ObjectActivationType(1000),ObjectActivationSpeed(1000)
-Dim ObjectStatus(1000),ObjectTimer(1000),ObjectTimerMax1(1000),ObjectTimerMax2(1000)
-Dim ObjectTeleportable(1000),ObjectButtonPush(1000),ObjectWaterReact(1000)
-Dim ObjectTelekinesisable(1000),ObjectFreezable(1000)
-Dim ObjectReactive(1000)
-Dim ObjectChild(1000),ObjectParent(1000)
-Dim ObjectData(1000,10),ObjectTextData$(1000,4)
-Dim ObjectTalkable(1000),ObjectCurrentAnim(1000),ObjectStandardAnim(1000),ObjectTileX(1000),ObjectTileY(1000)
-Dim ObjectTileX2(1000),ObjectTileY2(1000),ObjectMovementTimer(1000),ObjectMovementSpeed(1000),ObjectMoveXGoal(1000)
-Dim ObjectMoveYGoal(1000),ObjectTileTypeCollision(1000),ObjectObjectTypeCollision(1000),ObjectCaged(1000),ObjectDead(1000)
-Dim ObjectDeadTimer(1000),ObjectExclamation(1000),ObjectShadow(1000),ObjectLinked(1000),ObjectLinkBack(1000)
-Dim ObjectFlying(1000),ObjectFrozen(1000),ObjectIndigo(1000),ObjectFutureInt24(1000),ObjectFutureInt25(1000)
-Dim ObjectScaleAdjust#(1000),ObjectScaleXAdjust#(1000),ObjectScaleYAdjust#(1000),ObjectScaleZAdjust#(1000),ObjectFutureFloat5#(1000)
-Dim ObjectFutureFloat6#(1000),ObjectFutureFloat7#(1000),ObjectFutureFloat8#(1000),ObjectFutureFloat9#(1000),ObjectFutureFloat10#(1000)
-Dim ObjectFutureString1$(1000),ObjectFutureString2$(1000)
-
 Dim ObjectAdjusterString$(1000,30)
 
 Global HighlightWopAdjusters=True
@@ -844,12 +802,15 @@ Dim SimulatedObjectFrozen(1000)
 ;Dim SimulatedObjectScaleAdjust#(1000) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
 Dim SimulatedObjectScaleXAdjust#(1000),SimulatedObjectScaleYAdjust#(1000),SimulatedObjectScaleZAdjust#(1000)
 
+
 Type GameObject
 
 Field Entity,Texture,HatEntity,HatTexture,AccEntity,AccTexture
 Field Attributes.GameObjectAttributes
+Field Position.GameObjectPosition
 
 End Type
+
 
 Type GameObjectAttributes
 
@@ -857,8 +818,6 @@ Field ModelName$,TexName$ ; Formerly TextureName$, but that's a Blitz3d keyword.
 Field XScale#,YScale#,ZScale#
 Field XAdjust#,YAdjust#,ZAdjust#
 Field PitchAdjust#,YawAdjust#,RollAdjust#
-Field X#,Y#,Z#
-Field OldX#,OldY#,OldZ#
 Field DX#,DY#,DZ#
 Field Pitch#,Yaw#,Roll#
 Field Pitch2#,Yaw2#,Roll2#
@@ -871,19 +830,177 @@ Field Active,LastActive,ActivationType,ActivationSpeed
 Field Status,Timer,TimerMax1,TimerMax2
 Field Teleportable,ButtonPush,WaterReact
 Field Telekinesisable,Freezable,Reactive,Child,Parent
-Field Data0,Data1,Data2,Data3,Data4,Data5,Data6,Data7,Data8,Data9,DataExtra ; Oh my god. I guess even the slightest convenience has a price.
+Field Data0,Data1,Data2,Data3,Data4,Data5,Data6,Data7,Data8,Data9 ; Oh my god. I guess even the slightest convenience has a price.
 Field TextData1$,TextData2$,TextData3$,TextData4$
 Field Talkable,CurrentAnim,StandardAnim
-Field TileX,TileY,TileX2,TileY2,MovementTimer,MovementSpeed,MoveXGoal,MoveYGoal,TileTypeCollision,ObjectTypeCollision
+Field MovementTimer,MovementSpeed,MoveXGoal,MoveYGoal,TileTypeCollision,ObjectTypeCollision
 Field Caged,Dead,DeadTimer,Exclamation,Shadow,Linked,LinkBack,Flying,Frozen,Indigo,FutureInt24,FutureInt25
 Field ScaleAdjust#,ScaleXAdjust#,ScaleYAdjust#,ScaleZAdjust#
 Field FutureFloat5#,FutureFloat6#,FutureFloat7#,FutureFloat8#,FutureFloat9#,FutureFloat10#,FutureString1$,FutureString2$
 
 End Type
 
-Global CurrentObject.GameObject
 
-Dim LevelObjects.GameObject(1000)
+Type GameObjectPosition
+
+Field X#,Y#,Z#
+Field OldX#,OldY#,OldZ#
+Field TileX,TileY,TileX2,TileY2
+
+End Type
+
+
+Global CurrentObject.GameObject=New GameObject
+CurrentObject\Attributes=New GameObjectAttributes
+
+Dim LevelObjects.GameObject(MaxNofObjects)
+Dim BrushObjects.GameObjectAttributes(MaxNofObjects)
+
+For i=0 To MaxNofObjects
+	LevelObjects.GameObject(i)=New GameObject
+	LevelObjects.GameObject(i)\Attributes=New GameObjectAttributes
+	LevelObjects.GameObject(i)\Position=New GameObjectPosition
+	BrushObjects.GameObjectAttributes(i)=New GameObjectAttributes
+Next
+
+
+Type ObjectAdjusterInt
+
+Field Name$
+Field RandomEnabled,RandomMin,RandomMax,RandomMinDefault,RandomMaxDefault
+
+End Type
+
+
+Type ObjectAdjusterFloat
+
+Field Name$
+Field RandomEnabled,RandomMin#,RandomMax#,RandomMinDefault#,RandomMaxDefault#
+
+End Type
+
+
+Function NewObjectAdjusterInt(Name$,RandomMin,RandomMax)
+
+	Result=New ObjectAdjusterInt
+	Result\Name$=Name$
+	Result\RandomEnabled=False
+	Result\RandomMin=RandomMin
+	Result\RandomMax=RandomMax
+	Result\RandomMinDefault=RandomMin
+	Result\RandomMaxDefault=RandomMax
+	Return Result
+
+End Function
+
+Function NewObjectAdjusterFloat(Name$,RandomMin#,RandomMax#)
+
+	Result=New ObjectAdjusterFloat
+	Result\Name$=Name$
+	Result\RandomEnabled=False
+	Result\RandomMin=RandomMin
+	Result\RandomMax=RandomMax
+	Result\RandomMinDefault=RandomMin
+	Result\RandomMaxDefault=RandomMax
+	Return Result
+
+End Function
+
+
+Function AdjustObjectAdjusterInt(ObjectAdjuster,CurrentValue,SlowInt,FastInt,DelayTime)
+
+	If ObjectAdjuster\RandomEnabled
+		If OnLeftHalfAdjuster()
+			ObjectAdjuster\RandomMin=AdjustInt(ObjectAdjuster\Name$+" Min: ", ObjectAdjuster\RandomMin, SlowInt, FastInt, DelayTime)
+		Else
+			ObjectAdjuster\RandomMax=AdjustInt(ObjectAdjuster\Name$+" Max: ", ObjectAdjuster\RandomMax, SlowInt, FastInt, DelayTime)
+		EndIf
+	Else
+		Result=AdjustInt(ObjectAdjuster\Name$+": ", CurrentValue, SlowInt, FastInt, DelayTime)
+	EndIf
+	If ReturnPressed()
+		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
+		ObjectAdjuster\RandomMin=ObjectAdjuster\RandomMinDefault
+		ObjectAdjuster\RandomMax=ObjectAdjuster\RandomMaxDefault
+	EndIf
+	Return Result
+
+End Function
+
+
+Function AdjustObjectAdjusterFloat#(ObjectAdjuster,CurrentValue#,SlowFloat#,FastFloat#,DelayTime)
+
+	If ObjectAdjuster\RandomEnabled
+		If OnLeftHalfAdjuster()
+			ObjectAdjuster\RandomMin=AdjustFloat#(ObjectAdjuster\Name$+" Min: ", ObjectAdjuster\RandomMin, SlowFloat#, FastFloat#, DelayTime)
+		Else
+			ObjectAdjuster\RandomMax=AdjustFloat#(ObjectAdjuster\Name$+" Max: ", ObjectAdjuster\RandomMax, SlowFloat#, FastFloat#, DelayTime)
+		EndIf
+	Else
+		Result#=AdjustInt(ObjectAdjuster\Name$+": ", CurrentValue, SlowInt, FastInt, DelayTime)
+	EndIf
+	If ReturnPressed()
+		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
+		ObjectAdjuster\RandomMin=ObjectAdjuster\RandomMinDefault
+		ObjectAdjuster\RandomMax=ObjectAdjuster\RandomMaxDefault
+	EndIf
+	Return Result
+
+End Function
+
+
+Global ObjectAdjusterDefensePower=NewObjectAdjusterInt("DefensePower",0,33)
+Global ObjectAdjusterAttackPower=NewObjectAdjusterInt("AttackPower",0,33)
+Global ObjectAdjusterDestructionType=NewObjectAdjusterInt("DestructionType",0,1)
+Global ObjectAdjusterID=NewObjectAdjusterInt("ID",100,200)
+Global ObjectAdjusterLogicType=NewObjectAdjusterInt("Type",170,173)
+Global ObjectAdjusterLogicSubType=NewObjectAdjusterInt("SubType",0,8)
+Global ObjectAdjusterActivationSpeed=NewObjectAdjusterInt("ActivationSpeed",2,40)
+Global ObjectAdjusterActivationType=NewObjectAdjusterInt("ActivationType",12,16)
+Global ObjectAdjusterTimerMax1=NewObjectAdjusterInt("TimerMax1",1,100)
+Global ObjectAdjusterTimerMax2=NewObjectAdjusterInt("TimerMax2",1,100)
+Global ObjectAdjusterTimer=NewObjectAdjusterInt("Timer",1,100)
+Global ObjectAdjusterWaterReact=NewObjectAdjusterInt("WaterReact",0,10)
+Global ObjectAdjusterFreezable=NewObjectAdjusterInt("Freezable",0,1)
+Global ObjectAdjusterFrozen=NewObjectAdjusterInt("Frozen",0,100)
+Global ObjectAdjusterTalkable=NewObjectAdjusterInt("Talkable",0,100)
+Global ObjectAdjusterMovementSpeed=NewObjectAdjusterInt("MovementSpeed",10,40)
+Global ObjectAdjusterMovementType=NewObjectAdjusterInt("MovementType",41,48)
+Global ObjectAdjusterMovementTypeData=NewObjectAdjusterInt("MovementTypeData",0,30)
+Global ObjectAdjusterExclamation=NewObjectAdjusterInt("Exclamation",0,99)
+Global ObjectAdjusterLinked=NewObjectAdjusterInt("Linked",0,10)
+Global ObjectAdjusterLinkBack=NewObjectAdjusterInt("LinkBack",0,10)
+Global ObjectAdjusterParent=NewObjectAdjusterInt("Parent",0,10)
+Global ObjectAdjusterChild=NewObjectAdjusterInt("Child",0,10)
+Global ObjectAdjusterData10=NewObjectAdjusterInt("Data10",0,10)
+Global ObjectAdjusterCaged=NewObjectAdjusterInt("Caged",0,1)
+Global ObjectAdjusterDead=NewObjectAdjusterInt("Dead",0,3)
+Global ObjectAdjusterDeadTimer=NewObjectAdjusterInt("DeadTimer",1,100)
+Global ObjectAdjusterMovementTimer=NewObjectAdjusterInt("MovementTimer",0,1000)
+Global ObjectAdjusterFlying=NewObjectAdjusterInt("Flying",0,20)
+Global ObjectAdjusterIndigo=NewObjectAdjusterInt("Indigo",0,1)
+Global ObjectAdjusterStatus=NewObjectAdjusterInt("Status",0,10)
+
+Global ObjectAdjusterYawAdjust=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
+Global ObjectAdjusterRollAdjust=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
+Global ObjectAdjusterPitchAdjust=NewObjectAdjusterFloat("PitchAdjust",0.0,360.0)
+Global ObjectAdjusterXAdjust=NewObjectAdjusterFloat("XAdjust",-0.5,0.5)
+Global ObjectAdjusterYAdjust=NewObjectAdjusterFloat("YAdjust",-0.5,0.5)
+Global ObjectAdjusterZAdjust=NewObjectAdjusterFloat("ZAdjust",-0.5,0.5)
+Global ObjectAdjusterXScale=NewObjectAdjusterFloat("XScale",0.5,1.5)
+Global ObjectAdjusterYScale=NewObjectAdjusterFloat("YScale",0.5,1.5)
+Global ObjectAdjusterZScale=NewObjectAdjusterFloat("ZScale",0.5,1.5)
+Global ObjectAdjusterScaleAdjust=NewObjectAdjusterFloat("ScaleAdjust",0.5,1.5)
+Global ObjectAdjusterX=NewObjectAdjusterFloat("X",-0.5,0.5)
+Global ObjectAdjusterY=NewObjectAdjusterFloat("Y",-0.5,0.5)
+Global ObjectAdjusterZ=NewObjectAdjusterFloat("Z",-0.5,0.5)
+Global ObjectAdjusterDX=NewObjectAdjusterFloat("DX",-1.0,1.0)
+Global ObjectAdjusterDY=NewObjectAdjusterFloat("DY",-1.0,1.0)
+Global ObjectAdjusterDZ=NewObjectAdjusterFloat("DZ",-1.0,1.0)
+Global ObjectAdjusterSpeed=NewObjectAdjusterFloat("Speed",-0.5,0.5)
+Global ObjectAdjusterRadius=NewObjectAdjusterFloat("Radius",-0.5,0.5)
+
+
 
 Global CurrentObjectModel,CurrentObjectTexture
 Global CurrentHatModel,CurrentHatTexture
@@ -912,9 +1029,9 @@ Global CurrentObjectData10
 Global CurrentObjectPushDX#, CurrentObjectPushDY#
 Global CurrentObjectAttackPower, CurrentObjectDefensePower, CurrentObjectDestructionType
 Global CurrentObjectID, CurrentObjectType, CurrentObjectSubType
-Global CurrentObjectActive, CurrentObjectLastActive, CurrentObjectActivationType, CurrentObjectActivationSpeed
+Global CurrentObjectActive, CurrentObjectLastActive, CurrentObject\Attributes\ActivationType, CurrentObjectActivationSpeed
 Global CurrentObjectStatus, CurrentObjectTimer, CurrentObjectTimerMax1, CurrentObjectTimerMax2
-Global CurrentObjectTeleportable, CurrentObjectButtonPush, CurrentObjectWaterReact
+Global CurrentObject\Attributes\Teleportable, CurrentObjectButtonPush, CurrentObject\Attributes\WaterReact
 Global CurrentObjectTelekinesisable, CurrentObjectFreezable
 Global CurrentObjectReactive
 Global CurrentObjectChild, CurrentObjectParent
@@ -2992,7 +3109,7 @@ Function EditorMainLoop()
 	UpdateWater()
 	
 	; Animate Rainbow Magic
-	If (CurrentObjectType=200 And CurrentObjectData(0)=8) Then
+	If (CurrentObjectType=200 And CurrentObject\Attributes\Data0=8) Then
 		For i=0 To 3
 		    red=GetAnimatedRainbowRed()
 		    green=GetAnimatedRainbowGreen()
@@ -8525,15 +8642,15 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObjectSubType=ObjSubType
 	CurrentObjectActive=1001
 	CurrentObjectLastActive=1001
-	CurrentObjectActivationType=0
+	CurrentObject\Attributes\ActivationType=0
 	CurrentObjectActivationSpeed=0
 	CurrentObjectStatus=0
 	CurrentObjectTimer=0
 	CurrentObjectTimerMax1=0
 	CurrentObjectTimerMax2=0
-	CurrentObjectTeleportable=False
+	CurrentObject\Attributes\Teleportable=False
 	CurrentObjectButtonPush=False
-	CurrentObjectWaterReact=0
+	CurrentObject\Attributes\WaterReact=0
 	CurrentObjectTelekinesisable=0
 	CurrentObjectFreezable=0
 	CurrentObjectReactive=True
@@ -8637,15 +8754,15 @@ Function LoadObjectPreset()
 	CurrentObjectSubType=ReadInt(file)
 	CurrentObjectActive=ReadInt(file)
 	CurrentObjectLastActive=ReadInt(file)
-	CurrentObjectActivationType=ReadInt(file)
+	CurrentObject\Attributes\ActivationType=ReadInt(file)
 	CurrentObjectActivationSpeed=ReadInt(file)
 	CurrentObjectStatus=ReadInt(file)
 	CurrentObjectTimer=ReadInt(file)
 	CurrentObjectTimerMax1=ReadInt(file)
 	CurrentObjectTimerMax2=ReadInt(file)
-	CurrentObjectTeleportable=ReadInt(file)
+	CurrentObject\Attributes\Teleportable=ReadInt(file)
 	CurrentObjectButtonPush=ReadInt(file)
-	CurrentObjectWaterReact=ReadInt(file)
+	CurrentObject\Attributes\WaterReact=ReadInt(file)
 	CurrentObjectTelekinesisable=ReadInt(file)
 	CurrentObjectFreezable=ReadInt(file)
 	CurrentObjectReactive=ReadInt(file)
@@ -8843,20 +8960,20 @@ Function ShowMessageOnce(message$, milliseconds)
 
 End Function
 
-Function GetObjectOffset#(Dest,index)
+Function GetObjectOffset#(Attributes,index)
 
 	; Type-specific placements
-	If ObjectType(Dest)=10 And ObjectSubType(Dest)=1 ; house-door
-		If ObjectYawAdjust(Dest)=90
+	If Attributes\LogicType=10 And Attributes\LogicSubType=1 ; house-door
+		If Attributes\YawAdjust=90
 			xoffset#=0.5
 			yoffset#=1.0
-		Else If ObjectYawAdjust(Dest)=270
+		Else If Attributes\YawAdjust=270
 			xoffset#=0.5
 			yoffset#=0.0
-		Else If ObjectYawAdjust(Dest)=45
+		Else If Attributes\YawAdjust=45
 			xoffset#=-0.1
 			yoffset#=0.6
-		Else If ObjectYawAdjust(Dest)=315
+		Else If Attributes\YawAdjust=315
 			xoffset#=0.40
 			yoffset#=-0.1
 
@@ -8866,14 +8983,14 @@ Function GetObjectOffset#(Dest,index)
 			yoffset#=0.5
 
 		EndIf
-	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=2 ; dungeon-door
-		If ObjectYawAdjust(Dest)=0
+	Else If Attributes\LogicType=10 And Attributes\LogicSubType=2 ; dungeon-door
+		If Attributes\YawAdjust=0
 			xoffset#=0.0
 			yoffset#=1.0
-		Else If ObjectYawAdjust(Dest)=90
+		Else If Attributes\YawAdjust=90
 			xoffset#=1.0
 			yoffset#=1.0
-		Else If ObjectYawAdjust(Dest)=180
+		Else If Attributes\YawAdjust=180
 			xoffset#=1.0
 			yoffset#=0.0
 		Else
@@ -8881,17 +8998,17 @@ Function GetObjectOffset#(Dest,index)
 			yoffset#=0.0
 
 		EndIf
-	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=3 ; townhouse1-door
-		If ObjectYawAdjust(Dest)=90
+	Else If Attributes\LogicType=10 And Attributes\LogicSubType=3 ; townhouse1-door
+		If Attributes\YawAdjust=90
 			xoffset#=0.6
 			yoffset#=1.0
-		Else If ObjectYawAdjust(Dest)=270
+		Else If Attributes\YawAdjust=270
 			xoffset#=+0.40
 			yoffset#=0.0
-		Else If ObjectYawAdjust(Dest)=45
+		Else If Attributes\YawAdjust=45
 			xoffset#=-0.338
 			yoffset#=0.342
-		Else If ObjectYawAdjust(Dest)=315
+		Else If Attributes\YawAdjust=315
 			xoffset#=0.637
 			yoffset#=-0.361
 
@@ -8902,17 +9019,17 @@ Function GetObjectOffset#(Dest,index)
 
 		EndIf
 
-	Else If ObjectType(Dest)=10 And ObjectSubType(Dest)=4 ; townhouse2-door
-		If ObjectYawAdjust(Dest)=90
+	Else If Attributes\LogicType=10 And Attributes\LogicSubType=4 ; townhouse2-door
+		If Attributes\YawAdjust=90
 			xoffset#=0.1
 			yoffset#=1.0
-		Else If ObjectYawAdjust(Dest)=270
+		Else If Attributes\YawAdjust=270
 			xoffset#=0.90
 			yoffset#=0.0
-		Else If ObjectYawAdjust(Dest)=45
+		Else If Attributes\YawAdjust=45
 			xoffset#=-0.338-.35
 			yoffset#=0.342-.35
-		Else If ObjectYawAdjust(Dest)=315
+		Else If Attributes\YawAdjust=315
 			xoffset#=0.637+.35
 			yoffset#=-0.361-.35
 
@@ -8944,29 +9061,18 @@ Function IsPositionInLevel(x,y)
 
 End Function
 
-; Returns True if the object can be put in that position, and False otherwise
-Function SetObjectPosition(Dest,x#,y#)
+Function SetObjectPosition(Attributes,x#,y#)
 
 	floorx=Floor(x)
 	floory=Floor(y)
 	
-	If PreventPlacingObjectsOutsideLevel
-		If Not IsPositionInLevel(floorx,floory)
-			Return False
-		EndIf
-	EndIf
+	SetObjectTileXY(Attributes,floorx,floory)
 	
-	SetObjectTileXY(Dest,floorx,floory)
-	;ObjectTileX(Dest)=floorx
-	;ObjectTileX2(Dest)=floorx
-	;ObjectTileY(Dest)=floory
-	;ObjectTileY2(Dest)=floory
+	xoffset#=GetObjectOffset#(Attributes,0)
+	yoffset#=GetObjectOffset#(Attributes,1)
 	
-	xoffset#=GetObjectOffset#(Dest,0)
-	yoffset#=GetObjectOffset#(Dest,1)
-	
-	ObjectX#(Dest)=x#+xoffset#
-	ObjectY#(Dest)=y#+yoffset#
+	Attributes\X#=x#+xoffset#
+	Attributes\Y#=y#+yoffset#
 	
 	Return True
 
@@ -9017,299 +9123,201 @@ End Function
 
 Function PlaceObjectActual(x#,y#)
 
-	If Not PassesPlacementDensityTest()
-		Return
-	EndIf
-
-	If RandomType
-		CurrentObjectType=Rand(RandomTypeMin,RandomTypeMax)
-	EndIf
-	If RandomSubType
-		CurrentObjectSubType=Rand(RandomSubTypeMin,RandomSubTypeMax)
-	EndIf
-	
-	ObjectType(NofObjects)=CurrentObjectType
-	ObjectSubType(NofObjects)=CurrentObjectSubType
-	
-	If RandomPitchAdjust
-		CurrentObjectPitchAdjust#=Rnd(RandomPitchAdjustMin,RandomPitchAdjustMax)
-	EndIf
-	If RandomYawAdjust
-		CurrentObjectYawAdjust#=Rnd(RandomYawAdjustMin,RandomYawAdjustMax)
-	EndIf
-	If RandomRollAdjust
-		CurrentObjectRollAdjust#=Rnd(RandomRollAdjustMin,RandomRollAdjustMax)
-	EndIf
-	
-	ObjectPitchAdjust#(NofObjects)=CurrentObjectPitchAdjust#
-	ObjectYawAdjust#(NofObjects)=CurrentObjectYawAdjust#
-	ObjectRollAdjust#(NofObjects)=CurrentObjectRollAdjust#
-	
-	For i=0 To 9
-		If RandomData(i)
-			CurrentObjectData(i)=Rand(RandomDataMin(i),RandomDataMax(i))
-		EndIf
-	
-		ObjectData(NofObjects,i)=CurrentObjectData(i)
-	Next
-
-	If SetObjectPosition(NofObjects,x#,y#)=False ;,CurrentObjectX#,CurrentObjectY#)=False
-		; don't place anything
-		Return
-	EndIf
-	
 	If NofObjects>=MaxNofObjects
 		ShowMessageOnce(MaxNofObjects+" object limit reached; refusing to place any more", 1000)
 		Return
 	EndIf
+
+;	If PreventPlacingObjectsOutsideLevel
+;		If Not IsPositionInLevel(floorx,floory)
+;			Return False
+;		EndIf
+;	EndIf
 	
-	ObjectZ#(NofObjects)=CurrentObjectZ#
-
-
-	; first check if another object exists on the same tile
-	;For i=0 To NofObjects-1
-	;	If ObjectTileX(i)=Floor(x) And ObjectTileY(i)=Floor(y)
-	;		DeleteObject(i)
-	;		i=i-1
-	;	EndIf
-	;Next
+	If Not PassesPlacementDensityTest()
+		Return
+	EndIf
 	
-	ObjectHatEntity(NofObjects)=0
-	ObjectHatTexture(NofObjects)=0
-	ObjectAccEntity(NofObjects)=0
-	ObjectAccTexture(NofObjects)=0
+	SourceAttributes=CurrentObject\Attributes
 
-
-
-	ObjectModelName$(NofObjects)=CurrentObjectModelName$
-	ObjectTextureName$(NofObjects)=CurrentObjectTextureName$
+	If RandomType
+		SourceAttributes\LogicType=Rand(RandomTypeMin,RandomTypeMax)
+	EndIf
+	If RandomSubType
+		SourceAttributes\LogicSubType=Rand(RandomSubTypeMin,RandomSubTypeMax)
+	EndIf
+	
+	If RandomPitchAdjust
+		SourceAttributes\PitchAdjust#=Rnd(RandomPitchAdjustMin,RandomPitchAdjustMax)
+	EndIf
+	If RandomYawAdjust
+		SourceAttributes\YawAdjust#=Rnd(RandomYawAdjustMin,RandomYawAdjustMax)
+	EndIf
+	If RandomRollAdjust
+		SourceAttributes\RollAdjust#=Rnd(RandomRollAdjustMin,RandomRollAdjustMax)
+	EndIf
+	
+	If RandomData(0)
+		SourceAttributes\Data0=Rand(RandomDataMin(0),RandomDataMax(0))
+	EndIf
+	If RandomData(1)
+		SourceAttributes\Data1=Rand(RandomDataMin(1),RandomDataMax(1))
+	EndIf
+	If RandomData(2)
+		SourceAttributes\Data2=Rand(RandomDataMin(2),RandomDataMax(2))
+	EndIf
+	If RandomData(3)
+		SourceAttributes\Data3=Rand(RandomDataMin(3),RandomDataMax(3))
+	EndIf
+	If RandomData(4)
+		SourceAttributes\Data4=Rand(RandomDataMin(4),RandomDataMax(4))
+	EndIf
+	If RandomData(5)
+		SourceAttributes\Data5=Rand(RandomDataMin(5),RandomDataMax(5))
+	EndIf
+	If RandomData(6)
+		SourceAttributes\Data6=Rand(RandomDataMin(6),RandomDataMax(6))
+	EndIf
+	If RandomData(7)
+		SourceAttributes\Data7=Rand(RandomDataMin(7),RandomDataMax(7))
+	EndIf
+	If RandomData(8)
+		SourceAttributes\Data8=Rand(RandomDataMin(8),RandomDataMax(8))
+	EndIf
+	If RandomData(9)
+		SourceAttributes\Data9=Rand(RandomDataMin(9),RandomDataMax(9))
+	EndIf
 	
 	If RandomXScale
-		CurrentObjectXScale#=Rnd(RandomXScaleMin#,RandomXScaleMax#)
+		SourceAttributes\XScale#=Rnd(RandomXScaleMin#,RandomXScaleMax#)
 	EndIf
 	If RandomYScale
-		CurrentObjectYScale#=Rnd(RandomYScaleMin#,RandomYScaleMax#)
+		SourceAttributes\YScale#=Rnd(RandomYScaleMin#,RandomYScaleMax#)
 	EndIf
 	If RandomZScale
-		CurrentObjectZScale#=Rnd(RandomZScaleMin#,RandomZScaleMax#)
+		SourceAttributes\ZScale#=Rnd(RandomZScaleMin#,RandomZScaleMax#)
 	EndIf
-	
-	ObjectXScale#(NofObjects)=CurrentObjectXScale#
-	ObjectZScale#(NofObjects)=CurrentObjectZScale#
-	ObjectYScale#(NofObjects)=CurrentObjectYScale#
 	
 	If RandomXAdjust
-		CurrentObjectXAdjust#=Rnd(RandomXAdjustMin#,RandomXAdjustMax#)
+		SourceAttributes\XAdjust#=Rnd(RandomXAdjustMin#,RandomXAdjustMax#)
 	EndIf
 	If RandomYAdjust
-		CurrentObjectYAdjust#=Rnd(RandomYAdjustMin#,RandomYAdjustMax#)
+		SourceAttributes\YAdjust#=Rnd(RandomYAdjustMin#,RandomYAdjustMax#)
 	EndIf
 	If RandomZAdjust
-		CurrentObjectZAdjust#=Rnd(RandomZAdjustMin#,RandomZAdjustMax#)
+		SourceAttributes\ZAdjust#=Rnd(RandomZAdjustMin#,RandomZAdjustMax#)
 	EndIf
-	
-	ObjectXAdjust#(NofObjects)=CurrentObjectXAdjust#
-	ObjectZAdjust#(NofObjects)=CurrentObjectZAdjust#
-	ObjectYAdjust#(NofObjects)=CurrentObjectYAdjust#
-	
-	
-	ObjectOldX#(nofobjects)=-999
-	ObjectOldY#(nofobjects)=-999
-	ObjectOldZ#(nofobjects)=-999
-	ObjectDX#(NofObjects)=CurrentObjectDX#
-	ObjectDY#(NofObjects)=CurrentObjectDY#
-	ObjectDZ#(NofObjects)=CurrentObjectDZ#
-	ObjectPitch#(NofObjects)=CurrentObjectPitch#
-	ObjectYaw#(NofObjects)=CurrentObjectYaw#
-	ObjectRoll#(NofObjects)=CurrentObjectRoll#
-	ObjectPitch2#(NofObjects)=CurrentObjectPitch2#
-	ObjectYaw2#(NofObjects)=CurrentObjectYaw2#
-	ObjectRoll2#(NofObjects)=CurrentObjectRoll2#
-	ObjectXGoal#(NofObjects)=CurrentObjectXGoal#
-	ObjectYGoal#(NofObjects)=CurrentObjectYGoal#
-	ObjectZGoal#(NofObjects)=CurrentObjectZGoal#
 	
 	If RandomMovementType
-		CurrentObjectMovementType=Rand(RandomMovementTypeMin,RandomMovementTypeMax)
+		SourceAttributes\MovementType=Rand(RandomMovementTypeMin,RandomMovementTypeMax)
 	EndIf
-	
-	ObjectMovementType(NofObjects)=CurrentObjectMovementType
-	ObjectMovementTypeData(NofObjects)=CurrentObjectMovementTypeData
-	
-	ObjectSpeed#(NofObjects)=CurrentObjectSpeed#
-	ObjectRadius#(NofObjects)=CurrentObjectRadius#
-	ObjectRadiusType(NofObjects)=CurrentObjectRadiusType
-	ObjectData10(NofObjects)=CurrentObjectData10
-	ObjectPushDX#(NofObjects)=CurrentObjectPushDX#
-	ObjectPushDY#(NofObjects)=CurrentObjectPushDY#
-	ObjectAttackPower(NofObjects)=CurrentObjectAttackPower
 	
 	If RandomDefensePower
-		CurrentObjectDefensePower=Rand(RandomDefensePowerMin,RandomDefensePowerMax)
+		SourceAttributes\DefensePower=Rand(RandomDefensePowerMin,RandomDefensePowerMax)
 	EndIf
-	
-	ObjectDefensePower(NofObjects)=CurrentObjectDefensePower
-	ObjectDestructionType(NofObjects)=CurrentObjectDestructionType
 	
 	If RandomID
-		CurrentObjectID=Rand(RandomIDMin,RandomIDMax)
+		SourceAttributes\ID=Rand(RandomIDMin,RandomIDMax)
 	EndIf
-	
-	ObjectID(NofObjects)=CurrentObjectID
 	
 	If RandomActive
-		CurrentObjectActive=Rand(RandomActiveMin,RandomActiveMax)
+		SourceAttributes\Active=Rand(RandomActiveMin,RandomActiveMax)
 	EndIf
-	
-	ObjectActive(NofObjects)=CurrentObjectActive
-	ObjectLastActive(NofObjects)=CurrentObjectLastActive
-	
 	If RandomActivationType
-		CurrentObjectActivationType=Rand(RandomActivationTypeMin,RandomActivationTypeMax)
+		SourceAttributes\ActivationType=Rand(RandomActivationTypeMin,RandomActivationTypeMax)
 	EndIf
 	If RandomActivationSpeed
-		CurrentObjectActivationSpeed=Rand(RandomActivationSpeedMin,RandomActivationSpeedMax)
+		SourceAttributes\ActivationSpeed=Rand(RandomActivationSpeedMin,RandomActivationSpeedMax)
 		; enforce even numbers
-		If CurrentObjectActivationSpeed Mod 2=1
-			CurrentObjectActivationSpeed=CurrentObjectActivationSpeed+1
+		If SourceAttributes\ActivationSpeed Mod 2=1
+			SourceAttributes\ActivationSpeed=SourceAttributes\ActivationSpeed+1
 		EndIf
 	EndIf
 	
-	ObjectActivationType(NofObjects)=CurrentObjectActivationType
-	ObjectActivationSpeed(NofObjects)=CurrentObjectActivationSpeed
-	
 	If RandomStatus
-		CurrentObjectStatus=Rand(RandomStatusMin,RandomStatusMax)
+		SourceAttributes\Status=Rand(RandomStatusMin,RandomStatusMax)
 	EndIf
-	
-	ObjectStatus(NofObjects)=CurrentObjectStatus
 	
 	If RandomTimer
-		CurrentObjectTimer=Rand(RandomTimerMin,RandomTimerMax)
+		SourceAttributes\Timer=Rand(RandomTimerMin,RandomTimerMax)
 	EndIf
 	If RandomTimerMax1
-		CurrentObjectTimerMax1=Rand(RandomTimerMax1Min,RandomTimerMax1Max)
+		SourceAttributes\TimerMax1=Rand(RandomTimerMax1Min,RandomTimerMax1Max)
 	EndIf
 	If RandomTimerMax2
-		CurrentObjectTimerMax2=Rand(RandomTimerMax2Min,RandomTimerMax2Max)
+		SourceAttributes\TimerMax2=Rand(RandomTimerMax2Min,RandomTimerMax2Max)
 	EndIf
-	
-	ObjectTimer(NofObjects)=CurrentObjectTimer
-	ObjectTimerMax1(NofObjects)=CurrentObjectTimerMax1
-	ObjectTimerMax2(NofObjects)=CurrentObjectTimerMax2
 	
 	If RandomTeleportable
-		CurrentObjectTeleportable=Rand(0,1)
+		SourceAttributes\Teleportable=Rand(0,1)
 	EndIf
 	If RandomButtonPush
-		CurrentObjectButtonPush=Rand(0,1)
+		SourceAttributes\ButtonPush=Rand(0,1)
 	EndIf
-	
-	ObjectTeleportable(NofObjects)=CurrentObjectTeleportable
-	ObjectButtonPush(NofObjects)=CurrentObjectButtonPush
-	
-	ObjectWaterReact(NofObjects)=CurrentObjectWaterReact
-	ObjectTelekinesisable(NofObjects)=CurrentObjectTelekinesisable
-	ObjectFreezable(NofObjects)=CurrentObjectFreezable
-	ObjectReactive(NofObjects)=CurrentObjectReactive
-	ObjectChild(NofObjects)=CurrentObjectChild
-	ObjectParent(NofObjects)=CurrentObjectParent
-	
-	For i=0 To 4
-		ObjectTextData$(NofObjects,i)=CurrentObjectTextData$(i)
-	Next
 	
 	If RandomTalkable
-		CurrentObjectTalkable=Rand(RandomTalkableMin,RandomTalkableMax)
+		SourceAttributes\Talkable=Rand(RandomTalkableMin,RandomTalkableMax)
 	EndIf
-	
-	ObjectTalkable(NofObjects)=CurrentObjectTalkable
-	ObjectCurrentAnim(NofObjects)=CurrentObjectCurrentAnim
-	ObjectStandardAnim(NofObjects)=CurrentObjectStandardAnim
-	
-	ObjectMovementTimer(NofObjects)=CurrentObjectMovementTimer
 	
 	If RandomMovementSpeed
-		CurrentObjectMovementSpeed=Rand(RandomMovementSpeedMin,RandomMovementSpeedMax)
+		SourceAttributes\MovementSpeed=Rand(RandomMovementSpeedMin,RandomMovementSpeedMax)
 	EndIf
-	
-	ObjectMovementSpeed(NofObjects)=CurrentObjectMovementSpeed
 	
 	If RandomMoveXGoal
-		CurrentObjectMoveXGoal=Rand(RandomMoveXGoalMin,RandomMoveXGoalMax)
+		SourceAttributes\MoveXGoal=Rand(RandomMoveXGoalMin,RandomMoveXGoalMax)
 	EndIf
 	If RandomMoveYGoal
-		CurrentObjectMoveYGoal=Rand(RandomMoveYGoalMin,RandomMoveYGoalMax)
+		SourceAttributes\MoveYGoal=Rand(RandomMoveYGoalMin,RandomMoveYGoalMax)
 	EndIf
 	
-	ObjectMoveXGoal(NofObjects)=CurrentObjectMoveXGoal
-	ObjectMoveYGoal(NofObjects)=CurrentObjectMoveYGoal
-	
 	If RandomTTC
-		CurrentObjectTileTypeCollision=0
+		SourceAttributes\TileTypeCollision=0
 		For i=0 To 14
 			If Rand(0,1)=0
-				CurrentObjectTileTypeCollision=CurrentObjectTileTypeCollision+2^i
+				SourceAttributes\TileTypeCollision=SourceAttributes\TileTypeCollision+2^i
 			EndIf
 		Next
 	EndIf
 	If RandomOTC
-		CurrentObjectObjectTypeCollision=0
+		SourceAttributes\ObjectTypeCollision=0
 		For i=1 To 10
 			If Rand(0,1)=0
-				CurrentObjectObjectTypeCollision=CurrentObjectObjectTypeCollision+2^i
+				SourceAttributes\ObjectTypeCollision=SourceAttributes\ObjectTypeCollision+2^i
 			EndIf
 		Next
 	EndIf
 	
-	ObjectTileTypeCollision(NofObjects)=CurrentObjectTileTypeCollision
-	ObjectObjectTypeCollision(NofObjects)=CurrentObjectObjectTypeCollision
-	
-	ObjectCaged(NofObjects)=CurrentObjectCaged
-	
 	If RandomDead
-		CurrentObjectDead=Rand(RandomDeadMin,RandomDeadMax)
+		SourceAttributes\Dead=Rand(RandomDeadMin,RandomDeadMax)
 	EndIf
-	
-	ObjectDead(NofObjects)=CurrentObjectDead
-	ObjectDeadTimer(NofObjects)=CurrentObjectDeadTimer
 	
 	If RandomExclamation
-		CurrentObjectExclamation=Rand(RandomExclamationMin,RandomExclamationMax)
+		SourceAttributes\Exclamation=Rand(RandomExclamationMin,RandomExclamationMax)
 	EndIf
-	
-	ObjectExclamation(NofObjects)=CurrentObjectExclamation
-	
-	ObjectShadow(NofObjects)=CurrentObjectShadow
-	ObjectLinked(NofObjects)=CurrentObjectLinked
-	ObjectLinkBack(NofObjects)=CurrentObjectLinkBack
-	ObjectFlying(NofObjects)=CurrentObjectFlying
-	ObjectFrozen(NofObjects)=CurrentObjectFrozen
-	ObjectIndigo(NofObjects)=CurrentObjectIndigo
-	ObjectFutureInt24(NofObjects)=CurrentObjectFutureInt24
-	ObjectFutureInt25(NofObjects)=CurrentObjectFutureInt25
 	
 	If RandomScaleAdjust
-		CurrentObjectScaleAdjust#=Rnd(RandomScaleAdjustMin#,RandomScaleAdjustMax#)
+		SourceAttributes\ScaleAdjust#=Rnd(RandomScaleAdjustMin#,RandomScaleAdjustMax#)
 	EndIf
+	
+	
+	NewObject=LevelObjects(NofObjects)
+	
+	CopyObjectAttributes(SourceAttributes,NewObject\Attributes)
+	
+	SetObjectPosition(NewObject\Attributes,x#,y#)
+	
+	NewObject\HatEntity=0
+	NewObject\HatTexture=0
+	NewObject\AccEntity=0
+	NewObject\AccTexture=0
 
-	ObjectScaleAdjust(NofObjects)=CurrentObjectScaleAdjust
-	ObjectScaleXAdjust(NofObjects)=CurrentObjectScaleXAdjust
-	ObjectScaleYAdjust(NofObjects)=CurrentObjectScaleYAdjust
-	ObjectScaleZAdjust(NofObjects)=CurrentObjectScaleZAdjust
-	ObjectFutureFloat5(NofObjects)=CurrentObjectFutureFloat5
-	ObjectFutureFloat6(NofObjects)=CurrentObjectFutureFloat6
-	ObjectFutureFloat7(NofObjects)=CurrentObjectFutureFloat7
-	ObjectFutureFloat8(NofObjects)=CurrentObjectFutureFloat8
-	ObjectFutureFloat9(NofObjects)=CurrentObjectFutureFloat9
-	ObjectFutureFloat10(NofObjects)=CurrentObjectFutureFloat10
-	ObjectFutureString1$(NofObjects)=CurrentObjectFutureString1$
-	ObjectFutureString2$(NofObjects)=CurrentObjectFutureString2$
+	NewObject\Attributes\OldX#=-999
+	NewObject\Attributes\OldY#=-999
+	NewObject\Attributes\OldZ#=-999
 	
-	For i=0 To 30
-		ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
-	Next
-	
+	;For i=0 To 30
+	;	ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
+	;Next
 	
 	; this is only here because of randomized rotation
 	BuildCurrentObjectModel()
@@ -9335,15 +9343,9 @@ Function PlaceObjectActual(x#,y#)
 End Function
 
 
-Function CalculateEffectiveID(Dest)
+Function CalculateEffectiveID(Attributes)
 
-	Return CalculateEffectiveIDWith(ObjectType(Dest),ObjectID(Dest),ObjectData(Dest,0),ObjectData(Dest,1),ObjectTileTypeCollision(Dest),ObjectModelName$(Dest))
-
-End Function
-
-Function CalculateCurrentObjectEffectiveID()
-
-	Return CalculateEffectiveIDWith(CurrentObjectType,CurrentObjectID,CurrentObjectData(0),CurrentObjectData(1),CurrentObjectTileTypeCollision,CurrentObjectModelName$)
+	Return CalculateEffectiveIDWith(Attributes\LogicType,Attributes\ID,Attributes\Data0,Attributes\Data1,Attributes\TileTypeCollision,Attributes\ModelName$)
 
 End Function
 
@@ -9432,53 +9434,53 @@ Function ShowEntityAndAccessories(Dest)
 End Function
 
 
-Function UpdateObjectVisibility(Dest)
+Function UpdateObjectVisibility(Obj)
 
-	If ShowObjectMesh=0 Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Dest))
-		HideEntityAndAccessories(Dest)
+	If ShowObjectMesh=0 Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Obj\Attributes))
+		HideEntityAndAccessories(Obj)
 	Else
-		If SimulationLevel>=2 And ShouldBeInvisibleInGame(Dest)
-			HideEntityAndAccessories(Dest)
+		If SimulationLevel>=2 And ShouldBeInvisibleInGame(Obj\Attributes)
+			HideEntityAndAccessories(Obj)
 		Else
-			ShowEntityAndAccessories(Dest)
+			ShowEntityAndAccessories(Obj)
 		EndIf
 	EndIf
 
 End Function
 
 
-Function UpdateObjectAlpha(Dest)
+Function UpdateObjectAlpha(Obj)
 
-	If ObjectModelName$(Dest)="!NPC" Or ObjectModelName$(Dest)="!Tentacle"
-		Entity=GetChild(ObjectEntity(Dest),3)
+	If Obj\ModelName$="!NPC" Or Obj\ModelName$="!Tentacle"
+		Entity=GetChild(Obj\Entity,3)
 	Else
-		Entity=ObjectEntity(Dest)
+		Entity=Obj\Entity
 	EndIf
 
-	EntityAlpha Entity,BaseObjectAlpha#(Dest)
+	EntityAlpha Entity,BaseObjectAlpha#(Obj\Attributes)
 
 End Function
 
 
-Function BaseObjectAlpha#(Dest)
+Function BaseObjectAlpha#(Attributes)
 
-	If ObjectModelName$(Dest)="!FloingBubble"
+	If Attributes\ModelName$="!FloingBubble"
 		Return 0.5
-	;ElseIf ObjectModelName$(Dest)="!MagicMirror"
+	;ElseIf Attributes\ModelName$="!MagicMirror"
 	;	Return 0.5
-	ElseIf ObjectModelName$(Dest)="!IceFloat"
+	ElseIf Attributes\ModelName$="!IceFloat"
 		Return 0.8
-	ElseIf ObjectModelName$(Dest)="!PlantFloat"
+	ElseIf Attributes\ModelName$="!PlantFloat"
 		Return 0.7
-	ElseIf ObjectModelName$(Dest)="!Retrolasergate"
+	ElseIf Attributes\ModelName$="!Retrolasergate"
 		Return 0.5
-	ElseIf ObjectModelName$(Dest)="!Teleport"
+	ElseIf Attributes\ModelName$="!Teleport"
 		Return 0.6
-	ElseIf ObjectModelName$(Dest)="!WaterFall"
+	ElseIf Attributes\ModelName$="!WaterFall"
 		Return 0.7
-	ElseIf ObjectModelName$(Dest)="!IceBlock" And (ObjectData(Dest,3)=0 Or ObjectData(Dest,3)=1)
+	ElseIf Attributes\ModelName$="!IceBlock" And (Attributes\Data3=0 Or Attributes\Data3=1)
 		Return 0.5
-	ElseIf ObjectModelName$(Dest)="!Conveyor" And ObjectData(Dest,4)=4
+	ElseIf Attributes\ModelName$="!Conveyor" And Attributes\Data4=4
 		Return 0.8
 	Else
 		Return 1.0
@@ -9486,6 +9488,23 @@ Function BaseObjectAlpha#(Dest)
 	
 	; rainbow bubble alpha is set to 0.8 during gameplay/simulation
 
+End Function
+
+
+Function ObjectSumX#(Obj)
+	Return Obj\Position\X#+Obj\Attributes\XAdjust#
+End Function
+
+Function ObjectSumY#(Obj)
+	Return Obj\Position\Y#+Obj\Attributes\YAdjust#
+End Function
+
+Function ObjectSumZ#(Obj)
+	Return Obj\Position\Z#+Obj\Attributes\ZAdjust#
+End Function
+
+Function ObjectSumYaw#(Obj)
+	Return Obj\Position\Yaw#+Obj\Attributes\YawAdjust#
 End Function
 
 
@@ -9509,17 +9528,20 @@ Function SetEntityPositionToWorldPosition(entity,XP#,YP#,ZP#,TargetType,Yaw#,XSc
 End Function
 
 
-Function SetEntityPositionToObjectPosition(entity, Dest)
+Function SetEntityPositionToObjectPosition(entity, Obj)
 
-	SetEntityPositionToWorldPosition(entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectY(Dest)+ObjectYAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),ObjectType(Dest),ObjectYaw(Dest)+ObjectYawAdjust(Dest),ObjectXScale(Dest),ObjectYScale(Dest))
-	;PositionEntity entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)	
+	TheX#=ObjectSumX#(Obj)
+	TheY#=ObjectSumY#(Obj)
+	TheZ#=ObjectSumZ#(Obj)
+	TheYaw#=ObjectSumYaw#(Obj)
+	SetEntityPositionToWorldPosition(entity,TheX,TheY,TheZ,Obj\Attributes\LogicType,TheYaw#,Obj\Attributes\XScale,Obj\Attributes\YScale)	
 
 End Function
 
 
-Function SetEntityPositionToObjectPositionWithoutZ(entity, Dest, z#)
+Function SetEntityPositionToObjectPositionWithoutZ(entity, Obj, z#)
 
-	SetEntityPositionInWorld(entity,ObjectX(Dest)+ObjectXAdjust(Dest),ObjectY(Dest)+ObjectYAdjust(Dest),z#)
+	SetEntityPositionInWorld(entity,ObjectSumX#(Obj),ObjectSumY#(Obj),z#)
 
 End Function
 
@@ -9533,8 +9555,10 @@ End Function
 
 Function UpdateObjectPosition(Dest)
 
-	SetEntityPositionToObjectPosition(ObjectEntity(Dest), Dest)
+	Obj=LevelObjects(Dest)
 
+	SetEntityPositionToObjectPosition(Obj\Entity, Dest)
+	
 	;PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
 	
 ;	If ObjectHatEntity(Dest)>0
@@ -9545,11 +9569,11 @@ Function UpdateObjectPosition(Dest)
 ;		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 ;	EndIf
 	
-	If ObjectHatEntity(Dest)>0
-		TransformAccessoryEntityOntoBone(ObjectHatEntity(Dest),ObjectEntity(Dest))
+	If Obj\HatEntity>0
+		TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
 	EndIf
-	If ObjectAccEntity(Dest)>0
-		TransformAccessoryEntityOntoBone(ObjectAccEntity(Dest),ObjectEntity(Dest))
+	If Obj\AccEntity>0
+		TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
 	EndIf
 	
 	PositionObjectPositionMarker(Dest)
@@ -9561,45 +9585,45 @@ Function UpdateObjectPosition(Dest)
 End Function
 
 
-Function UpdateObjectEntityToCurrent(Dest)
+Function UpdateObjectEntityToCurrent(Obj)
 	
-	ObjectEntity(Dest)=CopyEntity(CurrentObjectModel)
+	Obj\Entity=CopyEntity(CurrentObject\Model)
 	
-	UpdateObjectVisibility(Dest)
+	UpdateObjectVisibility(Obj)
 	
-	If CurrentHatModel>0
+	If CurrentObject\HatModel>0
 	
-		ObjectHatEntity(Dest)=CreateAccEntity(CurrentObjectData(2))
-		ObjectHatTexture(Dest)=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
+		Obj\Entity=CreateAccEntity(CurrentObject\Attributes\Data2)
+		Obj\HatTexture=CreateHatTexture(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		
-		ScaleEntity ObjectHatEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+		ScaleEntity Obj\HatEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
 		
 		;RotateEntity ObjectHatEntity(Dest),0,0,0
-		;TurnEntity ObjectHatEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		;TurnEntity ObjectHatEntity(Dest),0,CurrentObjectYawAdjust-90,0
+		;TurnEntity ObjectHatEntity(Dest),CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
+		;TurnEntity ObjectHatEntity(Dest),0,CurrentObject\Attributes\YawAdjust-90,0
 	
-		If ObjectHatTexture(Dest)=0
-			EntityColor ObjectHatEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
+		If Obj\HatTexture=0
+			EntityColor Obj\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture ObjectHatEntity(Dest),ObjectHatTexture(Dest)
+			EntityTexture Obj\HatEntity,Obj\HatTexture
 		EndIf
 	EndIf
 	
 	If CurrentAccModel>0
-		ObjectAccEntity(Dest)=CreateAccEntity(CurrentObjectData(4))
-		ObjectAccTexture(Dest)=CreateGlassesTexture(CurrentObjectData(4),CurrentObjectData(5))
+		ObjectAccEntity(Dest)=CreateAccEntity(CurrentObject\Attributes\Data4)
+		ObjectAccTexture(Dest)=CreateGlassesTexture(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
 	
 	
-		ScaleEntity ObjectAccEntity(Dest),CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+		ScaleEntity Obj\AccEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
 		
 		;RotateEntity ObjectAccEntity(Dest),0,0,0
-		;TurnEntity ObjectAccEntity(Dest),CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
-		;TurnEntity ObjectAccEntity(Dest),0,CurrentObjectYawAdjust-90,0
+		;TurnEntity ObjectAccEntity(Dest),CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
+		;TurnEntity ObjectAccEntity(Dest),0,CurrentObject\Attributes\YawAdjust-90,0
 	
-		If ObjectAccTexture(Dest)=0
-			EntityColor ObjectAccEntity(Dest),ModelErrorR,ModelErrorG,ModelErrorB
+		If Obj\AccTexture=0
+			EntityColor Obj\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture ObjectAccEntity(Dest),ObjectAccTexture(Dest)
+			EntityTexture Obj\AccEntity,Obj\AccTexture
 		EndIf
 	EndIf
 	
@@ -9831,6 +9855,131 @@ Function GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
 End Function
 
 
+Function CopyObjectPosition(SourceAttributes,DestAttributes)
+
+	; oldxyz is not grabbed
+	DestAttributes\TileX=SourceAttributes\TileX
+	DestAttributes\TileY=SourceAttributes\TileY
+	DestAttributes\TileX2=SourceAttributes\TileX2
+	DestAttributes\TileY2=SourceAttributes\TileY2
+
+End Function
+
+
+Function CopyObjectAttributes(SourceAttributes,DestAttributes)
+
+	DestAttributes\ModelName$=SourceAttributes\ModelName$
+	DestAttributes\TexName$=SourceAttributes\TexName$
+	DestAttributes\XScale#=SourceAttributes\XScale#
+	DestAttributes\ZScale#=SourceAttributes\ZScale#
+	DestAttributes\YScale#=SourceAttributes\YScale#
+	DestAttributes\XAdjust#=SourceAttributes\XAdjust#
+	DestAttributes\ZAdjust#=SourceAttributes\ZAdjust#
+	DestAttributes\YAdjust#=SourceAttributes\YAdjust#
+	DestAttributes\PitchAdjust#=SourceAttributes\PitchAdjust#
+	DestAttributes\YawAdjust#=SourceAttributes\YawAdjust#
+	DestAttributes\RollAdjust#=SourceAttributes\RollAdjust#
+	DestAttributes\X#=SourceAttributes\X#
+	DestAttributes\Y#=SourceAttributes\Y#
+	DestAttributes\Z#=SourceAttributes\Z#
+	DestAttributes\DX#=SourceAttributes\DX#
+	DestAttributes\DY#=SourceAttributes\DY#
+	DestAttributes\DZ#=SourceAttributes\DZ#
+	DestAttributes\Pitch#=SourceAttributes\Pitch#
+	DestAttributes\Yaw#=SourceAttributes\Yaw#
+	DestAttributes\Roll#=SourceAttributes\Roll#
+	DestAttributes\Pitch2#=SourceAttributes\Pitch2#
+	DestAttributes\Yaw2#=SourceAttributes\Yaw2#
+	DestAttributes\Roll2#=SourceAttributes\Roll2#
+	DestAttributes\XGoal#=SourceAttributes\XGoal#
+	DestAttributes\YGoal#=SourceAttributes\YGoal#
+	DestAttributes\ZGoal#=SourceAttributes\ZGoal#
+	DestAttributes\MovementType=SourceAttributes\MovementType
+	DestAttributes\MovementTypeData=SourceAttributes\MovementTypeData
+	DestAttributes\Speed#=SourceAttributes\Speed#
+	DestAttributes\Radius#=SourceAttributes\Radius#
+	DestAttributes\RadiusType=SourceAttributes\RadiusType
+	DestAttributes\Data10=SourceAttributes\Data10
+	DestAttributes\PushDX#=SourceAttributes\PushDX#
+	DestAttributes\PushDY#=SourceAttributes\PushDY#
+	DestAttributes\AttackPower=SourceAttributes\AttackPower
+	DestAttributes\DefensePower=SourceAttributes\DefensePower
+	DestAttributes\DestructionType=SourceAttributes\DestructionType
+	DestAttributes\ID=SourceAttributes\ID
+	DestAttributes\LogicType=SourceAttributes\LogicType
+	DestAttributes\LogicSubType=SourceAttributes\LogicSubType
+	DestAttributes\Active=SourceAttributes\Active
+	DestAttributes\LastActive=SourceAttributes\LastActive
+	DestAttributes\ActivationType=SourceAttributes\ActivationType
+	DestAttributes\ActivationSpeed=SourceAttributes\ActivationSpeed
+	DestAttributes\Status=SourceAttributes\Status
+	DestAttributes\Timer=SourceAttributes\Timer
+	DestAttributes\TimerMax1=SourceAttributes\TimerMax1
+	DestAttributes\TimerMax2=SourceAttributes\TimerMax2
+	DestAttributes\Teleportable=SourceAttributes\Teleportable
+	DestAttributes\ButtonPush=SourceAttributes\ButtonPush
+	DestAttributes\WaterReact=SourceAttributes\WaterReact
+	DestAttributes\Telekinesisable=SourceAttributes\Telekinesisable
+	DestAttributes\Freezable=SourceAttributes\Freezable
+	DestAttributes\Reactive=SourceAttributes\Reactive
+	DestAttributes\Child=SourceAttributes\Child
+	DestAttributes\Parent=SourceAttributes\Parent
+	
+	DestAttributes\Data0=SourceAttributes\Data0
+	DestAttributes\Data1=SourceAttributes\Data1
+	DestAttributes\Data2=SourceAttributes\Data2
+	DestAttributes\Data3=SourceAttributes\Data3
+	DestAttributes\Data4=SourceAttributes\Data4
+	DestAttributes\Data5=SourceAttributes\Data5
+	DestAttributes\Data6=SourceAttributes\Data6
+	DestAttributes\Data7=SourceAttributes\Data7
+	DestAttributes\Data8=SourceAttributes\Data8
+	DestAttributes\Data9=SourceAttributes\Data9
+	
+	DestAttributes\TextData0$=SourceAttributes\TextData0$
+	DestAttributes\TextData1$=SourceAttributes\TextData1$
+	DestAttributes\TextData2$=SourceAttributes\TextData2$
+	DestAttributes\TextData3$=SourceAttributes\TextData3$
+	DestAttributes\TextData4$=SourceAttributes\TextData4$
+	
+	DestAttributes\Talkable=SourceAttributes\Talkable
+	DestAttributes\CurrentAnim=SourceAttributes\CurrentAnim
+	DestAttributes\StandardAnim=SourceAttributes\StandardAnim
+	DestAttributes\MovementTimer=SourceAttributes\MovementTimer
+	DestAttributes\MovementSpeed=SourceAttributes\MovementSpeed
+	DestAttributes\MoveXGoal=SourceAttributes\MoveXGoal
+	DestAttributes\MoveYGoal=SourceAttributes\MoveYGoal
+	DestAttributes\TileTypeCollision=SourceAttributes\TileTypeCollision
+	DestAttributes\SourceAttributes\TypeCollision=SourceAttributes\SourceAttributes\TypeCollision
+	DestAttributes\Caged=SourceAttributes\Caged
+	DestAttributes\Dead=SourceAttributes\Dead
+	DestAttributes\DeadTimer=SourceAttributes\DeadTimer
+	DestAttributes\Exclamation=SourceAttributes\Exclamation
+	DestAttributes\Shadow=SourceAttributes\Shadow
+	DestAttributes\Linked=SourceAttributes\Linked
+	DestAttributes\LinkBack=SourceAttributes\LinkBack
+	DestAttributes\Flying=SourceAttributes\Flying
+	DestAttributes\Frozen=SourceAttributes\Frozen
+	DestAttributes\Indigo=SourceAttributes\Indigo
+	DestAttributes\FutureInt24=SourceAttributes\FutureInt24
+	DestAttributes\FutureInt25=SourceAttributes\FutureInt25
+
+	DestAttributes\ScaleAdjust=SourceAttributes\ScaleAdjust
+	DestAttributes\ScaleXAdjust=SourceAttributes\ScaleXAdjust
+	DestAttributes\ScaleYAdjust=SourceAttributes\ScaleYAdjust
+	DestAttributes\ScaleZAdjust=SourceAttributes\ScaleZAdjust
+	DestAttributes\FutureFloat5=SourceAttributes\FutureFloat5
+	DestAttributes\FutureFloat6=SourceAttributes\FutureFloat6
+	DestAttributes\FutureFloat7=SourceAttributes\FutureFloat7
+	DestAttributes\FutureFloat8=SourceAttributes\FutureFloat8
+	DestAttributes\FutureFloat9=SourceAttributes\FutureFloat9
+	DestAttributes\FutureFloat10=SourceAttributes\FutureFloat10
+	DestAttributes\FutureString1$=SourceAttributes\FutureString1$
+	DestAttributes\FutureString2$=SourceAttributes\FutureString2$
+
+End Function
+
+
 Function ObjectIsAtInt(i,x,y)
 
 	MyX#=ObjectX(i)-GetObjectOffset#(i,0)
@@ -9857,6 +10006,7 @@ Function TryGrabObjectLoop(x#,y#,Target)
 End Function
 
 Function GrabObject(x#,y#)
+	
 	;CachedGrabbedObject=CurrentGrabbedObject
 	Flag=TryGrabObjectLoop(x#,y#,CurrentGrabbedObject)
 	If Flag=False
@@ -9873,109 +10023,12 @@ Function GrabObject(x#,y#)
 	
 	Dest=CurrentGrabbedObject
 
-	CurrentObjectModelName$=ObjectModelName$(Dest)
-	CurrentObjectTextureName$=ObjectTextureName$(Dest)
-	CurrentObjectXScale#=ObjectXScale#(Dest)
-	CurrentObjectZScale#=ObjectZScale#(Dest)
-	CurrentObjectYScale#=ObjectYScale#(Dest)
-	CurrentObjectXAdjust#=ObjectXAdjust#(Dest)
-	CurrentObjectZAdjust#=ObjectZAdjust#(Dest)
-	CurrentObjectYAdjust#=ObjectYAdjust#(Dest)
-	CurrentObjectPitchAdjust#=ObjectPitchAdjust#(Dest)
-	CurrentObjectYawAdjust#=ObjectYawAdjust#(Dest)
-	CurrentObjectRollAdjust#=ObjectRollAdjust#(Dest)
-	CurrentObjectX#=ObjectX#(Dest)-x-0.5
-	CurrentObjectY#=ObjectY#(Dest)-y-0.5
-	CurrentObjectZ#=ObjectZ#(Dest)
-	; oldxyz is not grabbed
-	CurrentObjectDX#=ObjectDX#(Dest)
-	CurrentObjectDY#=ObjectDY#(Dest)
-	CurrentObjectDZ#=ObjectDZ#(Dest)
-	CurrentObjectPitch#=ObjectPitch#(Dest)
-	CurrentObjectYaw#=ObjectYaw#(Dest)
-	CurrentObjectRoll#=ObjectRoll#(Dest)
-	CurrentObjectPitch2#=ObjectPitch2#(Dest)
-	CurrentObjectYaw2#=ObjectYaw2#(Dest)
-	CurrentObjectRoll2#=ObjectRoll2#(Dest)
-	CurrentObjectXGoal#=ObjectXGoal#(Dest)
-	CurrentObjectYGoal#=ObjectYGoal#(Dest)
-	CurrentObjectZGoal#=ObjectZGoal#(Dest)
-	CurrentObjectMovementType=ObjectMovementType(Dest)
-	CurrentObjectMovementTypeData=ObjectMovementTypeData(Dest)
-	CurrentObjectSpeed#=ObjectSpeed#(Dest)
-	CurrentObjectRadius#=ObjectRadius#(Dest)
-	CurrentObjectRadiusType=ObjectRadiusType(Dest)
-	CurrentObjectData10=ObjectData10(Dest)
-	CurrentObjectPushDX#=ObjectPushDX#(Dest)
-	CurrentObjectPushDY#=ObjectPushDY#(Dest)
-	CurrentObjectAttackPower=ObjectAttackPower(Dest)
-	CurrentObjectDefensePower=ObjectDefensePower(Dest)
-	CurrentObjectDestructionType=ObjectDestructionType(Dest)
-	CurrentObjectID=ObjectID(Dest)
-	CurrentObjectType=ObjectType(Dest)
-	CurrentObjectSubType=ObjectSubType(Dest)
-	CurrentObjectActive=ObjectActive(Dest)
-	CurrentObjectLastActive=ObjectLastActive(Dest)
-	CurrentObjectActivationType=ObjectActivationType(Dest)
-	CurrentObjectActivationSpeed=ObjectActivationSpeed(Dest)
-	CurrentObjectStatus=ObjectStatus(Dest)
-	CurrentObjectTimer=ObjectTimer(Dest)
-	CurrentObjectTimerMax1=ObjectTimerMax1(Dest)
-	CurrentObjectTimerMax2=ObjectTimerMax2(Dest)
-	CurrentObjectTeleportable=ObjectTeleportable(Dest)
-	CurrentObjectButtonPush=ObjectButtonPush(Dest)
-	CurrentObjectWaterReact=ObjectWaterReact(Dest)
-	CurrentObjectTelekinesisable=ObjectTelekinesisable(Dest)
-	CurrentObjectFreezable=ObjectFreezable(Dest)
-	CurrentObjectReactive=ObjectReactive(Dest)
-	CurrentObjectChild=ObjectChild(Dest)
-	CurrentObjectParent=ObjectParent(Dest)
-	For i=0 To 9
-		CurrentObjectData(i)=ObjectData(Dest,i)
-	Next
-	For i=0 To 4
-		CurrentObjectTextData$(i)=ObjectTextData$(Dest,i)
-	Next	
+	CopyObjectAttributes(LevelObjects(Dest)\Attributes,CurrentObject\Attributes)
+	CopyObjectPosition(LevelObjects(Dest)\Position,CurrentObject\Position)
 	
-	CurrentObjectTalkable=ObjectTalkable(Dest)
-	CurrentObjectCurrentAnim=ObjectCurrentAnim(Dest)
-	CurrentObjectStandardAnim=ObjectStandardAnim(Dest)
-	CurrentObjectTileX=ObjectTileX(Dest)
-	CurrentObjectTileY=ObjectTileY(Dest)
-	CurrentObjectTileX2=ObjectTileX2(Dest)
-	CurrentObjectTileY2=ObjectTileY2(Dest)
-	CurrentObjectMovementTimer=ObjectMovementTimer(Dest)
-	CurrentObjectMovementSpeed=ObjectMovementSpeed(Dest)
-	CurrentObjectMoveXGoal=ObjectMoveXGoal(Dest)
-	CurrentObjectMoveYGoal=ObjectMoveYGoal(Dest)
-	CurrentObjectTileTypeCollision=ObjectTileTypeCollision(Dest)
-	CurrentObjectObjectTypeCollision=ObjectObjectTypeCollision(Dest)
-	CurrentObjectCaged=ObjectCaged(Dest)
-	CurrentObjectDead=ObjectDead(Dest)
-	CurrentObjectDeadTimer=ObjectDeadTimer(Dest)
-	CurrentObjectExclamation=ObjectExclamation(Dest)
-	CurrentObjectShadow=ObjectShadow(Dest)
-	CurrentObjectLinked=ObjectLinked(Dest)
-	CurrentObjectLinkBack=ObjectLinkBack(Dest)
-	CurrentObjectFlying=ObjectFlying(Dest)
-	CurrentObjectFrozen=ObjectFrozen(Dest)
-	CurrentObjectIndigo=ObjectIndigo(Dest)
-	CurrentObjectFutureInt24=ObjectFutureInt24(Dest)
-	CurrentObjectFutureInt25=ObjectFutureInt25(Dest)
-
-	CurrentObjectScaleAdjust=ObjectScaleAdjust(Dest)
-	CurrentObjectScaleXAdjust=ObjectScaleXAdjust(Dest)
-	CurrentObjectScaleYAdjust=ObjectScaleYAdjust(Dest)
-	CurrentObjectScaleZAdjust=ObjectScaleZAdjust(Dest)
-	CurrentObjectFutureFloat5=ObjectFutureFloat5(Dest)
-	CurrentObjectFutureFloat6=ObjectFutureFloat6(Dest)
-	CurrentObjectFutureFloat7=ObjectFutureFloat7(Dest)
-	CurrentObjectFutureFloat8=ObjectFutureFloat8(Dest)
-	CurrentObjectFutureFloat9=ObjectFutureFloat9(Dest)
-	CurrentObjectFutureFloat10=ObjectFutureFloat10(Dest)
-	CurrentObjectFutureString1$=ObjectFutureString1$(Dest)
-	CurrentObjectFutureString2$=ObjectFutureString2$(Dest)
-	
+	CurrentObject\Attributes\X#=CurrentObject\Attributes\X#-x-0.5
+	CurrentObject\Attributes\Y#=CurrentObject\Attributes\Y#-y-0.5
+		
 	;NofObjectAdjusters=0
 	;ObjectAdjusterStart=0
 	;For i=0 To 30
@@ -10004,11 +10057,6 @@ Function GrabObject(x#,y#)
 	;	ObjectAdjuster$(11)="DefensePower"
 	;EndIf
 
-
-
-
-
-
 	BuildCurrentObjectModel()
 	
 
@@ -10017,113 +10065,10 @@ End Function
 
 
 Function GrabObjectFromBrush(i)	
-	Dest=i
 
-	CurrentObjectModelName$=BrushObjectModelName$(Dest)
-	CurrentObjectTextureName$=BrushObjectTextureName$(Dest)
-	CurrentObjectXScale#=BrushObjectXScale#(Dest)
-	CurrentObjectZScale#=BrushObjectZScale#(Dest)
-	CurrentObjectYScale#=BrushObjectYScale#(Dest)
-	CurrentObjectXAdjust#=BrushObjectXAdjust#(Dest)
-	CurrentObjectZAdjust#=BrushObjectZAdjust#(Dest)
-	CurrentObjectYAdjust#=BrushObjectYAdjust#(Dest)
-	CurrentObjectPitchAdjust#=BrushObjectPitchAdjust#(Dest)
-	CurrentObjectYawAdjust#=BrushObjectYawAdjust#(Dest)
-	CurrentObjectRollAdjust#=BrushObjectRollAdjust#(Dest)
-	CurrentObjectX#=BrushObjectX#(Dest)-x-0.5
-	CurrentObjectY#=BrushObjectY#(Dest)-y-0.5
-	CurrentObjectZ#=BrushObjectZ#(Dest)
-	; oldxyz is not grabbed
-	CurrentObjectDX#=BrushObjectDX#(Dest)
-	CurrentObjectDY#=BrushObjectDY#(Dest)
-	CurrentObjectDZ#=BrushObjectDZ#(Dest)
-	CurrentObjectPitch#=BrushObjectPitch#(Dest)
-	CurrentObjectYaw#=BrushObjectYaw#(Dest)
-	CurrentObjectRoll#=BrushObjectRoll#(Dest)
-	CurrentObjectPitch2#=BrushObjectPitch2#(Dest)
-	CurrentObjectYaw2#=BrushObjectYaw2#(Dest)
-	CurrentObjectRoll2#=BrushObjectRoll2#(Dest)
-	CurrentObjectXGoal#=BrushObjectXGoal#(Dest)
-	CurrentObjectYGoal#=BrushObjectYGoal#(Dest)
-	CurrentObjectZGoal#=BrushObjectZGoal#(Dest)
-	CurrentObjectMovementType=BrushObjectMovementType(Dest)
-	CurrentObjectMovementTypeData=BrushObjectMovementTypeData(Dest)
-	CurrentObjectSpeed#=BrushObjectSpeed#(Dest)
-	CurrentObjectRadius#=BrushObjectRadius#(Dest)
-	CurrentObjectRadiusType=BrushObjectRadiusType(Dest)
-	CurrentObjectData10=BrushObjectData10(Dest)
-	CurrentObjectPushDX#=BrushObjectPushDX#(Dest)
-	CurrentObjectPushDY#=BrushObjectPushDY#(Dest)
-	CurrentObjectAttackPower=BrushObjectAttackPower(Dest)
-	CurrentObjectDefensePower=BrushObjectDefensePower(Dest)
-	CurrentObjectDestructionType=BrushObjectDestructionType(Dest)
-	CurrentObjectID=BrushObjectID(Dest)
-	CurrentObjectType=BrushObjectType(Dest)
-	CurrentObjectSubType=BrushObjectSubType(Dest)
-	CurrentObjectActive=BrushObjectActive(Dest)
-	CurrentObjectLastActive=BrushObjectLastActive(Dest)
-	CurrentObjectActivationType=BrushObjectActivationType(Dest)
-	CurrentObjectActivationSpeed=BrushObjectActivationSpeed(Dest)
-	CurrentObjectStatus=BrushObjectStatus(Dest)
-	CurrentObjectTimer=BrushObjectTimer(Dest)
-	CurrentObjectTimerMax1=BrushObjectTimerMax1(Dest)
-	CurrentObjectTimerMax2=BrushObjectTimerMax2(Dest)
-	CurrentObjectTeleportable=BrushObjectTeleportable(Dest)
-	CurrentObjectButtonPush=BrushObjectButtonPush(Dest)
-	CurrentObjectWaterReact=BrushObjectWaterReact(Dest)
-	CurrentObjectTelekinesisable=BrushObjectTelekinesisable(Dest)
-	CurrentObjectFreezable=BrushObjectFreezable(Dest)
-	CurrentObjectReactive=BrushObjectReactive(Dest)
-	CurrentObjectChild=BrushObjectChild(Dest)
-	CurrentObjectParent=BrushObjectParent(Dest)
-	For i=0 To 9
-		CurrentObjectData(i)=BrushObjectData(Dest,i)
-	Next
-	For i=0 To 4
-		CurrentObjectTextData$(i)=BrushObjectTextData$(Dest,i)
-	Next	
-	
-	CurrentObjectTalkable=BrushObjectTalkable(Dest)
-	CurrentObjectCurrentAnim=BrushObjectCurrentAnim(Dest)
-	CurrentObjectStandardAnim=BrushObjectStandardAnim(Dest)
-	CurrentObjectTileX=BrushObjectTileX(Dest)
-	CurrentObjectTileY=BrushObjectTileY(Dest)
-	CurrentObjectTileX2=BrushObjectTileX2(Dest)
-	CurrentObjectTileY2=BrushObjectTileY2(Dest)
-	CurrentObjectMovementTimer=BrushObjectMovementTimer(Dest)
-	CurrentObjectMovementSpeed=BrushObjectMovementSpeed(Dest)
-	CurrentObjectMoveXGoal=BrushObjectMoveXGoal(Dest)
-	CurrentObjectMoveYGoal=BrushObjectMoveYGoal(Dest)
-	CurrentObjectTileTypeCollision=BrushObjectTileTypeCollision(Dest)
-	CurrentObjectObjectTypeCollision=BrushObjectObjectTypeCollision(Dest)
-	CurrentObjectCaged=BrushObjectCaged(Dest)
-	CurrentObjectDead=BrushObjectDead(Dest)
-	CurrentObjectDeadTimer=BrushObjectDeadTimer(Dest)
-	CurrentObjectExclamation=BrushObjectExclamation(Dest)
-	CurrentObjectShadow=BrushObjectShadow(Dest)
-	CurrentObjectLinked=BrushObjectLinked(Dest)
-	CurrentObjectLinkBack=BrushObjectLinkBack(Dest)
-	CurrentObjectFlying=BrushObjectFlying(Dest)
-	CurrentObjectFrozen=BrushObjectFrozen(Dest)
-	CurrentObjectIndigo=BrushObjectIndigo(Dest)
-	CurrentObjectFutureInt24=BrushObjectFutureInt24(Dest)
-	CurrentObjectFutureInt25=BrushObjectFutureInt25(Dest)
-
-	CurrentObjectScaleAdjust=BrushObjectScaleAdjust(Dest)
-	CurrentObjectScaleXAdjust=BrushObjectScaleXAdjust(Dest)
-	CurrentObjectScaleYAdjust=BrushObjectScaleYAdjust(Dest)
-	CurrentObjectScaleZAdjust=BrushObjectScaleZAdjust(Dest)
-	CurrentObjectFutureFloat5=BrushObjectFutureFloat5(Dest)
-	CurrentObjectFutureFloat6=BrushObjectFutureFloat6(Dest)
-	CurrentObjectFutureFloat7=BrushObjectFutureFloat7(Dest)
-	CurrentObjectFutureFloat8=BrushObjectFutureFloat8(Dest)
-	CurrentObjectFutureFloat9=BrushObjectFutureFloat9(Dest)
-	CurrentObjectFutureFloat10=BrushObjectFutureFloat10(Dest)
-	CurrentObjectFutureString1$=BrushObjectFutureString1$(Dest)
-	CurrentObjectFutureString2$=BrushObjectFutureString2$(Dest)
+	CopyObjectAttributes(BrushObjects(i)\Attributes,CurrentObject\Attributes)
 		
 	BuildCurrentObjectModel()
-	
 
 End Function
 
@@ -10133,11 +10078,9 @@ Function CreateObjectPositionMarker(i)
 
 	ObjectPositionMarker(i)=CopyEntity(ObjectPositionMarkerMesh)
 	EntityAlpha ObjectPositionMarker(i),.8
-	;EntityColor ObjectPositionMarker(i),255,100,100
 	PositionObjectPositionMarker(i)
 
-	;IncreaseLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
-	UpdateObjectPositionMarkersAtTile(ObjectTileX(i),ObjectTileY(i))
+	UpdateObjectPositionMarkersAtTile(LevelObjects(i)\Attributes\TileX,LevelObjects(i)\Attributes\TileY)
 	
 	If ShowObjectPositions=False
 		HideEntity ObjectPositionMarker(i)
@@ -10159,15 +10102,15 @@ Function DecrementLevelTileObjectCount(x,y)
 
 End Function
 
-Function IncrementLevelTileObjectCountFor(i)
+Function IncrementLevelTileObjectCountFor(Attributes)
 
-	IncrementLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
+	IncrementLevelTileObjectCount(Attributes\TileX,Attributes\TileY)
 
 End Function
 
-Function DecrementLevelTileObjectCountFor(i)
+Function DecrementLevelTileObjectCountFor(Attributes)
 
-	DecrementLevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
+	DecrementLevelTileObjectCount(Attributes\TileX,Attributes\TileY)
 
 End Function
 
@@ -10374,131 +10317,13 @@ Function CopyObjectData(Source,Dest)
 	ObjectHatTexture(Source)=0
 	ObjectAccTexture(Source)=0
 	
-
-	ObjectModelName$(Dest)=ObjectModelName$(Source)
-	ObjectTextureName$(Dest)=ObjectTextureName$(Source)
-	ObjectXScale#(Dest)=ObjectXScale#(Source)
-	ObjectZScale#(Dest)=ObjectZScale#(Source)
-	ObjectYScale#(Dest)=ObjectYScale#(Source)
-	ObjectXAdjust#(Dest)=ObjectXAdjust#(Source)
-	ObjectZAdjust#(Dest)=ObjectZAdjust#(Source)
-	ObjectYAdjust#(Dest)=ObjectYAdjust#(Source)
-	ObjectPitchAdjust#(Dest)=ObjectPitchAdjust#(Source)
-	ObjectYawAdjust#(Dest)=ObjectYawAdjust#(Source)
-	ObjectRollAdjust#(Dest)=ObjectRollAdjust#(Source)
+	
+	CopyObjectAttributes(LevelObjects(Source)\Attributes,LevelObjects(Dest)\Attributes)
+	CopyObjectPositions(LevelObjects(Source)\Position,LevelObjects(Dest)\Position)
 		
-	ObjectX(Dest)=ObjectX(Source)
-	ObjectY(Dest)=ObjectY(Source)
-	ObjectZ(Dest)=ObjectZ(Source)
-	;oldxyz is not copied
-	ObjectDX(Dest)=ObjectDX(Source)
-	ObjectDY(Dest)=ObjectDY(Source)
-	ObjectDZ(Dest)=ObjectDZ(Source)
-	
-	ObjectPitch(Dest)=ObjectPitch(Source)
-	ObjectYaw(Dest)=ObjectYaw(Source)
-	ObjectRoll(Dest)=ObjectRoll(Source)
-	ObjectPitch2(Dest)=ObjectPitch2(Source)
-	ObjectYaw2(Dest)=ObjectYaw2(Source)
-	ObjectRoll2(Dest)=ObjectRoll2(Source)
-
-
-	ObjectXGoal(Dest)=ObjectXGoal(Source)
-	ObjectYGoal(Dest)=ObjectYGoal(Source)
-	ObjectZGoal(Dest)=ObjectZGoal(Source)
-	
-	ObjectMovementType(Dest)=ObjectMovementType(Source)
-	ObjectMovementTypeData(Dest)=ObjectMovementTypeData(Source)
-	ObjectSpeed(Dest)=ObjectSpeed(Source)
-	ObjectRadius(Dest)=ObjectRadius(Source)
-	ObjectRadiusType(Dest)=ObjectRadiusType(Source)
-	
-	ObjectData10(Dest)=ObjectData10(Source)
-	
-	ObjectPushDX(Dest)=ObjectPushDX(Source)
-	ObjectPushDY(Dest)=ObjectPushDY(Source)
-
-	
-	ObjectAttackPower(Dest)=ObjectAttackPower(Source)
-	ObjectDefensePower(Dest)=ObjectDefensePower(Source)
-	ObjectDestructionType(Dest)=ObjectDestructionType(Source)
-	
-
-	ObjectID(Dest)=ObjectID(Source)
-	ObjectType(Dest)=ObjectType(Source)
-	ObjectSubType(Dest)=ObjectSubType(Source)
-	
-	ObjectActive(Dest)=ObjectActive(Source)
-	ObjectLastActive(Dest)=ObjectLastActive(Source)
-	ObjectActivationType(Dest)=ObjectActivationType(Source)
-	ObjectActivationSpeed(Dest)=ObjectActivationSpeed(Source)
-	
-	ObjectStatus(Dest)=ObjectStatus(Source)
-	ObjectTimer(Dest)=ObjectTimer(Source)
-	ObjectTimerMax1(Dest)=ObjectTimerMax1(Source)
-	ObjectTimerMax2(Dest)=ObjectTimerMax2(Source)
-	
-	ObjectTeleportable(Dest)=ObjectTeleportable(Source)
-	ObjectButtonPush(Dest)=ObjectButtonPush(Source)
-	ObjectWaterReact(Dest)=ObjectWaterReact(Source)
-	
-	ObjectTelekinesisable(Dest)=ObjectTelekinesisable(Source)
-	ObjectFreezable(Dest)=ObjectFreezable(Source)
-	
-	ObjectReactive(Dest)=ObjectReactive(Source)
-	
-	ObjectChild(Dest)=ObjectChild(Source)
-	ObjectParent(Dest)=ObjectParent(Source)
-
-	
-	For k=0 To 9
-		ObjectData(Dest,k)=ObjectData(Source,k)
-	Next
-	For k=0 To 3
-		ObjectTextData$(Dest,k)=ObjectTextData$(Source,k)
-	Next
-	
-	ObjectTalkable(Dest)=ObjectTalkable(Source)
-	ObjectCurrentAnim(Dest)=ObjectCurrentAnim(Source)
-	ObjectStandardAnim(Dest)=ObjectStandardAnim(Source)
-	ObjectTileX(Dest)=ObjectTileX(Source)
-	ObjectTileY(Dest)=ObjectTileY(Source)
-	ObjectTileX2(Dest)=ObjectTileX2(Source)
-	ObjectTileY2(Dest)=ObjectTileY2(Source)
-	ObjectMovementTimer(Dest)=ObjectMovementTimer(Source)
-	ObjectMovementSpeed(Dest)=ObjectMovementSpeed(Source)
-	ObjectMoveXGoal(Dest)=ObjectMoveXGoal(Source)
-	ObjectMoveYGoal(Dest)=ObjectMoveYGoal(Source)
-	ObjectTileTypeCollision(Dest)=ObjectTileTypeCollision(Source)
-	ObjectObjectTypeCollision(Dest)=ObjectObjectTypeCollision(Source)
-	ObjectCaged(Dest)=ObjectCaged(Source)
-	ObjectDead(Dest)=ObjectDead(Source)
-	ObjectDeadTimer(Dest)=ObjectDeadTimer(Source)
-	ObjectExclamation(Dest)=ObjectExclamation(Source)
-	ObjectShadow(Dest)=ObjectShadow(Source)
-	ObjectLinked(Dest)=ObjectLinked(Source)
-	ObjectLinkBack(Dest)=ObjectLinkBack(Source)
-	ObjectFlying(Dest)=ObjectFlying(Source)
-	ObjectFrozen(Dest)=ObjectFrozen(Source)
-	ObjectIndigo(Dest)=ObjectIndigo(Source)
-	ObjectFutureInt24(Dest)=ObjectFutureInt24(Source)
-	ObjectFutureInt25(Dest)=ObjectFutureInt25(Source)
-	ObjectScaleAdjust(Dest)=ObjectScaleAdjust(Source)
-	ObjectScaleXAdjust(Dest)=ObjectScaleXAdjust(Source)
-	ObjectScaleYAdjust(Dest)=ObjectScaleYAdjust(Source)
-	ObjectScaleZAdjust(Dest)=ObjectScaleZAdjust(Source)
-	ObjectFutureFloat5(Dest)=ObjectFutureFloat5(Source)
-	ObjectFutureFloat6(Dest)=ObjectFutureFloat6(Source)
-	ObjectFutureFloat7(Dest)=ObjectFutureFloat7(Source)
-	ObjectFutureFloat8(Dest)=ObjectFutureFloat8(Source)
-	ObjectFutureFloat9(Dest)=ObjectFutureFloat9(Source)
-	ObjectFutureFloat10(Dest)=ObjectFutureFloat10(Source)
-	ObjectFutureString1$(Dest)=ObjectFutureString1$(Source)
-	ObjectFutureString2$(Dest)=ObjectFutureString1$(Source)
-	
-	For i=0 To 30
-		ObjectAdjusterString$(Dest,i)=ObjectAdjusterString$(Source,i)
-	Next
+	;For i=0 To 30
+	;	ObjectAdjusterString$(Dest,i)=ObjectAdjusterString$(Source,i)
+	;Next
 	
 	ObjectPositionMarker(Dest)=ObjectPositionMarker(Source)
 
@@ -10657,135 +10482,23 @@ End Function
 
 Function PasteObjectData(Dest)
 
+	;xyz position is not changed
+	;ObjectTileX(Dest)=CurrentObjectTileX
+	;ObjectTileY(Dest)=CurrentObjectTileY
+	;ObjectTileX2(Dest)=CurrentObjectTileX2
+	;ObjectTileY2(Dest)=CurrentObjectTileY2
+	CopyObjectAttributes(CurrentObject/Attributes,LevelObjects(Dest)/Attributes)
+
 	;FreeClothes(Dest)
 	
 	;ObjectHatEntity(Dest)=CurrentObjectHatEntity
 	;ObjectAccEntity(Dest)=CurrentObjectAccEntity
 	;ObjectHatTexture(Dest)=CurrentObjectHatTexture
 	;ObjectAccTexture(Dest)=CurrentObjectAccTexture
-
-	ObjectModelName$(Dest)=CurrentObjectModelName$
-	ObjectTextureName$(Dest)=CurrentObjectTextureName$
-	ObjectXScale#(Dest)=CurrentObjectXScale#
-	ObjectZScale#(Dest)=CurrentObjectZScale#
-	ObjectYScale#(Dest)=CurrentObjectYScale#
-	ObjectXAdjust#(Dest)=CurrentObjectXAdjust#
-	ObjectZAdjust#(Dest)=CurrentObjectZAdjust#
-	ObjectYAdjust#(Dest)=CurrentObjectYAdjust#
-	ObjectPitchAdjust#(Dest)=CurrentObjectPitchAdjust#
-	ObjectYawAdjust#(Dest)=CurrentObjectYawAdjust#
-	ObjectRollAdjust#(Dest)=CurrentObjectRollAdjust#
 		
-	;xyz position is not changed
-	;oldxyz is not copied
-	ObjectDX(Dest)=CurrentObjectDX
-	ObjectDY(Dest)=CurrentObjectDY
-	ObjectDZ(Dest)=CurrentObjectDZ
-	
-	ObjectPitch(Dest)=CurrentObjectPitch
-	ObjectYaw(Dest)=CurrentObjectYaw
-	ObjectRoll(Dest)=CurrentObjectRoll
-	ObjectPitch2(Dest)=CurrentObjectPitch2
-	ObjectYaw2(Dest)=CurrentObjectYaw2
-	ObjectRoll2(Dest)=CurrentObjectRoll2
-
-
-	ObjectXGoal(Dest)=CurrentObjectXGoal
-	ObjectYGoal(Dest)=CurrentObjectYGoal
-	ObjectZGoal(Dest)=CurrentObjectZGoal
-	
-	ObjectMovementType(Dest)=CurrentObjectMovementType
-	ObjectMovementTypeData(Dest)=CurrentObjectMovementTypeData
-	ObjectSpeed(Dest)=CurrentObjectSpeed
-	ObjectRadius(Dest)=CurrentObjectRadius
-	ObjectRadiusType(Dest)=CurrentObjectRadiusType
-	
-	ObjectData10(Dest)=CurrentObjectData10
-	
-	ObjectPushDX(Dest)=CurrentObjectPushDX
-	ObjectPushDY(Dest)=CurrentObjectPushDY
-
-	
-	ObjectAttackPower(Dest)=CurrentObjectAttackPower
-	ObjectDefensePower(Dest)=CurrentObjectDefensePower
-	ObjectDestructionType(Dest)=CurrentObjectDestructionType
-	
-
-	ObjectID(Dest)=CurrentObjectID
-	ObjectType(Dest)=CurrentObjectType
-	ObjectSubType(Dest)=CurrentObjectSubType
-	
-	ObjectActive(Dest)=CurrentObjectActive
-	ObjectLastActive(Dest)=CurrentObjectLastActive
-	ObjectActivationType(Dest)=CurrentObjectActivationType
-	ObjectActivationSpeed(Dest)=CurrentObjectActivationSpeed
-	
-	ObjectStatus(Dest)=CurrentObjectStatus
-	ObjectTimer(Dest)=CurrentObjectTimer
-	ObjectTimerMax1(Dest)=CurrentObjectTimerMax1
-	ObjectTimerMax2(Dest)=CurrentObjectTimerMax2
-	
-	ObjectTeleportable(Dest)=CurrentObjectTeleportable
-	ObjectButtonPush(Dest)=CurrentObjectButtonPush
-	ObjectWaterReact(Dest)=CurrentObjectWaterReact
-	
-	ObjectTelekinesisable(Dest)=CurrentObjectTelekinesisable
-	ObjectFreezable(Dest)=CurrentObjectFreezable
-	
-	ObjectReactive(Dest)=CurrentObjectReactive
-	
-	ObjectChild(Dest)=CurrentObjectChild
-	ObjectParent(Dest)=CurrentObjectParent
-
-	
-	For k=0 To 9
-		ObjectData(Dest,k)=CurrentObjectData(k)
-	Next
-	For k=0 To 3
-		ObjectTextData$(Dest,k)=CurrentObjectTextData$(k)
-	Next
-	
-	ObjectTalkable(Dest)=CurrentObjectTalkable
-	ObjectCurrentAnim(Dest)=CurrentObjectCurrentAnim
-	ObjectStandardAnim(Dest)=CurrentObjectStandardAnim
-	;ObjectTileX(Dest)=CurrentObjectTileX
-	;ObjectTileY(Dest)=CurrentObjectTileY
-	;ObjectTileX2(Dest)=CurrentObjectTileX2
-	;ObjectTileY2(Dest)=CurrentObjectTileY2
-	ObjectMovementTimer(Dest)=CurrentObjectMovementTimer
-	ObjectMovementSpeed(Dest)=CurrentObjectMovementSpeed
-	ObjectMoveXGoal(Dest)=CurrentObjectMoveXGoal
-	ObjectMoveYGoal(Dest)=CurrentObjectMoveYGoal
-	ObjectTileTypeCollision(Dest)=CurrentObjectTileTypeCollision
-	ObjectObjectTypeCollision(Dest)=CurrentObjectObjectTypeCollision
-	ObjectCaged(Dest)=CurrentObjectCaged
-	ObjectDead(Dest)=CurrentObjectDead
-	ObjectDeadTimer(Dest)=CurrentObjectDeadTimer
-	ObjectExclamation(Dest)=CurrentObjectExclamation
-	ObjectShadow(Dest)=CurrentObjectShadow
-	ObjectLinked(Dest)=CurrentObjectLinked
-	ObjectLinkBack(Dest)=CurrentObjectLinkBack
-	ObjectFlying(Dest)=CurrentObjectFlying
-	ObjectFrozen(Dest)=CurrentObjectFrozen
-	ObjectIndigo(Dest)=CurrentObjectIndigo
-	ObjectFutureInt24(Dest)=CurrentObjectFutureInt24
-	ObjectFutureInt25(Dest)=CurrentObjectFutureInt25
-	ObjectScaleAdjust(Dest)=CurrentObjectScaleAdjust
-	ObjectScaleXAdjust(Dest)=CurrentObjectScaleXAdjust
-	ObjectScaleYAdjust(Dest)=CurrentObjectScaleYAdjust
-	ObjectScaleZAdjust(Dest)=CurrentObjectScaleZAdjust
-	ObjectFutureFloat5(Dest)=CurrentObjectFutureFloat5
-	ObjectFutureFloat6(Dest)=CurrentObjectFutureFloat6
-	ObjectFutureFloat7(Dest)=CurrentObjectFutureFloat7
-	ObjectFutureFloat8(Dest)=CurrentObjectFutureFloat8
-	ObjectFutureFloat9(Dest)=CurrentObjectFutureFloat9
-	ObjectFutureFloat10(Dest)=CurrentObjectFutureFloat10
-	ObjectFutureString1$(Dest)=CurrentObjectFutureString1$
-	ObjectFutureString2$(Dest)=CurrentObjectFutureString1$
-	
-	For i=0 To 30
-		ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
-	Next
+	;For i=0 To 30
+	;	ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
+	;Next
 	
 	FreeModel(Dest)
 	
@@ -10900,8 +10613,8 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
-			If CurrentObjectData(2)>0
-				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(2))))
+			If CurrentObject\Attributes\Data2>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data2)))
 			EndIf
 		EndIf
 		
@@ -10911,8 +10624,8 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
-			If CurrentObjectData(2)>0
-				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(2),CurrentObjectData(3))))
+			If CurrentObject\Attributes\Data2>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)))
 			EndIf
 		EndIf
 		
@@ -10920,12 +10633,12 @@ Function HoverOverObjectAdjuster(i)
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
 		ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(4))
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data4)
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
-			If CurrentObjectData(4)>0
-				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObjectData(4))))
+			If CurrentObject\Attributes\Data4>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data4)))
 			EndIf
 		EndIf
 		
@@ -10933,12 +10646,12 @@ Function HoverOverObjectAdjuster(i)
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(1))
 		ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(5))
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data5)
 		EndIf
 	
 		If CurrentObjectModelName$="!NPC"
-			If CurrentObjectData(4)>0
-				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObjectData(4),CurrentObjectData(5)+1)))
+			If CurrentObject\Attributes\Data4>0
+				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)))
 			EndIf
 		EndIf
 		
@@ -10946,7 +10659,7 @@ Function HoverOverObjectAdjuster(i)
 		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
 		ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(6))
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data6)
 		EndIf
 		
 	Case "Data7"
@@ -10956,7 +10669,7 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data8"
 		If CurrentObjectType=90
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObjectData(8))
+			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data8)
 		EndIf
 	
 	Case "TileTypeCollision"
@@ -11445,40 +11158,40 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=RandomActivationSpeedMax
 		
 	Case "ActivationType"
-		If CurrentObjectActivationType=1
+		If CurrentObject\Attributes\ActivationType=1
 			tex$="GrowZ"
-		Else If CurrentObjectActivationType=2
+		Else If CurrentObject\Attributes\ActivationType=2
 			tex$="GrowXYZ"
-		Else If CurrentObjectActivationType=3
+		Else If CurrentObject\Attributes\ActivationType=3
 			tex$="GrowXY"
-		Else If CurrentObjectActivationType=11
+		Else If CurrentObject\Attributes\ActivationType=11
 			tex$="GoDown"
-		Else If CurrentObjectActivationType=12
+		Else If CurrentObject\Attributes\ActivationType=12
 			tex$="Bridge1"
-		Else If CurrentObjectActivationType=13
+		Else If CurrentObject\Attributes\ActivationType=13
 			tex$="Bridge2"
-		Else If CurrentObjectActivationType=14
+		Else If CurrentObject\Attributes\ActivationType=14
 			tex$="Bridge3"
-		Else If CurrentObjectActivationType=15
+		Else If CurrentObject\Attributes\ActivationType=15
 			tex$="Bridge4"
-		Else If CurrentObjectActivationType=16
+		Else If CurrentObject\Attributes\ActivationType=16
 			tex$="Bridge5"
-		Else If CurrentObjectActivationType=17
+		Else If CurrentObject\Attributes\ActivationType=17
 			tex$="GoNorth"
-		Else If CurrentObjectActivationType=18
+		Else If CurrentObject\Attributes\ActivationType=18
 			tex$="GoEast"
-		Else If CurrentObjectActivationType=19
+		Else If CurrentObject\Attributes\ActivationType=19
 			tex$="GoSouth"
-		Else If CurrentObjectActivationType=20
+		Else If CurrentObject\Attributes\ActivationType=20
 			tex$="GoWest"
-		Else If CurrentObjectActivationType=21
+		Else If CurrentObject\Attributes\ActivationType=21
 			tex$="Fade"
-		Else If CurrentObjectActivationType=31
+		Else If CurrentObject\Attributes\ActivationType=31
 			tex$="Cage"
-		Else If CurrentObjectActivationType=41
+		Else If CurrentObject\Attributes\ActivationType=41
 			tex$="DungeonDoor"
 		Else
-			tex$=Str$(CurrentObjectActivationType)
+			tex$=Str$(CurrentObject\Attributes\ActivationType)
 		EndIf
 		Randomized=RandomActivationType
 		LeftAdj$=RandomActivationTypeMin
@@ -11493,7 +11206,7 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=""
 		
 	Case "WaterReact"
-		tex$=Str$(CurrentObjectWaterReact)
+		tex$=Str$(CurrentObject\Attributes\WaterReact)
 		
 	Case "Freezable"
 		tex$=Str$(CurrentObjectFreezable)
@@ -11502,13 +11215,13 @@ Function DisplayObjectAdjuster(i)
 		tex$=Str$(CurrentObjectFrozen)
 		
 	Case "Teleportable"
-		tex$=OneToYes$(CurrentObjectTeleportable)
+		tex$=OneToYes$(CurrentObject\Attributes\Teleportable)
 		Randomized=RandomTeleportable
 		LeftAdj$=""
 		RightAdj$=""
 	
 	Case "Data0"
-		tex$=Str$(CurrentObjectData(0))
+		tex$=Str$(CurrentObject\Attributes\Data0)
 		Randomized=RandomData(0)
 		LeftAdj$=RandomDataMin(0)
 		RightAdj$=RandomDataMax(0)
@@ -11519,13 +11232,13 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=160 And CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
 			tex2$="Turning"
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 				Case 0
 					tex$="Yes"
 				Default
 					tex$="No"
 			End Select
-			tex$=CurrentObjectData(0)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
 		
 		;If CurrentObjectModelName$="!Scritter" Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectType=210 Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage"  Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectType=424 Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
@@ -11543,7 +11256,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!WaterFall"
 			tex2$="Type"
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 				Case 0
 					tex$="Water"
 				Case 1
@@ -11562,7 +11275,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectModelName$="!Crystal"
 			tex2$="Type"
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 			Case 0
 				tex$="Rainbow"
 			Case 1
@@ -11574,7 +11287,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Texture"
 			
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 			Case 1
 				tex$="Blue"
 			Case 2
@@ -11599,7 +11312,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!Kaboom"
 			tex2$="Texture"
 			
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 			Case 1
 				tex$="Blue"
 			Case 2
@@ -11625,14 +11338,14 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!GrowFlower"
 			tex2$="TileLogic"
-			tex$=LogicIdToLogicName$(CurrentObjectData(0))
+			tex$=LogicIdToLogicName$(CurrentObject\Attributes\Data0)
 		EndIf
 		
 		; Model checks are separated from Type checks so that the Type can override the model.
 		
 		If CurrentObjectType=51 Or CurrentObjectType=200 ;Or CurrentObjectTextureName$="!GloveTex" ; spellball generator or glovecharge
 			tex2$="Spell"
-			tex$=GetMagicNameAndId(CurrentObjectData(0))
+			tex$=GetMagicNameAndId(CurrentObject\Attributes\Data0)
 		EndIf
 		
 		If CurrentObjectType=179 ; Custom Item
@@ -11641,14 +11354,14 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=320 ; Void
 			tex2$="TimeOffset"
-			If CurrentObjectData(0)=0
+			If CurrentObject\Attributes\Data0=0
 				tex$="Random"
 			EndIf
 		EndIf
 		
 		If CurrentObjectType=350 ; GrowFlower
 			tex2$="TileLogic"
-			tex$=LogicIdToLogicName$(CurrentObjectData(0))
+			tex$=LogicIdToLogicName$(CurrentObject\Attributes\Data0)
 		EndIf
 
 		If CurrentObjectType=280 Or CurrentObjectType=40 Or CurrentObjectType=210 Or CurrentObjectType=10 Or CurrentObjectType=172 Or CurrentObjectType=30 Or CurrentObjectType=140 Or CurrentObjectType=20 Or CurrentObjectType=410 Or CurrentObjectType=424 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=45 Or CurrentObjectType=46
@@ -11662,7 +11375,7 @@ Function DisplayObjectAdjuster(i)
 				tex2$="Col From"
 			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
 				tex2$="CMD"
-				tex$=Str(CurrentObjectData(0))+"/"+GetCommandName$(CurrentObjectData(0))
+				tex$=Str(CurrentObject\Attributes\Data0)+"/"+GetCommandName$(CurrentObject\Attributes\Data0)
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				tex2$="Colour"
 			Else If CurrentObjectSubType=13 ; Adventure Star
@@ -11682,13 +11395,13 @@ Function DisplayObjectAdjuster(i)
 
 		
 		If CurrentObjectType=40 ; bridge
-			tex$=Str$(CurrentObjectData(0)+8)
+			tex$=Str$(CurrentObject\Attributes\Data0+8)
 		EndIf
 
 		If CurrentObjectType=260 ; spikeyball
 			tex2$="Direction"
-			If CurrentObjectData(1)=2
-				Select CurrentObjectData(0)
+			If CurrentObject\Attributes\Data1=2
+				Select CurrentObject\Attributes\Data0
 				Case 0
 					tex$="North"
 				Case 1
@@ -11708,7 +11421,7 @@ Function DisplayObjectAdjuster(i)
 				End Select
 				
 			Else
-				Select CurrentObjectData(0)
+				Select CurrentObject\Attributes\Data0
 				Case 0
 					tex$="North"
 				Case 1
@@ -11723,12 +11436,12 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectType=250 ; chomper
 			tex2$="Speed"
-			tex$="+"+Str$(CurrentObjectData(0))
+			tex$="+"+Str$(CurrentObject\Attributes\Data0)
 		EndIf
 		If CurrentObjectType=230 ; fireflower
 			tex2$="Direction"
 			
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 			Case 0
 				tex$="North"
 			Case 1
@@ -11751,7 +11464,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=220 Or CurrentObjectType=421 Or CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
 			tex2$="Direction"
 			
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 			Case 0
 				tex$="North"
 			Case 1
@@ -11767,17 +11480,17 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObjectType=310 ; duck
 			tex2$="Move"
-			If CurrentObjectData(0)=1 
+			If CurrentObject\Attributes\Data0=1 
 				tex$="Yes"
 			Else
 				tex$="No"
 			EndIf
-			tex$=CurrentObjectData(0)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
 		
 		If CurrentObjectType=434 ; mothership
 			tex2$="SpawnTimer" ; Formerly TimerMax
-			If CurrentObjectData(0)=0
+			If CurrentObject\Attributes\Data0=0
 				tex$="No Spawns"
 			EndIf
 		EndIf
@@ -11800,7 +11513,7 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "Data1"
-		tex$=Str$(CurrentObjectData(1))
+		tex$=Str$(CurrentObject\Attributes\Data1)
 		Randomized=RandomData(1)
 		LeftAdj$=RandomDataMin(1)
 		RightAdj$=RandomDataMax(1)
@@ -11819,20 +11532,20 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!Chomper"
 			tex2$="Special"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="---"
-			Else If CurrentobjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Ghost"
-			Else If CurrentobjectData(1)=2
+			Else If CurrentObject\Attributes\Data1=2
 				tex$="Glow"
-			Else If CurrentObjectData(1)=3
+			Else If CurrentObject\Attributes\Data1=3
 				tex$="Mecha"
 			EndIf
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC" 
 			tex2$="Expression"
-			tex$=GetStinkerExpressionName$(CurrentObjectData(1))
+			tex$=GetStinkerExpressionName$(CurrentObject\Attributes\Data1)
 		EndIf
 		
 		If CurrentObjectModelName$="!Sun Sphere1"
@@ -11845,13 +11558,13 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!Crab"
 			tex2$="Status"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="Awake"
-			Else If CurrentObjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Curious"
-			Else If CurrentObjectData(1)=2
+			Else If CurrentObject\Attributes\Data1=2
 				tex$="Asleep"
-			Else If CurrentObjectData(1)=3
+			Else If CurrentObject\Attributes\Data1=3
 				tex$="Disabled"
 			EndIf
 		EndIf
@@ -11864,7 +11577,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=242 ; cuboid
 			tex2$="Turning"
-			If CurrentObjectData(1)=0 
+			If CurrentObject\Attributes\Data1=0 
 				tex$="No"
 			Else
 				tex$="Yes"
@@ -11877,16 +11590,16 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)<10 ; Color Changer
 				tex2$="Col To"
 			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
-				tex2$=GetCMDData1Name$(CurrentObjectData(0))
-				tex$=GetCmdData1ValueName$(CurrentObjectData(0),CurrentObjectData(1))
+				tex2$=GetCMDData1Name$(CurrentObject\Attributes\Data0)
+				tex$=GetCmdData1ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				tex2$="SubColour"
 			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="Dest Level"
 			Else If CurrentObjectSubType = 11 ; NPC Modifier
-				If CurrentObjectData(0)=2 ; NPC Exclamation
+				If CurrentObject\Attributes\Data0=2 ; NPC Exclamation
 					tex2$="Target ID"
-					If CurrentObjectData(1)=-1
+					If CurrentObject\Attributes\Data1=-1
 						tex$="Pla"
 					EndIf
 				Else
@@ -11901,36 +11614,36 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectType=190 ; Particle Emitter
 			tex2$="Intensity"
-			If CurrentObjectData(1)=1 tex$="Low"
-			If CurrentObjectData(1)=2 tex$="Reg"
-			If CurrentObjectData(1)=3 tex$="High"
+			If CurrentObject\Attributes\Data1=1 tex$="Low"
+			If CurrentObject\Attributes\Data1=2 tex$="Reg"
+			If CurrentObject\Attributes\Data1=3 tex$="High"
 			
 		EndIf
 		If CurrentObjectType=200 ; Glovecharge
 			tex2$="Usability"
-			If CurrentObjectData(1)<1
+			If CurrentObject\Attributes\Data1<1
 				tex$="Always"
-			ElseIf CurrentObjectData(1)=1
+			ElseIf CurrentObject\Attributes\Data1=1
 				tex$="Once"
-			ElseIf CurrentObjectData(1)>1
+			ElseIf CurrentObject\Attributes\Data1>1
 				tex$="Unusable"
 			EndIf
-			tex$=CurrentObjectData(1)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data1+"/"+tex$
 		EndIf
 		If CurrentObjectType=11 ; TollGate
 			tex2$="Type"
-			If CurrentObjectData(1)=0 
+			If CurrentObject\Attributes\Data1=0 
 				tex$="Star"
 			Else
 				tex$="Coin"
 			EndIf
-			tex$=CurrentObjectData(1)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data1+"/"+tex$
 			
 		EndIf
 		If CurrentObjectType=230 ; FireFlower
 			tex2$="Type"
 			
-			Select CurrentObjectData(1)
+			Select CurrentObject\Attributes\Data1
 			Case 0
 				tex$="Fire"
 			Case 1
@@ -11948,9 +11661,9 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObjectType=260 ; Spikeyball
 			tex2$="Type"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="Bounce Left"
-			Else If CurrentObjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Bounce Right"
 			Else
 				tex$="Bounce Diag"
@@ -11958,13 +11671,13 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectType=250 ; Chomper
 			tex2$="Special"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="---"
-			Else If currentobjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Ghost"
-			Else If currentobjectData(1)=2
+			Else If CurrentObject\Attributes\Data1=2
 				tex$="Glow"
-			Else If CurrentObjectData(1)=3
+			Else If CurrentObject\Attributes\Data1=3
 				tex$="Mecha"
 			EndIf
 			
@@ -11972,9 +11685,9 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectType=220 ; Turtle
 			tex2$="Turn"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="Left"
-			Else If CurrentObjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Right"
 			
 			EndIf
@@ -11982,13 +11695,13 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=370 ; Crab
 			tex2$="Status"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="Awake"
-			Else If CurrentObjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Curious"
-			Else If CurrentObjectData(1)=2
+			Else If CurrentObject\Attributes\Data1=2
 				tex$="Asleep"
-			Else If CurrentObjectData(1)=3
+			Else If CurrentObject\Attributes\Data1=3
 				tex$="Disabled"
 			EndIf
 		EndIf
@@ -11997,9 +11710,9 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObjectType=290 Or CurrentObjectType=380 ; Thwart or Ice Troll
 			tex2$="WalkAnim"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="Normal"
-			Else If CurrentObjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Hands Up"
 			EndIf
 		EndIf
@@ -12014,16 +11727,16 @@ Function DisplayObjectAdjuster(i)
 		; ufo or retro z-bot or zipbot or zapbot
 		If CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
 			tex2$="Turning"
-			If CurrentObjectData(1)=0
+			If CurrentObject\Attributes\Data1=0
 				tex$="Left"
-			Else If CurrentObjectData(1)=1
+			Else If CurrentObject\Attributes\Data1=1
 				tex$="Right"
 			EndIf
 		EndIf
 		
 		If CurrentObjectType=460 ; BurstFlower
 			tex2$="BurstProgress"
-			If CurrentObjectData(1)=150
+			If CurrentObject\Attributes\Data1=150
 				tex$="Fire"
 			EndIf
 		EndIf
@@ -12044,7 +11757,7 @@ Function DisplayObjectAdjuster(i)
 
 		
 	Case "Data2" 
-		tex$=Str$(CurrentObjectData(2))
+		tex$=Str$(CurrentObject\Attributes\Data2)
 		Randomized=RandomData(2)
 		LeftAdj$=RandomDataMin(2)
 		RightAdj$=RandomDataMax(2)
@@ -12060,30 +11773,30 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Acc1"
 			
-			tex$=GetAccessoryName$(CurrentObjectData(2))
+			tex$=GetAccessoryName$(CurrentObject\Attributes\Data2)
 			
-			tex$=CurrentObjectData(2)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 				
 			
 		EndIf
 		
 		If CurrentObjectModelName$="!Thwart" 
 			tex2$="Colour"
-			If CurrentObjectData(2)=0
+			If CurrentObject\Attributes\Data2=0
 				tex$="Standard"
-			Else If CurrentObjectData(2)=1
+			Else If CurrentObject\Attributes\Data2=1
 				tex$="Red"
-			Else If CurrentObjectData(2)=2
+			Else If CurrentObject\Attributes\Data2=2
 				tex$="Orange"
-			Else If CurrentObjectData(2)=3
+			Else If CurrentObject\Attributes\Data2=3
 				tex$="Yellow"
-			Else If CurrentObjectData(2)=4
+			Else If CurrentObject\Attributes\Data2=4
 				tex$="Green"
-			Else If CurrentObjectData(2)=5
+			Else If CurrentObject\Attributes\Data2=5
 				tex$="Blue"
-			Else If CurrentObjectData(2)=6
+			Else If CurrentObject\Attributes\Data2=6
 				tex$="Indigo"
-			Else If CurrentObjectData(2)=7
+			Else If CurrentObject\Attributes\Data2=7
 				tex$="Purple"
 
 			
@@ -12096,7 +11809,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!Wraith"
 			tex2$="Magic"
-			Select CurrentObjectData(2)
+			Select CurrentObject\Attributes\Data2
 			Case 0
 				tex$="Fire"
 			Case 1
@@ -12106,7 +11819,7 @@ Function DisplayObjectAdjuster(i)
 			Default
 				tex$="None"
 			End Select
-			tex$=CurrentObjectData(2)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
 		
 		;If CurrentObjectModelName$="!Spring"  Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!FlipBridge"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX" Or CurrentObjectModelName$="!Conveyor"
@@ -12114,7 +11827,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=280 Or CurrentObjectType=210 Or CurrentObjectType=410 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=282 Or CurrentObjectType=45 Or CurrentObjectType=46
 			tex2$="Direction"
 			If CurrentObjectType=210 ; transporter
-				tex$=Str$(3-CurrentObjectData(2))
+				tex$=Str$(3-CurrentObject\Attributes\Data2)
 			EndIf
 		EndIf
 		
@@ -12124,7 +11837,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=471 ; Wraith
 			tex2$="Magic"
-			Select CurrentObjectData(2)
+			Select CurrentObject\Attributes\Data2
 			Case 0
 				tex$="Fire"
 			Case 1
@@ -12134,7 +11847,7 @@ Function DisplayObjectAdjuster(i)
 			Default
 				tex$="None"
 			End Select
-			tex$=CurrentObjectData(2)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
 
 		If CurrentObjectType=90 ; button
@@ -12143,19 +11856,19 @@ Function DisplayObjectAdjuster(i)
 			Else If (CurrentObjectSubType Mod 32)<10 ; Color Changer
 				tex2$="SubCol From"
 			Else If (CurrentObjectSubType Mod 32)=15 ; General Command
-				tex2$=GetCMDData2Name$(CurrentObjectData(0))
-				tex$=GetCmdData2ValueName$(CurrentObjectData(0),CurrentObjectData(2))
+				tex2$=GetCMDData2Name$(CurrentObject\Attributes\Data0)
+				tex$=GetCmdData2ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
 			Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 				tex2$="Direction"
 			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="Dest X"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0 ; NPC Move
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=0 ; NPC Move
 				tex2$="X Goal"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Change
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=1 ; NPC Change
 				tex2$="Dialog"
-				If CurrentObjectData(2)=0 Then tex$="None"
-				If CurrentObjectData(2)=-1 Then	tex$="No Change"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2 ; NPC Exclamation
+				If CurrentObject\Attributes\Data2=0 Then tex$="None"
+				If CurrentObject\Attributes\Data2=-1 Then	tex$="No Change"
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=2 ; NPC Exclamation
 				tex2$="Particle ID"
 
 
@@ -12169,12 +11882,12 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=190
 			tex2$="Direction"
-			If CurrentObjectData(2)=0 tex$="Up"
-			If CurrentObjectData(2)=1 tex$="Down"
-			If CurrentObjectData(2)=2 tex$="East"
-			If CurrentObjectData(2)=3 tex$="West"
-			If CurrentObjectData(2)=4 tex$="North"
-			If CurrentObjectData(2)=5 tex$="South"
+			If CurrentObject\Attributes\Data2=0 tex$="Up"
+			If CurrentObject\Attributes\Data2=1 tex$="Down"
+			If CurrentObject\Attributes\Data2=2 tex$="East"
+			If CurrentObject\Attributes\Data2=3 tex$="West"
+			If CurrentObject\Attributes\Data2=4 tex$="North"
+			If CurrentObject\Attributes\Data2=5 tex$="South"
 			
 		EndIf
 		
@@ -12184,7 +11897,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=260 ; Spikeyball
 			tex2$="Speed"
-			tex$="+"+Str$(CurrentObjectData(2))
+			tex$="+"+Str$(CurrentObject\Attributes\Data2)
 		EndIf
 		
 		If CurrentObjectType=320 ; Void
@@ -12193,7 +11906,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=433 ; Z-Bot NPC
 			tex2$="Turning"
-			If CurrentObjectData(2)=0
+			If CurrentObject\Attributes\Data2=0
 				tex$="Player"
 			Else
 				tex$="Fixed"
@@ -12205,7 +11918,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Move"
 			
 				
-			Select CurrentObjectData(2)
+			Select CurrentObject\Attributes\Data2
 			Case 0
 				tex$="No"
 			Case 1
@@ -12228,7 +11941,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=242 ; cuboid
 			tex2$="CMD" ;"Explo CMD"
-			tex$=CurrentObjectData(2)+"/"+GetCommandName$(CurrentObjectData(2))
+			tex$=CurrentObject\Attributes\Data2+"/"+GetCommandName$(CurrentObject\Attributes\Data2)
 		EndIf
 		
 		If CurrentObjectType=434 ; mothership
@@ -12243,7 +11956,7 @@ Function DisplayObjectAdjuster(i)
 
 		
 	Case "Data3"
-		tex$=Str$(CurrentObjectData(3))
+		tex$=Str$(CurrentObject\Attributes\Data3)
 		Randomized=RandomData(3)
 		LeftAdj$=RandomDataMin(3)
 		RightAdj$=RandomDataMax(3)
@@ -12254,7 +11967,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!IceBlock"
 			tex2$="Style"
-			Select CurrentObjectData(3)
+			Select CurrentObject\Attributes\Data3
 			Case 0
 				tex$="Ice"
 			Case 1
@@ -12264,7 +11977,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Colour1"
-			tex$=GetAccessoryColorNameWithColorInt$(CurrentObjectData(2),CurrentObjectData(3))
+			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		EndIf
 		
 		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
@@ -12274,9 +11987,9 @@ Function DisplayObjectAdjuster(i)
 		; moobots or transporters or conveyor heads
 		If CurrentObjectType=432 Or CurrentObjectType=210 Or CurrentObjectType=45
 			tex2$="Turn"
-			If CurrentObjectData(3)=0
+			If CurrentObject\Attributes\Data3=0
 				tex$="Left"
-			Else If CurrentObjectData(3)=1
+			Else If CurrentObject\Attributes\Data3=1
 
 				tex$="Right"
 			Else If CurrentObjectType=432 ; only for pushbots
@@ -12288,11 +12001,11 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectType=40 ; stepping stone
 			tex2$="Sound"
-			If CurrentObjectData(3)=0
+			If CurrentObject\Attributes\Data3=0
 				tex$="Water"
-			Else If CurrentObjectData(3)=1
+			Else If CurrentObject\Attributes\Data3=1
 				tex$="Mecha"
-			Else If CurrentObjectData(3)=2
+			Else If CurrentObject\Attributes\Data3=2
 				tex$="Magic"
 			Else
 				tex$="Silent/Glitched"
@@ -12304,25 +12017,25 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObjectType=190
 			tex2$="Sound"
-			If CurrentObjectData(3)=0 tex$="None"
-			If CurrentObjectData(3)=1 
+			If CurrentObject\Attributes\Data3=0 tex$="None"
+			If CurrentObject\Attributes\Data3=1 
 				If CurrentObjectSubType=4 tex$="Spark"
 				If CurrentObjectSubType=5 tex$="QuietMagic"
 
 			EndIf
-			If CurrentObjectData(3)=2 
+			If CurrentObject\Attributes\Data3=2 
 				If CurrentObjectSubType=5 tex$="LoudMecha"
 			EndIf
-			If CurrentObjectData(3)=3 
+			If CurrentObject\Attributes\Data3=3 
 				If CurrentObjectSubType=5 tex$="Var.Gong"
 			EndIf
-			If CurrentObjectData(3)=4 
+			If CurrentObject\Attributes\Data3=4 
 				If CurrentObjectSubType=5 tex$="Grow Magic"
 			EndIf
-			If CurrentObjectData(3)=5 
+			If CurrentObject\Attributes\Data3=5 
 				If CurrentObjectSubType=5 tex$="Floing Magic"
 			EndIf
-			If CurrentObjectData(3)=6 
+			If CurrentObject\Attributes\Data3=6 
 				If CurrentObjectSubType=5 tex$="Gem"
 			EndIf
 
@@ -12334,23 +12047,23 @@ Function DisplayObjectAdjuster(i)
 				tex2$="Colour4"
 			Else If (CurrentObjectSubType Mod 32)<10 ; Color Changer
 				tex2$="SubCol To"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0 ; NPC Modifier: NPC Move
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=0 ; NPC Modifier: NPC Move
 				tex2$="Y Goal"
 			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="Dest Y"
 
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier: NPC Change
 				tex2$="Expression"
-				If CurrentObjectData(3)=-1
+				If CurrentObject\Attributes\Data3=-1
 					tex$="No Change"
 				Else
-					tex$=GetStinkerExpressionName$(CurrentObjectData(3))
+					tex$=GetStinkerExpressionName$(CurrentObject\Attributes\Data3)
 				EndIf
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=2 ; NPC Modifier: NPC Exclamation
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=2 ; NPC Modifier: NPC Exclamation
 				tex2$="Count"
 			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$=GetCMDData3Name$(CurrentObjectData(0))
-				tex$=GetCmdData3ValueName$(CurrentObjectData(0),CurrentObjectData(2),CurrentObjectData(3))
+				tex2$=GetCMDData3Name$(CurrentObject\Attributes\Data0)
+				tex$=GetCmdData3ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 			EndIf
 		EndIf
 		If CurrentObjectType=230 ; FireFlower
@@ -12364,8 +12077,8 @@ Function DisplayObjectAdjuster(i)
 		
 		If  CurrentObjectType=242 ; Cuboid
 			;tex2$="Cmd Data1"
-			tex2$=GetCMDData1Name$(CurrentObjectData(2))
-			tex$=GetCmdData1ValueName$(CurrentObjectData(2),CurrentObjectData(3))
+			tex2$=GetCMDData1Name$(CurrentObject\Attributes\Data2)
+			tex$=GetCmdData1ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		EndIf
 		
 		If CurrentObjectType=434 ; Mothership
@@ -12379,7 +12092,7 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "Data4"
-		tex$=Str$(CurrentObjectData(4))
+		tex$=Str$(CurrentObject\Attributes\Data4)
 		Randomized=RandomData(4)
 		LeftAdj$=RandomDataMin(4)
 		RightAdj$=RandomDataMax(4)
@@ -12395,9 +12108,9 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Acc2" ;"Glasses"
 			
-			tex$=GetAccessoryName$(CurrentObjectData(4))
+			tex$=GetAccessoryName$(CurrentObject\Attributes\Data4)
 			
-			tex$=CurrentObjectData(4)+"/"+tex$
+			tex$=CurrentObject\Attributes\Data4+"/"+tex$
 		EndIf
 
 		If CurrentObjectType=90 ; button
@@ -12406,34 +12119,34 @@ Function DisplayObjectAdjuster(i)
 				
 			Else If CurrentObjectSubType = 10 ; LevelExit
 				tex2$="PlayerYaw"
-				DisplayedRotation=(currentObjectData(4)+180) Mod 360
+				DisplayedRotation=(CurrentObject\Attributes\Data4+180) Mod 360
 				tex$=GetDirectionString$(DisplayedRotation)
 				
 				
-			Else If CurrentObjectSubType = 11 And (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2) ; NPC Modifier: NPC Move or NPC Exclamation
+			Else If CurrentObjectSubType = 11 And (CurrentObject\Attributes\Data0=0 Or CurrentObject\Attributes\Data0=2) ; NPC Modifier: NPC Move or NPC Exclamation
 				tex2$="Repeatable"
-				If CurrentObjectData(4)=0
+				If CurrentObject\Attributes\Data4=0
 					tex$="Yes"
 				Else
 					tex$="No"
 				EndIf
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier: NPC Change
 				tex2$="Yaw"
-				If CurrentObjectData(4)=-1
+				If CurrentObject\Attributes\Data4=-1
 					tex$="No Change"
 				Else
-					;tex$=GetDirectionString$(CurrentObjectData(4))
-					tex$=CurrentObjectData(4)
+					;tex$=GetDirectionString$(CurrentObject\Attributes\Data4)
+					tex$=CurrentObject\Attributes\Data4
 				EndIf
 			Else If (CurrentObjectSubType Mod 32)=15
-				tex2$=GetCMDData4Name$(CurrentObjectData(0))
-				tex$=GetCmdData4ValueName$(CurrentObjectData(0),CurrentObjectData(4))
+				tex2$=GetCMDData4Name$(CurrentObject\Attributes\Data0)
+				tex$=GetCmdData4ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
 			EndIf
 		EndIf
 		
 		If CurrentObjectType=281 ; suctube 
 			tex2$="Sound"
-			If CurrentObjectData(4)=0
+			If CurrentObject\Attributes\Data4=0
 				tex$="Normal"
 			Else 
 				tex$="Portal"
@@ -12444,13 +12157,13 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=190 ; Particle Emitter
 			tex2$="Timing"
-			If CurrentObjectData(4)=0 tex$="Random"
-			If CurrentObjectData(4)=1 tex$="Synchro"
+			If CurrentObject\Attributes\Data4=0 tex$="Random"
+			If CurrentObject\Attributes\Data4=1 tex$="Synchro"
 		EndIf
 		
 		If CurrentObjectType=431 Or CurrentObjectType=422 ; Zapbot or UFO
 			tex2$="Track"
-			tex$=OneToYes$(CurrentObjectData(4))
+			tex$=OneToYes$(CurrentObject\Attributes\Data4)
 		EndIf
 		
 		If CurrentObjectType=230 ; FireFlower
@@ -12458,18 +12171,18 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
-			If CurrentObjectData(4)>=0
+			If CurrentObject\Attributes\Data4>=0
 				tex2$="ActivateID"
 			Else
 				tex2$="ActivateType"
-				tex$=Str$(-CurrentObjectData(4))+"/"+GetTypeString$(-CurrentObjectData(4))
+				tex$=Str$(-CurrentObject\Attributes\Data4)+"/"+GetTypeString$(-CurrentObject\Attributes\Data4)
 			EndIf
 		EndIf
 
 		If  CurrentObjectType=242 ; Cuboid
 			;tex2$="Cmd Data2"
-			tex2$=GetCMDData2Name$(CurrentObjectData(2))
-			tex$=GetCmdData2ValueName$(CurrentObjectData(2),CurrentObjectData(4))
+			tex2$=GetCMDData2Name$(CurrentObject\Attributes\Data2)
+			tex$=GetCmdData2ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data4)
 		EndIf
 		If CurrentObjectType=434 ; Mothership
 			tex2$="FlyGoalX1"
@@ -12477,14 +12190,14 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "Data5"
-		tex$=Str$(CurrentObjectData(5))
+		tex$=Str$(CurrentObject\Attributes\Data5)
 		Randomized=RandomData(5)
 		LeftAdj$=RandomDataMin(5)
 		RightAdj$=RandomDataMax(5)
 		
 		If CurrentObjectModelName$="!NPC"
 			tex2$="Colour2"
-			tex$=GetAccessoryColorNameWithColorInt$(CurrentObjectData(4),CurrentObjectData(5)+1)
+			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)
 		EndIf
 		
 		If CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Obstacle36" Or CurrentObjectModelName$="!Obstacle37" Or CurrentObjectModelName$="!Obstacle38" Or CurrentObjectModelName$="!Obstacle39" Or CurrentObjectModelName$="!Obstacle40"
@@ -12501,7 +12214,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=281 ; Suctube
 			tex2$="Particles"
-			If CurrentObjectData(5)=0
+			If CurrentObject\Attributes\Data5=0
 				tex$="Yes"
 			Else
 				tex$="No"
@@ -12515,21 +12228,21 @@ Function DisplayObjectAdjuster(i)
 				tex2$="SubColour2"
 			Else If CurrentObjectSubType = 10
 				tex2$="FlyOver"
-				If CurrentObjectData(5)=0
+				If CurrentObject\Attributes\Data5=0
 					tex$="No"
 				Else
 					tex$="Yes"
 				EndIf
 
 
-			Else If (CurrentObjectSubType Mod 32)=15 Or (CurrentObjectSubType = 11 And CurrentObjectData(0)=1)
+			Else If (CurrentObjectSubType Mod 32)=15 Or (CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=1)
 				tex2$="Repeatable"
-				If CurrentObjectData(5)=0
+				If CurrentObject\Attributes\Data5=0
 					tex$="Yes"
 				Else
 					tex$="No"
 				EndIf
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=0
 				tex2$="DelayTimer"
 
 
@@ -12538,7 +12251,7 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor (should the tail really be here too?)
 			tex2$="Logic"
-			If CurrentObjectData(5)=0
+			If CurrentObject\Attributes\Data5=0
 				tex$="Move"
 			Else
 				tex$="Step"
@@ -12548,18 +12261,18 @@ Function DisplayObjectAdjuster(i)
 		
 		
 		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
-			If CurrentObjectData(5)>=0
+			If CurrentObject\Attributes\Data5>=0
 				tex2$="ActivateID"
 			Else
 				tex2$="ActivateType"
-				tex$=Str$(-CurrentObjectData(5))+"/"+GetTypeString$(-CurrentObjectData(5))
+				tex$=Str$(-CurrentObject\Attributes\Data5)+"/"+GetTypeString$(-CurrentObject\Attributes\Data5)
 			EndIf
 		EndIf
 		
 		If CurrentObjectType=242 ; Cuboid
 			;tex2$="Cmd Data3"
-			tex2$=GetCMDData3Name$(CurrentObjectData(2))
-			tex$=GetCmdData3ValueName$(CurrentObjectData(2),CurrentObjectData(4),CurrentObjectData(5))
+			tex2$=GetCMDData3Name$(CurrentObject\Attributes\Data2)
+			tex$=GetCmdData3ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
 		EndIf
 
 
@@ -12570,7 +12283,7 @@ Function DisplayObjectAdjuster(i)
 
 		
 	Case "Data6"
-		tex$=Str$(CurrentObjectData(6))
+		tex$=Str$(CurrentObject\Attributes\Data6)
 		Randomized=RandomData(6)
 		LeftAdj$=RandomDataMin(6)
 		RightAdj$=RandomDataMax(6)
@@ -12581,7 +12294,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectModelName$="!NPC"
 			tex2$="WalkAnim"
-			tex$=GetStinkerNPCWalkAnimName$(CurrentObjectData(6))
+			tex$=GetStinkerNPCWalkAnimName$(CurrentObject\Attributes\Data6)
 		EndIf
 		
 		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
@@ -12591,14 +12304,14 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="SubColour3"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=0 ; NPC Modifier: NPC Move
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=0 ; NPC Modifier: NPC Move
 				tex2$="DelayReset"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier: NPC Change
 				tex2$="WalkAnim"
-				If CurrentObjectData(6)=-1
+				If CurrentObject\Attributes\Data6=-1
 					tex$="No Change"
 				Else
-					tex$=GetStinkerNPCWalkAnimName$(CurrentObjectData(6))
+					tex$=GetStinkerNPCWalkAnimName$(CurrentObject\Attributes\Data6)
 				EndIf
 			EndIf
 			
@@ -12606,14 +12319,14 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=120 ; Wee Stinker
 			tex2$="Burning"
-			If CurrentObjectData(6)=600 tex$="Death"
+			If CurrentObject\Attributes\Data6=600 tex$="Death"
 		EndIf
 		
 		; Thwart, Ice Troll, Z-Bot NPC
 		If CurrentObjectType=290 Or CurrentObjectType=380 Or CurrentObjectType=433
 
 			tex2$="Shooter"
-			Select CurrentObjectData(6)
+			Select CurrentObject\Attributes\Data6
 			Case 0
 				tex$="No"
 			Case 1
@@ -12623,11 +12336,11 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectType=10 And CurrentObjectSubType=9 ; Autodoor
-			If CurrentObjectData(6)>=0
+			If CurrentObject\Attributes\Data6>=0
 				tex2$="ActivateID"
 			Else
 				tex2$="ActivateType"
-				tex$=Str$(-CurrentObjectData(6))+"/"+GetTypeString$(-CurrentObjectData(6))
+				tex$=Str$(-CurrentObject\Attributes\Data6)+"/"+GetTypeString$(-CurrentObject\Attributes\Data6)
 			EndIf
 		EndIf
 		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor (is tail relevant here?)
@@ -12636,8 +12349,8 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=242 ; Cuboid
 			;tex2$="Cmd Data4"
-			tex2$=GetCMDData4Name$(CurrentObjectData(2))
-			tex$=GetCmdData4ValueName$(CurrentObjectData(2),CurrentObjectData(6))
+			tex2$=GetCMDData4Name$(CurrentObject\Attributes\Data2)
+			tex$=GetCmdData4ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data6)
 		EndIf
 
 		If CurrentObjectType=434 ; Mothership
@@ -12646,7 +12359,7 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "Data7"
-		tex$=Str$(CurrentObjectData(7))
+		tex$=Str$(CurrentObject\Attributes\Data7)
 		Randomized=RandomData(7)
 		LeftAdj$=RandomDataMin(7)
 		RightAdj$=RandomDataMax(7)
@@ -12662,12 +12375,12 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				tex2$="SubColour4"
-			Else If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
+			Else If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier: NPC Change
 				tex2$="Turn"
-				If CurrentObjectData(7)=-1
+				If CurrentObject\Attributes\Data7=-1
 					tex$="No Change"
 				Else
-					tex$=GetNPCTurningName$(CurrentObjectData(7))
+					tex$=GetNPCTurningName$(CurrentObject\Attributes\Data7)
 				EndIf
 				
 				
@@ -12676,7 +12389,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=110 Or CurrentObjectType=390 ; Stinker NPC or Kaboom NPC
 		
 			tex2$="Turn"
-			tex$=GetNPCTurningName$(CurrentObjectData(7))
+			tex$=GetNPCTurningName$(CurrentObject\Attributes\Data7)
 		EndIf
 		
 		If CurrentObjectType=290 Or CurrentObjectType=380 Or CurrentObjectType=433 ; Thwart, Ice Troll, and Z-Bot NPC
@@ -12701,7 +12414,7 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "Data8"
-		tex$=Str$(CurrentObjectData(8))
+		tex$=Str$(CurrentObject\Attributes\Data8)
 		Randomized=RandomData(8)
 		LeftAdj$=RandomDataMin(8)
 		RightAdj$=RandomDataMax(8)
@@ -12713,36 +12426,36 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectModelName$="!StinkerWee"
 			
 			tex2$="Type"
-			If CurrentObjectData(8)=0 tex$="Normal"
-			If CurrentObjectData(8)=1 tex$="Green"
-			If CurrentObjectData(8)=2 tex$="White"
+			If CurrentObject\Attributes\Data8=0 tex$="Normal"
+			If CurrentObject\Attributes\Data8=1 tex$="Green"
+			If CurrentObject\Attributes\Data8=2 tex$="White"
 
 		EndIf
 
 		If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
 			tex2$="ActivateID"
-			If CurrentObjectData(8)=0
+			If CurrentObject\Attributes\Data8=0
 				tex$="All"
-			Else If CurrentObjectData(8)=-2
+			Else If CurrentObject\Attributes\Data8=-2
 				tex$="Pla"
 			EndIf
 		EndIf
 		If CurrentObjectType=110 ; Stinker NPC
 			
 			tex2$="IdleAnim"
-			tex$=GetStinkerNPCIdleAnimName$(CurrentObjectData(8))			
+			tex$=GetStinkerNPCIdleAnimName$(CurrentObject\Attributes\Data8)			
 			
 		EndIf
 		
 		If CurrentObjectType=390 ; Kaboom NPC
 			
 			tex2$="Anim"
-			If CurrentObjectData(8)=0 tex$="Stand"
-			If CurrentObjectData(8)=1 tex$="Sit"
-			If CurrentObjectData(8)=2 tex$="Sit/Stand"
-			If CurrentObjectData(8)=3 tex$="Shiver Some"
-			If CurrentObjectData(8)=4 tex$="Shiver Constant"
-			If CurrentObjectData(8)=5 tex$="Exercise"
+			If CurrentObject\Attributes\Data8=0 tex$="Stand"
+			If CurrentObject\Attributes\Data8=1 tex$="Sit"
+			If CurrentObject\Attributes\Data8=2 tex$="Sit/Stand"
+			If CurrentObject\Attributes\Data8=3 tex$="Shiver Some"
+			If CurrentObject\Attributes\Data8=4 tex$="Shiver Constant"
+			If CurrentObject\Attributes\Data8=5 tex$="Exercise"
 	
 			
 			
@@ -12751,8 +12464,8 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=400 ; Baby Boomer
 			
 			tex2$="Boom"
-			If CurrentObjectData(8)=0 tex$="No"
-			If CurrentObjectData(8)=1 tex$="Yes"
+			If CurrentObject\Attributes\Data8=0 tex$="No"
+			If CurrentObject\Attributes\Data8=1 tex$="Yes"
 				
 			
 			
@@ -12761,8 +12474,8 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObjectType=433 ; Z-Bot NPC
 			
 			tex2$="IntroSound"
-			If CurrentObjectData(8)=0 tex$="On"
-			If CurrentObjectData(8)=1 tex$="Off"
+			If CurrentObject\Attributes\Data8=0 tex$="On"
+			If CurrentObject\Attributes\Data8=1 tex$="Off"
 			
 		EndIf
 		
@@ -12770,8 +12483,8 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=50 ; spellball
 			tex2$="FromZapbot"
-			If CurrentObjectData(8)=0 tex$="No"
-			If CurrentObjectData(8)=-99 tex$="Yes"
+			If CurrentObject\Attributes\Data8=0 tex$="No"
+			If CurrentObject\Attributes\Data8=-99 tex$="Yes"
 		EndIf
 
 
@@ -12786,26 +12499,26 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "Data9"
-		tex$=Str$(CurrentObjectData(9))
+		tex$=Str$(CurrentObject\Attributes\Data9)
 		Randomized=RandomData(9)
 		LeftAdj$=RandomDataMin(9)
 		RightAdj$=RandomDataMax(9)
 		
 		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="Deadly"
-			If CurrentObjectData(9)=0 tex$="No"
-			If CurrentObjectData(9)=1 tex$="Yes"
+			If CurrentObject\Attributes\Data9=0 tex$="No"
+			If CurrentObject\Attributes\Data9=1 tex$="Yes"
 			
 
 		EndIf
 
 		If CurrentObjectType=90 ; button
-			If CurrentObjectSubType = 11 And CurrentObjectData(0)=1 ; NPC Modifier: NPC Change
+			If CurrentObjectSubType = 11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier: NPC Change
 				tex2$="IdleAnim"
-				If CurrentObjectData(9)=-1
+				If CurrentObject\Attributes\Data9=-1
 					tex$="No Change"
 				Else
-					tex$=GetStinkerNPCIdleAnimName$(CurrentObjectData(9))
+					tex$=GetStinkerNPCIdleAnimName$(CurrentObject\Attributes\Data9)
 				EndIf
 			EndIf
 		EndIf
@@ -12816,7 +12529,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=200
 			tex2$="ReadyForSound"
-			tex$=CurrentObjectData(9)+"/"+ZeroToYes$(CurrentObjectData(9))
+			tex$=CurrentObject\Attributes\Data9+"/"+ZeroToYes$(CurrentObject\Attributes\Data9)
 		EndIf
 		
 				
@@ -12828,8 +12541,8 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObjectType=441 ; Sun Sphere 1
 			tex2$="Empty"
-			If CurrentObjectData(9)=0 tex$="No"
-			If CurrentObjectData(9)=1 tex$="Yes"
+			If CurrentObject\Attributes\Data9=0 tex$="No"
+			If CurrentObject\Attributes\Data9=1 tex$="Yes"
 		EndIf
 		
 		If CurrentObjectType=470 Or CurrentObjectType=471 ; Ghost or Wraith
@@ -13154,17 +12867,17 @@ End Function
 
 Function GapSubType(SmallerExclusive,LargerExclusive)
 
-	If CurrentObjectSubType>SmallerExclusive And CurrentObjectSubType<LargerExclusive-20
-		CurrentObjectSubType=LargerExclusive
-	Else If CurrentObjectSubType>LargerExclusive-19 And CurrentObjectSubType<LargerExclusive
-		CurrentObjectSubType=SmallerExclusive
+	If CurrentObject\Attributes\LogicSubType>SmallerExclusive And CurrentObject\Attributes\LogicSubType<LargerExclusive-20
+		CurrentObject\Attributes\LogicSubType=LargerExclusive
+	Else If CurrentObject\Attributes\LogicSubType>LargerExclusive-19 And CurrentObject\Attributes\LogicSubType<LargerExclusive
+		CurrentObject\Attributes\LogicSubType=SmallerExclusive
 	EndIf
 
 End Function
 
 Function OnLeftHalfAdjuster()
 
-	Return MouseX()<602
+	Return MouseX()<SidebarX+102 ;602
 
 End Function
 
@@ -13383,43 +13096,46 @@ Function AdjustObjectAdjuster(i)
 					Target$=CurrentObjectTextData$(0)
 					CurrentObjectTextData$(0)=InputString$("Replacement TextData0: ")
 					For j=0 To NofObjects-1
-						If ObjectTextData$(j,0)=Target$
-							ObjectTextData$(j,0)=CurrentObjectTextData$(0)
-							UpdateObjectModel(j)
+						LevelObject=LevelObjects(j)
+						If LevelObject\Attributes\TextData0$=Target$
+							LevelObject\Attributes\TextData0$=CurrentObject\Attributes\TextData0$
+							UpdateObjectModel(LevelObject)
 						EndIf
 					Next
 				EndIf
 			Else
-				CurrentObjectTextData$(0)=InputString$("TextData0: ")
+				CurrentObject\Attributes\TextData$(0)=InputString$("TextData0: ")
 			EndIf
 		EndIf
 	Case "ObjectTextData1"
 		If LeftMouse=True
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
-					Target$=CurrentObjectTextData$(1)
+					Target$=CurrentObject\Attributes\TextData$1
 					CurrentObjectTextData$(1)=InputString$("Replacement TextData1: ")
 					For j=0 To NofObjects-1
-						If ObjectTextData$(j,1)=Target$
-							ObjectTextData$(j,1)=CurrentObjectTextData$(1)
-							UpdateObjectModel(j)
+						LevelObject=LevelObjects(j)
+						If LevelObject\Attributes\TextData1$=Target$
+							LevelObject\Attributes\TextData1$=CurrentObject\Attributes\TextData1$
+							UpdateObjectModel(LevelObject)
 						EndIf
 					Next
 				EndIf
 			Else
-				CurrentObjectTextData$(1)=InputString$("TextData1: ")
+				CurrentObject\Attributes\TextData1$=InputString$("TextData1: ")
 			EndIf
 		EndIf
 	Case "TextureName"
 		If LeftMouse=True
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
-					Target$=CurrentObjectTextureName$
+					Target$=CurrentObject\Attributes\TexName$
 					InputTextureName("Replacement TextureName: ")
 					For j=0 To NofObjects-1
-						If ObjectTextureName$(j)=Target$
-							ObjectTextureName$(j)=CurrentObjectTextureName$
-							UpdateObjectModel(j)
+						LevelObject=LevelObjects(j)
+						If LevelObject\Attributes\TexName$=Target$
+							LevelObject\Attributes\TexName$=CurrentObject\Attributes\TexName$
+							UpdateObjectModel(LevelObject)
 						EndIf
 					Next
 				EndIf
@@ -13432,13 +13148,14 @@ Function AdjustObjectAdjuster(i)
 		If LeftMouse=True
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
-					Target$=CurrentObjectModelName$
+					Target$=CurrentObject\Attributes\ModelName$
 					InputModelName("Replacement ModelName: ")
 					For j=0 To NofObjects-1
-						If ObjectModelName$(j)=Target$
-							ObjectModelName$(j)=CurrentObjectModelName$
-							If CurrentObjectModelName$="!CustomModel"
-								ObjectTextData$(j,0)=CurrentObjectTextData$(0)
+						LevelObject=LevelObjects(j)
+						If LevelObject\Attributes\ModelName$=Target$
+							LevelObject\Attributes\ModelName$=CurrentObject\Attributes\ModelName$
+							If CurrentObject\Attributes\ModelName$="!CustomModel"
+								LevelObject\Attributes\TextData0$=CurrentObject\Attributes\TextData0$
 							EndIf
 							UpdateObjectModel(j)
 						EndIf
@@ -13450,248 +13167,78 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "DefensePower"
-		If RandomDefensePower
-			If OnLeftHalfAdjuster()
-				RandomDefensePowerMin=AdjustInt("DefensePower Min: ", RandomDefensePowerMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomDefensePowerMax=AdjustInt("DefensePower Max: ", RandomDefensePowerMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectDefensePower=AdjustInt("DefensePower: ", CurrentObjectDefensePower, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomDefensePower=Not RandomDefensePower
-			RandomDefensePowerMin=0
-			RandomDefensePowerMax=33
-		EndIf
+		CurrentObject\Attributes\DefensePower=AdjustObjectAdjusterInt(ObjectAdjusterDefensePower,CurrentObject\Attributes\DefensePower,SlowInt,FastInt,DelayTime)
 		
-		If CurrentObjectDefensePower>=34 Then CurrentObjectDefensePower=0
-		If CurrentObjectDefensePower<0 Then CurrentObjectDefensePower=33
+		If CurrentObject\Attributes\DefensePower>=34 Then CurrentObject\Attributes\DefensePower=0
+		If CurrentObject\Attributes\DefensePower<0 Then CurrentObject\Attributes\DefensePower=33
 		
 	Case "AttackPower"
-		CurrentObjectAttackPower=AdjustInt("AttackPower: ", CurrentObjectAttackPower, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\AttackPower=AdjustObjectAdjusterInt(ObjectAdjusterAttackPower,CurrentObject\Attributes\AttackPower,SlowInt,FastInt,DelayTime)
 		
 	Case "DestructionType"
-		CurrentObjectDestructionType=AdjustInt("DestructionType: ", CurrentObjectDestructionType, SlowInt, FastInt, DelayTime)
-		
+		CurrentObject\Attributes\DestructionType=AdjustObjectAdjusterInt(ObjectAdjusterDestructionType,CurrentObject\Attributes\DestructionType,SlowInt,FastInt,DelayTime)
 	
 	Case "YawAdjust"
 		SlowFloat#=SlowInt
 		FastFloat#=FastRotate
-		If RandomYawAdjust
-			If OnLeftHalfAdjuster()
-				RandomYawAdjustMin=AdjustFloat#("YawAdjust Min: ", RandomYawAdjustMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomYawAdjustMax=AdjustFloat#("YawAdjust Max: ", RandomYawAdjustMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectYawAdjust=AdjustFloat#("YawAdjust: ", CurrentObjectYawAdjust, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomYawAdjust=Not RandomYawAdjust
-			RandomYawAdjustMin#=0.0
-			RandomYawAdjustMax#=360.0
-		EndIf
+		CurrentObject\Attributes\YawAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterYawAdjust,CurrentObject\Attributes\YawAdjust,SlowFloat#,FastFloat#,DelayTime)
 		
-		If CurrentObjectYawAdjust>=360 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust-360
-		If CurrentObjectYawAdjust<0 Then CurrentObjectYawAdjust=CurrentObjectYawAdjust+360
+		If CurrentObject\Attributes\YawAdjust>=360 Then CurrentObject\Attributes\YawAdjust=CurrentObject\Attributes\YawAdjust-360
+		If CurrentObject\Attributes\YawAdjust<0 Then CurrentObject\Attributes\YawAdjust=CurrentObject\Attributes\YawAdjust+360
 		
 	Case "PitchAdjust"
 		SlowFloat#=SlowInt
 		FastFloat#=FastRotate
-		If RandomPitchAdjust
-			If OnLeftHalfAdjuster()
-				RandomPitchAdjustMin=AdjustFloat#("PitchAdjust Min: ", RandomPitchAdjustMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomPitchAdjustMax=AdjustFloat#("PitchAdjust Max: ", RandomPitchAdjustMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectPitchAdjust=AdjustFloat#("PitchAdjust: ", CurrentObjectPitchAdjust, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomPitchAdjust=Not RandomPitchAdjust
-			RandomPitchAdjustMin#=0.0
-			RandomPitchAdjustMax#=360.0
-		EndIf
+		CurrentObject\Attributes\PitchAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterPitchAdjust,CurrentObject\Attributes\PitchAdjust,SlowFloat#,FastFloat#,DelayTime)
 		
-		If CurrentObjectPitchAdjust>=360 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust-360
-		If CurrentObjectPitchAdjust<0 Then CurrentObjectPitchAdjust=CurrentObjectPitchAdjust+360
+		If CurrentObject\Attributes\PitchAdjust>=360 Then CurrentObject\Attributes\PitchAdjust=CurrentObject\Attributes\PitchAdjust-360
+		If CurrentObject\Attributes\PitchAdjust<0 Then CurrentObject\Attributes\PitchAdjust=CurrentObject\Attributes\PitchAdjust+360
 		
 	Case "RollAdjust"
 		SlowFloat#=SlowInt
 		FastFloat#=FastRotate
-		If RandomRollAdjust
-			If OnLeftHalfAdjuster()
-				RandomRollAdjustMin=AdjustFloat#("RollAdjust Min: ", RandomRollAdjustMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomRollAdjustMax=AdjustFloat#("RollAdjust Max: ", RandomRollAdjustMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectRollAdjust=AdjustFloat#("RollAdjust: ", CurrentObjectRollAdjust, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomRollAdjust=Not RandomRollAdjust
-			RandomRollAdjustMin#=0.0
-			RandomRollAdjustMax#=360.0
-		EndIf
+		CurrentObject\Attributes\RollAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterRollAdjust,CurrentObject\Attributes\RollAdjust,SlowFloat#,FastFloat#,DelayTime)
 		
-		If CurrentObjectRollAdjust>=360 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust-360
-		If CurrentObjectRollAdjust<0 Then CurrentObjectRollAdjust=CurrentObjectRollAdjust+360
+		If CurrentObject\Attributes\RollAdjust>=360 Then CurrentObject\Attributes\RollAdjust=CurrentObject\Attributes\RollAdjust-360
+		If CurrentObject\Attributes\RollAdjust<0 Then CurrentObject\Attributes\RollAdjust=CurrentObject\Attributes\RollAdjust+360
 
 
 		
 	Case "XAdjust"
-		If RandomXAdjust
-			If OnLeftHalfAdjuster()
-				RandomXAdjustMin=AdjustFloat#("XAdjust Min: ", RandomXAdjustMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomXAdjustMax=AdjustFloat#("XAdjust Max: ", RandomXAdjustMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectXAdjust=AdjustFloat#("XAdjust: ", CurrentObjectXAdjust, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomXAdjust=Not RandomXAdjust
-			RandomXAdjustMin#=-0.5
-			RandomXAdjustMax#=0.5
-		EndIf
+		CurrentObject\Attributes\XAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterXAdjust,CurrentObject\Attributes\XAdjust,SlowFloat#,FastFloat#,DelayTime)
 	Case "YAdjust"
-		If RandomYAdjust
-			If OnLeftHalfAdjuster()
-				RandomYAdjustMin=AdjustFloat#("YAdjust Min: ", RandomYAdjustMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomYAdjustMax=AdjustFloat#("YAdjust Max: ", RandomYAdjustMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectYAdjust=AdjustFloat#("YAdjust: ", CurrentObjectYAdjust, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomYAdjust=Not RandomYAdjust
-			RandomYAdjustMin#=-0.5
-			RandomYAdjustMax#=0.5
-		EndIf
+		CurrentObject\Attributes\YAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterYAdjust,CurrentObject\Attributes\YAdjust,SlowFloat#,FastFloat#,DelayTime)
 	Case "ZAdjust"
-		If RandomZAdjust
-			If OnLeftHalfAdjuster()
-				RandomZAdjustMin=AdjustFloat#("ZAdjust Min: ", RandomZAdjustMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomZAdjustMax=AdjustFloat#("ZAdjust Max: ", RandomZAdjustMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectZAdjust=AdjustFloat#("ZAdjust: ", CurrentObjectZAdjust, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomZAdjust=Not RandomZAdjust
-			RandomZAdjustMin#=-0.5
-			RandomZAdjustMax#=0.5
-		EndIf
+		CurrentObject\Attributes\ZAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,SlowFloat#,FastFloat#,DelayTime)
 		
 		
 	Case "XScale"
 		SlowFloat#=SlowScale#
-		If RandomXScale
-			If OnLeftHalfAdjuster()
-				RandomXScaleMin=AdjustFloat#("XScale Min: ", RandomXScaleMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomXScaleMax=AdjustFloat#("XScale Max: ", RandomXScaleMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectXScale=AdjustFloat#("XScale: ", CurrentObjectXScale, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomXScale=Not RandomXScale
-			RandomXScaleMin#=0.5
-			RandomXScaleMax#=1.5
-		EndIf
+		CurrentObject\Attributes\XScale=AdjustObjectAdjusterFloat(ObjectAdjusterXScale,CurrentObject\Attributes\XScale,SlowFloat#,FastFloat#,DelayTime)
 	Case "YScale"
 		SlowFloat#=SlowScale#
-		If RandomYScale
-			If OnLeftHalfAdjuster()
-				RandomYScaleMin=AdjustFloat#("YScale Min: ", RandomYScaleMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomYScaleMax=AdjustFloat#("YScale Max: ", RandomYScaleMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectYScale=AdjustFloat#("YScale: ", CurrentObjectYScale, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomYScale=Not RandomYScale
-			RandomYScaleMin#=0.5
-			RandomYScaleMax#=1.5
-		EndIf
+		CurrentObject\Attributes\YScale=AdjustObjectAdjusterFloat(ObjectAdjusterYScale,CurrentObject\Attributes\YScale,SlowFloat#,FastFloat#,DelayTime)
 	Case "ZScale"
 		SlowFloat#=SlowScale#
-		If RandomZScale
-			If OnLeftHalfAdjuster()
-				RandomZScaleMin=AdjustFloat#("ZScale Min: ", RandomZScaleMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomZScaleMax=AdjustFloat#("ZScale Max: ", RandomZScaleMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectZScale=AdjustFloat#("ZScale: ", CurrentObjectZScale, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomZScale=Not RandomZScale
-			RandomZScaleMin#=0.5
-			RandomZScaleMax#=1.5
-		EndIf
+		CurrentObject\Attributes\ZScale=AdjustObjectAdjusterFloat(ObjectAdjusterZScale,CurrentObject\Attributes\ZScale,SlowFloat#,FastFloat#,DelayTime)
 
 
 	Case "ID"
 		FastInt=FastID
-		If RandomID
-			If OnLeftHalfAdjuster()
-				RandomIDMin=AdjustInt("ID Min: ", RandomIDMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomIDMax=AdjustInt("ID Max: ", RandomIDMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectID=AdjustInt("ID: ", CurrentObjectID, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomID=Not RandomID
-			RandomIDMin=100
-			RandomIDMax=200
-		EndIf
+		CurrentObject\Attributes\ID=AdjustObjectAdjusterInt(ObjectAdjusterID,CurrentObject\Attributes\ID,SlowInt,FastInt,DelayTime)
 
 	Case "Type"
-		If RandomType
-			If OnLeftHalfAdjuster()
-				RandomTypeMin=AdjustInt("Type Min: ", RandomTypeMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomTypeMax=AdjustInt("Type Max: ", RandomTypeMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectType=AdjustInt("Type: ", CurrentObjectType, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomType=Not RandomType
-			RandomTypeMin=170
-			RandomTypeMax=173
-		EndIf
+		CurrentObject\Attributes\LogicType=AdjustObjectAdjusterInt(ObjectAdjusterLogicType,CurrentObject\Attributes\LogicType,SlowInt,FastInt,DelayTime)
 	Case "SubType"
-		If RandomSubType
-			If OnLeftHalfAdjuster()
-				RandomSubTypeMin=AdjustInt("SubType Min: ", RandomSubTypeMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomSubTypeMax=AdjustInt("SubType Max: ", RandomSubTypeMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectSubType=AdjustInt("SubType: ", CurrentObjectSubType, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomSubType=Not RandomSubType
-			RandomSubTypeMin=0
-			RandomSubTypeMax=8
-		EndIf
+		CurrentObject\Attributes\LogicSubType=AdjustObjectAdjusterInt(ObjectAdjusterLogicSubType,CurrentObject\Attributes\LogicSubType,SlowInt,FastInt,DelayTime)
 				
-		If CurrentObjectType=179 ; Custom Item
+		If CurrentObject\Attributes\LogicType=179 ; Custom Item
 		
 			Min=-400
 			Max=509
 		
-			If CurrentObjectSubType<Min
-				CurrentObjectSubType=Max
+			If CurrentObject\Attributes\LogicSubType<Min
+				CurrentObject\Attributes\LogicSubType=Max
 			EndIf
 				
 			GapSubType(-400,-300)
@@ -13699,34 +13246,34 @@ Function AdjustObjectAdjuster(i)
 			GapSubType(-195,-100)
 			GapSubType(-98,-6)
 				
-			If CurrentObjectSubType>27 And CurrentObjectSubType<490
-				CurrentObjectSubType=509
-			Else If CurrentObjectSubType>489 And CurrentObjectSubType<509
-				CurrentObjectSubType=27
+			If CurrentObject\Attributes\LogicSubType>27 And CurrentObject\Attributes\LogicSubType<490
+				CurrentObject\Attributes\LogicSubType=509
+			Else If CurrentObject\Attributes\LogicSubType>489 And CurrentObject\Attributes\LogicSubType<509
+				CurrentObject\Attributes\LogicSubType=27
 				
-			Else If CurrentObjectSubType>Max
-				CurrentObjectSubType=Min
+			Else If CurrentObject\Attributes\LogicSubType>Max
+				CurrentObject\Attributes\LogicSubType=Min
 
-			Else If CurrentObjectSubType=8
-				CurrentObjectSubType=10
-			Else If CurrentObjectSubType=9
-				CurrentObjectSubType=7
+			Else If CurrentObject\Attributes\LogicSubType=8
+				CurrentObject\Attributes\LogicSubType=10
+			Else If CurrentObject\Attributes\LogicSubType=9
+				CurrentObject\Attributes\LogicSubType=7
 				
-			Else If CurrentObjectSubType=18
-				CurrentObjectSubType=20
-			Else If CurrentObjectSubType=19
-				CurrentObjectSubType=17
+			Else If CurrentObject\Attributes\LogicSubType=18
+				CurrentObject\Attributes\LogicSubType=20
+			Else If CurrentObject\Attributes\LogicSubType=19
+				CurrentObject\Attributes\LogicSubType=17
 				
 			EndIf
 		
 		EndIf
-		If CurrentObjectType=230 ; FireFlower
-			If CurrentObjectSubType<0 Then CUrrentObjectSubType=3
-			If CurrentObjectSubType>3 Then CurrentObjectSubType=0
+		If CurrentObject\Attributes\LogicType=230 ; FireFlower
+			If CurrentObject\Attributes\LogicSubType<0 Then CurrentObject\Attributes\LogicSubType=3
+			If CurrentObject\Attributes\LogicSubType>3 Then CurrentObject\Attributes\LogicSubType=0
 		EndIf
-		If CurrentObjectType=370 ; Crab
-			If CurrentObjectSubType<0 Then CUrrentObjectSubType=1
-			If CurrentObjectSubType>1 Then CurrentObjectSubType=0
+		If CurrentObject\Attributes\LogicType=370 ; Crab
+			If CurrentObject\Attributes\LogicSubType<0 Then CurrentObject\Attributes\LogicSubType=1
+			If CurrentObject\Attributes\LogicSubType>1 Then CurrentObject\Attributes\LogicSubType=0
 		EndIf
 		
 
@@ -13739,12 +13286,12 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		ElseIf ReturnKey=False
 			If RawInput=True
-				CurrentObjectActive=InputInt("Active: ")
+				CurrentObject\Attributes\Active=InputInt("Active: ")
 			Else
-				If CurrentObjectActive=0
-					CurrentObjectActive=1001
+				If CurrentObject\Attributes\Active=0
+					CurrentObject\Attributes\Active=1001
 				Else
-					CurrentObjectActive=0
+					CurrentObject\Attributes\Active=0
 				EndIf
 			EndIf
 			If MouseScroll=0
@@ -13759,128 +13306,63 @@ Function AdjustObjectAdjuster(i)
 	Case "ActivationSpeed"
 		SlowInt=SlowInt*2
 		FastInt=FastInt*2
-		If RandomActivationSpeed
-			If OnLeftHalfAdjuster()
-				RandomActivationSpeedMin=AdjustInt("ActivationSpeed Min: ", RandomActivationSpeedMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomActivationSpeedMax=AdjustInt("ActivationSpeed Max: ", RandomActivationSpeedMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectActivationSpeed=AdjustInt("ActivationSpeed: ", CurrentObjectActivationSpeed, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomActivationSpeed=Not RandomActivationSpeed
-			RandomActivationSpeedMin=2
-			RandomActivationSpeedMax=40
-		EndIf
+		CurrentObject\Attributes\ActivationSpeed=AdjustObjectAdjusterInt(ObjectAdjusterActivationSpeed,CurrentObject\Attributes\ActivationSpeed,SlowInt,FastInt,DelayTime)
 	Case "ActivationType"
-		If RandomActivationType
-			If OnLeftHalfAdjuster()
-				RandomActivationTypeMin=AdjustInt("ActivationType Min: ", RandomActivationTypeMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomActivationTypeMax=AdjustInt("ActivationType Max: ", RandomActivationTypeMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectActivationType=AdjustInt("ActivationType: ", CurrentObjectActivationType, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomActivationType=Not RandomActivationType
-			RandomActivationTypeMin=12
-			RandomActivationTypeMax=16
-		EndIf
+		CurrentObject\Attributes\ActivationType=AdjustObjectAdjusterInt(ObjectAdjusterActivationType,CurrentObject\Attributes\ActivationType,SlowInt,FastInt,DelayTime)
 			
 		;If CurrentObjectModelName$="!SteppingStone"
 		;	If LeftMouse=True Or RightMouse=True
-		;		If CurrentObjectActivationType=3 
-		;			CurrentObjectActivationType=16
-		;		Else If CurrentObjectActivationType=16
-		;			CurrentObjectActivationType=21
+		;		If CurrentObject\Attributes\ActivationType=3 
+		;			CurrentObject\Attributes\ActivationType=16
+		;		Else If CurrentObject\Attributes\ActivationType=16
+		;			CurrentObject\Attributes\ActivationType=21
 		;		Else
-		;			CurrentObjectActivationType=3
+		;			CurrentObject\Attributes\ActivationType=3
 		;		EndIf
 		;	EndIf
 		;Else If CurrentObjectModelName$="!ColourGate"
 		;	If LeftMouse=True Or RightMouse=True
-		;		If CurrentObjectActivationType=1 
-		;			CurrentObjectActivationType=2
-		;		Else If CurrentObjectActivationType=2
-		;			CurrentObjectActivationType=3
-		;		Else If CurrentObjectActivationType=3
-		;			CurrentObjectActivationType=11
-		;		Else If CurrentObjectActivationType=11
-		;			CurrentObjectActivationType=21
+		;		If CurrentObject\Attributes\ActivationType=1 
+		;			CurrentObject\Attributes\ActivationType=2
+		;		Else If CurrentObject\Attributes\ActivationType=2
+		;			CurrentObject\Attributes\ActivationType=3
+		;		Else If CurrentObject\Attributes\ActivationType=3
+		;			CurrentObject\Attributes\ActivationType=11
+		;		Else If CurrentObject\Attributes\ActivationType=11
+		;			CurrentObject\Attributes\ActivationType=21
 		;		Else
-		;			CurrentObjectActivationType=1
+		;			CurrentObject\Attributes\ActivationType=1
 		;		EndIf
 		;	EndIf
 		;Else If CurrentObjectModelName$="!Autodoor"
 		;	If LeftMouse=True Or RightMouse=True
-		;		If CurrentObjectActivationType=11 
-		;			CurrentObjectActivationType=17
-		;		Else If CurrentObjectActivationType=17
-		;			CurrentObjectActivationType=18
-		;		Else If CurrentObjectActivationType=18
-		;			CurrentObjectActivationType=19
-		;		Else If CurrentObjectActivationType=19
-		;			CurrentObjectActivationType=20
+		;		If CurrentObject\Attributes\ActivationType=11 
+		;			CurrentObject\Attributes\ActivationType=17
+		;		Else If CurrentObject\Attributes\ActivationType=17
+		;			CurrentObject\Attributes\ActivationType=18
+		;		Else If CurrentObject\Attributes\ActivationType=18
+		;			CurrentObject\Attributes\ActivationType=19
+		;		Else If CurrentObject\Attributes\ActivationType=19
+		;			CurrentObject\Attributes\ActivationType=20
 		;		Else
-		;			CurrentObjectActivationType=11
+		;			CurrentObject\Attributes\ActivationType=11
 		;		EndIf
 		;	EndIf
 		
 	Case "TimerMax1"
 		FastInt=FastTimer
-		If RandomTimerMax1
-			If OnLeftHalfAdjuster()
-				RandomTimerMax1Min=AdjustInt("TimerMax1 Min: ", RandomTimerMax1Min, SlowInt, FastInt, DelayTime)
-			Else
-				RandomTimerMax1Max=AdjustInt("TimerMax1 Max: ", RandomTimerMax1Max, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectTimerMax1=AdjustInt("TimerMax1: ", CurrentObjectTimerMax1, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomTimerMax1=Not RandomTimerMax1
-			RandomTimerMax1Min=1
-			RandomTimerMax1Max=100
-		EndIf
+		CurrentObject\Attributes\TimerMax1=AdjustObjectAdjusterInt(ObjectAdjusterTimerMax1,CurrentObject\Attributes\TimerMax1,SlowInt,FastInt,DelayTime)
 	Case "TimerMax2"
 		FastInt=FastTimer
-		If RandomTimerMax2
-			If OnLeftHalfAdjuster()
-				RandomTimerMax2Min=AdjustInt("TimerMax2 Min: ", RandomTimerMax2Min, SlowInt, FastInt, DelayTime)
-			Else
-				RandomTimerMax2Max=AdjustInt("TimerMax2 Max: ", RandomTimerMax2Max, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectTimerMax2=AdjustInt("TimerMax2: ", CurrentObjectTimerMax2, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomTimerMax2=Not RandomTimerMax2
-			RandomTimerMax2Min=1
-			RandomTimerMax2Max=100
-		EndIf
+		CurrentObject\Attributes\TimerMax2=AdjustObjectAdjusterInt(ObjectAdjusterTimerMax2,CurrentObject\Attributes\TimerMax2,SlowInt,FastInt,DelayTime)
 	Case "Timer"
 		FastInt=FastTimer
-		If RandomTimer
-			If OnLeftHalfAdjuster()
-				RandomTimerMin=AdjustInt("Timer Min: ", RandomTimerMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomTimerMax=AdjustInt("Timer Max: ", RandomTimerMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectTimer=AdjustInt("Timer: ", CurrentObjectTimer, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomTimer=Not RandomTimer
-			RandomTimerMin=1
-			RandomTimerMax=100
-		EndIf
+		CurrentObject\Attributes\Timer=AdjustObjectAdjusterInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,SlowInt,FastInt,DelayTime)
 		
 	Case "ButtonPush"
 		If Not RandomButtonPush And ReturnKey=False
 			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
-				CurrentObjectButtonPush=1-CurrentObjectButtonPush
+				CurrentObject\Attributes\ButtonPush=1-CurrentObject\Attributes\ButtonPush
 				If MouseScroll=0
 					Delay 150
 				EndIf
@@ -13891,15 +13373,15 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 	Case "WaterReact"
-		CurrentObjectWaterReact=AdjustInt("WaterReact: ", CurrentObjectWaterReact, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\WaterReact=AdjustObjectAdjusterInt(ObjectAdjusterWaterReact,CurrentObject\Attributes\WaterReact,SlowInt,FastInt,DelayTime)
 	Case "Freezable"
-		CurrentObjectFreezable=AdjustInt("Freezable: ", CurrentObjectFreezable, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Freezable=AdjustObjectAdjusterInt(ObjectAdjusterFreezable,CurrentObject\Attributes\Freezable,SlowInt,FastInt,DelayTime)
 	Case "Frozen"
-		CurrentObjectFrozen=AdjustInt("Frozen: ", CurrentObjectFrozen, SlowInt, FastInt, DelayTime)		
+		CurrentObject\Attributes\Frozen=AdjustObjectAdjusterInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,SlowInt,FastInt,DelayTime)		
 	Case "Teleportable"
 		If Not RandomTeleportable And ReturnKey=False
 			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
-				CurrentObjectTeleportable=1-CurrentObjectTeleportable
+				CurrentObject\Attributes\Teleportable=1-CurrentObject\Attributes\Teleportable
 				If MouseScroll=0
 					Delay 150
 				EndIf
@@ -13910,120 +13392,123 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "Data0"
-		OldData=CurrentObjectData(0)
+		OldData=CurrentObject\Attributes\Data0
 		
-		;CurrentObjectData(0)=AdjustInt("Data0: ", CurrentObjectData(0), SlowInt, FastInt, DelayTime)
+		;CurrentObject\Attributes\Data0=AdjustInt("Data0: ", CurrentObject\Attributes\Data0, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(0, SlowInt, FastInt, DelayTime)
+		
+		CurrentObjectModelName$=CurrentObject\Attributes\ModelName$
+		CurrentObjectType=CurrentObject\Attributes\LogicType
 		
 		If CurrentObjectModelName$="!Scritter" ;Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectType=424
 			; colours 0-6
-			If CurrentObjectData(0)>6 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=6
+			If CurrentObject\Attributes\Data0>6 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=6
 	
 		Else If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
-			If CurrentObjectData(0)>3 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=3
+			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
 		
 		;If CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
-		;	If CurrentObjectData(0)>1 CurrentObjectData(0)=0
-		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=1
+		;	If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
+		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
 		;
 		;EndIf
 		
-		If IsObjectLogicFourColorButton(CurrentObjectType,CurrentObjectSubType)
+		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			SetThreeOtherDataIfNotEqual(1,2,3,0,OldData)
 		EndIf
 
 		
 		If CurrentObjectType=190 Or CurrentObjectType=164
 			; particle spray
-			If CurrentObjectData(0)>63 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=63
+			If CurrentObject\Attributes\Data0>63 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=63
 		EndIf
 		;If CurrentObjectModelName$="!StarGate"
-		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=0
+		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=0
 		;EndIf
 		;If CurrentObjectModelName$="!CustomItem"
-		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=62
-		;	If CurrentObjectData(0)>62 CurrentObjectData(0)=0
+		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=62
+		;	If CurrentObject\Attributes\Data0>62 CurrentObject\Attributes\Data0=0
 		;EndIf
 		If CurrentObjectModelName$="!Gem"
-			If CurrentObjectData(0)>2 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=2
+			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
 		EndIf
 		If CurrentObjectModelName$="!Crystal"
-			If CurrentObjectData(0)>1 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=1
+			If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
 
 
 		EndIf
 		If CurrentObjectType=260 ; Spikeyball
-			If CurrentObjectData(1)=2
-				If CurrentObjectData(0)>7 CurrentObjectData(0)=0
-				If CurrentObjectData(0)<0 CurrentObjectData(0)=7
+			If CurrentObject\Attributes\Data1=2
+				If CurrentObject\Attributes\Data0>7 CurrentObject\Attributes\Data0=0
+				If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=7
 			Else
-				If CurrentObjectData(0)>3 CurrentObjectData(0)=0
-				If CurrentObjectData(0)<0 CurrentObjectData(0)=3
+				If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
+				If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 			EndIf
 		EndIf
 		If CurrentObjectType=230 ; FireFlower
-			If CurrentObjectData(0)>7 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=7
+			If CurrentObject\Attributes\Data0>7 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=7
 		EndIf
 		;If CurrentObjectModelName$="!Turtle" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectType<>424) Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot"
 		; turtle or scouge or ufo or retro z-bot or zipbot or zapbot
 		If CurrentObjectType=220 Or CurrentObjectType=421 Or CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
-			If CurrentObjectData(0)>3 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=3
+			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
 		If CurrentObjectModelName="!Kaboom"
 
-			If CurrentObjectData(0)>5 CurrentObjectData(0)=1
-			If CurrentObjectData(0)<1 CurrentObjectData(0)=5
+			If CurrentObject\Attributes\Data0>5 CurrentObject\Attributes\Data0=1
+			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=5
 		EndIf
 		
 		If CurrentObjectModelName$="!NPC"
 			; texture
-			If CurrentObjectData(0)>8 CurrentObjectData(0)=1
-			If CurrentObjectData(0)<1 CurrentObjectData(0)=8
+			If CurrentObject\Attributes\Data0>8 CurrentObject\Attributes\Data0=1
+			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=8
 		EndIf
 
 		
 		If CurrentObjectModelName$="!Wisp"
 			; texture
-			If CurrentObjectData(0)>9 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=9
+			If CurrentObject\Attributes\Data0>9 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=9
 		EndIf
 		
 		If CurrentObjectModelName$="!Sign"
 			; shape
-			If CurrentObjectData(0)>5 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=5
+			If CurrentObject\Attributes\Data0>5 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=5
 		EndIf
 		
 		If CurrentObjectModelName$="!WaterFall"
 			; liquid type
-			If CurrentObjectData(0)>2 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=2
+			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
 		EndIf
 
 		
 
 
 		;If CurrentObjectType=310 ;CurrentObjectModelName$="!Rubberducky"
-		;	If CurrentObjectData(0)>1 CurrentObjectData(0)=0
-		;	If CurrentObjectData(0)<0 CurrentObjectData(0)=1
+		;	If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
+		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
 		;EndIf
 		
 		If CurrentObjectType=51 ; Magic Shooter
-			If CurrentObjectData(0)>9 CurrentObjectData(0)=0
-			If CurrentObjectData(0)<0 CurrentObjectData(0)=9
+			If CurrentObject\Attributes\Data0>9 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=9
 		EndIf
 		
 		If CurrentObjectType=470 Or CurrentObjectType=471 ; ghost or wraith
 			
-			If CurrentObjectData(1)<2 CurrentObjectData(1)=2
+			If CurrentObject\Attributes\Data1<2 CurrentObject\Attributes\Data1=2
 			
 
 		EndIf
@@ -14033,115 +13518,115 @@ Function AdjustObjectAdjuster(i)
 			
 
 	Case "Data1"
-		;CurrentObjectData(1)=AdjustInt("Data1: ", CurrentObjectData(1), SlowInt, FastInt, DelayTime)
+		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(1, SlowInt, FastInt, DelayTime)
 		
 		;If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter"  Or (CurrentObjectModelName$="!Button" And ((CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17)) Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!Retrolasergate"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
 
 
 			; subcolours 0-4
-		;	If CurrentObjectData(1)>4 CurrentObjectData(1)=0
-		;	If CurrentObjectData(1)<0 CurrentObjectData(1)=4
+		;	If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
+		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
 		;Else If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<10) 
 
 			; colours 0-15
-		;	If CurrentObjectData(1)>15 CurrentObjectData(1)=0
-		;	If CurrentObjectData(1)<0 CurrentObjectData(1)=15
+		;	If CurrentObject\Attributes\Data1>15 CurrentObject\Attributes\Data1=0
+		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=15
 		;EndIf
 		
 		If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
-			If CurrentObjectData(1)>3 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=3
+			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf
 	
 		
 		If CurrentObjectType=190
 			; particle spray intensity
-			If CurrentObjectData(1)>3 CurrentObjectData(1)=1
-			If CurrentObjectData(1)<1 CurrentObjectData(1)=3
+			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=1
+			If CurrentObject\Attributes\Data1<1 CurrentObject\Attributes\Data1=3
 		EndIf
 ;		If CurrentObjectType=11 ; TollGate
-;			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
-;			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+;			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
+;			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 ;
 ;		EndIf
 		If CurrentObjectType=230 ; FireFlower
-			If CurrentObjectData(1)>3 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=3
+			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf 
 		
 		If CurrentObjectType=242 ; Cuboid
 
-			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 
 		EndIf
 
 		;If CurrentObjectModelName$="!Gem"
-		;	If CurrentObjectData(1)>15 CurrentObjectData(1)=0
-		;	If CurrentObjectData(1)<0 CurrentObjectData(1)=15
+		;	If CurrentObject\Attributes\Data1>15 CurrentObject\Attributes\Data1=0
+		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=15
 
 		;EndIf
 		If CurrentObjectType=260 ; SpikeyBall
-			If CurrentObjectData(1)>2 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=2
+			If CurrentObject\Attributes\Data1>2 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=2
 
-			If CurrentObjectData(1)=2
-				If CurrentObjectData(0)>7 CurrentObjectData(0)=0
-				If CurrentObjectData(0)<0 CurrentObjectData(0)=7
+			If CurrentObject\Attributes\Data1=2
+				If CurrentObject\Attributes\Data0>7 CurrentObject\Attributes\Data0=0
+				If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=7
 			Else
-				If CurrentObjectData(0)>3 CurrentObjectData(0)=0
-				If CurrentObjectData(0)<0 CurrentObjectData(0)=3
+				If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
+				If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 			EndIf
 		EndIf
 		If CurrentObjectType=250 ; Chomper
-			If CurrentObjectData(1)>3 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=3
+			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf
 		If CurrentObjectType=220 ; Turtle
-			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 		EndIf
 		If CurrentObjectType=370 ; Crab
-			If CurrentObjectData(1)>3 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=3
+			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf
 
 		
 
 		If CurrentObjectModelName$="!NPC"
 			; Expression
-			If CurrentObjectData(1)>4 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=4
+			If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
 		EndIf
 		
 		;If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate")  Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot" Or CurrentObjectModelname$="!Portal Warp"
 		If CurrentObjectType=290 Or CurrentObjectType=380 ; Thwart or Ice Troll
-			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 		EndIf
 		
 		; ufo or retro z-bot or zipbot or zapbot
 		If CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
 			; turning
-			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 		EndIf
 		
 		If CurrentObjectModelname$="!Portal Warp"
 			; ???
-			If CurrentObjectData(1)>1 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=1
+			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 		EndIf
 		
 		If CurrentObjectModelName$="!Sign"
 			; texture
-			If CurrentObjectData(1)>5 CurrentObjectData(1)=0
-			If CurrentObjectData(1)<0 CurrentObjectData(1)=5
+			If CurrentObject\Attributes\Data1>5 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=5
 		EndIf
 ;		If CurrentObjectType=470 ; Ghost
-;			If CurrentObjectData(1)>9 CurrentObjectData(1)=1
-;			If CurrentObjectData(1)<1 CurrentObjectData(1)=9
+;			If CurrentObject\Attributes\Data1>9 CurrentObject\Attributes\Data1=1
+;			If CurrentObject\Attributes\Data1<1 CurrentObject\Attributes\Data1=9
 ;		EndIf
 
 
@@ -14149,160 +13634,160 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data2"
-		;CurrentObjectData(2)=AdjustInt("Data2: ", CurrentObjectData(2), SlowInt, FastInt, DelayTime)
+		;CurrentObject\Attributes\Data2=AdjustInt("Data2: ", CurrentObject\Attributes\Data2, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(2, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectType=280 Or CurrentObjectType=410 ; Spring or FlipBridge
 			; direction 0-7
-			If CurrentObjectData(2)>7 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=7
+			If CurrentObject\Attributes\Data2>7 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=7
 		EndIf
 		If CurrentObjectType=281 Or CurrentObjectType=282 Or CurrentObjectType=45 Or CurrentObjectType=46 ; Suctube or Suctube X or Conveyor
 			; direction 0-3
-			If CurrentObjectData(2)>3 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=3
+			If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
 		EndIf
 
 		; transporter, weebot, zapbot, pushbot
 		If CurrentObjectType=210 Or CurrentObjectType=430 Or CurrentObjectType=431 Or CurrentObjectType=432
 			; direction 0-3 (or speed for zap/weebot)
-			If CurrentObjectData(2)>3 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=3
+			If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
 		EndIf
 
 		If CurrentObjectType=90
 			If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17
 				; direction 0-1
-				If CurrentObjectData(2)>1 CurrentObjectData(2)=0
-				If CurrentObjectData(2)<0 CurrentObjectData(2)=1
+				If CurrentObject\Attributes\Data2>1 CurrentObject\Attributes\Data2=0
+				If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=1
 			EndIf
 			If CurrentObjectSubType=11
-				Select CurrentObjectData(0)
+				Select CurrentObject\Attributes\Data0
 				Case 0
 					; x goal
-					If CurrentobjectData(2)<0 CurrentObjectData(2)=0
+					If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=0
 				Case 1
 					; talkable
-					If CurrentobjectData(2)<-1 CurrentObjectData(2)=-1
+					If CurrentObject\Attributes\Data2<-1 CurrentObject\Attributes\Data2=-1
 				Case 2
 					; particle
-					If CurrentobjectData(2)<0 CurrentObjectData(2)=63
-					If CurrentobjectData(2)>63 CurrentObjectData(2)=0
+					If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=63
+					If CurrentObject\Attributes\Data2>63 CurrentObject\Attributes\Data2=0
 				End Select
 			EndIf
 		EndIf
 		If CurrentObjectType=190
 			; particle spray dir
-			If CurrentObjectData(2)>5 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=5
+			If CurrentObject\Attributes\Data2>5 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=5
 		EndIf
 		
 		;If  CurrentObjectModelName$="!ColourGate"
-		;	If CurrentObjectData(2)>2 CurrentObjectData(2)=0
-		;	If CurrentObjectData(2)<0 CurrentObjectData(2)=2
+		;	If CurrentObject\Attributes\Data2>2 CurrentObject\Attributes\Data2=0
+		;	If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=2
 		;EndIf
 		
 		;If CurrentObjectModelName$="!Gem"
-		;	If CurrentObjectData(0)>2 CurrentObjectData(0)=-2
-		;	If CurrentObjectData(0)<-2 CurrentObjectData(0)=2
+		;	If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=-2
+		;	If CurrentObject\Attributes\Data0<-2 CurrentObject\Attributes\Data0=2
 		;EndIf
 
 
 		
 		If CurrentObjectModelName$="!NPC"
-			;If CurrentObjectData(2)>56 CurrentObjectData(2)=0
-			;If CurrentObjectData(2)<0 CurrentObjectData(2)=56
-			CurrentObjectData(3)=1
+			;If CurrentObject\Attributes\Data2>56 CurrentObject\Attributes\Data2=0
+			;If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=56
+			CurrentObject\Attributes\Data3=1
 
 		EndIf
 		
 		If CurrentObjectModelName$="!Thwart"
 			; colour
-			If CurrentObjectData(2)>7 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=7
+			If CurrentObject\Attributes\Data2>7 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=7
 		EndIf
 		
 		If CurrentObjectType=433 ; Z-Bot NPC
-			If CurrentObjectData(2)>1 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=1
+			If CurrentObject\Attributes\Data2>1 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=1
 		EndIf
 
 
 
 		;If CurrentObjectModelName$="!Sign"
-		;	If CurrentObjectData(2)>3 CurrentObjectData(2)=0
-		;	If CurrentObjectData(2)<0 CurrentObjectData(2)=3
+		;	If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
+		;	If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
 		;	
 		;
 		;EndIf
 		
 		If CurrentObjectModelName$="!Wraith"
 			; Doubles as both magic type and texture
-			If CurrentObjectData(2)>2 CurrentObjectData(2)=0
-			If CurrentObjectData(2)<0 CurrentObjectData(2)=2
+			If CurrentObject\Attributes\Data2>2 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=2
 		EndIf
 
 		
 
 	Case "Data3"
-		;CurrentObjectData(3)=AdjustInt("Data3: ", CurrentObjectData(3), SlowInt, FastInt, DelayTime)
+		;CurrentObject\Attributes\Data3=AdjustInt("Data3: ", CurrentObject\Attributes\Data3, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(3, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectType=190
-			If CurrentObjectData(3)<0 Then CurrentObjectData(3)=0
+			If CurrentObject\Attributes\Data3<0 Then CurrentObject\Attributes\Data3=0
 			Select CurrentObjectSubType
 			Case 4
-				If CurrentObjectData(3)>1 Then CurrentObjectData(3)=0
+				If CurrentObject\Attributes\Data3>1 Then CurrentObject\Attributes\Data3=0
 			Case 5
-				If CurrentObjectData(3)>6 Then CurrentObjectData(3)=0
+				If CurrentObject\Attributes\Data3>6 Then CurrentObject\Attributes\Data3=0
 			End Select
 		EndIf
 
 		If CurrentObjectType=40 ; stepping stone
 			; sound
-			If CurrentObjectData(3)>3 CurrentObjectData(3)=0
-			If CurrentObjectData(3)<0 CurrentObjectData(3)=3
+			If CurrentObject\Attributes\Data3>3 CurrentObject\Attributes\Data3=0
+			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=3
 		EndIf
 		If CurrentObjectType=90 And CurrentObjectSubType=11 ; button
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 			Case 0
 				; y goal
-				If CurrentobjectData(3)<0 CurrentObjectData(3)=0
+				If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
 			Case 1
 				; y goal
-				If CurrentobjectData(3)<-1 CurrentObjectData(3)=4
-				If CurrentobjectData(3)>4 CurrentObjectData(3)=-1
+				If CurrentObject\Attributes\Data3<-1 CurrentObject\Attributes\Data3=4
+				If CurrentObject\Attributes\Data3>4 CurrentObject\Attributes\Data3=-1
 			Case 2
 				; how many particles
-				If CurrentobjectData(3)<0 CurrentObjectData(3)=9
-				If CurrentobjectData(3)>9 CurrentObjectData(3)=0
+				If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=9
+				If CurrentObject\Attributes\Data3>9 CurrentObject\Attributes\Data3=0
 			End Select
 		EndIf
 		If  CurrentObjectType=230 ; FireFlower
 			; hitpoints
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
+			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
 		EndIf
 
 		If  CurrentObjectType=432 ; moobot
 			; pushbot left/right turn,
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=2
-			If CurrentobjectData(3)>2 CurrentObjectData(3)=0
+			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=2
+			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=0
 		EndIf
 		If  CurrentObjectType=45 ; conveyor lead
 			; turn direction
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=1
-			If CurrentobjectData(3)>1 CurrentObjectData(3)=0
+			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=1
+			If CurrentObject\Attributes\Data3>1 CurrentObject\Attributes\Data3=0
 		EndIf
 
 ;		If  CurrentObjectType=46 ; conveyor tail
-;			If CurrentobjectData(3)<1 CurrentObjectData(3)=1
+;			If CurrentObject\Attributes\Data3<1 CurrentObject\Attributes\Data3=1
 ;			
 ;		EndIf
 
 		If  Currentobjectmodelname$="!Suctube" Or CurrentObjectModelName$="!SuctubeX"
 			; Suctube tex
-			If CurrentobjectData(3)<0 CurrentObjectData(3)=0
-			If CurrentobjectData(3)>2 CurrentObjectData(3)=2
+			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
+			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=2
 		EndIf
 
 
@@ -14314,25 +13799,25 @@ Function AdjustObjectAdjuster(i)
 			AdjFast=45
 		EndIf
 		
-		OldData=CurrentObjectData(4)
+		OldData=CurrentObject\Attributes\Data4
 		
-		;CurrentObjectData(4)=AdjustInt("Data4: ", CurrentObjectData(4), Adj, AdjFast, DelayTime)
+		;CurrentObject\Attributes\Data4=AdjustInt("Data4: ", CurrentObject\Attributes\Data4, Adj, AdjFast, DelayTime)
 		AdjustObjectData(4, Adj, AdjFast, DelayTime)
 
 		If CurrentObjectType=90
 			If CurrentObjectSubType=10 ; LevelExit
 				;playerstartingyaw
-				If CurrentObjectData(4)<0 Then CurrentObjectData(4)=360-45
-				If CurrentObjectData(4)>359 Then CurrentObjectData(4)=0
+				If CurrentObject\Attributes\Data4<0 Then CurrentObject\Attributes\Data4=360-45
+				If CurrentObject\Attributes\Data4>359 Then CurrentObject\Attributes\Data4=0
 			ElseIf CurrentObjectSubType=11 ; NPC Modifier
-				If (CurrentObjectData(0)=0 Or CurrentObjectData(0)=2)
+				If (CurrentObject\Attributes\Data0=0 Or CurrentObject\Attributes\Data0=2)
 					; repeatable
-					If CurrentobjectData(4)<0 CurrentObjectData(4)=1
-					If CurrentobjectData(4)>1 CurrentObjectData(4)=0
-				ElseIf CurrentObjectData(0)=1
+					If CurrentObject\Attributes\Data4<0 CurrentObject\Attributes\Data4=1
+					If CurrentObject\Attributes\Data4>1 CurrentObject\Attributes\Data4=0
+				ElseIf CurrentObject\Attributes\Data0=1
 					; yaw
-					If CurrentobjectData(4)<-1 CurrentObjectData(4)=359
-					If CurrentobjectData(4)>359 CurrentObjectData(4)=0
+					If CurrentObject\Attributes\Data4<-1 CurrentObject\Attributes\Data4=359
+					If CurrentObject\Attributes\Data4>359 CurrentObject\Attributes\Data4=0
 				EndIf
 			ElseIf IsObjectSubTypeFourColorButton(CurrentObjectSubType)
 				SetThreeOtherDataIfNotEqual(5,6,7,4,OldData)
@@ -14340,66 +13825,66 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 		If CurrentObjectModelName$="!NPC"
-;			If CurrentObjectData(4)=-1 CurrentObjectData(4)=116
-;			If CurrentObjectData(4)=1 CurrentObjectData(4)=101
-;			If CurrentObjectData(4)=100 CurrentObjectData(4)=0
-;			If CurrentObjectData(4)=117 CurrentObjectData(4)=0
+;			If CurrentObject\Attributes\Data4=-1 CurrentObject\Attributes\Data4=116
+;			If CurrentObject\Attributes\Data4=1 CurrentObject\Attributes\Data4=101
+;			If CurrentObject\Attributes\Data4=100 CurrentObject\Attributes\Data4=0
+;			If CurrentObject\Attributes\Data4=117 CurrentObject\Attributes\Data4=0
 
 			; Set the glasses color back to 1.
-			CurrentObjectData(5)=0
+			CurrentObject\Attributes\Data5=0
 		EndIf
 		
 		If CurrentObjectType=190
-			If CurrentObjectData(4)<0 Then CurrentObjectData(4)=0
-			If CurrentObjectData(4)>1 Then CurrentObjectData(4)=0
+			If CurrentObject\Attributes\Data4<0 Then CurrentObject\Attributes\Data4=0
+			If CurrentObject\Attributes\Data4>1 Then CurrentObject\Attributes\Data4=0
 		EndIf
 		
 		
 		If CurrentObjectType=431 Or CurrentObjectType=422 ; Zapbot or UFO
 			; zapbot track?
-			If CurrentobjectData(4)<0 CurrentObjectData(4)=1
-			If CurrentobjectData(4)>1 CurrentObjectData(4)=0
+			If CurrentObject\Attributes\Data4<0 CurrentObject\Attributes\Data4=1
+			If CurrentObject\Attributes\Data4>1 CurrentObject\Attributes\Data4=0
 		EndIf
 		
 		
 		If  Currentobjectmodelname$="!Conveyor"
 			; visual type
-			If CurrentobjectData(4)<0 CurrentObjectData(4)=4
-			If CurrentobjectData(4)>4 CurrentObjectData(4)=0
+			If CurrentObject\Attributes\Data4<0 CurrentObject\Attributes\Data4=4
+			If CurrentObject\Attributes\Data4>4 CurrentObject\Attributes\Data4=0
 		EndIf
 
 
 		If CurrentObjectType=281 ; Suctube
 			; sound
-			If CurrentobjectData(4)<0 CurrentObjectData(4)=1
-			If CurrentobjectData(4)>1 CurrentObjectData(4)=0
+			If CurrentObject\Attributes\Data4<0 CurrentObject\Attributes\Data4=1
+			If CurrentObject\Attributes\Data4>1 CurrentObject\Attributes\Data4=0
 		EndIf
 
 
 
 	Case "Data5"
-		;CurrentObjectData(5)=AdjustInt("Data5: ", CurrentObjectData(5), SlowInt, FastInt, DelayTime)
+		;CurrentObject\Attributes\Data5=AdjustInt("Data5: ", CurrentObject\Attributes\Data5, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(5, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectType=90 ; button
 			If (CurrentObjectSubType Mod 32)=15
 				; repeatable
-				If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-				If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+				If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
+				If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 			EndIf
 			If CurrentObjectSubType=11
-				If CurrentObjectData(0)=0
+				If CurrentObject\Attributes\Data0=0
 					; timer
-					If CurrentobjectData(5)<0 CurrentObjectData(5)=0
-				ElseIf CurrentObjectData(0)=1
+					If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=0
+				ElseIf CurrentObject\Attributes\Data0=1
 					; repeatable
-					If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-					If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+					If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
+					If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 				EndIf
 			ElseIf CurrentObjectSubType=10
 				; levelexit flyover
-				If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-				If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+				If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
+				If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 			EndIf
 		EndIf
 
@@ -14407,59 +13892,59 @@ Function AdjustObjectAdjuster(i)
 		;If CurrentObjectModelName$="!NPC"
 		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor
 			; Logic
-			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+			If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
+			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 		EndIf
-		;If CurrentObjectModelName$="!NPC" And (CurrentObjectData(4)<>101 And CurrentObjectData(4)<>102) Then CurrentObjectData(5)=0
+		;If CurrentObjectModelName$="!NPC" And (CurrentObject\Attributes\Data4<>101 And CurrentObject\Attributes\Data4<>102) Then CurrentObject\Attributes\Data5=0
 		
 		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
-			If CurrentObjectData(5)>255 CurrentObjectData(5)=0
-			If CurrentObjectData(5)<0 CurrentObjectData(5)=255
+			If CurrentObject\Attributes\Data5>255 CurrentObject\Attributes\Data5=0
+			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=255
 		EndIf
 		
 		If CurrentObjectType=281 ;CurrentObjectModelName$="!Suctube"
 			; particles
-			If CurrentObjectData(5)>1 CurrentObjectData(5)=0
-			If CurrentObjectData(5)<0 CurrentObjectData(5)=1
+			If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
+			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 		EndIf
 
 			
 
 
 	Case "Data6"
-		;CurrentObjectData(6)=AdjustInt("Data6: ", CurrentObjectData(6), 1, 10, 150)
+		;CurrentObject\Attributes\Data6=AdjustInt("Data6: ", CurrentObject\Attributes\Data6, 1, 10, 150)
 		AdjustObjectData(6, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectType=90 And CurrentObjectSubType=11
-			If CurrentObjectData(0)=0
+			If CurrentObject\Attributes\Data0=0
 				; timer reset
-				If CurrentobjectData(6)<0 CurrentObjectData(6)=0
-			ElseIf CurrentObjectData(0)=1
+				If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=0
+			ElseIf CurrentObject\Attributes\Data0=1
 				; walk anim
-				If CurrentobjectData(6)<-1 CurrentObjectData(6)=2
-				If CurrentobjectData(6)>2 CurrentObjectData(6)=-1
+				If CurrentObject\Attributes\Data6<-1 CurrentObject\Attributes\Data6=2
+				If CurrentObject\Attributes\Data6>2 CurrentObject\Attributes\Data6=-1
 			EndIf
 		EndIf
 
 		If CurrentObjectModelName$="!NPC"
 			; WalkAnim
-			If CurrentObjectData(6)>2 CurrentObjectData(6)=0
-			If CurrentObjectData(6)<0 CurrentObjectData(6)=2
+			If CurrentObject\Attributes\Data6>2 CurrentObject\Attributes\Data6=0
+			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=2
 			
 
 		EndIf
 
 		If CurrentObjectType=290 Or CurrentObjectType=380 Or CurrentObjectType=433 ; Thwart or Ice Troll or Z-Bot NPC
 			; Shooter
-			If CurrentObjectData(6)>1 CurrentObjectData(6)=0
-			If CurrentObjectData(6)<0 CurrentObjectData(6)=1
+			If CurrentObject\Attributes\Data6>1 CurrentObject\Attributes\Data6=0
+			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=1
 			
 
 		EndIf
 
 		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
-			If CurrentObjectData(6)>255 CurrentObjectData(6)=0
-			If CurrentObjectData(6)<0 CurrentObjectData(6)=255
+			If CurrentObject\Attributes\Data6>255 CurrentObject\Attributes\Data6=0
+			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=255
 			
 
 		EndIf
@@ -14467,23 +13952,23 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data7"
-		;CurrentObjectData(7)=AdjustInt("Data7: ", CurrentObjectData(7), 1, 10, 150)
+		;CurrentObject\Attributes\Data7=AdjustInt("Data7: ", CurrentObject\Attributes\Data7, 1, 10, 150)
 		AdjustObjectData(7, SlowInt, FastInt, DelayTime)
 		
-		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObjectData(0)=1 ; NPC Modifier
+		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier
 			; turn
-			If CurrentobjectData(7)=-2 CurrentObjectData(7)=25
-			If CurrentobjectData(7)=26 CurrentObjectData(7)=-1
-			If CurrentobjectData(7)=6 CurrentObjectData(7)=10
-			If CurrentobjectData(7)=9 CurrentObjectData(7)=5
-			If CurrentobjectData(7)=16 CurrentObjectData(7)=20
-			If CurrentobjectData(7)=19 CurrentObjectData(7)=15
+			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=25
+			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=-1
+			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
+			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
+			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
+			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
 
 		EndIf
 		
 		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
-			If CurrentObjectData(7)>255 CurrentObjectData(7)=0
-			If CurrentObjectData(7)<0 CurrentObjectData(7)=255
+			If CurrentObject\Attributes\Data7>255 CurrentObject\Attributes\Data7=0
+			If CurrentObject\Attributes\Data7<0 CurrentObject\Attributes\Data7=255
 			
 
 		EndIf
@@ -14491,48 +13976,48 @@ Function AdjustObjectAdjuster(i)
 		If CurrentObjectType=110 Or CurrentObjectType=390 ; Stinker NPC or Kaboom NPC
 
 			; Turn
-			If CurrentobjectData(7)=-2 CurrentObjectData(7)=25
-			If CurrentobjectData(7)=26 CurrentObjectData(7)=-1
-			If CurrentobjectData(7)=6 CurrentObjectData(7)=10
-			If CurrentobjectData(7)=9 CurrentObjectData(7)=5
-			If CurrentobjectData(7)=16 CurrentObjectData(7)=20
-			If CurrentobjectData(7)=19 CurrentObjectData(7)=15
+			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=25
+			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=-1
+			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
+			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
+			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
+			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
 
 
 		EndIf
 
 
 	Case "Data8"
-		;CurrentObjectData(8)=AdjustInt("Data8: ", CurrentObjectData(8), 1, 10, 150)
-		PrevValue=CurrentObjectData(8)
+		;CurrentObject\Attributes\Data8=AdjustInt("Data8: ", CurrentObject\Attributes\Data8, 1, 10, 150)
+		PrevValue=CurrentObject\Attributes\Data8
 		AdjustObjectData(8, SlowInt, FastInt, DelayTime)
-		NewValue=CurrentObjectData(8)
+		NewValue=CurrentObject\Attributes\Data8
 
 		If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
 			; ActivateID (Pla is -2, so skip -1 to get there)
 			If NewValue>PrevValue
-				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=0
+				If CurrentObject\Attributes\Data8<0 Then CurrentObject\Attributes\Data8=0
 			Else
-				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=-2
+				If CurrentObject\Attributes\Data8<0 Then CurrentObject\Attributes\Data8=-2
 			EndIf
 ;			If LeftMouse=True
-;				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=0
+;				If CurrentObject\Attributes\Data8<0 Then CurrentObject\Attributes\Data8=0
 ;			ElseIf RightMouse=True
-;				If CurrentObjectData(8)<0 Then CurrentObjectData(8)=-2
+;				If CurrentObject\Attributes\Data8<0 Then CurrentObject\Attributes\Data8=-2
 ;			EndIf
 		EndIf
 		If CurrentObjectModelName$="!NPC"
 			; Anim
-			If CurrentObjectData(8)>10 CurrentObjectData(8)=0
-			If CurrentObjectData(8)<0 CurrentObjectData(8)=10
+			If CurrentObject\Attributes\Data8>10 CurrentObject\Attributes\Data8=0
+			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=10
 			
 
 		EndIf
 		
 		If CurrentObjectModelName$="!Kaboom"
 			; Anim
-			If CurrentObjectData(8)>5 CurrentObjectData(8)=0
-			If CurrentObjectData(8)<0 CurrentObjectData(8)=5
+			If CurrentObject\Attributes\Data8>5 CurrentObject\Attributes\Data8=0
+			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=5
 			
 
 		EndIf
@@ -14540,91 +14025,49 @@ Function AdjustObjectAdjuster(i)
 		If CurrentObjectType=400 Or CurrentObjectType=433 ; Baby Boomer or Z-Bot NPC
 			; Boom?
 			; IntroSound
-			If CurrentObjectData(8)>1 CurrentObjectData(8)=0
-			If CurrentObjectData(8)<0 CurrentObjectData(8)=1
+			If CurrentObject\Attributes\Data8>1 CurrentObject\Attributes\Data8=0
+			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=1
 		EndIf
 		
 		If CurrentObjectModelName$="!StinkerWee"
 			; Texture
-			If CurrentObjectData(8)>2 CurrentObjectData(8)=0
-			If CurrentObjectData(8)<0 CurrentObjectData(8)=2
+			If CurrentObject\Attributes\Data8>2 CurrentObject\Attributes\Data8=0
+			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=2
 		EndIf
 
 
 
 	Case "Data9"
-		;CurrentObjectData(9)=AdjustInt("Data9: ", CurrentObjectData(9), 1, 10, 150)
+		;CurrentObject\Attributes\Data9=AdjustInt("Data9: ", CurrentObject\Attributes\Data9, 1, 10, 150)
 		AdjustObjectData(9, SlowInt, FastInt, DelayTime)
 		
 		If CurrentObjectModelName$="!CustomModel" And CurrentObjectType=160
 			; Deadly
-			If CurrentobjectData(9)>1 CurrentObjectData(9)=0
-			If CurrentobjectData(9)<0 CurrentObjectData(9)=1
+			If CurrentObject\Attributes\Data9>1 CurrentObject\Attributes\Data9=0
+			If CurrentObject\Attributes\Data9<0 CurrentObject\Attributes\Data9=1
 		EndIf
 		
-		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObjectData(0)=1
+		If CurrentObjectType=90 And CurrentObjectSubType=11 And CurrentObject\Attributes\Data0=1
 			; anim
-			If CurrentobjectData(9)<-1 CurrentObjectData(9)=10
-			If CurrentobjectData(9)>10 CurrentObjectData(9)=-1
+			If CurrentObject\Attributes\Data9<-1 CurrentObject\Attributes\Data9=10
+			If CurrentObject\Attributes\Data9>10 CurrentObject\Attributes\Data9=-1
 		EndIf
 		
 		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor
-			If CurrentObjectData(9)<1 CurrentObjectData(9)=1
+			If CurrentObject\Attributes\Data9<1 CurrentObject\Attributes\Data9=1
 		EndIf
-
 
 	Case "Talkable"
-		If RandomTalkable
-			If OnLeftHalfAdjuster()
-				RandomTalkableMin=AdjustInt("Talkable Min: ", RandomTalkableMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomTalkableMax=AdjustInt("Talkable Max: ", RandomTalkableMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectTalkable=AdjustInt("Talkable: ", CurrentObjectTalkable, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomTalkable=Not RandomTalkable
-		EndIf
-		
-		;If CurrentObjectTalkable<0 CurrentObjectTalkable=0
-		;If  CurrentObjectModelName$="!Sign" And CurrentObjectTalkable<10001 CurrentObjectTalkable=10001
-
+		CurrentObject\Attributes\Talkable=AdjustObjectAdjusterInt(ObjectAdjusterTalkable,CurrentObject\Attributes\Talkable,SlowInt,FastInt,DelayTime)
 
 	Case "MovementSpeed"
-		If RandomMovementSpeed
-			If OnLeftHalfAdjuster()
-				RandomMovementSpeedMin=AdjustInt("MovementSpeed Min: ", RandomMovementSpeedMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomMovementSpeedMax=AdjustInt("MovementSpeed Max: ", RandomMovementSpeedMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectMovementSpeed=AdjustInt("MovementSpeed: ", CurrentObjectMovementSpeed, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomMovementSpeed=Not RandomMovementSpeed
-			RandomMovementSpeedMin=10
-			RandomMovementSpeedMax=40
-		EndIf
+		CurrentObject\Attributes\MovementSpeed=AdjustObjectAdjusterInt(ObjectAdjusterMovementSpeed,CurrentObject\Attributes\MovementSpeed,SlowInt,FastInt,DelayTime)
 		
 	Case "MovementType"
-		If RandomMovementType
-			If OnLeftHalfAdjuster()
-				RandomMovementTypeMin=AdjustInt("MovementType Min: ", RandomMovementTypeMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomMovementTypeMax=AdjustInt("MovementType Max: ", RandomMovementTypeMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectMovementType=AdjustInt("MovementType: ", CurrentObjectMovementType, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomMovementType=Not RandomMovementType
-			RandomMovementTypeMin=41
-			RandomMovementTypeMax=48
-		EndIf
+		CurrentObject\Attributes\MovementType=AdjustObjectAdjusterInt(ObjectAdjusterMovementType,CurrentObject\Attributes\MovementType,SlowInt,FastInt,DelayTime)
 		
 	Case "MovementTypeData"
-		CurrentObjectMovementTypeData=AdjustInt("MovementTypeData: ", CurrentObjectMovementTypeData, 1, 10, 150)
+		CurrentObject\Attributes\MovementTypeData=AdjustObjectAdjusterInt(ObjectAdjusterMovementTypeData,CurrentObject\Attributes\MovementTypeData,SlowInt,FastInt,DelayTime)
 		
 	Case "TileTypeCollision"
 		If (Not RandomTTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0)
@@ -14675,56 +14118,29 @@ Function AdjustObjectAdjuster(i)
 		If ReturnPressed()
 			RandomOTC=Not RandomOTC
 		EndIf
-
 		
 	Case "ScaleAdjust"
-		If RandomScaleAdjust
-			If OnLeftHalfAdjuster()
-				RandomScaleAdjustMin=AdjustFloat#("ScaleAdjust Min: ", RandomScaleAdjustMin, SlowFloat#, FastFloat#, DelayTime)
-			Else
-				RandomScaleAdjustMax=AdjustFloat#("ScaleAdjust Max: ", RandomScaleAdjustMax, SlowFloat#, FastFloat#, DelayTime)
-			EndIf
-		Else
-			CurrentObjectScaleAdjust=AdjustFloat#("ScaleAdjust: ", CurrentObjectScaleAdjust, SlowFloat#, FastFloat#, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomScaleAdjust=Not RandomScaleAdjust
-			RandomScaleAdjustMin#=0.5
-			RandomScaleAdjustMax#=1.5
-		EndIf
-
+		CurrentObject\Attributes\ScaleAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterScaleAdjust,CurrentObject\Attributes\ScaleAdjust,SlowFloat#,FastFloat#,DelayTime)
+		
 	Case "Exclamation"
-		If RandomExclamation
-			If OnLeftHalfAdjuster()
-				RandomExclamationMin=AdjustInt("Exclamation Min: ", RandomExclamationMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomExclamationMax=AdjustInt("Exclamation Max: ", RandomExclamationMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectExclamation=AdjustInt("Exclamation: ", CurrentObjectExclamation, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomExclamation=Not RandomExclamation
-			RandomExclamationMin=0
-			RandomExclamationMax=99
-		EndIf
-	
+		CurrentObject\Attributes\Exclamation=AdjustObjectAdjusterInt(ObjectAdjusterExclamation,CurrentObject\Attributes\Exclamation,SlowInt,FastInt,DelayTime)
+		
 	Case "Linked"
-		CurrentObjectLinked=AdjustInt("Linked: ", CurrentObjectLinked, 1, 10, 150)
+		CurrentObject\Attributes\Linked=AdjustObjectAdjusterInt(ObjectAdjusterLinked,CurrentObject\Attributes\Linked,SlowInt,FastInt,DelayTime)
 	Case "LinkBack"
-		CurrentObjectLinkBack=AdjustInt("LinkBack: ", CurrentObjectLinkBack, 1, 10, 150)
+		CurrentObject\Attributes\LinkBack=AdjustObjectAdjusterInt(ObjectAdjusterLinkBack,CurrentObject\Attributes\LinkBack,SlowInt,FastInt,DelayTime)
 		
 	Case "Parent"
-		CurrentObjectParent=AdjustInt("Parent: ", CurrentObjectParent, 1, 10, 150)
+		CurrentObject\Attributes\Parent=AdjustObjectAdjusterInt(ObjectAdjusterParent,CurrentObject\Attributes\Parent,SlowInt,FastInt,DelayTime)
 	Case "Child"
-		CurrentObjectChild=AdjustInt("Child: ", CurrentObjectChild, 1, 10, 150)
+		CurrentObject\Attributes\Child=AdjustObjectAdjusterInt(ObjectAdjusterChild,CurrentObject\Attributes\Child,SlowInt,FastInt,DelayTime)
 		
 	Case "DX"
-		CurrentObjectDX=AdjustFloat#("DX: ", CurrentObjectDX, 0.01, 0.1, 150)
+		CurrentObject\Attributes\DX=AdjustObjectAdjusterFloat(ObjectAdjusterDX,CurrentObject\Attributes\DX,SlowFloat#,FastFloat#,DelayTime)
 	Case "DY"
-		CurrentObjectDY=AdjustFloat#("DY: ", CurrentObjectDY, 0.01, 0.1, 150)
+		CurrentObject\Attributes\DY=AdjustObjectAdjusterFloat(ObjectAdjusterDY,CurrentObject\Attributes\DY,SlowFloat#,FastFloat#,DelayTime)
 	Case "DZ"
-		CurrentObjectDZ=AdjustFloat#("DZ: ", CurrentObjectDZ, 0.01, 0.1, 150)
+		CurrentObject\Attributes\DZ=AdjustObjectAdjusterFloat(ObjectAdjusterDZ,CurrentObject\Attributes\DZ,SlowFloat#,FastFloat#,DelayTime)
 		
 	Case "MoveXGoal"
 		If RandomMoveXGoal
@@ -14758,70 +14174,35 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "Data10"
-		CurrentObjectData10=AdjustInt("Data10: ", CurrentObjectData10, 1, 10, 150)
+		CurrentObject\Attributes\Data10=AdjustObjectAdjusterInt(ObjectAdjusterData10,CurrentObject\Attributes\Data10,SlowInt,FastInt,DelayTime)
 		
 	Case "Caged"
-		CurrentObjectCaged=AdjustInt("Caged: ", CurrentObjectCaged, 1, 10, 150)
+		CurrentObject\Attributes\Caged=AdjustObjectAdjusterInt(ObjectAdjusterCaged,CurrentObject\Attributes\Caged,SlowInt,FastInt,DelayTime)
 	Case "Dead"
-		If RandomDead
-			If OnLeftHalfAdjuster()
-				RandomDeadMin=AdjustInt("Dead Min: ", RandomDeadMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomDeadMax=AdjustInt("Dead Max: ", RandomDeadMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectDead=AdjustInt("Dead: ", CurrentObjectDead, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomDead=Not RandomDead
-			RandomDeadMin=0
-			RandomDeadMax=3
-		EndIf
+		CurrentObject\Attributes\Dead=AdjustObjectAdjusterInt(ObjectAdjusterDead,CurrentObject\Attributes\Dead,SlowInt,FastInt,DelayTime)
 	Case "DeadTimer"
-		CurrentObjectDeadTimer=AdjustInt("DeadTimer: ", CurrentObjectDeadTimer, 1, 25, 150)
+		CurrentObject\Attributes\DeadTimer=AdjustObjectAdjusterInt(ObjectAdjusterDeadTimer,CurrentObject\Attributes\DeadTimer,SlowInt,25,DelayTime)
 	Case "MovementTimer"
-		CurrentObjectMovementTimer=AdjustInt("MovementTimer: ", CurrentObjectMovementTimer, 1, 25, 150)
+		CurrentObject\Attributes\MovementTimer=AdjustObjectAdjusterInt(ObjectAdjusterMovementTimer,CurrentObject\Attributes\MovementTimer,SlowInt,25,DelayTime)
 		
 	Case "Flying"
-		CurrentObjectFlying=AdjustInt("Flying: ", CurrentObjectFlying, 1, 10, 150)
+		CurrentObject\Attributes\Flying=AdjustObjectAdjusterInt(ObjectAdjusterDead,CurrentObject\Attributes\Flying,SlowInt,FastInt,DelayTime)
 		
 	Case "Indigo"
-		CurrentObjectIndigo=AdjustInt("Indigo: ", CurrentObjectIndigo, 1, 10, 150)
+		CurrentObject\Attributes\Indigo=AdjustObjectAdjusterInt(ObjectAdjusterIndigo,CurrentObject\Attributes\Indigo,SlowInt,FastInt,DelayTime)
 		
 	Case "Speed"
-		CurrentObjectSpeed=AdjustFloat#("Speed: ", CurrentObjectSpeed, 0.01, 0.1, 150)
+		CurrentObject\Attributes\Speed=AdjustObjectAdjusterFloat(ObjectAdjusterSpeed,CurrentObject\Attributes\Speed,SlowFloat#,FastFloat#,DelayTime)
 	Case "Radius"
-		CurrentObjectRadius=AdjustFloat#("Radius: ", CurrentObjectRadius, 0.01, 0.1, 150)
+		CurrentObject\Attributes\Radius=AdjustObjectAdjusterFloat(ObjectAdjusterRadius,CurrentObject\Attributes\Radius,SlowFloat#,FastFloat#,DelayTime)
 		
 	Case "Status"
-		If RandomStatus
-			If OnLeftHalfAdjuster()
-				RandomStatusMin=AdjustInt("Status Min: ", RandomStatusMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomStatusMax=AdjustInt("Status Max: ", RandomStatusMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObjectStatus=AdjustInt("Status: ", CurrentObjectStatus, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomStatus=Not RandomStatus
-			RandomStatusMin=0
-			RandomStatusMax=10
-		EndIf
-
-
-
-
-
-
-	
-	
-
-			
+		CurrentObject\Attributes\Status=AdjustObjectAdjusterInt(ObjectAdjusterStatus,CurrentObject\Attributes\Status,SlowInt,FastInt,DelayTime)
 		
-
-	
+		
+		
 	End Select
+	
 	BuildCurrentObjectModel()
 
 End Function 
@@ -15399,12 +14780,12 @@ Function BuildCurrentObjectModel()
 	
 
 	If CurrentObjectModelName$="!Button"
-		If CurrentObjectSubType=16 And CurrentObjectData(2)=1 Then CurrentObjectSubType=17
-		If CurrentObjectSubType=17 And CurrentObjectData(2)=0 Then CurrentObjectSubType=16
-		If CurrentObjectSubType=16+32 And CurrentObjectData(2)=1 Then CurrentObjectSubType=17+32
-		If CurrentObjectSubType=17+32 And CurrentObjectData(2)=0 Then CurrentObjectSubType=16+32
+		If CurrentObjectSubType=16 And CurrentObject\Attributes\Data2=1 Then CurrentObjectSubType=17
+		If CurrentObjectSubType=17 And CurrentObject\Attributes\Data2=0 Then CurrentObjectSubType=16
+		If CurrentObjectSubType=16+32 And CurrentObject\Attributes\Data2=1 Then CurrentObjectSubType=17+32
+		If CurrentObjectSubType=17+32 And CurrentObject\Attributes\Data2=0 Then CurrentObjectSubType=16+32
 
-		CurrentObjectModel=CreateButtonMesh(CurrentObjectSubType,CurrentObjectData(0),CurrentObjectData(1),CurrentObjectData(2),CurrentObjectData(3))
+		CurrentObjectModel=CreateButtonMesh(CurrentObjectSubType,CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		
 		
 	Else If CurrentObjectModelName$="!CustomModel"
@@ -15424,42 +14805,42 @@ Function BuildCurrentObjectModel()
 	
 	
 	Else If CurrentObjectModelName$="!Teleport"
-		CurrentObjectModel=CreateTeleporterMesh(CurrentObjectData(0))
+		CurrentObjectModel=CreateTeleporterMesh(CurrentObject\Attributes\Data0)
 	Else If CurrentObjectModelName$="!Item"
-		CurrentObjectModel=CreatePickupItemMesh(CurrentObjectData(2))
+		CurrentObjectModel=CreatePickupItemMesh(CurrentObject\Attributes\Data2)
 	Else If CurrentObjectModelName$="!Stinker" Or CurrentObjectModelName$="!NPC"
 		CurrentObjectModel=CopyEntity(StinkerMesh)
 		
 		; possible prevention for the body000A.jpg error
-		If CurrentObjectData(0)>8 CurrentObjectData(0)=1
-		If CurrentObjectData(0)<1 CurrentObjectData(0)=8
+		If CurrentObject\Attributes\Data0>8 CurrentObject\Attributes\Data0=1
+		If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=8
 		
-		If CurrentObjectData(1)>4 CurrentObjectData(1)=0
-		If CurrentObjectData(1)<0 CurrentObjectData(1)=4
+		If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
+		If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
 		
 		
-		If CurrentObjectData(0)=5
+		If CurrentObject\Attributes\Data0=5
 			CurrentObjectTexture=Waterfalltexture(0) ;MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
-		Else If CurrentObjectData(0)=6
+		Else If CurrentObject\Attributes\Data0=6
 			CurrentObjectTexture=Waterfalltexture(1) ;MyLoadTexture("Data\leveltextures\waterfalllava.jpg",1)
 
 		Else
-			CurrentObjectTexture=MyLoadTexture("data/models/stinker/body00"+Str$(CurrentObjectData(0))+Chr$(65+CurrentObjectData(1))+".jpg",1)
+			CurrentObjectTexture=MyLoadTexture("data/models/stinker/body00"+Str$(CurrentObject\Attributes\Data0)+Chr$(65+CurrentObject\Attributes\Data1)+".jpg",1)
 		EndIf
 		EntityTexture GetChild(CurrentObjectModel,3),CurrentObjectTexture
 		
 		
 		
-		If CurrentObjectData(2)>0	; hat
-			CurrentHatModel=CreateAccEntity(CurrentObjectData(2))
-			CurrentHatTexture=CreateHatTexture(CurrentObjectData(2),CurrentObjectData(3))
+		If CurrentObject\Attributes\Data2>0	; hat
+			CurrentHatModel=CreateAccEntity(CurrentObject\Attributes\Data2)
+			CurrentHatTexture=CreateHatTexture(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 			
 			;TransformAccessoryEntityOntoBone(CurrentHatModel,CurrentObjectModel)
 		EndIf
 		
-		If CurrentObjectData(4)>0 ;100 ; acc
-			CurrentAccModel=CreateAccEntity(CurrentObjectData(4))
-			CurrentAccTexture=CreateGlassesTexture(CurrentObjectData(4),CurrentObjectData(5))
+		If CurrentObject\Attributes\Data4>0 ;100 ; acc
+			CurrentAccModel=CreateAccEntity(CurrentObject\Attributes\Data4)
+			CurrentAccTexture=CreateGlassesTexture(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
 			
 			;TransformAccessoryEntityOntoBone(CurrentAccModel,CurrentObjectModel)
 		EndIf
@@ -15470,18 +14851,18 @@ Function BuildCurrentObjectModel()
 	
 	
 	Else If CurrentObjectModelName$="!ColourGate"
-		CurrentObjectModel=CreateColourGateMesh(CurrentObjectData(2),CurrentObjectData(0))
+		CurrentObjectModel=CreateColourGateMesh(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data0)
 	Else If CurrentObjectModelName$="!Transporter"
-		CurrentObjectModel=CreateTransporterMesh(CurrentObjectData(0),3)
-		RotateMesh CurrentObjectModel,0,90*CurrentObjectData(2),0
+		CurrentObjectModel=CreateTransporterMesh(CurrentObject\Attributes\Data0,3)
+		RotateMesh CurrentObjectModel,0,90*CurrentObject\Attributes\Data2,0
 		
 	Else If CurrentObjectModelName$="!Conveyor"
-		If CurrentObjectData(4)=4
-			CurrentObjectModel=CreateCloudMesh(CurrentObjectData(0))
+		If CurrentObject\Attributes\Data4=4
+			CurrentObjectModel=CreateCloudMesh(CurrentObject\Attributes\Data0)
 		Else
-			CurrentObjectModel=CreateTransporterMesh(CurrentObjectData(0),CurrentObjectData(4))
+			CurrentObjectModel=CreateTransporterMesh(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
 		EndIf
-		RotateMesh CurrentObjectModel,0,-90*CurrentObjectData(2),0
+		RotateMesh CurrentObjectModel,0,-90*CurrentObject\Attributes\Data2,0
 		If CurrentObjectType=46 ScaleMesh CurrentObjectmodel,.5,.5,.5
 
 	Else If CurrentObjectModelName$="!Autodoor"
@@ -15490,21 +14871,21 @@ Function BuildCurrentObjectModel()
 		
 		
 	Else If CurrentObjectModelName$="!Key"
-		CurrentObjectModel=CreateKeyMesh(CurrentObjectData(0))
+		CurrentObjectModel=CreateKeyMesh(CurrentObject\Attributes\Data0)
 	Else If CurrentObjectModelName$="!KeyCard" 
-		CurrentObjectModel=CreateKeyCardMesh(CurrentObjectData(0))
+		CurrentObjectModel=CreateKeyCardMesh(CurrentObject\Attributes\Data0)
 
 		
 	Else If CurrentObjectModelName$="!StinkerWee"
 		CurrentObjectModel=CopyEntity(StinkerWeeMesh)
-		EntityTexture CurrentObjectModel,StinkerWeeTexture(CurrentObjectData(8)+1)
+		EntityTexture CurrentObjectModel,StinkerWeeTexture(CurrentObject\Attributes\Data8+1)
 	Else If CurrentObjectModelName$="!Cage"
 		CurrentObjectModel=CopyEntity(CageMesh)
 		Else If CurrentObjectModelName$="!StarGate"
 		CurrentObjectModel=CopyEntity(StarGateMesh)
 	Else If CurrentObjectModelName$="!Scritter"
 		CurrentObjectModel=CopyEntity(ScritterMesh)
-		EntityTexture CurrentObjectModel,ScritterTexture(CurrentObjectData(0))
+		EntityTexture CurrentObjectModel,ScritterTexture(CurrentObject\Attributes\Data0)
 	Else If CurrentObjectModelName$="!RainbowBubble"
 		CurrentObjectModel=CreateSphere()
 		;ScaleMesh CurrentObjectModel,.4,.4,.4
@@ -15513,7 +14894,7 @@ Function BuildCurrentObjectModel()
 		EntityTexture CurrentObjectModel,Rainbowtexture2
 		
 	Else If CurrentObjectModelName$="!IceBlock"
-		CurrentObjectModel=CreateIceBlockMesh(CurrentObjectData(3))
+		CurrentObjectModel=CreateIceBlockMesh(CurrentObject\Attributes\Data3)
 		
 	Else If CurrentObjectModelName$="!PlantFloat"
 		CurrentObjectModel=CreatePlantFloatMesh()
@@ -15535,24 +14916,24 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CopyEntity(ChomperMesh)
 		If CurrentObjectSubType=1 
 			EntityTexture CurrentObjectModel,WaterChomperTexture
-		Else If CurrentObjectData(1)=3 
+		Else If CurrentObject\Attributes\Data1=3 
 			EntityTexture CurrentObjectModel,MechaChomperTexture
 		Else
 			EntityTexture CurrentObjectModel,ChomperTexture
 		EndIf
 	Else If CurrentObjectModelName$="!Bowler"
 		CurrentObjectModel=CopyEntity(BowlerMesh)
-		Direction=CurrentObjectData(0)
-		If CurrentObjectData(1)<>2
+		Direction=CurrentObject\Attributes\Data0
+		If CurrentObject\Attributes\Data1<>2
 			Direction=Direction*2
 		EndIf
 		CurrentObjectYawAdjust=(-45*Direction +3600) Mod 360
 	Else If CurrentObjectModelName$="!Turtle"
 		CurrentObjectModel=CopyEntity(TurtleMesh)
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(0) +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 	Else If CurrentObjectModelName$="!Thwart"
 		CurrentObjectModel=CopyEntity(ThwartMesh)
-		EntityTexture CurrentObjectModel,ThwartTexture(CurrentObjectData(2))
+		EntityTexture CurrentObjectModel,ThwartTexture(CurrentObject\Attributes\Data2)
 	Else If CurrentObjectModelName$="!Tentacle"
 		CurrentObjectModel=CopyEntity(TentacleMesh)
 		Animate GetChild(CurrentObjectModel,3),1,.1,1,0
@@ -15562,7 +14943,7 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CopyEntity(GhostMesh)
 	Else If CurrentObjectModelName$="!Wraith"
 		CurrentObjectModel=CopyEntity(WraithMesh)
-		EntityTexture CurrentObjectModel,WraithTexture(CurrentObjectData(2))
+		EntityTexture CurrentObjectModel,WraithTexture(CurrentObject\Attributes\Data2)
 
 	
 
@@ -15573,7 +14954,7 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CopyEntity(TrollMesh)
 	Else If CurrentObjectModelName$="!Kaboom"
 		CurrentObjectModel=CopyEntity(KaboomMesh)
-		EntityTexture CurrentObjectModel,KaboomTexture(CurrentObjectData(0))
+		EntityTexture CurrentObjectModel,KaboomTexture(CurrentObject\Attributes\Data0)
 	Else If CurrentObjectModelName$="!BabyBoomer"
 		CurrentObjectModel=CopyEntity(KaboomMesh)
 		EntityTexture CurrentObjectModel,KaboomTexture(1)
@@ -15583,11 +14964,11 @@ Function BuildCurrentObjectModel()
 	Else If CurrentObjectModelName$="!FireFlower"
 		CurrentObjectModel=CopyEntity(FireFlowerMesh)
 		If CurrentObjectSubType<>1
-			CurrentObjectYawAdjust=(-45*CurrentObjectData(0) +3600) Mod 360
+			CurrentObjectYawAdjust=(-45*CurrentObject\Attributes\Data0 +3600) Mod 360
 		Else
 			CurrentObjectYawAdjust=0
 		EndIf
-		If CurrentObjectData(1)=1
+		If CurrentObject\Attributes\Data1=1
 			EntityTexture CurrentObjectModel,FireFlowerTexture2
 		EndIf
 		
@@ -15602,7 +14983,7 @@ Function BuildCurrentObjectModel()
 	Else If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 		CurrentObjectModel=CreateSphere(12)
 		ScaleMesh CurrentObjectModel,.1,.1,.1
-		EntityColor CurrentObjectModel,CurrentObjectData(5),CurrentObjectData(6),CurrentObjectData(7)
+		EntityColor CurrentObjectModel,CurrentObject\Attributes\Data5,CurrentObject\Attributes\Data6,CurrentObject\Attributes\Data7
 	Else If CurrentObjectModelName$="!Void"
 		;CurrentObjectModel=CreateSphere(12)
 		;ScaleMesh CurrentObjectModel,.4,.15,.4
@@ -15623,8 +15004,8 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CreateCube()
 		ScaleMesh CurrentObjectModel,0.4,0.4,0.4
 		PositionMesh CurrentObjectModel,0,0.5,0
-		If CurrentObjectData(0)<0 Or CurrentObjectData(0)>8 Then CurrentObjectData(0)=0
-		EntityTexture CurrentObjectModel,TeleporterTexture(CurrentObjectData(0))
+		If CurrentObject\Attributes\Data0<0 Or CurrentObject\Attributes\Data0>8 Then CurrentObject\Attributes\Data0=0
+		EntityTexture CurrentObjectModel,TeleporterTexture(CurrentObject\Attributes\Data0)
 		
 	Else If CurrentObjectModelName$="!Prism"
 		CurrentObjectModel=CopyEntity(PrismMesh)
@@ -15632,31 +15013,31 @@ Function BuildCurrentObjectModel()
 			
 	Else If  CurrentObjectModelName$="!Obstacle10" 
 		CurrentObjectModel=CopyEntity(  ObstacleMesh(10 ))
-		EntityTexture CurrentObjectModel, MushroomTex(  (Abs(CurrentObjectData(0))) Mod 3)
+		EntityTexture CurrentObjectModel, MushroomTex(  (Abs(CurrentObject\Attributes\Data0)) Mod 3)
 
 	
 
 		
 	Else If  CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
-		CurrentObjectModel=CopyEntity(  ObstacleMesh((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)+CurrentObjectData(0))  )
-		EntityTexture CurrentObjectModel, ObstacleTexture((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)+CurrentObjectData(1))
+		CurrentObjectModel=CopyEntity(  ObstacleMesh((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)+CurrentObject\Attributes\Data0)  )
+		EntityTexture CurrentObjectModel, ObstacleTexture((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)+CurrentObject\Attributes\Data1)
 
 	Else If Left$(CurrentObjectModelName$,9)="!Obstacle"
 		CurrentObjectModel=CopyEntity(ObstacleMesh((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)))
 
 	Else If CurrentObjectModelName$="!WaterFall"
-		CurrentObjectModel=CreateWaterFallMesh(CurrentObjectData(0))
+		CurrentObjectModel=CreateWaterFallMesh(CurrentObject\Attributes\Data0)
 	Else If CurrentObjectModelName$="!Star"
 		CurrentObjectModel=CopyEntity(StarMesh)
 		EntityTexture CurrentObjectModel,GoldStarTexture
 	Else If CurrentObjectModelName$="!Wisp"
 		CurrentObjectModel=CopyEntity(StarMesh)
-		EntityTexture CurrentObjectModel,WispTexture(CurrentObjectData(0))
+		EntityTexture CurrentObjectModel,WispTexture(CurrentObject\Attributes\Data0)
 	
 	
 	Else If CurrentObjectModelName$="!Portal Warp"
 		CurrentObjectModel=CopyEntity(PortalWarpMesh)
-		If CurrentObjectData(1)=0
+		If CurrentObject\Attributes\Data1=0
 			EntityTexture CurrentObjectModel,StarTexture
 		Else
 			EntityTexture CurrentObjectModel,RainbowTexture
@@ -15664,7 +15045,7 @@ Function BuildCurrentObjectModel()
 		
 	Else If CurrentObjectModelName$="!Sun Sphere1"
 		CurrentObjectModel=CreateSphere()
-		EntityColor CurrentObjectModel,CurrentObjectData(0),CurrentObjectData(1),CurrentObjectData(2)
+		EntityColor CurrentObjectModel,CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2
 		EntityBlend CurrentObjectModel,3
 		
 	Else If CurrentObjectModelName$="!Sun Sphere2"
@@ -15681,16 +15062,16 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CopyEntity(CoinMesh)
 		EntityTexture CurrentObjectModel,TokenCoinTexture
 	Else If CurrentObjectModelName$="!Gem"
-		;If currentobjectdata(0)<0 Or currentobjectdata(0)>2 Then currentobjectdata(0)=0
-		;If currentobjectdata(1)<0 Or currentobjectdata(1)>7 Then currentobjectdata(1)=0
+		;If CurrentObject\Attributes\Data0<0 Or CurrentObject\Attributes\Data0>2 Then CurrentObject\Attributes\Data0=0
+		;If CurrentObject\Attributes\Data1<0 Or CurrentObject\Attributes\Data1>7 Then CurrentObject\Attributes\Data1=0
 		
 		; Note that the vanilla WA3E player will kill you without hesitation if you have a Data0 (gem mesh) outside this range.
-		Data0=CurrentObjectData(0)
+		Data0=CurrentObject\Attributes\Data0
 		If Data0<0 Or Data0>2 Then Data0=0
 		
 		CurrentObjectModel=CopyEntity(GemMesh(Data0))
 		
-		Data1=CurrentObjectData(1)
+		Data1=CurrentObject\Attributes\Data1
 		If Data1<0 Or Data1>8
 			EntityColor CurrentObjectModel,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
@@ -15698,7 +15079,7 @@ Function BuildCurrentObjectModel()
 		EndIf
 	Else If CurrentObjectModelName$="!Crystal"
 		CurrentObjectModel=CopyEntity(GemMesh(2))
-		If currentobjectdata(0)=0
+		If CurrentObject\Attributes\Data0=0
 			EntityTexture currentobjectmodel,rainbowtexture
 		Else
 			EntityTexture currentobjectmodel,ghosttexture
@@ -15707,38 +15088,38 @@ Function BuildCurrentObjectModel()
 
 
 	Else If CurrentObjectModelName$="!Sign"
-		CurrentObjectModel=CreateSignMesh(CurrentObjectData(0),CurrentObjectData(1))
+		CurrentObjectModel=CreateSignMesh(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 
 
 	Else If CurrentObjectModelName$="!CustomItem"
-		CurrentObjectModel=CreateCustomItemMesh(CurrentObjectData(0))
+		CurrentObjectModel=CreateCustomItemMesh(CurrentObject\Attributes\Data0)
 
 		
 	Else If CurrentObjectModelName$="!SteppingStone"
 		CurrentObjectModel=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
-		If CurrentObjectData(0)<0 Or CurrentObjectData(0)>3
-			;CurrentObjectData(0)=0
+		If CurrentObject\Attributes\Data0<0 Or CurrentObject\Attributes\Data0>3
+			;CurrentObject\Attributes\Data0=0
 			EntityColor CurrentObjectModel,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture CurrentObjectModel,SteppingStoneTexture(CurrentObjectData(0))
+			EntityTexture CurrentObjectModel,SteppingStoneTexture(CurrentObject\Attributes\Data0)
 		EndIf
 	Else If CurrentObjectModelName$="!Spring" 
 		CurrentObjectModel=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		RotateMesh CurrentObjectModel,90,0,0
-		CurrentObjectYawAdjust=(-45*CurrentObjectData(2) +3600) Mod 360
+		CurrentObjectYawAdjust=(-45*CurrentObject\Attributes\Data2 +3600) Mod 360
 
 
 		EntityTexture CurrentObjectModel,Springtexture
 	Else If CurrentObjectModelName$="!Suctube" 
-		CurrentObjectModel=CreateSuctubemesh(CurrentObjectData(3),CurrentObjectData(0),True)
+		CurrentObjectModel=CreateSuctubemesh(CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data0,True)
 		
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(2) +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data2 +3600) Mod 360
 		
-		Redosuctubemesh(CurrentObjectModel, CurrentObjectData(0), CurrentObjectActive, CurrentObjectData(2), CurrentObjectYawAdjust)
+		Redosuctubemesh(CurrentObjectModel, CurrentObject\Attributes\Data0, CurrentObjectActive, CurrentObject\Attributes\Data2, CurrentObjectYawAdjust)
 
 	Else If CurrentObjectModelName$="!SuctubeX" 
-		CurrentObjectModel=CreateSuctubeXmesh(CurrentObjectData(3))
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(2) +3600) Mod 360
+		CurrentObjectModel=CreateSuctubeXmesh(CurrentObject\Attributes\Data3)
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data2 +3600) Mod 360
 
 
 		
@@ -15748,10 +15129,10 @@ Function BuildCurrentObjectModel()
 		;CurrentObjectModel=CreateCube()
 		;ScaleMesh CurrentObjectModel,.35,.1,.5
 		
-		CurrentObjectModel=CreateFlipBridgeMesh(CurrentObjectData(0))
+		CurrentObjectModel=CreateFlipBridgeMesh(CurrentObject\Attributes\Data0)
 		;EntityTexture CurrentObjectModel,GateTexture
 		
-		CurrentObjectYawAdjust=(-45*CurrentObjectData(2) +3600) Mod 360
+		CurrentObjectYawAdjust=(-45*CurrentObject\Attributes\Data2 +3600) Mod 360
 	
 	Else If CurrentObjectModelName$="!Door"
 		CurrentObjectModel=MyLoadmesh("data\models\houses\door01.3ds",0)
@@ -15783,34 +15164,34 @@ Function BuildCurrentObjectModel()
 		
 	Else If CurrentObjectModelName$="!Retroscouge"
 		CurrentObjectModel=CopyEntity(RetroScougeMesh)
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(0) +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 	
 	Else If CurrentObjectModelName$="!Retrozbot"
 		CurrentObjectModel=CopyEntity(RetroZbotMesh)
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(0) +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 		
 	Else If CurrentObjectModelName$="!Retroufo"
 		CurrentObjectModel=CopyEntity(RetroUFOMesh)
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(0) +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 	
 	Else If CurrentObjectModelName$="!Retrolasergate"
-		CurrentObjectModel=CreateretrolasergateMesh(Currentobjectdata(0))
+		CurrentObjectModel=CreateretrolasergateMesh(CurrentObject\Attributes\Data0)
 		
 	Else If CurrentObjectModelName$="!Weebot"
 		CurrentObjectModel=CopyEntity(WeebotMesh)
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(0) +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 		
 	Else If CurrentObjectModelName$="!Zapbot"
 		CurrentObjectModel=CopyEntity(ZapbotMesh)
-		CurrentObjectYawAdjust=(-90*CurrentObjectData(0) +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 
 	Else If CurrentObjectModelName$="!Pushbot"
-		CurrentObjectModel=CreatePushbotMesh(CurrentObjectData(0),CurrentObjectData(3))
-		CurrentObjectYawAdjust=-CurrentObjectData(2)*90
+		CurrentObjectModel=CreatePushbotMesh(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data3)
+		CurrentObjectYawAdjust=-CurrentObject\Attributes\Data2*90
 		
 	Else If CurrentObjectModelName$="!ZbotNPC"
 		CurrentObjectModel=CopyEntity(ZbotNPCMesh)
-		EntityTexture CurrentObjectModel,ZBotNPCTexture(CurrentObjectData(2))
+		EntityTexture CurrentObjectModel,ZBotNPCTexture(CurrentObject\Attributes\Data2)
 	
 	Else If CurrentObjectModelName$="!Mothership"
 		CurrentObjectModel=CopyEntity(MothershipMesh)
@@ -15836,7 +15217,7 @@ Function BuildCurrentObjectModel()
 		
 	
 	Else If CurrentObjectModelName$="!GrowFlower"
-		CurrentObjectModel=CreateGrowFlowerMesh(CurrentObjectData(0))
+		CurrentObjectModel=CreateGrowFlowerMesh(CurrentObject\Attributes\Data0)
 
 	Else If CurrentObjectModelName$="!FloingBubble"
 		CurrentObjectModel=CreateFloingBubbleMesh()
@@ -15864,26 +15245,26 @@ Function BuildCurrentObjectModel()
 	If CurrentObjectTextureName$="!None" 
 		CurrentObjectTexture=0
 	Else If CurrentObjectTextureName$="!Door"
-		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
-		If CurrentObjectData(5)>2 Then CurrentObjectData(5)=2
-		If DoorTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture TextureTarget,DoorTexture(CurrentObjectData(5))
+		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
+		If CurrentObject\Attributes\Data5>2 Then CurrentObject\Attributes\Data5=2
+		If DoorTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
+		EntityTexture TextureTarget,DoorTexture(CurrentObject\Attributes\Data5)
 	Else If CurrentObjectTextureName$="!Cottage"
-		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
-		If CottageTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture TextureTarget,CottageTexture(CurrentObjectData(5))	
+		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
+		If CottageTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
+		EntityTexture TextureTarget,CottageTexture(CurrentObject\Attributes\Data5)	
 	Else If CurrentObjectTextureName$="!Townhouse"
-		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
-		If HouseTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture TextureTarget,HouseTexture(CurrentObjectData(5))	
+		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
+		If HouseTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
+		EntityTexture TextureTarget,HouseTexture(CurrentObject\Attributes\Data5)	
 	Else If CurrentObjectTextureName$="!Windmill"
-		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
-		If WindmillTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture TextureTarget,WindmillTexture(CurrentObjectData(5))	
+		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
+		If WindmillTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
+		EntityTexture TextureTarget,WindmillTexture(CurrentObject\Attributes\Data5)	
 	Else If CurrentObjectTextureName$="!Fence"
-		If CurrentObjectData(5)<0 Then CurrentObjectData(5)=0
-		If FenceTexture(CurrentObjectData(5))=0 Then CurrentObjectData(5)=0
-		EntityTexture TextureTarget,FenceTexture(CurrentObjectData(5))	
+		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
+		If FenceTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
+		EntityTexture TextureTarget,FenceTexture(CurrentObject\Attributes\Data5)	
 	Else If CurrentObjectTextureName$="!FireTrap"
 		EntityTexture TextureTarget,FireTrapTexture
 
@@ -15900,7 +15281,7 @@ Function BuildCurrentObjectModel()
 		EntityTexture TextureTarget,GloveTex
 			EntityFX TextureTarget,2
 			For i=0 To 3
-				Col=CurrentObjectData(0)
+				Col=CurrentObject\Attributes\Data0
 				VertexColor GetSurface(TextureTarget,1),i,GetMagicColor(Col,0),GetMagicColor(Col,1),GetMagicColor(Col,2)
 			Next
 
@@ -16035,36 +15416,36 @@ Function CalculateCurrentObjectTargetIDs()
 			Next
 		Else If (CurrentObjectSubType Mod 32)<10 ; ColorX2Y
 			CurrentObjectTargetIDCount=1
-			CurrentObjectTargetID(0)=ColorToID(CurrentObjectData(0),CurrentObjectData(2))
+			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
 		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 			CurrentObjectTargetIDCount=1
-			CurrentObjectTargetID(0)=ColorToID(CurrentObjectData(0),CurrentObjectData(1))
+			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 		Else If (CurrentObjectSubType Mod 32)=15 ; General Command
-			Select CurrentObjectData(0)
+			Select CurrentObject\Attributes\Data0
 			Case 1,2,3,4,5,51,52,61,62,63
 				CurrentObjectTargetIDCount=1
-				CurrentObjectTargetID(0)=CurrentObjectData(1)
+				CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
 			Case 64
-				If CurrentObjectData(1)=-1 ; Ignore if targeting the player
+				If CurrentObject\Attributes\Data1=-1 ; Ignore if targeting the player
 					CurrentObjectTargetIDCount=0
 				Else
 					CurrentObjectTargetIDCount=1
-					CurrentObjectTargetID(0)=CurrentObjectData(1)
+					CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
 				EndIf
 			Default
 				CurrentObjectTargetIDCount=0
 			End Select
 		Else If (CurrentObjectSubType Mod 32)=11 ; NPC Modifier
-			If CurrentObjectData(0)=2 ; NPC Exclamation
-				If CurrentObjectData(1)=-1 ; Ignore if targeting the player
+			If CurrentObject\Attributes\Data0=2 ; NPC Exclamation
+				If CurrentObject\Attributes\Data1=-1 ; Ignore if targeting the player
 					CurrentObjectTargetIDCount=0
 				Else
 					CurrentObjectTargetIDCount=1
-					CurrentObjectTargetID(0)=CurrentObjectData(1)
+					CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
 				EndIf
 			Else
 				CurrentObjectTargetIDCount=1
-				CurrentObjectTargetID(0)=CurrentObjectData(1)
+				CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
 			EndIf
 		Else
 			CurrentObjectTargetIDCount=0
@@ -16079,12 +15460,12 @@ Function CalculateCurrentObjectActivateIDs()
 	
 	If CurrentObjectType=90 Or CurrentObjectType=210 ; button or transporter
 		CurrentObjectActivateIdCount=1
-		CurrentObjectActivateId(0)=CurrentObjectData(8)
+		CurrentObjectActivateId(0)=CurrentObject\Attributes\Data8
 	ElseIf IsObjectLogicAutodoor(CurrentObjectType,CurrentObjectSubType)
 		CurrentObjectActivateIdCount=3
-		CurrentObjectActivateId(0)=CurrentObjectData(4)
-		CurrentObjectActivateId(1)=CurrentObjectData(5)
-		CurrentObjectActivateId(2)=CurrentObjectData(6)
+		CurrentObjectActivateId(0)=CurrentObject\Attributes\Data4
+		CurrentObjectActivateId(1)=CurrentObject\Attributes\Data5
+		CurrentObjectActivateId(2)=CurrentObject\Attributes\Data6
 	Else
 		CurrentObjectActivateIdCount=0
 	EndIf
@@ -16109,23 +15490,23 @@ Function ShowWorldAdjusterPositions()
 	Select CurrentObjectType
 	Case 90 ; button
 		If CurrentObjectSubType=10 ; levelexit
-			If CurrentObjectData(1)=CurrentLevelNumber
-				SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
+			If CurrentObject\Attributes\Data1=CurrentLevelNumber
+				SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 			EndIf
-		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
-			SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
+		ElseIf CurrentObjectSubType=11 And CurrentObject\Attributes\Data0=0 ; NPC move
+			SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		ElseIf CurrentObjectSubType=15 ; general command
-			ShowWorldAdjusterPositionsCmd(CurrentObjectData(0),CurrentObjectData(1),CurrentObjectData(2),CurrentObjectData(3),CurrentObjectData(4))
+			ShowWorldAdjusterPositionsCmd(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data4)
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
-		SetWorldAdjusterPosition(0,CurrentObjectData(1),CurrentObjectData(2))
+		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2)
 	Case 242 ; cuboid
-		ShowWorldAdjusterPositionsCmd(CurrentObjectData(2),CurrentObjectData(3),CurrentObjectData(4),CurrentObjectData(5),CurrentObjectData(6))
+		ShowWorldAdjusterPositionsCmd(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5,CurrentObject\Attributes\Data6)
 	Case 434 ; mothership
-		SetWorldAdjusterPosition(0,CurrentObjectData(2),CurrentObjectData(3))
-		SetWorldAdjusterPosition(1,CurrentObjectData(4),CurrentObjectData(5))
-		SetWorldAdjusterPosition(2,CurrentObjectData(6),CurrentObjectData(7))
-		SetWorldAdjusterPosition(3,CurrentObjectData(8),CurrentObjectData(9))
+		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
+		SetWorldAdjusterPosition(1,CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
+		SetWorldAdjusterPosition(2,CurrentObject\Attributes\Data6,CurrentObject\Attributes\Data7)
+		SetWorldAdjusterPosition(3,CurrentObject\Attributes\Data8,CurrentObject\Attributes\Data9)
 	End Select
 
 End Function
@@ -16167,21 +15548,21 @@ Function SetCurrentObjectTargetLocation(x,y)
 		If CurrentObjectSubType=10 ; levelexit
 			CalculateLevelExitTo(1,2,3,4,CurrentLevelNumber,x,y)
 			CurrentGrabbedObjectModified=True
-		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
-			CurrentObjectData(2)=x
-			CurrentObjectData(3)=y
+		ElseIf CurrentObjectSubType=11 And CurrentObject\Attributes\Data0=0 ; NPC move
+			CurrentObject\Attributes\Data2=x
+			CurrentObject\Attributes\Data3=y
 			CurrentGrabbedObjectModified=True
 		ElseIf CurrentObjectSubType=15 ; general command
-			SetCurrentObjectTargetLocationCmd(CurrentObjectData(0),1,2,3,4,x,y)
+			SetCurrentObjectTargetLocationCmd(CurrentObject\Attributes\Data0,1,2,3,4,x,y)
 		Else
 			GenerateLevelExitTo(CurrentLevelNumber,x,y)
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
-		CurrentObjectData(1)=x
-		CurrentObjectData(2)=y
+		CurrentObject\Attributes\Data1=x
+		CurrentObject\Attributes\Data2=y
 		CurrentGrabbedObjectModified=True
 	Case 242 ; cuboid
-		SetCurrentObjectTargetLocationCmd(CurrentObjectData(2),3,4,5,6,x,y)
+		SetCurrentObjectTargetLocationCmd(CurrentObject\Attributes\Data2,3,4,5,6,x,y)
 	Default
 		GenerateLevelExitTo(CurrentLevelNumber,x,y)
 	End Select
@@ -16495,110 +15876,47 @@ Function ReSizeLevel()
 
 End Function
 
-Function ResizeLevelFixObjectTargets(i)
+Function ResizeLevelFixObjectTargets(Obj)
 
-	If ObjectMoveXGoal(i)<>0
-		ObjectMoveXGoal(i)=ObjectMoveXGoal(i)+WidthLeftChange
+	If Obj\Attributes\MoveXGoal<>0
+		Obj\Attributes\MoveXGoal=Obj\Attributes\MoveXGoal+WidthLeftChange
 	EndIf
-	If ObjectMoveYGoal(i)<>0
-		ObjectMoveYGoal(i)=ObjectMoveYGoal(i)+HeightTopChange
+	If Obj\Attributes\MoveYGoal<>0
+		Obj\Attributes\MoveYGoal=Obj\Attributes\MoveYGoal+HeightTopChange
 	EndIf
 
-	Select ObjectType(i)
+	Select Obj\Attributes\LogicType
 	Case 90 ; button
-		If ObjectSubType(i)=10 ; levelexit
-			If ObjectData(i,1)=CurrentLevelNumber
-				ObjectData(i,2)=ObjectData(i,2)+WidthLeftChange
-				ObjectData(i,3)=ObjectData(i,3)+HeightTopChange
+		If Obj\Attributes\LogicSubType=10 ; levelexit
+			If Obj\Attributes\Data1=CurrentLevelNumber
+				Obj\Attributes\Data2=Obj\Attributes\Data2+WidthLeftChange
+				Obj\Attributes\Data3=Obj\Attributes\Data3+HeightTopChange
 			EndIf
-		ElseIf ObjectSubType(i)=11 And ObjectData(i,0)=0 ; NPC move
-			ObjectData(i,2)=ObjectData(i,2)+WidthLeftChange
-			ObjectData(i,3)=ObjectData(i,3)+HeightTopChange
-		ElseIf ObjectSubType(i)=15 ; general command
-			ResizeLevelFixObjectTargetsCmd(i,ObjectData(i,0),1,2,3,4)
-		EndIf
-	Case 51,52 ; magic shooter, meteor shooter
-		ObjectData(i,1)=ObjectData(i,1)+WidthLeftChange
-		ObjectData(i,2)=ObjectData(i,2)+HeightTopChange
-	Case 242 ; cuboid
-		ResizeLevelFixObjectTargetsCmd(i,ObjectData(i,2),3,4,5,6)
-	Case 434 ; mothership
-		ObjectData(i,2)=ObjectData(i,2)+WidthLeftChange
-		ObjectData(i,3)=ObjectData(i,3)+HeightTopChange
-		ObjectData(i,4)=ObjectData(i,4)+WidthLeftChange
-		ObjectData(i,5)=ObjectData(i,5)+HeightTopChange
-		ObjectData(i,6)=ObjectData(i,6)+WidthLeftChange
-		ObjectData(i,7)=ObjectData(i,7)+HeightTopChange
-		ObjectData(i,8)=ObjectData(i,8)+WidthLeftChange
-		ObjectData(i,9)=ObjectData(i,9)+HeightTopChange
-	End Select
-
-End Function
-
-Function ResizeLevelFixObjectTargetsCmd(i,Cmd,D1,D2,D3,D4)
-
-	Select Cmd
-	Case 7
-		If ObjectData(i,D1)=CurrentLevelNumber
-			ObjectData(i,D2)=ObjectData(i,D2)+WidthLeftChange
-			ObjectData(i,D3)=ObjectData(i,D3)+HeightTopChange
-		EndIf
-	Case 11
-		ObjectData(i,D2)=ObjectData(i,D2)+WidthLeftChange
-		ObjectData(i,D3)=ObjectData(i,D3)+HeightTopChange
-	Case 41,42
-		ObjectData(i,D1)=ObjectData(i,D1)+WidthLeftChange
-		ObjectData(i,D2)=ObjectData(i,D2)+HeightTopChange
-		ObjectData(i,D3)=ObjectData(i,D3)+WidthLeftChange
-		ObjectData(i,D4)=ObjectData(i,D4)+HeightTopChange
-	Case 61
-		ObjectData(i,D2)=ObjectData(i,D2)+WidthLeftChange
-		ObjectData(i,D3)=ObjectData(i,D3)+HeightTopChange
-	End Select
-
-End Function
-
-Function ResizeLevelFixCurrentObjectTargets()
-
-	If CurrentObjectMoveXGoal<>0
-		CurrentObjectMoveXGoal=CurrentObjectMoveXGoal+WidthLeftChange
-	EndIf
-	If CurrentObjectMoveYGoal<>0
-		CurrentObjectMoveYGoal=CurrentObjectMoveYGoal+HeightTopChange
-	EndIf
-
-	Select CurrentObjectType
-	Case 90 ; button
-		If CurrentObjectSubType=10 ; levelexit
-			If CurrentObjectData(1)=CurrentLevelNumber
-				CurrentObjectData(2)=CurrentObjectData(2)+WidthLeftChange
-				CurrentObjectData(3)=CurrentObjectData(3)+HeightTopChange
-			EndIf
-		ElseIf CurrentObjectSubType=11 And CurrentObjectData(0)=0 ; NPC move
-			CurrentObjectData(2)=CurrentObjectData(2)+WidthLeftChange
-			CurrentObjectData(3)=CurrentObjectData(3)+HeightTopChange
+		ElseIf Obj\Attributes\LogicSubType=11 And Obj\Attributes\Data0=0 ; NPC move
+			Obj\Attributes\Data2=Obj\Attributes\Data2+WidthLeftChange
+			Obj\Attributes\Data3=Obj\Attributes\Data3+HeightTopChange
 		ElseIf CurrentObjectSubType=15 ; general command
-			ResizeLevelFixCurrentObjectTargetsCmd(CurrentObjectData(0),1,2,3,4)
+			ResizeLevelFixCurrentObjectTargetsCmd(Obj,Obj\Attributes\Data0,1,2,3,4)
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
-		CurrentObjectData(1)=CurrentObjectData(1)+WidthLeftChange
-		CurrentObjectData(2)=CurrentObjectData(2)+HeightTopChange
+		Obj\Attributes\Data1=Obj\Attributes\Data1+WidthLeftChange
+		Obj\Attributes\Data2=Obj\Attributes\Data2+HeightTopChange
 	Case 242 ; cuboid
-		ResizeLevelFixCurrentObjectTargetsCmd(CurrentObjectData(2),3,4,5,6)
+		ResizeLevelFixCurrentObjectTargetsCmd(Obj,Obj\Attributes\Data2,3,4,5,6)
 	Case 434 ; mothership
-		CurrentObjectData(2)=CurrentObjectData(2)+WidthLeftChange
-		CurrentObjectData(3)=CurrentObjectData(3)+HeightTopChange
-		CurrentObjectData(4)=CurrentObjectData(4)+WidthLeftChange
-		CurrentObjectData(5)=CurrentObjectData(5)+HeightTopChange
-		CurrentObjectData(6)=CurrentObjectData(6)+WidthLeftChange
-		CurrentObjectData(7)=CurrentObjectData(7)+HeightTopChange
-		CurrentObjectData(8)=CurrentObjectData(8)+WidthLeftChange
-		CurrentObjectData(9)=CurrentObjectData(9)+HeightTopChange
+		Obj\Attributes\Data2=Obj\Attributes\Data2+WidthLeftChange
+		Obj\Attributes\Data3=Obj\Attributes\Data3+HeightTopChange
+		Obj\Attributes\Data4=Obj\Attributes\Data4+WidthLeftChange
+		Obj\Attributes\Data5=Obj\Attributes\Data5+HeightTopChange
+		Obj\Attributes\Data6=Obj\Attributes\Data6+WidthLeftChange
+		Obj\Attributes\Data7=Obj\Attributes\Data7+HeightTopChange
+		Obj\Attributes\Data8=Obj\Attributes\Data8+WidthLeftChange
+		Obj\Attributes\Data9=Obj\Attributes\Data9+HeightTopChange
 	End Select
 
 End Function
 
-Function ResizeLevelFixCurrentObjectTargetsCmd(Cmd,D1,D2,D3,D4)
+Function ResizeLevelFixObjectTargetsCmd(Obj,Cmd,D1,D2,D3,D4)
 
 	Select Cmd
 	Case 7
@@ -16624,15 +15942,16 @@ End Function
 
 Function RawSetObjectTileX(i,tilex)
 
-	ObjectTileX(i)=tilex
-	ObjectTileX2(i)=tilex
+	Obj=LevelObjects(i)
+	Obj\Position\TileX=tilex
+	Obj\Position\TileX2=tilex
 	
-	If ObjectType(i)=50 ; spellball
-		ObjectData(i,2)=ObjectTileX(i)
-		ObjectData(i,4)=ObjectTileX(i)
-		If CurrentObjectType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
-			CurrentObjectData(2)=ObjectData(i,2)
-			CurrentObjectData(4)=ObjectData(i,4)
+	If Obj\Attributes\LogicType=50 ; spellball
+		Obj\Attributes\Data2=Obj\Position\TileX
+		Obj\Attributes\Data4=Obj\Position\TileX
+		If CurrentObject\Attributes\LogicType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
+			CurrentObject\Attributes\Data2=Obj\Attributes\Data2
+			CurrentObject\Attributes\Data4=Obj\Attributes\Data4
 		EndIf
 	EndIf
 
@@ -16640,15 +15959,16 @@ End Function
 
 Function RawSetObjectTileY(i,tiley)
 
-	ObjectTileY(i)=tiley
-	ObjectTileY2(i)=tiley
+	Obj=LevelObjects(i)
+	Obj\Position\TileY=tiley
+	Obj\Position\TileY2=tiley
 	
-	If ObjectType(i)=50 ; spellball
-		ObjectData(i,3)=ObjectTileY(i)
-		ObjectData(i,5)=ObjectTileY(i)
-		If CurrentObjectType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
-			CurrentObjectData(3)=ObjectData(i,3)
-			CurrentObjectData(5)=ObjectData(i,5)
+	If Obj\Attributes\LogicType=50 ; spellball
+		Obj\Attributes\Data3=Obj\Position\TileY
+		Obj\Attributes\Data5=Obj\Position\TileY
+		If CurrentObject\Attributes\LogicType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
+			CurrentObject\Attributes\Data3=Obj\Attributes\Data3
+			CurrentObject\Attributes\Data5=Obj\Attributes\Data5
 		EndIf
 	EndIf
 
@@ -16657,14 +15977,14 @@ End Function
 Function SetObjectTileX(i,tilex)
 
 	RawSetObjectTileX(i,tilex)
-	IncrementLevelTileObjectCountFor(i)
+	IncrementLevelTileObjectCountFor(LevelObjects(i))
 
 End Function
 
 Function SetObjectTileY(i,tiley)
 
 	RawSetObjectTileY(i,tiley)
-	IncrementLevelTileObjectCountFor(i)
+	IncrementLevelTileObjectCountFor(LevelObjects(i))
 
 End Function
 
@@ -16672,27 +15992,27 @@ Function SetObjectTileXY(i,tilex,tiley)
 
 	RawSetObjectTileX(i,tilex)
 	RawSetObjectTileY(i,tiley)
-	IncrementLevelTileObjectCountFor(i)
+	IncrementLevelTileObjectCountFor(LevelObjects(i))
 
 End Function
 
 Function ChangeObjectTileX(i,tilex)
 
-	DecrementLevelTileObjectCountFor(i)
+	DecrementLevelTileObjectCountFor(LevelObjects(i))
 	SetObjectTileX(i,tilex)
 
 End Function
 
 Function ChangeObjectTileY(i,tiley)
 
-	DecrementLevelTileObjectCountFor(i)
+	DecrementLevelTileObjectCountFor(LevelObjects(i))
 	SetObjectTileY(i,tiley)
 
 End Function
 
 Function ChangeObjectTileXY(i,tilex,tiley)
 
-	DecrementLevelTileObjectCountFor(i)
+	DecrementLevelTileObjectCountFor(LevelObjects(i))
 	SetObjectTileXY(i,tilex,tiley)
 
 End Function
@@ -18340,12 +17660,68 @@ Function IsObjectLogicAutodoor(TargetType,TargetSubType)
 
 End Function
 
+; i hate blitz because it won't let me have arrays in custom types
+Function SetDataByIndex(Attributes,i,Value)
+	Select i
+	Case 0
+		Attributes\Data0=Value
+	Case 1
+		Attributes\Data1=Value
+	Case 2
+		Attributes\Data2=Value
+	Case 3
+		Attributes\Data3=Value
+	Case 4
+		Attributes\Data4=Value
+	Case 5
+		Attributes\Data5=Value
+	Case 6
+		Attributes\Data6=Value
+	Case 7
+		Attributes\Data7=Value
+	Case 8
+		Attributes\Data8=Value
+	Case 9
+		Attributes\Data9=Value
+	End Select
+End Function
+
+; screw blitzard
+Function GetDataByIndex(Attributes,i)
+
+	Select i
+	Case 0
+		Return Attributes\Data0
+	Case 1
+		Return Attributes\Data1
+	Case 2
+		Return Attributes\Data2
+	Case 3
+		Return Attributes\Data3
+	Case 4
+		Return Attributes\Data4
+	Case 5
+		Return Attributes\Data5
+	Case 6
+		Return Attributes\Data6
+	Case 7
+		Return Attributes\Data7
+	Case 8
+		Return Attributes\Data8
+	Case 9
+		Return Attributes\Data9
+	End Select
+
+End Function
+
 Function SetThreeOtherDataIfNotEqual(DTo1,DTo2,DTo3,DFrom,OldData)
 
-	If CurrentObjectData(DTo1)=OldData And CurrentObjectData(DTo2)=OldData And CurrentObjectData(DTo3)=OldData
-		CurrentObjectData(DTo1)=CurrentObjectData(DFrom)
-		CurrentObjectData(DTo2)=CurrentObjectData(DFrom)
-		CurrentObjectData(DTo3)=CurrentObjectData(DFrom)
+	Attributes=CurrentObject\Attributes
+	If GetDataByIndex(Attributes,DTo1)=OldData And GetDataByIndex(Attributes,DTo2)=OldData And GetDataByIndex(Attributes,DTo3)=OldData
+		NewValue=GetDataByIndex(Attributes,DFrom)
+		SetDataByIndex(Attributes,DTo1,NewValue)
+		SetDataByIndex(Attributes,DTo2,NewValue)
+		SetDataByIndex(Attributes,DTo3,NewValue)
 	EndIf
 
 End Function
@@ -26660,7 +26036,7 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		
 	Case 220 ; Dragon Turtle
-		CurrentObjectMovementType=41+CurrentObjectData(0)*2+CurrentObjectData(1)
+		CurrentObjectMovementType=41+CurrentObject\Attributes\Data0*2+CurrentObject\Attributes\Data1
 		CurrentObjectMovementSpeed=25
 		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^6
@@ -26670,7 +26046,7 @@ Function RetrieveDefaultTrueMovement()
 		
 	Case 250 ; Chomper
 		CurrentObjectMovementType=13
-		CurrentObjectMovementSpeed=20+5*CurrentObjectData(0)
+		CurrentObjectMovementSpeed=20+5*CurrentObject\Attributes\Data0
 		
 		If CurrentObjectSubType=0 ; Non-Water Chomper
 			CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
@@ -26678,22 +26054,22 @@ Function RetrieveDefaultTrueMovement()
 			CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14	
 		EndIf
 		
-		If CurrentObjectData(1)=1 ; Ghost Chomper
+		If CurrentObject\Attributes\Data1=1 ; Ghost Chomper
 			CurrentObjectObjectTypeCollision=2^1+2^4+2^6
 		Else ; Non-Ghost Chomper
 			CurrentObjectObjectTypeCollision=2^1+2^3+2^6
 		EndIf
 		
 	Case 260 ; Spikeyball
-		CurrentObjectMovementSpeed=25+5*CurrentObjectData(2)
+		CurrentObjectMovementSpeed=25+5*CurrentObject\Attributes\Data2
 		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^1+2^2+2^3+2^6+2^9
 		
-		Data0=CurrentObjectData(0) Mod 8
-		If CurrentObjectData(1)=0 Or CurrentObjectData(1)=1
+		Data0=CurrentObject\Attributes\Data0 Mod 8
+		If CurrentObject\Attributes\Data1=0 Or CurrentObject\Attributes\Data1=1
 			; zbot movement
-			CurrentObjectMovementType=41+Data0*2+CurrentObjectData(1)
-		Else If CurrentObjectData(1)=2
+			CurrentObjectMovementType=41+Data0*2+CurrentObject\Attributes\Data1
+		Else If CurrentObject\Attributes\Data1=2
 			; bounce movement
 			CurrentObjectMovementType=71+Data0	
 		EndIf
@@ -26714,8 +26090,8 @@ Function RetrieveDefaultTrueMovement()
 	Case 271 ; Zipper
 	
 		CurrentObjectTileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
-		CurrentObjectData(1)=Rand(0,360)
-		CurrentObjectData(2)=Rand(1,4)
+		CurrentObject\Attributes\Data1=Rand(0,360)
+		CurrentObject\Attributes\Data2=Rand(1,4)
 	
 	Case 290 ; Thwart
 		CurrentObjectData10=-1
@@ -26731,8 +26107,8 @@ Function RetrieveDefaultTrueMovement()
 	Case 310 ; Rubberducky
 		CurrentObjectMovementSpeed=4
 		CurrentObjectTileTypeCollision=2^2 ; -1 in-game, but probably doesn't make a difference.
-		CurrentObjectData(1)=Rand(1,3)
-		CurrentObjectData(2)=Rand(0,360)
+		CurrentObject\Attributes\Data1=Rand(1,3)
+		CurrentObject\Attributes\Data2=Rand(0,360)
 		
 	Case 330 ; Wysp
 		CurrentObjectMovementType=10
@@ -26797,32 +26173,32 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectObjectTypeCollision=2^6+2^8
 		
 	Case 420 ; Coily
-		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObjectMovementSpeed=30
 		CurrentObjectTileTypeCollision=2^0+2^3+2^9+2^10+2^14
 		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
 	
 	Case 422 ; UFO
-		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObjectMovementSpeed=20
 		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^3+2^6
 	
 	Case 423 ; Retro Z-Bot
-		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObjectMovementSpeed=60
 		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
 		
 	Case 430 ; Zipbot
-		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
+		CurrentObjectMovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObjectMovementSpeed=120
 		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
 		
 	Case 431 ; Zapbot
-		CurrentObjectMovementType=41+2*CurrentObjectData(0)+CurrentObjectData(1)
-		CurrentObjectMovementSpeed=20*CurrentObjectData(2)
+		CurrentObjectMovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
+		CurrentObjectMovementSpeed=20*CurrentObject\Attributes\Data2
 		CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^3+2^6
 		
@@ -26832,7 +26208,7 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^6
 		
-		CurrentObjectID=500+CurrentObjectData(0)*5+CurrentObjectData(1)
+		CurrentObjectID=500+CurrentObject\Attributes\Data0*5+CurrentObject\Attributes\Data1
 		
 	Case 433 ; Z-Bot NPC
 		CurrentObjectData10=-1
@@ -26845,12 +26221,12 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectTileTypeCollision=0
 		CurrentObjectObjectTypeCollision=0
 		
-		CurrentObjectData(1)=-1
+		CurrentObject\Attributes\Data1=-1
 		CurrentObjectZ=4
 		
 	Case 470 ; Ghost
 		CurrentObjectMovementType=0
-		CurrentObjectMovementSpeed=5+5*CurrentObjectData(1)
+		CurrentObjectMovementSpeed=5+5*CurrentObject\Attributes\Data1
 		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^1+2^3+2^6
 		
