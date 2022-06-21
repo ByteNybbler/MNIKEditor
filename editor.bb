@@ -809,9 +809,9 @@ Field RandomEnabled,RandomMin#,RandomMax#,RandomMinDefault#,RandomMaxDefault#
 End Type
 
 
-Function NewObjectAdjusterInt(Name$,RandomMin,RandomMax)
+Function NewObjectAdjusterInt.ObjectAdjusterInt(Name$,RandomMin,RandomMax)
 
-	Result=New ObjectAdjusterInt
+	Result.ObjectAdjusterInt=New ObjectAdjusterInt
 	Result\Name$=Name$
 	Result\RandomEnabled=False
 	Result\RandomMin=RandomMin
@@ -822,9 +822,9 @@ Function NewObjectAdjusterInt(Name$,RandomMin,RandomMax)
 
 End Function
 
-Function NewObjectAdjusterFloat(Name$,RandomMin#,RandomMax#)
+Function NewObjectAdjusterFloat.ObjectAdjusterFloat(Name$,RandomMin#,RandomMax#)
 
-	Result=New ObjectAdjusterFloat
+	Result.ObjectAdjusterFloat=New ObjectAdjusterFloat
 	Result\Name$=Name$
 	Result\RandomEnabled=False
 	Result\RandomMin=RandomMin
@@ -836,7 +836,7 @@ Function NewObjectAdjusterFloat(Name$,RandomMin#,RandomMax#)
 End Function
 
 
-Function AdjustObjectAdjusterInt(ObjectAdjuster,CurrentValue,SlowInt,FastInt,DelayTime)
+Function AdjustObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,SlowInt,FastInt,DelayTime)
 
 	If ObjectAdjuster\RandomEnabled
 		If OnLeftHalfAdjuster()
@@ -857,7 +857,7 @@ Function AdjustObjectAdjusterInt(ObjectAdjuster,CurrentValue,SlowInt,FastInt,Del
 End Function
 
 
-Function AdjustObjectAdjusterFloat#(ObjectAdjuster,CurrentValue#,SlowFloat#,FastFloat#,DelayTime)
+Function AdjustObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat,CurrentValue#,SlowFloat#,FastFloat#,DelayTime)
 
 	If ObjectAdjuster\RandomEnabled
 		If OnLeftHalfAdjuster()
@@ -878,56 +878,56 @@ Function AdjustObjectAdjusterFloat#(ObjectAdjuster,CurrentValue#,SlowFloat#,Fast
 End Function
 
 
-Global ObjectAdjusterDefensePower=NewObjectAdjusterInt("DefensePower",0,33)
-Global ObjectAdjusterAttackPower=NewObjectAdjusterInt("AttackPower",0,33)
-Global ObjectAdjusterDestructionType=NewObjectAdjusterInt("DestructionType",0,1)
-Global ObjectAdjusterID=NewObjectAdjusterInt("ID",100,200)
-Global ObjectAdjusterLogicType=NewObjectAdjusterInt("Type",170,173)
-Global ObjectAdjusterLogicSubType=NewObjectAdjusterInt("SubType",0,8)
-Global ObjectAdjusterActivationSpeed=NewObjectAdjusterInt("ActivationSpeed",2,40)
-Global ObjectAdjusterActivationType=NewObjectAdjusterInt("ActivationType",12,16)
-Global ObjectAdjusterTimerMax1=NewObjectAdjusterInt("TimerMax1",1,100)
-Global ObjectAdjusterTimerMax2=NewObjectAdjusterInt("TimerMax2",1,100)
-Global ObjectAdjusterTimer=NewObjectAdjusterInt("Timer",1,100)
-Global ObjectAdjusterWaterReact=NewObjectAdjusterInt("WaterReact",0,10)
-Global ObjectAdjusterFreezable=NewObjectAdjusterInt("Freezable",0,1)
-Global ObjectAdjusterFrozen=NewObjectAdjusterInt("Frozen",0,100)
-Global ObjectAdjusterTalkable=NewObjectAdjusterInt("Talkable",0,100)
-Global ObjectAdjusterMovementSpeed=NewObjectAdjusterInt("MovementSpeed",10,40)
-Global ObjectAdjusterMovementType=NewObjectAdjusterInt("MovementType",41,48)
-Global ObjectAdjusterMovementTypeData=NewObjectAdjusterInt("MovementTypeData",0,30)
-Global ObjectAdjusterExclamation=NewObjectAdjusterInt("Exclamation",0,99)
-Global ObjectAdjusterLinked=NewObjectAdjusterInt("Linked",0,10)
-Global ObjectAdjusterLinkBack=NewObjectAdjusterInt("LinkBack",0,10)
-Global ObjectAdjusterParent=NewObjectAdjusterInt("Parent",0,10)
-Global ObjectAdjusterChild=NewObjectAdjusterInt("Child",0,10)
-Global ObjectAdjusterData10=NewObjectAdjusterInt("Data10",0,10)
-Global ObjectAdjusterCaged=NewObjectAdjusterInt("Caged",0,1)
-Global ObjectAdjusterDead=NewObjectAdjusterInt("Dead",0,3)
-Global ObjectAdjusterDeadTimer=NewObjectAdjusterInt("DeadTimer",1,100)
-Global ObjectAdjusterMovementTimer=NewObjectAdjusterInt("MovementTimer",0,1000)
-Global ObjectAdjusterFlying=NewObjectAdjusterInt("Flying",0,20)
-Global ObjectAdjusterIndigo=NewObjectAdjusterInt("Indigo",0,1)
-Global ObjectAdjusterStatus=NewObjectAdjusterInt("Status",0,10)
+Global ObjectAdjusterDefensePower.ObjectAdjusterInt=NewObjectAdjusterInt("DefensePower",0,33)
+Global ObjectAdjusterAttackPower.ObjectAdjusterInt=NewObjectAdjusterInt("AttackPower",0,33)
+Global ObjectAdjusterDestructionType.ObjectAdjusterInt=NewObjectAdjusterInt("DestructionType",0,1)
+Global ObjectAdjusterID.ObjectAdjusterInt=NewObjectAdjusterInt("ID",100,200)
+Global ObjectAdjusterLogicType.ObjectAdjusterInt=NewObjectAdjusterInt("Type",170,173)
+Global ObjectAdjusterLogicSubType.ObjectAdjusterInt=NewObjectAdjusterInt("SubType",0,8)
+Global ObjectAdjusterActivationSpeed.ObjectAdjusterInt=NewObjectAdjusterInt("ActivationSpeed",2,40)
+Global ObjectAdjusterActivationType.ObjectAdjusterInt=NewObjectAdjusterInt("ActivationType",12,16)
+Global ObjectAdjusterTimerMax1.ObjectAdjusterInt=NewObjectAdjusterInt("TimerMax1",1,100)
+Global ObjectAdjusterTimerMax2.ObjectAdjusterInt=NewObjectAdjusterInt("TimerMax2",1,100)
+Global ObjectAdjusterTimer.ObjectAdjusterInt=NewObjectAdjusterInt("Timer",1,100)
+Global ObjectAdjusterWaterReact.ObjectAdjusterInt=NewObjectAdjusterInt("WaterReact",0,10)
+Global ObjectAdjusterFreezable.ObjectAdjusterInt=NewObjectAdjusterInt("Freezable",0,1)
+Global ObjectAdjusterFrozen.ObjectAdjusterInt=NewObjectAdjusterInt("Frozen",0,100)
+Global ObjectAdjusterTalkable.ObjectAdjusterInt=NewObjectAdjusterInt("Talkable",0,100)
+Global ObjectAdjusterMovementSpeed.ObjectAdjusterInt=NewObjectAdjusterInt("MovementSpeed",10,40)
+Global ObjectAdjusterMovementType.ObjectAdjusterInt=NewObjectAdjusterInt("MovementType",41,48)
+Global ObjectAdjusterMovementTypeData.ObjectAdjusterInt=NewObjectAdjusterInt("MovementTypeData",0,30)
+Global ObjectAdjusterExclamation.ObjectAdjusterInt=NewObjectAdjusterInt("Exclamation",0,99)
+Global ObjectAdjusterLinked.ObjectAdjusterInt=NewObjectAdjusterInt("Linked",0,10)
+Global ObjectAdjusterLinkBack.ObjectAdjusterInt=NewObjectAdjusterInt("LinkBack",0,10)
+Global ObjectAdjusterParent.ObjectAdjusterInt=NewObjectAdjusterInt("Parent",0,10)
+Global ObjectAdjusterChild.ObjectAdjusterInt=NewObjectAdjusterInt("Child",0,10)
+Global ObjectAdjusterData10.ObjectAdjusterInt=NewObjectAdjusterInt("Data10",0,10)
+Global ObjectAdjusterCaged.ObjectAdjusterInt=NewObjectAdjusterInt("Caged",0,1)
+Global ObjectAdjusterDead.ObjectAdjusterInt=NewObjectAdjusterInt("Dead",0,3)
+Global ObjectAdjusterDeadTimer.ObjectAdjusterInt=NewObjectAdjusterInt("DeadTimer",1,100)
+Global ObjectAdjusterMovementTimer.ObjectAdjusterInt=NewObjectAdjusterInt("MovementTimer",0,1000)
+Global ObjectAdjusterFlying.ObjectAdjusterInt=NewObjectAdjusterInt("Flying",0,20)
+Global ObjectAdjusterIndigo.ObjectAdjusterInt=NewObjectAdjusterInt("Indigo",0,1)
+Global ObjectAdjusterStatus.ObjectAdjusterInt=NewObjectAdjusterInt("Status",0,10)
 
-Global ObjectAdjusterYawAdjust=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
-Global ObjectAdjusterRollAdjust=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
-Global ObjectAdjusterPitchAdjust=NewObjectAdjusterFloat("PitchAdjust",0.0,360.0)
-Global ObjectAdjusterXAdjust=NewObjectAdjusterFloat("XAdjust",-0.5,0.5)
-Global ObjectAdjusterYAdjust=NewObjectAdjusterFloat("YAdjust",-0.5,0.5)
-Global ObjectAdjusterZAdjust=NewObjectAdjusterFloat("ZAdjust",-0.5,0.5)
-Global ObjectAdjusterXScale=NewObjectAdjusterFloat("XScale",0.5,1.5)
-Global ObjectAdjusterYScale=NewObjectAdjusterFloat("YScale",0.5,1.5)
-Global ObjectAdjusterZScale=NewObjectAdjusterFloat("ZScale",0.5,1.5)
-Global ObjectAdjusterScaleAdjust=NewObjectAdjusterFloat("ScaleAdjust",0.5,1.5)
-Global ObjectAdjusterX=NewObjectAdjusterFloat("X",-0.5,0.5)
-Global ObjectAdjusterY=NewObjectAdjusterFloat("Y",-0.5,0.5)
-Global ObjectAdjusterZ=NewObjectAdjusterFloat("Z",-0.5,0.5)
-Global ObjectAdjusterDX=NewObjectAdjusterFloat("DX",-1.0,1.0)
-Global ObjectAdjusterDY=NewObjectAdjusterFloat("DY",-1.0,1.0)
-Global ObjectAdjusterDZ=NewObjectAdjusterFloat("DZ",-1.0,1.0)
-Global ObjectAdjusterSpeed=NewObjectAdjusterFloat("Speed",-0.5,0.5)
-Global ObjectAdjusterRadius=NewObjectAdjusterFloat("Radius",-0.5,0.5)
+Global ObjectAdjusterYawAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
+Global ObjectAdjusterRollAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
+Global ObjectAdjusterPitchAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("PitchAdjust",0.0,360.0)
+Global ObjectAdjusterXAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("XAdjust",-0.5,0.5)
+Global ObjectAdjusterYAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YAdjust",-0.5,0.5)
+Global ObjectAdjusterZAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("ZAdjust",-0.5,0.5)
+Global ObjectAdjusterXScale.ObjectAdjusterFloat=NewObjectAdjusterFloat("XScale",0.5,1.5)
+Global ObjectAdjusterYScale.ObjectAdjusterFloat=NewObjectAdjusterFloat("YScale",0.5,1.5)
+Global ObjectAdjusterZScale.ObjectAdjusterFloat=NewObjectAdjusterFloat("ZScale",0.5,1.5)
+Global ObjectAdjusterScaleAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("ScaleAdjust",0.5,1.5)
+Global ObjectAdjusterX.ObjectAdjusterFloat=NewObjectAdjusterFloat("X",-0.5,0.5)
+Global ObjectAdjusterY.ObjectAdjusterFloat=NewObjectAdjusterFloat("Y",-0.5,0.5)
+Global ObjectAdjusterZ.ObjectAdjusterFloat=NewObjectAdjusterFloat("Z",-0.5,0.5)
+Global ObjectAdjusterDX.ObjectAdjusterFloat=NewObjectAdjusterFloat("DX",-1.0,1.0)
+Global ObjectAdjusterDY.ObjectAdjusterFloat=NewObjectAdjusterFloat("DY",-1.0,1.0)
+Global ObjectAdjusterDZ.ObjectAdjusterFloat=NewObjectAdjusterFloat("DZ",-1.0,1.0)
+Global ObjectAdjusterSpeed.ObjectAdjusterFloat=NewObjectAdjusterFloat("Speed",-0.5,0.5)
+Global ObjectAdjusterRadius.ObjectAdjusterFloat=NewObjectAdjusterFloat("Radius",-0.5,0.5)
 
 Dim CurrentObjectTargetID(3)
 Global CurrentObjectTargetIDCount=0
@@ -2481,7 +2481,7 @@ Function ResetGraphicsEntities()
 	
 	; reload object entities
 	For i=0 To NofObjects-1
-		CreateObjectModel(i)
+		CreateLevelObjectModel(i)
 	Next
 
 End Function
@@ -2718,7 +2718,7 @@ Function EditorMainLoop()
 	
 	If ShowObjectMesh>=2
 		For i=0 To NofObjects-1
-			CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
+			CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 			x#=ProjectedX#()
 			y#=ProjectedY#()
 			If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
@@ -2729,7 +2729,7 @@ Function EditorMainLoop()
 					; display object IDs
 					StringOnObject$=CalculateEffectiveId(i)
 				ElseIf ShowObjectMesh=ShowObjectMeshCount
-					StringOnObject$=LevelTileObjectCount(ObjectTileX(i),ObjectTileY(i))
+					StringOnObject$=LevelTileObjectCount(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
 				EndIf
 				Text x#-4*Len(StringOnObject$),y#,StringOnObject$
 			EndIf
@@ -2744,7 +2744,7 @@ Function EditorMainLoop()
 			If MyEffectiveId=CurrentObjectTargetID(j)
 				HitTargetID=True
 			
-				CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
+				CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 				x#=ProjectedX#()
 				y#=ProjectedY#()
 				If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
@@ -2759,7 +2759,7 @@ Function EditorMainLoop()
 		If Not HitTargetID
 			For j=0 To CurrentObjectActivateIDCount-1
 				If MyEffectiveId=CurrentObjectActivateID(j) And CurrentObjectActivateID(j)>0
-					CameraProject(Camera1,ObjectX(i),0.5,-ObjectY(i))
+					CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 					x#=ProjectedX#()
 					y#=ProjectedY#()
 					If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
@@ -3004,13 +3004,13 @@ Function EditorMainLoop()
 	EndIf
 	For i = 0 To 1000
 		For j=0 To 3
-			If ObjectType(i)=200 And ObjectData(i, 0)=8 Then
+			If LevelObjects(i)\Attributes\LogicType=200 And LevelObjects(i)\Attributes\Data0=8 Then
 				red=GetAnimatedRainbowRed()
 			    green=GetAnimatedRainbowGreen()
 			    blue=GetAnimatedRainbowBlue()
 				
-				If ObjectEntity(i)>0 Then
-			    	VertexColor GetSurface(ObjectEntity(i),1),j,red,green,blue
+				If LevelObjects(i)\Entity>0 Then
+			    	VertexColor GetSurface(LevelObjects(i)\Entity,1),j,red,green,blue
 				EndIf
 			EndIf
 		Next
@@ -4030,7 +4030,8 @@ End Function
 
 Function TryLevelGoto(i,x,y,D1,D2,D3)
 
-	If ObjectTileX(i)=x And ObjectTileY(i)=y
+	If LevelObjects(i)\Position\TileX=x And LevelObjects(i)\Position\TileY=y
+		xzx
 		ToLevel=ObjectData(i,D1)
 		If ToLevel=CurrentLevelNumber
 			PositionCameraInLevel(ObjectData(i,D2),ObjectData(i,D3))
@@ -17604,141 +17605,152 @@ Function LoadLevel(levelnumber)
 	NofObjects=0
 	ReadObjectCount=ReadInt(file)
 	For i=0 To ReadObjectCount-1
-		Dest=i
-		ObjectModelName$(i)=ReadString$(file)
-		ObjectTextureName$(i)=ReadString$(file)
-		ObjectXScale(i)=ReadFloat(file)
-		ObjectYScale(i)=ReadFloat(file)
-		ObjectZScale(i)=ReadFloat(file)
-		ObjectXAdjust(i)=ReadFloat(file)
-		ObjectYAdjust(i)=ReadFloat(file)
-		ObjectZAdjust(i)=ReadFloat(file)
-		ObjectPitchAdjust(i)=ReadFloat(file)
-		ObjectYawAdjust(i)=ReadFloat(file)
-		ObjectRollAdjust(i)=ReadFloat(file)
-	
-		ObjectX(Dest)=ReadFloat(file)
-		ObjectY(Dest)=ReadFloat(file)
-		ObjectZ(Dest)=ReadFloat(file)
-		ObjectOldX(Dest)=ReadFloat(file)
-		ObjectOldY(Dest)=ReadFloat(file)
-		ObjectOldZ(Dest)=ReadFloat(file)
-
-		ObjectDX(Dest)=ReadFloat(file)
-		ObjectDY(Dest)=ReadFloat(file)
-		ObjectDZ(Dest)=ReadFloat(file)
-	
-		ObjectPitch(Dest)=ReadFloat(file)
-		ObjectYaw(Dest)=ReadFloat(file)
-		ObjectRoll(Dest)=ReadFloat(file)
-		ObjectPitch2(Dest)=ReadFloat(file)
-		ObjectYaw2(Dest)=ReadFloat(file)
-		ObjectRoll2(Dest)=ReadFloat(file)
-
-		ObjectXGoal(Dest)=ReadFloat(file)
-		ObjectYGoal(Dest)=ReadFloat(file)
-		ObjectZGoal(Dest)=ReadFloat(file)
-	
-		ObjectMovementType(Dest)=ReadInt(file)
-		ObjectMovementTypeData(Dest)=ReadInt(file)
-		ObjectSpeed(Dest)=ReadFloat(file)
-		ObjectRadius(Dest)=ReadFloat(file)
-		ObjectRadiusType(Dest)=ReadInt(file)
-	
-		ObjectData10(Dest)=ReadInt(file)
-	
-		ObjectPushDX(Dest)=ReadFloat(file)
-		ObjectPushDY(Dest)=ReadFloat(file)
-	
-		ObjectAttackPower(Dest)=ReadInt(file)
-		ObjectDefensePower(Dest)=ReadInt(file)
-		ObjectDestructionType(Dest)=ReadInt(file)
-	
-		ObjectID(Dest)=ReadInt(file)
+		LevelObject=LevelObjects(i)
+		Attributes=LevelObject\Attributes
+		Position=LevelObject\Position
 		
-		ObjectType(Dest)=ReadInt(file)
-		ObjectSubType(Dest)=ReadInt(file)
+		Attributes\ModelName$=ReadString$(file)
+		Attributes\TextureName$=ReadString$(file)
+		Attributes\XScale=ReadFloat(file)
+		Attributes\YScale=ReadFloat(file)
+		Attributes\ZScale=ReadFloat(file)
+		Attributes\XAdjust=ReadFloat(file)
+		Attributes\YAdjust=ReadFloat(file)
+		Attributes\ZAdjust=ReadFloat(file)
+		Attributes\PitchAdjust=ReadFloat(file)
+		Attributes\YawAdjust=ReadFloat(file)
+		Attributes\RollAdjust=ReadFloat(file)
 	
-		ObjectActive(Dest)=ReadInt(file)
-		ObjectLastActive(Dest)=ReadInt(file)
-		ObjectActivationType(Dest)=ReadInt(file)
-		ObjectActivationSpeed(Dest)=ReadInt(file)
-	
-		ObjectStatus(Dest)=ReadInt(file)
-		ObjectTimer(Dest)=ReadInt(file)
-		ObjectTimerMax1(Dest)=ReadInt(file)
-		ObjectTimerMax2(Dest)=ReadInt(file)
-	
-		ObjectTeleportable(Dest)=ReadInt(file)
-		ObjectButtonPush(Dest)=ReadInt(file)
-		ObjectWaterReact(Dest)=ReadInt(file)
-	
-		ObjectTelekinesisable(Dest)=ReadInt(file)
-		ObjectFreezable(Dest)=ReadInt(file)
-	
-		ObjectReactive(Dest)=ReadInt(file)
+		Position\X=ReadFloat(file)
+		Position\Y=ReadFloat(file)
+		Position\Z=ReadFloat(file)
+		Position\OldX=ReadFloat(file)
+		Position\OldY=ReadFloat(file)
+		Position\OldZ=ReadFloat(file)
 
-		ObjectChild(Dest)=ReadInt(file)
-		ObjectParent(Dest)=ReadInt(file)
-
-
+		Attributes\DX=ReadFloat(file)
+		Attributes\DY=ReadFloat(file)
+		Attributes\DZ=ReadFloat(file)
 	
-		For k=0 To 9
-			ObjectData(Dest,k)=ReadInt(file)
-		Next
-		For k=0 To 3
-			ObjectTextData$(Dest,k)=ReadString$(file)
-		Next
+		Attributes\Pitch=ReadFloat(file)
+		Attributes\Yaw=ReadFloat(file)
+		Attributes\Roll=ReadFloat(file)
+		Attributes\Pitch2=ReadFloat(file)
+		Attributes\Yaw2=ReadFloat(file)
+		Attributes\Roll2=ReadFloat(file)
+
+		Attributes\XGoal=ReadFloat(file)
+		Attributes\YGoal=ReadFloat(file)
+		Attributes\ZGoal=ReadFloat(file)
+	
+		Attributes\MovementType=ReadInt(file)
+		Attributes\MovementTypeData=ReadInt(file)
+		Attributes\Speed=ReadFloat(file)
+		Attributes\Radius=ReadFloat(file)
+		Attributes\RadiusType=ReadInt(file)
+	
+		Attributes\Data10=ReadInt(file)
+	
+		Attributes\PushDX=ReadFloat(file)
+		Attributes\PushDY=ReadFloat(file)
+	
+		Attributes\AttackPower=ReadInt(file)
+		Attributes\DefensePower=ReadInt(file)
+		Attributes\DestructionType=ReadInt(file)
+	
+		Attributes\ID=ReadInt(file)
 		
-		ObjectTalkable(Dest)=ReadInt(file)
-		ObjectCurrentAnim(Dest)=ReadInt(file)
-		ObjectStandardAnim(Dest)=ReadInt(file)
-		;ObjectTileX(Dest)=ReadInt(file)
-		;ObjectTileY(Dest)=ReadInt(file)
+		Attributes\LogicType=ReadInt(file)
+		Attributes\LogicSubType=ReadInt(file)
+	
+		Attributes\Active=ReadInt(file)
+		Attributes\LastActive=ReadInt(file)
+		Attributes\ActivationType=ReadInt(file)
+		Attributes\ActivationSpeed=ReadInt(file)
+	
+		Attributes\Status=ReadInt(file)
+		Attributes\Timer=ReadInt(file)
+		Attributes\TimerMax1=ReadInt(file)
+		Attributes\TimerMax2=ReadInt(file)
+	
+		Attributes\Teleportable=ReadInt(file)
+		Attributes\ButtonPush=ReadInt(file)
+		Attributes\WaterReact=ReadInt(file)
+	
+		Attributes\Telekinesisable=ReadInt(file)
+		Attributes\Freezable=ReadInt(file)
+	
+		Attributes\Reactive=ReadInt(file)
+
+		Attributes\Child=ReadInt(file)
+		Attributes\Parent=ReadInt(file)
+
+		Attributes\Data0=ReadInt(file)
+		Attributes\Data1=ReadInt(file)
+		Attributes\Data2=ReadInt(file)
+		Attributes\Data3=ReadInt(file)
+		Attributes\Data4=ReadInt(file)
+		Attributes\Data5=ReadInt(file)
+		Attributes\Data6=ReadInt(file)
+		Attributes\Data7=ReadInt(file)
+		Attributes\Data8=ReadInt(file)
+		Attributes\Data9=ReadInt(file)
+	
+		Attributes\ObjectTextData0=ReadString$(file)
+		Attributes\ObjectTextData1=ReadString$(file)
+		Attributes\ObjectTextData2=ReadString$(file)
+		Attributes\ObjectTextData3=ReadString$(file)
+		
+		Attributes\Talkable=ReadInt(file)
+		Attributes\CurrentAnim=ReadInt(file)
+		Attributes\StandardAnim=ReadInt(file)
+		;ObjectTileX=ReadInt(file)
+		;ObjectTileY=ReadInt(file)
 		tilex=ReadInt(file)
 		tiley=ReadInt(file)
-		SetObjectTileXY(Dest,tilex,tiley)
-		ObjectTileX2(Dest)=ReadInt(file)
-		ObjectTileY2(Dest)=ReadInt(file)
-		ObjectMovementTimer(Dest)=ReadInt(file)
-		ObjectMovementSpeed(Dest)=ReadInt(file)
-		ObjectMoveXGoal(Dest)=ReadInt(file)
-		ObjectMoveYGoal(Dest)=ReadInt(file)
-		ObjectTileTypeCollision(Dest)=ReadInt(file)
-		ObjectObjectTypeCollision(Dest)=ReadInt(file)
-		ObjectCaged(Dest)=ReadInt(file)
-		ObjectDead(Dest)=ReadInt(file)
-		ObjectDeadTimer(Dest)=ReadInt(file)
-		ObjectExclamation(Dest)=ReadInt(file)
-		ObjectShadow(Dest)=ReadInt(file)
-		ObjectLinked(Dest)=ReadInt(file)
-		ObjectLinkBack(Dest)=ReadInt(file)
-		ObjectFlying(Dest)=ReadInt(file)
-		ObjectFrozen(Dest)=ReadInt(file)
-		ObjectIndigo(Dest)=ReadInt(file)
-		ObjectFutureInt24(Dest)=ReadInt(file)
-		ObjectFutureInt25(Dest)=ReadInt(file)
-		ObjectScaleAdjust(Dest)=ReadFloat(file)
-		ObjectScaleXAdjust(Dest)=ReadFloat(file)	
-		ObjectScaleYAdjust(Dest)=ReadFloat(file)
-		ObjectScaleZAdjust(Dest)=ReadFloat(file)
-		ObjectScaleXAdjust(Dest)=1.0
-		ObjectScaleYAdjust(Dest)=1.0
-		ObjectScaleZAdjust(Dest)=1.0
-		ObjectFutureFloat5(Dest)=ReadFloat(file)
-		ObjectFutureFloat6(Dest)=ReadFloat(file)
-		ObjectFutureFloat7(Dest)=ReadFloat(file)	
-		ObjectFutureFloat8(Dest)=ReadFloat(file)
-		ObjectFutureFloat9(Dest)=ReadFloat(file)
-		ObjectFutureFloat10(Dest)=ReadFloat(file)
-		ObjectFutureString1$(Dest)=ReadString(file)
-		ObjectFutureString2$(Dest)=ReadString(file)
+		SetObjectTileXY(i,tilex,tiley)
+		ReadInt(file) ;ObjectTileX2=ReadInt(file)
+		ReadInt(file) ;ObjectTileY2=ReadInt(file)
+		Attributes\MovementTimer=ReadInt(file)
+		Attributes\MovementSpeed=ReadInt(file)
+		Attributes\MoveXGoal=ReadInt(file)
+		Attributes\MoveYGoal=ReadInt(file)
+		Attributes\TileTypeCollision=ReadInt(file)
+		Attributes\ObjectTypeCollision=ReadInt(file)
+		Attributes\Caged=ReadInt(file)
+		Attributes\Dead=ReadInt(file)
+		Attributes\DeadTimer=ReadInt(file)
+		Attributes\Exclamation=ReadInt(file)
+		Attributes\Shadow=ReadInt(file)
+		Attributes\Linked=ReadInt(file)
+		Attributes\LinkBack=ReadInt(file)
+		Attributes\Flying=ReadInt(file)
+		Attributes\Frozen=ReadInt(file)
+		Attributes\Indigo=ReadInt(file)
+		Attributes\FutureInt24=ReadInt(file)
+		Attributes\FutureInt25=ReadInt(file)
+		Attributes\ScaleAdjust=ReadFloat(file)
+		Attributes\ScaleXAdjust=ReadFloat(file)	
+		Attributes\ScaleYAdjust=ReadFloat(file)
+		Attributes\ScaleZAdjust=ReadFloat(file)
+		Attributes\ScaleXAdjust=1.0
+		Attributes\ScaleYAdjust=1.0
+		Attributes\ScaleZAdjust=1.0
+		Attributes\FutureFloat5=ReadFloat(file)
+		Attributes\FutureFloat6=ReadFloat(file)
+		Attributes\FutureFloat7=ReadFloat(file)	
+		Attributes\FutureFloat8=ReadFloat(file)
+		Attributes\FutureFloat9=ReadFloat(file)
+		Attributes\FutureFloat10=ReadFloat(file)
+		Attributes\FutureString1$=ReadString(file)
+		Attributes\FutureString2$=ReadString(file)
 		
 		For k=0 To 30
-			ObjectAdjusterString$(Dest,k)=ReadString(file)
+			;ObjectAdjusterString$(Dest,k)=ReadString(file)
+			ReadString(file)
 		Next
 		
-		CreateObjectModel(Dest)
+		CreateObjectModel
 
 
 		NofObjects=NofObjects+1
@@ -17752,10 +17764,11 @@ Function LoadLevel(levelnumber)
 	; finalize object data
 	PlayerIndex=NofObjects
 	For j=0 To NofObjects-1
-		ObjectLinked(j)=ObjectIndexGameToEditor(ObjectLinked(j), PlayerIndex)
-		ObjectLinkBack(j)=ObjectIndexGameToEditor(ObjectLinkBack(j), PlayerIndex)
-		ObjectParent(j)=ObjectIndexGameToEditor(ObjectParent(j), PlayerIndex)
-		ObjectChild(j)=ObjectIndexGameToEditor(ObjectChild(j), PlayerIndex)
+		LevelObject=LevelObjects
+		LevelObject\Attributes\Linked=ObjectIndexGameToEditor(LevelObject\Attributes\Linked, PlayerIndex)
+		LevelObject\Attributes\LinkBack=ObjectIndexGameToEditor(LevelObject\Attributes\LinkBack, PlayerIndex)
+		LevelObject\Attributes\Parent=ObjectIndexGameToEditor(LevelObject\Attributes\Parent, PlayerIndex)
+		LevelObject\Attributes\Child=ObjectIndexGameToEditor(LevelObject\Attributes\Child, PlayerIndex)
 	Next
 	
 	SomeObjectWasChanged()
@@ -25028,10 +25041,11 @@ Function SearchForCustomContent(ex$,ishub=False)
 		
 		; skip unused adjusters
 		SeekFile file,FilePos(file)+((57+10)*4)
-
-		For k=0 To 3
-			ObjectTextData$(Dest,k)=ReadString$(file)
-		Next
+		
+		LevelObjects(i)\Attributes\TextData0$=ReadString$(file)
+		LevelObjects(i)\Attributes\TextData1$=ReadString$(file)
+		LevelObjects(i)\Attributes\TextData2$=ReadString$(file)
+		LevelObjects(i)\Attributes\TextData3$=ReadString$(file)
 		
 		; skip unused adjusters
 		SeekFile file,FilePos(file)+(35*4)
