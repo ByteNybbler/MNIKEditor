@@ -937,6 +937,7 @@ Dim CurrentObjectActivateId(2)
 Global CurrentObjectActivateIdCount=0
 
 Global IDFilterEnabled=False
+Global IDFilterInverted=False
 Global IDFilterAllow=-1
 
 Global TexturePrefix$=""
@@ -2942,7 +2943,10 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarIDFilterX,ToolbarIDFilterY,"ID FILTER")
 	If IDFilterEnabled
-		Line1$=IDFilterAllow
+		Line1$="= "+IDFilterAllow
+		If IDFilterInverted
+			Line1$="!"+Line1$
+		EndIf
 	Else
 		Line1$="OFF"
 	EndIf
@@ -6190,11 +6194,18 @@ Function EditorLocalControls()
 				IDFilterEnabled=True
 			Else
 				IDFilterEnabled=False
+				IDFilterInverted=False
 			EndIf
 			For j=0 To NofObjects-1
 				UpdateObjectVisibility(j)
 			Next
 			Delay 100
+		EndIf
+		If RightMouse=True And RightMouseReleased=True
+			If IDFilterEnabled
+				IDFilterInverted=Not IDFilterInverted
+				Delay 100
+			EndIf
 		EndIf
 		If IDFilterEnabled And MouseScroll<>0
 			If ShiftDown()
@@ -9336,9 +9347,24 @@ Function ShowEntityAndAccessories(Dest)
 End Function
 
 
-Function UpdateObjectVisibility(Obj)
+Function IDFilterShouldHide(Attributes.GameObjectAttributes)
 
-	If ShowObjectMesh=0 Or (IDFilterEnabled=True And IDFilterAllow<>CalculateEffectiveID(Obj\Attributes))
+If IDFilterEnabled
+	If IDFilterInverted=True
+		Return IDFilterAllow=CalculateEffectiveID(Attributes)
+	Else
+		Return IDFilterAllow<>CalculateEffectiveID(Attributes)
+	EndIf
+Else
+	Return False
+EndIf
+
+End Function
+
+
+Function UpdateObjectVisibility(Obj.GameObject)
+
+	If ShowObjectMesh=0 Or IDFilterShouldHide(Obj\Attributes)
 		HideEntityAndAccessories(Obj)
 	Else
 		If SimulationLevel>=2 And ShouldBeInvisibleInGame(Obj\Attributes)
