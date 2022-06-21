@@ -696,7 +696,7 @@ Global HighlightWopAdjusters=True
 Global NofWopAdjusters=0
 Dim ObjectAdjusterWop$(30)
 
-Dim ObjectPositionMarker(1000)
+Dim ObjectPositionMarker(MaxNofObjects)
 Dim WorldAdjusterPositionMarker(3)
 Global CurrentObjectMoveXYGoalMarker
 Global WhereWeEndedUpMarker ; For traveling with G between LevelExits.
@@ -2401,7 +2401,7 @@ Function InitializeGraphicsEntities()
 		CursorMeshOpaque(i)=CreateCube()
 		ScaleMesh CursorMeshOpaque(i),.2,0.01,.2
 		
-		; The square region that the brush covers
+		; The square region that the brush covers, used only by the texture picker
 		CursorMeshTexturePicker=CreateCube()
 		ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
 		EntityAlpha CursorMeshTexturePicker,.3
@@ -3057,7 +3057,7 @@ Function SetEditorMode(NewMode)
 		SetBrushMode(BrushModeNormal)
 	EndIf
 	
-	If NewMode=0
+	If NewMode=0 Or NewMode=3 ; If EditorMode=1 Or EditorMode=2
 		Camera1Proj=Camera1SavedProjMode
 		Camera3Proj=0
 		UpdateCameraProj()
@@ -4596,38 +4596,45 @@ Function EditorLocalControls()
 	
 	
 	; *************************************
-	; Selecting A Texture / Picking a Texture
+	; Selecting A Texture / Picking a Texture / Texture Picker
 	; *************************************
 	If EditorMode=1 Or EditorMode=2
+		; Draw a rectangle so the user can't see the level behind the texture picker on larger resolutions.
+		Color 0,0,0
+		Rect 0,0,LevelViewportWidth,LevelViewportHeight
+		
 		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
 			nmx=LevelViewportX(mx)
 			nmy=my
 			DivisorNumerator=LevelViewportHeight
 			DivisorX#=Float#(DivisorNumerator)/8.0
 			DivisorY#=Float#(DivisorNumerator)/8.0
-			StepSize#=1.0/8.0;*TilePickerZoomScaling#
+			StepSize#=1.0/8.0
 			ScaleEntity CursorMeshPillar(0),0.0325,0.01,0.0325
 			ScaleEntity CursorMeshTexturePicker,0.0325,0.01,0.0325
-			PositionEntity CursorMeshPillar(0),Floor(nmx/DivisorX#)*StepSize#+StepSize#/2.0,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2.0,200
-			PositionEntity CursorMeshTexturePicker,Floor(nmx/DivisorX#)*StepSize#+StepSize#/2.0,200,-Floor(nmy/DivisorY#)*StepSize#-StepSize#/2.0,200
+			tilepickx=Floor(nmx/DivisorX#)
+			tilepicky=Floor(nmy/DivisorY#)
+			tilepickx=ClampInt(0,7,tilepickx)
+			tilepicky=ClampInt(0,7,tilepicky)
+			PositionEntity CursorMeshPillar(0),tilepickx*StepSize#+StepSize#/2.0,200,-tilepicky*StepSize#-StepSize#/2.0,200
+			PositionEntity CursorMeshTexturePicker,tilepickx*StepSize#+StepSize#/2.0,200,-tilepicky*StepSize#-StepSize#/2.0,200
 			ShowEntity CursorMeshPillar(0)
 			ShowEntity CursorMeshOpaque(0)
 			ShowEntity CursorMeshTexturePicker
 			If LeftMouse=True
 				If editormode=1
 					; main texture
-					CurrentTileTexture=Floor(nmx/DivisorX#)+Floor(nmy/DivisorY#)*8
+					CurrentTileTexture=tilepickx+tilepicky*8
 				Else If editormode=2
 					; main texture
-					CurrentTileSideTexture=Floor(nmx/DivisorX#)+Floor(nmy/DivisorY#)*8
+					CurrentTileSideTexture=tilepickx+tilepicky*8
 				EndIf
 				SetEditorMode(0)
 				LeftMouseReleased=False
 				BuildCurrentTileModel()
 				ScaleEntity CursorMeshPillar(0),1,1,1
 			EndIf
-	
-		Else 
+		Else
 			HideCursors()
 		EndIf
 	EndIf
