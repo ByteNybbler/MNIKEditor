@@ -412,23 +412,94 @@ Global BrushWidth=1
 Global BrushHeight=1
 Global CustomBrushEditorMode=-1
 
+Global RandomYawAdjust=False
+Global RandomYawAdjustMin#=0.0
+Global RandomYawAdjustMax#=360.0
+Global RandomRollAdjust=False
+Global RandomRollAdjustMin#=0.0
+Global RandomRollAdjustMax#=360.0
+Global RandomPitchAdjust=False
+Global RandomPitchAdjustMin#=0.0
+Global RandomPitchAdjustMax#=360.0
+Global RandomScaleAdjust=False
+Global RandomScaleAdjustMin#=0.5
+Global RandomScaleAdjustMax#=1.5
+Global RandomXScale=False
+Global RandomXScaleMin#=0.5
+Global RandomXScaleMax#=1.5
+Global RandomYScale=False
+Global RandomYScaleMin#=0.5
+Global RandomYScaleMax#=1.5
+Global RandomZScale=False
+Global RandomZScaleMin#=0.5
+Global RandomZScaleMax#=1.5
+Global RandomXAdjust=False
+Global RandomXAdjustMin#=-0.5
+Global RandomXAdjustMax#=0.5
+Global RandomYAdjust=False
+Global RandomYAdjustMin#=-0.5
+Global RandomYAdjustMax#=0.5
+Global RandomZAdjust=False
+Global RandomZAdjustMin#=-0.5
+Global RandomZAdjustMax#=0.5
+Global RandomTimer=False
+Global RandomTimerMin=1
+Global RandomTimerMax=100
+Global RandomTimerMax1=False
+Global RandomTimerMax1Min=1
+Global RandomTimerMax1Max=100
+Global RandomTimerMax2=False
+Global RandomTimerMax2Min=1
+Global RandomTimerMax2Max=100
+Global RandomID=False
+Global RandomIDMin=100
+Global RandomIDMax=200
+Global RandomMovementSpeed=False
+Global RandomMovementSpeedMin=10
+Global RandomMovementSpeedMax=40
+Global RandomMovementType=False
+Global RandomMovementTypeMin=41
+Global RandomMovementTypeMax=48
+Global RandomType=False
+Global RandomTypeMin=170
+Global RandomTypeMax=173
+Global RandomSubType=False
+Global RandomSubTypeMin=0
+Global RandomSubTypeMax=8
 Global RandomActive=False
 Global RandomActiveMin=0
 Global RandomActiveMax=1001
-
+Global RandomActivationType=False
+Global RandomActivationTypeMin=12
+Global RandomActivationTypeMax=16
+Global RandomActivationSpeed=False
+Global RandomActivationSpeedMin=2
+Global RandomActivationSpeedMax=40
+Global RandomDefensePower=False
+Global RandomDefensePowerMin=0
+Global RandomDefensePowerMax=33
+Global RandomExclamation=False
+Global RandomExclamationMin=0
+Global RandomExclamationMax=99
 Global RandomMoveXGoal=False
 Global RandomMoveXGoalMin=0
 Global RandomMoveXGoalMax=39
-
 Global RandomMoveYGoal=False
 Global RandomMoveYGoalMin=0
 Global RandomMoveYGoalMax=39
-
+Global RandomDead=False
+Global RandomDeadMin=0
+Global RandomDeadMax=3
+Global RandomStatus=False
+Global RandomStatusMin=0
+Global RandomStatusMax=10
+Global RandomTalkable=False
+Global RandomTalkableMin=0
+Global RandomTalkableMax=0
 Global RandomTTC=False
 Global RandomOTC=False
 Global RandomButtonPush=False
 Global RandomTeleportable=False
-
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -929,29 +1000,29 @@ Global ObjectAdjusterDZ=NewObjectAdjusterFloat("DZ",-1.0,1.0)
 Global ObjectAdjusterSpeed=NewObjectAdjusterFloat("Speed",-0.5,0.5)
 Global ObjectAdjusterRadius=NewObjectAdjusterFloat("Radius",-0.5,0.5)
 
-xzx
+
 
 Global CurrentObjectModel,CurrentObjectTexture
 Global CurrentHatModel,CurrentHatTexture
 Global CurrentAccModel,CurrentAccTexture
 
-Global CurrentObject\Attributes\ModelName$
-Global CurrentObject\Attributes\TexName$
-Global CurrentObject\Attributes\XScale#
-Global CurrentObject\Attributes\ZScale#
-Global CurrentObject\Attributes\YScale#
-Global CurrentObject\Attributes\XAdjust#
-Global CurrentObject\Attributes\ZAdjust#
-Global CurrentObject\Attributes\YAdjust#
-Global CurrentObject\Attributes\PitchAdjust#
-Global CurrentObject\Attributes\YawAdjust#
-Global CurrentObject\Attributes\RollAdjust#
-Global CurrentObject\Position\X#,CurrentObject\Position\Y#,CurrentObject\Position\Z#
-Global CurrentObject\Position\OldX#,CurrentObject\Position\OldY#,CurrentObject\Position\OldZ#
-Global CurrentObject\Attributes\DX#, CurrentObject\Attributes\DY#, CurrentObject\Attributes\DZ#
-Global CurrentObjectPitch#, CurrentObject\Position\Yaw#, CurrentObjectRoll#
-Global CurrentObjectPitch2#, CurrentObject\Position\Yaw2#, CurrentObjectRoll2#
-Global CurrentObject\Attributes\XGoal#, CurrentObject\Attributes\YGoal#, CurrentObject\Position\ZGoal#
+Global CurrentObjectModelName$
+Global CurrentObjectTextureName$
+Global CurrentObjectXScale#
+Global CurrentObjectZScale#
+Global CurrentObjectYScale#
+Global CurrentObjectXAdjust#
+Global CurrentObjectZAdjust#
+Global CurrentObjectYAdjust#
+Global CurrentObjectPitchAdjust#
+Global CurrentObjectYawAdjust#
+Global CurrentObjectRollAdjust#
+Global CurrentObjectX#,CurrentObjectY#,CurrentObjectZ#
+Global CurrentObjectOldX#,CurrentObjectOldY#,CurrentObjectOldZ#
+Global CurrentObjectDX#, CurrentObjectDY#, CurrentObjectDZ#
+Global CurrentObjectPitch#, CurrentObjectYaw#, CurrentObjectRoll#
+Global CurrentObjectPitch2#, CurrentObjectYaw2#, CurrentObjectRoll2#
+Global CurrentObjectXGoal#, CurrentObjectYGoal#, CurrentObjectZGoal#
 Global CurrentObjectMovementType, CurrentObjectMovementTypeData, CurrentObjectSpeed#
 Global CurrentObjectRadius#, CurrentObjectRadiusType
 Global CurrentObjectData10
@@ -963,12 +1034,12 @@ Global CurrentObjectStatus, CurrentObjectTimer, CurrentObjectTimerMax1, CurrentO
 Global CurrentObject\Attributes\Teleportable, CurrentObjectButtonPush, CurrentObject\Attributes\WaterReact
 Global CurrentObjectTelekinesisable, CurrentObjectFreezable
 Global CurrentObjectReactive
-Global CurrentObject\Attributes\Child, CurrentObject\Attributes\Parent
+Global CurrentObjectChild, CurrentObjectParent
 Dim CurrentObjectData(10), CurrentObjectTextData$(4)
-Global CurrentObjectTalkable,CurrentObjectCurrentAnim,CurrentObjectStandardAnim,CurrentObject\Position\TileX,CurrentObject\Position\TileY
-Global CurrentObject\Position\TileX2,CurrentObject\Position\TileY2,CurrentObjectMovementTimer,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
+Global CurrentObjectTalkable,CurrentObjectCurrentAnim,CurrentObjectStandardAnim,CurrentObjectTileX,CurrentObjectTileY
+Global CurrentObjectTileX2,CurrentObjectTileY2,CurrentObjectMovementTimer,CurrentObjectMovementSpeed,CurrentObjectMoveXGoal
 Global CurrentObjectMoveYGoal,CurrentObjectTileTypeCollision,CurrentObjectObjectTypeCollision,CurrentObjectCaged,CurrentObjectDead
-Global CurrentObjectDeadTimer,CurrentObject\Attributes\Exclamation,CurrentObjectShadow,CurrentObject\Attributes\Linked,CurrentObject\Attributes\LinkBack
+Global CurrentObjectDeadTimer,CurrentObjectExclamation,CurrentObjectShadow,CurrentObjectLinked,CurrentObjectLinkBack
 Global CurrentObjectFlying,CurrentObjectFrozen,CurrentObjectIndigo,CurrentObjectFutureInt24,CurrentObjectFutureInt25
 Global CurrentObjectScaleAdjust#,CurrentObjectScaleXAdjust#,CurrentObjectScaleYAdjust#,CurrentObjectScaleZAdjust#,CurrentObjectFutureFloat5#
 Global CurrentObjectFutureFloat6#,CurrentObjectFutureFloat7#,CurrentObjectFutureFloat8#,CurrentObjectFutureFloat9#,CurrentObjectFutureFloat10#
@@ -6199,7 +6270,7 @@ Function EditorLocalControls()
 					ObjectZAdjust(i)=ObjectZAdjust(i)+Adjustment
 					UpdateObjectPosition(i)
 				Next
-				CurrentObject\Attributes\ZAdjust=CurrentObject\Attributes\ZAdjust+Adjustment
+				CurrentObjectZAdjust=CurrentObjectZAdjust+Adjustment
 				BuildCurrentObjectModel()
 				SomeObjectWasChanged()
 				
@@ -8526,35 +8597,35 @@ End Function
 
 Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 
-	CurrentObject\Attributes\ModelName$=ModelName$
-	CurrentObject\Attributes\TexName$="!None"
-	CurrentObject\Attributes\XScale#=1
-	CurrentObject\Attributes\YScale#=1
-	CurrentObject\Attributes\ZScale#=1
-	CurrentObject\Attributes\XAdjust#=0.0
-	CurrentObject\Attributes\YAdjust#=0.0
-	CurrentObject\Attributes\ZAdjust#=0.0
-	CurrentObject\Attributes\PitchAdjust#=0.0
-	CurrentObject\Attributes\YawAdjust#=0.0
-	CurrentObject\Attributes\RollAdjust#=0.0
-	CurrentObject\Position\X#=0.0
-	CurrentObject\Position\Y#=0.0
-	CurrentObject\Position\Z#=0.0
-	CurrentObject\Position\OldX#=-999
-	CurrentObject\Position\OldY#=-999
-	CurrentObject\Position\OldZ#=-999
-	CurrentObject\Attributes\DX#=0
-	CurrentObject\Attributes\DY#=0
-	CurrentObject\Attributes\DZ#=0
+	CurrentObjectModelName$=ModelName$
+	CurrentObjectTextureName$="!None"
+	CurrentObjectXScale#=1
+	CurrentObjectYScale#=1
+	CurrentObjectZScale#=1
+	CurrentObjectXAdjust#=0.0
+	CurrentObjectYAdjust#=0.0
+	CurrentObjectZAdjust#=0.0
+	CurrentObjectPitchAdjust#=0.0
+	CurrentObjectYawAdjust#=0.0
+	CurrentObjectRollAdjust#=0.0
+	CurrentObjectX#=0.0
+	CurrentObjectY#=0.0
+	CurrentObjectZ#=0.0
+	CurrentObjectOldX#=-999
+	CurrentObjectOldY#=-999
+	CurrentObjectOldZ#=-999
+	CurrentObjectDX#=0
+	CurrentObjectDY#=0
+	CurrentObjectDZ#=0
 	CurrentObjectPitch#=0
-	CurrentObject\Position\Yaw#=0
+	CurrentObjectYaw#=0
 	CurrentObjectRoll#=0
 	CurrentObjectPitch2#=0
-	CurrentObject\Position\Yaw2#=0
+	CurrentObjectYaw2#=0
 	CurrentObjectRoll2#=0
-	CurrentObject\Attributes\XGoal#=0
-	CurrentObject\Attributes\YGoal#=0
-	CurrentObject\Position\ZGoal#=0
+	CurrentObjectXGoal#=0
+	CurrentObjectYGoal#=0
+	CurrentObjectZGoal#=0
 	CurrentObjectMovementType=0
 	CurrentObjectMovementTypeData=0
 	CurrentObjectSpeed#=0
@@ -8583,8 +8654,8 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObjectTelekinesisable=0
 	CurrentObjectFreezable=0
 	CurrentObjectReactive=True
-	CurrentObject\Attributes\Child=-1
-	CurrentObject\Attributes\Parent=-1
+	CurrentObjectChild=-1
+	CurrentObjectParent=-1
 	For i=0 To 9
 		CurrentObjectData(i)=0
 	Next
@@ -8594,10 +8665,10 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObjectTalkable=0
 	CurrentObjectCurrentAnim=0
 	CurrentObjectStandardAnim=0
-	CurrentObject\Position\TileX=0
-	CurrentObject\Position\TileY=0
-	CurrentObject\Position\TileX2=0
-	CurrentObject\Position\TileY2=0
+	CurrentObjectTileX=0
+	CurrentObjectTileY=0
+	CurrentObjectTileX2=0
+	CurrentObjectTileY2=0
 	CurrentObjectMovementTimer=0
 	CurrentObjectMovementSpeed=0
 	CurrentObjectMoveXGoal=0
@@ -8607,10 +8678,10 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObjectCaged=0
 	CurrentObjectDead=0
 	CurrentObjectDeadTimer=0
-	CurrentObject\Attributes\Exclamation=0
+	CurrentObjectExclamation=0
 	CurrentObjectShadow=-1
-	CurrentObject\Attributes\Linked=-1
-	CurrentObject\Attributes\LinkBack=-1
+	CurrentObjectLinked=-1
+	CurrentObjectLinkBack=-1
 	CurrentObjectFlying=0
 	CurrentObjectFrozen=0
 	CurrentObjectIndigo=0
@@ -8638,35 +8709,35 @@ Function LoadObjectPreset()
 
 	file=ReadFile(filename$)
 	
-	CurrentObject\Attributes\ModelName$=ReadString$(file)
-	CurrentObject\Attributes\TexName$=ReadString$(file)
-	CurrentObject\Attributes\XScale#=ReadFloat(file)
-	CurrentObject\Attributes\YScale#=ReadFloat(file)
-	CurrentObject\Attributes\ZScale#=ReadFloat(file)
-	CurrentObject\Attributes\XAdjust#=ReadFloat(file)
-	CurrentObject\Attributes\YAdjust#=ReadFloat(file)
-	CurrentObject\Attributes\ZAdjust#=ReadFloat(file)
-	CurrentObject\Attributes\PitchAdjust#=ReadFloat(file)
-	CurrentObject\Attributes\YawAdjust#=ReadFloat(file)
-	CurrentObject\Attributes\RollAdjust#=ReadFloat(file)
-	CurrentObject\Position\X#=ReadFloat(file)
-	CurrentObject\Position\Y#=ReadFloat(file)
-	CurrentObject\Position\Z#=ReadFloat(file)
-	CurrentObject\Position\OldX#=ReadFloat(file)
-	CurrentObject\Position\OldY#=ReadFloat(file)
-	CurrentObject\Position\OldZ#=ReadFloat(file)
-	CurrentObject\Attributes\DX#=ReadFloat(file)
-	CurrentObject\Attributes\DY#=ReadFloat(file)
-	CurrentObject\Attributes\DZ#=ReadFloat(file)
+	CurrentObjectModelName$=ReadString$(file)
+	CurrentObjectTextureName$=ReadString$(file)
+	CurrentObjectXScale#=ReadFloat(file)
+	CurrentObjectYScale#=ReadFloat(file)
+	CurrentObjectZScale#=ReadFloat(file)
+	CurrentObjectXAdjust#=ReadFloat(file)
+	CurrentObjectYAdjust#=ReadFloat(file)
+	CurrentObjectZAdjust#=ReadFloat(file)
+	CurrentObjectPitchAdjust#=ReadFloat(file)
+	CurrentObjectYawAdjust#=ReadFloat(file)
+	CurrentObjectRollAdjust#=ReadFloat(file)
+	CurrentObjectX#=ReadFloat(file)
+	CurrentObjectY#=ReadFloat(file)
+	CurrentObjectZ#=ReadFloat(file)
+	CurrentObjectOldX#=ReadFloat(file)
+	CurrentObjectOldY#=ReadFloat(file)
+	CurrentObjectOldZ#=ReadFloat(file)
+	CurrentObjectDX#=ReadFloat(file)
+	CurrentObjectDY#=ReadFloat(file)
+	CurrentObjectDZ#=ReadFloat(file)
 	CurrentObjectPitch#=ReadFloat(file)
-	CurrentObject\Position\Yaw#=ReadFloat(file)
+	CurrentObjectYaw#=ReadFloat(file)
 	CurrentObjectRoll#=ReadFloat(file)
 	CurrentObjectPitch2#=ReadFloat(file)
-	CurrentObject\Position\Yaw2#=ReadFloat(file)
+	CurrentObjectYaw2#=ReadFloat(file)
 	CurrentObjectRoll2#=ReadFloat(file)
-	CurrentObject\Attributes\XGoal#=ReadFloat(file)
-	CurrentObject\Attributes\YGoal#=ReadFloat(file)
-	CurrentObject\Position\ZGoal#=ReadFloat(file)
+	CurrentObjectXGoal#=ReadFloat(file)
+	CurrentObjectYGoal#=ReadFloat(file)
+	CurrentObjectZGoal#=ReadFloat(file)
 	CurrentObjectMovementType=ReadInt(file)
 	CurrentObjectMovementTypeData=ReadInt(file)
 	CurrentObjectSpeed#=ReadFloat(file)
@@ -8695,8 +8766,8 @@ Function LoadObjectPreset()
 	CurrentObjectTelekinesisable=ReadInt(file)
 	CurrentObjectFreezable=ReadInt(file)
 	CurrentObjectReactive=ReadInt(file)
-	CurrentObject\Attributes\Child=ReadInt(file)
-	CurrentObject\Attributes\Parent=ReadInt(file)
+	CurrentObjectChild=ReadInt(file)
+	CurrentObjectParent=ReadInt(file)
 	For i=0 To 9
 		CurrentObjectData(i)=ReadInt(file)
 	Next
@@ -8706,10 +8777,10 @@ Function LoadObjectPreset()
 	CurrentObjectTalkable=ReadInt(file)
 	CurrentObjectCurrentAnim=ReadInt(file)
 	CurrentObjectStandardAnim=ReadInt(file)
-	CurrentObject\Position\TileX=ReadInt(file)
-	CurrentObject\Position\TileY=ReadInt(file)
-	CurrentObject\Position\TileX2=ReadInt(file)
-	CurrentObject\Position\TileY2=ReadInt(file)
+	CurrentObjectTileX=ReadInt(file)
+	CurrentObjectTileY=ReadInt(file)
+	CurrentObjectTileX2=ReadInt(file)
+	CurrentObjectTileY2=ReadInt(file)
 	CurrentObjectMovementTimer=ReadInt(file)
 	CurrentObjectMovementSpeed=ReadInt(file)
 	CurrentObjectMoveXGoal=ReadInt(file)
@@ -8719,14 +8790,14 @@ Function LoadObjectPreset()
 	CurrentObjectCaged=ReadInt(file)
 	CurrentObjectDead=ReadInt(file)
 	CurrentObjectDeadTimer=ReadInt(file)
-	CurrentObject\Attributes\Exclamation=ReadInt(file)
+	CurrentObjectExclamation=ReadInt(file)
 	CurrentObjectShadow=ReadInt(file)
-	;CurrentObject\Attributes\Linked=ReadInt(file)
+	;CurrentObjectLinked=ReadInt(file)
 	ReadInt(file)
-	CurrentObject\Attributes\Linked=-1
-	;CurrentObject\Attributes\LinkBack=ReadInt(file)
+	CurrentObjectLinked=-1
+	;CurrentObjectLinkBack=ReadInt(file)
 	ReadInt(file)
-	CurrentObject\Attributes\LinkBack=-1
+	CurrentObjectLinkBack=-1
 	CurrentObjectFlying=ReadInt(file)
 	CurrentObjectFrozen=ReadInt(file)
 	CurrentObjectIndigo=ReadInt(file)
@@ -10179,28 +10250,28 @@ Function DeleteObject(i)
 		EndIf
 	Next
 	
-	If CurrentObject\Attributes\Linked=i
-		CurrentObject\Attributes\Linked=-1
-	Else If CurrentObject\Attributes\Linked>i
-		CurrentObject\Attributes\Linked=CurrentObject\Attributes\Linked-1
+	If CurrentObjectLinked=i
+		CurrentObjectLinked=-1
+	Else If CurrentObjectLinked>i
+		CurrentObjectLinked=CurrentObjectLinked-1
 	EndIf
 	
-	If CurrentObject\Attributes\LinkBack=i
-		CurrentObject\Attributes\LinkBack=-1
-	Else If CurrentObject\Attributes\LinkBack>i
-		CurrentObject\Attributes\LinkBack=CurrentObject\Attributes\LinkBack-1
+	If CurrentObjectLinkBack=i
+		CurrentObjectLinkBack=-1
+	Else If CurrentObjectLinkBack>i
+		CurrentObjectLinkBack=CurrentObjectLinkBack-1
 	EndIf
 	
-	If CurrentObject\Attributes\Parent=i
-		CurrentObject\Attributes\Parent=-1
-	Else If CurrentObject\Attributes\Parent>i
-		CurrentObject\Attributes\Parent=CurrentObject\Attributes\Parent-1
+	If CurrentObjectParent=i
+		CurrentObjectParent=-1
+	Else If CurrentObjectParent>i
+		CurrentObjectParent=CurrentObjectParent-1
 	EndIf
 	
-	If CurrentObject\Attributes\Child=i
-		CurrentObject\Attributes\Child=-1
-	Else If CurrentObject\Attributes\Child>i
-		CurrentObject\Attributes\Child=CurrentObject\Attributes\Child-1
+	If CurrentObjectChild=i
+		CurrentObjectChild=-1
+	Else If CurrentObjectChild>i
+		CurrentObjectChild=CurrentObjectChild-1
 	EndIf
 	
 	UpdateObjectPositionMarkersAtTile(tilex,tiley)
@@ -10412,10 +10483,10 @@ End Function
 Function PasteObjectData(Dest)
 
 	;xyz position is not changed
-	;ObjectTileX(Dest)=CurrentObject\Position\TileX
-	;ObjectTileY(Dest)=CurrentObject\Position\TileY
-	;ObjectTileX2(Dest)=CurrentObject\Position\TileX2
-	;ObjectTileY2(Dest)=CurrentObject\Position\TileY2
+	;ObjectTileX(Dest)=CurrentObjectTileX
+	;ObjectTileY(Dest)=CurrentObjectTileY
+	;ObjectTileX2(Dest)=CurrentObjectTileX2
+	;ObjectTileY2(Dest)=CurrentObjectTileY2
 	CopyObjectAttributes(CurrentObject/Attributes,LevelObjects(Dest)/Attributes)
 
 	;FreeClothes(Dest)
@@ -10541,7 +10612,7 @@ Function HoverOverObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data2)))
 			EndIf
@@ -10552,7 +10623,7 @@ Function HoverOverObjectAdjuster(i)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(3))
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)))
 			EndIf
@@ -10565,7 +10636,7 @@ Function HoverOverObjectAdjuster(i)
 			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data4)
 		EndIf
 	
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data4)))
 			EndIf
@@ -10578,7 +10649,7 @@ Function HoverOverObjectAdjuster(i)
 			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data5)
 		EndIf
 	
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)))
 			EndIf
@@ -10636,11 +10707,11 @@ Function HoverOverObjectAdjuster(i)
 		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this object logic.")
 		
 	Case "ModelName"
-		Count=CountObjectModelNames(CurrentObject\Attributes\ModelName$)
+		Count=CountObjectModelNames(CurrentObjectModelName$)
 		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this ModelName.")
 	
 	Case "TextureName"
-		Count=CountObjectTextureNames(CurrentObject\Attributes\TexName$)
+		Count=CountObjectTextureNames(CurrentObjectTextureName$)
 		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this TextureName.")
 		
 	Case "ID"
@@ -10664,53 +10735,53 @@ Function DisplayObjectAdjuster(i)
 	Select ObjectAdjuster$(i)
 	Case "TextureName"
 		tex2$="Texture"
-		tex$=CurrentObject\Attributes\TexName$
+		tex$=CurrentObjectTextureName$
 		;If Left$(tex$,1)="?" ; object re-texture
 		;	tex$=Right$(tex$,Len(tex$)-1)
 		;EndIf
 	
 	Case "ModelName"
 		tex2$="Model"
-		tex$=CurrentObject\Attributes\ModelName$
+		tex$=CurrentObjectModelName$
 		;If Left$(tex$,1)="?" ; object re-model
 		;	tex$=Right$(tex$,Len(tex$)-1)
 		;EndIf
 		
 	Case "X"
-		tex$=Str$(CurrentObject\Position\X)
+		tex$=Str$(CurrentObjectX)
 	Case "Y"
-		tex$=Str$(CurrentObject\Position\Y)
+		tex$=Str$(CurrentObjectY)
 	Case "Z"
-		tex$=Str$(CurrentObject\Position\Z)
+		tex$=Str$(CurrentObjectZ)
 	
 	Case "XAdjust"
-		tex$=Str$(CurrentObject\Attributes\XAdjust)
+		tex$=Str$(CurrentObjectXAdjust)
 		Randomized=RandomXAdjust
 		LeftAdj$=RandomXAdjustMin
 		RightAdj$=RandomXAdjustMax
 	Case "YAdjust"
-		tex$=Str$(CurrentObject\Attributes\YAdjust)
+		tex$=Str$(CurrentObjectYAdjust)
 		Randomized=RandomYAdjust
 		LeftAdj$=RandomYAdjustMin
 		RightAdj$=RandomYAdjustMax
 	Case "ZAdjust"
-		tex$=Str$(CurrentObject\Attributes\ZAdjust)
+		tex$=Str$(CurrentObjectZAdjust)
 		Randomized=RandomZAdjust
 		LeftAdj$=RandomZAdjustMin
 		RightAdj$=RandomZAdjustMax
 	
 	Case "XScale"
-		tex$=Str$(CurrentObject\Attributes\XScale)
+		tex$=Str$(CurrentObjectXScale)
 		Randomized=RandomXScale
 		LeftAdj$=RandomXScaleMin
 		RightAdj$=RandomXScaleMax
 	Case "YScale"
-		tex$=Str$(CurrentObject\Attributes\YScale)
+		tex$=Str$(CurrentObjectYScale)
 		Randomized=RandomYScale
 		LeftAdj$=RandomYScaleMin
 		RightAdj$=RandomYScaleMax
 	Case "ZScale"
-		tex$=Str$(CurrentObject\Attributes\ZScale)
+		tex$=Str$(CurrentObjectZScale)
 		Randomized=RandomZScale
 		LeftAdj$=RandomZScaleMin
 		RightAdj$=RandomZScaleMax
@@ -10791,17 +10862,17 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "YawAdjust"
-		tex$=Str$(CurrentObject\Attributes\YawAdjust)
+		tex$=Str$(CurrentObjectYawAdjust)
 		Randomized=RandomYawAdjust
 		LeftAdj$=RandomYawAdjustMin
 		RightAdj$=RandomYawAdjustMax
 	Case "PitchAdjust"
-		tex$=Str$(CurrentObject\Attributes\PitchAdjust)
+		tex$=Str$(CurrentObjectPitchAdjust)
 		Randomized=RandomPitchAdjust
 		LeftAdj$=RandomPitchAdjustMin
 		RightAdj$=RandomPitchAdjustMax
 	Case "RollAdjust"
-		tex$=Str$(CurrentObject\Attributes\RollAdjust)
+		tex$=Str$(CurrentObjectRollAdjust)
 		Randomized=RandomRollAdjust
 		LeftAdj$=RandomRollAdjustMin
 		RightAdj$=RandomRollAdjustMax
@@ -10822,7 +10893,7 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomSubTypeMin
 		RightAdj$=RandomSubTypeMax
 		
-		If CurrentObject\Attributes\ModelName$="!Crab"
+		If CurrentObjectModelName$="!Crab"
 			tex2$="Color"
 			If CurrentObjectSubType=0
 				tex$="Green"
@@ -11155,11 +11226,11 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(0)
 		RightAdj$=RandomDataMax(0)
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="YawAnim"
 		EndIf
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!Obstacle48" ; (wysp ship)
+		If CurrentObjectType=160 And CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
 			tex2$="Turning"
 			Select CurrentObject\Attributes\Data0
 				Case 0
@@ -11170,20 +11241,20 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Scritter" Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObjectType=210 Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Door" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!Cage"  Or CurrentObject\Attributes\TexName$="!FireTrap" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObjectType=424 Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Autodoor" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"
-		If CurrentObject\Attributes\ModelName$="!Scritter" Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"		
+		;If CurrentObjectModelName$="!Scritter" Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectType=210 Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage"  Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectType=424 Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
+		If CurrentObjectModelName$="!Scritter" Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"		
 			tex2$="Colour"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+		If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
 			tex2$="Shape"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!CustomItem"
+		If CurrentObjectModelName$="!CustomItem"
 			tex2$="Texture"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!WaterFall"
+		If CurrentObjectModelName$="!WaterFall"
 			tex2$="Type"
 			Select CurrentObject\Attributes\Data0
 				Case 0
@@ -11196,13 +11267,13 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		
-		If CurrentObject\Attributes\ModelName$="!Gem"
+		If CurrentObjectModelName$="!Gem"
 			tex2$="Shape"
 		EndIf
-		If CurrentObject\Attributes\ModelName$="!Sign"
+		If CurrentObjectModelName$="!Sign"
 			tex2$="Shape"
 		EndIf
-		If CurrentObject\Attributes\ModelName$="!Crystal"
+		If CurrentObjectModelName$="!Crystal"
 			tex2$="Type"
 			Select CurrentObject\Attributes\Data0
 			Case 0
@@ -11213,7 +11284,7 @@ Function DisplayObjectAdjuster(i)
 
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			tex2$="Texture"
 			
 			Select CurrentObject\Attributes\Data0
@@ -11238,7 +11309,7 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Kaboom"
+		If CurrentObjectModelName$="!Kaboom"
 			tex2$="Texture"
 			
 			Select CurrentObject\Attributes\Data0
@@ -11257,22 +11328,22 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Wisp"
+		If CurrentObjectModelName$="!Wisp"
 			tex2$="Texture"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
+		If CurrentObjectModelName$="!Sun Sphere1"
 			tex2$="Red"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!GrowFlower"
+		If CurrentObjectModelName$="!GrowFlower"
 			tex2$="TileLogic"
 			tex$=LogicIdToLogicName$(CurrentObject\Attributes\Data0)
 		EndIf
 		
 		; Model checks are separated from Type checks so that the Type can override the model.
 		
-		If CurrentObjectType=51 Or CurrentObjectType=200 ;Or CurrentObject\Attributes\TexName$="!GloveTex" ; spellball generator or glovecharge
+		If CurrentObjectType=51 Or CurrentObjectType=200 ;Or CurrentObjectTextureName$="!GloveTex" ; spellball generator or glovecharge
 			tex2$="Spell"
 			tex$=GetMagicNameAndId(CurrentObject\Attributes\Data0)
 		EndIf
@@ -11447,19 +11518,19 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(1)
 		RightAdj$=RandomDataMax(1)
 
-		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+		If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
 			tex2$="Texture"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Gem"
+		If CurrentObjectModelName$="!Gem"
 			tex2$="Colour"
 		EndIf
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="PitchAnim"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Chomper"
+		If CurrentObjectModelName$="!Chomper"
 			tex2$="Special"
 			If CurrentObject\Attributes\Data1=0
 				tex$="---"
@@ -11472,20 +11543,20 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC" 
+		If CurrentObjectModelName$="!NPC" 
 			tex2$="Expression"
 			tex$=GetStinkerExpressionName$(CurrentObject\Attributes\Data1)
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
+		If CurrentObjectModelName$="!Sun Sphere1"
 			tex2$="Green"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Sign"
+		If CurrentObjectModelName$="!Sign"
 			tex2$="Texture"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Crab"
+		If CurrentObjectModelName$="!Crab"
 			tex2$="Status"
 			If CurrentObject\Attributes\Data1=0
 				tex$="Awake"
@@ -11498,7 +11569,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Door" Or CurrentObject\Attributes\ModelName$="!Key"  Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!Cage" Or CurrentObject\Attributes\TexName$="!FireTrap" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!Retrolasergate" Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Autodoor" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"
+		;If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!ColourGate" Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key"  Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!Retrolasergate" Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelname$="!Autodoor" Or CurrentObjectModelname$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
 		; spring or bridge or transporter or gate or key or teleporter or cage or fire trap or laser gate or moobot or suctube or conveyor
 		If CurrentObjectType=280 Or CurrentObjectType=40 Or CurrentObjectType=210 Or CurrentObjectType=10 Or CurrentObjectType=172 Or CurrentObjectType=30 Or CurrentObjectType=140 Or CurrentObjectType=20 Or CurrentObjectType=410 Or CurrentObjectType=424 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=45 Or CurrentObjectType=46
 			tex2$="SubColour"
@@ -11651,7 +11722,7 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Goal X"
 		EndIf
 
-		;If (Left$(CurrentObject\Attributes\ModelName$,6)="!Retro" And CurrentObject\Attributes\ModelName$<>"!Retrolasergate") Or CurrentObject\Attributes\ModelName$="!Weebot"  Or CurrentObject\Attributes\ModelName$="!Zapbot"
+		;If (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate") Or CurrentObjectModelName$="!Weebot"  Or CurrentObjectModelName$="!Zapbot"
 
 		; ufo or retro z-bot or zipbot or zapbot
 		If CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
@@ -11691,15 +11762,15 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(2)
 		RightAdj$=RandomDataMax(2)
 		
-		If CurrentObject\Attributes\ModelName$="!ColourGate"
+		If CurrentObjectModelName$="!ColourGate"
 			tex2$="Frame"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Gem"
+		If CurrentObjectModelName$="!Gem"
 			tex2$="XOffset"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			tex2$="Acc1"
 			
 			tex$=GetAccessoryName$(CurrentObject\Attributes\Data2)
@@ -11709,7 +11780,7 @@ Function DisplayObjectAdjuster(i)
 			
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Thwart" 
+		If CurrentObjectModelName$="!Thwart" 
 			tex2$="Colour"
 			If CurrentObject\Attributes\Data2=0
 				tex$="Standard"
@@ -11732,11 +11803,11 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
+		If CurrentObjectModelName$="!Sun Sphere1"
 			tex2$="Blue"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Wraith"
+		If CurrentObjectModelName$="!Wraith"
 			tex2$="Magic"
 			Select CurrentObject\Attributes\Data2
 			Case 0
@@ -11751,7 +11822,7 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Spring"  Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!FlipBridge"  Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Suctube"  Or CurrentObject\Attributes\ModelName$="!SuctubeX" Or CurrentObject\Attributes\ModelName$="!Conveyor"
+		;If CurrentObjectModelName$="!Spring"  Or CurrentObjectModelName$="!Transporter" Or CurrentObjectModelName$="!FlipBridge"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Suctube"  Or CurrentObjectModelName$="!SuctubeX" Or CurrentObjectModelName$="!Conveyor"
 		; spring or transporter or flipbridge or moobot or suctube or suctubex or conveyor
 		If CurrentObjectType=280 Or CurrentObjectType=210 Or CurrentObjectType=410 Or CurrentObjectType=432 Or CurrentObjectType=281 Or CurrentObjectType=282 Or CurrentObjectType=45 Or CurrentObjectType=46
 			tex2$="Direction"
@@ -11760,7 +11831,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="RollAnim"
 		EndIf
 		
@@ -11890,11 +11961,11 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(3)
 		RightAdj$=RandomDataMax(3)
 		
-		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
+		If CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!SuctubeX"
 			tex2$="Style"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!IceBlock"
+		If CurrentObjectModelName$="!IceBlock"
 			tex2$="Style"
 			Select CurrentObject\Attributes\Data3
 			Case 0
@@ -11904,12 +11975,12 @@ Function DisplayObjectAdjuster(i)
 			End Select
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			tex2$="Colour1"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		EndIf
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="XAnim"
 		EndIf
 
@@ -12026,15 +12097,15 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(4)
 		RightAdj$=RandomDataMax(4)
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="YAnim"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Conveyor"
+		If CurrentObjectModelName$="!Conveyor"
 			tex2$="Visual Type"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			tex2$="Acc2" ;"Glasses"
 			
 			tex$=GetAccessoryName$(CurrentObject\Attributes\Data4)
@@ -12124,20 +12195,20 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(5)
 		RightAdj$=RandomDataMax(5)
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			tex2$="Colour2"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Door" Or CurrentObject\Attributes\ModelName$="!Obstacle36" Or CurrentObject\Attributes\ModelName$="!Obstacle37" Or CurrentObject\Attributes\ModelName$="!Obstacle38" Or CurrentObject\Attributes\ModelName$="!Obstacle39" Or CurrentObject\Attributes\ModelName$="!Obstacle40"
+		If CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Obstacle36" Or CurrentObjectModelName$="!Obstacle37" Or CurrentObjectModelName$="!Obstacle38" Or CurrentObjectModelName$="!Obstacle39" Or CurrentObjectModelName$="!Obstacle40"
 			tex2$="Style"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!GlowWorm" Or CurrentObject\Attributes\ModelName$="!Zipper"
+		If CurrentObjectModelName$="!GlowWorm" Or CurrentObjectModelName$="!Zipper"
 			tex2$="Red"
 		EndIf
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="ZAnim"
 		EndIf
 		
@@ -12217,16 +12288,16 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(6)
 		RightAdj$=RandomDataMax(6)
 		
-		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 			tex2$="Green"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			tex2$="WalkAnim"
 			tex$=GetStinkerNPCWalkAnimName$(CurrentObject\Attributes\Data6)
 		EndIf
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="XSpeed"
 		EndIf
 
@@ -12293,11 +12364,11 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(7)
 		RightAdj$=RandomDataMax(7)
 		
-		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 			tex2$="Blue"
 		EndIf
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="YSpeed"
 		EndIf
 
@@ -12348,11 +12419,11 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(8)
 		RightAdj$=RandomDataMax(8)
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="ZSpeed"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!StinkerWee"
+		If CurrentObjectModelName$="!StinkerWee"
 			
 			tex2$="Type"
 			If CurrentObject\Attributes\Data8=0 tex$="Normal"
@@ -12417,7 +12488,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 
-		If CurrentObjectType=434 ;CurrentObject\Attributes\ModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalX3"
 		EndIf
 		
@@ -12433,7 +12504,7 @@ Function DisplayObjectAdjuster(i)
 		LeftAdj$=RandomDataMin(9)
 		RightAdj$=RandomDataMax(9)
 		
-		If CurrentObjectType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
+		If CurrentObjectType=160 And CurrentObjectModelName$="!CustomModel"
 			tex2$="Deadly"
 			If CurrentObject\Attributes\Data9=0 tex$="No"
 			If CurrentObject\Attributes\Data9=1 tex$="Yes"
@@ -12463,7 +12534,7 @@ Function DisplayObjectAdjuster(i)
 		
 				
 				
-		If CurrentObjectType=434 ;CurrentObject\Attributes\ModelName$="!Mothership"
+		If CurrentObjectType=434 ;CurrentObjectModelName$="!Mothership"
 			tex2$="FlyGoalY3"
 		EndIf
 		
@@ -12523,48 +12594,48 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObjectScaleAdjust)
-		Randomized=ObjectAdjusterScaleAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterScaleAdjust\RandomMin
-		RightAdj$=ObjectAdjusterScaleAdjust\RandomMax
+		Randomized=RandomScaleAdjust
+		LeftAdj$=RandomScaleAdjustMin
+		RightAdj$=RandomScaleAdjustMax
 	Case "Exclamation"
-		If CurrentObject\Attributes\Exclamation=-1
+		If CurrentObjectExclamation=-1
 			tex$="None"
 		Else
-			tex$=Str$(CurrentObject\Attributes\Exclamation)
+			tex$=Str$(CurrentObjectExclamation)
 		EndIf
 		
-		Randomized=ObjectAdjusterExclamation\RandomEnabled
-		LeftAdj$=ObjectAdjusterExclamation\RandomMin
-		RightAdj$=ObjectAdjusterExclamation\RandomMax
+		Randomized=RandomExclamation
+		LeftAdj$=RandomExclamationMin
+		RightAdj$=RandomExclamationMax
 		
 	Case "Linked"
-		If CurrentObject\Attributes\Linked=-1
+		If CurrentObjectLinked=-1
 			tex$="None"
-		ElseIf CurrentObject\Attributes\Linked=-2
+		ElseIf CurrentObjectLinked=-2
 			tex$="Pla"
 		Else
-			tex$=Str$(CurrentObject\Attributes\Linked)
+			tex$=Str$(CurrentObjectLinked)
 		EndIf
 	Case "LinkBack"
-		If CurrentObject\Attributes\LinkBack=-1
+		If CurrentObjectLinkBack=-1
 			tex$="None"
-		ElseIf CurrentObject\Attributes\LinkBack=-2
+		ElseIf CurrentObjectLinkBack=-2
 			tex$="Pla"
 		Else
-			tex$=Str$(CurrentObject\Attributes\LinkBack)
+			tex$=Str$(CurrentObjectLinkBack)
 		EndIf
 	
 	Case "Parent"
-		tex$=Str$(CurrentObject\Attributes\Parent)
+		tex$=Str$(CurrentObjectParent)
 	Case "Child"
-		tex$=Str$(CurrentObject\Attributes\Child)
+		tex$=Str$(CurrentObjectChild)
 		
 	Case "DX"
-		tex$=Str$(CurrentObject\Attributes\DX)
+		tex$=Str$(CurrentObjectDX)
 	Case "DY"
-		tex$=Str$(CurrentObject\Attributes\DY)
+		tex$=Str$(CurrentObjectDY)
 	Case "DZ"
-		tex$=Str$(CurrentObject\Attributes\DZ)
+		tex$=Str$(CurrentObjectDZ)
 		
 	Case "MoveXGoal"
 		tex$=Str$(CurrentObjectMoveXGoal)
@@ -12927,7 +12998,7 @@ Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
 		RandomDataMin(i)=0
 		RandomDataMax(i)=10
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			Select i
 			Case 2
 				; Use vanilla ranges
@@ -12965,11 +13036,11 @@ End Function
 
 Function InputTextureName(Prompt$)
 
-	CurrentObject\Attributes\TexName$=InputString$(Prompt$)
-	If Left$(CurrentObject\Attributes\TexName$,1)="/"
-		CurrentObject\Attributes\TexName$="userdata/custom/models/"+Right$(CurrentObject\Attributes\TexName$,Len(CurrentObject\Attributes\TexName$)-1)
+	CurrentObjectTextureName$=InputString$(Prompt$)
+	If Left$(CurrentObjectTextureName$,1)="/"
+		CurrentObjectTextureName$="userdata/custom/models/"+Right$(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)
 	Else
-		CurrentObject\Attributes\TexName$=TexturePrefix$+CurrentObject\Attributes\TexName$
+		CurrentObjectTextureName$=TexturePrefix$+CurrentObjectTextureName$
 	EndIf
 
 End Function
@@ -12977,12 +13048,12 @@ End Function
 
 Function InputModelName(Prompt$)
 
-	CurrentObject\Attributes\ModelName$=InputString$(Prompt$)
-	If CurrentObject\Attributes\ModelName$="!CustomModel"
+	CurrentObjectModelName$=InputString$(Prompt$)
+	If CurrentObjectModelName$="!CustomModel"
 		CurrentObjectTextData$(0)=InputString$("Enter custom model name (e.g. Default): ")
-	ElseIf Left$(CurrentObject\Attributes\ModelName$,1)="/" Or Left$(CurrentObject\Attributes\ModelName$,1)="?"
-		CurrentObjectTextData$(0)=Right$(CurrentObject\Attributes\ModelName$,Len(CurrentObject\Attributes\ModelName$)-1)
-		CurrentObject\Attributes\ModelName$="!CustomModel"
+	ElseIf Left$(CurrentObjectModelName$,1)="/" Or Left$(CurrentObjectModelName$,1)="?"
+		CurrentObjectTextData$(0)=Right$(CurrentObjectModelName$,Len(CurrentObjectModelName$)-1)
+		CurrentObjectModelName$="!CustomModel"
 	EndIf
 
 End Function
@@ -13239,7 +13310,7 @@ Function AdjustObjectAdjuster(i)
 	Case "ActivationType"
 		CurrentObject\Attributes\ActivationType=AdjustObjectAdjusterInt(ObjectAdjusterActivationType,CurrentObject\Attributes\ActivationType,SlowInt,FastInt,DelayTime)
 			
-		;If CurrentObject\Attributes\ModelName$="!SteppingStone"
+		;If CurrentObjectModelName$="!SteppingStone"
 		;	If LeftMouse=True Or RightMouse=True
 		;		If CurrentObject\Attributes\ActivationType=3 
 		;			CurrentObject\Attributes\ActivationType=16
@@ -13249,7 +13320,7 @@ Function AdjustObjectAdjuster(i)
 		;			CurrentObject\Attributes\ActivationType=3
 		;		EndIf
 		;	EndIf
-		;Else If CurrentObject\Attributes\ModelName$="!ColourGate"
+		;Else If CurrentObjectModelName$="!ColourGate"
 		;	If LeftMouse=True Or RightMouse=True
 		;		If CurrentObject\Attributes\ActivationType=1 
 		;			CurrentObject\Attributes\ActivationType=2
@@ -13263,7 +13334,7 @@ Function AdjustObjectAdjuster(i)
 		;			CurrentObject\Attributes\ActivationType=1
 		;		EndIf
 		;	EndIf
-		;Else If CurrentObject\Attributes\ModelName$="!Autodoor"
+		;Else If CurrentObjectModelName$="!Autodoor"
 		;	If LeftMouse=True Or RightMouse=True
 		;		If CurrentObject\Attributes\ActivationType=11 
 		;			CurrentObject\Attributes\ActivationType=17
@@ -13326,20 +13397,20 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObject\Attributes\Data0=AdjustInt("Data0: ", CurrentObject\Attributes\Data0, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(0, SlowInt, FastInt, DelayTime)
 		
-		CurrentObject\Attributes\ModelName$=CurrentObject\Attributes\ModelName$
+		CurrentObjectModelName$=CurrentObject\Attributes\ModelName$
 		CurrentObjectType=CurrentObject\Attributes\LogicType
 		
-		If CurrentObject\Attributes\ModelName$="!Scritter" ;Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObjectType=424
+		If CurrentObjectModelName$="!Scritter" ;Or CurrentObjectModelName$="!Cuboid" Or CurrentObjectType=424
 			; colours 0-6
 			If CurrentObject\Attributes\Data0>6 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=6
 	
-		Else If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+		Else If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
 			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Obstacle48" ; (wysp ship)
+		;If CurrentObjectModelName$="!Obstacle48" ; (wysp ship)
 		;	If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
 		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
 		;
@@ -13355,18 +13426,18 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0>63 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=63
 		EndIf
-		;If CurrentObject\Attributes\ModelName$="!StarGate"
+		;If CurrentObjectModelName$="!StarGate"
 		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=0
 		;EndIf
-		;If CurrentObject\Attributes\ModelName$="!CustomItem"
+		;If CurrentObjectModelName$="!CustomItem"
 		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=62
 		;	If CurrentObject\Attributes\Data0>62 CurrentObject\Attributes\Data0=0
 		;EndIf
-		If CurrentObject\Attributes\ModelName$="!Gem"
+		If CurrentObjectModelName$="!Gem"
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
 		EndIf
-		If CurrentObject\Attributes\ModelName$="!Crystal"
+		If CurrentObjectModelName$="!Crystal"
 			If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
 
@@ -13385,38 +13456,38 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0>7 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=7
 		EndIf
-		;If CurrentObject\Attributes\ModelName$="!Turtle" Or (Left$(CurrentObject\Attributes\ModelName$,6)="!Retro" And CurrentObjectType<>424) Or CurrentObject\Attributes\ModelName$="!Weebot" Or CurrentObject\Attributes\ModelName$="!Zapbot"
+		;If CurrentObjectModelName$="!Turtle" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectType<>424) Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot"
 		; turtle or scouge or ufo or retro z-bot or zipbot or zapbot
 		If CurrentObjectType=220 Or CurrentObjectType=421 Or CurrentObjectType=422 Or CurrentObjectType=423 Or CurrentObjectType=430 Or CurrentObjectType=431
 			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
-		If CurrentObject\Attributes\ModelName="!Kaboom"
+		If CurrentObjectModelName="!Kaboom"
 
 			If CurrentObject\Attributes\Data0>5 CurrentObject\Attributes\Data0=1
 			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=5
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			; texture
 			If CurrentObject\Attributes\Data0>8 CurrentObject\Attributes\Data0=1
 			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=8
 		EndIf
 
 		
-		If CurrentObject\Attributes\ModelName$="!Wisp"
+		If CurrentObjectModelName$="!Wisp"
 			; texture
 			If CurrentObject\Attributes\Data0>9 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=9
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Sign"
+		If CurrentObjectModelName$="!Sign"
 			; shape
 			If CurrentObject\Attributes\Data0>5 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=5
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!WaterFall"
+		If CurrentObjectModelName$="!WaterFall"
 			; liquid type
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
@@ -13425,7 +13496,7 @@ Function AdjustObjectAdjuster(i)
 		
 
 
-		;If CurrentObjectType=310 ;CurrentObject\Attributes\ModelName$="!Rubberducky"
+		;If CurrentObjectType=310 ;CurrentObjectModelName$="!Rubberducky"
 		;	If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
 		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
 		;EndIf
@@ -13450,20 +13521,20 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(1, SlowInt, FastInt, DelayTime)
 		
-		;If CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter"  Or (CurrentObject\Attributes\ModelName$="!Button" And ((CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17)) Or CurrentObject\Attributes\ModelName$="!Door" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!Cage" Or CurrentObject\Attributes\TexName$="!FireTrap" Or CurrentObject\Attributes\ModelName$="!Retrolasergate"  Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Autodoor" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"
+		;If CurrentObjectModelName$="!Spring" Or CurrentObjectModelName$="!FlipBridge" Or CurrentObjectModelName$="!SteppingStone" Or CurrentObjectModelName$="!Transporter"  Or (CurrentObjectModelName$="!Button" And ((CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17)) Or CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Key" Or CurrentObjectModelName$="!KeyCard" Or CurrentObjectModelName$="!Teleport" Or CurrentObjectModelName$="!Cage" Or CurrentObjectTextureName$="!FireTrap" Or CurrentObjectModelName$="!Retrolasergate"  Or CurrentObjectModelName$="!Pushbot" Or CurrentObjectModelName$="!Autodoor" Or CurrentObjectModelName$="!Suctube" Or CurrentObjectModelName$="!Conveyor"
 
 
 			; subcolours 0-4
 		;	If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
 		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
-		;Else If  (CurrentObject\Attributes\ModelName$="!Button" And (CurrentObjectSubType Mod 32)<10) 
+		;Else If  (CurrentObjectModelName$="!Button" And (CurrentObjectSubType Mod 32)<10) 
 
 			; colours 0-15
 		;	If CurrentObject\Attributes\Data1>15 CurrentObject\Attributes\Data1=0
 		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=15
 		;EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+		If CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
 			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf
@@ -13491,7 +13562,7 @@ Function AdjustObjectAdjuster(i)
 
 		EndIf
 
-		;If CurrentObject\Attributes\ModelName$="!Gem"
+		;If CurrentObjectModelName$="!Gem"
 		;	If CurrentObject\Attributes\Data1>15 CurrentObject\Attributes\Data1=0
 		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=15
 
@@ -13523,13 +13594,13 @@ Function AdjustObjectAdjuster(i)
 
 		
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			; Expression
 			If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Thwart" Or CurrentObject\Attributes\ModelName$="!Troll" Or (Left$(CurrentObject\Attributes\ModelName$,6)="!Retro" And CurrentObject\Attributes\ModelName$<>"!Retrolasergate")  Or CurrentObject\Attributes\ModelName$="!Weebot" Or CurrentObject\Attributes\ModelName$="!Zapbot" Or CurrentObject\Attributes\ModelName$="!Portal Warp"
+		;If CurrentObjectModelName$="!Thwart" Or CurrentObjectModelName$="!Troll" Or (Left$(CurrentObjectModelName$,6)="!Retro" And CurrentObjectModelName$<>"!Retrolasergate")  Or CurrentObjectModelName$="!Weebot" Or Currentobjectmodelname$="!Zapbot" Or CurrentObjectModelname$="!Portal Warp"
 		If CurrentObjectType=290 Or CurrentObjectType=380 ; Thwart or Ice Troll
 			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
@@ -13542,13 +13613,13 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Portal Warp"
+		If CurrentObjectModelname$="!Portal Warp"
 			; ???
 			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Sign"
+		If CurrentObjectModelName$="!Sign"
 			; texture
 			If CurrentObject\Attributes\Data1>5 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=5
@@ -13611,26 +13682,26 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=5
 		EndIf
 		
-		;If  CurrentObject\Attributes\ModelName$="!ColourGate"
+		;If  CurrentObjectModelName$="!ColourGate"
 		;	If CurrentObject\Attributes\Data2>2 CurrentObject\Attributes\Data2=0
 		;	If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=2
 		;EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Gem"
+		;If CurrentObjectModelName$="!Gem"
 		;	If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=-2
 		;	If CurrentObject\Attributes\Data0<-2 CurrentObject\Attributes\Data0=2
 		;EndIf
 
 
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			;If CurrentObject\Attributes\Data2>56 CurrentObject\Attributes\Data2=0
 			;If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=56
 			CurrentObject\Attributes\Data3=1
 
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Thwart"
+		If CurrentObjectModelName$="!Thwart"
 			; colour
 			If CurrentObject\Attributes\Data2>7 CurrentObject\Attributes\Data2=0
 			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=7
@@ -13643,14 +13714,14 @@ Function AdjustObjectAdjuster(i)
 
 
 
-		;If CurrentObject\Attributes\ModelName$="!Sign"
+		;If CurrentObjectModelName$="!Sign"
 		;	If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
 		;	If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
 		;	
 		;
 		;EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Wraith"
+		If CurrentObjectModelName$="!Wraith"
 			; Doubles as both magic type and texture
 			If CurrentObject\Attributes\Data2>2 CurrentObject\Attributes\Data2=0
 			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=2
@@ -13713,7 +13784,7 @@ Function AdjustObjectAdjuster(i)
 ;			
 ;		EndIf
 
-		If  CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
+		If  Currentobjectmodelname$="!Suctube" Or CurrentObjectModelName$="!SuctubeX"
 			; Suctube tex
 			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
 			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=2
@@ -13753,7 +13824,7 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 ;			If CurrentObject\Attributes\Data4=-1 CurrentObject\Attributes\Data4=116
 ;			If CurrentObject\Attributes\Data4=1 CurrentObject\Attributes\Data4=101
 ;			If CurrentObject\Attributes\Data4=100 CurrentObject\Attributes\Data4=0
@@ -13776,7 +13847,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 		
-		If  CurrentObject\Attributes\ModelName$="!Conveyor"
+		If  Currentobjectmodelname$="!Conveyor"
 			; visual type
 			If CurrentObject\Attributes\Data4<0 CurrentObject\Attributes\Data4=4
 			If CurrentObject\Attributes\Data4>4 CurrentObject\Attributes\Data4=0
@@ -13818,20 +13889,20 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 
-		;If CurrentObject\Attributes\ModelName$="!NPC"
+		;If CurrentObjectModelName$="!NPC"
 		If CurrentObjectType=45 Or CurrentObjectType=46 ; Conveyor
 			; Logic
 			If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
 			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 		EndIf
-		;If CurrentObject\Attributes\ModelName$="!NPC" And (CurrentObject\Attributes\Data4<>101 And CurrentObject\Attributes\Data4<>102) Then CurrentObject\Attributes\Data5=0
+		;If CurrentObjectModelName$="!NPC" And (CurrentObject\Attributes\Data4<>101 And CurrentObject\Attributes\Data4<>102) Then CurrentObject\Attributes\Data5=0
 		
-		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 			If CurrentObject\Attributes\Data5>255 CurrentObject\Attributes\Data5=0
 			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=255
 		EndIf
 		
-		If CurrentObjectType=281 ;CurrentObject\Attributes\ModelName$="!Suctube"
+		If CurrentObjectType=281 ;CurrentObjectModelName$="!Suctube"
 			; particles
 			If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
 			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
@@ -13855,7 +13926,7 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			; WalkAnim
 			If CurrentObject\Attributes\Data6>2 CurrentObject\Attributes\Data6=0
 			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=2
@@ -13871,7 +13942,7 @@ Function AdjustObjectAdjuster(i)
 
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 			If CurrentObject\Attributes\Data6>255 CurrentObject\Attributes\Data6=0
 			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=255
 			
@@ -13895,7 +13966,7 @@ Function AdjustObjectAdjuster(i)
 
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
+		If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 			If CurrentObject\Attributes\Data7>255 CurrentObject\Attributes\Data7=0
 			If CurrentObject\Attributes\Data7<0 CurrentObject\Attributes\Data7=255
 			
@@ -13935,7 +14006,7 @@ Function AdjustObjectAdjuster(i)
 ;				If CurrentObject\Attributes\Data8<0 Then CurrentObject\Attributes\Data8=-2
 ;			EndIf
 		EndIf
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObjectModelName$="!NPC"
 			; Anim
 			If CurrentObject\Attributes\Data8>10 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=10
@@ -13943,7 +14014,7 @@ Function AdjustObjectAdjuster(i)
 
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Kaboom"
+		If CurrentObjectModelName$="!Kaboom"
 			; Anim
 			If CurrentObject\Attributes\Data8>5 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=5
@@ -13958,7 +14029,7 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=1
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!StinkerWee"
+		If CurrentObjectModelName$="!StinkerWee"
 			; Texture
 			If CurrentObject\Attributes\Data8>2 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=2
@@ -13970,7 +14041,7 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObject\Attributes\Data9=AdjustInt("Data9: ", CurrentObject\Attributes\Data9, 1, 10, 150)
 		AdjustObjectData(9, SlowInt, FastInt, DelayTime)
 		
-		If CurrentObject\Attributes\ModelName$="!CustomModel" And CurrentObjectType=160
+		If CurrentObjectModelName$="!CustomModel" And CurrentObjectType=160
 			; Deadly
 			If CurrentObject\Attributes\Data9>1 CurrentObject\Attributes\Data9=0
 			If CurrentObject\Attributes\Data9<0 CurrentObject\Attributes\Data9=1
@@ -14708,7 +14779,7 @@ Function BuildCurrentObjectModel()
 	
 	
 
-	If CurrentObject\Attributes\ModelName$="!Button"
+	If CurrentObjectModelName$="!Button"
 		If CurrentObjectSubType=16 And CurrentObject\Attributes\Data2=1 Then CurrentObjectSubType=17
 		If CurrentObjectSubType=17 And CurrentObject\Attributes\Data2=0 Then CurrentObjectSubType=16
 		If CurrentObjectSubType=16+32 And CurrentObject\Attributes\Data2=1 Then CurrentObjectSubType=17+32
@@ -14717,7 +14788,7 @@ Function BuildCurrentObjectModel()
 		CurrentObjectModel=CreateButtonMesh(CurrentObjectSubType,CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		
 		
-	Else If CurrentObject\Attributes\ModelName$="!CustomModel"
+	Else If CurrentObjectModelName$="!CustomModel"
 		
 		If FileType("UserData\Custom\Models\"+currentObjectTextData(0)+".3ds")<>1 Or FileType("UserData\Custom\Models\"+currentObjectTextData(0)+".jpg")<>1
 			Print "Couldn't Load 3ds/jpg."
@@ -14733,11 +14804,11 @@ Function BuildCurrentObjectModel()
 		
 	
 	
-	Else If CurrentObject\Attributes\ModelName$="!Teleport"
+	Else If CurrentObjectModelName$="!Teleport"
 		CurrentObjectModel=CreateTeleporterMesh(CurrentObject\Attributes\Data0)
-	Else If CurrentObject\Attributes\ModelName$="!Item"
+	Else If CurrentObjectModelName$="!Item"
 		CurrentObjectModel=CreatePickupItemMesh(CurrentObject\Attributes\Data2)
-	Else If CurrentObject\Attributes\ModelName$="!Stinker" Or CurrentObject\Attributes\ModelName$="!NPC"
+	Else If CurrentObjectModelName$="!Stinker" Or CurrentObjectModelName$="!NPC"
 		CurrentObjectModel=CopyEntity(StinkerMesh)
 		
 		; possible prevention for the body000A.jpg error
@@ -14779,13 +14850,13 @@ Function BuildCurrentObjectModel()
 
 	
 	
-	Else If CurrentObject\Attributes\ModelName$="!ColourGate"
+	Else If CurrentObjectModelName$="!ColourGate"
 		CurrentObjectModel=CreateColourGateMesh(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data0)
-	Else If CurrentObject\Attributes\ModelName$="!Transporter"
+	Else If CurrentObjectModelName$="!Transporter"
 		CurrentObjectModel=CreateTransporterMesh(CurrentObject\Attributes\Data0,3)
 		RotateMesh CurrentObjectModel,0,90*CurrentObject\Attributes\Data2,0
 		
-	Else If CurrentObject\Attributes\ModelName$="!Conveyor"
+	Else If CurrentObjectModelName$="!Conveyor"
 		If CurrentObject\Attributes\Data4=4
 			CurrentObjectModel=CreateCloudMesh(CurrentObject\Attributes\Data0)
 		Else
@@ -14794,45 +14865,45 @@ Function BuildCurrentObjectModel()
 		RotateMesh CurrentObjectModel,0,-90*CurrentObject\Attributes\Data2,0
 		If CurrentObjectType=46 ScaleMesh CurrentObjectmodel,.5,.5,.5
 
-	Else If CurrentObject\Attributes\ModelName$="!Autodoor"
+	Else If CurrentObjectModelName$="!Autodoor"
 		CurrentObjectModel=CopyEntity(AutodoorMesh)
 		
 		
 		
-	Else If CurrentObject\Attributes\ModelName$="!Key"
+	Else If CurrentObjectModelName$="!Key"
 		CurrentObjectModel=CreateKeyMesh(CurrentObject\Attributes\Data0)
-	Else If CurrentObject\Attributes\ModelName$="!KeyCard" 
+	Else If CurrentObjectModelName$="!KeyCard" 
 		CurrentObjectModel=CreateKeyCardMesh(CurrentObject\Attributes\Data0)
 
 		
-	Else If CurrentObject\Attributes\ModelName$="!StinkerWee"
+	Else If CurrentObjectModelName$="!StinkerWee"
 		CurrentObjectModel=CopyEntity(StinkerWeeMesh)
 		EntityTexture CurrentObjectModel,StinkerWeeTexture(CurrentObject\Attributes\Data8+1)
-	Else If CurrentObject\Attributes\ModelName$="!Cage"
+	Else If CurrentObjectModelName$="!Cage"
 		CurrentObjectModel=CopyEntity(CageMesh)
-		Else If CurrentObject\Attributes\ModelName$="!StarGate"
+		Else If CurrentObjectModelName$="!StarGate"
 		CurrentObjectModel=CopyEntity(StarGateMesh)
-	Else If CurrentObject\Attributes\ModelName$="!Scritter"
+	Else If CurrentObjectModelName$="!Scritter"
 		CurrentObjectModel=CopyEntity(ScritterMesh)
 		EntityTexture CurrentObjectModel,ScritterTexture(CurrentObject\Attributes\Data0)
-	Else If CurrentObject\Attributes\ModelName$="!RainbowBubble"
+	Else If CurrentObjectModelName$="!RainbowBubble"
 		CurrentObjectModel=CreateSphere()
 		;ScaleMesh CurrentObjectModel,.4,.4,.4
 		;PositionMesh CurrentObjectModel,0,1,0
 		ScaleMesh CurrentObjectModel,.5,.5,.5
 		EntityTexture CurrentObjectModel,Rainbowtexture2
 		
-	Else If CurrentObject\Attributes\ModelName$="!IceBlock"
+	Else If CurrentObjectModelName$="!IceBlock"
 		CurrentObjectModel=CreateIceBlockMesh(CurrentObject\Attributes\Data3)
 		
-	Else If CurrentObject\Attributes\ModelName$="!PlantFloat"
+	Else If CurrentObjectModelName$="!PlantFloat"
 		CurrentObjectModel=CreatePlantFloatMesh()
 		;CurrentObjectModel=CreateSphere()
 		;ScaleMesh CurrentObjectModel,.4,.1,.4
 ;		PositionMesh CurrentObjectModel,0,1,0
 		;EntityTexture CurrentObjectModel,Rainbowtexture
 		
-	Else If CurrentObject\Attributes\ModelName$="!IceFloat"
+	Else If CurrentObjectModelName$="!IceFloat"
 		CurrentObjectModel=CreateIceFloatMesh()
 		;CurrentObjectModel=CreateSphere()
 		;ScaleMesh CurrentObjectModel,.4,.1,.4
@@ -14841,7 +14912,7 @@ Function BuildCurrentObjectModel()
 
 
 
-	Else If CurrentObject\Attributes\ModelName$="!Chomper"
+	Else If CurrentObjectModelName$="!Chomper"
 		CurrentObjectModel=CopyEntity(ChomperMesh)
 		If CurrentObjectSubType=1 
 			EntityTexture CurrentObjectModel,WaterChomperTexture
@@ -14850,121 +14921,121 @@ Function BuildCurrentObjectModel()
 		Else
 			EntityTexture CurrentObjectModel,ChomperTexture
 		EndIf
-	Else If CurrentObject\Attributes\ModelName$="!Bowler"
+	Else If CurrentObjectModelName$="!Bowler"
 		CurrentObjectModel=CopyEntity(BowlerMesh)
 		Direction=CurrentObject\Attributes\Data0
 		If CurrentObject\Attributes\Data1<>2
 			Direction=Direction*2
 		EndIf
-		CurrentObject\Attributes\YawAdjust=(-45*Direction +3600) Mod 360
-	Else If CurrentObject\Attributes\ModelName$="!Turtle"
+		CurrentObjectYawAdjust=(-45*Direction +3600) Mod 360
+	Else If CurrentObjectModelName$="!Turtle"
 		CurrentObjectModel=CopyEntity(TurtleMesh)
-		CurrentObject\Attributes\YawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
-	Else If CurrentObject\Attributes\ModelName$="!Thwart"
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
+	Else If CurrentObjectModelName$="!Thwart"
 		CurrentObjectModel=CopyEntity(ThwartMesh)
 		EntityTexture CurrentObjectModel,ThwartTexture(CurrentObject\Attributes\Data2)
-	Else If CurrentObject\Attributes\ModelName$="!Tentacle"
+	Else If CurrentObjectModelName$="!Tentacle"
 		CurrentObjectModel=CopyEntity(TentacleMesh)
 		Animate GetChild(CurrentObjectModel,3),1,.1,1,0
-	Else If CurrentObject\Attributes\ModelName$="!Lurker"
+	Else If CurrentObjectModelName$="!Lurker"
 		CurrentObjectModel=CopyEntity(LurkerMesh)
-	Else If CurrentObject\Attributes\ModelName$="!Ghost"
+	Else If CurrentObjectModelName$="!Ghost"
 		CurrentObjectModel=CopyEntity(GhostMesh)
-	Else If CurrentObject\Attributes\ModelName$="!Wraith"
+	Else If CurrentObjectModelName$="!Wraith"
 		CurrentObjectModel=CopyEntity(WraithMesh)
 		EntityTexture CurrentObjectModel,WraithTexture(CurrentObject\Attributes\Data2)
 
 	
 
-	Else If CurrentObject\Attributes\ModelName$="!Crab"
+	Else If CurrentObjectModelName$="!Crab"
 		CurrentObjectModel=CopyEntity(CrabMesh)
 		If CurrentObjectSubType=0 Then EntityTexture CurrentObjectModel,CrabTexture2
-	Else If CurrentObject\Attributes\ModelName$="!Troll"
+	Else If CurrentObjectModelName$="!Troll"
 		CurrentObjectModel=CopyEntity(TrollMesh)
-	Else If CurrentObject\Attributes\ModelName$="!Kaboom"
+	Else If CurrentObjectModelName$="!Kaboom"
 		CurrentObjectModel=CopyEntity(KaboomMesh)
 		EntityTexture CurrentObjectModel,KaboomTexture(CurrentObject\Attributes\Data0)
-	Else If CurrentObject\Attributes\ModelName$="!BabyBoomer"
+	Else If CurrentObjectModelName$="!BabyBoomer"
 		CurrentObjectModel=CopyEntity(KaboomMesh)
 		EntityTexture CurrentObjectModel,KaboomTexture(1)
 
 
 
-	Else If CurrentObject\Attributes\ModelName$="!FireFlower"
+	Else If CurrentObjectModelName$="!FireFlower"
 		CurrentObjectModel=CopyEntity(FireFlowerMesh)
 		If CurrentObjectSubType<>1
-			=(-45*CurrentObject\Attributes\Data0 +3600) Mod 360
+			CurrentObjectYawAdjust=(-45*CurrentObject\Attributes\Data0 +3600) Mod 360
 		Else
-			CurrentObject\Position\YawAdjust=0
+			CurrentObjectYawAdjust=0
 		EndIf
 		If CurrentObject\Attributes\Data1=1
 			EntityTexture CurrentObjectModel,FireFlowerTexture2
 		EndIf
 		
-	Else If CurrentObject\Attributes\ModelName$="!BurstFlower"
+	Else If CurrentObjectModelName$="!BurstFlower"
 		CurrentObjectModel=CopyEntity(BurstFlowerMesh)
 
-	Else If CurrentObject\Attributes\ModelName$="!Busterfly"
+	Else If CurrentObjectModelName$="!Busterfly"
 		CurrentObjectModel=CopyEntity(BusterflyMesh)
 		;AnimateMD2 CurrentObjectModel,2,.4,2,9
 		
 		
-	Else If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
+	Else If CurrentObjectModelName$="!GlowWorm"  Or CurrentObjectModelName$="!Zipper"
 		CurrentObjectModel=CreateSphere(12)
 		ScaleMesh CurrentObjectModel,.1,.1,.1
 		EntityColor CurrentObjectModel,CurrentObject\Attributes\Data5,CurrentObject\Attributes\Data6,CurrentObject\Attributes\Data7
-	Else If CurrentObject\Attributes\ModelName$="!Void"
+	Else If CurrentObjectModelName$="!Void"
 		;CurrentObjectModel=CreateSphere(12)
 		;ScaleMesh CurrentObjectModel,.4,.15,.4
 		CurrentObjectModel=CreateVoidMesh()
-	Else If CurrentObject\Attributes\ModelName$="!Rubberducky"
+	Else If CurrentObjectModelName$="!Rubberducky"
 		CurrentObjectModel=CopyEntity(RubberduckyMesh)
 
-	Else If CurrentObject\Attributes\ModelName$="!Barrel1"
+	Else If CurrentObjectModelName$="!Barrel1"
 		CurrentObjectModel=CopyEntity(BarrelMesh)
 		EntityTexture CurrentObjectModel,BarrelTexture1
-	Else If CurrentObject\Attributes\ModelName$="!Barrel2"
+	Else If CurrentObjectModelName$="!Barrel2"
 		CurrentObjectModel=CopyEntity(BarrelMesh)
-		EntityTexture CurrentObjectModel,BarrelTexCurrentObject\Attributes\YawAdjustture2
-	Else If CurrentObject\CurrentObject\Attributes\YawAdjust"!Barrel3"
+		EntityTexture CurrentObjectModel,BarrelTexture2
+	Else If CurrentObjectModelName$="!Barrel3"
 		CurrentObjectModel=CopyEntity(BarrelMesh)
 		EntityTexture CurrentObjectModel,BarrelTexture3
-	Else If CurrentObject\Attributes\ModelName$="!Cuboid"
+	Else If CurrentObjectModelName$="!Cuboid"
 		CurrentObjectModel=CreateCube()
 		ScaleMesh CurrentObjectModel,0.4,0.4,0.4
 		PositionMesh CurrentObjectModel,0,0.5,0
 		If CurrentObject\Attributes\Data0<0 Or CurrentObject\Attributes\Data0>8 Then CurrentObject\Attributes\Data0=0
 		EntityTexture CurrentObjectModel,TeleporterTexture(CurrentObject\Attributes\Data0)
 		
-	Else If CurrentObject\Attributes\ModelName$="!Prism"
+	Else If CurrentObjectModelName$="!Prism"
 		CurrentObjectModel=CopyEntity(PrismMesh)
 		EntityTexture CurrentObjectModel,PrismTexture
 			
-	Else If  CurrentObject\Attributes\ModelName$="!Obstacle10" 
+	Else If  CurrentObjectModelName$="!Obstacle10" 
 		CurrentObjectModel=CopyEntity(  ObstacleMesh(10 ))
 		EntityTexture CurrentObjectModel, MushroomTex(  (Abs(CurrentObject\Attributes\Data0)) Mod 3)
 
 	
 
 		
-	Else If  CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
-		CurrentObjectModel=CopyEntity(  ObstacleMesh((Asc(Mid$(CurrentObject\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObject\Attributes\ModelName$,11,1))-48)+CurrentObject\Attributes\Data0)  )
-		EntityTexture CurrentObjectModel, ObstacleTexture((Asc(Mid$(CurrentObject\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObject\Attributes\ModelName$,11,1))-48)+CurrentObject\Attributes\Data1)
+	Else If  CurrentObjectModelName$="!Obstacle51" Or CurrentObjectModelName$="!Obstacle55" Or CurrentObjectModelName$="!Obstacle59"
+		CurrentObjectModel=CopyEntity(  ObstacleMesh((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)+CurrentObject\Attributes\Data0)  )
+		EntityTexture CurrentObjectModel, ObstacleTexture((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)+CurrentObject\Attributes\Data1)
 
-	Else If Left$(CurrentObject\Attributes\ModelName$,9)="!Obstacle"
-		CurrentObjectModel=CopyEntity(ObstacleMesh((Asc(Mid$(CurrentObject\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObject\Attributes\ModelName$,11,1))-48)))
+	Else If Left$(CurrentObjectModelName$,9)="!Obstacle"
+		CurrentObjectModel=CopyEntity(ObstacleMesh((Asc(Mid$(CurrentObjectModelName$,10,1))-48)*10+(Asc(Mid$(CurrentObjectModelName$,11,1))-48)))
 
-	Else If CurrentObject\Attributes\ModelName$="!WaterFall"
+	Else If CurrentObjectModelName$="!WaterFall"
 		CurrentObjectModel=CreateWaterFallMesh(CurrentObject\Attributes\Data0)
-	Else If CurrentObject\Attributes\ModelName$="!Star"
+	Else If CurrentObjectModelName$="!Star"
 		CurrentObjectModel=CopyEntity(StarMesh)
 		EntityTexture CurrentObjectModel,GoldStarTexture
-	Else If CurrentObject\Attributes\ModelName$="!Wisp"
+	Else If CurrentObjectModelName$="!Wisp"
 		CurrentObjectModel=CopyEntity(StarMesh)
 		EntityTexture CurrentObjectModel,WispTexture(CurrentObject\Attributes\Data0)
 	
 	
-	Else If CurrentObject\Attributes\ModelName$="!Portal Warp"
+	Else If CurrentObjectModelName$="!Portal Warp"
 		CurrentObjectModel=CopyEntity(PortalWarpMesh)
 		If CurrentObject\Attributes\Data1=0
 			EntityTexture CurrentObjectModel,StarTexture
@@ -14972,25 +15043,25 @@ Function BuildCurrentObjectModel()
 			EntityTexture CurrentObjectModel,RainbowTexture
 		EndIf
 		
-	Else If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
+	Else If CurrentObjectModelName$="!Sun Sphere1"
 		CurrentObjectModel=CreateSphere()
 		EntityColor CurrentObjectModel,CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2
 		EntityBlend CurrentObjectModel,3
 		
-	Else If CurrentObject\Attributes\ModelName$="!Sun Sphere2"
+	Else If CurrentObjectModelName$="!Sun Sphere2"
 		CurrentObjectModel=CreateSphere()
 		ScaleMesh CurrentObjectModel,.5,.5,.5
 
 
 
-	Else If CurrentObject\Attributes\ModelName$="!Coin"
+	Else If CurrentObjectModelName$="!Coin"
 		CurrentObjectModel=CopyEntity(CoinMesh)
 		EntityTexture CurrentObjectModel,GoldCoinTexture
 		If CurrentObjectType=425 EntityTexture CurrentObjectModel,Retrorainbowcointexture
-	Else If CurrentObject\Attributes\ModelName$="!Token"
+	Else If CurrentObjectModelName$="!Token"
 		CurrentObjectModel=CopyEntity(CoinMesh)
 		EntityTexture CurrentObjectModel,TokenCoinTexture
-	Else If CurrentObject\Attributes\ModelName$="!Gem"
+	Else If CurrentObjectModelName$="!Gem"
 		;If CurrentObject\Attributes\Data0<0 Or CurrentObject\Attributes\Data0>2 Then CurrentObject\Attributes\Data0=0
 		;If CurrentObject\Attributes\Data1<0 Or CurrentObject\Attributes\Data1>7 Then CurrentObject\Attributes\Data1=0
 		
@@ -15006,7 +15077,7 @@ Function BuildCurrentObjectModel()
 		Else
 			EntityTexture CurrentObjectModel,TeleporterTexture(Data1)
 		EndIf
-	Else If CurrentObject\Attributes\ModelName$="!Crystal"
+	Else If CurrentObjectModelName$="!Crystal"
 		CurrentObjectModel=CopyEntity(GemMesh(2))
 		If CurrentObject\Attributes\Data0=0
 			EntityTexture currentobjectmodel,rainbowtexture
@@ -15016,15 +15087,15 @@ Function BuildCurrentObjectModel()
 			
 
 
-	Else If CurrentObject\Attributes\ModelName$="!Sign"
+	Else If CurrentObjectModelName$="!Sign"
 		CurrentObjectModel=CreateSignMesh(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 
 
-	Else If CurrentObject\Attributes\ModelName$="!CustomItem"
+	Else If CurrentObjectModelName$="!CustomItem"
 		CurrentObjectModel=CreateCustomItemMesh(CurrentObject\Attributes\Data0)
 
 		
-	Else If CurrentObject\Attributes\ModelName$="!SteppingStone"
+	Else If CurrentObjectModelName$="!SteppingStone"
 		CurrentObjectModel=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		If CurrentObject\Attributes\Data0<0 Or CurrentObject\Attributes\Data0>3
 			;CurrentObject\Attributes\Data0=0
@@ -15032,125 +15103,130 @@ Function BuildCurrentObjectModel()
 		Else
 			EntityTexture CurrentObjectModel,SteppingStoneTexture(CurrentObject\Attributes\Data0)
 		EndIf
-	Else If CurrentObject\Attributes\ModelName$="!Spring" 
+	Else If CurrentObjectModelName$="!Spring" 
 		CurrentObjectModel=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		RotateMesh CurrentObjectModel,90,0,0
-		CurrentObject\Position\YawAdjust=(-45*CurrentObject\Attributes\Data2 +3600) Mod 360
+		CurrentObjectYawAdjust=(-45*CurrentObject\Attributes\Data2 +3600) Mod 360
 
 
 		EntityTexture CurrentObjectModel,Springtexture
-	Else If CurrentObject\Attributes\ModelName$="!Suctube" 
+	Else If CurrentObjectModelName$="!Suctube" 
 		CurrentObjectModel=CreateSuctubemesh(CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data0,True)
 		
-		CurrentObject\Position\YawAdjust=(-90*CurrentObject\Attributes\Data2 +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data2 +3600) Mod 360
 		
-		Redosuctubemesh(CurrentObjectModel, CurrentObject\Attributes\Data0, CurrentObjectActive, CurrentObject\Attributes\Data2, CurrentObject\Position\YawAdjust)
+		Redosuctubemesh(CurrentObjectModel, CurrentObject\Attributes\Data0, CurrentObjectActive, CurrentObject\Attributes\Data2, CurrentObjectYawAdjust)
 
-	Else If CurrentObject\Attributes\ModelName$="!SuctubeX" 
+	Else If CurrentObjectModelName$="!SuctubeX" 
 		CurrentObjectModel=CreateSuctubeXmesh(CurrentObject\Attributes\Data3)
-		CurrentObject\Position\YawAdjust=(-90*CurrentObject\Attributes\Data2 +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data2 +3600) Mod 360
 
 
 		
 
 		
-	Else If CurrentObject\Attributes\ModelName$="!FlipBridge"
+	Else If CurrentObjectModelName$="!FlipBridge"
 		;CurrentObjectModel=CreateCube()
 		;ScaleMesh CurrentObjectModel,.35,.1,.5
 		
 		CurrentObjectModel=CreateFlipBridgeMesh(CurrentObject\Attributes\Data0)
 		;EntityTexture CurrentObjectModel,GateTexture
 		
-		CurrentObject\Position\YawAdjust=(-45*CurrentObject\Attributes\Data2 +3600) Mod 360
+		CurrentObjectYawAdjust=(-45*CurrentObject\Attributes\Data2 +3600) Mod 360
 	
-	Else If CurrentObject\Attributes\ModelName$="!Door"
+	Else If CurrentObjectModelName$="!Door"
 		CurrentObjectModel=MyLoadmesh("data\models\houses\door01.3ds",0)
 		
-	Else If CurrentObject\Attributes\ModelName$="!Cylinder"
+	Else If CurrentObjectModelName$="!Cylinder"
 		CurrentObjectModel=CopyEntity(cylinder)
 		
-	Else If CurrentObject\Attributes\ModelName$="CurrentObject\Attributes\YawAdjustectModel=MyLoadmesh("data\models\squares\square1.b3d",0)
+	Else If CurrentObjectModelName$="!Square"
+		CurrentObjectModel=MyLoadmesh("data\models\squares\square1.b3d",0)
 		
-	Else If CurrentObject\Attributes\ModelName$="!SpellBall"
+	Else If CurrentObjectModelName$="!SpellBall"
 		CurrentObjectModel=CreateSpellBallMesh(7) ; use white magic spellball mesh
 		
-	Else If CurrentObject\Attributes\ModelName$="!FencTrue
-		CurrenCurrentObject\Attributes\YawAdjusty(fence1)
-	Else If CurrentObject\Attributes\ModelName$="!Fence2"
+	Else If CurrentObjectModelName$="!Fence1"
+		CurrentObjectModel=CopyEntity(fence1)
+	Else If CurrentObjectModelName$="!Fence2"
 		CurrentObjectModel=CopyEntity(fence2)
-	Else If CurrentObject\Attributes\ModelName$="!Fencepost"
-CurrentObject\Attributes\YawAdjustopyEntity(fencepost)
-	Else If CurrentObject\Attributes\ModelName$="!Fountain"
-		CurrentObjectModel=MyLoadmesh("data\models\hoCurrentObject\Attributes\YawAdjust)
+	Else If CurrentObjectModelName$="!Fencepost"
+		CurrentObjectModel=CopyEntity(fencepost)
+	Else If CurrentObjectModelName$="!Fountain"
+		CurrentObjectModel=MyLoadmesh("data\models\houses\fountain01.b3d",0)
 		EntityTexture CurrentObjectModel,FountainTexture
 		
-	Else If CurrentObject\Attributes\ModelName$="!Retrobox"
+	Else If CurrentObjectModelName$="!Retrobox"
 		CurrentObjectModel=CopyEntity(RetroBoxMesh)
 		
-	Else If CurrentObject\Attributes\ModelName$="!Retrocoily"
+	Else If CurrentObjectModelName$="!Retrocoily"
 		CurrentObjectModel=CopyEntity(RetroCoilyMesh)
 		
-	Else If CurrentObject\Attributes\ModelName$="!CurrentObject\Attributes\YawAdjusttObjectModel=CopyEntity(RetroScougeMesh)
-		CurrentObject\Position\YawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
+	Else If CurrentObjectModelName$="!Retroscouge"
+		CurrentObjectModel=CopyEntity(RetroScougeMesh)
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 	
-	Else If CurrentObject\Attributes\ModelName$="!Retrozbot"
+	Else If CurrentObjectModelName$="!Retrozbot"
 		CurrentObjectModel=CopyEntity(RetroZbotMesh)
-		CurrentObject\Position\YawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 		
-	Else If CurrentObject\Attributes\ModelName$="!Retroufo"
+	Else If CurrentObjectModelName$="!Retroufo"
 		CurrentObjectModel=CopyEntity(RetroUFOMesh)
-		CurrentObject\Position\YawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 	
-	Else If CurrentObject\Attributes\ModelName$="!Retrolasergate"
+	Else If CurrentObjectModelName$="!Retrolasergate"
 		CurrentObjectModel=CreateretrolasergateMesh(CurrentObject\Attributes\Data0)
 		
-	Else If CurrentObject\Attributes\ModelName$="!Weebot"
+	Else If CurrentObjectModelName$="!Weebot"
 		CurrentObjectModel=CopyEntity(WeebotMesh)
-		CurrentObject\Position\YawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 		
-	Else If CurrentObject\Attributes\ModelName$="!Zapbot"
+	Else If CurrentObjectModelName$="!Zapbot"
 		CurrentObjectModel=CopyEntity(ZapbotMesh)
-		CurrentObject\Position\YawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
+		CurrentObjectYawAdjust=(-90*CurrentObject\Attributes\Data0 +3600) Mod 360
 
-	Else If CurrentObject\Attributes\ModelName$="!Pushbot"
+	Else If CurrentObjectModelName$="!Pushbot"
 		CurrentObjectModel=CreatePushbotMesh(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data3)
-		CurrentObject\Position\YawAdjust=-CurrentObject\Attributes\Data2*90
+		CurrentObjectYawAdjust=-CurrentObject\Attributes\Data2*90
 		
-	Else If CurrentObject\Attributes\ModelName$="!ZbotNPC"
+	Else If CurrentObjectModelName$="!ZbotNPC"
 		CurrentObjectModel=CopyEntity(ZbotNPCMesh)
 		EntityTexture CurrentObjectModel,ZBotNPCTexture(CurrentObject\Attributes\Data2)
 	
-	Else ICurrentObject\Attributes\YawAdjustutes\ModelName$="!Mothership"
+	Else If CurrentObjectModelName$="!Mothership"
 		CurrentObjectModel=CopyEntity(MothershipMesh)
 
 
 		
-	Else If CurrentObject\Attributes\ModelName="!FloingOrb" ; not toCurrentObject\Attributes\YawAdjustingBubble
+	Else If CurrentObjectModelName="!FloingOrb" ; not to be confused with !FloingBubble
 		CurrentObjectModel=CreateSphere()
 		ScaleMesh CurrentObjectModel,.3,.3,.3
 		EntityColor CurrentObjectModel,255,0,0
 	
-	Else If CurrentObCurrentObject\Attributes\YawAdjustame="!MagicMirror"
+	Else If CurrentObjectModelName="!MagicMirror"
 		CurrentObjectModel=CreateMagicMirrorMesh()
 
 	
 	
-	Else If CurrentObject\Attributes\ModelName$="!SkyMachineMap"
+	Else If CurrentObjectModelName$="!SkyMachineMap"
 		CurrentObjectModel=CreateCube()
 		ScaleMesh CurrentObjectModel,2.5,.01,2.5
 		PositionMesh CurrentObjectModel,0,0,-1
-		EntityTexture CurrentObjectModel,SCurrentObject\Attributes\YawAdjust	EntityBlend CurrentObjectModel,3
+		EntityTexture CurrentObjectModel,SkyMachineMapTexture
+		EntityBlend CurrentObjectModel,3
 		
 	
-	Else If CurrentObject\Attributes\ModelName$="!GrowFlower"
-		CurrentObjectModel=CreateGrowFlowerMesh(CurrCurrentObject\Attributes\YawAdjustata0)
+	Else If CurrentObjectModelName$="!GrowFlower"
+		CurrentObjectModel=CreateGrowFlowerMesh(CurrentObject\Attributes\Data0)
 
-	Else If CurrentObject\Attributes\ModelName$="!FloingBubble"
+	Else If CurrentObjectModelName$="!FloingBubble"
 		CurrentObjectModel=CreateFloingBubbleMesh()
 
 		
-	Else If CurrentObject\Attributes\ModelName$="!None"
-		CurrentObjectModel=CreateCurrentObject\Attributes\YawAdjusturrentObjectType=50 ; spellball
+	Else If CurrentObjectModelName$="!None"
+		CurrentObjectModel=CreateNoneMesh()
+		
+		If CurrentObjectType=50 ; spellball
 			UseMagicColor(CurrentObjectModel,CurrentObjectSubType)
 		EndIf
 		
@@ -15160,39 +15236,39 @@ CurrentObject\Attributes\YawAdjustopyEntity(fencepost)
 
 	EndIf
 
-	If CurrentObject\Attributes\ModelName$="!FlipBridge"
+	If CurrentObjectModelName$="!FlipBridge"
 		TextureTarget=GetChild(CurrentObjectModel,1)
 	Else
 		TextureTarget=CurrentObjectModel
 	EndIf
 
-	If CurrentObject\Attributes\TexName$="!None" 
+	If CurrentObjectTextureName$="!None" 
 		CurrentObjectTexture=0
-	Else If CurrentObject\Attributes\TexName$="!Door"
+	Else If CurrentObjectTextureName$="!Door"
 		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
 		If CurrentObject\Attributes\Data5>2 Then CurrentObject\Attributes\Data5=2
 		If DoorTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
 		EntityTexture TextureTarget,DoorTexture(CurrentObject\Attributes\Data5)
-	Else If CurrentObject\Attributes\TexName$="!Cottage"
+	Else If CurrentObjectTextureName$="!Cottage"
 		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
 		If CottageTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
 		EntityTexture TextureTarget,CottageTexture(CurrentObject\Attributes\Data5)	
-	Else If CurrentObject\Attributes\TexName$="!Townhouse"
+	Else If CurrentObjectTextureName$="!Townhouse"
 		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
 		If HouseTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
 		EntityTexture TextureTarget,HouseTexture(CurrentObject\Attributes\Data5)	
-	Else If CurrentObject\Attributes\TexName$="!Windmill"
+	Else If CurrentObjectTextureName$="!Windmill"
 		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
 		If WindmillTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
 		EntityTexture TextureTarget,WindmillTexture(CurrentObject\Attributes\Data5)	
-	Else If CurrentObject\Attributes\TexName$="!Fence"
+	Else If CurrentObjectTextureName$="!Fence"
 		If CurrentObject\Attributes\Data5<0 Then CurrentObject\Attributes\Data5=0
 		If FenceTexture(CurrentObject\Attributes\Data5)=0 Then CurrentObject\Attributes\Data5=0
 		EntityTexture TextureTarget,FenceTexture(CurrentObject\Attributes\Data5)	
-	Else If CurrentObject\Attributes\TexName$="!FireTrap"
+	Else If CurrentObjectTextureName$="!FireTrap"
 		EntityTexture TextureTarget,FireTrapTexture
 
-	Else If Left$(CurrentObject\Attributes\TexName$,2)="!T"
+	Else If Left$(CurrentObjectTextureName$,2)="!T"
 		
 		
 		EntityTexture TextureTarget,StinkerTexture
@@ -15209,16 +15285,16 @@ CurrentObject\Attributes\YawAdjustopyEntity(fencepost)
 				VertexColor GetSurface(TextureTarget,1),i,GetMagicColor(Col,0),GetMagicColor(Col,1),GetMagicColor(Col,2)
 			Next
 
-	Else If Left(CurrentObject\Attributes\TexName$,1)="?"
+	Else If Left(CurrentObjectTextureName$,1)="?"
 		; custom texture For existing objects
-		If Lower(Right(CurrentObject\Attributes\TexName$,4))=".jpg" Or Lower(Right(CurrentObject\Attributes\TexName$,4))=".bmp" Or Lower(Right(CurrentObject\Attributes\TexName$,4))=".png"
-			tname$="UserData\Custom\Objecttextures\"+Right(CurrentObject\Attributes\TexName$,Len(CurrentObject\Attributes\TexName$)-1)
+		If Lower(Right(CurrentObjectTextureName$,4))=".jpg" Or Lower(Right(CurrentObjectTextureName$,4))=".bmp" Or Lower(Right(CurrentObjectTextureName$,4))=".png"
+			tname$="UserData\Custom\Objecttextures\"+Right(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)
 		Else
-			tname$="UserData\Custom\Objecttextures\"+Right(CurrentObject\Attributes\TexName$,Len(CurrentObject\Attributes\TexName$)-1)+".jpg"
+			tname$="UserData\Custom\Objecttextures\"+Right(CurrentObjectTextureName$,Len(CurrentObjectTextureName$)-1)+".jpg"
 		EndIf
 		If FileType(tname$)<>1 
 			tname$="UserData\Custom\Objecttextures\default.jpg"
-			CurrentObject\Attributes\TexName$="?Default"
+			CurrentObjectTextureName$="?Default"
 		EndIf
 		
 		If Lower(Right(tname$,4))=".png"
@@ -15229,13 +15305,13 @@ CurrentObject\Attributes\YawAdjustopyEntity(fencepost)
 		EndIf
 		EntityTexture TextureTarget,CurrentObjectTexture
 		
-	Else If CurrentObject\Attributes\TexName$<>"" And CurrentObject\Attributes\TexName$<>"!None" And Left$(CurrentObject\Attributes\TexName$,1)<>"!"  And CurrentObject\Attributes\ModelName$<>"!Button"
-		If myFileType(CurrentObject\Attributes\TexName$)=1 Or FileType(CurrentObject\Attributes\TexName$)=1
-			CurrentObjectTexture=myLoadTexture(CurrentObject\Attributes\TexName$,4)
+	Else If CurrentObjectTextureName$<>"" And CurrentObjectTextureName$<>"!None" And Left$(CurrentObjectTextureName$,1)<>"!"  And CurrentObjectmodelname$<>"!Button"
+		If myFileType(CurrentObjectTextureName$)=1 Or FileType(CurrentObjectTextureName$)=1
+			CurrentObjectTexture=myLoadTexture(CurrentObjectTextureName$,4)
 			EntityTexture TextureTarget,CurrentObjectTexture
 		Else
 			Print "WARNING!"
-			Print "Couldn't load texture: " + CurrentObject\Attributes\TexName$
+			Print "Couldn't load texture: " + CurrentObjectTextureName$
 			Print "The adventure may be unplayable in game"
 			Delay 2000
 		EndIf
@@ -15245,21 +15321,21 @@ CurrentObject\Attributes\YawAdjustopyEntity(fencepost)
 	
 	If CurrentObjectScaleAdjust=0.0 Then CurrentObjectScaleAdjust=1.0
 	
-	If CurrentObject\Attributes\ModelName$<>"!None"
-		ScaleEntity CurrentObjectModel,CurrentObject\Attributes\XScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\YScale*CurrentObjectScaleAdjust
-		;RotateEntity CurrentObjectModel,CurrentObject\Attributes\PitchAdjust,CurrentObject\Position\YawAdjust,CurrentObject\Attributes\RollAdjust
+	If CurrentObjectModelName$<>"!None"
+		ScaleEntity CurrentObjectModel,CurrentObjectXScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectYScale*CurrentObjectScaleAdjust
+		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
 		RotateEntity CurrentObjectModel,0,0,0
-		TurnEntity CurrentObjectModel,CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
-		TurnEntity CurrentObjectModel,0,CurrentObject\Position\YawAdjust,0
+		TurnEntity CurrentObjectModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+		TurnEntity CurrentObjectModel,0,CurrentObjectYawAdjust,0
 		
-		If CurrentObject\Attributes\ModelName$="!Kaboom" Or CurrentObject\Attributes\ModelName$="!BabyBoomer" Then TurnEntity CurrentObjectModel,0,90,0
+		If CurrentObjectModelName$="!Kaboom" Or CurrentObjectModelName$="!BabyBoomer" Then TurnEntity CurrentObjectModel,0,90,0
 
 
-	;	PositionEntity CurrentObjectModel,CurrentObject\Attributes\XAdjust,CurrentObject\Attributes\ZAdjust+CurrentObject\Position\Z,-CurrentObject\Attributes\YAdjust
+	;	PositionEntity CurrentObjectModel,CurrentObjectXAdjust,CurrentObjectZAdjust+CurrentObjectZ,-CurrentObjectYAdjust
 		
 	EndIf
 
-	PositionEntity CurrentObjectModel,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\Attributes\ZAdjust+CurrentObject\Position\Z,0-CurrentObject\Attributes\YAdjust
+	PositionEntity CurrentObjectModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ,0-CurrentObjectYAdjust
 	
 	If CurrentHatModel>0
 	
@@ -15268,16 +15344,16 @@ CurrentObject\Attributes\YawAdjustopyEntity(fencepost)
 		Else
 			EntityTexture CurrentHatModel,CurrentHatTexture
 		EndIf
-		ScaleEntity CurrentHatModel,CurrentObject\Attributes\YScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\XScale*CurrentObjectScaleAdjust
+		ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
 		
-		;RotateEntity CurrentObjectModel,CurrentObject\Attributes\PitchAdjust,CurrentObject\Position\YawAdjust,CurrentObject\Attributes\RollAdjust
+		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
 ;		RotateEntity CurrentHatModel,0,0,0
-;		TurnEntity CurrentHatModel,CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
-;		TuCurrentObject\Attributes\YawAdjustel,0,CurrentObject\Position\YawAdjust-90,0
+;		TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;		TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
 		
 		;bone=FindChild(CurrentObjectModel,"hat_bone")
 	
-;		PositionEntity CurrentHatModel,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\AttribuCurrentObject\Attributes\YawAdjustectZ+.1+.84*CurrentObject\Attributes\ZScale/.035,0-CurrentObject\Attributes\YAdjust
+;		PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 
 		TransformAccessoryEntityOntoBone(CurrentHatModel,CurrentObjectModel)
 
@@ -15291,18 +15367,18 @@ CurrentObject\Attributes\YawAdjustopyEntity(fencepost)
 		Else
 			EntityTexture CurrentAccModel,CurrentAccTexture
 		EndIf
-		ScaleEntity CurrentAccModel,CurrentObject\Attributes\YScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\XScale*CurrentObjectScaleAdjust
+		ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
 		
-		;RotateEntity CurrentObjectModel,CurrentObject\Attributes\PitchAdjust,CurrentObject\Position\YawAdjust,CurrentObject\Attributes\RollAdjust
+		;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
 ;		RotateEntity CurrentAccModel,0,0,0
-;		TurnEntity CurrentAccModel,CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
-;		TurnEntity CurrentAccModel,0,CurrentObject\Position\YawAdjust-90,0
+;		TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;		TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
 		
 		;bone=FindChild(CurrentObjectModel,"hat_bone")
 	
-CurrentObject\Attributes\YawAdjustentAccModel,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\Attributes\ZAdjust+CurrentObject\Position\Z+.1+.84*CurrentObject\Attributes\ZScale/.035,0-CurrentObject\Attributes\YAdjust
+;		PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 
-		TransforCurrentObject\Attributes\YawAdjustne(CurrentAccModel,CurrentObjectModel)
+		TransformAccessoryEntityOntoBone(CurrentAccModel,CurrentObjectModel)
 
 	EndIf
 
@@ -15340,10 +15416,10 @@ Function CalculateCurrentObjectTargetIDs()
 			Next
 		Else If (CurrentObjectSubType Mod 32)<10 ; ColorX2Y
 			CurrentObjectTargetIDCount=1
-			CurrentObjectTargetID(0)=ColorToID(CurrentObjectCurrentObject\Attributes\YawAdjustentObject\Attributes\Data2)
+			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
 		Else If (CurrentObjectSubType Mod 32)=16 Or (CurrentObjectSubType Mod 32)=17 ; Rotator or ???
 			CurrentObjectTargetIDCount=1
-			CurrentObjectTargCurrentObject\Attributes\YawAdjustentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 		Else If (CurrentObjectSubType Mod 32)=15 ; General Command
 			Select CurrentObject\Attributes\Data0
 			Case 1,2,3,4,5,51,52,61,62,63
@@ -15559,9 +15635,9 @@ Function CalculateLevelExitTo(D1,D2,D3,D4,level,x,y)
 	CurrentObjectData(D4)=StartingYaw
 	
 	If CurrentObjectType=90 And CurrentObjectSubType=10 ; LevelExit
-		CurrentObject\Position\YawAdjust=180-StartingYaw
-		If CurrentObject\Position\YawAdjust<0
-			CurrentObject\Position\YawAdjust=CurrentObject\Position\YawAdjust+360
+		CurrentObjectYawAdjust=180-StartingYaw
+		If CurrentObjectYawAdjust<0
+			CurrentObjectYawAdjust=CurrentObjectYawAdjust+360
 		EndIf
 	EndIf
 
@@ -15612,7 +15688,8 @@ Function CopyLevel()
 
 	For i=0 To 99
 		For j=0 To 99
-			CoCurrentObject\Attributes\YawAdjust)=LevelTileCurrentObject\Attributes\YawAdjustonding to squares CurrentObject\Attributes\YawAdjustpyLevelTileRotation(i,j)=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
+			CopyLevelTileTexture(i,j)=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
+			CopyLevelTileRotation(i,j)=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
 			CopyLevelTileSideTexture(i,j)=LevelTileSideTexture(i,j) ; texture for extrusion walls
 			CopyLevelTileSideRotation(i,j)=LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
 			CopyLevelTileRandom#(i,j)=LevelTileRandom#(i,j) ; random height pertubation of tile
@@ -16887,15 +16964,15 @@ Function CreateObjectModel(Dest)
 ;		
 ;			
 ;			EntityTexture CurrentHatModel,CurrentHatTexture
-;			ScaleEntity CurrentHatModel,CurrentObject\Attributes\YScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\XScale*CurrentObjectScaleAdjust
-;			;RotateEntity CurrentObjectModel,CurrentObject\Attributes\PitchAdjust,CurrentObject\Position\YawAdjust,CurrentObject\Attributes\RollAdjust
+;			ScaleEntity CurrentHatModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+;			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
 ;			RotateEntity CurrentHatModel,0,0,0
-;			TurnEntity CurrentHatModel,CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
-;			TurnEntity CurrentHatModel,0,CurrentObject\Position\YawAdjust-90,0
+;			TurnEntity CurrentHatModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;			TurnEntity CurrentHatModel,0,CurrentObjectYawAdjust-90,0
 ;			
 ;			bone=FindChild(CurrentObjectModel,"hat_bone")
 ;		
-;			PositionEntity CurrentHatModel,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\Attributes\ZAdjust+CurrentObject\Position\Z+.1+.84*CurrentObject\Attributes\ZScale/.035,0-CurrentObject\Attributes\YAdjust
+;			PositionEntity CurrentHatModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 ;	
 ;	
 ;		EndIf
@@ -16904,15 +16981,15 @@ Function CreateObjectModel(Dest)
 ;		
 ;			
 ;			EntityTexture CurrentAccModel,CurrentAccTexture
-;			ScaleEntity CurrentAccModel,CurrentObject\Attributes\YScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObjectScaleAdjust,CurrentObject\Attributes\XScale*CurrentObjectScaleAdjust
-;			;RotateEntity CurrentObjectModel,CurrentObject\Attributes\PitchAdjust,CurrentObject\Position\YawAdjust,CurrentObject\Attributes\RollAdjust
+;			ScaleEntity CurrentAccModel,CurrentObjectYScale*CurrentObjectScaleAdjust,CurrentObjectZScale*CurrentObjectScaleAdjust,CurrentObjectXScale*CurrentObjectScaleAdjust
+;			;RotateEntity CurrentObjectModel,CurrentObjectPitchAdjust,CurrentObjectYawAdjust,CurrentObjectRollAdjust
 ;			RotateEntity CurrentAccModel,0,0,0
-;			TurnEntity CurrentAccModel,CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
-;			TurnEntity CurrentAccModel,0,CurrentObject\Position\YawAdjust-90,0
+;			TurnEntity CurrentAccModel,CurrentObjectPitchAdjust,0,CurrentObjectRollAdjust
+;			TurnEntity CurrentAccModel,0,CurrentObjectYawAdjust-90,0
 ;			
 ;			bone=FindChild(CurrentObjectModel,"hat_bone")
 ;		
-;			PositionEntity CurrentAccModel,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\Attributes\ZAdjust+CurrentObject\Position\Z+.1+.84*CurrentObject\Attributes\ZScale/.035,0-CurrentCurrentObject\Attributes\YawAdjustust
+;			PositionEntity CurrentAccModel,0+CurrentObjectXAdjust,300+CurrentObjectZAdjust+CurrentObjectZ+.1+.84*CurrentObjectZScale/.035,0-CurrentObjectYAdjust
 ;	
 ;	
 ;		EndIf
@@ -16925,7 +17002,7 @@ Function CreateObjectModel(Dest)
 
 		Else If ObjectModelName$(Dest)="!StinkerWee"
 			ObjectEntity(Dest)=CopyEntity(StinkerWeeMesh)
-			EntityTexture ObjectEntity(Dest),StinkerWCurrentObject\Attributes\YawAdjustest,8)+1)
+			EntityTexture ObjectEntity(Dest),StinkerWeeTexture(ObjectData(Dest,8)+1)
 		Else If ObjectModelName$(Dest)="!Cage"
 			ObjectEntity(Dest)=CopyEntity(CageMesh)
 		Else If ObjectModelName$(Dest)="!StarGate"
@@ -16942,12 +17019,12 @@ Function CreateObjectModel(Dest)
 			ScaleMesh ObjectEntity(Dest),.5,.5,.5
 			EntityTexture ObjectEntity(Dest),Rainbowtexture
 			
-		Else If CurrentObject\Attributes\YawAdjust="!IceBlock"
+		Else If ObjectModelName$(Dest)="!IceBlock"
 			ObjectEntity(Dest)=CreateIceBlockMesh(ObjectData(Dest,3))
 			
 		Else If ObjectModelName$(Dest)="!PlantFloat"
 			ObjectEntity(Dest)=CreatePlantFloatMesh()
-			;ObjCurrentObject\Attributes\YawAdjustSphere()
+			;ObjectEntity(Dest)=CreateSphere()
 			;ScaleMesh ObjectEntity(Dest),.4,.1,.4
 ;			PositionMesh ObjectEntity(Dest),0,1,0
 			;EntityTexture ObjectEntity(Dest),Rainbowtexture
@@ -22572,7 +22649,7 @@ Function StartTestModeAt(level,x,y)
 	DuplicateLevel(1,Original1Wlv$)
 	; Place a level transition at the adventure start coordinates.
 	GenerateLevelExitTo(level,x,y)
-	CurrentObject\Attributes\ZAdjust=1000.0 ; Move the LevelExit out of view in-game.
+	CurrentObjectZAdjust=1000.0 ; Move the LevelExit out of view in-game.
 	PreventPlacingObjectsOutsideLevel=False
 	PlaceObject(AdventureStartX,AdventureStartY)
 	SaveLevel()
@@ -25933,8 +26010,8 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^6
 		;If CurrentObjectMoveXGoal=0 And CurrentObjectMoveYGoal=0
-			;CurrentObjectMoveXGoal=Floor(CurrentObject\Position\X)
-			;CurrentObjectMoveYGoal=Floor(CurrentObject\Position\Y) 
+			;CurrentObjectMoveXGoal=Floor(CurrentObjectX)
+			;CurrentObjectMoveYGoal=Floor(CurrentObjectY) 
 			;CurrentObjectCurrentAnim=10
 		;EndIf
 	
@@ -25944,9 +26021,9 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^6+2^8
 		
-		CurrentObject\Attributes\XScale=0.025
-		CurrentObject\Attributes\YScale=0.025
-		CurrentObject\Attributes\ZScale=0.025
+		CurrentObjectXScale=0.025
+		CurrentObjectYScale=0.025
+		CurrentObjectZScale=0.025
 	
 	Case 150 ; Scritter
 		CurrentObjectMovementSpeed=50
@@ -26001,11 +26078,11 @@ Function RetrieveDefaultTrueMovement()
 	
 		CurrentObjectTileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
 		
-		If CurrentObject\Attributes\ModelName$="!Busterfly"
+		If CurrentObjectModelName$="!Busterfly"
 
-			CurrentObject\Attributes\XScale=.01
-			CurrentObject\Attributes\YScale=.01
-			CurrentObject\Attributes\ZScale=.01
+			CurrentObjectXScale=.01
+			CurrentObjectYScale=.01
+			CurrentObjectZScale=.01
 			CurrentObjectRoll2=90
 			
 		EndIf
@@ -26022,8 +26099,8 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectTileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
 		CurrentObjectObjectTypeCollision=2^4+2^6
 		;If CurrentObjectMoveXGoal=0 And CurrentObjectMoveYGoal=0
-			;CurrentObjectMoveXGoal=Floor(CurrentObject\Position\X)
-			;CurrentObjectMoveYGoal=Floor(CurrentObject\Position\Y) 
+			;CurrentObjectMoveXGoal=Floor(CurrentObjectX)
+			;CurrentObjectMoveYGoal=Floor(CurrentObjectY) 
 			;CurrentObjectCurrentAnim=10
 		;EndIf
 		
@@ -26057,9 +26134,9 @@ Function RetrieveDefaultTrueMovement()
 				CurrentObjectMovementType=0
 				;AnimateMD2 ObjectEntity(i),3,1,48,49
 			End Select
-			CurrentObject\Attributes\XScale=0.006
-			CurrentObject\Attributes\YScale=0.006
-			CurrentObject\Attributes\ZScale=0.006
+			CurrentObjectXScale=0.006
+			CurrentObjectYScale=0.006
+			CurrentObjectZScale=0.006
 		Else ; red
 			CurrentObjectTileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 			Select ObjectData(i,1)
@@ -26145,7 +26222,7 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObjectObjectTypeCollision=0
 		
 		CurrentObject\Attributes\Data1=-1
-		CurrentObject\Position\Z=4
+		CurrentObjectZ=4
 		
 	Case 470 ; Ghost
 		CurrentObjectMovementType=0
