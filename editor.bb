@@ -10656,6 +10656,10 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data3"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(3))
+		ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
+			If CurrentObjectTargetIDCount<>0
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+			EndIf
 		EndIf
 		
 		If CurrentObject\Attributes\ModelName$="!NPC"
@@ -15551,20 +15555,7 @@ Function CalculateCurrentObjectTargetIDs()
 			CurrentObjectTargetIDCount=1
 			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 		Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
-			Select CurrentObject\Attributes\Data0
-			Case 1,2,3,4,5,51,52,61,62,63
-				CurrentObjectTargetIDCount=1
-				CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
-			Case 64
-				If CurrentObject\Attributes\Data1=-1 ; Ignore if targeting the player
-					CurrentObjectTargetIDCount=0
-				Else
-					CurrentObjectTargetIDCount=1
-					CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
-				EndIf
-			Default
-				CurrentObjectTargetIDCount=0
-			End Select
+			CalculateCommandTargetIDs(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 		Else If (CurrentObject\Attributes\LogicSubType Mod 32)=11 ; NPC Modifier
 			If CurrentObject\Attributes\Data0=2 ; NPC Exclamation
 				If CurrentObject\Attributes\Data1=-1 ; Ignore if targeting the player
@@ -15580,10 +15571,31 @@ Function CalculateCurrentObjectTargetIDs()
 		Else
 			CurrentObjectTargetIDCount=0
 		EndIf
+	ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
+		CalculateCommandTargetIDs(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 	Else
 		CurrentObjectTargetIDCount=0
 	EndIf
 	
+End Function
+
+Function CalculateCommandTargetIDs(Command,Data1)
+
+	Select Command
+	Case 1,2,3,4,5,51,52,61,62,63
+		CurrentObjectTargetIDCount=1
+		CurrentObjectTargetID(0)=Data1
+	Case 64
+		If Data1=-1 ; Ignore if targeting the player
+			CurrentObjectTargetIDCount=0
+		Else
+			CurrentObjectTargetIDCount=1
+			CurrentObjectTargetID(0)=Data1
+		EndIf
+	Default
+		CurrentObjectTargetIDCount=0
+	End Select
+
 End Function
 
 Function CalculateCurrentObjectActivateIDs()
