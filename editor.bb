@@ -1049,8 +1049,8 @@ Function ReadDisplayFile()
 	file=ReadFile (globaldirname$+"\"+EditorDisplayFile$)
 	If file>0
 	
-		j=ReadInt(file)
-		For i=0 To j-1
+		NofMyGfxModes=ReadInt(file)
+		For i=0 To NofMyGfxModes-1
 			MyGfxModeWidth(i)=ReadInt(file)
 			MyGfxModeHeight(i)=ReadInt(file)
 			MyGfxModeDepth(i)=ReadInt(file)
@@ -1092,7 +1092,8 @@ Function WriteDisplayFile()
 End Function
 
 Function PopulateGfxModes()
-		
+	
+	j=0
 	For i=1 To CountGfxModes3D()
 		ratio#=Float(GfxModeWidth(i))/Float(GfxModeHeight(i))
 		If ratio#>1.33 And ratio#<1.34 And GfxModeWidth(i)>=640
@@ -1102,7 +1103,7 @@ Function PopulateGfxModes()
 			MyGfxModeDepth(j)=GfxModeDepth(i)
 			;IsWideScreen(j)=False
 			j=j+1
-		ElseIf ratio#>1.77 And ratio#<1.78 And GfxModeWidth(i)>=640 And widescreen=True
+		ElseIf ratio#>1.77 And ratio#<1.78 And GfxModeWidth(i)>=640 ;And widescreen=True
 			MyGfxModeWidth(j)=GfxModeWidth(i)
 			MyGfxModeHeight(j)=GfxModeHeight(i)
 			MyGfxModeDepth(j)=GfxModeDepth(i)
@@ -1297,10 +1298,10 @@ Global CameraProj=0
 Global CameraPanning=False
 Global GameCamera=False ; whether "game camera mode" is active (simulates the in-game camera)
 
-Global Camera1PerspectiveZoom#=1.0*GfxZoomScaling#
-Global Camera1OrthographicZoom#=0.015*GfxZoomScaling#
-Global Camera1Zoom#=Camera1PerspectiveZoom#
-Global Camera4Zoom#=8.0
+Global Camera1PerspectiveZoom#
+Global Camera1OrthographicZoom#
+Global Camera1Zoom#
+Global Camera4Zoom#
 
 Global Camera1StartY=6 ;/GfxZoomScaling# ;*GfxAspectRatio#
 ; saved when entering orthographic mode since orthographic mode mouse wheel scrolling does not change the height, unlike perspective mode mouse wheel scrolling
@@ -2429,6 +2430,11 @@ Function InitializeGraphicsCameras()
 	GameCamera=False
 	
 	Camera1 = CreateCamera() ; level camera
+	Camera1PerspectiveZoom#=1.0*GfxZoomScaling#
+	Camera1OrthographicZoom#=0.015*GfxZoomScaling#
+	Camera1Zoom#=Camera1PerspectiveZoom#
+	Camera4Zoom#=8.0
+	
 	TurnEntity Camera1,65,0,0
 	PositionEntity Camera1,7,Camera1StartY,-14
 	CameraViewport camera1,0,0,LevelViewportWidth,LevelViewportHeight
@@ -2590,6 +2596,8 @@ End Function
 
 Function ResolutionWasChanged()
 
+	Return ; Exit for now until InitializeGraphicsEntities is complete, assuming that ever happens.
+	
 	CalculateUIValues()
 	ResetGraphicsEntities()
 
@@ -20278,16 +20286,16 @@ Function SettingsMainLoop()
 			GfxHeight=MyGfxModeHeight(gfxmode)
 			GfxDepth=MyGfxModeDepth(gfxmode)
 			
-			Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
-			ResolutionWasChanged()
+			;Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
+			;ResolutionWasChanged()
 			
 			WriteDisplayFile()
 			
 			Repeat
 			Until MouseDown(1)=0
 			
-			;ExecFile ("editor3d.exe")
-			;EndApplication()
+			ExecFile ("editor3d.exe")
+			EndApplication()
 			
 		EndIf
 		If selected=3
