@@ -19701,6 +19701,7 @@ End Function
 Function AdventureFileNamesListPageDown()
 	AdventureFileNamesListedStart=AdventureFileNamesListedStart+19
 	If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
+	If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
 End Function
 
 Function StartAdventureSelectScreen()
