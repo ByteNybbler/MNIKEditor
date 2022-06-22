@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/21/22"
+Global VersionDate$="06/22/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -1043,52 +1043,85 @@ Global TilePickerZoomScaling#
 
 Const EditorDisplayFile$="displaymnikeditor.wdf"
 
-file=ReadFile (globaldirname$+"\"+EditorDisplayFile$)
-If file>0
+Function ReadDisplayFile()
 
-	j=ReadInt(file)
-	For i=0 To j-1
-		MyGfxModeWidth(i)=ReadInt(file)
-		MyGfxModeHeight(i)=ReadInt(file)
-		MyGfxModeDepth(i)=ReadInt(file)
+	file=ReadFile (globaldirname$+"\"+EditorDisplayFile$)
+	If file>0
+	
+		j=ReadInt(file)
+		For i=0 To j-1
+			MyGfxModeWidth(i)=ReadInt(file)
+			MyGfxModeHeight(i)=ReadInt(file)
+			MyGfxModeDepth(i)=ReadInt(file)
+		Next
+		mygfxmode=ReadInt(file)
+		GfxWindowed=ReadInt(file)
+		GfxWidth=MyGfxModeWidth(mygfxmode)
+		GfxHeight=MyGfxModeHeight(mygfxmode)
+		GfxDepth=MyGfxModeDepth(mygfxmode)
+	Else
+		GfxWidth=800
+		GfxHeight=600
+		GfxWindowed=1
+		GfxDepth=16
+	EndIf
+
+End Function
+
+Function WriteDisplayFile()
+
+	file=WriteFile(globaldirname$+"\"+EditorDisplayFile$)
+
+	WriteInt file,NofMyGfxModes
+	
+	For i=0 To NofMyGfxModes-1
+		WriteInt file,MyGfxModeWidth(i)
+		WriteInt file,MyGfxModeHeight(i)
+		WriteInt file,MyGfxModeDepth(i)
+		
+		
 	Next
-	mygfxmode=ReadInt(file)
-	GfxWindowed=ReadInt(file)
-	GfxWidth=MyGfxModeWidth(mygfxmode)
-	GfxHeight=MyGfxModeHeight(mygfxmode)
-	GfxDepth=MyGfxModeDepth(mygfxmode)
 	
+	WriteInt file,GfxMode
+	WriteInt file,GfxWindowed
 	
-	; something is wrong withe graphics mode: try different versions
-	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
-		GfxWidth=800
-		GfxHeight=600
-		GfxDepth=16
-	EndIf
-	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
-		GfxWidth=800
-		GfxHeight=600
-		GfxDepth=32
-	EndIf
-	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
-		GfxWidth=640
-		GfxHeight=480
-		GfxDepth=16
-	EndIf
-	If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
-		GfxWidth=640
-		GfxHeight=480
-		GfxDepth=32
-	EndIf
-	
-Else
+	CloseFile file
+
+End Function
+
+ReadDisplayFile()
+
+; something is wrong withe graphics mode: try different versions
+If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
 	GfxWidth=800
 	GfxHeight=600
-	GfxWindowed=1
 	GfxDepth=16
-
-
-	
+EndIf
+If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+	GfxWidth=800
+	GfxHeight=600
+	GfxDepth=32
+EndIf
+If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+	GfxWidth=640
+	GfxHeight=480
+	GfxDepth=16
+EndIf
+If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+	GfxWidth=640
+	GfxHeight=480
+	GfxDepth=32
+EndIf
+If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
+	Print "Unable to set graphics mode!"
+	Print ""
+	Print "Please ensure that your video card drivers"
+	Print "are up-to-date, or use the graphic options"
+	Print "to select a different display mode."
+	Print ""
+	Print "Exiting... press any key."
+	WaitKey()
+	End
 EndIf
 
 ;widescreen
@@ -1101,20 +1134,6 @@ ratio#=Float(GfxWidth)/Float(GfxHeight)
 
 If ratio#>1.77 And ratio#<1.78 ;aspect ratio must be 16:9
 	widescreen=True
-EndIf 
-
-
-If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
-	Print "Unable to set graphics mode!"
-	Print ""
-	Print "Please ensure that your video card drivers"
-	Print "are up-to-date, or use the graphic options"
-	Print "to select a different display mode."
-	Print ""
-	Print "Exiting... press any key."
-	WaitKey()
-	End
-	
 EndIf
 
 OriginalRatio#=800.0/600.0
@@ -20132,6 +20151,8 @@ Function SettingsMainLoop()
 			GfxHeight=MyGfxModeHeight(gfxmode)
 			GfxDepth=MyGfxModeDepth(gfxmode)
 			Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
+			
+			WriteDisplayFile()
 			
 			Repeat
 			Until MouseDown(1)=0
