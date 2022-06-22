@@ -2592,7 +2592,7 @@ Function ResetGraphicsEntities()
 	
 	; reload object entities
 	For i=0 To NofObjects-1
-		CreateLevelObjectModel(i)
+		BuildLevelObjectModel(i)
 	Next
 
 End Function
@@ -9711,7 +9711,7 @@ Function UpdateObjectEntityToCurrent(Obj.GameObject)
 	
 	If CurrentObject\HatEntity>0
 	
-		Obj\Entity=CreateAccEntity(CurrentObject\Attributes\Data2)
+		Obj\HatEntity=CreateAccEntity(CurrentObject\Attributes\Data2)
 		Obj\HatTexture=CreateHatTexture(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		
 		ScaleEntity Obj\HatEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
@@ -14863,63 +14863,63 @@ End Function
 
 Function BuildCurrentObjectModel()
 
-	BuildObjectModel(CurrentObject)
+	BuildObjectModel(CurrentObject,0,0,300+CurrentObject\Position\Z)
 	
-	PositionEntity CurrentObject\Entity,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\Attributes\ZAdjust+CurrentObject\Position\Z,0-CurrentObject\Attributes\YAdjust
-	
-	If CurrentObject\HatEntity>0
-	
+	FinalizeCurrentObject()
 
-		If CurrentObject\HatTexture=0
-			EntityColor CurrentObject\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
+End Function
 
+Function BuildObjectAccessories(Obj.GameObject)
+
+	If Obj\HatEntity>0
+		
+		If Obj\HatTexture=0
+			EntityColor Obj\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture CurrentObject\HatEntity,CurrentObject\HatTexture
+			EntityTexture Obj\HatEntity,Obj\HatTexture
 		EndIf
-		ScaleEntity CurrentObject\HatEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
+		ScaleEntity Obj\HatEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
 		
-		;RotateEntity CurrentObject\Entity,CurrentObject\Attributes\PitchAdjust,CurrentObject\Attributes\YawAdjust,CurrentObject\Attributes\RollAdjust
-;		RotateEntity CurrentObject\HatEntity,0,0,0
-;		TurnEntity CurrentObject\HatEntity,CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
-;		TuCurrentObject\Attributes\YawAdjustel,0,CurrentObject\Attributes\YawAdjust-90,0
+		;RotateEntity Obj\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
+;		RotateEntity Obj\HatEntity,0,0,0
+;		TurnEntity Obj\HatEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
+;		TuObj\Attributes\YawAdjustel,0,Obj\Attributes\YawAdjust-90,0
 		
-		;bone=FindChild(CurrentObject\Entity,"hat_bone")
+		;bone=FindChild(Obj\Entity,"hat_bone")
 	
-;		PositionEntity CurrentObject\HatEntity,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\AttribuCurrentObject\Attributes\YawAdjustectZ+.1+.84*CurrentObject\Attributes\ZScale/.035,0-CurrentObject\Attributes\YAdjust
+;		PositionEntity Obj\HatEntity,0+Obj\Attributes\XAdjust,300+Obj\AttribuObj\Attributes\YawAdjustectZ+.1+.84*Obj\Attributes\ZScale/.035,0-Obj\Attributes\YAdjust
 
-		TransformAccessoryEntityOntoBone(CurrentObject\HatEntity,CurrentObject\Entity)
+		TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
 
 	EndIf
 	
-	If CurrentObject\AccEntity>0
-	
+	If Obj\AccEntity>0
 		
-		If CurrentObject\AccTexture=0
-			EntityColor CurrentObject\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
-
+		If Obj\AccTexture=0
+			EntityColor Obj\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture CurrentObject\AccEntity,CurrentObject\AccTexture
+			EntityTexture Obj\AccEntity,Obj\AccTexture
 		EndIf
-		ScaleEntity CurrentObject\AccEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
+		ScaleEntity Obj\AccEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
 		
-		;RotateEntity CurrentObject\Entity,CurrentObject\Attributes\PitchAdjust,CurrentObject\Attributes\YawAdjust,CurrentObject\Attributes\RollAdjust
-;		RotateEntity CurrentObject\AccEntity,0,0,0
-;		TurnEntity CurrentObject\AccEntity,CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
-;		TurnEntity CurrentObject\AccEntity,0,CurrentObject\Attributes\YawAdjust-90,0
+		;RotateEntity Obj\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
+;		RotateEntity Obj\AccEntity,0,0,0
+;		TurnEntity Obj\AccEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
+;		TurnEntity Obj\AccEntity,0,Obj\Attributes\YawAdjust-90,0
 		
-		;bone=FindChild(CurrentObject\Entity,"hat_bone")
+		;bone=FindChild(Obj\Entity,"hat_bone")
 	
-		;PositionEntity CurrentObject\Attributes\YawAdjustentAccModel,0+CurrentObject\Attributes\XAdjust,300+CurrentObject\Attributes\ZAdjust+CurrentObject\Position\Z+.1+.84*CurrentObject\Attributes\ZScale/.035,0-CurrentObject\Attributes\YAdjust
+		;PositionEntity Obj\Attributes\YawAdjustentAccModel,0+Obj\Attributes\XAdjust,300+Obj\Attributes\ZAdjust+Obj\Position\Z+.1+.84*Obj\Attributes\ZScale/.035,0-Obj\Attributes\YAdjust
 
-		TransformAccessoryEntityOntoBone(CurrentObject\AccEntity,CurrentObject\Entity)
+		TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
 
 	EndIf
 
 End Function
 
-Function BuildObjectModel(Obj.GameObject)
+Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	
-	If CurrentObject\Entity>0 
+	If Obj\Entity>0 
 		FreeEntity Obj\Entity
 		Obj\Entity=0
 	EndIf
@@ -15505,10 +15505,11 @@ Function BuildObjectModel(Obj.GameObject)
 	;	PositionEntity Obj\Entity,Obj\Attributes\XAdjust,Obj\Attributes\ZAdjust+Obj\Position\Z,-Obj\Attributes\YAdjust
 		
 	EndIf
-
-
-	FinalizeCurrentObject()
 	
+	
+	PositionEntity Obj\Entity,x#+Obj\Attributes\XAdjust,z#+Obj\Attributes\ZAdjust,-y#-Obj\Attributes\YAdjust
+	
+	BuildObjectAccessories(Obj)
 
 End Function
 
@@ -16962,24 +16963,24 @@ Function TransformAccessoryEntityOntoBone(Entity,BoneHaver)
 End Function
 
 
-Function CreateLevelObjectModel(Dest)
+Function BuildLevelObjectModel(Dest)
 
-	BuildObjectModel(LevelObjects(Dest))		
-	
 	Obj.GameObject=LevelObjects(Dest)
+
+	BuildObjectModel(Obj,Obj\Position\X,Obj\Position\Y,Obj\Position\Z)
 	
 	UpdateObjectAnimation(Obj)
 	
 	UpdateObjectVisibility(Obj)
 	
-	PositionEntity Obj\Entity,ObjectSumX#(Obj),ObjectSumZ#(Obj),-ObjectSumY#(Obj)
+	;PositionEntity Obj\Entity,ObjectSumX#(Obj),ObjectSumZ#(Obj),-ObjectSumY#(Obj)
 	
-	If Obj\HatEntity>0
-		TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
-	EndIf
-	If Obj\AccEntity>0
-		TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
-	EndIf
+	;If Obj\HatEntity>0
+	;	TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
+	;EndIf
+	;If Obj\AccEntity>0
+	;	TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
+	;EndIf
 
 End Function
 
@@ -16992,7 +16993,7 @@ Function UpdateLevelObjectModel(Dest)
 	
 	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),10)
 	
-	CreateLevelObjectModel(Dest)
+	BuildLevelObjectModel(Dest)
 
 End Function
 
@@ -17889,7 +17890,7 @@ Function LoadLevel(levelnumber)
 			ReadString(file)
 		Next
 		
-		CreateLevelObjectModel(i)
+		BuildLevelObjectModel(i)
 
 
 		NofObjects=NofObjects+1
