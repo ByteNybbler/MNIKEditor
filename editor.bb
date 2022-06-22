@@ -4717,12 +4717,10 @@ Function EditorLocalControls()
 						CustomBrushEditorMode=EditorMode
 					ElseIf EditorMode=3
 						For k=0 To NofObjects-1
-							ObjX=LevelObjects(k)\Position\X
-							ObjY=LevelObjects(k)\Position\Y
 							ObjTileX=LevelObjects(k)\Position\TileX
 							ObjTileY=LevelObjects(k)\Position\TileY
-							If ObjX>BrushXStart And ObjX<BrushXStart+BrushWidth And ObjY>BrushYStart And ObjY<BrushYStart+BrushHeight
-								CopyObjectDataToBrush(k,NofBrushObjects,TileX-BrushXStart,TileY-BrushYStart)
+							If ObjTileX>=BrushXStart And ObjTileX<BrushXStart+BrushWidth And ObjTileY>=BrushYStart And ObjTileY<BrushYStart+BrushHeight
+								CopyObjectDataToBrush(k,NofBrushObjects,ObjTileX-BrushXStart,ObjTileY-BrushYStart)
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
 						Next
