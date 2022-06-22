@@ -9437,7 +9437,7 @@ Function PlaceObjectActual(x#,y#)
 	CreateObjectPositionMarker(ThisObject)
 	
 	
-	UpdateObjectEntityToCurrent(LevelObjects(ThisObject))
+	UpdateObjectEntityToCurrent(ThisObject)
 	
 	
 	SetCurrentGrabbedObject(ThisObject)
@@ -9707,8 +9707,9 @@ Function UpdateObjectPosition(Dest)
 End Function
 
 
-Function UpdateObjectEntityToCurrent(Obj.GameObject)
+Function UpdateObjectEntityToCurrent(Dest)
 	
+	Obj.GameObject=LevelObjects(Dest)
 	Obj\Entity=CopyEntity(CurrentObject\Entity)
 	
 	UpdateObjectVisibility(Obj)
@@ -10536,7 +10537,7 @@ Function PasteObjectData(Dest)
 	
 	FreeModel(LevelObjects(Dest))
 	
-	UpdateObjectEntityToCurrent(LevelObjects(Dest))
+	UpdateObjectEntityToCurrent(Dest)
 	
 	UpdateCurrentGrabbedObjectMarkerPosition()
 	
@@ -18037,15 +18038,20 @@ Function OpenTypedDialog()
 
 End Function
 
-Function GetAdventureDir$()
+Function GetAdventuresDir$()
 
 	If AdventureCurrentArchive=1
-		ex2$="Archive\"
+		Return globaldirname$+"\Custom\Editing\Archive\"
 	Else
-		ex2$="Current\"
+		Return globaldirname$+"\Custom\Editing\Current\"
 	EndIf
-	
-	Return globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+
+End Function
+
+Function GetAdventureDir$()
+
+	ex2$=GetAdventuresDir$()
+	Return ex2$+AdventureFileName$+"\"
 
 End Function
 
