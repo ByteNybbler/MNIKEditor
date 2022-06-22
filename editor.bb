@@ -14081,15 +14081,23 @@ Function AdjustObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier
 			; turn
-			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=35
-			If CurrentObject\Attributes\Data7=36 CurrentObject\Attributes\Data7=-1
-			
+
+			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=25
+			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=-1
 			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
 			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
 			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
 			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
-			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=30
-			If CurrentObject\Attributes\Data7=29 CurrentObject\Attributes\Data7=25
+			
+;			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=35
+;			If CurrentObject\Attributes\Data7=36 CurrentObject\Attributes\Data7=-1
+;			
+;			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
+;			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
+;			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
+;			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
+;			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=30
+;			If CurrentObject\Attributes\Data7=29 CurrentObject\Attributes\Data7=25
 
 		EndIf
 		
