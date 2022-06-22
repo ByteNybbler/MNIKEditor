@@ -17005,61 +17005,61 @@ Function CameraControls()
 		Return
 	EndIf
 	
-	If CtrlDown()
-		Return
-	EndIf
+	If Not CtrlDown()
 
-	If KeyDown(75) Or KeyDown(203) Or KeyDown(KeyMoveWest) ; numpad 4 or left arrow
-			
-		TranslateEntity Target,-Adj,0,0
-	EndIf
-	If KeyDown(77) Or KeyDown(205) Or KeyDown(KeyMoveEast) ; numpad 6 or right arrow
-		
-		TranslateEntity Target,Adj,0,0
-	EndIf
-	If KeyDown(72) Or KeyDown(200) Or KeyDown(KeyMoveNorth) ; numpad 8 or up arrow
-	
-		TranslateEntity Target,0,0,Adj
-	EndIf
-	If KeyDown(80) Or KeyDown(208) Or KeyDown(KeyMoveSouth) ; numpad 2 or down arrow
-	
-		TranslateEntity Target,0,0,-Adj
-	EndIf
-	If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
-	
-		TranslateEntity Target,0,Adj,0
-	EndIf
-	If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
-	
-		TranslateEntity Target,0,-Adj,0
-	EndIf
-	If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
-		
-		TurnEntity Target,1,0,0
-	EndIf
-	If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
-	
-		TurnEntity Target,-1,0,0
-	EndIf
-	If KeyDown(181) ;Or KeyDown(3) ; numpad /
-		
-		TurnEntity Target,0,1,0
-	EndIf
-	If KeyDown(55) ;Or KeyDown(4) ; numpad *
-		
-		TurnEntity Target,0,-1,0
-	EndIf
-	
-	If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
-		; reset camera rotation
-		If Target=Camera1
-			RotateEntity Camera1,65,0,0
-		ElseIf Target=Camera4
-			RotateEntity Camera4,25,0,0
-			PositionEntity Camera4,0,303.8,-8
-			Camera4Zoom#=8
-			CameraZoom Camera4,Camera4Zoom#
+		If KeyDown(75) Or KeyDown(203) Or KeyDown(KeyMoveWest) ; numpad 4 or left arrow
+				
+			TranslateEntity Target,-Adj,0,0
 		EndIf
+		If KeyDown(77) Or KeyDown(205) Or KeyDown(KeyMoveEast) ; numpad 6 or right arrow
+			
+			TranslateEntity Target,Adj,0,0
+		EndIf
+		If KeyDown(72) Or KeyDown(200) Or KeyDown(KeyMoveNorth) ; numpad 8 or up arrow
+		
+			TranslateEntity Target,0,0,Adj
+		EndIf
+		If KeyDown(80) Or KeyDown(208) Or KeyDown(KeyMoveSouth) ; numpad 2 or down arrow
+		
+			TranslateEntity Target,0,0,-Adj
+		EndIf
+		If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
+		
+			TranslateEntity Target,0,Adj,0
+		EndIf
+		If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
+		
+			TranslateEntity Target,0,-Adj,0
+		EndIf
+		If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
+			
+			TurnEntity Target,1,0,0
+		EndIf
+		If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
+		
+			TurnEntity Target,-1,0,0
+		EndIf
+		If KeyDown(181) ;Or KeyDown(3) ; numpad /
+			
+			TurnEntity Target,0,1,0
+		EndIf
+		If KeyDown(55) ;Or KeyDown(4) ; numpad *
+			
+			TurnEntity Target,0,-1,0
+		EndIf
+		
+		If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
+			; reset camera rotation
+			If Target=Camera1
+				RotateEntity Camera1,65,0,0
+			ElseIf Target=Camera4
+				RotateEntity Camera4,25,0,0
+				PositionEntity Camera4,0,303.8,-8
+				Camera4Zoom#=8
+				CameraZoom Camera4,Camera4Zoom#
+			EndIf
+		EndIf
+		
 	EndIf
 	
 	If MouseScroll<>0
