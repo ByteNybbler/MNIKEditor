@@ -15630,6 +15630,10 @@ Function ShowWorldAdjusterPositions()
 	Next
 
 	Select CurrentObject\Attributes\LogicType
+	Case 50 ; spellball
+		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+	Case 51,52 ; magic shooter, meteor shooter
+		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2)
 	Case 90 ; button
 		If CurrentObject\Attributes\LogicSubType=10 ; levelexit
 			If CurrentObject\Attributes\Data1=CurrentLevelNumber
@@ -15640,8 +15644,6 @@ Function ShowWorldAdjusterPositions()
 		ElseIf CurrentObject\Attributes\LogicSubType=15 ; general command
 			ShowWorldAdjusterPositionsCmd(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data4)
 		EndIf
-	Case 51,52 ; magic shooter, meteor shooter
-		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2)
 	Case 242 ; cuboid
 		ShowWorldAdjusterPositionsCmd(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5,CurrentObject\Attributes\Data6)
 	Case 434 ; mothership
@@ -15686,6 +15688,14 @@ End Function
 Function SetCurrentObjectTargetLocation(x,y)
 
 	Select CurrentObject\Attributes\LogicType
+	Case 50 ; spellball
+		CurrentObject\Attributes\Data0=x
+		CurrentObject\Attributes\Data1=y
+		CurrentGrabbedObjectModified=True	
+	Case 51,52 ; magic shooter, meteor shooter
+		CurrentObject\Attributes\Data1=x
+		CurrentObject\Attributes\Data2=y
+		CurrentGrabbedObjectModified=True
 	Case 90 ; button
 		If CurrentObject\Attributes\LogicSubType=10 ; levelexit
 			CalculateLevelExitTo(1,2,3,4,CurrentLevelNumber,x,y)
@@ -15699,10 +15709,6 @@ Function SetCurrentObjectTargetLocation(x,y)
 		Else
 			GenerateLevelExitTo(CurrentLevelNumber,x,y)
 		EndIf
-	Case 51,52 ; magic shooter, meteor shooter
-		CurrentObject\Attributes\Data1=x
-		CurrentObject\Attributes\Data2=y
-		CurrentGrabbedObjectModified=True
 	Case 242 ; cuboid
 		SetCurrentObjectTargetLocationCmd(CurrentObject\Attributes\Data2,3,4,5,6,x,y)
 	Default
@@ -16027,6 +16033,12 @@ Function ResizeLevelFixObjectTargets(Obj.GameObject)
 	EndIf
 
 	Select Obj\Attributes\LogicType
+	Case 50 ; spellball
+		Obj\Attributes\Data0=Obj\Attributes\Data0+WidthLeftChange
+		Obj\Attributes\Data1=Obj\Attributes\Data1+HeightTopChange
+	Case 51,52 ; magic shooter, meteor shooter
+		Obj\Attributes\Data1=Obj\Attributes\Data1+WidthLeftChange
+		Obj\Attributes\Data2=Obj\Attributes\Data2+HeightTopChange
 	Case 90 ; button
 		If Obj\Attributes\LogicSubType=10 ; levelexit
 			If Obj\Attributes\Data1=CurrentLevelNumber
@@ -16039,9 +16051,6 @@ Function ResizeLevelFixObjectTargets(Obj.GameObject)
 		ElseIf CurrentObject\Attributes\LogicSubType=15 ; general command
 			ResizeLevelFixObjectTargetsCmd(Obj\Attributes,Obj\Attributes\Data0,1,2,3,4)
 		EndIf
-	Case 51,52 ; magic shooter, meteor shooter
-		Obj\Attributes\Data1=Obj\Attributes\Data1+WidthLeftChange
-		Obj\Attributes\Data2=Obj\Attributes\Data2+HeightTopChange
 	Case 242 ; cuboid
 		ResizeLevelFixObjectTargetsCmd(Obj\Attributes,Obj\Attributes\Data2,3,4,5,6)
 	Case 434 ; mothership
