@@ -946,45 +946,6 @@ Global SimulationLevel=1
 Const SimulationLevelMax=3
 Const SimulationLevelAnimation=1
 
-Dim BrushObjectModelName$(1000)
-Dim BrushObjectTextureName$(1000)
-Dim BrushObjectXScale#(1000)
-Dim BrushObjectZScale#(1000)
-Dim BrushObjectYScale#(1000)
-Dim BrushObjectXAdjust#(1000)
-Dim BrushObjectZAdjust#(1000)
-Dim BrushObjectYAdjust#(1000)
-Dim BrushObjectPitchAdjust#(1000)
-Dim BrushObjectYawAdjust#(1000)
-Dim BrushObjectRollAdjust#(1000)
-Dim BrushObjectX#(1000),BrushObjectY#(1000),BrushObjectZ#(1000)
-Dim BrushObjectOldX#(1000),BrushObjectOldY#(1000),BrushObjectOldZ#(1000)
-Dim BrushObjectDX#(1000),BrushObjectDY#(1000),BrushObjectDZ#(1000)
-Dim BrushObjectPitch#(1000),BrushObjectYaw#(1000),BrushObjectRoll#(1000)
-Dim BrushObjectPitch2#(1000),BrushObjectYaw2#(1000),BrushObjectRoll2#(1000)
-Dim BrushObjectXGoal#(1000),BrushObjectYGoal#(1000),BrushObjectZGoal#(1000)
-Dim BrushObjectMovementType(1000),BrushObjectMovementTypeData(1000),BrushObjectSpeed#(1000)
-Dim BrushObjectRadius#(1000),BrushObjectRadiusType(1000)
-Dim BrushObjectData10(1000)
-Dim BrushObjectPushDX#(1000),BrushObjectPushDY#(1000)
-Dim BrushObjectAttackPower(1000),BrushObjectDefensePower(1000),BrushObjectDestructionType(1000)
-Dim BrushObjectID(1000),BrushObjectType(1000),BrushObjectSubType(1000)
-Dim BrushObjectActive(1000),BrushObjectLastActive(1000),BrushObjectActivationType(1000),BrushObjectActivationSpeed(1000)
-Dim BrushObjectStatus(1000),BrushObjectTimer(1000),BrushObjectTimerMax1(1000),BrushObjectTimerMax2(1000)
-Dim BrushObjectTeleportable(1000),BrushObjectButtonPush(1000),BrushObjectWaterReact(1000)
-Dim BrushObjectTelekinesisable(1000),BrushObjectFreezable(1000)
-Dim BrushObjectReactive(1000)
-Dim BrushObjectChild(1000),BrushObjectParent(1000)
-Dim BrushObjectData(1000,10),BrushObjectTextData$(1000,4)
-Dim BrushObjectTalkable(1000),BrushObjectCurrentAnim(1000),BrushObjectStandardAnim(1000),BrushObjectTileX(1000),BrushObjectTileY(1000)
-Dim BrushObjectTileX2(1000),BrushObjectTileY2(1000),BrushObjectMovementTimer(1000),BrushObjectMovementSpeed(1000),BrushObjectMoveXGoal(1000)
-Dim BrushObjectMoveYGoal(1000),BrushObjectTileTypeCollision(1000),BrushObjectObjectTypeCollision(1000),BrushObjectCaged(1000),BrushObjectDead(1000)
-Dim BrushObjectDeadTimer(1000),BrushObjectExclamation(1000),BrushObjectShadow(1000),BrushObjectLinked(1000),BrushObjectLinkBack(1000)
-Dim BrushObjectFlying(1000),BrushObjectFrozen(1000),BrushObjectIndigo(1000),BrushObjectFutureInt24(1000),BrushObjectFutureInt25(1000)
-Dim BrushObjectScaleAdjust#(1000),BrushObjectScaleXAdjust#(1000),BrushObjectScaleYAdjust#(1000),BrushObjectScaleZAdjust#(1000),BrushObjectFutureFloat5#(1000)
-Dim BrushObjectFutureFloat6#(1000),BrushObjectFutureFloat7#(1000),BrushObjectFutureFloat8#(1000),BrushObjectFutureFloat9#(1000),BrushObjectFutureFloat10#(1000)
-Dim BrushObjectFutureString1$(1000),BrushObjectFutureString2$(1000)
-
 ;Dim BrushObjectXOffset#(1000),BrushObjectYOffset#(1000)
 Dim BrushObjectTileXOffset(1000),BrushObjectTileYOffset(1000)
 
@@ -17082,6 +17043,8 @@ Function CameraControls()
 		If Target=Camera1 And mx<LevelViewportWidth+10 And my>=0 And my<LevelViewportHeight
 			If ShiftDown()
 				SetBrushWidth(BrushWidth+MouseScroll)
+			ElseIf CtrlDown()
+				SetBrushHeight(BrushHeight+MouseScroll)
 			Else
 				; level camera
 				If Camera1Proj=1 ; perspective
@@ -17099,9 +17062,6 @@ Function CameraControls()
 					EndIf
 					CameraZoom Camera1,Camera1Zoom#
 				EndIf
-			EndIf
-			If CtrlDown()
-				SetBrushHeight(BrushHeight+MouseScroll)
 			EndIf
 		ElseIf Target=Camera4
 			; object camera
@@ -25678,100 +25638,104 @@ Function ControlParticleEmitters(i)
 	
 	;If ObjectActive(i)=0 Then Return
 	
-	Select ObjectSubType(i)
+	TheX#=SimulatedObjectXAdjust(i)+LevelObjects(i)\Position\TileX+0.5
+	TheY#=SimulatedObjectYAdjust(i)+LevelObjects(i)\Position\TileY+0.5
+	TheZ#=SimulatedObjectZAdjust(i)
+	
+	Select SimulatedObjectSubType(i)
 	Case 1
 		; steam
 		If SimulatedObjectStatus(i)=0
 			; not steaming - check if start
-			If Rand(0,400)<=ObjectData(i,1)*2
+			If Rand(0,400)<=SimulatedObjectData(i,1)*2
 				SimulatedObjectStatus(i)=1
 			EndIf
 		Else
-			If Rand(0,200*ObjectData(i,1))<2
+			If Rand(0,200*SimulatedObjectData(i,1))<2
 				
 				SimulatedObjectStatus(i)=0
 				
 			EndIf
-			Select ObjectData(i,2)
+			Select SimulatedObjectData(i,2)
 			Case 0
-				If Rand(0,25)<ObjectData(i,1)*3-2 AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
+				If Rand(0,25)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,.03,0,0,.01,0,0,0,100,3)
 			Case 1
-				If Rand(0,10)<ObjectData(i,1) AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,-.03,0,0,.01,0,0,0,100,3)
+				If Rand(0,10)<SimulatedObjectData(i,1) AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,-.03,0,0,.01,0,0,0,100,3)
 			Case 2
-				If Rand(0,10)<ObjectData(i,1) AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,.03,0,0,0,.01,0,0,0,100,3)
+				If Rand(0,10)<SimulatedObjectData(i,1) AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,.03,0,0,0,.01,0,0,0,100,3)
 			Case 3
-				If Rand(0,10)<ObjectData(i,1) AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,-.03,0,0,0,.01,0,0,0,100,3)
+				If Rand(0,10)<SimulatedObjectData(i,1) AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,-.03,0,0,0,.01,0,0,0,100,3)
 			Case 4
-				If Rand(0,10)<ObjectData(i,1) AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,0,.03,0,.01,0,0,0,100,3)
+				If Rand(0,10)<SimulatedObjectData(i,1) AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,0,.03,0,.01,0,0,0,100,3)
 			Case 5
-				If Rand(0,10)<ObjectData(i,1) AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,0,-.03,0,.01,0,0,0,100,3)
+				If Rand(0,10)<SimulatedObjectData(i,1) AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,0,-.03,0,.01,0,0,0,100,3)
 			End Select
 					
 				
 		EndIf
 	Case 2
 		; splish
-		If Rand (0,1000)<=ObjectData(i,1)*2
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.01,0,0,0,0,.01,0,0,0,100,4)
+		If Rand (0,1000)<=SimulatedObjectData(i,1)*2
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.01,0,0,0,0,.01,0,0,0,100,4)
 		EndIf
 		
 	Case 3
 		; fountain
-		Select ObjectData(i,2)
+		Select SimulatedObjectData(i,2)
 		Case 0
-			If Rand(0,12)<ObjectData(i,1)*3-2 AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,Rnd(-.01,.01),Rnd(.05,.07),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
+			If Rand(0,12)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,Rnd(-.01,.01),Rnd(.05,.07),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
 		Case 1
-			If Rand(0,12)<ObjectData(i,1)*3-2 AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,Rnd(-.01,.01),-Rnd(0,.02),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
+			If Rand(0,12)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,Rnd(-.01,.01),-Rnd(0,.02),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
 		Case 2
-			If Rand(0,12)<ObjectData(i,1)*3-2 AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,Rnd(.05,.07),Rnd(.02,.01),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
+			If Rand(0,12)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,Rnd(.05,.07),Rnd(.02,.01),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
 		Case 3
-			If Rand(0,12)<ObjectData(i,1)*3-2 AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,-Rnd(.05,.07),Rnd(.02,.01),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
+			If Rand(0,12)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,-Rnd(.05,.07),Rnd(.02,.01),Rnd(-.01,.01),0,.001,0,-.001,0,100,3)
 		Case 4
-			If Rand(0,12)<ObjectData(i,1)*3-2 AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,Rnd(-.01,.01),Rnd(.02,.01),Rnd(.05,.07),0,.001,0,-.001,0,100,3)
+			If Rand(0,12)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,Rnd(-.01,.01),Rnd(.02,.01),Rnd(.05,.07),0,.001,0,-.001,0,100,3)
 		Case 5
-			If Rand(0,12)<ObjectData(i,1)*3-2 AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,Rnd(-.01,.01),Rnd(.02,.01),-Rnd(.05,.07),0,.001,0,-.001,0,100,3)
+			If Rand(0,12)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,Rnd(-.01,.01),Rnd(.02,.01),-Rnd(.05,.07),0,.001,0,-.001,0,100,3)
 		End Select
 		
 	Case 4
 		; sparks
-		If Rand(0,1000)<ObjectData(i,1)*ObjectData(i,1)
-			For j=0 To ObjectData(i,1)*30
-				Select ObjectData(i,2)
+		If Rand(0,1000)<SimulatedObjectData(i,1)*SimulatedObjectData(i,1)
+			For j=0 To SimulatedObjectData(i,1)*30
+				Select SimulatedObjectData(i,2)
 				Case 0
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0.01,.2,Rnd(-.01,.01),Rnd(.09,.11),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.2,Rnd(-.01,.01),Rnd(.09,.11),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
 				Case 1
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0.01,.2,Rnd(-.01,.01),-Rnd(0,.02),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.2,Rnd(-.01,.01),-Rnd(0,.02),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
 				Case 2
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0.01,.2,Rnd(.01,.04),Rnd(.03,.01),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.2,Rnd(.01,.04),Rnd(.03,.01),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
 				Case 3
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0.01,.2,-Rnd(.01,.04),Rnd(.03,.01),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.2,-Rnd(.01,.04),Rnd(.03,.01),Rnd(-.01,.01),0,.0001,0,-.0015,0,50,3)
 				Case 4
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0.01,.2,Rnd(-.01,.01),Rnd(.03,.01),Rnd(.01,.04),0,.0001,0,-.0015,0,50,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.2,Rnd(-.01,.01),Rnd(.03,.01),Rnd(.01,.04),0,.0001,0,-.0015,0,50,3)
 				Case 5
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0.01,.2,Rnd(-.01,.01),Rnd(.03,.01),-Rnd(.01,.04),0,.0001,0,-.0015,0,50,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.2,Rnd(-.01,.01),Rnd(.03,.01),-Rnd(.01,.04),0,.0001,0,-.0015,0,50,3)
 				End Select
 			Next
 		EndIf
 	Case 5
 		; blinker
-		If (ObjectData(i,4)=0 And Rand(0,200)<ObjectData(i,1)) Or (ObjectData(i,4)=1 And LevelTimer Mod (500-ObjectData(i,1)*100)=0)
+		If (SimulatedObjectData(i,4)=0 And Rand(0,200)<SimulatedObjectData(i,1)) Or (SimulatedObjectData(i,4)=1 And LevelTimer Mod (500-SimulatedObjectData(i,1)*100)=0)
 
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0.01,.4,0,0,0,0,.0005,0,0,0,100,3)
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.4,0,0,0,0,.0005,0,0,0,100,3)
 			
 		EndIf
 		
 	Case 6
 		; circle
-		If (ObjectData(i,4)=0 And Rand(0,200)<ObjectData(i,1)) Or (ObjectData(i,4)=1 And LevelTimer Mod (500-ObjectData(i,1)*100)=0)
+		If (SimulatedObjectData(i,4)=0 And Rand(0,200)<SimulatedObjectData(i,1)) Or (SimulatedObjectData(i,4)=1 And LevelTimer Mod (500-SimulatedObjectData(i,1)*100)=0)
 
 			For j=0 To 44
-				Select ObjectData(i,2)
+				Select SimulatedObjectData(i,2)
 				Case 0,1
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,.01*ObjectData(i,1)*Cos(j*8),0,.01*ObjectData(i,1)*Sin(j*8),0,.001,0,0,0,100,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,.01*SimulatedObjectData(i,1)*Cos(j*8),0,.01*SimulatedObjectData(i,1)*Sin(j*8),0,.001,0,0,0,100,3)
 				Case 2,3
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.01*ObjectData(i,1)*Cos(j*8),.01*ObjectData(i,1)*Sin(j*8),0,.001,0,0,0,100,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,.01*SimulatedObjectData(i,1)*Cos(j*8),.01*SimulatedObjectData(i,1)*Sin(j*8),0,.001,0,0,0,100,3)
 				Case 4,5
-					AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,.01*ObjectData(i,1)*Cos(j*8),.01*ObjectData(i,1)*Sin(j*8),0,0,.001,0,0,0,100,3)
+					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,.01*SimulatedObjectData(i,1)*Cos(j*8),.01*SimulatedObjectData(i,1)*Sin(j*8),0,0,.001,0,0,0,100,3)
 				
 				End Select
 			Next
@@ -25780,34 +25744,23 @@ Function ControlParticleEmitters(i)
 		
 	Case 7
 		; spiral
-		Select ObjectData(i,2)
+		Select SimulatedObjectData(i,2)
 		Case 0
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,.02*ObjectData(i,1)*Cos((Leveltimer*ObjectData(i,1)) Mod 360),0,.02*ObjectData(i,1)*Sin((Leveltimer*ObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
 		Case 2
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.02*ObjectData(i,1)*Cos((Leveltimer*ObjectData(i,1)) Mod 360),.02*ObjectData(i,1)*Sin((Leveltimer*ObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
 		Case 4
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,.02*ObjectData(i,1)*Cos((Leveltimer*ObjectData(i,1)) Mod 360),.02*ObjectData(i,1)*Sin((Leveltimer*ObjectData(i,1)) Mod 360),0,0,.001,0,0,0,100,3)
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,0,.001,0,0,0,100,3)
 		
 		Case 1
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,-.02*ObjectData(i,1)*Cos((Leveltimer*ObjectData(i,1)) Mod 360),0,.02*ObjectData(i,1)*Sin((Leveltimer*ObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,-.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
 		Case 3
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,-.02*ObjectData(i,1)*Cos((Leveltimer*ObjectData(i,1)) Mod 360),.02*ObjectData(i,1)*Sin((Leveltimer*ObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,-.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
 		Case 5
-			AddParticle(ObjectData(i,0),ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,-.02*ObjectData(i,1)*Cos((Leveltimer*ObjectData(i,1)) Mod 360),.02*ObjectData(i,1)*Sin((Leveltimer*ObjectData(i,1)) Mod 360),0,0,.001,0,0,0,100,3)
+			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,-.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,0,.001,0,0,0,100,3)
 
 		End Select
 	
-
-
-		
-	
-
-
-
-
-	
-
-
 	
 	End Select
 
@@ -25816,41 +25769,41 @@ End Function
 
 Function ControlWaterfall(i)
 
-	If ObjectYawAdjust(i)=0
+	If SimulatedObjectYawAdjust(i)=0
 		k1=1
 		k2=0
 	EndIf
-	If ObjectYawAdjust(i)=90
+	If SimulatedObjectYawAdjust(i)=90
 		k1=0
 		k2=1
 	EndIf
-	If ObjectYawAdjust(i)=-90 Or ObjectYawAdjust(i)=270
+	If SimulatedObjectYawAdjust(i)=-90 Or SimulatedObjectYawAdjust(i)=270
 		k1=0
 		k2=-1
 	EndIf
 
 	If Rand(0,100)<10  	
-		If ObjectData(i,0)=1
-			AddParticle(1,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.55,0.6),ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
+		If SimulatedObjectData(i,0)=1
+			AddParticle(1,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.55,0.6),SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
 		Else 
-			AddParticle(5,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.55,0.6),ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
+			AddParticle(5,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.55,0.6),SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
 		EndIf
 	EndIf
 
 	If Rand(0,100)<3 
-		If ObjectData(i,0)=0
-			AddParticle(6,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(ObjectZAdjust(i),ObjectZAdjust(i)+ObjectZScale(i)/2.0),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
-		Else If ObjectData(i,0)=1
-			AddParticle(24,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(ObjectZAdjust(i),ObjectZAdjust(i)+ObjectZScale(i)/2.0),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
+		If SimulatedObjectData(i,0)=0
+			AddParticle(6,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(SimulatedObjectZAdjust(i),SimulatedObjectZAdjust(i)+SimulatedObjectZScale(i)/2.0),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
+		Else If SimulatedObjectData(i,0)=1
+			AddParticle(24,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(SimulatedObjectZAdjust(i),SimulatedObjectZAdjust(i)+SimulatedObjectZScale(i)/2.0),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
 		Else
-			AddParticle(27,ObjectX(i)+k1*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(ObjectZAdjust(i),ObjectZAdjust(i)+ObjectZScale(i)/2.0),-ObjectY(i)+k2*Rnd(-.5*ObjectXScale(i),.5*ObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
+			AddParticle(27,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(SimulatedObjectZAdjust(i),SimulatedObjectZAdjust(i)+SimulatedObjectZScale(i)/2.0),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
 		EndIf
 	EndIf
 	If Rand(0,100)<10 
-		If ObjectData(i,0)=1
-			AddParticle(32,ObjectX(i)+k1*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))+k2*0.5,(-.2*ObjectZScale(i))+ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))-k1*0.5,0,.1,0,0,0,0,.012,0,0,0,100,4)
+		If SimulatedObjectData(i,0)=1
+			AddParticle(32,SimulatedObjectX(i)+k1*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))+k2*0.5,(-.2*SimulatedObjectZScale(i))+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))-k1*0.5,0,.1,0,0,0,0,.012,0,0,0,100,4)
 		Else 
-			AddParticle(4,ObjectX(i)+k1*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))+k2*0.5,(-.2*ObjectZScale(i))+ObjectZAdjust(i),-ObjectY(i)+k2*Rnd(-.35*ObjectXScale(i),.35*ObjectXScale(i))-k1*0.5,0,.2,0,0,0,0,.012,0,0,0,100,4)
+			AddParticle(4,SimulatedObjectX(i)+k1*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))+k2*0.5,(-.2*SimulatedObjectZScale(i))+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))-k1*0.5,0,.2,0,0,0,0,.012,0,0,0,100,4)
 		EndIf
 	EndIf
 
@@ -25859,6 +25812,8 @@ End Function
 
 
 Function ControlVoid(i)
+
+	Obj.GameObject=LevelObjects(i)
 
 	If SimulatedObjectData(i,0)=0
 		SimulatedObjectData(i,0)=Rand(1,360)
@@ -25874,10 +25829,10 @@ Function ControlVoid(i)
 	SimulatedObjectZScale(i)=(1.3+.6*Sin((leveltimer*2+SimulatedobjectData(i,0)) Mod 360));*(1.0+Float(ObjectData(i,2)))
 
 		
-	TurnEntity ObjectENtity(i),0,.1,0
+	TurnEntity Obj\Entity,0,.1,0
 	
-	If ObjectModelName$(i)="!Void"
-		surface=GetSurface(ObjectENtity(i),1)
+	If Obj\Attributes\ModelName$="!Void"
+		surface=GetSurface(Obj\Entity,1)
 		For i=0 To 17
 			VertexCoords surface,i*2,VertexX(surface,i*2),(1+.6*Sin(i*80+((LevelTimer*4) Mod 360))),VertexZ(surface,i*2)
 		Next
@@ -25895,10 +25850,10 @@ Function ControlTeleporter(i)
 	If Rand(0,100)<5 And (SimulatedObjectActive(i)>0 Or SimulationLevel<2)
 		a=Rand(0,360)
 		b#=Rnd(0.002,0.006)
-		AddParticle(23,ObjectX(i)+0.5*Sin(a),0,-ObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
+		AddParticle(23,SimulatedObjectX(i)+0.5*Sin(a),0,-SimulatedObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
 	EndIf
 	
-	MyId=CalculateEffectiveID(i)
+	MyId=CalculateEffectiveID(LevelObjects(i)\Attributes)
 	
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+.5
 	If MyId Mod 5<3
@@ -25929,10 +25884,12 @@ End Function
 
 Function ControlObstacle(i)
 
+	ModelName$=LevelObjects(i)\Attributes\ModelName$
+
 	; (no control, but used to adjust leveltilelogic)
-	If ObjectModelName$(i)="!Obstacle03" ; volcano
+	If ModelName$="!Obstacle03" ; volcano
 		If Rand(0,40)=0
-			AddParticle(Rand(24,26),ObjectX(i)+Rnd(-.7,.7),1.8+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.9,.7),0,.2,0,Rnd(0.01,0.03),0,0,.03,0,0,0,100,3)
+			AddParticle(Rand(24,26),SimulatedObjectX(i)+Rnd(-.7,.7),1.8+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+Rnd(-.9,.7),0,.2,0,Rnd(0.01,0.03),0,0,.03,0,0,0,100,3)
 		EndIf
 		If Rand(0,10)=0
 			If Rand(0,5)=0
@@ -25940,51 +25897,51 @@ Function ControlObstacle(i)
 			Else
 				part22=0
 			EndIf
-			AddParticle(part22,ObjectX(i)+Rnd(-.3,.3),1.5+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.5,.3),0,.6,0,Rnd(0.01,0.03),0,0,.01,0,0,0,100,3)
+			AddParticle(part22,SimulatedObjectX(i)+Rnd(-.3,.3),1.5+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+Rnd(-.5,.3),0,.6,0,Rnd(0.01,0.03),0,0,.01,0,0,0,100,3)
 		EndIf
-	Else If ObjectModelName$(i)="!Obstacle04" ; acid pool
+	Else If ModelName$="!Obstacle04" ; acid pool
 		If Rand(0,100)=0
-			AddParticle(27,ObjectX(i)+Rnd(-.5,.5),1+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.7,.5),0,.11,0,Rnd(0.01,0.03),0,0,.01,0,0,0,100,3)
+			AddParticle(27,SimulatedObjectX(i)+Rnd(-.5,.5),1+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+Rnd(-.7,.5),0,.11,0,Rnd(0.01,0.03),0,0,.01,0,0,0,100,3)
 		EndIf
 		If Rand(0,100)=0
-			AddParticle(35,ObjectX(i)+Rnd(-.3,.6),2.0+ObjectZAdjust(i),-ObjectY(i)+Rnd(-.6,.3),0,.04,0,0,0,0,.001,0,0,0,100,4)
+			AddParticle(35,SimulatedObjectX(i)+Rnd(-.3,.6),2.0+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+Rnd(-.6,.3),0,.04,0,0,0,0,.001,0,0,0,100,4)
 		EndIf
 		
-	Else If ObjectModelName$(i)="!Obstacle45" ; waterwheel
-		If ObjectYawAdjust(i)=0
+	Else If ModelName$="!Obstacle45" ; waterwheel
+		If SimulatedObjectYawAdjust(i)=0
 			SimulatedObjectRoll(i)=SimulatedObjectRoll(i)+2
 		EndIf
-		If ObjectYawAdjust(i)=180
+		If SimulatedObjectYawAdjust(i)=180
 			SimulatedObjectRoll(i)=SimulatedObjectRoll(i)-2
 		EndIf
-		If ObjectYawAdjust(i)=90
+		If SimulatedObjectYawAdjust(i)=90
 			SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+2
 		EndIf
-		If ObjectYawAdjust(i)=270
+		If SimulatedObjectYawAdjust(i)=270
 			SimulatedObjectPitch(i)=SimulatedObjectPitch(i)-2
 		EndIf
 	
-	Else If ObjectModelName$(i)="!Obstacle48" ; UFO - by mistake in here
-		If ObjectData(i,0)=0
+	Else If ModelName$="!Obstacle48" ; UFO - by mistake in here
+		If SimulatedObjectData(i,0)=0
 			SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
 		EndIf
-	Else If ObjectModelName$(i)="!Crystal" ; UFO - by mistake in here
+	Else If ModelName$="!Crystal" ; UFO - by mistake in here
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
 
 					
 	
 
 	EndIf
-	If ObjectModelName$(i)="!CustomModel"	; Custom Model 
+	If ModelName$="!CustomModel"	; Custom Model 
 		ControlCustomModel(i)
 	EndIf
-
-	;SimulateObjectRotation(i)
 
 End Function
 
 
 Function ControlCustomModel(i)
+	
+	Obj.GameObject=LevelObjects(i)
 
 ;	If ObjectOldX(i)=-999;0 And ObjectOldY(i)=0 And ObjectOldZ(i)=0
 ;		ObjectOldX(i)=ObjectXAdjust(i)
@@ -25996,42 +25953,45 @@ Function ControlCustomModel(i)
 
 	;ObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+ObjectData(i,7)+30) Mod 360))
 	
-	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+ObjectData(i,0)
+	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+SimulatedObjectData(i,0)
 	If SimulatedObjectYaw(i)>360 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)-360
 	If SimulatedObjectYaw(i)<0 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+360
 	
-	SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+ObjectData(i,1)
+	SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+SimulatedObjectData(i,1)
 	If SimulatedObjectPitch(i)>360 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)-360
 	If SimulatedObjectPitch(i)<0 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+360
 	
-	SimulatedObjectroll(i)=SimulatedObjectroll(i)+ObjectData(i,2)
+	SimulatedObjectroll(i)=SimulatedObjectroll(i)+SimulatedObjectData(i,2)
 	If SimulatedObjectroll(i)>360 Then SimulatedObjectroll(i)=SimulatedObjectroll(i)-360
 	If SimulatedObjectroll(i)<0 Then SimulatedObjectroll(i)=SimulatedObjectroll(i)+360
 	
-	If ObjectData(i,3)>0
+	BaseX#=Obj\Attributes\XAdjust
+	BaseY#=Obj\Attributes\YAdjust
+	BaseZ#=Obj\Attributes\ZAdjust
+	
+	If SimulatedObjectData(i,3)>0
 		; Technically these ObjectX/Y/ZAdjust instances should be OldX/Y/Z. But no one's crazy enough to edit OldX/Y/Z directly, right?
-		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)+Float(ObjectData(i,3))*Sin((leveltimer Mod 36000)*Float(ObjectData(i,6)/100.0))
+		SimulatedObjectXAdjust(i)=BaseX#+Float(SimulatedObjectData(i,3))*Sin((leveltimer Mod 36000)*Float(SimulatedObjectData(i,6)/100.0))
 	Else
-		SimulatedObjectXAdjust(i)=ObjectXAdjust(i)+Float(ObjectData(i,3))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,6)/100.0))
+		SimulatedObjectXAdjust(i)=BaseX#+Float(SimulatedObjectData(i,3))*Cos((leveltimer Mod 36000)*Float(SimulatedObjectData(i,6)/100.0))
 	EndIf
-	If ObjectData(i,4)>0
-		SimulatedObjectYAdjust(i)=ObjectYAdjust(i)+Float(ObjectData(i,4))*Sin((leveltimer Mod 36000)*Float(ObjectData(i,7)/100.0))
+	If SimulatedObjectData(i,4)>0
+		SimulatedObjectYAdjust(i)=BaseY#+Float(SimulatedObjectData(i,4))*Sin((leveltimer Mod 36000)*Float(SimulatedObjectData(i,7)/100.0))
 	Else
-		SimulatedObjectYAdjust(i)=ObjectYAdjust(i)+Float(ObjectData(i,4))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,7)/100.0))
+		SimulatedObjectYAdjust(i)=BaseY#+Float(SimulatedObjectData(i,4))*Cos((leveltimer Mod 36000)*Float(SimulatedObjectData(i,7)/100.0))
 	EndIf
-	If ObjectData(i,5)>0
-		SimulatedObjectZAdjust(i)=ObjectZAdjust(i)+Float(ObjectData(i,5))*Sin((leveltimer Mod 36000)*Float(ObjectData(i,8)/100.0))
+	If SimulatedObjectData(i,5)>0
+		SimulatedObjectZAdjust(i)=BaseZ#+Float(SimulatedObjectData(i,5))*Sin((leveltimer Mod 36000)*Float(SimulatedObjectData(i,8)/100.0))
 	Else
-		SimulatedObjectZAdjust(i)=ObjectZAdjust(i)+Float(ObjectData(i,5))*Cos((leveltimer Mod 36000)*Float(ObjectData(i,8)/100.0))
+		SimulatedObjectZAdjust(i)=BaseZ#+Float(SimulatedObjectData(i,5))*Cos((leveltimer Mod 36000)*Float(SimulatedObjectData(i,8)/100.0))
 	EndIf
 	
-	;SimulateObjectPosition(i)
-	; object rotation is simulated by ControlObstacle
-
 End Function
 
 
 Function ControlGoldStar(i)
+
+	Obj.GameObject=LevelObjects(i)
 
 	SimulatedObjectZ(i)=.8
 ;	If AdventureCurrentStatus=0
@@ -26047,7 +26007,7 @@ Function ControlGoldStar(i)
 
 	a=Rand(0,300)
 	If a<50
-		AddParticle(19,ObjectTileX(i)+0.5,.7+ObjectZAdjust(i),-ObjectTileY(i)-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
+		AddParticle(19,Obj\Position\TileX+0.5,.7+SimulatedObjectZAdjust(i),-Obj\Position\TileY-0.5,Rand(0,360),0.16,Rnd(-.015,.015),0.03,Rnd(-.015,.015),0,0.001,0,-.00025,0,100,3)
 	EndIf
 
 End Function
@@ -26055,16 +26015,16 @@ End Function
 
 Function ControlGoldCoin(i)
 
-	If ObjectActive(i)<1001 And ObjectActive(i)>0
+	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i)>0
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
 		
-		If ObjectActive(i)>600
+		If SimulatedObjectActive(i)>600
 			SimulatedObjectZ(i)=.2+Float(1000-SimulatedObjectActive(i))/400.0
 		Else
 			SimulatedObjectZ(i)=1.2
 		EndIf
-		If ObjectActive(i)=400
+		If SimulatedObjectActive(i)=400
 			; Little Spark
 			For j=1 To 20
 				AddParticle(19,ObjectTileX(i)+0.5,1.6,-ObjectTileY(i)-0.5,Rand(0,360),0.15,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
@@ -26080,9 +26040,6 @@ Function ControlGoldCoin(i)
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
 		SimulatedObjectZ(i)=0
 	EndIf
-	
-	;SimulateObjectPosition(i)
-	;SimulateObjectRotation(i)
 
 End Function
 
