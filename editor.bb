@@ -11778,11 +11778,12 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 ; Thwart or Ice Troll
 			tex2$="WalkAnim"
-			If CurrentObject\Attributes\Data1=0
-				tex$="Normal"
-			Else If CurrentObject\Attributes\Data1=1
+			If CurrentObject\Attributes\Data1=1
 				tex$="Hands Up"
+			Else
+				tex$="Normal"
 			EndIf
+			tex$=CurrentObject\Attributes\Data1+"/"+tex$
 		EndIf
 		
 		
@@ -13730,10 +13731,10 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 		;If CurrentObject\Attributes\ModelName$="!Thwart" Or CurrentObject\Attributes\ModelName$="!Troll" Or (Left$(CurrentObject\Attributes\ModelName$,6)="!Retro" And CurrentObject\Attributes\ModelName$<>"!Retrolasergate")  Or CurrentObject\Attributes\ModelName$="!Weebot" Or CurrentObject\Attributes\ModelName$="!Zapbot" Or CurrentObject\Attributes\ModelName$="!Portal Warp"
-		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 ; Thwart or Ice Troll
-			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
-			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
-		EndIf
+		;If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 ; Thwart or Ice Troll
+		;	If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
+		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
+		;EndIf
 		
 		; ufo or retro z-bot or zipbot or zapbot
 		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=423 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431
@@ -14055,27 +14056,21 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
 			; WalkAnim
-			If CurrentObject\Attributes\Data6>2 CurrentObject\Attributes\Data6=0
-			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=2
-			
-
+			;If CurrentObject\Attributes\Data6>2 CurrentObject\Attributes\Data6=0
+			;If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=2
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 Or CurrentObject\Attributes\LogicType=433 ; Thwart or Ice Troll or Z-Bot NPC
 			; Shooter
 			If CurrentObject\Attributes\Data6>1 CurrentObject\Attributes\Data6=0
 			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=1
-			
-
 		EndIf
 
 		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
 			If CurrentObject\Attributes\Data6>255 CurrentObject\Attributes\Data6=0
 			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=255
-			
-
 		EndIf
 
 
@@ -14135,20 +14130,17 @@ Function AdjustObjectAdjuster(i)
 ;				If CurrentObject\Attributes\Data8<0 Then CurrentObject\Attributes\Data8=-2
 ;			EndIf
 		EndIf
-		If CurrentObject\Attributes\ModelName$="!NPC"
-			; Anim
+		
+		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
+			; IdleAnim
 			If CurrentObject\Attributes\Data8>10 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=10
-			
-
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!Kaboom"
-			; Anim
+		If CurrentObject\Attributes\LogicType=390 ; Kaboom NPC
+			; IdleAnim
 			If CurrentObject\Attributes\Data8>5 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=5
-			
-
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=400 Or CurrentObject\Attributes\LogicType=433 ; Baby Boomer or Z-Bot NPC
@@ -14176,7 +14168,7 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data9<0 CurrentObject\Attributes\Data9=1
 		EndIf
 		
-		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1
+		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Change
 			; anim
 			If CurrentObject\Attributes\Data9<-1 CurrentObject\Attributes\Data9=10
 			If CurrentObject\Attributes\Data9>10 CurrentObject\Attributes\Data9=-1
@@ -24485,14 +24477,54 @@ End Function
 Function GetStinkerNPCWalkAnimName$(Value)
 
 	Select Value
+	Case -1
+		Return "All"
 	Case 0
 		Return "Waddle"
 	Case 1
 		Return "Walk"
 	Case 2
 		Return "Run"
+	Case 3
+		Return "CastSpell1"
+	Case 4
+		Return "CastSpell2"
+	Case 5
+		Return "Reach"
+	Case 6
+		Return "CastSpell4"
+	Case 7
+		Return "Wave1"
+	Case 8
+		Return "FootTap"
+	Case 9
+		Return "Sway"
+	Case 10
+		Return "Panic1"
+	Case 11
+		Return "Dance"
+	Case 12
+		Return "Sit1"
+	Case 13
+		Return "Sit2"
+	Case 14
+		Return "WaveFast"
+	Case 15
+		Return "PraiseTheSun"
+	Case 16
+		Return "Sit3"
+	Case 17
+		Return "SitSpasm"
+	Case 18
+		Return "Panic2"
+	Case 19
+		Return "Wave"
+	Case 20
+		Return "Sit5"
+	Case 21
+		Return "Sit6"		
 	Default
-		Return Value+"/NotVanilla"
+		Return Value+"/None"
 	End Select
 
 End Function
