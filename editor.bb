@@ -19911,7 +19911,7 @@ Function AdventureSelectScreen()
 				DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else If FileType(GlobalDirName$+"\Custom\Editing\Archive\"+AdventureNameEntered$)=2
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,TextMenusR,TextMenusG,TextMenusB)
-			Else If FileType(GlobalDirName$+"\Custom\Adventures\"+AdventureNameEntered$)=2
+			Else If FileType(GlobalDirName$+"\Custom\Adventures\"+EditorUserName$+"#"+AdventureNameEntered$)=2
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Player!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else If FileType("Data\Adventures\"+AdventureNameEntered$)=2
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Data\Adventures!",0,5,TextMenusR,TextMenusG,TextMenusB)
@@ -20195,12 +20195,14 @@ Function AdventureSelectScreen2()
 				ex2$=NextFile$(dirfile)
 				If ex2$<>"" And ex2$<>"." And ex2$<>".."
 					CopyFile FromDir$+ex2$,ToDir$+"\"+ex2$
+					
 					If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
 						DeleteFile FromDir$+"\"+ex2$
 					EndIf
 				EndIf
 			Until ex2$=""
 			CloseDir dirfile
+			
 			If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
 				DeleteDir FromDir$
 			EndIf
@@ -20509,6 +20511,27 @@ Function DialogExists(dialognumber)
 		Return True
 	Else
 		Return False
+	EndIf
+
+End Function
+
+Function AdventureTitleWithoutAuthor$(ex$)
+
+	exWithoutUsername$=""
+	FoundHash=False
+	For i=1 To Len(ex$)
+		TheChar$=Mid$(ex$,i,1)
+		If FoundHash
+			exWithoutUsername$=exWithoutUsername$+TheChar$
+		ElseIf TheChar$="#"
+			FoundHash=True
+		EndIf
+	Next
+	
+	If FoundHash=False
+		Return ex$
+	Else
+		Return exWithoutUsername$
 	EndIf
 
 End Function
@@ -25030,6 +25053,15 @@ Function CompileHub(PackContent)
 End Function
 
 Function CompileAdventure(PackCustomContent)
+
+	AdventureFileNameWithoutAuthor$=AdventureTitleWithoutAuthor$(AdventureFileName$)
+
+	If AdventureFileNameWithoutAuthor$=AdventureFileName$
+		OutputFileName$=EditorUserName$+"#"+AdventureFileName$+".wa3"
+	Else
+		OutputFileName$=AdventureFileName$+".wa3"
+	EndIf
+
 	Cls
 	Locate 0,0
 	Print ""
@@ -25092,9 +25124,9 @@ Function CompileAdventure(PackCustomContent)
 	Print "Writing WA3 File to Downloads Inbox..."
 	Print ""
 	Print ""
-	file1=WriteFile(globaldirname$+"\Custom\downloads inbox\"+EditorUserName$+"#"+AdventureFileName$+".wa3")
+	file1=WriteFile(globaldirname$+"\Custom\downloads inbox\"+OutputFileName$)
 	If file1=0
-		Print "ERROR: Cannot Write "+globaldirname$+"\Custom\downloads inbox\"+EditorUserName$+"#"+AdventureFileName$+".wa3"
+		Print "ERROR: Cannot Write "+globaldirname$+"\Custom\downloads inbox\"+OutputFileName$
 		Print "Aborting..."
 		Delay 3000
 		Return False
@@ -25124,11 +25156,11 @@ Function CompileAdventure(PackCustomContent)
 	Print ""
 	Print ""
 	Print "Copying File to Downloads Outbox..."
-	CopyFile globaldirname$+"\Custom\downloads inbox\"+EditorUserName$+"#"+AdventureFileName$+".wa3",globaldirname$+"\Custom\downloads outbox\"+EditorUserName$+"#"+AdventureFileName$+".wa3"
+	CopyFile globaldirname$+"\Custom\downloads inbox\"+OutputFileName$,globaldirname$+"\Custom\downloads outbox\"+OutputFileName$
 	Print ""
 	Print ""
 	Delay 1000
-	Print "Compile Completed... Filename: "+EditorUserName$+"#"+AdventureFileName$+".wa3"
+	Print "Compile Completed... Filename: "+OutputFileName$
 	Print "You can now play/test your level."
 	
 	Delay 500
