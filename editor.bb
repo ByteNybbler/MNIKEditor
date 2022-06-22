@@ -14081,12 +14081,15 @@ Function AdjustObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier
 			; turn
-			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=25
-			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=-1
+			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=35
+			If CurrentObject\Attributes\Data7=36 CurrentObject\Attributes\Data7=-1
+			
 			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
 			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
 			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
 			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
+			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=30
+			If CurrentObject\Attributes\Data7=29 CurrentObject\Attributes\Data7=25
 
 		EndIf
 		
@@ -14097,17 +14100,29 @@ Function AdjustObjectAdjuster(i)
 
 		EndIf
 		
-		If CurrentObject\Attributes\LogicType=110 Or CurrentObject\Attributes\LogicType=390 ; Stinker NPC or Kaboom NPC
-
+;		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
+;
+;			; Turn ; Stinker NPC Turn
+;			If CurrentObject\Attributes\Data7=-1 CurrentObject\Attributes\Data7=35
+;			If CurrentObject\Attributes\Data7=36 CurrentObject\Attributes\Data7=0
+;			
+;			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
+;			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
+;			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
+;			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
+;			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=30
+;			If CurrentObject\Attributes\Data7=29 CurrentObject\Attributes\Data7=25
+;
+;		EndIf
+		
+		If CurrentObject\Attributes\LogicType=110 Or CurrentObject\Attributes\LogicType=390 ; Kaboom NPC
 			; Turn
-			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=25
-			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=-1
+			If CurrentObject\Attributes\Data7=-1 CurrentObject\Attributes\Data7=25
+			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=0
 			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
 			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
 			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
 			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
-
-
 		EndIf
 
 
@@ -24540,6 +24555,7 @@ Function GetNPCTurningName$(Value)
 	If (Value Mod 10)=5 tex$="Count Fast"
 	If Value>=10 And Value<20 tex$=tex$+"Bounce"
 	If Value>=20 And Value<30 tex$=tex$+"BouFas"
+	If Value>=30 tex$=tex$+"SpdAnm"
 	Return tex$
 
 End Function
