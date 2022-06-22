@@ -4347,7 +4347,7 @@ Function EditorLocalRendering()
 	Rect StartX,StartY,80,35,True
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+16,StartY+2,"Height"
-	Text StartX,StartY+15,"^^"
+	Text StartX,StartY+19,"^^" ; Formerly +15
 	Text StartX+80-16,StartY+15,"vv"
 	If LevelHeight>9
 		Text StartX+40-8,StartY+15,Str$(LevelHeight)
@@ -4619,14 +4619,16 @@ Function EditorLocalControls()
 				If EditorMode=3
 					; object dragging
 					If RightMouse
-						DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
-						TileX=DraggedPosition\TileX
-						TileY=DraggedPosition\TileY
-						If CurrentDraggedObject<>-1 And (TileX<>BrushCursorX Or TileY<>BrushCursorY)
-							DecrementLevelTileObjectCount(TileX,TileY)
-							SetObjectPosition(CurrentDraggedObject,BrushCursorX,BrushCursorY);,0,0)
-							UpdateObjectPosition(CurrentDraggedObject)
-							SomeObjectWasChanged()
+						If CurrentDraggedObject<>-1
+							DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
+							TileX=DraggedPosition\TileX
+							TileY=DraggedPosition\TileY
+							If (TileX<>BrushCursorX Or TileY<>BrushCursorY)
+								DecrementLevelTileObjectCount(TileX,TileY)
+								SetObjectPosition(CurrentDraggedObject,BrushCursorX,BrushCursorY);,0,0)
+								UpdateObjectPosition(CurrentDraggedObject)
+								SomeObjectWasChanged()
+							EndIf
 						EndIf
 					Else
 						CurrentDraggedObject=-1
@@ -4728,8 +4730,8 @@ Function EditorLocalControls()
 	; *************************************
 	If EditorMode=1 Or EditorMode=2
 		; Draw a rectangle so the user can't see the level behind the texture picker on larger resolutions.
-		Color 0,0,0
-		Rect 0,0,LevelViewportWidth,LevelViewportHeight
+		;Color 0,0,0
+		;Rect 0,0,LevelViewportWidth,LevelViewportHeight
 		
 		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
 			nmx=LevelViewportX(mx)
