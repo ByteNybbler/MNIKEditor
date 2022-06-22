@@ -17926,7 +17926,7 @@ Function LoadLevel(levelnumber)
 	; finalize object data
 	PlayerIndex=NofObjects
 	For j=0 To NofObjects-1
-		LevelObject.GameObject=LevelObjects(i)
+		LevelObject.GameObject=LevelObjects(j)
 		LevelObject\Attributes\Linked=ObjectIndexGameToEditor(LevelObject\Attributes\Linked, PlayerIndex)
 		LevelObject\Attributes\LinkBack=ObjectIndexGameToEditor(LevelObject\Attributes\LinkBack, PlayerIndex)
 		LevelObject\Attributes\Parent=ObjectIndexGameToEditor(LevelObject\Attributes\Parent, PlayerIndex)
