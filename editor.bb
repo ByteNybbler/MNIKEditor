@@ -2440,7 +2440,7 @@ Function InitializeGraphicsCameras()
 	CameraViewport camera1,0,0,LevelViewportWidth,LevelViewportHeight
 	CameraRange camera1,.1,50
 	
-	Camera2 = CreateCamera()
+	Camera2 = CreateCamera() ; tile camera
 	CameraClsColor camera2,255,0,0
 	CameraViewport Camera2,SidebarX+10,SidebarY+20,200,220
 	CameraRange camera2,.1,1000
@@ -2451,7 +2451,7 @@ Function InitializeGraphicsCameras()
 	Camera3 = CreateCamera() ; texture picker camera
 	CameraClsColor camera3,0,0,0 ;255,0,0
 	CameraViewport Camera3,0,0,LevelViewportWidth,LevelViewportHeight
-	CameraRange camera3,.1,1000
+	CameraRange camera3,.1,10 ;1000
 	RotateEntity Camera3,90,0,0
 	PositionEntity Camera3,0.5,210,-0.5
 	CameraZoom Camera3,20.0*TilePickerZoomScaling#
@@ -4729,10 +4729,6 @@ Function EditorLocalControls()
 	; Selecting A Texture / Picking a Texture / Texture Picker
 	; *************************************
 	If EditorMode=1 Or EditorMode=2
-		; Draw a rectangle so the user can't see the level behind the texture picker on larger resolutions.
-		;Color 0,0,0
-		;Rect 0,0,LevelViewportWidth,LevelViewportHeight
-		
 		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
 			nmx=LevelViewportX(mx)
 			nmy=my
