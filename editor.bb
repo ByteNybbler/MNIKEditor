@@ -14045,14 +14045,14 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObject\Attributes\Data6=AdjustInt("Data6: ", CurrentObject\Attributes\Data6, 1, 10, 150)
 		AdjustObjectData(6, SlowInt, FastInt, DelayTime)
 		
-		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11
-			If CurrentObject\Attributes\Data0=0
+		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 ; NPC Modifier
+			If CurrentObject\Attributes\Data0=0 ; NPC Move
 				; timer reset
 				If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=0
-			ElseIf CurrentObject\Attributes\Data0=1
+			;ElseIf CurrentObject\Attributes\Data0=1
 				; walk anim
-				If CurrentObject\Attributes\Data6<-1 CurrentObject\Attributes\Data6=2
-				If CurrentObject\Attributes\Data6>2 CurrentObject\Attributes\Data6=-1
+				;If CurrentObject\Attributes\Data6<-1 CurrentObject\Attributes\Data6=2
+				;If CurrentObject\Attributes\Data6>2 CurrentObject\Attributes\Data6=-1
 			EndIf
 		EndIf
 
@@ -24494,7 +24494,7 @@ Function GetStinkerNPCWalkAnimName$(Value)
 	Case 6
 		Return "CastSpell4"
 	Case 7
-		Return "Wave1"
+		Return "WaveAndDrop"
 	Case 8
 		Return "FootTap"
 	Case 9
@@ -24514,11 +24514,11 @@ Function GetStinkerNPCWalkAnimName$(Value)
 	Case 16
 		Return "Sit3"
 	Case 17
-		Return "SitSpasm"
+		Return "SitVibrate"
 	Case 18
 		Return "Panic2"
 	Case 19
-		Return "Wave"
+		Return "WaveNormal"
 	Case 20
 		Return "Sit5"
 	Case 21
