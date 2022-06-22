@@ -37,6 +37,8 @@
 * Enter: Toggle custom brush mode. The cursor brush will be purple while a custom brush is active. Entering custom brush mode will copy all objects or tiles that are being hovered over by the brush, depending on whether the editor is in object mode or tile mode. This lets you paste those objects or tiles anywhere else. Press enter again to exit custom brush mode. Try it out with a large brush size!
 * R: Update the currently-grabbed object. This does the same thing as pressing the Update button.
 * Tab: Switch between object mode and tile mode.
+* Shift+scroll the mouse wheel while hovering mouse over level view: Change the brush width.
+* Ctrl+scroll the mouse wheel while hovering mouse over level view: Change the brush height. Can be done at the same time as shift+scroll.
 * G: Pressing G when hovering the cursor over a LevelExit follows that LevelExit to its destination. A yellow marker will briefly appear at the destination coordinates when the destination level loads. This also works with general commands and cuboids.
 * F6: Toggle orthographic projection.
 * F7: Toggle wireframe mode.
@@ -57,7 +59,7 @@
 
 ### CAMERA CONTROLS
 
-* Scroll the mouse wheel: Zoom the target camera in and out or move it up and down. The target camera is determined by the mouse's current location. Hold shift to go faster.
+* Scroll the mouse wheel: Zoom the target camera in and out or move it up and down. The target camera is determined by the mouse's current location.
 * Arrow keys or WASD or Numpad 2/4/6/8: Pan the target camera. Hold shift to move faster.
 * Space+Click+Drag: Pan the level editor camera.
 * X or Numpad 5: Reset the target camera's rotation.
