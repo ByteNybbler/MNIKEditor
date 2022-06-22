@@ -19724,10 +19724,9 @@ Function AdventureSelectScreen()
 	EndIf
 	DisplayText2(AdventureNameEntered$,0,4,255,255,255)
 	
+	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	
-	If hubmode=True
-		DisplayText2("===================================================",0,7,TextMenusR,TextMenusG,TextMenusB)
-	Else
+	If hubmode=False
 		If AdventureCurrentArchive=0
 			DisplayText2("Current",28,6,255,255,255)
 			DisplayText2("Archive",37,6,155,155,155)
@@ -19736,7 +19735,6 @@ Function AdventureSelectScreen()
 			DisplayText2("Archive",37,6,255,255,255)
 		EndIf
 		DisplayText2("/",35.5,5.9,TextMenusR,TextMenusG,TextMenusB)
-		DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	If NofAdventureFileNames>19
 		For i=0 To 18
