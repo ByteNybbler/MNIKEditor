@@ -6316,6 +6316,7 @@ Function EditorLocalControls()
 	EndIf
 	
 	If IsMouseOverToolbarItem(ToolbarIDFilterX,ToolbarIDFilterY)
+		; id filter
 		If LeftMouse=True And LeftMouseReleased=True
 			If IDFilterEnabled=False Or CtrlDown()
 				IDFilterAllow=InputInt("Enter the ID to filter for: ")
@@ -6329,22 +6330,25 @@ Function EditorLocalControls()
 			Next
 			Delay 100
 		EndIf
-		If RightMouse=True And RightMouseReleased=True
-			If IDFilterEnabled
+		If IDFilterEnabled
+			If MouseScroll<>0
+				If ShiftDown()
+					Adj=50
+				Else
+					Adj=1
+				EndIf
+				IDFilterAllow=IDFilterAllow+Adj*MouseScroll
+				For j=0 To NofObjects-1
+					UpdateObjectVisibility(LevelObjects(j))
+				Next
+			EndIf
+			If RightMouse=True And RightMouseReleased=True
 				IDFilterInverted=Not IDFilterInverted
+				For j=0 To NofObjects-1
+					UpdateObjectVisibility(LevelObjects(j))
+				Next
 				Delay 100
 			EndIf
-		EndIf
-		If IDFilterEnabled And MouseScroll<>0
-			If ShiftDown()
-				Adj=50
-			Else
-				Adj=1
-			EndIf
-			IDFilterAllow=IDFilterAllow+Adj*MouseScroll
-			For j=0 To NofObjects-1
-				UpdateObjectVisibility(LevelObjects(j))
-			Next
 		EndIf
 	EndIf
 	
@@ -15519,7 +15523,6 @@ Function FinalizeCurrentObject()
 	ShowWorldAdjusterPositions()
 	CalculateCurrentObjectTargetIDs()
 	CalculateCurrentObjectActivateIDs()
-	;SetDefaultRandomRangeValues()
 
 End Function
 
