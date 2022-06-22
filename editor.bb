@@ -17253,9 +17253,11 @@ Function CameraControls()
 		If Target=Camera1 And mx<LevelViewportWidth+10 And my>=0 And my<LevelViewportHeight
 			If ShiftDown()
 				SetBrushWidth(BrushWidth+MouseScroll)
-			ElseIf CtrlDown()
+			EndIf
+			If CtrlDown()
 				SetBrushHeight(BrushHeight+MouseScroll)
-			Else
+			EndIf
+			If (Not ShiftDown()) And (Not CtrlDown())
 				; level camera
 				If Camera1Proj=1 ; perspective
 					SpeedFactor#=3.0*Adj
