@@ -471,6 +471,8 @@ CreateDir GlobalDirName$+"\Custom\Downloads Outbox"
 CreateDir GlobalDirName$+"\Custom\Leveltextures"
 CreateDir GlobalDirName$+"\Custom\Icons"
 CreateDir GlobalDirName$+"\Custom\Maps"
+CreateDir "Data"
+CreateDir "Data\Adventures"
 
 Global EditorUserName$=""
 Global NofEditorUserNames
@@ -483,7 +485,9 @@ Dim AdventureFileNamesListed$(10000)
 Global AdventureNameEntered$=""
 Global AdventureFileNamesListedStart
 Global AdventureNameSelected
+
 Global AdventureCurrentArchive=0
+Const MaxAdventureCurrentArchive=3
 
 
 Global DisplayFullScreen=False
@@ -17339,20 +17343,8 @@ End Function
 
 
 Function SaveLevel()
-
-
 	
-		
-	If AdventureCurrentArchive=1
-		ex2$="Archive\"
-	Else
-		ex2$="Current\"
-	EndIf
-
-
-	
-
-	file=WriteFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+currentlevelnumber+".wlv")
+	file=WriteFile (GetAdventureDir$()+currentlevelnumber+".wlv")
 	
 	If (currentlevelnumber>94 And currentlevelnumber<99) Or Left$(Upper$(adventurefilename$),5)="ZACHY"
 		; WA3 VAULTS
@@ -17642,26 +17634,14 @@ Function LoadLevel(levelnumber)
 
 	resetlevel()
 	
-		
-		
-	If AdventureCurrentArchive=1
-		ex2$="Archive\"
-	Else
-		ex2$="Current\"
-	EndIf
-
-	
-	
-
-	
 	; clear current objects first
 	;ShowMessage("Freeing " + NofObjects + " objects...", 1000)
 	For i=0 To NofObjects-1
 		;DeleteObject(i)
 		FreeObject(i)
 	Next
-
-	file=ReadFile (globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"+levelnumber+".wlv")
+	
+	file=ReadFile (GetAdventureDir$()+levelnumber+".wlv")
 	
 	LevelWidth=-999
 	; This loop will bypass the protection on MOFI and WA3 Beta1 level files.
@@ -18063,11 +18043,16 @@ End Function
 
 Function GetAdventuresDir$()
 
-	If AdventureCurrentArchive=1
+	Select AdventureCurrentArchive
+	Case 1
 		Return globaldirname$+"\Custom\Editing\Archive\"
-	Else
+	Case 2
+		Return globaldirname$+"\Custom\Adventures\"
+	Case 3
+		Return "Data\Adventures\"
+	Default
 		Return globaldirname$+"\Custom\Editing\Current\"
-	EndIf
+	End Select
 
 End Function
 
@@ -19728,11 +19713,8 @@ Function StartAdventureSelectScreen()
 	CameraProj=1
 	UpdateCameraProj()
 	
-	If AdventureCurrentArchive=0
-		GetCurrentAdventures()
-	Else
-		GetArchiveAdventures()
-	EndIf
+	
+	GetAdventures()
 	
 	
 	AdventureNameEntered$=""
@@ -19819,14 +19801,26 @@ Function AdventureSelectScreen()
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	
 	If hubmode=False
-		If AdventureCurrentArchive=0
-			DisplayText2("Current",28,6,255,255,255)
-			DisplayText2("Archive",37,6,155,155,155)
-		Else
-			DisplayText2("Current",28,6,155,155,155)
-			DisplayText2("Archive",37,6,255,255,255)
-		EndIf
-		DisplayText2("/",35.5,5.9,TextMenusR,TextMenusG,TextMenusB)
+;		If AdventureCurrentArchive=0
+;			DisplayText2("Current",28,6,255,255,255)
+;			DisplayText2("Archive",37,6,155,155,155)
+;		Else
+;			DisplayText2("Current",28,6,155,155,155)
+;			DisplayText2("Archive",37,6,255,255,255)
+;		EndIf
+;		DisplayText2("/",35.5,5.9,TextMenusR,TextMenusG,TextMenusB)
+
+		Select AdventureCurrentArchive
+		Case 1
+			TheString$="Archive"
+		Case 2
+			TheString$="Player"
+		Case 3
+			TheString$="Data/Adventures"
+		Default
+			TheString$="Current"
+		End Select
+		DisplayText2(TheString$,28,6,255,255,255)
 	EndIf
 	If NofAdventureFileNames>19
 		For i=0 To 18
@@ -19917,13 +19911,19 @@ Function AdventureSelectScreen()
 				DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else If FileType(GlobalDirName$+"\Custom\Editing\Archive\"+AdventureNameEntered$)=2
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,TextMenusR,TextMenusG,TextMenusB)
+			Else If FileType(GlobalDirName$+"\Custom\Adventures\"+AdventureNameEntered$)=2
+				DisplayText2(" INVALID ADVENTURE NAME - Already in Player!",0,5,TextMenusR,TextMenusG,TextMenusB)
+			Else If FileType("Data\Adventures\"+AdventureNameEntered$)=2
+				DisplayText2(" INVALID ADVENTURE NAME - Already in Data\Adventures!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else
 				DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
+				AdventureCurrentArchive=0 ; Set to current.
+				
 				CreateDir GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$
 	
 				AdventureFileName$=AdventureNameEntered$
 				
-				GetCurrentAdventures()
+				GetAdventures()
 				
 				For i=0 To NofAdventureFileNames-1	
 					If AdventureFileName$=AdventureFileNamesListed$(i)
@@ -19951,6 +19951,25 @@ Function AdventureSelectScreen()
 	EndIf
 	
 	
+	
+	If hubmode=False
+		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(36)
+			If MouseDown(1)
+				SetAdventureCurrentArchive(AdventureCurrentArchive+1)
+				GetAdventures()
+				Delay 100
+			EndIf
+			If MouseDown(2)
+				SetAdventureCurrentArchive(AdventureCurrentArchive-1)
+				GetAdventures()
+				Delay 100
+			EndIf
+		EndIf
+		;If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(36) And AdventureCurrentArchive=0
+		;	AdventureCurrentArchive=1
+		;	GetAdventures()
+		;EndIf
+	EndIf
 	
 	
 	If MouseDown(1)
@@ -19986,20 +20005,12 @@ Function AdventureSelectScreen()
 				
 			EndIf
 
-		
-			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(36) And AdventureCurrentArchive=1 And hubmode=False
-				GetCurrentAdventures()
-			EndIf
-			If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(36) And AdventureCurrentArchive=0 And hubmode=False
-				GetArchiveAdventures()
-			EndIf
-
 			If mx<LetterX(12) And my>LetterHeight And my<LetterHeight*2 ;hubmode
 				hubmode=Not hubmode
 				If hubmode
 					GetHubs()
 				Else
-					GetCurrentAdventures()
+					GetAdventures()
 				EndIf
 				Repeat
 				Until MouseDown(1)=0
@@ -20111,31 +20122,36 @@ Function AdventureSelectScreen2()
 	DisplayText2("               Choose Option:",0,6,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 
-	If AdventureCurrentArchive=0
-
+	If AdventureCurrentArchive=0 Or AdventureCurrentArchive=3
 		If Selected=0
 			DisplayText2("EDIT",20,9,255,255,255)
 		Else
 			DisplayText2("EDIT",20,9,155,155,155)
 		EndIf
 	EndIf
-	If AdventureCurrentArchive=0 And hubmode=False
-		If Selected=1 
-			DisplayText2("MOVE TO ARCHIVE",14.5,11,255,255,255)
+	If hubmode=False
+		If AdventureCurrentArchive=0
+			If Selected=1 
+				DisplayText2("MOVE TO ARCHIVE",14.5,11,255,255,255)
+			Else
+				DisplayText2("MOVE TO ARCHIVE",14.5,11,155,155,155)
+			EndIf
+		ElseIf AdventureCurrentArchive=1
+			If Selected=1
+				DisplayText2("MOVE TO CURRENT",14.5,11,255,255,255)
+			Else
+				DisplayText2("MOVE TO CURRENT",14.5,11,155,155,155)
+			EndIf
 		Else
-			DisplayText2("MOVE TO ARCHIVE",14.5,11,155,155,155)
-		EndIf
-	EndIf
-	If AdventureCurrentArchive=1 And hubmode=False
-		If Selected=1 And AdventureCurrentArchive=1
-			DisplayText2("MOVE TO CURRENT",14.5,11,255,255,255)
-		Else
-			DisplayText2("MOVE TO CURRENT",14.5,11,155,155,155)
+			If Selected=1
+				DisplayText2("COPY TO CURRENT",14.5,11,255,255,255)
+			Else
+				DisplayText2("COPY TO CURRENT",14.5,11,155,155,155)
+			EndIf
 		EndIf
 	EndIf
 	
 	If AdventureCurrentArchive=0
-
 		If Selected=2
 			DisplayText2("DELETE",19,13,255,255,255)
 		Else
@@ -20149,7 +20165,7 @@ Function AdventureSelectScreen2()
 	EndIf
 
 	If MouseDown(1)
-		If selected=0 And AdventureCurrentArchive=0
+		If selected=0 And AdventureCurrentArchive=0 Or AdventureCurrentArchive=3
 			If hubmode
 				HubFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
 				StartHub()
@@ -20165,33 +20181,32 @@ Function AdventureSelectScreen2()
 
 		If selected=1
 			ex$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+			
+			FromDir$=GetAdventureDir$()
 			If adventurecurrentarchive=0
-				CreateDir GlobalDirName$+"\Custom\Editing\Archive\"+ex$
-				dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Current\"+ex$)
-				Repeat
-					ex2$=NextFile$(dirfile)
-					If ex2$<>"" And ex2$<>"." And ex2$<>".."
-						CopyFile GlobalDirName$+"\Custom\Editing\Current\"+ex$+"\"+ex2$,GlobalDirName$+"\Custom\Editing\Archive\"+ex$+"\"+ex2$
-						DeleteFile GlobalDirName$+"\Custom\Editing\Current\"+ex$+"\"+ex2$
-					EndIf
-				Until ex2$=""
-				CloseDir dirfile
-				DeleteDir GlobalDirName$+"\Custom\Editing\Current\"+ex$
-				GetCurrentAdventures()
+				ToDir$=GlobalDirName$+"\Custom\Editing\Archive\"+ex$
 			Else
-				CreateDir GlobalDirName$+"\Custom\Editing\Current\"+ex$
-				dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Archive\"+ex$)
-				Repeat
-					ex2$=NextFile$(dirfile)
-					If ex2$<>"" And ex2$<>"." And ex2$<>".."
-						CopyFile GlobalDirName$+"\Custom\Editing\Archive\"+ex$+"\"+ex2$,GlobalDirName$+"\Custom\Editing\Current\"+ex$+"\"+ex2$
-						DeleteFile GlobalDirName$+"\Custom\Editing\Archive\"+ex$+"\"+ex2$
-					EndIf
-				Until ex2$=""
-				CloseDir dirfile
-				DeleteDir GlobalDirName$+"\Custom\Editing\Archive\"+ex$
-				GetArchiveAdventures()
+				ToDir$=GlobalDirName$+"\Custom\Editing\Current\"+ex$
 			EndIf
+			
+			CreateDir ToDir$
+			dirfile=ReadDir(FromDir$)
+			Repeat
+				ex2$=NextFile$(dirfile)
+				If ex2$<>"" And ex2$<>"." And ex2$<>".."
+					CopyFile FromDir$+ex2$,ToDir$+"\"+ex2$
+					If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
+						DeleteFile FromDir$+"\"+ex2$
+					EndIf
+				EndIf
+			Until ex2$=""
+			CloseDir dirfile
+			If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
+				DeleteDir FromDir$
+			EndIf
+			
+			GetAdventures()
+			
 			SetEditorMode(5)
 			Repeat
 			Until MouseDown(1)=0
@@ -20275,28 +20290,18 @@ Function AdventureSelectScreen3()
 				CloseDir dirfile
 				DeleteDir GlobalDirName$+"\Custom\Editing\Hubs\"+ex$
 				GetHubs()
-			ElseIf adventurecurrentarchive=0
-				dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Current\"+ex$)
-				Repeat
-					ex2$=NextFile$(dirfile)
-					If ex2$<>"" And ex2$<>"." And ex2$<>".."
-						DeleteFile GlobalDirName$+"\Custom\Editing\Current\"+ex$+"\"+ex2$
-					EndIf
-				Until ex2$=""
-				CloseDir dirfile
-				DeleteDir GlobalDirName$+"\Custom\Editing\Current\"+ex$
-				GetCurrentAdventures()
 			Else
-				dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Archive\"+ex$)
+				TheDir$=GetAdventuresDir$()+ex$
+				dirfile=ReadDir(TheDir$)
 				Repeat
 					ex2$=NextFile$(dirfile)
 					If ex2$<>"" And ex2$<>"." And ex2$<>".."
-						DeleteFile GlobalDirName$+"\Custom\Editing\Archive\"+ex$+"\"+ex2$
+						DeleteFile TheDir$+"\"+ex2$
 					EndIf
 				Until ex2$=""
 				CloseDir dirfile
-				DeleteDir GlobalDirName$+"\Custom\Editing\Archive\"+ex$
-				GetArchiveAdventures()
+				DeleteDir TheDir$
+				GetAdventures()
 			EndIf
 
 			
@@ -20319,6 +20324,17 @@ Function AdventureSelectScreen3()
 	If waitflag=True Delay 2000
 
 	
+End Function
+
+Function SetAdventureCurrentArchive(NewValue)
+
+	AdventureCurrentArchive=NewValue
+	If AdventureCurrentArchive<0
+		AdventureCurrentArchive=MaxAdventureCurrentArchive
+	ElseIf AdventureCurrentArchive>MaxAdventureCurrentArchive
+		AdventureCurrentArchive=0
+	EndIf
+
 End Function
 
 Function SettingsMainLoop()
@@ -20414,23 +20430,25 @@ Function SettingsMainLoop()
 End Function
 
 
-Function GetCurrentAdventures()
+Function GetAdventures()
 
 	NofAdventureFileNames=0
 	AdventureFileNamesListedStart=0
-	AdventureCurrentArchive=0
 	
-	dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Current")
+	TheDir$=GetAdventuresDir$()
+	dirfile=ReadDir(TheDir$)
 	
 	Repeat
 		ex$=NextFile$(dirfile)
-		If ex$<>"." And ex$<>".." And ex$<>"" And FileType(GlobalDirName$+"\Custom\Editing\Current\"+ex$)=2
+		If ex$<>"." And ex$<>".." And ex$<>"" And FileType(TheDir$+ex$)=2
 			; check if there's a hash or name is too long
 			flag=True
-			For i=1 To Len(ex$)
-				If Mid$(ex$,i,1)="#" Then flag=False
-			Next
-			If Len(ex$)>38 Then flag=False
+			
+			;For i=1 To Len(ex$)
+			;	If Mid$(ex$,i,1)="#" Then flag=False
+			;Next
+			;If Len(ex$)>38 Then flag=False
+			
 			If flag=True
 				; good file name - add to list
 				AdventureFileNamesListed$(NofAdventureFileNames)=ex$
@@ -20444,36 +20462,6 @@ Function GetCurrentAdventures()
 
 End Function
 
-Function GetArchiveAdventures()
-	
-	NofAdventureFileNames=0
-	AdventureFileNamesListedStart=0
-	AdventureCurrentArchive=1
-	
-	dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Archive")
-	
-	Repeat
-		ex$=NextFile$(dirfile)
-		If ex$<>"." And ex$<>".." And ex$<>"" And FileType(GlobalDirName$+"\Custom\Editing\Archive\"+ex$)=2
-			; check if there's a hash or name is too long
-			flag=True
-			For i=1 To Len(ex$)
-				If Mid$(ex$,i,1)="#" Then flag=False
-			Next
-			If Len(ex$)>38 Then flag=False
-			If flag=True
-				; good file name - add to list
-				AdventureFileNamesListed$(NofAdventureFileNames)=ex$
-				NofAdventureFileNames=NofAdventureFileNames+1
-			EndIf
-		EndIf
-	Until ex$=""
-	
-	CloseDir dirfile
-
-
-
-End Function
 
 Function GetHubs()
 
@@ -20507,13 +20495,7 @@ End Function
 
 Function LevelExists(levelnumber)
 
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
-
-	If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(levelnumber)+".wlv")=1
+	If FileType(GetAdventureDir$()+Str$(levelnumber)+".wlv")=1
 		Return True
 	Else
 		Return False
@@ -20523,13 +20505,7 @@ End Function
 
 Function DialogExists(dialognumber)
 
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
-
-	If FileType(GlobalDirName$+"\Custom\Editing\"+ex$+AdventureFileName$+"\"+Str$(dialognumber)+".dia")=1
+	If FileType(GetAdventureDir$()+Str$(dialognumber)+".dia")=1
 		Return True
 	Else
 		Return False
@@ -20555,13 +20531,6 @@ Function StartMaster()
 	CameraProj=1
 	UpdateCameraProj()
 	
-	
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
-	
 	For i=1 To MaxLevel
 		; check existence of wlv and dia files
 		MasterLevelList(i)=0
@@ -20582,7 +20551,7 @@ Function StartMaster()
 		FreeTexture IconTextureCustom
 		IconTextureCustom=0
 	EndIf
-	If FileType(globaldirname$+"\Custom\editing\"+ex$+AdventureFileName$+"\master.dat")=1
+	If FileType(GetAdventureDir$()+"master.dat")=1
 		LoadMasterFile()
 		If customiconname$="Standard"
 			IconTextureCustom=myLoadTexture("data\Graphics\icons-custom.bmp",4)
@@ -21285,13 +21254,7 @@ Function MasterMainLoop()
 					If mb=1
 						If CopyingLevel=StateCopying And LevelExists(SelectedLevel)=False
 							; copy from CopiedLevel
-							If AdventureCurrentArchive=1
-								ex2$="Archive\"
-							Else
-								ex2$="Current\"
-							EndIf
-
-							dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+							dirbase$=GetAdventureDir$()
 							CopyFile(dirbase$+CopiedLevel+".wlv",dirbase$+SelectedLevel+".wlv")
 							MasterLevelList(SelectedLevel)=1
 							
@@ -21345,13 +21308,7 @@ Function MasterMainLoop()
 					If mb=1
 						If CopyingDialog=StateCopying And DialogExists(SelectedDialog)=False
 							; copy from CopiedDialog
-							If AdventureCurrentArchive=1
-								ex2$="Archive\"
-							Else
-								ex2$="Current\"
-							EndIf
-
-							dirbase$=globaldirname$+"\custom\editing\"+ex2$+AdventureFileName$+"\"
+							dirbase$=GetAdventureDir$()
 							CopyFile(dirbase$+CopiedDialog+".dia",dirbase$+SelectedDialog+".dia")
 							MasterDialogList(SelectedDialog)=1
 							
@@ -21990,7 +21947,8 @@ Function HubMainLoop()
 			If MouseX()<LetterX(4) And MouseY()>LetterHeight*11+i*LetterHeight And MouseY()<=LetterHeight*12+i*LetterHeight
 				HubSelectedAdventure=HubAdvStart+i
 				If HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
-					GetCurrentAdventures()
+					SetAdventureCurrentArchive(0)
+					GetAdventures()
 					AdventureNameEntered$=""
 					SetEditorMode(12)
 				EndIf
@@ -22011,7 +21969,8 @@ Function HubMainLoop()
 		
 		; replace
 		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And HubSelectedAdventure>=0
-			GetCurrentAdventures()
+			SetAdventureCurrentArchive(0)
+			GetAdventures()
 			SetEditorMode(12)
 			Repeat
 			Until MouseDown(1)=0 
@@ -22261,31 +22220,13 @@ End Function
 
 Function MasterFileExists()
 
-	If AdventureCurrentArchive=1
-		ex2$="Archive\"
-	Else
-		ex2$="Current\"
-	EndIf
-
-	Return FileExists(globaldirname$+"\Custom\editing\"+ex2$+AdventureFileName$+"\master.dat")
+	Return FileExists(GetAdventureDir$()+"master.dat")
 
 End Function
 
-Function LoadMasterFile()
+Function LoadMasterFile()	
 
-
-	If AdventureCurrentArchive=1
-		ex2$="Archive\"
-	Else
-		ex2$="Current\"
-	EndIf
-
-
-	
-
-	file=ReadFile (globaldirname$+"\Custom\editing\"+ex2$+AdventureFileName$+"\master.dat")
-
-	
+	file=ReadFile (GetAdventureDir$()+"master.dat")
 	
 	adventuretitle$=ReadString$(file)
 	For i=0 To 4
@@ -22460,17 +22401,7 @@ End Function
 
 Function SaveMasterFIle()
 
-	
-	If AdventureCurrentArchive=1
-		ex2$="Archive\"
-	Else
-		ex2$="Current\"
-	EndIf
-
-
-	
-
-	file=WriteFile (globaldirname$+"\Custom\editing\"+ex2$+AdventureFileName$+"\master.dat")
+	file=WriteFile (GetAdventureDir$()+"master.dat")
 
 
 	WriteString file,adventuretitle$
@@ -23466,17 +23397,10 @@ End Function
 
 Function LoadDialogFile()
 
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
-
-
 	ClearDialogFile()
 		
 	; yep - load
-	file=ReadFile(globaldirname$+"\Custom\editing\"+ex$+AdventureFileName$+"\"+Str$(currentdialog)+".dia")
+	file=ReadFile(GetAdventureDir$()+Str$(currentdialog)+".dia")
 
 	NofInterchanges=ReadInt(file)
 	For i=0 To NofInterchanges-1
@@ -23516,17 +23440,8 @@ Function LoadDialogFile()
 End Function
 
 Function SaveDialogFile()
-		
-			
-		
-	If AdventureCurrentArchive=1
-		ex$="Archive\"
-	Else
-		ex$="Current\"
-	EndIf
-
-
-	file=WriteFile(globaldirname$+"\Custom\editing\"+ex$+AdventureFileName$+"\"+Str$(currentdialog)+".dia")
+	
+	file=WriteFile(GetAdventureDir$()+Str$(currentdialog)+".dia")
 	
 	;NofInterChanges=NofInterChanges+1 ; MS, why would you do this?
 		
