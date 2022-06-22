@@ -781,6 +781,7 @@ End Type
 
 Global CurrentObject.GameObject=New GameObject
 CurrentObject\Attributes=New GameObjectAttributes
+CurrentObject\Position=New GameObjectPosition
 
 Dim LevelObjects.GameObject(MaxNofObjects)
 Dim BrushObjects.GameObjectAttributes(MaxNofObjects)
@@ -3076,6 +3077,8 @@ Function SetBrushWidth(NewBrushWidth)
 	ElseIf BrushWidth>100
 		BrushWidth=100
 	EndIf
+	
+	BrushCursorStateWasChanged()
 
 End Function
 
@@ -3088,6 +3091,8 @@ Function SetBrushHeight(NewBrushHeight)
 	ElseIf BrushHeight>100
 		BrushHeight=100
 	EndIf
+	
+	BrushCursorStateWasChanged()
 
 End Function
 
