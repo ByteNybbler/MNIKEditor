@@ -828,10 +828,10 @@ Function NewObjectAdjusterFloat.ObjectAdjusterFloat(Name$,RandomMin#,RandomMax#)
 	Result.ObjectAdjusterFloat=New ObjectAdjusterFloat
 	Result\Name$=Name$
 	Result\RandomEnabled=False
-	Result\RandomMin=RandomMin
-	Result\RandomMax=RandomMax
-	Result\RandomMinDefault=RandomMin
-	Result\RandomMaxDefault=RandomMax
+	Result\RandomMin#=RandomMin
+	Result\RandomMax#=RandomMax
+	Result\RandomMinDefault#=RandomMin
+	Result\RandomMaxDefault#=RandomMax
 	Return Result
 
 End Function
@@ -846,14 +846,14 @@ Function AdjustObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,S
 			ObjectAdjuster\RandomMax=AdjustInt(ObjectAdjuster\Name$+" Max: ", ObjectAdjuster\RandomMax, SlowInt, FastInt, DelayTime)
 		EndIf
 	Else
-		Result=AdjustInt(ObjectAdjuster\Name$+": ", CurrentValue, SlowInt, FastInt, DelayTime)
+		CurrentValue=AdjustInt(ObjectAdjuster\Name$+": ", CurrentValue, SlowInt, FastInt, DelayTime)
 	EndIf
 	If ReturnPressed()
 		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
 		ObjectAdjuster\RandomMin=ObjectAdjuster\RandomMinDefault
 		ObjectAdjuster\RandomMax=ObjectAdjuster\RandomMaxDefault
 	EndIf
-	Return Result
+	Return CurrentValue
 
 End Function
 
@@ -867,16 +867,30 @@ Function AdjustObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat,CurrentVa
 			ObjectAdjuster\RandomMax=AdjustFloat#(ObjectAdjuster\Name$+" Max: ", ObjectAdjuster\RandomMax, SlowFloat#, FastFloat#, DelayTime)
 		EndIf
 	Else
-		Result#=AdjustInt(ObjectAdjuster\Name$+": ", CurrentValue, SlowInt, FastInt, DelayTime)
+		CurrentValue#=AdjustFloat#(ObjectAdjuster\Name$+": ", CurrentValue, SlowFloat#, FastFloat#, DelayTime)
 	EndIf
 	If ReturnPressed()
 		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
 		ObjectAdjuster\RandomMin=ObjectAdjuster\RandomMinDefault
 		ObjectAdjuster\RandomMax=ObjectAdjuster\RandomMaxDefault
 	EndIf
-	Return Result
+	Return CurrentValue
 
 End Function
+
+
+Function RandomObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt)
+
+	Return Rand(ObjectAdjuster\RandomMin,ObjectAdjuster\RandomMax)
+
+End Function
+
+Function RandomObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat)
+
+	Return Rnd#(ObjectAdjuster\RandomMin,ObjectAdjuster\RandomMax)
+
+End Function
+
 
 
 Global ObjectAdjusterDefensePower.ObjectAdjusterInt=NewObjectAdjusterInt("DefensePower",0,33)
@@ -8921,8 +8935,8 @@ Function LoadObjectPreset()
 	AddAdjuster("Data8")
 	
 	AddAdjuster("Data9")
-	AddAdjuster("ObjectTextData0")
-	AddAdjuster("ObjectTextData1")
+	AddAdjuster("TextData0")
+	AddAdjuster("TextData1")
 	AddAdjuster("Talkable")
 	AddAdjuster("Exclamation")
 	AddAdjuster("Timer")
@@ -9183,21 +9197,21 @@ Function PlaceObjectActual(x#,y#)
 	
 	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
 
-	If RandomType
-		SourceAttributes\LogicType=Rand(RandomTypeMin,RandomTypeMax)
+	If ObjectAdjusterLogicType\RandomEnabled
+		SourceAttributes\LogicType=RandomObjectAdjusterInt(ObjectAdjusterLogicType)
 	EndIf
-	If RandomSubType
-		SourceAttributes\LogicSubType=Rand(RandomSubTypeMin,RandomSubTypeMax)
+	If ObjectAdjusterLogicSubType\RandomEnabled
+		SourceAttributes\LogicSubType=RandomObjectAdjusterInt(ObjectAdjusterLogicSubType)
 	EndIf
 	
-	If RandomPitchAdjust
-		SourceAttributes\PitchAdjust#=Rnd(RandomPitchAdjustMin,RandomPitchAdjustMax)
+	If ObjectAdjusterPitchAdjust\RandomEnabled
+		SourceAttributes\PitchAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterPitchAdjust)
 	EndIf
-	If RandomYawAdjust
-		SourceAttributes\YawAdjust#=Rnd(RandomYawAdjustMin,RandomYawAdjustMax)
+	If ObjectAdjusterYawAdjust\RandomEnabled
+		SourceAttributes\YawAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterYawAdjust)
 	EndIf
-	If RandomRollAdjust
-		SourceAttributes\RollAdjust#=Rnd(RandomRollAdjustMin,RandomRollAdjustMax)
+	If ObjectAdjusterRollAdjust\RandomEnabled
+		SourceAttributes\RollAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterRollAdjust)
 	EndIf
 	
 	If RandomData(0)
@@ -9231,64 +9245,64 @@ Function PlaceObjectActual(x#,y#)
 		SourceAttributes\Data9=Rand(RandomDataMin(9),RandomDataMax(9))
 	EndIf
 	
-	If RandomXScale
-		SourceAttributes\XScale#=Rnd(RandomXScaleMin#,RandomXScaleMax#)
+	If ObjectAdjusterXScale\RandomEnabled
+		SourceAttributes\XScale#=RandomObjectAdjusterFloat#(ObjectAdjusterXScale)
 	EndIf
-	If RandomYScale
-		SourceAttributes\YScale#=Rnd(RandomYScaleMin#,RandomYScaleMax#)
+	If ObjectAdjusterYScale\RandomEnabled
+		SourceAttributes\YScale#=RandomObjectAdjusterFloat#(ObjectAdjusterYScale)
 	EndIf
-	If RandomZScale
-		SourceAttributes\ZScale#=Rnd(RandomZScaleMin#,RandomZScaleMax#)
-	EndIf
-	
-	If RandomXAdjust
-		SourceAttributes\XAdjust#=Rnd(RandomXAdjustMin#,RandomXAdjustMax#)
-	EndIf
-	If RandomYAdjust
-		SourceAttributes\YAdjust#=Rnd(RandomYAdjustMin#,RandomYAdjustMax#)
-	EndIf
-	If RandomZAdjust
-		SourceAttributes\ZAdjust#=Rnd(RandomZAdjustMin#,RandomZAdjustMax#)
+	If ObjectAdjusterZScale\RandomEnabled
+		SourceAttributes\ZScale#=RandomObjectAdjusterFloat#(ObjectAdjusterZScale)
 	EndIf
 	
-	If RandomMovementType
-		SourceAttributes\MovementType=Rand(RandomMovementTypeMin,RandomMovementTypeMax)
+	If ObjectAdjusterXAdjust\RandomEnabled
+		SourceAttributes\XAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterXAdjust)
+	EndIf
+	If ObjectAdjusterYAdjust\RandomEnabled
+		SourceAttributes\YAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterYAdjust)
+	EndIf
+	If ObjectAdjusterZAdjust\RandomEnabled
+		SourceAttributes\ZAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterZAdjust)
 	EndIf
 	
-	If RandomDefensePower
-		SourceAttributes\DefensePower=Rand(RandomDefensePowerMin,RandomDefensePowerMax)
+	If ObjectAdjusterMovementType\RandomEnabled
+		SourceAttributes\MovementType=RandomObjectAdjusterInt(ObjectAdjusterMovementType)
 	EndIf
 	
-	If RandomID
-		SourceAttributes\ID=Rand(RandomIDMin,RandomIDMax)
+	If ObjectAdjusterDefensePower\RandomEnabled
+		SourceAttributes\DefensePower=RandomObjectAdjusterInt(ObjectAdjusterDefensePower)
+	EndIf
+	
+	If ObjectAdjusterID\RandomEnabled
+		SourceAttributes\ID=RandomObjectAdjusterInt(ObjectAdjusterID)
 	EndIf
 	
 	If RandomActive
 		SourceAttributes\Active=Rand(RandomActiveMin,RandomActiveMax)
 	EndIf
-	If RandomActivationType
-		SourceAttributes\ActivationType=Rand(RandomActivationTypeMin,RandomActivationTypeMax)
+	If ObjectAdjusterActivationType\RandomEnabled
+		SourceAttributes\ActivationType=RandomObjectAdjusterInt(ObjectAdjusterActivationType)
 	EndIf
-	If RandomActivationSpeed
-		SourceAttributes\ActivationSpeed=Rand(RandomActivationSpeedMin,RandomActivationSpeedMax)
+	If ObjectAdjusterActivationSpeed\RandomEnabled
+		SourceAttributes\ActivationSpeed=RandomObjectAdjusterInt(ObjectAdjusterActivationSpeed)
 		; enforce even numbers
 		If SourceAttributes\ActivationSpeed Mod 2=1
 			SourceAttributes\ActivationSpeed=SourceAttributes\ActivationSpeed+1
 		EndIf
 	EndIf
 	
-	If RandomStatus
-		SourceAttributes\Status=Rand(RandomStatusMin,RandomStatusMax)
+	If ObjectAdjusterStatus\RandomEnabled
+		SourceAttributes\Status=RandomObjectAdjusterInt(ObjectAdjusterStatus)
 	EndIf
 	
-	If RandomTimer
-		SourceAttributes\Timer=Rand(RandomTimerMin,RandomTimerMax)
+	If ObjectAdjusterTimer\RandomEnabled
+		SourceAttributes\Timer=RandomObjectAdjusterInt(ObjectAdjusterTimer)
 	EndIf
-	If RandomTimerMax1
-		SourceAttributes\TimerMax1=Rand(RandomTimerMax1Min,RandomTimerMax1Max)
+	If ObjectAdjusterTimerMax1\RandomEnabled
+		SourceAttributes\TimerMax1=RandomObjectAdjusterInt(ObjectAdjusterTimerMax1)
 	EndIf
-	If RandomTimerMax2
-		SourceAttributes\TimerMax2=Rand(RandomTimerMax2Min,RandomTimerMax2Max)
+	If ObjectAdjusterTimerMax2\RandomEnabled
+		SourceAttributes\TimerMax2=RandomObjectAdjusterInt(ObjectAdjusterTimerMax2)
 	EndIf
 	
 	If RandomTeleportable
@@ -9298,12 +9312,12 @@ Function PlaceObjectActual(x#,y#)
 		SourceAttributes\ButtonPush=Rand(0,1)
 	EndIf
 	
-	If RandomTalkable
-		SourceAttributes\Talkable=Rand(RandomTalkableMin,RandomTalkableMax)
+	If ObjectAdjusterTalkable\RandomEnabled
+		SourceAttributes\Talkable=RandomObjectAdjusterInt(ObjectAdjusterTalkable)
 	EndIf
 	
-	If RandomMovementSpeed
-		SourceAttributes\MovementSpeed=Rand(RandomMovementSpeedMin,RandomMovementSpeedMax)
+	If ObjectAdjusterMovementSpeed\RandomEnabled
+		SourceAttributes\MovementSpeed=RandomObjectAdjusterInt(ObjectAdjusterMovementSpeed)
 	EndIf
 	
 	If RandomMoveXGoal
@@ -9330,16 +9344,28 @@ Function PlaceObjectActual(x#,y#)
 		Next
 	EndIf
 	
-	If RandomDead
-		SourceAttributes\Dead=Rand(RandomDeadMin,RandomDeadMax)
+	If ObjectAdjusterDead\RandomEnabled
+		SourceAttributes\Dead=RandomObjectAdjusterInt(ObjectAdjusterDead)
 	EndIf
 	
-	If RandomExclamation
-		SourceAttributes\Exclamation=Rand(RandomExclamationMin,RandomExclamationMax)
+	If ObjectAdjusterExclamation\RandomEnabled
+		SourceAttributes\Exclamation=RandomObjectAdjusterInt(ObjectAdjusterExclamation)
 	EndIf
 	
-	If RandomScaleAdjust
-		SourceAttributes\ScaleAdjust#=Rnd(RandomScaleAdjustMin#,RandomScaleAdjustMax#)
+	If ObjectAdjusterDestructionType\RandomEnabled
+		SourceAttributes\DestructionType=RandomObjectAdjusterInt(ObjectAdjusterDestructionType)
+	EndIf
+	
+	If ObjectAdjusterLinked\RandomEnabled
+		SourceAttributes\Linked=RandomObjectAdjusterInt(ObjectAdjusterLinked)
+	EndIf
+	
+	If ObjectAdjusterLinkBack\RandomEnabled
+		SourceAttributes\LinkBack=RandomObjectAdjusterInt(ObjectAdjusterLinkBack)
+	EndIf
+	
+	If ObjectAdjusterScaleAdjust\RandomEnabled
+		SourceAttributes\ScaleAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterScaleAdjust)
 	EndIf
 	
 	
@@ -11113,14 +11139,14 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=ObjectAdjusterTimer\RandomMax
 
 
-	Case "ObjectTextData0"
+	Case "TextData0"
 		; custom model
 		tex2$=""
-		tex$=CurrentObjectTextData0
+		tex$=CurrentObject\Attributes\TextData0$
 		
-	Case "ObjectTextData1"
+	Case "TextData1"
 		tex2$=""
-		tex$=CurrentObjectTextData1$
+		tex$=CurrentObject\Attributes\TextData1$
 
 		
 	Case "Active"
@@ -11186,7 +11212,7 @@ Function DisplayObjectAdjuster(i)
 
 
 	Case "ButtonPush"
-		tex$=OneToYes$(CurrentObjectButtonPush)
+		tex$=OneToYes$(CurrentObject\Attributes\ButtonPush)
 		Randomized=RandomButtonPush
 		LeftAdj$=""
 		RightAdj$=""
@@ -12282,6 +12308,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data6"
 		tex$=Str$(CurrentObject\Attributes\Data6)
+		Randomized=RandomData(6)
 		LeftAdj$=RandomDataMin(6)
 		RightAdj$=RandomDataMax(6)
 		
@@ -12824,7 +12851,7 @@ Function DisplayObjectAdjuster(i)
 		;Text StartX+80-HalfNameWidth-8*Len(LeftAdj$),TextY,LeftAdj$
 		;Text StartX+104+HalfNameWidth,TextY,RightAdj$
 		
-	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"ObjectTextData0" And ObjectAdjuster$(i)<>"ObjectTextData1"
+	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"TextData0" And ObjectAdjuster$(i)<>"TextData1"
 		tex$=tex2$+": "+tex$
 	EndIf
 	
@@ -13144,7 +13171,7 @@ Function AdjustObjectAdjuster(i)
 	SlowScale#=0.001
 
 	Select ObjectAdjuster$(i)
-	Case "ObjectTextData0"
+	Case "TextData0"
 		If LeftMouse=True
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
@@ -13162,7 +13189,7 @@ Function AdjustObjectAdjuster(i)
 				CurrentObject\Attributes\TextData0=InputString$("TextData0: ")
 			EndIf
 		EndIf
-	Case "ObjectTextData1"
+	Case "TextData1"
 		If LeftMouse=True
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
