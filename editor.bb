@@ -26682,7 +26682,7 @@ Function ControlStinkerWee(i)
 	If Obj\Attributes\Caged=True And SimulatedObjectSubType(i)<>4 And SimulatedObjectSubType(i)<>5
 		; just Caged
 		EntityTexture Obj\Entity,StinkerWeeTextureSad(SimulatedObjectData(i,8)+1)
-		;PlaySoundFX(66,ObjectTileX(i),ObjectTileY(i))
+		;PlaySoundFX(66,Pos\TileX,Pos\TileY)
 		If SimulatedObjectSubType(i)=2
 			SimulatedObjectSubType(i)=5
 		Else
@@ -26724,8 +26724,8 @@ Function ControlStinkerWee(i)
 		SimulatedObjectData(i,1)=0
 		SimulatedObjectData(i,2)=4
 		SimulatedObjectSubType(i)=2
-		;ObjectMoveXGoal(i)=ObjectTileX(i)
-		;ObjectMoveYGoal(i)=ObjectTileY(i)
+		;ObjectMoveXGoal(i)=Pos\TileX
+		;ObjectMoveYGoal(i)=Pos\TileY
 	Else If SimulatedObjectData(i,2)<4
 		; stopped - but wait a few frames before switching animation
 		; (to avoid start/stop animation)
@@ -26739,7 +26739,7 @@ Function ControlStinkerWee(i)
 				If Rand(0,100)<3  
 					AddParticle(9,Pos\TileX+.5,.9,-Pos\TileY-.5,0,0.5,0,0.01,0,0,.001,0,0,0,200,3)
 					SimulatedObjectData(i,2)=0
-					;PlaySoundFX(59,ObjectTileX(i),ObjectTileY(i))
+					;PlaySoundFX(59,Pos\TileX,Pos\TileY)
 				EndIf
 				
 				
@@ -26766,7 +26766,7 @@ Function ControlStinkerWee(i)
 				If Rand(0,1000)<2 And SimulatedObjectData(i,1)>100
 					; do an animation
 					If (Rand(0,100)<50) ; wave
-						;PlaySoundFX(Rand(50,54),ObjectTileX(i),ObjectTileY(i))
+						;PlaySoundFX(Rand(50,54),Pos\TileX,Pos\TileY)
 						MaybeAnimateMD2(Obj\Entity,3,.2,101,120,1)
 						SimulatedObjectCurrentAnim(i)=4
 					Else If SimulatedObjectSubtype(i)=2	; tap
@@ -26805,7 +26805,7 @@ Function ControlStinkerWee(i)
 ;				ObjectData(i,1)=ObjectData(i,1)+1
 ;				If ObjectData(i,1)>5000 And leveltimer Mod 5000=0
 ;					; bored!
-;					PlaySoundFX(68,ObjectTileX(i),ObjectTileY(i))
+;					PlaySoundFX(68,Pos\TileX,Pos\TileY)
 ;					ObjectData(i,1)=0
 ; 					EndIf
 ;			EndIf
@@ -26815,7 +26815,7 @@ Function ControlStinkerWee(i)
 ;				
 ;				If ObjectData(i,1)>4800
 ;					; fell asleep again
-;					PlaySoundFX(69,ObjectTileX(i),ObjectTileY(i))
+;					PlaySoundFX(69,Pos\TileX,Pos\TileY)
 ;			;		EntityTexture ObjectEntity(i),StinkerWeeTextureSleep
 ;					AnimateMD2 ObjectEntity(i),3,.2,201,217,1
 ;					ObjectCurrentAnim(i)=7
@@ -26841,7 +26841,7 @@ Function ControlScritter(i)
 
 	;If ObjectMovementTimer(i)>0
 	;	SimulatedObjectZ(i)=0.4*Abs(Sin(ObjectMovementTimer(i)*360/1000))
-	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),10,0)
+	;	TurnObjectTowardDirection(i,Pos\TileX2-Pos\TileX,Pos\TileY2-Pos\TileY,10,0)
 	;Else
 		Pos.GameObjectPosition=LevelObjects(i)\Position
 		TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,6,0)
@@ -26931,7 +26931,7 @@ Function ControlCrab(i)
 	If SimulatedObjectStatus(i)=0 And SimulatedObjectData(i,1)<2
 		SimulatedObjectZ(i)=0
 		;If Obj\Attributes\MovementTimer>0 
-		;	TurnObjectTowardDirection(i,-(ObjectTileX2(i)-ObjectTileX(i)),-(ObjectTileY2(i)-ObjectTileY(i)),10,0)
+		;	TurnObjectTowardDirection(i,-(Pos\TileX2-Pos\TileX),-(Pos\TileY2-Pos\TileY),10,0)
 		;Else
 			TurnObjectTowardDirection(i,-(PlayerX()-SimulatedObjectX(i)),-(PlayerY()-SimulatedObjectY(i)),6,0)
 		;EndIf
@@ -27212,7 +27212,6 @@ Function ControlFlipBridge(i)
 		ScaleEntity GetChild(Obj\Entity,1),1.0,1.0,YScale#
 	Else
 		SimulatedObjectScaleYAdjust(i)=YScale#
-		;SimulateObjectScale(i)
 	EndIf
 
 End Function
@@ -27221,8 +27220,6 @@ End Function
 Function ControlSpring(i)
 
 	SimulatedObjectZ(i)=.5
-	
-	;SimulateObjectPosition(i)
 
 End Function
 
@@ -27448,7 +27445,10 @@ End Function
 
 Function ControlCuboid(i)
 
-	If SimulatedObjectData(i,5)<>ObjectTIleX(i) Or SimulatedObjectData(i,6)<>ObjectTileY(i)
+	Obj.GameObject=LevelObjects(i)
+	Pos.GameObjectPosition=Obj\Position
+
+	If SimulatedObjectData(i,5)<>Pos\TileX Or SimulatedObjectData(i,6)<>Pos\TileY
 		SimulatedObjectData(i,5)=0
 		SimulatedObjectData(i,6)=0
 	EndIf
@@ -27464,15 +27464,18 @@ End Function
 
 Function ControlFountain(i)
 
-	If ObjectActive(i)>0
-		AddParticle(ObjectData(i,0),ObjectTileX(i)+.5,ObjectZAdjust(i)+.5,-ObjectTileY(i)-.5,0,.1,Rnd(-.01,.01),Rnd(.07,.099),Rnd(-.01,.01),0,.001,0,-.001,0,150,3)
+	If SimulatedObjectActive(i)>0
+		Obj.GameObject=LevelObjects(i)
+		Pos.GameObjectPosition=Obj\Position
+		
+		AddParticle(SimulatedObjectData(i,0),Pos\TileX+.5,SimulatedObjectZAdjust(i)+.5,-Pos\TileY-.5,0,.1,Rnd(-.01,.01),Rnd(.07,.099),Rnd(-.01,.01),0,.001,0,-.001,0,150,3)
 	EndIf
 
 End Function
 
 Function ControlMeteorite(i)
 
-	AddParticle(Rand(0,3),ObjectX(i)+Rnd(-.1,.1),ObjectZ(i)+Rnd(-.1,.1),-ObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.01,.01),Rnd(-.01,.01),Rnd(-.01,.01),3,.02,0,0,0,125,3)
+	AddParticle(Rand(0,3),SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.01,.01),Rnd(-.01,.01),Rnd(-.01,.01),3,.02,0,0,0,125,3)
 	
 End Function
 
@@ -27480,6 +27483,8 @@ Function ControlZipper(i)
 	
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=-1 ; not really used
+		
+		Obj.GameObject=LevelObjects(i)
 		
 		EntityBlend Obj\Entity,3
 		
@@ -27501,11 +27506,14 @@ Function ControlZipper(i)
 End Function
 
 Function ControlButterfly(i)
+
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
 	
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=-1 ; not really used
 		
-		If ObjectModelName$(i)="!Busterfly"
+		If Attributes\ModelName$="!Busterfly"
 
 			SimulatedObjectXScale(i)=.01
 			SimulatedObjectYScale(i)=.01
@@ -27523,7 +27531,7 @@ Function ControlButterfly(i)
 	EndIf
 	
 
-	If ObjectModelName$(i)="!Busterfly"
+	If Attributes\ModelName$="!Busterfly"
 		zz#=.2*Sin((SimulatedObjectData(i,2)*(Leveltimer+SimulatedObjectData(i,1))) Mod 360)
 		;TurnObjectTowardDirection(i,ObjectDX(i),ObjectDY(i),2,90)
 		SimulatedObjectZ(i)=.4+zz
@@ -27536,7 +27544,7 @@ Function ControlButterfly(i)
 		SimulatedObjectXScale(i)=size
 		SimulatedObjectYScale(i)=size
 		SimulatedObjectZScale(i)=size
-		If leveltimer Mod 4=1 AddParticle(Rand(24,30),SimulatedObjectX(i)-3*ObjectDX(i),SimulatedObjectZ(i),-SimulatedObjectY(i)+3*ObjectDY(i),0,.3*size,0,0.00,0,3,0,0,0,0,15,3)
+		If leveltimer Mod 4=1 AddParticle(Rand(24,30),SimulatedObjectX(i)-3*Attributes\DX,SimulatedObjectZ(i),-SimulatedObjectY(i)+3*Attributes\DY,0,.3*size,0,0.00,0,3,0,0,0,0,15,3)
 
 	EndIf
 
@@ -27544,27 +27552,30 @@ End Function
 
 Function ControlSpellBall(i)
 
-	If ObjectSubType(i)<8
-		myparticle=24+ObjectSubType(i)
+	If SimulatedObjectSubType(i)<8
+		myparticle=24+SimulatedObjectSubType(i)
 	Else
 		myparticle=Rand(24,31)
 	EndIf
 	
 	; do the trail
-	If (LevelTimer Mod 2=0) And ObjectData(i,8)<>-99
-		AddParticle(myparticle,ObjectX(i)+Rnd(-.1,.1),ObjectZ(i)+Rnd(-.1,.1),-ObjectY(i)+Rnd(-.1,.1),0,0.5,0,0.00,0,3,.01,0,0,0,75,3)
+	If (LevelTimer Mod 2=0) And SimulatedObjectData(i,8)<>-99
+		AddParticle(myparticle,SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,0.5,0,0.00,0,3,.01,0,0,0,75,3)
 	EndIf
 
 End Function
 
 Function ControlChomper(i)
 
+	Obj.GameObject=LevelObjects(i)
+	Pos.GameObjectPosition=Obj\Position
+
 	If SimulatedObjectTileTypeCollision(i)=0
 		;AnimateMD2 Obj\Entity,1,.6,1,29
 		SimulatedObjectYawAdjust(i)=0
-		SimulatedObjectMovementSpeed(i)=20+5*ObjectData(i,0)
-		;SimulatedObjectTileX(i)=Floor(SimulatedObjectX(i))
-		;SimulatedObjectTileY(i)=Floor(SimulatedObjectY(i))
+		SimulatedObjectMovementSpeed(i)=20+5*SimulatedObjectData(i,0)
+		;SimulatedPos\TileX=Floor(SimulatedObjectX(i))
+		;SimulatedPos\TileY=Floor(SimulatedObjectY(i))
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
 		;SimulatedObjectMovementType(i)=13
@@ -27590,16 +27601,20 @@ Function ControlChomper(i)
 	
 	
 	;If Obj\Attributes\MovementTimer>0
-	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),3,180)
+	;	TurnObjectTowardDirection(i,Pos\TileX2-Pos\TileX,Pos\TileY2-Pos\TileY,3,180)
 	;Else
-		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),1,180)
+		TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,1,180)
 	;EndIf
 
 End Function
 
 Function ControlNPC(i)
 
-	If ObjectModelName$(i)<>"!NPC" Return ; don't want to risk a MAV
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+	Pos.GameObjectPosition=Obj\Position
+
+	If Attributes\ModelName$<>"!NPC" Return ; don't want to risk a MAV
 	
 	
 
@@ -27630,14 +27645,14 @@ Function ControlNPC(i)
 ;	EndIf
 
 	;dist=100 ; Distance from player
-	Dist=maximum2(Abs(ObjectTileX(i)-BrushCursorX),Abs(ObjectTileY(i)-BrushCursorY))
+	Dist=maximum2(Abs(Pos\TileX-BrushCursorX),Abs(Pos\TileY-BrushCursorY))
 	; Exclamation
 	If SimulatedObjectExclamation(i)>=100 And SimulatedObjectExclamation(i)<200 And Dist>4
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)-100
 	EndIf
 	If SimulatedObjectExclamation(i)>=0 And SimulatedObjectExclamation(i)<100 And Dist<4
 		
-		AddParticle(SimulatedObjectExclamation(i),ObjectTileX(i)+.5,1.3,-ObjectTileY(i)-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
+		AddParticle(SimulatedObjectExclamation(i),Pos\TileX+.5,1.3,-Pos\TileY-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)+100
 	EndIf
 
@@ -27658,10 +27673,10 @@ Function ControlNPC(i)
 
 	EndIf
 	
-	If ObjectLinked(i)=-1 And SimulatedObjectData10(i)>=0
+	If Attributes\Linked=-1 And SimulatedObjectData10(i)>=0
 		
 		; just restarted after talking and/or after transporter
-	;	If ObjectMoveXGoal(i)=ObjectTileX(i) And ObjectMoveYGoal(i)=ObjectTileY(i)
+	;	If ObjectMoveXGoal(i)=Pos\TileX And ObjectMoveYGoal(i)=Pos\TileY
 			SimulatedObjectMoveXGoal(i)=SimulatedObjectData10(i) Mod 200
 			SimulatedObjectMoveYGoal(i)=SimulatedObjectData10(i) / 200
 			;SimulatedObjectMovementType(i)=10
@@ -27669,14 +27684,14 @@ Function ControlNPC(i)
 		SimulatedObjectData10(i)=-1
 	EndIf
 	
-	If ObjectFlying(i)/10=1
+	If Attributes\Flying/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
 			MaybeAnimate(GetChild(Obj\Entity,3),1,1,11)
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
-		TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-SimulatedObjectYawAdjust(i))
-	Else If ObjectFlying(i)/10=2
+		TurnObjectTowardDirection(i,-(Pos\TileX-Pos\TileX2),-(Pos\TileY-Pos\TileY2),10,-SimulatedObjectYawAdjust(i))
+	Else If Attributes\Flying/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>13
 			MaybeAnimate(GetChild(Obj\Entity,3),3,2,13)
@@ -27695,7 +27710,7 @@ Function ControlNPC(i)
 			EndIf
 		Case 1
 			; Turn Toward Player
-			TurnObjectTowardDirection(i,PlayerX()-ObjectX(i),PlayerY()-ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+			TurnObjectTowardDirection(i,PlayerX()-SimulatedObjectX(i),PlayerY()-SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
 		
 		Case 2
 			; Various turning options
@@ -27708,7 +27723,7 @@ Function ControlNPC(i)
 			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)-.5) Mod 360
 		Case 5
 			; Various turning options
-			SimulatedObjectYaw(i)=(ObjectYaw(i)-2) Mod 360
+			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)-2) Mod 360
 		End Select
 		
 		; Jumping?
@@ -27795,7 +27810,7 @@ Function ControlNPC(i)
 			EndIf
 		Case 8
 			; Sit if far from player, otherwise stand and wave fast
-			Dist=maximum2(Abs(ObjectTileX(i)-PlayerTileX()),Abs(ObjectTileY(i)-PlayerTileY()))
+			Dist=maximum2(Abs(Pos\TileX-PlayerTileX()),Abs(Pos\TileY-PlayerTileY()))
 			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
 				SimulatedObjectCurrentAnim(i)=14
 				MaybeAnimate(GetChild(Obj\Entity,3),3,.4,14)
@@ -27852,7 +27867,11 @@ End Function
 
 Function ControlKaboom(i)
 
-	If ObjectModelName$(i)<>"!Kaboom" Return
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+	Pos.GameObjectPosition=Obj\Position
+
+	If Attributes\ModelName$<>"!Kaboom" Return
 	
 	If SimulatedObjectTileTypeCollision(i)=0
 		; First time (should later be put into object creation at level editor)
@@ -27861,8 +27880,8 @@ Function ControlKaboom(i)
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^11+2^12+2^14
 		;SimulatedObjectObjectTypeCollision(i)=2^6
 		If SimulatedObjectMoveXGoal(i)=0 And SimulatedObjectMoveYGoal(i)=0
-			SimulatedObjectMoveXGoal(i)=Floor(ObjectX(i))
-			SimulatedObjectMoveYGoal(i)=Floor(ObjectY(i))
+			SimulatedObjectMoveXGoal(i)=Floor(SimulatedObjectX(i))
+			SimulatedObjectMoveYGoal(i)=Floor(SimulatedObjectY(i))
 			;ObjectMovementType(i)=0
 			;ObjectMovementTimer(i)=0
 			;ObjectSubType(i)=0  
@@ -27876,14 +27895,14 @@ Function ControlKaboom(i)
 	EndIf
 	
 	
-	If ObjectDead(i)=1
+	If Attributes\Dead=1
 		; spinning out of control
 		SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
 		SimulatedObjectZ(i)=SimulatedObjectZ(i)+.01
 		
 		Return
 	EndIf
-	If ObjectDead(i)=3
+	If Attributes\Dead=3
 		; drowning
 		SimulatedObjectYaw(i)=0
 		SimulatedObjectZ(i)=SimulatedObjectZ(i)-.005
@@ -27893,26 +27912,26 @@ Function ControlKaboom(i)
 	
 	
 	;dist=100 ; Distance to player
-	Dist=maximum2(Abs(ObjectTileX(i)-PlayerTileX()),Abs(ObjectTileY(i)-PlayerTileY()))
+	Dist=maximum2(Abs(Pos\TileX-PlayerTileX()),Abs(Pos\TileY-PlayerTileY()))
 	; Exclamation
 	If SimulatedObjectExclamation(i)>=100 And SimulatedObjectExclamation(i)<200 And Dist>4
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)-100
 	EndIf
 	If SimulatedObjectExclamation(i)>=0 And SimulatedObjectExclamation(i)<100 And Dist<4
 		
-		AddParticle(SimulatedObjectExclamation(i),ObjectTileX(i)+.5,1.3,-ObjectTileY(i)-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
+		AddParticle(SimulatedObjectExclamation(i),Pos\TileX+.5,1.3,-Pos\TileY-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)+100
 	EndIf
 	
-	If ObjectFlying(i)/10=1
+	If Attributes\Flying/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
 			;Animate GetChild(Obj\Entity,3),1,1,11
 			AnimateMD2 Obj\Entity,3,2,31,60
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
-		TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-SimulatedObjectYawAdjust(i))
-	Else If ObjectFlying(i)/10=2
+		TurnObjectTowardDirection(i,-(Pos\TileX-Pos\TileX2),-(Pos\TileY-Pos\TileY2),10,-SimulatedObjectYawAdjust(i))
+	Else If Attributes\Flying/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>11
 			;Animate GetChild(Obj\Entity,3),3,2,13
@@ -27932,7 +27951,7 @@ Function ControlKaboom(i)
 			EndIf
 		Case 1
 			; Turn Toward Player
-			TurnObjectTowardDirection(i,PlayerX()-ObjectX(i),PlayerY()-ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+			TurnObjectTowardDirection(i,PlayerX()-SimulatedObjectX(i),PlayerY()-SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
 		
 		Case 2
 			; Various turning options
@@ -28033,7 +28052,10 @@ End Function
 
 Function ControlZbotNPC(i)
 
-	If SimulatedObjectData(i,0)>0 And ObjectIndigo(i)=0
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+
+	If SimulatedObjectData(i,0)>0 And Attributes\Indigo=0
 		SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
 		If SimulatedObjectData(i,0)=120 
 			;DestroyObject(i,0)
@@ -28041,29 +28063,31 @@ Function ControlZbotNPC(i)
 		EndIf
 	EndIf
 
-	If SimulatedObjectData(i,0)>0 And ObjectIndigo(i)=0
+	If SimulatedObjectData(i,0)>0 And Attributes\Indigo=0
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectData(i,0))/10.0
 		SimulatedObjectZ(i)=SimulatedObjectZ(i)+0.002
 		Return
 	EndIf
 
 	; particle effects
-	If ObjectActive(i)>0 And ObjectActive(i)<1001 ; currently activating or deactivating
+	If SimulatedObjectActive(i)>0 And SimulatedObjectActive(i)<1001 ; currently activating or deactivating
 		If Rand(0,100)<50
 			a=Rand(0,360)
 			b#=Rnd(0.002,0.006)
-			AddParticle(23,ObjectX(i)+0.5*Sin(a),0,-ObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
+			AddParticle(23,SimulatedObjectX(i)+0.5*Sin(a),0,-SimulatedObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
 		EndIf
 	EndIf
 	
-	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+	TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
 
 End Function
 
 
 Function ControlMirror(i)
 
-	Select ObjectSubtype(i)	
+	Obj.GameObject=LevelObjects(i)
+
+	Select SimulatedObjectSubtype(i)	
 
 	Case 0	; inactive
 		;ObjectActivationSpeed(i)=20
@@ -28072,10 +28096,10 @@ Function ControlMirror(i)
 	Case 1,2,3,4,5	; fire, ice, time, acid, home
 		;ObjectActivationSpeed(i)=4
 		;ActivateObject(i)
-		EntityTexture Obj\Entity,MirrorTexture(ObjectSubtype(i))
-		PositionTexture MirrorTexture(ObjectSubtype(i)),Sin(Leveltimer/10.0),Cos(leveltimer/17.0)
-		ScaleTexture mirrortexture(objectsubtype(i)),0.5+0.1*Sin(leveltimer/7.0),0.5+0.1*Cos(leveltimer/11.0)
-		RotateTexture mirrortexture(objectsubtype(i)),leveltimer / 24.0
+		EntityTexture Obj\Entity,MirrorTexture(SimulatedObjectSubtype(i))
+		PositionTexture MirrorTexture(SimulatedObjectSubtype(i)),Sin(Leveltimer/10.0),Cos(leveltimer/17.0)
+		ScaleTexture mirrortexture(Simulatedobjectsubtype(i)),0.5+0.1*Sin(leveltimer/7.0),0.5+0.1*Cos(leveltimer/11.0)
+		RotateTexture mirrortexture(Simulatedobjectsubtype(i)),leveltimer / 24.0
 		
 		;If Leveltimer Mod 400 = 0 playsoundfx(123,objectx(i),objectY(i))
 		
@@ -28090,12 +28114,15 @@ End Function
 
 Function ControlGhost(i)
 
+	Obj.GameObject=LevelObjects(i)
+	Pos.GameObjectPosition=Obj\Position
+
 	If SimulatedObjectTileTypeCollision(i)=0
 	
 		SimulatedObjectYawAdjust(i)=0
 		;SimulatedObjectMovementSpeed(i)=5+5*ObjectData(i,1)
-		;SimulatedObjectTileX(i)=Floor(ObjectX(i))
-		;SimulatedObjectTileY(i)=Floor(ObjectY(i))
+		;SimulatedPos\TileX=Floor(ObjectX(i))
+		;SimulatedPos\TileY=Floor(ObjectY(i))
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
 		;SimulatedObjectMovementType(i)=0
@@ -28103,9 +28130,9 @@ Function ControlGhost(i)
 	EndIf
 
 	;If ObjectMovementTimer(i)>0
-	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),3,180)
+	;	TurnObjectTowardDirection(i,Pos\TileX2-Pos\TileX,Pos\TileY2-Pos\TileY,3,180)
 	;Else
-		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),1,180)
+		TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,1,180)
 	;EndIf
 	
 	If SimulatedObjectStatus(i)=0
@@ -28143,7 +28170,7 @@ Function ControlGhost(i)
 		EndIf
 		If SimulatedObjectData(i,9)<50 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)+2
 		
-		If Abs(SimulatedObjectX(i)-ObjectX(PlayerObject))>SimulatedObjectData(i,0) Or Abs(SimulatedObjectY(i)-ObjectY(PlayerObject))>SimulatedObjectData(i,0)
+		If Abs(SimulatedObjectX(i)-PlayerX())>SimulatedObjectData(i,0) Or Abs(SimulatedObjectY(i)-PlayerY())>SimulatedObjectData(i,0)
 
 			SimulatedObjectStatus(i)=0
 			;PlaySoundFX(102,ObjectX(i),ObjectY(i))
@@ -28158,12 +28185,15 @@ End Function
 
 Function ControlWraith(i)
 
+	Obj.GameObject=LevelObjects(i)
+	Pos.GameObjectPosition=Obj\Position
+
 	If SimulatedObjectTileTypeCollision(i)=0
 	
 		SimulatedObjectYawAdjust(i)=0
 		;ObjectMovementSpeed(i)=20+5*ObjectData(i,0)
-		;ObjectTileX(i)=Floor(ObjectX(i))
-		;ObjectTileY(i)=Floor(ObjectY(i))
+		;Pos\TileX=Floor(ObjectX(i))
+		;Pos\TileY=Floor(ObjectY(i))
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
 		;SimulatedObjectMovementType(i)=0
@@ -28171,9 +28201,9 @@ Function ControlWraith(i)
 	EndIf
 
 	;If ObjectMovementTimer(i)>0
-	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),3,180)
+	;	TurnObjectTowardDirection(i,Pos\TileX2-Pos\TileX,Pos\TileY2-Pos\TileY,3,180)
 	;Else
-		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),1,180)
+		TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,1,180)
 	;EndIf
 	
 	If SimulatedObjectStatus(i)=0
@@ -28184,7 +28214,7 @@ Function ControlWraith(i)
 		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
 		
 		;ObjectMovementType(i)=0
-		If Abs(ObjectX(i)-PlayerX())<=SimulatedObjectData(i,0) And Abs(ObjectY(i)-PlayerY())<=SimulatedObjectData(i,0)
+		If Abs(SimulatedObjectX(i)-PlayerX())<=SimulatedObjectData(i,0) And Abs(SimulatedObjectY(i)-PlayerY())<=SimulatedObjectData(i,0)
 
 
 			; in range
@@ -28253,7 +28283,7 @@ Function ControlWraith(i)
 			
 		EndIf
 		
-		If Abs(ObjectX(i)-PlayerX())>SimulatedObjectData(i,0) Or Abs(ObjectY(i)-PlayerY())>SimulatedObjectData(i,0)
+		If Abs(SimulatedObjectX(i)-PlayerX())>SimulatedObjectData(i,0) Or Abs(SimulatedObjectY(i)-PlayerY())>SimulatedObjectData(i,0)
 
 			SimulatedObjectData(i,8)=0
 			
@@ -28487,8 +28517,10 @@ Function ControlObjects()
 	For i=0 To NofObjects-1
 	
 		Obj.GameObject=LevelObjects(i)
+		Attributes.GameObjectAttributes=Obj\Attributes
+		Pos.GameObjectPosition=Obj\Position
 	
-		If Obj\Attributes\Reactive=True
+		If Attributes\Reactive=True
 			
 			; Get Scale
 			ObjXScale#=SimulatedObjectXScale(i)*SimulatedObjectScaleXAdjust(i)
@@ -28498,7 +28530,7 @@ Function ControlObjects()
 			If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
 			
 				; Select Visual Animation	
-				Select ObjectActivationType(i)
+				Select Attributes\ActivationType
 				Case 0
 					; nothing
 				Case 1
@@ -28523,29 +28555,29 @@ Function ControlObjects()
 					
 				Case 12,13,14,15,16
 					; push up from -x.01 to -5.01 (used for stepping stones)
-					SimulatedObjectZ#(i)=-(ObjectActivationType(i)-6)-.01+(ObjectActivationType(i)-11)*Float(SimulatedObjectActive(i))/1001.0
+					SimulatedObjectZ#(i)=-(Attributes\ActivationType-6)-.01+(Attributes\ActivationType-11)*Float(SimulatedObjectActive(i))/1001.0
 					
 				Case 17 ; *** THESE ONLY WORK FOR AUTODOORS - OBJECTTILEX MUST BE PRE_SET
 					; push north
-					SimulatedObjectY#(i)=ObjectTileY(i)+0.5-SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+					SimulatedObjectY#(i)=Pos\TileY+0.5-SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 				Case 18
 					; push East
-					SimulatedObjectX#(i)=ObjectTileX(i)+0.5+SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+					SimulatedObjectX#(i)=Pos\TileX+0.5+SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 			
 				Case 19
 					; push south
-					SimulatedObjectY#(i)=ObjectTileY(i)+0.5+SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+					SimulatedObjectY#(i)=Pos\TileY+0.5+SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 			
 				Case 20
 					; push west
-					SimulatedObjectX#(i)=ObjectTileX(i)+0.5-SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
+					SimulatedObjectX#(i)=Pos\TileX+0.5-SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 			
 			
 			
 				
 				
 				Case 21
-					If ObjectModelName$(i)="!NPC" Or ObjectModelName$(i)="!Tentacle"
+					If Attributes\ModelName$="!NPC" Or Attributes\ModelName$="!Tentacle"
 						Entity=GetChild(Obj\Entity,3)
 					Else
 						Entity=Obj\Entity
@@ -28571,7 +28603,7 @@ Function ControlObjects()
 			
 			
 			
-			Select ObjectType(i)
+			Select Attributes\LogicType
 			
 			Case 20
 				ControlTrap(i)
@@ -28695,13 +28727,13 @@ Function ControlObjects()
 			SimulatedObjectLastActive(i)=SimulatedObjectActive(i)
 			
 		;Else
-		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
+		;	AddParticle(2,ObjectXAdjust(i)+Pos\TileX+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-Pos\TileY-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
 		
-			If ObjectHatEntity(i)>0
-				TransformAccessoryEntityOntoBone(ObjectHatEntity(i),Obj\Entity)
+			If Obj\HatEntity>0
+				TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
 			EndIf
-			If ObjectAccEntity(i)>0
-				TransformAccessoryEntityOntoBone(ObjectAccEntity(i),Obj\Entity)
+			If Obj\AccEntity>0
+				TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
 			EndIf
 			
 		EndIf
