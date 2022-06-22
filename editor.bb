@@ -14123,7 +14123,7 @@ Function AdjustObjectAdjuster(i)
 ;
 ;		EndIf
 		
-		If CurrentObject\Attributes\LogicType=110 Or CurrentObject\Attributes\LogicType=390 ; Kaboom NPC
+		If CurrentObject\Attributes\LogicType=110 Or CurrentObject\Attributes\LogicType=390 ; Stinker NPC or Kaboom NPC
 			; Turn
 			If CurrentObject\Attributes\Data7=-1 CurrentObject\Attributes\Data7=25
 			If CurrentObject\Attributes\Data7=26 CurrentObject\Attributes\Data7=0
