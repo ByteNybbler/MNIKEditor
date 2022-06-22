@@ -19954,7 +19954,7 @@ Function AdventureSelectScreen()
 	
 	
 	If hubmode=False
-		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(36)
+		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44)
 			If MouseDown(1)
 				SetAdventureCurrentArchive(AdventureCurrentArchive+1)
 				GetAdventures()
