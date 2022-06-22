@@ -28733,7 +28733,8 @@ Function ControlObjects()
 			ObjYScale#=SimulatedObjectYScale(i)*SimulatedObjectScaleYAdjust(i)
 			ObjZScale#=SimulatedObjectZScale(i)*SimulatedObjectScaleZAdjust(i)
 		
-			If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
+			;If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
+			If SimulatedObjectActive(i)<>0 Or SimulationLevel>=2
 			
 				; Select Visual Animation	
 				Select Attributes\ActivationType
