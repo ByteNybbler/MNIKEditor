@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/22/22"
+Global VersionDate$="06/23/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -403,11 +403,12 @@ Global LevelMusic,LevelWeather
 
 Global Leveltimer
 
+Global NofGrabbedObjects=0
+Dim GrabbedObjects(MaxNofObjects)
 Global CurrentGrabbedObject=-1
 Global CurrentGrabbedObjectModified=False
 Global CurrentDraggedObject=-1
 
-;Global BrushSize=1
 Global BrushWidth=1
 Global BrushHeight=1
 Global CustomBrushEditorMode=-1
@@ -22183,7 +22184,10 @@ Function ReadTestFile()
 		SetEditorMode(ReadInt(testfile))
 		
 		If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
-			AccessLevelAtCenter(ReadInt(testfile))
+			level=ReadInt(testfile)
+			x=ReadInt(testfile)
+			y=ReadInt(testfile)
+			AccessLevelAt(level,x,y)
 			StartEditorMainLoop()
 		EndIf
 		
@@ -22195,7 +22199,7 @@ Function ReadTestFile()
 
 End Function
 
-Function StartTestMode()
+Function StartTestMode(TestAtX=0,TestAtY=0)
 	
 	WaitFlag=True
 	SaveMasterFile()
@@ -22212,6 +22216,8 @@ Function StartTestMode()
 	
 	If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
 		WriteInt file,CurrentLevelNumber
+		WriteInt file,TestAtX
+		WriteInt file,TestAtY
 	EndIf
 	
 	CloseFile file
@@ -22253,7 +22259,7 @@ Function StartTestModeAt(level,x,y)
 	PlaceObject(AdventureStartX,AdventureStartY)
 	SaveLevel()
 	CurrentLevelNumber=level ; Necessary so that the editor knows what level to return to when re-opening after testing.
-	StartTestMode()
+	StartTestMode(x,y)
 
 End Function
 
