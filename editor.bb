@@ -475,6 +475,7 @@ CreateDir "Data"
 CreateDir "Data\Adventures"
 
 Global EditorUserName$=""
+Global AdventureUserName$=""
 Global NofEditorUserNames
 Dim EditorUserNamesListed$(100)
 Global EditorUserNameEntered$=""
@@ -20552,12 +20553,35 @@ Function AdventureTitleWithoutAuthor$(ex$)
 
 End Function
 
+Function GetAuthorFromAdventureTitle$(ex$)
+
+	TheUsername$=""
+	FoundHash=False
+	For i=1 To Len(ex$)
+		TheChar$=Mid$(ex$,i,1)	
+		If TheChar$="#"
+			FoundHash=True
+		ElseIf Not FoundHash
+			TheUsername$=TheUsername$+TheChar$
+		EndIf
+	Next
+	
+	If FoundHash=False
+		Return EditorUserName$
+	Else
+		Return TheUsername$
+	EndIf
+
+End Function
+
 Function StartMaster()
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
 	
+	AdventureUserName$=GetAuthorFromAdventureTitle$(AdventureFileName$)
+	
 	ResetPreviousLevelNumberBuffer()
-
+	
 	SetEditorMode(8)
 	
 	CopyingLevel=StateNotSpecial
@@ -22438,7 +22462,7 @@ Function SaveHubFile()
 	CloseFile file
 End Function
 
-Function SaveMasterFIle()
+Function SaveMasterFile()
 
 	file=WriteFile (GetAdventureDir$()+"master.dat")
 
@@ -22448,7 +22472,7 @@ Function SaveMasterFIle()
 		WriteString file,adventuretextline$(i)
 	Next
 	
-	WriteString file,EditorUserName$
+	WriteString file,AdventureUserName$
 	WriteString file,CustomIconName$
 	WriteString file,CustomMapName$ ;""
 	WriteString file,""
@@ -25114,7 +25138,7 @@ Function CompileAdventure(PackCustomContent)
 	AdventureFileNameWithoutAuthor$=AdventureTitleWithoutAuthor$(AdventureFileName$)
 
 	If AdventureFileNameWithoutAuthor$=AdventureFileName$
-		OutputFileName$=EditorUserName$+"#"+AdventureFileName$+".wa3"
+		OutputFileName$=AdventureUserName$+"#"+AdventureFileName$+".wa3"
 	Else
 		OutputFileName$=AdventureFileName$+".wa3"
 	EndIf
