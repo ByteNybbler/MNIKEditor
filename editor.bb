@@ -26908,19 +26908,19 @@ Function ControlCrab(i)
 		; 4-retract
 		; 5-come out
 		If Obj\Attributes\Frozen>0
-			MaybeAnimateMD2(ObjectEntity(i),2,.01,1,2)
+			MaybeAnimateMD2(Obj\Entity,2,.01,1,2)
 			SimulatedObjectCurrentAnim(i)=0
-		Else If ObjectMovementTimer(i)=0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=3) And SimulatedObjectdata(i,1)<2
+		Else If Obj\Attributes\MovementTimer=0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=3) And SimulatedObjectdata(i,1)<2
 			
 			
-			MaybeAnimateMD2(ObjectEntity(i),2,Rnd(.02,.04),1,13)
+			MaybeAnimateMD2(Obj\Entity,2,Rnd(.02,.04),1,13)
 			SimulatedObjectCurrentAnim(i)=1
 			
 			
 		Else If SimulatedObjectCurrentAnim(i)=2 
 			SimulatedObjectCurrentAnim(i)=3
-		Else If ObjectMovementTimer(i)>0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=1 Or SimulatedObjectCurrentAnim(i)=20)
-			MaybeAnimateMD2(ObjectEntity(i),1,1,1,30)
+		Else If Obj\Attributes\MovementTimer>0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=1 Or SimulatedObjectCurrentAnim(i)=20)
+			MaybeAnimateMD2(Obj\Entity,1,1,1,30)
 			SimulatedObjectCurrentAnim(i)=2
 		Else If SimulatedObjectCurrentAnim(i)>=5 And SimulatedObjectCurrentAnim(i)<20
 			; delay for coming out anim so it doesn' immediately go into walking
@@ -26930,10 +26930,10 @@ Function ControlCrab(i)
 	
 	If SimulatedObjectStatus(i)=0 And SimulatedObjectData(i,1)<2
 		SimulatedObjectZ(i)=0
-		;If ObjectMovementTimer(i)>0 
+		;If Obj\Attributes\MovementTimer>0 
 		;	TurnObjectTowardDirection(i,-(ObjectTileX2(i)-ObjectTileX(i)),-(ObjectTileY2(i)-ObjectTileY(i)),10,0)
 		;Else
-			TurnObjectTowardDirection(i,-(PlayerX()-ObjectX(i)),-(PlayerY()-ObjectY(i)),6,0)
+			TurnObjectTowardDirection(i,-(PlayerX()-SimulatedObjectX(i)),-(PlayerY()-SimulatedObjectY(i)),6,0)
 		;EndIf
 	EndIf
 	
@@ -26942,15 +26942,17 @@ End Function
 
 Function ControlTrap(i)
 
+	Obj.GameObject=LevelObjects(i)
+
 	SimulatedObjectZ(i)=0.04
 
-	If ObjectActive(i)=1001 Or SimulationLevel<2
+	If SimulatedObjectActive(i)=1001 Or SimulationLevel<2
 		If SimulatedObjectStatus(i)=0
 			; currently off
 			SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
 			If SimulatedObjectTimer(i)<=0
 				; turn on
-				SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+				SimulatedObjectTimer(i)=Obj\Attributes\TimerMax1
 				SimulatedObjectStatus(i)=1
 			EndIf
 		Else
@@ -26958,26 +26960,26 @@ Function ControlTrap(i)
 			SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
 			If SimulatedObjectTimer(i)<=0
 				; turn off
-				SimulatedObjectTimer(i)=ObjectTimerMax2(i)
+				SimulatedObjectTimer(i)=Obj\Attributes\TimerMax2
 				SimulatedObjectStatus(i)=0
 			EndIf
 		EndIf
 	
 		
-		Select ObjectSubType(i)
+		Select SimulatedObjectSubType(i)
 			Case 0
 				; fire - create particle when on
 				
 			If SimulatedObjectStatus(i)=1
-				;If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
-				If Rand(0,100)<50 AddParticle(2,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
+				;If Rand(0,100)<50 AddParticle(2,Pos\X+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
+				If Rand(0,100)<50 AddParticle(2,SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZAdjust(i),-SimulatedObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
 			EndIf
 			
 		End Select
 	Else
 		
-		;If Rand(0,100)<2 AddParticle(0,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
-		If Rand(0,100)<2 AddParticle(0,ObjectX(i)+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
+		;If Rand(0,100)<2 AddParticle(0,Pos\X+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
+		If Rand(0,100)<2 AddParticle(0,SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZAdjust(i),-SimulatedObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
 		
 	EndIf
 	
@@ -26988,29 +26990,32 @@ End Function
 
 Function ControlFireFlower(i)
 
-	If ObjectModelName$(i)<>"!FireFlower"
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+
+	If Attributes\ModelName$<>"!FireFlower"
 		Return
 	EndIf
 
-	If (SimulatedObjectTimer(i)>=0 And SimulatedObjectData(i,2)=0) Or (SimulatedObjectData(i,2)=2 And SimulatedObjectTimer(i)=ObjectTimerMax1(i))
+	If (SimulatedObjectTimer(i)>=0 And SimulatedObjectData(i,2)=0) Or (SimulatedObjectData(i,2)=2 And SimulatedObjectTimer(i)=Attributes\TimerMax1)
 		SimulatedObjectData(i,2)=1
-		MaybeAnimateMD2(ObjectEntity(i),1,.2,1,20,1)
+		MaybeAnimateMD2(Obj\Entity,1,.2,1,20,1)
 	EndIf
 	
 	;If ObjectActive(i)<1001
 	;	SimulatedObjectTimer(i)=ObjectTimerMax1(i)
 	;EndIf
 	
-	If ObjectIndigo(i)=0 SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+	If Attributes\Indigo=0 SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
 	SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+80) Mod 8
 	SimulatedObjectYawAdjust(i)=0 ; Necessary to make the model face the correct way due to the weird special case handling of its rotation.
 	
 	dx#=0
 	dy#=0
-	If ObjectSubType(i)=1
+	If SimulatedObjectSubType(i)=1
 		; follow player
-		dx=PlayerX()-ObjectX(i)
-		dy=PlayerY()-ObjectY(i)
+		dx=PlayerX()-SimulatedObjectX(i)
+		dy=PlayerY()-SimulatedObjectY(i)
 		total#=Sqr(dx^2+dy^2)
 		dx=dx/total
 		dy=dy/total
@@ -27037,21 +27042,21 @@ Function ControlFireFlower(i)
 	If SimulatedObjectTimer(i)<0
 
 		If SimulatedObjectData(i,2)=1
-			MaybeAnimateMD2(ObjectEntity(i),1,.5,21,60,1)
+			MaybeAnimateMD2(Obj\Entity,1,.5,21,60,1)
 			SimulatedObjectData(i,2)=0
 		EndIf
 	
 		If SimulatedObjectTimer(i)=-80
-			SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+			SimulatedObjectTimer(i)=Attributes\TimerMax1
 		EndIf
 		
 		; and fire
 		If SimulatedObjectTimer(i)=-60
 
-			If ObjectSubType(i)=2
+			If SimulatedObjectSubType(i)=2
 				SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+1) Mod 8
 			EndIf
-			If ObjectSubType(i)=3
+			If SimulatedObjectSubType(i)=3
 				SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)-1) Mod 8
 			EndIf
 
@@ -27105,39 +27110,44 @@ End Function
 
 
 Function ToggleObject(i)
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+
 	; switches objects from activating to deactivating or vice versa
 	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i) Mod 2 =0
-		If ObjectType(i)=410
+		If Attributes\LogicType=410
 			;ActivateFlipBridge(i)
 		Else
-			SimulatedObjectActive(i)=SimulatedObjectActive(i)+ObjectActivationSpeed(i)+1
+			SimulatedObjectActive(i)=SimulatedObjectActive(i)+Attributes\ActivationSpeed+1
 			
 		EndIf
 		If SimulatedObjectActive(i)>1001 Then SimulatedObjectActive(i)=1001
 	Else If SimulatedObjectActive(i)>0 And SimulatedObjectActive(i) Mod 2 =1
-		If ObjectType(i)=410
+		If Attributes\LogicType=410
 			;DeActivateFlipBridge(i)
 		Else
-			SimulatedObjectActive(i)=SimulatedObjectActive(i)-ObjectActivationSpeed(i)-1
+			SimulatedObjectActive(i)=SimulatedObjectActive(i)-Attributes\ActivationSpeed-1
 			
 		EndIf
 		If SimulatedObjectActive(i)<0 Then SimulatedObjectActive(i)=0
 	EndIf
-	If ObjectType(i)=281 And ObjectModelName$(i)="!SucTube"
-		Redosuctubemesh(ObjectEntity(i), ObjectData(i,0), ObjectActive(i), ObjectData(i,2), ObjectYawAdjust(i))
+	If Attributes\LogicType=281 And Attributes\ModelName$="!SucTube"
+		Redosuctubemesh(Obj\Entity, SimulatedObjectData(i,0), SimulatedObjectActive(i), SimulatedObjectData(i,2), SimulatedObjectYawAdjust(i))
 	EndIf
 	
 End Function
 
 
 Function ControlChangeActive(i)
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
 
 	If SimulatedObjectActive(i)>0 And SimulatedObjectActive(i) Mod 2 = 0
 		; deactivating
-		SimulatedObjectActive(i)=SimulatedObjectActive(i)-ObjectActivationSpeed(i)
+		SimulatedObjectActive(i)=SimulatedObjectActive(i)-Attributes\ActivationSpeed
 	Else If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i) Mod 2=1
 		; activating
-		SimulatedObjectActive(i)=SimulatedObjectActive(i)+ObjectActivationSpeed(i)
+		SimulatedObjectActive(i)=SimulatedObjectActive(i)+Attributes\ActivationSpeed
 		
 	EndIf
 	If SimulatedObjectActive(i)<0 	SimulatedObjectActive(i)=0
@@ -27147,14 +27157,16 @@ End Function
 
 
 Function ControlSteppingStone(i)
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
 
 	; Data(2) - Alternating?
 	If SimulatedObjectData(i,2)=2
 		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
-		If SimulatedObjectTimer(i)<0 Then SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+		If SimulatedObjectTimer(i)<0 Then SimulatedObjectTimer(i)=Attributes\TimerMax1
 		If SimulatedObjectTimer(i)=0
 			ToggleObject(i)
-			SimulatedObjectTimer(i)=ObjectTimerMax1(i)
+			SimulatedObjectTimer(i)=Attributes\TimerMax1
 		EndIf
 		
 		ControlChangeActive(i)
@@ -27162,7 +27174,7 @@ Function ControlSteppingStone(i)
 		
 	
 	; 0-submerged, 1001-surfaced
-	If (SimulatedObjectActive(i)<1001-4*ObjectActivationSpeed(i)) And SimulatedObjectLastActive(i)>=1001-4*ObjectActivationSpeed(i)
+	If (SimulatedObjectActive(i)<1001-4*Attributes\ActivationSpeed) And SimulatedObjectLastActive(i)>=1001-4*Attributes\ActivationSpeed
 
 		; just submerged
 		If SimulatedObjectData(i,3)=0
@@ -27171,7 +27183,7 @@ Function ControlSteppingStone(i)
 	
 	EndIf
 	
-	If (SimulatedObjectActive(i)=>1001-4*ObjectActivationSpeed(i)) And SimulatedObjectLastActive(i)<1001-4*ObjectActivationSpeed(i)
+	If (SimulatedObjectActive(i)=>1001-4*Attributes\ActivationSpeed) And SimulatedObjectLastActive(i)<1001-4*Attributes\ActivationSpeed
 		
 		; just emerged
 		If SimulatedObjectData(i,3)=0
@@ -27186,6 +27198,9 @@ End Function
 
 
 Function ControlFlipBridge(i)
+
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
 	
 	YScale#=6.6
 	
@@ -27193,8 +27208,8 @@ Function ControlFlipBridge(i)
 		YScale#=1+5.6*Float(SimulatedObjectActive(i))/1001.0
 	EndIf
 	
-	If ObjectModelName$(i)="!FlipBridge"
-		ScaleEntity GetChild(ObjectEntity(i),1),1.0,1.0,YScale#
+	If Attributes\ModelName$="!FlipBridge"
+		ScaleEntity GetChild(Obj\Entity,1),1.0,1.0,YScale#
 	Else
 		SimulatedObjectScaleYAdjust(i)=YScale#
 		;SimulateObjectScale(i)
@@ -27214,14 +27229,17 @@ End Function
 
 Function ControlBabyBoomer(i)
 
-	If ObjectDead(i)=1
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+
+	If Attributes\Dead=1
 		; spinning out of control
 		SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
 		;ObjectZ(i)=ObjectZ(i)+.01
 		;ObjectSubType(i)=-2
 		Return
 	EndIf
-	If ObjectDead(i)=3
+	If Attributes\Dead=3
 		; drowning
 		SimulatedObjectYaw(i)=90
 		;ObjectZ(i)=ObjectZ(i)-.005
@@ -27229,21 +27247,21 @@ Function ControlBabyBoomer(i)
 		Return
 	EndIf
 	
-	If ObjectData(i,8)=1
+	If SimulatedObjectData(i,8)=1
 		; lit
 ;		For j=1 To 5
 			If Rand(0,100)<20
-				AddParticle(23,ObjectX(i),Rnd(0.7,0.8),-ObjectY(i),0,.05,Rnd(-0.005,0.005),Rnd(0,0.005),Rnd(-0.005,0.005),0,.004,0,0,0,50,3)
+				AddParticle(23,SimulatedObjectX(i),Rnd(0.7,0.8),-SimulatedObjectY(i),0,.05,Rnd(-0.005,0.005),Rnd(0,0.005),Rnd(-0.005,0.005),0,.004,0,0,0,50,3)
 			EndIf
 ;		Next
 	EndIf
 	
-	If ObjectData(i,8)>0
-		;EntityTexture ObjectEntity(i),KaboomTextureSquint
+	If SimulatedObjectData(i,8)>0
+		;EntityTexture Obj\Entity,KaboomTextureSquint
 		; lit and burning
 		For j=1 To 5
-			If Rand(0,100)<ObjectData(i,8)
-				AddParticle(Rand(16,18),ObjectX(i),Rnd(0.7,0.8),-ObjectY(i),0,.1,Rnd(-0.02,0.02),Rnd(0,0.02),Rnd(-0.02,0.02),0,.004,0,-.0001,0,50,3)
+			If Rand(0,100)<SimulatedObjectData(i,8)
+				AddParticle(Rand(16,18),SimulatedObjectX(i),Rnd(0.7,0.8),-SimulatedObjectY(i),0,.1,Rnd(-0.02,0.02),Rnd(0,0.02),Rnd(-0.02,0.02),0,.004,0,-.0001,0,50,3)
 			EndIf
 		Next
 	EndIf
@@ -27254,6 +27272,10 @@ End Function
 Function ControlSuctube(i)
 
 	If SimulatedObjectActive(i)<>1001 Then Return
+	
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+	Pos.GameObjectPosition=Obj\Position
 
 	suck=True
 	blow=True
@@ -27261,36 +27283,40 @@ Function ControlSuctube(i)
 	
 	; check if sucking/blowing active (e.g. if another tube in front of it)
 	For j=0 To NofObjects-1
-		If ObjectType(j)=281 And i<>j
+		OtherObj.GameObject=LevelObjects(j)
+		OtherAttributes.GameObjectAttributes=Obj\Attributes
+		OtherPos.GameObjectPosition=Obj\Position
+		
+		If OtherAttributes\LogicType=281 And i<>j
 			; found another suctube
-			If ObjectData(i,2)=ObjectData(j,2) And ObjectData(i,0)=ObjectData(j,0) And ObjectData(i,1)=ObjectData(j,1)
+			If Attributes\Data2=OtherAttributes\Data2 And Attributes\Data0=OtherAttributes\Data0 And Attributes\Data1=OtherAttributes\Data1
 				; same direction
-				If ObjectData(i,2)=0 
-					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)-1
+				If SimulatedObjectData(i,2)=0 
+					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY-1
 						suck=False
 					EndIf
-					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)+1
+					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY+1
 						blow=False
 					EndIf
-				Else If ObjectData(i,2)=1 
-					If ObjectTileX(i)=ObjectTileX(j)+1 And ObjectTileY(i)=ObjectTileY(j)
+				Else If SimulatedObjectData(i,2)=1 
+					If Pos\TileX=OtherPos\TileX+1 And Pos\TileY=OtherPos\TileY
 						suck=False
 					EndIf
-					If  ObjectTileX(i)=ObjectTileX(j)-1 And ObjectTileY(i)=ObjectTileY(j)
+					If Pos\TileX=OtherPos\TileX-1 And Pos\TileY=OtherPos\TileY
 						blow=False
 					EndIf
-				Else If ObjectData(i,2)=2 
-					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)+1
+				Else If SimulatedObjectData(i,2)=2 
+					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY+1
 						suck=False
 					EndIf
-					If ObjectTileX(i)=ObjectTileX(j) And ObjectTileY(i)=ObjectTileY(j)-1
+					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY-1
 						blow=False
 					EndIf
-				Else If ObjectData(i,2)=3 
-					If ObjectTileX(i)=ObjectTileX(j)-1 And ObjectTileY(i)=ObjectTileY(j)
+				Else If SimulatedObjectData(i,2)=3 
+					If Pos\TileX=OtherPos\TileX-1 And Pos\TileY=OtherPos\TileY
 						suck=False
 					EndIf
-					If ObjectTileX(i)=ObjectTileX(j)+1 And ObjectTileY(i)=ObjectTileY(j)
+					If Pos\TileX=OtherPos\TileX+1 And Pos\TileY=OtherPos\TileY
 						blow=False
 					EndIf
 				EndIf
@@ -27298,36 +27324,36 @@ Function ControlSuctube(i)
 		EndIf
 	Next
 	
-	If ObjectData(i,5)=0
+	If SimulatedObjectData(i,5)=0
 		; particle effects
 		If Rand(0,100)<30
 			psize#=Rnd(0.1,0.2)
 			pspeed#=Rnd(1,2)
 			parttex=Rand(16,23)
 			If suck=True
-				Select ObjectData(i,2)
+				Select SimulatedObjectData(i,2)
 				Case 0
-					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)-Rnd(1.0,1.9),0,psize,0.0,0.0,-Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-SimulatedObjectY(i)-Rnd(1.0,1.9),0,psize,0.0,0.0,-Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
 		 		Case 1
-					AddParticle(parttex,ObjectX(i)-Rnd(1.0,1.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)-Rnd(1.0,1.5),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(-1,1),0,psize,Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
 		 		Case 2
 				;	AddParticle(0,0,Rnd(0.5,5.5),0,0,5,0.0,0.0,Rnd(-0.01,-0.02),0,0,0,0,0,Rand(10,50),3)
 		
-					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)+Rnd(1.0,1.9),0,psize,0.0,0.0,Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(1.0,1.9),0,psize,0.0,0.0,Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
 		 		Case 3
-					AddParticle(parttex,ObjectX(i)+Rnd(1.0,1.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,-Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)+Rnd(1.0,1.5),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(-1,1),0,psize,-Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
 		 		End Select
 			EndIf
 			If blow=True
-				Select ObjectData(i,2)
+				Select SimulatedObjectData(i,2)
 				Case 0
-					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)+Rnd(0.0,0.5),0,psize,0.0,0.0,-Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(0.0,0.5),0,psize,0.0,0.0,-Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
 		 		Case 1
-					AddParticle(parttex,ObjectX(i)+Rnd(0,0.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)+Rnd(0,0.5),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(-1,1),0,psize,Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
 		 		Case 2
-					AddParticle(parttex,ObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-ObjectY(i)-Rnd(0.0,0.5),0,psize,0.0,0.0,Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-SimulatedObjectY(i)-Rnd(0.0,0.5),0,psize,0.0,0.0,Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
 		 		Case 3
-					AddParticle(parttex,ObjectX(i)-Rnd(0.0,0.5),Rnd(0.5,1.4),-ObjectY(i)+Rnd(-1,1),0,psize,-Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
+					AddParticle(parttex,SimulatedObjectX(i)-Rnd(0.0,0.5),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(-1,1),0,psize,-Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
 		 		End Select
 			EndIf
 		EndIf
@@ -27339,12 +27365,15 @@ End Function
 
 Function ControlThwart(i)
 
-	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+
+	TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
 	
 	; shooting?
-	If SimulatedObjectData(i,6)>0 And ObjectIndigo(i)=0
-		dx#=PlayerX()-ObjectX(i)
-		dy#=PlayerY()-ObjectY(i)
+	If SimulatedObjectData(i,6)>0 And Attributes\Indigo=0
+		dx#=PlayerX()-SimulatedObjectX(i)
+		dy#=PlayerY()-SimulatedObjectY(i)
 		total#=Sqr(dx^2+dy^2)
 		dx=dx/total
 		dy=dy/total
@@ -27358,8 +27387,8 @@ Function ControlThwart(i)
 				SimulatedObjectData(i,5)=dy*10000
 			EndIf
 			If SimulatedObjectTimer(i)=-1
-				If ObjectModelName$(i)="!Thwart"
-					MaybeAnimateMD2(ObjectEntity(i),3,1,81,120,1)
+				If Attributes\ModelName$="!Thwart"
+					MaybeAnimateMD2(Obj\Entity,3,1,81,120,1)
 				EndIf
 			EndIf
 		
@@ -27374,12 +27403,15 @@ End Function
 
 Function ControlTroll(i)
 
-	TurnObjectTowardDirection(i,-PlayerX()+ObjectX(i),-PlayerY()+ObjectY(i),6,-SimulatedObjectYawAdjust(i))
+	Obj.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=Obj\Attributes
+
+	TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
 	
 	; shooting?
-	If SimulatedObjectData(i,6)>0 And SimulatedObjectActive(i)=1001 And ObjectIndigo(i)=0
-		dx#=PlayerX()-ObjectX(i)
-		dy#=PlayerY()-ObjectY(i)
+	If SimulatedObjectData(i,6)>0 And SimulatedObjectActive(i)=1001 And Attributes\Indigo=0
+		dx#=PlayerX()-SimulatedObjectX(i)
+		dy#=PlayerY()-SimulatedObjectY(i)
 		total#=Sqr(dx^2+dy^2)
 		dx=dx/total
 		dy=dy/total
@@ -27393,8 +27425,8 @@ Function ControlTroll(i)
 				SimulatedObjectData(i,5)=dy*10000
 			EndIf
 			If SimulatedObjectTimer(i)=-1
-				If ObjectModelName$(i)="!Troll"
-					MaybeAnimateMD2(ObjectEntity(i),3,1,81,119,1)
+				If Attributes\ModelName$="!Troll"
+					MaybeAnimateMD2(Obj\Entity,3,1,81,119,1)
 				EndIf
 			EndIf
 		
@@ -27449,7 +27481,7 @@ Function ControlZipper(i)
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=-1 ; not really used
 		
-		EntityBlend ObjectEntity(i),3
+		EntityBlend Obj\Entity,3
 		
 		SimulatedObjectData(i,1)=Rand(0,360)
 		SimulatedObjectData(i,2)=Rand(1,4)
@@ -27480,9 +27512,9 @@ Function ControlButterfly(i)
 			SimulatedObjectZScale(i)=.01
 			SimulatedObjectRoll2(i)=90
 			
-			;AnimateMD2 ObjectEntity(i),2,.4,2,9
+			;AnimateMD2 Obj\Entity,2,.4,2,9
 		Else
-			EntityBlend ObjectEntity(i),3
+			EntityBlend Obj\Entity,3
 		EndIf
 		
 		SimulatedObjectData(i,1)=Rand(0,360)
@@ -27528,7 +27560,7 @@ End Function
 Function ControlChomper(i)
 
 	If SimulatedObjectTileTypeCollision(i)=0
-		;AnimateMD2 ObjectEntity(i),1,.6,1,29
+		;AnimateMD2 Obj\Entity,1,.6,1,29
 		SimulatedObjectYawAdjust(i)=0
 		SimulatedObjectMovementSpeed(i)=20+5*ObjectData(i,0)
 		;SimulatedObjectTileX(i)=Floor(SimulatedObjectX(i))
@@ -27538,26 +27570,26 @@ Function ControlChomper(i)
 		;SimulatedObjectMovementType(i)=13
 		If SimulatedObjectData(i,1)=1
 			;SimulatedObjectObjectTypeCollision(i)=2^1+2^6+2^4
-			EntityBlend ObjectEntity(i),3
+			EntityBlend Obj\Entity,3
 			
 		EndIf
 		If SimulatedObjectData(i,1)=2
-			EntityFX ObjectEntity(i),1
+			EntityFX Obj\Entity,1
 		EndIf
 	EndIf
 	
 	
 	If SimulatedObjectData(i,1)=1
 		If leveltimer Mod 360<180
-			EntityAlpha ObjectEntity(i),Abs(Sin(LevelTimer Mod 360))
+			EntityAlpha Obj\Entity,Abs(Sin(LevelTimer Mod 360))
 		Else
-			EntityAlpha ObjectEntity(i),0.3*Abs(Sin(LevelTimer Mod 360))
+			EntityAlpha Obj\Entity,0.3*Abs(Sin(LevelTimer Mod 360))
 
 		EndIf
 	EndIf
 	
 	
-	;If ObjectMovementTimer(i)>0
+	;If Obj\Attributes\MovementTimer>0
 	;	TurnObjectTowardDirection(i,ObjectTileX2(i)-ObjectTileX(i),ObjectTileY2(i)-ObjectTileY(i),3,180)
 	;Else
 		TurnObjectTowardDirection(i,PlayerTileX()-ObjectTileX(i),PlayerTileY()-ObjectTileY(i),1,180)
@@ -27579,7 +27611,7 @@ Function ControlNPC(i)
 			SimulatedObjectFrozen(i)=1000*SimulatedObjectFrozen(i)
 		EndIf
 		SimulatedObjectCurrentAnim(i)=11
-		MaybeAnimate(GetChild(objectentity(i),3),3,1,11)
+		MaybeAnimate(GetChild(Obj\Entity,3),3,1,11)
 		;PlaySoundFX(85,ObjectX(i),ObjectY(i))
 
 	EndIf
@@ -27587,7 +27619,7 @@ Function ControlNPC(i)
 		; revert
 		SimulatedObjectFrozen(i)=0
 		SimulatedObjectCurrentAnim(i)=10
-		MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+		MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
 
 	EndIf
 ;	If SimulatedObjectFrozen(i)>2 Or SimulatedObjectFrozen(i)<0
@@ -27640,14 +27672,14 @@ Function ControlNPC(i)
 	If ObjectFlying(i)/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
-			MaybeAnimate(GetChild(objectentity(i),3),1,1,11)
+			MaybeAnimate(GetChild(Obj\Entity,3),1,1,11)
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 		TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-SimulatedObjectYawAdjust(i))
 	Else If ObjectFlying(i)/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>13
-			MaybeAnimate(GetChild(objectentity(i),3),3,2,13)
+			MaybeAnimate(GetChild(Obj\Entity,3),3,2,13)
 			SimulatedObjectCurrentAnim(i)=13
 		EndIf
 
@@ -27692,18 +27724,18 @@ Function ControlNPC(i)
 			; Just Swaying
 			If SimulatedObjectCurrentAnim(i)<>10
 				SimulatedObjectCurrentAnim(i)=10
-				MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+				MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
 			EndIf
 		Case 1
 			; Wave from time to Time
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 120 =0 
 					SimulatedObjectCurrentAnim(i)=8
-					MaybeAnimate(GetChild(objectentity(i),3),3,.2,8)
+					MaybeAnimate(GetChild(Obj\Entity,3),3,.2,8)
 				EndIf
-			Else If Animating (GetChild(objectentity(i),3))=False
+			Else If Animating (GetChild(Obj\Entity,3))=False
 				SimulatedObjectCurrentAnim(i)=10
-				MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+				MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
 			EndIf
 
 
@@ -27711,19 +27743,19 @@ Function ControlNPC(i)
 			; Wave All The Time
 			If SimulatedObjectCurrentAnim(i)<>15
 				SimulatedObjectCurrentAnim(i)=15
-				MaybeAnimate(GetChild(objectentity(i),3),2,.2,15)
+				MaybeAnimate(GetChild(Obj\Entity,3),2,.2,15)
 			EndIf
 		Case 3
 			; Foottap from time to Time
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=9
-					MaybeAnimate(GetChild(objectentity(i),3),1,.4,9)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,9)
 				EndIf
 			Else 
 				If Rand(0,1000)<2
 					SimulatedObjectCurrentAnim(i)=10
-					MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
 				EndIf
 			EndIf
 	
@@ -27731,7 +27763,7 @@ Function ControlNPC(i)
 			; Foottap All The Time
 			If SimulatedObjectCurrentAnim(i)<>9
 				SimulatedObjectCurrentAnim(i)=9
-				MaybeAnimate(GetChild(objectentity(i),3),1,.2,9)
+				MaybeAnimate(GetChild(Obj\Entity,3),1,.2,9)
 			EndIf
 			
 		Case 5
@@ -27739,41 +27771,41 @@ Function ControlNPC(i)
 			If SimulatedObjectCurrentAnim(i)<>12
 				SimulatedObjectCurrentAnim(i)=12
 				If SimulatedObjectData(i,7)>=20
-					MaybeAnimate(GetChild(objectentity(i),3),1,.4,12)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,12)
 				Else
-					MaybeAnimate(GetChild(objectentity(i),3),1,.2,12)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.2,12)
 				EndIf
 			EndIf
 		Case 6
 			; Just Sit
 			If SimulatedObjectCurrentAnim(i)<>14
 				SimulatedObjectCurrentAnim(i)=14
-				MaybeAnimate(GetChild(objectentity(i),3),3,.2,14)
+				MaybeAnimate(GetChild(Obj\Entity,3),3,.2,14)
 			EndIf
 		Case 7
 			; Sit if far from player, otherwise stand
 			
 			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
 				SimulatedObjectCurrentAnim(i)=14
-				MaybeAnimate(GetChild(objectentity(i),3),3,.4,14)
+				MaybeAnimate(GetChild(Obj\Entity,3),3,.4,14)
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>114 And dist<=3
 				SimulatedObjectCurrentAnim(i)=114
-				MaybeAnimate(GetChild(objectentity(i),3),3,-.4,14)
+				MaybeAnimate(GetChild(Obj\Entity,3),3,-.4,14)
 			EndIf
 		Case 8
 			; Sit if far from player, otherwise stand and wave fast
 			Dist=maximum2(Abs(ObjectTileX(i)-PlayerTileX()),Abs(ObjectTileY(i)-PlayerTileY()))
 			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
 				SimulatedObjectCurrentAnim(i)=14
-				MaybeAnimate(GetChild(objectentity(i),3),3,.4,14)
+				MaybeAnimate(GetChild(Obj\Entity,3),3,.4,14)
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>114 And dist<=3
 				SimulatedObjectCurrentAnim(i)=114
-				MaybeAnimate(GetChild(objectentity(i),3),3,-.4,14)
+				MaybeAnimate(GetChild(Obj\Entity,3),3,-.4,14)
 			EndIf
-			If SimulatedObjectCurrentAnim(i)=114 And Animating(GetChild(objectentity(i),3))=False
-				MaybeAnimate(GetChild(objectentity(i),3),3,.4,15)
+			If SimulatedObjectCurrentAnim(i)=114 And Animating(GetChild(Obj\Entity,3))=False
+				MaybeAnimate(GetChild(Obj\Entity,3),3,.4,15)
 			EndIf
 
 
@@ -27784,13 +27816,13 @@ Function ControlNPC(i)
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=11
-					MaybeAnimate(GetChild(objectentity(i),3),1,.4,11)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,11)
 					If SimulatedObjectData(i,y)<10 Then SimulatedObjectData(i,7)=SimulatedObjectData(i,7)+20
 				EndIf
 			Else 
 				If Leveltimer Mod 120 =0 
 					SimulatedObjectCurrentAnim(i)=10
-					MaybeAnimate(GetChild(objectentity(i),3),1,.05,10)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
 					SimulatedObjectData(i,7)=SimulatedObjectData(i,7)-20
 					SimulatedObjectZ(i)=0
 				EndIf
@@ -27801,9 +27833,9 @@ Function ControlNPC(i)
 			If SimulatedObjectCurrentAnim(i)<>11
 				SimulatedObjectCurrentAnim(i)=11
 				If SimulatedObjectData(i,7)>=20
-					MaybeAnimate(GetChild(objectentity(i),3),1,.4,11)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,11)
 				Else
-					MaybeAnimate(GetChild(objectentity(i),3),1,.2,11)
+					MaybeAnimate(GetChild(Obj\Entity,3),1,.2,11)
 				EndIf
 
 			EndIf
@@ -27835,7 +27867,7 @@ Function ControlKaboom(i)
 			;ObjectMovementTimer(i)=0
 			;ObjectSubType(i)=0  
 			SimulatedObjectCurrentAnim(i)=10
-			AnimateMD2 ObjectEntity(i),0,.2,1,2
+			AnimateMD2 Obj\Entity,0,.2,1,2
 
 		EndIf
 		
@@ -27875,16 +27907,16 @@ Function ControlKaboom(i)
 	If ObjectFlying(i)/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
-			;Animate GetChild(objectentity(i),3),1,1,11
-			AnimateMD2 ObjectEntity(i),3,2,31,60
+			;Animate GetChild(Obj\Entity,3),1,1,11
+			AnimateMD2 Obj\Entity,3,2,31,60
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 		TurnObjectTowardDirection(i,-(ObjectTileX(i)-ObjectTileX2(i)),-(ObjectTileY(i)-ObjectTileY2(i)),10,-SimulatedObjectYawAdjust(i))
 	Else If ObjectFlying(i)/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>11
-			;Animate GetChild(objectentity(i),3),3,2,13
-			AnimateMD2 ObjectEntity(i),3,2,31,60
+			;Animate GetChild(Obj\Entity,3),3,2,13
+			AnimateMD2 Obj\Entity,3,2,31,60
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 
@@ -27927,29 +27959,29 @@ Function ControlKaboom(i)
 			; Just Swaying
 			If SimulatedObjectCurrentAnim(i)<>10
 				SimulatedObjectCurrentAnim(i)=10
-				;Animate GetChild(objectentity(i),3),1,.05,10
-				AnimateMD2 ObjectEntity(i),0,.2,1,2
+				;Animate GetChild(Obj\Entity,3),1,.05,10
+				AnimateMD2 Obj\Entity,0,.2,1,2
 			EndIf
 		
 		Case 1
 			; Just Sit
 			If SimulatedObjectCurrentAnim(i)<>13
 				SimulatedObjectCurrentAnim(i)=13
-				;Animate GetChild(objectentity(i),3),3,.2,14
-				AnimateMD2 ObjectEntity(i),3,.5,31,50
+				;Animate GetChild(Obj\Entity,3),3,.2,14
+				AnimateMD2 Obj\Entity,3,.5,31,50
 			EndIf
 		Case 2
 			; Sit if far from player, otherwise stand
 			
 			If SimulatedObjectCurrentAnim(i)<>13 And dist>3
 				SimulatedObjectCurrentAnim(i)=13
-				;Animate GetChild(objectentity(i),3),3,.4,14
-				AnimateMD2 ObjectEntity(i),3,.5,31,50
+				;Animate GetChild(Obj\Entity,3),3,.4,14
+				AnimateMD2 Obj\Entity,3,.5,31,50
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>113 And dist<=3
 				SimulatedObjectCurrentAnim(i)=113
-				;Animate GetChild(objectentity(i),3),3,-.4,14
-				AnimateMD2 ObjectEntity(i),3,-.5,50,31
+				;Animate GetChild(Obj\Entity,3),3,-.4,14
+				AnimateMD2 Obj\Entity,3,-.5,50,31
 			EndIf
 		
 
@@ -27958,15 +27990,15 @@ Function ControlKaboom(i)
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=15
-					;Animate GetChild(objectentity(i),3),1,.4,11
-					AnimateMD2 ObjectEntity(i),2,.5,55,70
+					;Animate GetChild(Obj\Entity,3),1,.4,11
+					AnimateMD2 Obj\Entity,2,.5,55,70
 					
 				EndIf
 			Else 
 				If Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=10
-					;Animate GetChild(objectentity(i),3),1,.05,10
-					AnimateMD2 ObjectEntity(i),3,-.2,70,53
+					;Animate GetChild(Obj\Entity,3),1,.05,10
+					AnimateMD2 Obj\Entity,3,-.2,70,53
 					
 					
 				EndIf
@@ -27976,15 +28008,15 @@ Function ControlKaboom(i)
 			; Shiver All The Time
 			If SimulatedObjectCurrentAnim(i)<>15
 				SimulatedObjectCurrentAnim(i)=15
-				AnimateMD2 ObjectEntity(i),2,.5,59,70
+				AnimateMD2 Obj\Entity,2,.5,59,70
 				
 			EndIf
 		Case 5
 			; Bounce
 			If SimulatedObjectCurrentAnim(i)<>16
 				SimulatedObjectCurrentAnim(i)=16
-				;Animate GetChild(objectentity(i),3),3,.2,14
-				AnimateMD2 ObjectEntity(i),2,.5,31,50
+				;Animate GetChild(Obj\Entity,3),3,.2,14
+				AnimateMD2 Obj\Entity,2,.5,31,50
 			EndIf
 
 		End Select
@@ -28040,7 +28072,7 @@ Function ControlMirror(i)
 	Case 1,2,3,4,5	; fire, ice, time, acid, home
 		;ObjectActivationSpeed(i)=4
 		;ActivateObject(i)
-		EntityTexture ObjectEntity(i),MirrorTexture(ObjectSubtype(i))
+		EntityTexture Obj\Entity,MirrorTexture(ObjectSubtype(i))
 		PositionTexture MirrorTexture(ObjectSubtype(i)),Sin(Leveltimer/10.0),Cos(leveltimer/17.0)
 		ScaleTexture mirrortexture(objectsubtype(i)),0.5+0.1*Sin(leveltimer/7.0),0.5+0.1*Cos(leveltimer/11.0)
 		RotateTexture mirrortexture(objectsubtype(i)),leveltimer / 24.0
@@ -28088,7 +28120,7 @@ Function ControlGhost(i)
 		EndIf
 		
 		If SimulationLevel>=2	
-			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
 		
@@ -28107,7 +28139,7 @@ Function ControlGhost(i)
 		SimulatedObjectData(i,8)=1
 		;ObjectMovementTYpe(i)=13
 		If SimulationLevel>=2
-			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		If SimulatedObjectData(i,9)<50 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)+2
 		
@@ -28146,7 +28178,7 @@ Function ControlWraith(i)
 	
 	If SimulatedObjectStatus(i)=0
 		If SimulationLevel>=2
-			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 			
 		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
@@ -28166,7 +28198,7 @@ Function ControlWraith(i)
 	Else If SimulatedObjectStatus(i)=1
 		
 		If SimulationLevel>=2
-			EntityAlpha ObjectEntity(i),Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		
 		
@@ -28454,15 +28486,16 @@ Function ControlObjects()
 
 	For i=0 To NofObjects-1
 	
-		If ObjectReactive(i)=True
-		
+		Obj.GameObject=LevelObjects(i)
+	
+		If Obj\Attributes\Reactive=True
 			
 			; Get Scale
 			ObjXScale#=SimulatedObjectXScale(i)*SimulatedObjectScaleXAdjust(i)
 			ObjYScale#=SimulatedObjectYScale(i)*SimulatedObjectScaleYAdjust(i)
 			ObjZScale#=SimulatedObjectZScale(i)*SimulatedObjectScaleZAdjust(i)
 		
-			If (ObjectActive(i)<>0 And ObjectActive(i)<>1001) Or SimulationLevel>=2
+			If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
 			
 				; Select Visual Animation	
 				Select ObjectActivationType(i)
@@ -28513,9 +28546,9 @@ Function ControlObjects()
 				
 				Case 21
 					If ObjectModelName$(i)="!NPC" Or ObjectModelName$(i)="!Tentacle"
-						Entity=GetChild(ObjectEntity(i),3)
+						Entity=GetChild(Obj\Entity,3)
 					Else
-						Entity=ObjectEntity(i)
+						Entity=Obj\Entity
 					EndIf
 					; Fade in
 					EntityAlpha Entity,Float(SimulatedObjectActive(i))/1001.0
@@ -28657,7 +28690,7 @@ Function ControlObjects()
 			
 			SimulateObjectPosition(i)
 			SimulateObjectRotation(i)
-			ScaleEntity ObjectEntity(i),ObjXScale#,ObjZScale#,ObjYScale#
+			ScaleEntity Obj\Entity,ObjXScale#,ObjZScale#,ObjYScale#
 			
 			SimulatedObjectLastActive(i)=SimulatedObjectActive(i)
 			
@@ -28665,10 +28698,10 @@ Function ControlObjects()
 		;	AddParticle(2,ObjectXAdjust(i)+ObjectTileX(i)+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-ObjectTileY(i)-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
 		
 			If ObjectHatEntity(i)>0
-				TransformAccessoryEntityOntoBone(ObjectHatEntity(i),ObjectEntity(i))
+				TransformAccessoryEntityOntoBone(ObjectHatEntity(i),Obj\Entity)
 			EndIf
 			If ObjectAccEntity(i)>0
-				TransformAccessoryEntityOntoBone(ObjectAccEntity(i),ObjectEntity(i))
+				TransformAccessoryEntityOntoBone(ObjectAccEntity(i),Obj\Entity)
 			EndIf
 			
 		EndIf
