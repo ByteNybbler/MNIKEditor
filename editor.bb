@@ -8690,7 +8690,7 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObject\Attributes\TimerMax1=0
 	CurrentObject\Attributes\TimerMax2=0
 	CurrentObject\Attributes\Teleportable=False
-	CurrentObjectButtonPush=False
+	CurrentObject\Attributes\ButtonPush=False
 	CurrentObject\Attributes\WaterReact=0
 	CurrentObject\Attributes\Telekinesisable=0
 	CurrentObject\Attributes\Freezable=0
@@ -8728,11 +8728,11 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObject\Attributes\Dead=0
 	CurrentObject\Attributes\DeadTimer=0
 	CurrentObject\Attributes\Exclamation=0
-	CurrentObjectShadow=-1
+	CurrentObject\Attributes\Shadow=-1
 	CurrentObject\Attributes\Linked=-1
 	CurrentObject\Attributes\LinkBack=-1
 	CurrentObject\Attributes\Flying=0
-	CurrentObjectFrozen=0
+	CurrentObject\Attributes\Frozen=0
 	CurrentObject\Attributes\Indigo=0
 	CurrentObject\Attributes\FutureInt24=0
 	CurrentObject\Attributes\FutureInt25=0
@@ -8810,7 +8810,7 @@ Function LoadObjectPreset()
 	CurrentObject\Attributes\TimerMax1=ReadInt(file)
 	CurrentObject\Attributes\TimerMax2=ReadInt(file)
 	CurrentObject\Attributes\Teleportable=ReadInt(file)
-	CurrentObjectButtonPush=ReadInt(file)
+	CurrentObject\Attributes\ButtonPush=ReadInt(file)
 	CurrentObject\Attributes\WaterReact=ReadInt(file)
 	CurrentObject\Attributes\Telekinesisable=ReadInt(file)
 	CurrentObject\Attributes\Freezable=ReadInt(file)
@@ -8848,7 +8848,7 @@ Function LoadObjectPreset()
 	CurrentObject\Attributes\Dead=ReadInt(file)
 	CurrentObject\Attributes\DeadTimer=ReadInt(file)
 	CurrentObject\Attributes\Exclamation=ReadInt(file)
-	CurrentObjectShadow=ReadInt(file)
+	CurrentObject\Attributes\Shadow=ReadInt(file)
 	;CurrentObject\Attributes\Linked=ReadInt(file)
 	ReadInt(file)
 	CurrentObject\Attributes\Linked=-1
@@ -8856,7 +8856,7 @@ Function LoadObjectPreset()
 	ReadInt(file)
 	CurrentObject\Attributes\LinkBack=-1
 	CurrentObject\Attributes\Flying=ReadInt(file)
-	CurrentObjectFrozen=ReadInt(file)
+	CurrentObject\Attributes\Frozen=ReadInt(file)
 	CurrentObject\Attributes\Indigo=ReadInt(file)
 	CurrentObject\Attributes\FutureInt24=ReadInt(file)
 	CurrentObject\Attributes\FutureInt25=ReadInt(file)
@@ -9196,6 +9196,7 @@ Function PlaceObjectActual(x#,y#)
 	EndIf
 	
 	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
+	SourcePosition.GameObjectPosition=CurrentObject\Position
 
 	If ObjectAdjusterLogicType\RandomEnabled
 		SourceAttributes\LogicType=RandomObjectAdjusterInt(ObjectAdjusterLogicType)
@@ -9263,6 +9264,26 @@ Function PlaceObjectActual(x#,y#)
 	EndIf
 	If ObjectAdjusterZAdjust\RandomEnabled
 		SourceAttributes\ZAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterZAdjust)
+	EndIf
+	
+	If ObjectAdjusterX\RandomEnabled
+		SourcePosition\X#=RandomObjectAdjusterFloat#(ObjectAdjusterX)
+	EndIf
+	If ObjectAdjusterY\RandomEnabled
+		SourcePosition\Y#=RandomObjectAdjusterFloat#(ObjectAdjusterY)
+	EndIf
+	If ObjectAdjusterZ\RandomEnabled
+		SourcePosition\Z#=RandomObjectAdjusterFloat#(ObjectAdjusterZ)
+	EndIf
+	
+	If ObjectAdjusterDX\RandomEnabled
+		SourceAttributes\DX#=RandomObjectAdjusterFloat#(ObjectAdjusterDX)
+	EndIf
+	If ObjectAdjusterDY\RandomEnabled
+		SourceAttributes\DY#=RandomObjectAdjusterFloat#(ObjectAdjusterDY)
+	EndIf
+	If ObjectAdjusterDZ\RandomEnabled
+		SourceAttributes\DZ#=RandomObjectAdjusterFloat#(ObjectAdjusterDZ)
 	EndIf
 	
 	If ObjectAdjusterMovementType\RandomEnabled
@@ -9348,6 +9369,18 @@ Function PlaceObjectActual(x#,y#)
 		SourceAttributes\Dead=RandomObjectAdjusterInt(ObjectAdjusterDead)
 	EndIf
 	
+	If ObjectAdjusterCaged\RandomEnabled
+		SourceAttributes\Caged=RandomObjectAdjusterInt(ObjectAdjusterCaged)
+	EndIf
+	
+	If ObjectAdjusterIndigo\RandomEnabled
+		SourceAttributes\Indigo=RandomObjectAdjusterInt(ObjectAdjusterIndigo)
+	EndIf
+	
+	If ObjectAdjusterFrozen\RandomEnabled
+		SourceAttributes\Frozen=RandomObjectAdjusterInt(ObjectAdjusterFrozen)
+	EndIf
+	
 	If ObjectAdjusterExclamation\RandomEnabled
 		SourceAttributes\Exclamation=RandomObjectAdjusterInt(ObjectAdjusterExclamation)
 	EndIf
@@ -9372,6 +9405,7 @@ Function PlaceObjectActual(x#,y#)
 	NewObject.GameObject=LevelObjects(NofObjects)
 	
 	CopyObjectAttributes(SourceAttributes,NewObject\Attributes)
+	CopyObjectPosition(SourcePosition,NewObject\Position)
 	
 	SetObjectPosition(NofObjects,x#,y#)
 	
@@ -11230,7 +11264,7 @@ Function DisplayObjectAdjuster(i)
 		RightAdj$=ObjectAdjusterFreezable\RandomMax
 		
 	Case "Frozen"
-		tex$=Str$(CurrentObjectFrozen)
+		tex$=Str$(CurrentObject\Attributes\Frozen)
 		Randomized=ObjectAdjusterFrozen\RandomEnabled
 		LeftAdj$=ObjectAdjusterFrozen\RandomMin
 		RightAdj$=ObjectAdjusterFrozen\RandomMax
