@@ -1036,7 +1036,7 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 
 
 
-Global NofMyGfxModes, MyGfxMode
+Global NofMyGfxModes, GfxMode
 Dim MyGfxModeWidth(1000),MyGfxModeHeight(1000),MyGfxModeDepth(1000)
 Global GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 Global GfxZoomScaling#
@@ -1055,12 +1055,13 @@ Function ReadDisplayFile()
 			MyGfxModeHeight(i)=ReadInt(file)
 			MyGfxModeDepth(i)=ReadInt(file)
 		Next
-		mygfxmode=ReadInt(file)
+		GfxMode=ReadInt(file)
 		GfxWindowed=ReadInt(file)
-		GfxWidth=MyGfxModeWidth(mygfxmode)
-		GfxHeight=MyGfxModeHeight(mygfxmode)
-		GfxDepth=MyGfxModeDepth(mygfxmode)
+		GfxWidth=MyGfxModeWidth(gfxmode)
+		GfxHeight=MyGfxModeHeight(gfxmode)
+		GfxDepth=MyGfxModeDepth(gfxmode)
 	Else
+		PopulateGfxModes()
 		GfxWidth=800
 		GfxHeight=600
 		GfxWindowed=1
@@ -1087,6 +1088,46 @@ Function WriteDisplayFile()
 	WriteInt file,GfxWindowed
 	
 	CloseFile file
+
+End Function
+
+Function PopulateGfxModes()
+		
+	For i=1 To CountGfxModes3D()
+		ratio#=Float(GfxModeWidth(i))/Float(GfxModeHeight(i))
+		If ratio#>1.33 And ratio#<1.34 And GfxModeWidth(i)>=640
+			; list all 4:3 modes above 640x480
+			MyGfxModeWidth(j)=GfxModeWidth(i)
+			MyGfxModeHeight(j)=GfxModeHeight(i)
+			MyGfxModeDepth(j)=GfxModeDepth(i)
+			;IsWideScreen(j)=False
+			j=j+1
+		ElseIf ratio#>1.77 And ratio#<1.78 And GfxModeWidth(i)>=640 And widescreen=True
+			MyGfxModeWidth(j)=GfxModeWidth(i)
+			MyGfxModeHeight(j)=GfxModeHeight(i)
+			MyGfxModeDepth(j)=GfxModeDepth(i)
+			;IsWideScreen(j)=True
+			j=j+1
+		EndIf
+	Next
+	NofMyGfxModes=j
+	
+	GfxMode=-1	
+	
+	If GfxMode=-1	
+		For j=0 To NofMyGfxModes-1
+			If MyGfxModeWidth(j)=800 And MyGfxModeheight(j)=600 And MyGfxModeDepth(j)=32
+				GfxMode=j
+			EndIf
+		Next
+	EndIf
+	If GfxMode=-1
+		For j=0 To NofMyGfxModes-1
+			If MyGfxModeWidth(j)=800 And MyGfxModeHeight(j)=600 And MyGfxModeDepth(j)=16
+				GfxMode=j
+			EndIf
+		Next
+	EndIf
 
 End Function
 
@@ -1137,9 +1178,8 @@ If ratio#>1.77 And ratio#<1.78 ;aspect ratio must be 16:9
 	widescreen=True
 EndIf
 
-OriginalRatio#=800.0/600.0
-Global GfxAspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
-GfxZoomScaling#=OriginalRatio#/GfxAspectRatio#
+Const OriginalRatio#=800.0/600.0
+Global GfxAspectRatio#
 
 GfxWindowed=2 ; Force windowed mode
 
@@ -1154,71 +1194,70 @@ EndIf
 
 ;ShowMessage("Graphics3D: "+GfxWidth+" x "+GfxHeight+" with depth "+GfxDepth,1000)
 
-Global ToolbarBrushModeX=ToolbarPositionX(1)
-Global ToolbarBrushModeY=ToolbarPositionY(1)
-
-Global ToolbarBrushSizeX=ToolbarPositionX(2)
-Global ToolbarBrushSizeY=ToolbarPositionY(1)
-
-Global ToolbarTexPrefixX=ToolbarPositionX(2)
-Global ToolbarTexPrefixY=ToolbarPositionY(2)
-
-Global ToolbarDensityX=ToolbarPositionX(3)
-Global ToolbarDensityY=ToolbarPositionY(1)
-
-Global ToolbarElevateX=ToolbarPositionX(3)
-Global ToolbarElevateY=ToolbarPositionY(2)
-
-Global ToolbarBrushWrapX=ToolbarPositionX(4)
-Global ToolbarBrushWrapY=ToolbarPositionY(1)
-
-Global ToolbarStepPerX=ToolbarPositionX(4)
-Global ToolbarStepPerY=ToolbarPositionY(2)
-
-Global ToolbarShowMarkersX=ToolbarPositionX(5)
-Global ToolbarShowMarkersY=ToolbarPositionY(1)
-
-Global ToolbarShowObjectsX=ToolbarPositionX(5)
-Global ToolbarShowObjectsY=ToolbarPositionY(2)
-
-Global ToolbarShowLogicX=ToolbarPositionX(6)
-Global ToolbarShowLogicY=ToolbarPositionY(1)
-
-Global ToolbarShowLevelX=ToolbarPositionX(6)
-Global ToolbarShowLevelY=ToolbarPositionY(2)
-
-Global ToolbarIDFilterX=ToolbarPositionX(7)
-Global ToolbarIDFilterY=ToolbarPositionY(1)
-
-Global ToolbarSimulationLevelX=ToolbarPositionX(7)
-Global ToolbarSimulationLevelY=ToolbarPositionY(2)
-
-Global ToolbarExitX=ToolbarPositionX(8)
-Global ToolbarExitY=ToolbarPositionY(1)
-
-Global ToolbarSaveX=ToolbarPositionX(8)
-Global ToolbarSaveY=ToolbarPositionY(2)
-
 Const LettersCountX=44
 Const LettersCountY=30
-
-Global LetterWidth#=Float#(GfxWidth)/Float#(LettersCountX)*GfxZoomScaling#
-Global LetterHeight#=Float#(GfxHeight)/Float#(LettersCountY) ;*GfxZoomScaling#
 
 Const ToolbarHeight=100
 Const SidebarWidth=300
 
-Global LevelViewportWidth=GfxWidth-SidebarWidth
-Global LevelViewportHeight=GfxHeight-ToolbarHeight
-TilePickerZoomScaling#=Float#(LevelViewportHeight)/Float#(LevelViewportWidth) ; The numerator is 1 because the original 500x500 viewport is a 1:1 ratio.
+Global ToolbarBrushModeX
+Global ToolbarBrushModeY
 
-Global SidebarX=LevelViewportWidth
-Global SidebarY=0
+Global ToolbarBrushSizeX
+Global ToolbarBrushSizeY
 
-Global FlStartX=SidebarX+206 ; 706
-Global FlStartY=SidebarY+165
+Global ToolbarTexPrefixX
+Global ToolbarTexPrefixY
 
-Global LowerButtonsCutoff=LetterHeight*26
+Global ToolbarDensityX
+Global ToolbarDensityY
+
+Global ToolbarElevateX
+Global ToolbarElevateY
+
+Global ToolbarBrushWrapX
+Global ToolbarBrushWrapY
+
+Global ToolbarStepPerX
+Global ToolbarStepPerY
+
+Global ToolbarShowMarkersX
+Global ToolbarShowMarkersY
+
+Global ToolbarShowObjectsX
+Global ToolbarShowObjectsY
+
+Global ToolbarShowLogicX
+Global ToolbarShowLogicY
+
+Global ToolbarShowLevelX
+Global ToolbarShowLevelY
+
+Global ToolbarIDFilterX
+Global ToolbarIDFilterY
+
+Global ToolbarSimulationLevelX
+Global ToolbarSimulationLevelY
+
+Global ToolbarExitX
+Global ToolbarExitY
+
+Global ToolbarSaveX
+Global ToolbarSaveY
+
+Global LetterWidth#
+Global LetterHeight#
+
+Global LevelViewportWidth
+Global LevelViewportHeight
+
+Global SidebarX
+Global SidebarY
+
+Global FlStartX
+Global FlStartY
+
+Global LowerButtonsCutoff
 
 ;ahaha goodness...
 
@@ -2176,6 +2215,7 @@ Global SelectedGlyph
 Global MaxParticleWarningTimer=0 ; number of frames remaining before the "too many particles" warning message disappears
 
 
+CalculateUIValues()
 InitializeGraphicsCameras() ; needed for loading particles
 InitializeGraphicsEntities()
 InitializeGraphicsTextures()
@@ -2288,6 +2328,73 @@ Function OnRegainFocus()
 	
 	ReadConfigs()
 
+End Function
+
+Function CalculateUIValues()
+
+	GfxAspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
+	GfxZoomScaling#=OriginalRatio#/GfxAspectRatio#
+	
+	ToolbarBrushModeX=ToolbarPositionX(1)
+	ToolbarBrushModeY=ToolbarPositionY(1)
+	
+	ToolbarBrushSizeX=ToolbarPositionX(2)
+	ToolbarBrushSizeY=ToolbarPositionY(1)
+	
+	ToolbarTexPrefixX=ToolbarPositionX(2)
+	ToolbarTexPrefixY=ToolbarPositionY(2)
+	
+	ToolbarDensityX=ToolbarPositionX(3)
+	ToolbarDensityY=ToolbarPositionY(1)
+	
+	ToolbarElevateX=ToolbarPositionX(3)
+	ToolbarElevateY=ToolbarPositionY(2)
+	
+	ToolbarBrushWrapX=ToolbarPositionX(4)
+	ToolbarBrushWrapY=ToolbarPositionY(1)
+	
+	ToolbarStepPerX=ToolbarPositionX(4)
+	ToolbarStepPerY=ToolbarPositionY(2)
+	
+	ToolbarShowMarkersX=ToolbarPositionX(5)
+	ToolbarShowMarkersY=ToolbarPositionY(1)
+	
+	ToolbarShowObjectsX=ToolbarPositionX(5)
+	ToolbarShowObjectsY=ToolbarPositionY(2)
+	
+	ToolbarShowLogicX=ToolbarPositionX(6)
+	ToolbarShowLogicY=ToolbarPositionY(1)
+	
+	ToolbarShowLevelX=ToolbarPositionX(6)
+	ToolbarShowLevelY=ToolbarPositionY(2)
+	
+	ToolbarIDFilterX=ToolbarPositionX(7)
+	ToolbarIDFilterY=ToolbarPositionY(1)
+	
+	ToolbarSimulationLevelX=ToolbarPositionX(7)
+	ToolbarSimulationLevelY=ToolbarPositionY(2)
+	
+	ToolbarExitX=ToolbarPositionX(8)
+	ToolbarExitY=ToolbarPositionY(1)
+	
+	ToolbarSaveX=ToolbarPositionX(8)
+	ToolbarSaveY=ToolbarPositionY(2)
+	
+	LetterWidth#=Float#(GfxWidth)/Float#(LettersCountX)*GfxZoomScaling#
+	LetterHeight#=Float#(GfxHeight)/Float#(LettersCountY)
+	
+	LevelViewportWidth=GfxWidth-SidebarWidth
+	LevelViewportHeight=GfxHeight-ToolbarHeight
+	TilePickerZoomScaling#=Float#(LevelViewportHeight)/Float#(LevelViewportWidth) ; The numerator is 1 because the original 500x500 viewport is a 1:1 ratio.
+	
+	SidebarX=LevelViewportWidth
+	SidebarY=0
+	
+	FlStartX=SidebarX+206 ; 706
+	FlStartY=SidebarY+165
+	
+	LowerButtonsCutoff=LetterHeight*26
+	
 End Function
 
 Function InitializeGraphicsTextures()
@@ -2477,6 +2584,13 @@ Function ResetWindowSize()
 	SetBuffer BackBuffer()
 	Graphics3D 800,600,16,3
 	
+	ResetGraphicsEntities()
+
+End Function
+
+Function ResolutionWasChanged()
+
+	CalculateUIValues()
 	ResetGraphicsEntities()
 
 End Function
@@ -19178,6 +19292,12 @@ Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
 End Function
 
+Function DisplayCenteredText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
+
+	DisplayText2(mytext$,x#-Len(mytext$)/2,y#,red,green,blue,widthmult#)
+
+End Function
+
 Function AbsoluteDifference(a,b)
 
 	Return Abs(a-b)
@@ -19760,9 +19880,11 @@ Function AdventureSelectScreen()
 	;			Print "Note: Screenmode will be switched upon next restart."
 	;			Delay 4000
 				
+				;ShowMessage("Here we go!",1000)
 				SetEditorMode(13)
 				Repeat
 				Until MouseDown(1)=0
+				;ShowMessage("We're here!",1000)
 				
 			EndIf
 
@@ -20116,20 +20238,20 @@ Function SettingsMainLoop()
 	DisplayText2("============================================",0,1,TextMenusR,TextMenusG,TextMenusB)
 	
 	If Selected=0
-		DisplayText2("Controls",18,9,255,255,255)
+		DisplayCenteredText2("Controls",22,9,255,255,255)
 	Else
-		DisplayText2("Controls",18,9,155,155,155)
+		DisplayCenteredText2("Controls",22,9,155,155,155)
 	EndIf
 	ex$=Str$(MyGfxModeWidth(GfxMode))+"x"+Str$(MyGfxModeHeight(GfxMode))+"x"+Str$(MyGfxModeDepth(GfxMode))
 	If Selected=1
-		DisplayText2("Resolution "+ex$,8,11,255,255,255)
+		DisplayCenteredText2("Resolution "+ex$,22,11,255,255,255)
 	Else
-		DisplayText2("Resolution "+ex$,8,11,155,155,155)
+		DisplayCenteredText2("Resolution "+ex$,22,11,155,155,155)
 	EndIf
 	If Selected=2
-		DisplayText2("Apply Resolution",8,13,255,255,255)
+		DisplayCenteredText2("Apply Resolution",22,13,255,255,255)
 	Else
-		DisplayText2("Apply Resolution",8,13,155,155,155)
+		DisplayCenteredText2("Apply Resolution",22,13,155,155,155)
 	EndIf
 	If Selected=3
 		DisplayText2("Back",20,15,255,255,255)
@@ -20155,12 +20277,18 @@ Function SettingsMainLoop()
 			GfxWidth=MyGfxModeWidth(gfxmode)
 			GfxHeight=MyGfxModeHeight(gfxmode)
 			GfxDepth=MyGfxModeDepth(gfxmode)
+			
 			Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
+			ResolutionWasChanged()
 			
 			WriteDisplayFile()
 			
 			Repeat
 			Until MouseDown(1)=0
+			
+			;ExecFile ("editor3d.exe")
+			;EndApplication()
+			
 		EndIf
 		If selected=3
 			SetEditorMode(5)
@@ -20178,6 +20306,12 @@ Function SettingsMainLoop()
 			Until MouseDown(2)=0
 		EndIf
 	EndIf
+	
+	RenderLetters()
+	UpdateWorld 
+	RenderWorld
+	
+	FinishDrawing()
 
 End Function
 
