@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/23/22"
+Global VersionDate$="06/24/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -21347,6 +21347,9 @@ Function MasterMainLoop()
 						
 						Repeat
 						Until MouseDown(1)=0
+						
+						mb=0
+						Exit
 					ElseIf mb=2 And LevelExists(SelectedLevel)=True
 						If CopyingLevel=StateCopying And SelectedLevel=CopiedLevel
 							CopyingLevel=StateNotSpecial
@@ -21357,6 +21360,9 @@ Function MasterMainLoop()
 						
 						Repeat
 						Until MouseDown(2)=0
+						
+						mb=0
+						Exit
 					ElseIf mb=3 And LevelExists(SelectedLevel)=True
 						If CopyingLevel=StateSwapping And SelectedLevel=CopiedLevel
 							CopyingLevel=StateNotSpecial
@@ -21367,6 +21373,9 @@ Function MasterMainLoop()
 						
 						Repeat
 						Until MouseDown(3)=0
+						
+						mb=0
+						Exit
 					EndIf
 				EndIf
 			Next
@@ -21401,6 +21410,9 @@ Function MasterMainLoop()
 						
 						Repeat
 						Until MouseDown(1)=0
+						
+						mb=0
+						Exit
 					ElseIf mb=2 And DialogExists(SelectedDialog)=True
 						If CopyingDialog=StateCopying And SelectedDialog=CopiedDialog
 							CopyingDialog=StateNotSpecial
@@ -21411,6 +21423,9 @@ Function MasterMainLoop()
 						
 						Repeat
 						Until MouseDown(2)=0
+						
+						mb=0
+						Exit
 					ElseIf mb=3 And DialogExists(SelectedDialog)=True
 						If CopyingDialog=StateSwapping And SelectedDialog=CopiedDialog
 							CopyingDialog=StateNotSpecial
@@ -21421,6 +21436,9 @@ Function MasterMainLoop()
 						
 						Repeat
 						Until MouseDown(3)=0
+						
+						mb=0
+						Exit
 					EndIf
 				EndIf
 			Next
