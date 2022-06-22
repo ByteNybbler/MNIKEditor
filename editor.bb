@@ -19971,15 +19971,15 @@ Function AdventureSelectScreen()
 	
 	If hubmode=False
 		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44)
-			If MouseDown(1)
+			If MouseDown(1) Or MouseScroll>0
 				SetAdventureCurrentArchive(AdventureCurrentArchive+1)
 				GetAdventures()
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
-			If MouseDown(2)
+			If MouseDown(2) Or MouseScroll<0
 				SetAdventureCurrentArchive(AdventureCurrentArchive-1)
 				GetAdventures()
-				Delay 100
+				If MouseScroll=0 Then Delay 100
 			EndIf
 		EndIf
 		;If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(36) And AdventureCurrentArchive=0
