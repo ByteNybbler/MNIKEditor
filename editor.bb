@@ -19673,6 +19673,16 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 
 End Function
 
+Function GetMouseLetterX()
+
+	x=(MouseX()-LetterX(0))/LetterWidth-0.5
+	If x<0
+		x=0
+	EndIf
+	Return x
+
+End Function
+
 Function StartUserSelectScreen()
 	SetEditorMode(4)
 	
@@ -21151,10 +21161,7 @@ Function MasterMainLoop()
 		; Mouse Pos
 		Entering=0
 		
-		x=(MouseX()-LetterX(0))/LetterWidth
-		If x<0
-			x=0
-		EndIf
+		x=GetMouseLetterX()
 		y=(MouseY()-LetterHeight*5)/LetterHeight
 	
 		debug1=MouseY()
@@ -22250,11 +22257,7 @@ Function HubMainLoop()
 	MouseTextEntryTrackMouseMovement()
 	
 	Entering=0
-	x=(MouseX()-LetterX(0))/LetterWidth
-	If x<0
-		x=0
-	EndIf
-	
+	x=GetMouseLetterX()
 	y=(MouseY()-LetterHeight*5)/LetterHeight
 	If x<38 And MouseY()>=84 And y=3
 		Entering=1
@@ -23202,10 +23205,7 @@ Function DialogMainLoop()
 	; Mouse Pos
 	Entering=0
 	
-	x=(MouseX()-LetterX(0))/LetterWidth
-	If x<0
-		x=0
-	EndIf
+	x=GetMouseLetterX()
 	If MouseY()<LetterHeight*14
 		y=(MouseY()-LetterHeight*5)/LetterHeight
 	Else If MouseY()<LetterHeight*15
