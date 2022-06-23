@@ -12256,12 +12256,8 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=10 And CurrentObject\Attributes\LogicSubType=9 ; Autodoor
-			If CurrentObject\Attributes\Data4>=0
-				tex2$="ActivateID"
-			Else
-				tex2$="ActivateType"
-				tex$=Str$(-CurrentObject\Attributes\Data4)+"/"+GetTypeString$(-CurrentObject\Attributes\Data4)
-			EndIf
+			tex2$=GetAutodoorActivateName$(CurrentObject\Attributes\Data4)
+			tex$=GetAutodoorActivateValueName$(CurrentObject\Attributes\Data4)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=200 ; Glovecharge
@@ -12352,12 +12348,8 @@ Function DisplayObjectAdjuster(i)
 		
 		
 		If CurrentObject\Attributes\LogicType=10 And CurrentObject\Attributes\LogicSubType=9 ; Autodoor
-			If CurrentObject\Attributes\Data5>=0
-				tex2$="ActivateID"
-			Else
-				tex2$="ActivateType"
-				tex$=Str$(-CurrentObject\Attributes\Data5)+"/"+GetTypeString$(-CurrentObject\Attributes\Data5)
-			EndIf
+			tex2$=GetAutodoorActivateName$(CurrentObject\Attributes\Data5)
+			tex$=GetAutodoorActivateValueName$(CurrentObject\Attributes\Data5)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=242 ; Cuboid
@@ -12426,12 +12418,8 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=10 And CurrentObject\Attributes\LogicSubType=9 ; Autodoor
-			If CurrentObject\Attributes\Data6>=0
-				tex2$="ActivateID"
-			Else
-				tex2$="ActivateType"
-				tex$=Str$(-CurrentObject\Attributes\Data6)+"/"+GetTypeString$(-CurrentObject\Attributes\Data6)
-			EndIf
+			tex2$=GetAutodoorActivateName$(CurrentObject\Attributes\Data6)
+			tex$=GetAutodoorActivateValueName$(CurrentObject\Attributes\Data6)
 		EndIf
 		If CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46 ; Conveyor (is tail relevant here?)
 			tex2$="ActivationWait"
@@ -17133,6 +17121,28 @@ End Function
 Function IsObjectLogicAutodoor(TargetType,TargetSubType)
 
 	Return TargetType=10 And TargetSubType=9
+
+End Function
+
+Function GetAutodoorActivateName$(DataValue)
+
+	If DataValue>=0
+		Return "ActivateID"
+	Else
+		Return "ActivateType"
+	EndIf
+
+End Function
+
+Function GetAutodoorActivateValueName$(DataValue)
+
+	If DataValue=0
+		Return "Creatures" ;"The Living"
+	ElseIf DataValue<0
+		Return Str$(-DataValue)+"/"+GetTypeString$(-DataValue)
+	Else
+		Return DataValue
+	EndIf
 
 End Function
 
