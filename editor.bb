@@ -12202,7 +12202,7 @@ Function DisplayObjectAdjuster(i)
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				tex2$="SubColour1"
 
-			Else If CurrentObject\Attributes\LogicType=10 ; LevelExit
+			Else If CurrentObject\Attributes\LogicSubType=10 ; LevelExit
 				tex2$="PlayerYaw"
 				DisplayedRotation=(CurrentObject\Attributes\Data4+180) Mod 360
 				tex$=GetDirectionString$(DisplayedRotation)
