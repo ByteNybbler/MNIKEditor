@@ -25030,15 +25030,20 @@ Function GetCommandColor(id,index)
 		g=dark
 		b=0
 	Case 6,9,10,11,12,13 ; environment
-		; cyan-esque
+		; cyan
 		r=0
-		g=120 ;dark ;255
+		g=255 ;200 ;120 ;dark ;255
 		b=255
 	Case 4,51,52 ; alter object attributes / dark magic
 		; indigo
-		r=40 ;0
-		g=40 ;0
+		r=0
+		g=100
 		b=255
+		
+		; #e079cb
+		;r=224 ;0
+		;g=121 ;0
+		;b=203 ;255
 	Case 41,42 ; object spawning
 		; purple
 		r=255
