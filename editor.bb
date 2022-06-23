@@ -2830,8 +2830,8 @@ Function EditorMainLoop()
 	ControlParticles()
 	RenderParticles()
 	
-	ControlLetters()
-	RenderLetters()
+	;ControlLetters()
+	;RenderLetters()
 	
 	UpdateWorld
 	RenderWorld
@@ -18347,18 +18347,15 @@ Function CreateGeneralCommandTextMesh(col1)
 	b=GetCommandColor(col1,2)
 	
 	scaling#=0.3
-	xsize#=scaling#
-	ysize#=scaling#
+	yoffset#=-0.10
 	
 	;outlinesize#=0.01
 	
-	BuildTextSurface(Surface,Command$,xsize#,ysize#,-0.015,scaling#)
+	BuildTextSurface(Surface,Command$,-0.015,scaling#,0,0.0,yoffset#)
 	
 	EntityColor ExtraEntity,r,g,b
 	
 	RotateMesh ExtraEntity,90,0,0
-	
-	EntityTexture ExtraEntity,TextTexture
 	
 	UpdateNormals ExtraEntity
 	
@@ -18366,7 +18363,14 @@ Function CreateGeneralCommandTextMesh(col1)
 	BackdropEntity=CreateMesh(ExtraEntity)
 	Surface=CreateSurface(BackdropEntity)
 	
-	BuildTextSurface(Surface,Command$,xsize#,ysize#,-0.014,scaling#*2)
+	;scaling#=scaling#*2
+	
+	offset#=0.02
+	
+	BuildTextSurface(Surface,Command$,-0.014,scaling#,0,offset#,yoffset#)
+	BuildTextSurface(Surface,Command$,-0.014,scaling#,1,-offset#,yoffset#)
+	BuildTextSurface(Surface,Command$,-0.014,scaling#,2,0.0,yoffset#+offset#)
+	BuildTextSurface(Surface,Command$,-0.014,scaling#,3,0.0,yoffset#-offset#)
 	
 	;radius#=0.45
 	
@@ -18380,26 +18384,33 @@ Function CreateGeneralCommandTextMesh(col1)
 	;EntityAlpha BackdropEntity,0.3
 	
 	EntityColor BackdropEntity,0,0,0
+	;EntityColor BackdropEntity,255,255,255
+	;EntityColor BackdropEntity,255-r,255-g,255-b
 	
 	RotateMesh BackdropEntity,90,0,0
 	
-	EntityTexture BackdropEntity,TextTexture
-	
 	UpdateNormals BackdropEntity
 	
+	; Comment these out to debug the glyph placement.
+	EntityTexture ExtraEntity,TextTexture
+	EntityTexture BackdropEntity,TextTexture
 	
 	Return ExtraEntity
 
 End Function
 
-Function BuildTextSurface(mySurface,myString$,xsize#,ysize#,z#,scaling#)
+Function BuildTextSurface(mySurface,myString$,z#,scaling#,letteroffset=0,xoffset#=0.0,yoffset#=0.0)
+
+	xsize#=scaling#
+	ysize#=scaling#
 
 	For i=1 To Len(myString$)
 		let=Asc(Mid$(myString$,i,1))-32
-		letternumber=(i-1)
+		letternumber=i-1
+		
 		x#=-xsize#*(Len(myString$)-1)*0.5+(i-1)*xsize#
-		y#=-ysize#*0.5
-		AddTextToSurface(mySurface,letternumber,let,x#,y#,z#,0.5*scaling#)
+		y#=0
+		AddTextToSurface(mySurface,letternumber+letteroffset*Len(myString$),let,x#+xoffset#,y#+yoffset#,z#,0.5*scaling#)
 	Next
 
 End Function
@@ -25025,8 +25036,8 @@ Function GetCommandColor(id,index)
 		b=255
 	Case 4,51,52 ; alter object attributes / dark magic
 		; indigo
-		r=0 ;0
-		g=0
+		r=40 ;0
+		g=40 ;0
 		b=255
 	Case 41,42 ; object spawning
 		; purple
