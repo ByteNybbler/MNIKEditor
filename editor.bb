@@ -1269,6 +1269,9 @@ Global ToolbarSaveY
 Global LetterWidth#
 Global LetterHeight#
 
+Const CharWidth#=0.045
+Const CharHeight#=0.05
+
 Global LevelViewportWidth
 Global LevelViewportHeight
 
@@ -2827,6 +2830,9 @@ Function EditorMainLoop()
 	ControlParticles()
 	RenderParticles()
 	
+	ControlLetters()
+	RenderLetters()
+	
 	UpdateWorld
 	RenderWorld
 	
@@ -2849,6 +2855,12 @@ Function EditorMainLoop()
 		ProjectedTextLimitY=LevelViewportHeight-10
 		
 		For i=0 To NofObjects-1
+;			If LevelObjects(i)\Attributes\LogicType=90 And LevelObjects(i)\Attributes\LogicSubType=15 ; General Command
+;				Command$=LevelObjects(i)\Attributes\Data0
+;				Pos.GameObjectPosition=LevelObjects(i)\Position
+;				DisplayTextFacingUp(Command$,Pos\X,Pos\Y,Pos\Z+0.05,255,255,0)
+;			EndIf
+		
 			MyEffectiveId=CalculateEffectiveId(LevelObjects(i)\Attributes)
 			
 			HitTargetID=False
@@ -3145,28 +3157,9 @@ Function EditorMainLoop()
 	
 	UpdateWater()
 	
-	; Animate Rainbow Magic
-	If (CurrentObject\Attributes\LogicType=200 And CurrentObject\Attributes\Data0=8) Then
-		For i=0 To 3
-		    red=GetAnimatedRainbowRed()
-		    green=GetAnimatedRainbowGreen()
-		    blue=GetAnimatedRainbowBlue()
-			
-		    VertexColor GetSurface(CurrentObject\Entity,1),i,red,green,blue
-		Next
-	EndIf
-	For i = 0 To 1000
-		For j=0 To 3
-			If LevelObjects(i)\Attributes\LogicType=200 And LevelObjects(i)\Attributes\Data0=8 Then
-				red=GetAnimatedRainbowRed()
-			    green=GetAnimatedRainbowGreen()
-			    blue=GetAnimatedRainbowBlue()
-				
-				If LevelObjects(i)\Entity>0 Then
-			    	VertexColor GetSurface(LevelObjects(i)\Entity,1),j,red,green,blue
-				EndIf
-			EndIf
-		Next
+	AnimateColors(CurrentObject)
+	For i=0 To NofObjects-1
+		AnimateColors(LevelObjects(i))
 	Next
 	
 	;DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
@@ -3189,6 +3182,24 @@ Function EditorMainLoop()
 	EndIf
 	
 	FinishDrawing()
+
+End Function
+
+
+Function AnimateColors(Obj.GameObject)
+
+	If Obj\Attributes\LogicType=90 And Obj\Attributes\LogicSubType=15 And Obj\Attributes\Data0=5 ; General Command 5
+		EntityColor Obj\Entity,GetAnimatedFlashing(LevelTimer),60,60
+	ElseIf Obj\Attributes\LogicType=200 And Obj\Attributes\Data0=8
+		; Animate Rainbow Magic
+		For i=0 To 3
+		    red=GetAnimatedRainbowRed()
+		    green=GetAnimatedRainbowGreen()
+		    blue=GetAnimatedRainbowBlue()
+			
+		    VertexColor GetSurface(Obj\Entity,1),i,red,green,blue
+		Next
+	EndIf
 
 End Function
 
@@ -13667,19 +13678,6 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
 		AdjustObjectData(1, SlowInt, FastInt, DelayTime)
 		
-		;If CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter"  Or (CurrentObject\Attributes\ModelName$="!Button" And ((CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17)) Or CurrentObject\Attributes\ModelName$="!Door" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!Cage" Or CurrentObject\Attributes\TexName$="!FireTrap" Or CurrentObject\Attributes\ModelName$="!Retrolasergate"  Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Autodoor" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"
-
-
-			; subcolours 0-4
-		;	If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
-		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
-		;Else If  (CurrentObject\Attributes\ModelName$="!Button" And (CurrentObject\Attributes\LogicSubType Mod 32)<10) 
-
-			; colours 0-15
-		;	If CurrentObject\Attributes\Data1>15 CurrentObject\Attributes\Data1=0
-		;	If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=15
-		;EndIf
-		
 		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
@@ -16527,6 +16525,11 @@ Function GetAnimatedRainbowBlue()
 End Function
 
 
+Function GetAnimatedFlashing(Timer)
+	Return 150+105*Sin(Timer*8)
+End Function
+
+
 Function ChangeBrushModeByDelta(Delta)
 
 	SetBrushMode(BrushMode+Delta)
@@ -18209,7 +18212,14 @@ End Function
 Function CreateButtonMesh(btype,col1,col2,col3,col4)
 	; texture is the available "colour" from 0-15
 	btype=btype Mod 32
-	If btype=15 Then btype=11	
+	;IsGeneralCommand=False
+	
+	If btype=15
+		;IsGeneralCommand=True
+		Return CreateGeneralCommandTextMesh(col1)
+		
+		btype=11
+	EndIf
 	
 	If btype>=5 And btype<10
 		col3=col1
@@ -18313,7 +18323,57 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 	
 	EntityTexture Entity,ButtonTexture
 	
-	Return ENtity
+;	If IsGeneralCommand
+;	
+;		ExtraEntity=CreateGeneralCommandTextMesh(col1)
+;
+;		EntityParent ExtraEntity,Entity
+;	
+;	EndIf
+	
+	Return Entity
+
+End Function
+
+Function CreateGeneralCommandTextMesh(col1)
+
+	ExtraEntity=CreateMesh()
+	Surface=CreateSurface(ExtraEntity)
+	
+	Command$=col1
+	
+	r=GetCommandColor(col1,0)
+	g=GetCommandColor(col1,1)
+	b=GetCommandColor(col1,2)
+	
+	scaling#=0.3
+	xsize#=scaling#
+	ysize#=scaling#
+	
+	;outlinesize#=0.01
+	
+	For i=1 To Len(Command$)
+		let=Asc(Mid$(Command$,i,1))-32
+		letternumber=(i-1)
+		x#=-xsize#*(Len(Command$)-1)*0.5+(i-1)*xsize#
+		y#=-ysize#*0.5
+		z#=-0.015
+		AddTextToSurface(Surface,letternumber,let,x#,y#,z#,0.5*scaling#)
+		
+		; Outline.
+		;AddTextToSurface(Surface,letternumber+1,let,x#-outlinesize#,y#-outlinesize#,z#-0.005,0.5*(scaling#+outlinesize))
+		;ColorText(Surface,letternumber,r,g,b,1.0)
+	Next
+	
+	EntityColor ExtraEntity,r,g,b
+	
+	RotateMesh ExtraEntity,90,0,0
+	
+	EntityTexture ExtraEntity,TextTexture
+	
+	UpdateNormals ExtraEntity
+	
+	Return ExtraEntity
 
 End Function
 
@@ -19398,11 +19458,8 @@ End Function
 
 Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
-	CharWidth#=0.045 ;1/LetterWidth
-	CharHeight#=0.05 ;1/LetterHeight
 	For i=1 To Len(mytext$)
 		let=Asc(Mid$(mytext$,i,1))-32
-		;AddLetter(let,-.97+(x+(i-1)*widthmult)*.045,.5-(y-4+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
 		AddLetter(let,-.97+(x+(i-1)*widthmult)*CharWidth#,.5-(y-4+j)*CharHeight#,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
 	Next
 	
@@ -22832,8 +22889,8 @@ Function DialogMainLoop()
 	DisplayText2("I",41,5,130,130,255)
 	DisplayText2("V",43,5,255,100,255)
 	DisplayText2("R",39,6,Rand(0,255),Rand(0,255),Rand(0,255))
-	DisplayText2("B",41,6,150+105*Sin(DialogTimer*8),150+105*Sin(DialogTimer*8),150+105*Sin(DialogTimer*8))
-	DisplayText2("W",43,6,150+105*Sin(DialogTimer*8),60,60)
+	DisplayText2("B",41,6,GetAnimatedFlashing(DialogTimer),GetAnimatedFlashing(DialogTimer),GetAnimatedFlashing(DialogTimer))
+	DisplayText2("W",43,6,GetAnimatedFlashing(DialogTimer),60,60)
 	
 	DisplayText2("NO SH",39,7,255,255,255)
 	DisplayText2("JI WA",39,8,255,255,255)
@@ -22972,11 +23029,11 @@ Function DialogMainLoop()
 						DialogCurrentGreen=Rand(0,255)
 						DialogCurrentBlue=Rand(0,255)
 					Case "CBLI"
-						DialogCurrentRed=150+105*Sin(DialogTimer*8)
-						DialogCurrentGreen=150+105*Sin(DialogTimer*8)
-						DialogCurrentBlue=150+105*Sin(DialogTimer*8)
+						DialogCurrentRed=GetAnimatedFlashing(DialogTimer)
+						DialogCurrentGreen=GetAnimatedFlashing(DialogTimer)
+						DialogCurrentBlue=GetAnimatedFlashing(DialogTimer)
 					Case "CWAR"
-						DialogCurrentRed=150+105*Sin(DialogTimer*8)
+						DialogCurrentRed=GetAnimatedFlashing(DialogTimer)
 						DialogCurrentGreen=60
 						DialogCurrentBlue=60
 					Case "ENON"
@@ -24898,6 +24955,77 @@ Function GetDirectionString$(DisplayedRotation)
 		Return DisplayedRotation
 	EndIf
 
+End Function
+
+Function GetCommandColor(id,index)
+
+	dark=100
+
+	Select id
+	Case 5 ; death
+		r=GetAnimatedFlashing(LevelTimer)
+		g=60
+		b=60
+	Case 7,8,102,103,104,115 ; change level
+		; red
+		r=255
+		g=0
+		b=0
+	Case 21,22,23,24,25,26,27,28,29,30 ; dialogs
+		; orange
+		r=255
+		g=dark
+		b=0
+	Case 61,62,63,64,65 ; NPC manipulation
+		; yellow
+		r=255
+		g=255
+		b=0
+	Case 1,3 ; change object interactivity
+		; green
+		r=0
+		g=255
+		b=0
+	Case 2;,5
+		; dark green
+		r=0
+		g=dark
+		b=0
+	Case 6,9,10,11,12,13 ; environment
+		; blue
+		r=0
+		g=dark ;255
+		b=255
+	Case 41,42 ; object spawning
+		; indigo
+		r=0
+		g=0
+		b=255
+	Case 4,51,52 ; alter object attributes / dark magic
+		; purple
+		r=255
+		g=0
+		b=255
+	Case 111,112,113,114,116,117 ; global state
+		; white
+		r=255
+		g=255
+		b=255
+	Default ; not a valid command
+		; gray
+		r=dark
+		g=dark
+		b=dark
+	End Select
+	
+	If index=0
+		Return r
+	ElseIf index=1
+		Return g
+	Else
+		Return b
+	EndIf
+	
 End Function
 
 Function BuildHub()

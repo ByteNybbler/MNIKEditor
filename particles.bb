@@ -847,8 +847,6 @@ End Function
 Function RenderLetters()
 
 	letternumber=0 ; internal count for triangle creation
-	nudge#=.004 ; push this much inward from texture border to avoid grabbing pieces of neighbour
-	
 	
 	mySurface=TextSurface
 	
@@ -858,37 +856,17 @@ Function RenderLetters()
 	
 		size#=p\size
 		
-		; 8x8 textures
-		; pre-calculuate (u1,v1) and (u2,v2) corner values for speed increase
 		tex=p\Texture
-		u1#=Float(tex Mod 16)*0.0625+nudge
-		u2#=u1+0.0625-2*nudge
-		v1#=Float(Floor(tex/16))*0.125+nudge
-		v2#=v1+0.125-2*nudge
 			
-		; no turning at all
-		; these particles simply "live" in the x/y plane
-		; Very fast. And possibly useful for certain types of particles
-		; and if particlemesh is a child of the camera
-		AddVertex (mySurface,p\x-size,p\y+2*size,p\z,u1,v1)
-		AddVertex (mySurface,p\x+size,p\y-2*size,p\z,u2,v2)
-		AddVertex (mySurface,p\x+size,p\y+2*size,p\z,u2,v1)
-		AddVertex (mySurface,p\x-size,p\y-2*size,p\z,u1,v2)
-	
-						
-		; *** Note again that in order to lower the need for TForms in case zero, I've switched
-		; the usual order of the quad vertices - upper/left, lower/right, then upper/right and lower/left
-		AddTriangle (mySurface,letternumber*4+0,letternumber*4+2,letternumber*4+3)
-		AddTriangle (mySurface,letternumber*4+2,letternumber*4+1,letternumber*4+3)
+		AddTextToSurface(mySurface,letternumber,tex,p\x,p\y,p\z,size#)
 		
 		If p\Lifespan>0
 			alpha#=Float(p\Timer)/Float(p\Lifespan)
 		Else 
-			alpha#=1.0	
+			alpha#=1.0
 		EndIf
-		For j=0 To 3
-			VertexColor mySurface,letternumber*4+j,p\red,p\green,p\blue,alpha
-		Next
+		
+		ColorText(mySurface,letternumber,p\red,p\green,p\blue,alpha)
 
 		letternumber=letternumber+1
 		
@@ -896,6 +874,41 @@ Function RenderLetters()
 		
 	Next
 	
+End Function
+
+Function AddTextToSurface(mySurface,letternumber,tex,x#,y#,z#,size#)
+
+	nudge#=.004 ; push this much inward from texture border to avoid grabbing pieces of neighbour
+
+	; 8x8 textures
+	; pre-calculuate (u1,v1) and (u2,v2) corner values for speed increase
+	u1#=Float(tex Mod 16)*0.0625+nudge
+	u2#=u1+0.0625-2*nudge
+	v1#=Float(Floor(tex/16))*0.125+nudge
+	v2#=v1+0.125-2*nudge
+	
+	; no turning at all
+	; these particles simply "live" in the x/y plane
+	; Very fast. And possibly useful for certain types of particles
+	; and if particlemesh is a child of the camera
+	AddVertex (mySurface,x#-size,y#+2*size,z#,u1,v1)
+	AddVertex (mySurface,x#+size,y#-2*size,z#,u2,v2)
+	AddVertex (mySurface,x#+size,y#+2*size,z#,u2,v1)
+	AddVertex (mySurface,x#-size,y#-2*size,z#,u1,v2)
+	
+	; *** Note again that in order to lower the need for TForms in case zero, I've switched
+	; the usual order of the quad vertices - upper/left, lower/right, then upper/right and lower/left
+	AddTriangle (mySurface,letternumber*4+0,letternumber*4+2,letternumber*4+3)
+	AddTriangle (mySurface,letternumber*4+2,letternumber*4+1,letternumber*4+3)
+
+End Function
+
+Function ColorText(mySurface,letternumber,red,green,blue,alpha#)
+
+	For j=0 To 3
+		VertexColor mySurface,letternumber*4+j,red,green,blue,alpha
+	Next
+
 End Function
 
 Function DisplayText(mytext$,x#,y#,size#,spacing#,red,green,blue)
