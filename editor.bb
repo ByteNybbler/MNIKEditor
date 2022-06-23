@@ -18352,18 +18352,7 @@ Function CreateGeneralCommandTextMesh(col1)
 	
 	;outlinesize#=0.01
 	
-	For i=1 To Len(Command$)
-		let=Asc(Mid$(Command$,i,1))-32
-		letternumber=(i-1)
-		x#=-xsize#*(Len(Command$)-1)*0.5+(i-1)*xsize#
-		y#=-ysize#*0.5
-		z#=-0.015
-		AddTextToSurface(Surface,letternumber,let,x#,y#,z#,0.5*scaling#)
-		
-		; Outline.
-		;AddTextToSurface(Surface,letternumber+1,let,x#-outlinesize#,y#-outlinesize#,z#-0.005,0.5*(scaling#+outlinesize))
-		;ColorText(Surface,letternumber,r,g,b,1.0)
-	Next
+	BuildTextSurface(Surface,Command$,xsize#,ysize#,-0.015,scaling#)
 	
 	EntityColor ExtraEntity,r,g,b
 	
@@ -18373,7 +18362,45 @@ Function CreateGeneralCommandTextMesh(col1)
 	
 	UpdateNormals ExtraEntity
 	
+	
+	BackdropEntity=CreateMesh(ExtraEntity)
+	Surface=CreateSurface(BackdropEntity)
+	
+	BuildTextSurface(Surface,Command$,xsize#,ysize#,-0.014,scaling#*2)
+	
+	;radius#=0.45
+	
+	;AddVertex (surface,-radius,0.01,radius)
+	;AddVertex (surface,radius,0.01,radius)
+	;AddVertex (surface,-radius,0.01,-radius)
+	;AddVertex (surface,radius,0.01,-radius)
+	;AddTriangle (surface,0,1,2)
+	;AddTriangle (surface,1,3,2)
+	
+	;EntityAlpha BackdropEntity,0.3
+	
+	EntityColor BackdropEntity,0,0,0
+	
+	RotateMesh BackdropEntity,90,0,0
+	
+	EntityTexture BackdropEntity,TextTexture
+	
+	UpdateNormals BackdropEntity
+	
+	
 	Return ExtraEntity
+
+End Function
+
+Function BuildTextSurface(mySurface,myString$,xsize#,ysize#,z#,scaling#)
+
+	For i=1 To Len(myString$)
+		let=Asc(Mid$(myString$,i,1))-32
+		letternumber=(i-1)
+		x#=-xsize#*(Len(myString$)-1)*0.5+(i-1)*xsize#
+		y#=-ysize#*0.5
+		AddTextToSurface(mySurface,letternumber,let,x#,y#,z#,0.5*scaling#)
+	Next
 
 End Function
 
@@ -24986,22 +25013,22 @@ Function GetCommandColor(id,index)
 		r=0
 		g=255
 		b=0
-	Case 2;,5
+	Case 2
 		; dark green
 		r=0
 		g=dark
 		b=0
 	Case 6,9,10,11,12,13 ; environment
-		; blue
+		; cyan-esque
 		r=0
-		g=dark ;255
-		b=255
-	Case 41,42 ; object spawning
-		; indigo
-		r=0
-		g=0
+		g=120 ;dark ;255
 		b=255
 	Case 4,51,52 ; alter object attributes / dark magic
+		; indigo
+		r=0 ;0
+		g=0
+		b=255
+	Case 41,42 ; object spawning
 		; purple
 		r=255
 		g=0
