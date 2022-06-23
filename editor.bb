@@ -4383,11 +4383,7 @@ Function EditorLocalRendering()
 	Text StartX+20,StartY+2,"Width"
 	Text StartX,StartY+15,"<<"
 	Text StartX+80-16,StartY+15,">>"
-	If LevelWidth>9
-		Text StartX+40-8,StartY+15,Str$(levelWidth)
-	Else 
-		Text StartX+40-16,StartY+15,Str$(levelWidth)
-	EndIf
+	CenteredText(StartX+40,StartY+15,Str$(LevelWidth))
 	
 	StartY=50
 	Color RectOnR,RectOnG,RectOnB
@@ -4396,12 +4392,7 @@ Function EditorLocalRendering()
 	Text StartX+16,StartY+2,"Height"
 	Text StartX,StartY+19,"^^" ; Formerly +15
 	Text StartX+80-16,StartY+15,"vv"
-	If LevelHeight>9
-		Text StartX+40-8,StartY+15,Str$(LevelHeight)
-	Else 
-		Text StartX+40-16,StartY+15,Str$(LevelHeight)
-	EndIf
-	
+	CenteredText(StartX+40,StartY+15,Str$(LevelHeight))
 	
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text SidebarX+150-7*4,SidebarY+290,"OBJECTS"
