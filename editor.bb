@@ -26049,6 +26049,12 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
 		
+	Case 471 ; Wraith
+		CurrentObject\Attributes\MovementType=0
+		CurrentObject\Attributes\MovementSpeed=20+5*CurrentObject\Attributes\Data0
+		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
+		
 	Default
 		Return False
 	End Select
