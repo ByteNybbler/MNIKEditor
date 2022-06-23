@@ -20208,7 +20208,7 @@ Function AdventureSelectScreen()
 End Function
 Function AdventureSelectScreen2()
 
-	MX=MouseX()
+	mx=MouseX()
 	my=MouseY()
 	StartY=LetterHeight*9
 	If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
@@ -20282,65 +20282,76 @@ Function AdventureSelectScreen2()
 		DisplayText2("CANCEL",19,15,155,155,155)
 	EndIf
 
-	If MouseDown(1)
-		If selected=0 And AdventureCurrentArchive=0 Or AdventureCurrentArchive=3
-			If hubmode
-				HubFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
-				StartHub()
-			Else
-				AdventureFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
-				MasterDialogListStart=0
-				MasterLevelListStart=0
-				StartMaster()
-			EndIf
-			Repeat
-			Until MouseDown(1)=0
+	If MouseDown(1) And Selected<>-1
+		Repeat
+		Until MouseDown(1)=0
+		
+		; Check again to make sure the mouse is still on the button.
+		OldSelected=Selected
+		
+		mx=MouseX()
+		my=MouseY()
+		
+		If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
+			Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
+		Else 
+			Selected=-1
 		EndIf
-
-		If selected=1
-			ex$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
-			
-			FromDir$=GetAdventureDir$()
-			If adventurecurrentarchive=0
-				ToDir$=GlobalDirName$+"\Custom\Editing\Archive\"+ex$
-			Else
-				ToDir$=GlobalDirName$+"\Custom\Editing\Current\"+ex$
-			EndIf
-			
-			CreateDir ToDir$
-			dirfile=ReadDir(FromDir$)
-			Repeat
-				ex2$=NextFile$(dirfile)
-				If ex2$<>"" And ex2$<>"." And ex2$<>".."
-					CopyFile FromDir$+ex2$,ToDir$+"\"+ex2$
-					
-					If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
-						DeleteFile FromDir$+"\"+ex2$
-					EndIf
+		
+		If Selected=OldSelected
+			If selected=0 And AdventureCurrentArchive=0 Or AdventureCurrentArchive=3
+				If hubmode
+					HubFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+					StartHub()
+				Else
+					AdventureFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+					MasterDialogListStart=0
+					MasterLevelListStart=0
+					StartMaster()
 				EndIf
-			Until ex2$=""
-			CloseDir dirfile
-			
-			If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
-				DeleteDir FromDir$
+				Repeat
+				Until MouseDown(1)=0
 			EndIf
-			
-			GetAdventures()
-			
-			SetEditorMode(5)
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-		If selected=2 And AdventureCurrentArchive=0
-			SetEditorMode(7)
-			Repeat
-			Until MouseDown(1)=0
-		EndIf
-
-		If selected=3
-			SetEditorMode(5)
-			Repeat
-			Until MouseDown(1)=0
+	
+			If selected=1
+				ex$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+				
+				FromDir$=GetAdventureDir$()
+				If adventurecurrentarchive=0
+					ToDir$=GlobalDirName$+"\Custom\Editing\Archive\"+ex$
+				Else
+					ToDir$=GlobalDirName$+"\Custom\Editing\Current\"+ex$
+				EndIf
+				
+				CreateDir ToDir$
+				dirfile=ReadDir(FromDir$)
+				Repeat
+					ex2$=NextFile$(dirfile)
+					If ex2$<>"" And ex2$<>"." And ex2$<>".."
+						CopyFile FromDir$+ex2$,ToDir$+"\"+ex2$
+						
+						If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
+							DeleteFile FromDir$+"\"+ex2$
+						EndIf
+					EndIf
+				Until ex2$=""
+				CloseDir dirfile
+				
+				If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
+					DeleteDir FromDir$
+				EndIf
+				
+				GetAdventures()
+				
+				SetEditorMode(5)
+			EndIf
+			If selected=2 And AdventureCurrentArchive=0
+				SetEditorMode(7)
+			EndIf
+	
+			If selected=3
+				SetEditorMode(5)
+			EndIf
 		EndIf
 	EndIf
 			
