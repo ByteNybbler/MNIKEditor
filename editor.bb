@@ -805,14 +805,16 @@ CurrentObject\Attributes=New GameObjectAttributes
 CurrentObject\Position=New GameObjectPosition
 
 Dim LevelObjects.GameObject(MaxNofObjects)
-Dim BrushObjects.GameObjectAttributes(MaxNofObjects)
+Dim BrushObjectModels.GameObjectModel(MaxNofObjects)
+Dim BrushObjectAttributes.GameObjectAttributes(MaxNofObjects)
 
 For i=0 To MaxNofObjects
 	LevelObjects.GameObject(i)=New GameObject
 	LevelObjects.GameObject(i)\Model=New GameObjectModel
 	LevelObjects.GameObject(i)\Attributes=New GameObjectAttributes
 	LevelObjects.GameObject(i)\Position=New GameObjectPosition
-	BrushObjects.GameObjectAttributes(i)=New GameObjectAttributes
+	BrushObjectModels.GameObjectModels(i)=New GameObjectModel
+	BrushObjectAttributes.GameObjectAttributes(i)=New GameObjectAttributes
 Next
 
 
@@ -9552,31 +9554,33 @@ Function ShouldBeInvisibleInGame(Attributes.GameObjectAttributes)
 End Function
 
 
-Function HideEntityAndAccessories(Obj.GameObject)
+Function HideObjectModel(Model.GameObjectModel)
 
-	If Obj\Model\Entity>0
-		HideEntity Obj\Model\Entity
+	If Model\Entity>0
+		HideEntity Model\Entity
 	EndIf
-	If Obj\Model\HatEntity>0
-		HideEntity Obj\Model\HatEntity
+	If Model\HatEntity>0
+		HideEntity Model\HatEntity
 	EndIf
-	If Obj\Model\AccEntity>0
-		HideEntity Obj\Model\AccEntity
+	If Model\AccEntity>0
+		HideEntity Model\AccEntity
 	EndIf
 
 End Function
 
 
-Function ShowEntityAndAccessories(Obj.GameObject)
+Function ShowObjectModel(Obj.GameObject)
 
-	If Obj\Model\Entity>0
-		ShowEntity Obj\Model\Entity
+	Model.GameObjectModel=Obj\Model
+	
+	If Model\Entity>0
+		ShowEntity Model\Entity
 	EndIf
-	If Obj\Model\HatEntity>0
-		ShowEntity Obj\Model\HatEntity
+	If Model\HatEntity>0
+		ShowEntity Model\HatEntity
 	EndIf
-	If Obj\Model\AccEntity>0
-		ShowEntity Obj\Model\AccEntity
+	If Model\AccEntity>0
+		ShowEntity Model\AccEntity
 	EndIf
 	
 	UpdateObjectAlpha(Obj)
@@ -9602,12 +9606,12 @@ End Function
 Function UpdateObjectVisibility(Obj.GameObject)
 
 	If ShowObjectMesh=0 Or IDFilterShouldHide(Obj\Attributes)
-		HideEntityAndAccessories(Obj)
+		HideObjectModel(Obj\Model)
 	Else
 		If SimulationLevel>=2 And ShouldBeInvisibleInGame(Obj\Attributes)
-			HideEntityAndAccessories(Obj)
+			HideObjectModel(Obj\Model)
 		Else
-			ShowEntityAndAccessories(Obj)
+			ShowObjectModel(Obj)
 		EndIf
 	EndIf
 
@@ -10246,7 +10250,7 @@ End Function
 
 Function GrabObjectFromBrush(i)	
 
-	CopyObjectAttributes(BrushObjects(i),CurrentObject\Attributes)
+	CopyObjectAttributes(BrushObjectAttributes(i),CurrentObject\Attributes)
 		
 	BuildCurrentObjectModel()
 
@@ -10330,7 +10334,7 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 
 End Function
 
-Function FreeModel(Model.GameObjectModel)
+Function FreeObjectModel(Model.GameObjectModel)
 
 	If Model\Entity>0 
 		FreeEntity Model\Entity
@@ -10364,7 +10368,7 @@ Function FreeObject(i)
 
 	Obj.GameObject=LevelObjects(i)
 
-	FreeModel(Obj\Model)
+	FreeObjectModel(Obj\Model)
 	
 	tilex=Obj\Position\TileX
 	tiley=Obj\Position\TileY
@@ -10383,10 +10387,10 @@ Function DeleteObject(i)
 
 	FreeObject(i)
 	
-	;ShowMessage("Copying object data...", 100)
+	;ShowMessage("Moving object data...", 100)
 
 	For j=i+1 To NofObjects-1
-		CopyObjectData(j,j-1)
+		MoveObjectData(j,j-1)
 	Next
 
 	;ShowMessage("Setting current grabbed object...", 100)
@@ -10479,24 +10483,12 @@ Function DeleteObjectAt(x,y)
 
 End Function
 
-Function CopyObjectData(Source,Dest)
+Function MoveObjectData(Source,Dest)
 
 	ObjSource.GameObject=LevelObjects(Source)
 	ObjDest.GameObject=LevelObjects(Dest)
 
-	ObjDest\Model\Entity=ObjSource\Model\Entity
-	ObjDest\Model\Texture=ObjSource\Model\Texture
-	ObjDest\Model\HatEntity=ObjSource\Model\HatEntity
-	ObjDest\Model\AccEntity=ObjSource\Model\AccEntity
-	ObjDest\Model\HatTexture=ObjSource\Model\HatTexture
-	ObjDest\Model\AccTexture=ObjSource\Model\AccTexture
-	; making sure there is no aliasing since that previously caused occasional MAVs
-	ObjSource\Model\Entity=0
-	ObjSource\Model\Texture=0
-	ObjSource\Model\HatEntity=0
-	ObjSource\Model\AccEntity=0
-	ObjSource\Model\HatTexture=0
-	ObjSource\Model\AccTexture=0
+	MoveObjectModel(ObjSource\Model,ObjDest\Model)
 	
 	
 	CopyObjectAttributes(ObjSource\Attributes,ObjDest\Attributes)
@@ -10507,8 +10499,26 @@ Function CopyObjectData(Source,Dest)
 	;Next
 	
 	ObjectPositionMarker(Dest)=ObjectPositionMarker(Source)
-
 	
+End Function
+
+
+Function MoveObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
+
+	Dest\Entity=Source\Entity
+	Dest\Texture=Source\Texture
+	Dest\HatEntity=Source\HatEntity
+	Dest\AccEntity=Source\AccEntity
+	Dest\HatTexture=Source\HatTexture
+	Dest\AccTexture=Source\AccTexture
+	; making sure there is no aliasing since that previously caused occasional MAVs
+	Source\Entity=0
+	Source\Texture=0
+	Source\HatEntity=0
+	Source\AccEntity=0
+	Source\HatTexture=0
+	Source\AccTexture=0
+
 End Function
 
 
@@ -10527,7 +10537,35 @@ Function CopyObjectDataToBrush(Source,Dest,XOffset,YOffset)
 	;BrushObjectTileX2(Dest)=ObjectTileX2(Source)
 	;BrushObjectTileY2(Dest)=ObjectTileY2(Source)
 	
-	CopyObjectAttributes(LevelObjects(Source)\Attributes,BrushObjects(Dest))
+	CopyObjectAttributes(LevelObjects(Source)\Attributes,BrushObjectAttributes(Dest))
+	CopyObjectModel(LevelObjects(Source)\Model,BrushObjectModels(Dest))
+	HideObjectModel(BrushObjectModels(Dest))
+
+End Function
+
+
+Function CopyObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
+
+	FreeObjectModel(Dest)
+	
+	If Source\Entity>0
+		Dest\Entity=CopyEntity(Source\Entity)
+	EndIf
+	If Source\Texture>0
+		Dest\Texture=0 ;Source\Texture
+	EndIf
+	If Source\HatEntity>0
+		Dest\HatEntity=CopyEntity(Source\HatEntity)
+	EndIf
+	If Source\AccEntity>0
+		Dest\AccEntity=CopyEntity(Source\AccEntity)
+	EndIf
+	If Source\HatTexture>0
+		Dest\HatTexture=0 ;Source\HatTexture
+	EndIf
+	If Source\AccTexture>0
+		Dest\AccTexture=0 ;Source\AccTexture
+	EndIf
 
 End Function
 
@@ -10570,7 +10608,7 @@ Function PasteObjectData(Dest)
 	;	ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
 	;Next
 	
-	FreeModel(LevelObjects(Dest)\Model)
+	FreeObjectModel(LevelObjects(Dest)\Model)
 	
 	UpdateObjectEntityToCurrent(Dest)
 	
@@ -14953,7 +14991,7 @@ End Function
 
 Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 
-	FreeModel(Obj\Model)
+	FreeObjectModel(Obj\Model)
 	
 	
 
@@ -17016,7 +17054,7 @@ Function UpdateLevelObjectModel(Dest)
 
 	;ShowMessage("Freeing object model "+Dest+": "+ObjectModelName$(Dest),10)
 
-	FreeModel(LevelObjects(Dest)\Model)
+	FreeObjectModel(LevelObjects(Dest)\Model)
 	
 	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),10)
 	
