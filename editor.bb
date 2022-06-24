@@ -3786,12 +3786,17 @@ Function FloodFillInitializeState(StartX,StartY)
 		Next
 	Next
 	
-	SetLevelTileAsTarget(StartX,StartY)
-	FloodStackX(0)=StartX
-	FloodStackY(0)=StartY
-	LevelTileVisited(StartX,StartY)=True
-	FloodElementCount=1
 	FloodedElementsClear()
+	
+	If IsPositionInLevel(StartX,StartY)
+		SetLevelTileAsTarget(StartX,StartY)
+		FloodStackX(0)=StartX
+		FloodStackY(0)=StartY
+		LevelTileVisited(StartX,StartY)=True
+		FloodElementCount=1
+	Else
+		FloodElementCount=0
+	EndIf
 
 End Function
 
