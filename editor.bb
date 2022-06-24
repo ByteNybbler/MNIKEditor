@@ -1426,13 +1426,9 @@ Function AddSquareToBrushSurface(i,j,y#)
 
 End Function
 
-Function AddTileToBrushSurfaceActual(i,j)
+Function AddTileToBrushSurfaceActual(x,y)
 
-	AddSquareToBrushSurface(i,j,0.0)
-	Y#=LevelTileExtrusion(i,j)+LevelTileHeight(i,j)
-	If Y#<>0.0
-		AddSquareToBrushSurface(i,j,Y#)
-	EndIf
+	AddSquareToBrushSurface(x,y,0.0)
 	
 	If EditorMode=3
 		BrushXStart=GetBrushXStart()
@@ -1442,9 +1438,9 @@ Function AddTileToBrushSurfaceActual(i,j)
 		For i=0 To BrushWidth-1
 			For j=0 To BrushHeight-1
 				For k=0 To NofBrushObjects-1
-					x=BrushSpaceWrapX(i+OffsetX)
-					y=BrushSpaceWrapY(j+OffsetY)
-					If BrushObjectTileXOffset(k)=x And BrushObjectTileYOffset(k)=y
+					BrushSpaceX=BrushSpaceWrapX(i+OffsetX)
+					BrushSpaceY=BrushSpaceWrapY(j+OffsetY)
+					If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
 						If NofPreviewObjects<MaxNofObjects-NofObjects
 							Preview=CopyEntity(BrushObjectModels(k)\Entity)
 							EntityAlpha Preview,0.2
@@ -1457,6 +1453,13 @@ Function AddTileToBrushSurfaceActual(i,j)
 			Next
 		Next
 	EndIf
+	
+	If IsPositionInLevel(x,y)
+		SquareHeight#=LevelTileExtrusion(x,y)+LevelTileHeight(x,y)
+		If SquareHeight#<>0.0
+			AddSquareToBrushSurface(x,y,SquareHeight#)
+		EndIf
+	EndIf
 
 End Function
 
@@ -1465,23 +1468,18 @@ Function AddTileToBrushSurface(i,j)
 	If BrushMode=BrushModeSetMirror
 		Return
 	EndIf
-	
-	If (Not IsPositionInLevel(i,j))
-		AddSquareToBrushSurface(i,j,0.0)
-		Return
-	EndIf
 
 	AddTileToBrushSurfaceActual(i,j)
 	
 	If DupeMode=DupeModeX
-		TargetX=MirrorAcrossInt(BrushCursorX,MirrorPositionX)
+		TargetX=MirrorAcrossInt(i,MirrorPositionX)
 		AddTileToBrushSurfaceActual(TargetX,j)
 	ElseIf DupeMode=DupeModeY
-		TargetY=MirrorAcrossInt(BrushCursorY,MirrorPositionY)
+		TargetY=MirrorAcrossInt(j,MirrorPositionY)
 		AddTileToBrushSurfaceActual(i,TargetY)
 	ElseIf DupeMode=DupeModeXPlusY
-		TargetX=MirrorAcrossInt(BrushCursorX,MirrorPositionX)
-		TargetY=MirrorAcrossInt(BrushCursorY,MirrorPositionY)
+		TargetX=MirrorAcrossInt(i,MirrorPositionX)
+		TargetY=MirrorAcrossInt(j,MirrorPositionY)
 		AddTileToBrushSurfaceActual(TargetX,j)
 		AddTileToBrushSurfaceActual(i,TargetY)
 		AddTileToBrushSurfaceActual(TargetX,TargetY)
