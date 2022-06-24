@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/24/22"
+Global VersionDate$="06/25/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -740,9 +740,23 @@ Dim SimulatedObjectScaleXAdjust#(1000),SimulatedObjectScaleYAdjust#(1000),Simula
 
 Type GameObject
 
-Field Entity,Texture,HatEntity,HatTexture,AccEntity,AccTexture
+Field Model.GameObjectModel
 Field Attributes.GameObjectAttributes
 Field Position.GameObjectPosition
+
+End Type
+
+
+Type GameObjectModel
+
+Field Entity
+Field Texture
+
+Field HatEntity
+Field HatTexture
+
+Field AccEntity
+Field AccTexture
 
 End Type
 
@@ -786,6 +800,7 @@ End Type
 
 
 Global CurrentObject.GameObject=New GameObject
+CurrentObject\Model=New GameObjectModel
 CurrentObject\Attributes=New GameObjectAttributes
 CurrentObject\Position=New GameObjectPosition
 
@@ -794,6 +809,7 @@ Dim BrushObjects.GameObjectAttributes(MaxNofObjects)
 
 For i=0 To MaxNofObjects
 	LevelObjects.GameObject(i)=New GameObject
+	LevelObjects.GameObject(i)\Model=New GameObjectModel
 	LevelObjects.GameObject(i)\Attributes=New GameObjectAttributes
 	LevelObjects.GameObject(i)\Position=New GameObjectPosition
 	BrushObjects.GameObjectAttributes(i)=New GameObjectAttributes
@@ -3189,7 +3205,7 @@ End Function
 Function AnimateColors(Obj.GameObject)
 
 	If Obj\Attributes\LogicType=90 And Obj\Attributes\LogicSubType=15 And Obj\Attributes\Data0=5 ; General Command 5
-		EntityColor Obj\Entity,GetAnimatedFlashing(LevelTimer),60,60
+		EntityColor Obj\Model\Entity,GetAnimatedFlashing(LevelTimer),60,60
 	ElseIf Obj\Attributes\LogicType=200 And Obj\Attributes\Data0=8
 		; Animate Rainbow Magic
 		For i=0 To 3
@@ -3197,7 +3213,7 @@ Function AnimateColors(Obj.GameObject)
 		    green=GetAnimatedRainbowGreen()
 		    blue=GetAnimatedRainbowBlue()
 			
-		    VertexColor GetSurface(Obj\Entity,1),i,red,green,blue
+		    VertexColor GetSurface(Obj\Model\Entity,1),i,red,green,blue
 		Next
 	EndIf
 
@@ -5260,7 +5276,7 @@ Function EditorLocalControls()
 			Color TextLevelR,TextLevelG,TextLevelB
 			LevelTextureCustomName$=Input$( "Custom Texture Name (e.g. 'customtemplate'):")
 			
-			If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
+			If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
 				Locate 0,0
 				Color 0,0,0
 				Rect 0,0,500,40,True
@@ -9440,10 +9456,10 @@ Function PlaceObjectActual(x#,y#)
 	
 	SetObjectPosition(NofObjects,x#,y#)
 	
-	NewObject\HatEntity=0
-	NewObject\HatTexture=0
-	NewObject\AccEntity=0
-	NewObject\AccTexture=0
+	NewObject\Model\HatEntity=0
+	NewObject\Model\HatTexture=0
+	NewObject\Model\AccEntity=0
+	NewObject\Model\AccTexture=0
 
 	NewObject\Position\OldX#=-999
 	NewObject\Position\OldY#=-999
@@ -9538,14 +9554,14 @@ End Function
 
 Function HideEntityAndAccessories(Obj.GameObject)
 
-	If Obj\Entity>0
-		HideEntity Obj\Entity
+	If Obj\Model\Entity>0
+		HideEntity Obj\Model\Entity
 	EndIf
-	If Obj\HatEntity>0
-		HideEntity Obj\HatEntity
+	If Obj\Model\HatEntity>0
+		HideEntity Obj\Model\HatEntity
 	EndIf
-	If Obj\AccEntity>0
-		HideEntity Obj\AccEntity
+	If Obj\Model\AccEntity>0
+		HideEntity Obj\Model\AccEntity
 	EndIf
 
 End Function
@@ -9553,14 +9569,14 @@ End Function
 
 Function ShowEntityAndAccessories(Obj.GameObject)
 
-	If Obj\Entity>0
-		ShowEntity Obj\Entity
+	If Obj\Model\Entity>0
+		ShowEntity Obj\Model\Entity
 	EndIf
-	If Obj\HatEntity>0
-		ShowEntity Obj\HatEntity
+	If Obj\Model\HatEntity>0
+		ShowEntity Obj\Model\HatEntity
 	EndIf
-	If Obj\AccEntity>0
-		ShowEntity Obj\AccEntity
+	If Obj\Model\AccEntity>0
+		ShowEntity Obj\Model\AccEntity
 	EndIf
 	
 	UpdateObjectAlpha(Obj)
@@ -9601,9 +9617,9 @@ End Function
 Function UpdateObjectAlpha(Obj.GameObject)
 
 	If Obj\Attributes\ModelName$="!NPC" Or Obj\Attributes\ModelName$="!Tentacle"
-		Entity=GetChild(Obj\Entity,3)
+		Entity=GetChild(Obj\Model\Entity,3)
 	Else
-		Entity=Obj\Entity
+		Entity=Obj\Model\Entity
 	EndIf
 
 	EntityAlpha Entity,BaseObjectAlpha#(Obj\Attributes)
@@ -9706,7 +9722,7 @@ Function UpdateObjectPosition(Dest)
 
 	Obj.GameObject=LevelObjects(Dest)
 
-	SetEntityPositionToObjectPosition(Obj\Entity, Obj)
+	SetEntityPositionToObjectPosition(Obj\Model\Entity, Obj)
 	
 	;PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
 	
@@ -9718,11 +9734,11 @@ Function UpdateObjectPosition(Dest)
 ;		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 ;	EndIf
 	
-	If Obj\HatEntity>0
-		TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
+	If Obj\Model\HatEntity>0
+		TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 	EndIf
-	If Obj\AccEntity>0
-		TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
+	If Obj\Model\AccEntity>0
+		TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 	EndIf
 	
 	PositionObjectPositionMarker(Dest)
@@ -9737,43 +9753,43 @@ End Function
 Function UpdateObjectEntityToCurrent(Dest)
 	
 	Obj.GameObject=LevelObjects(Dest)
-	Obj\Entity=CopyEntity(CurrentObject\Entity)
+	Obj\Model\Entity=CopyEntity(CurrentObject\Model\Entity)
 	
 	UpdateObjectVisibility(Obj)
 	
-	If CurrentObject\HatEntity>0
+	If CurrentObject\Model\HatEntity>0
 	
-		Obj\HatEntity=CreateAccEntity(CurrentObject\Attributes\Data2)
-		Obj\HatTexture=CreateHatTexture(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
+		Obj\Model\HatEntity=CreateAccEntity(CurrentObject\Attributes\Data2)
+		Obj\Model\HatTexture=CreateHatTexture(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		
-		ScaleEntity Obj\HatEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
+		ScaleEntity Obj\Model\HatEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
 		
 		;RotateEntity ObjectHatEntity(Dest),0,0,0
 		;TurnEntity ObjectHatEntity(Dest),CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
 		;TurnEntity ObjectHatEntity(Dest),0,CurrentObject\Attributes\YawAdjust-90,0
 	
-		If Obj\HatTexture=0
-			EntityColor Obj\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
+		If Obj\Model\HatTexture=0
+			EntityColor Obj\Model\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture Obj\HatEntity,Obj\HatTexture
+			EntityTexture Obj\Model\HatEntity,Obj\Model\HatTexture
 		EndIf
 	EndIf
 	
-	If CurrentObject\AccEntity>0
-		Obj\AccEntity=CreateAccEntity(CurrentObject\Attributes\Data4)
-		Obj\AccTexture=CreateGlassesTexture(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
+	If CurrentObject\Model\AccEntity>0
+		Obj\Model\AccEntity=CreateAccEntity(CurrentObject\Attributes\Data4)
+		Obj\Model\AccTexture=CreateGlassesTexture(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
 	
 	
-		ScaleEntity Obj\AccEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
+		ScaleEntity Obj\Model\AccEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
 		
 		;RotateEntity ObjectAccEntity(Dest),0,0,0
 		;TurnEntity ObjectAccEntity(Dest),CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
 		;TurnEntity ObjectAccEntity(Dest),0,CurrentObject\Attributes\YawAdjust-90,0
 	
-		If Obj\AccTexture=0
-			EntityColor Obj\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
+		If Obj\Model\AccTexture=0
+			EntityColor Obj\Model\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture Obj\AccEntity,Obj\AccTexture
+			EntityTexture Obj\Model\AccEntity,Obj\Model\AccTexture
 		EndIf
 	EndIf
 	
@@ -9787,7 +9803,7 @@ End Function
 Function UpdateObjectAnimation(Obj.GameObject)
 
 	ModelName$=Obj\Attributes\ModelName$
-	Entity=Obj\Entity
+	Entity=Obj\Model\Entity
 
 	If ModelName$="!BabyBoomer"
 		AnimateMD2 Entity,0,.2,1,2
@@ -9978,7 +9994,7 @@ Function SimulateObjectPosition(Dest)
 	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
 	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
 	
-	Entity=LevelObjects(Dest)\Entity
+	Entity=LevelObjects(Dest)\Model\Entity
 	TheType=LevelObjects(Dest)\Attributes\LogicType
 	
 	SetEntityPositionToWorldPosition(Entity,XP#,YP#,ZP#,TheType,SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest),SimulatedObjectXScale(Dest),SimulatedObjectYScale(Dest))
@@ -9991,7 +10007,7 @@ Function SimulateObjectRotation(Dest)
 	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
 	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
 	
-	Entity=LevelObjects(Dest)\Entity
+	Entity=LevelObjects(Dest)\Model\Entity
 	GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
 	TurnEntity Entity,SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
 	
@@ -10007,7 +10023,7 @@ Function SimulateObjectScale(Dest)
 	YS#=SimulatedObjectYScale(Dest)
 	ZS#=SimulatedObjectZScale(Dest)
 	
-	Entity=LevelObjects(Dest)\Entity
+	Entity=LevelObjects(Dest)\Model\Entity
 	ScaleEntity Entity,XS#,ZS#,YS#
 	
 End Function
@@ -10316,38 +10332,38 @@ End Function
 
 Function FreeModel(Obj.GameObject)
 
-	If Obj\Entity>0
-		FreeEntity Obj\Entity
-		Obj\Entity=0
+	If Obj\Model\Entity>0
+		FreeEntity Obj\Model\Entity
+		Obj\Model\Entity=0
 	EndIf
 	
-	If Obj\Texture>0
-		FreeTexture Obj\Texture
-		Obj\Texture=0
+	If Obj\Model\Texture>0
+		FreeTexture Obj\Model\Texture
+		Obj\Model\Texture=0
 	EndIf
 
 	;ShowMessage("Checking ObjectHatEntity for freeing on "+i+": "+ObjectHatEntity, 1000)
-	If Obj\HatEntity>0
-		FreeEntity Obj\HatEntity
-		Obj\HatEntity=0
+	If Obj\Model\HatEntity>0
+		FreeEntity Obj\Model\HatEntity
+		Obj\Model\HatEntity=0
 	EndIf
 
 	;ShowMessage("Checking ObjectAccEntity for freeing on "+i+": "+ObjectAccEntity, 1000)
-	If Obj\AccEntity>0
-		FreeEntity Obj\AccEntity
-		Obj\AccEntity=0
+	If Obj\Model\AccEntity>0
+		FreeEntity Obj\Model\AccEntity
+		Obj\Model\AccEntity=0
 	EndIf
 	
 	;ShowMessage("Checking ObjectHatTexture for freeing on "+i+": "+ObjectHatTexture, 1000)
-	If Obj\HatTexture>0
-		FreeTexture Obj\HatTexture
-		Obj\HatTexture=0
+	If Obj\Model\HatTexture>0
+		FreeTexture Obj\Model\HatTexture
+		Obj\Model\HatTexture=0
 	EndIf
 
 	;ShowMessage("Checking ObjectAccTexture for freeing on "+i+": "+ObjectAccTexture, 1000)
-	If Obj\AccTexture>0
-		FreeTexture Obj\AccTexture
-		Obj\AccTexture=0
+	If Obj\Model\AccTexture>0
+		FreeTexture Obj\Model\AccTexture
+		Obj\Model\AccTexture=0
 	EndIf
 
 End Function
@@ -10476,19 +10492,19 @@ Function CopyObjectData(Source,Dest)
 	ObjSource.GameObject=LevelObjects(Source)
 	ObjDest.GameObject=LevelObjects(Dest)
 
-	ObjDest\Entity=ObjSource\Entity
-	ObjDest\Texture=ObjSource\Texture
-	ObjDest\HatEntity=ObjSource\HatEntity
-	ObjDest\AccEntity=ObjSource\AccEntity
-	ObjDest\HatTexture=ObjSource\HatTexture
-	ObjDest\AccTexture=ObjSource\AccTexture
+	ObjDest\Model\Entity=ObjSource\Model\Entity
+	ObjDest\Model\Texture=ObjSource\Model\Texture
+	ObjDest\Model\HatEntity=ObjSource\Model\HatEntity
+	ObjDest\Model\AccEntity=ObjSource\Model\AccEntity
+	ObjDest\Model\HatTexture=ObjSource\Model\HatTexture
+	ObjDest\Model\AccTexture=ObjSource\Model\AccTexture
 	; making sure there is no aliasing since that previously caused occasional MAVs
-	ObjSource\Entity=0
-	ObjSource\Texture=0
-	ObjSource\HatEntity=0
-	ObjSource\AccEntity=0
-	ObjSource\HatTexture=0
-	ObjSource\AccTexture=0
+	ObjSource\Model\Entity=0
+	ObjSource\Model\Texture=0
+	ObjSource\Model\HatEntity=0
+	ObjSource\Model\AccEntity=0
+	ObjSource\Model\HatTexture=0
+	ObjSource\Model\AccTexture=0
 	
 	
 	CopyObjectAttributes(ObjSource\Attributes,ObjDest\Attributes)
@@ -14897,47 +14913,47 @@ End Function
 
 Function BuildObjectAccessories(Obj.GameObject)
 
-	If Obj\HatEntity>0
+	If Obj\Model\HatEntity>0
 		
-		If Obj\HatTexture=0
-			EntityColor Obj\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
+		If Obj\Model\HatTexture=0
+			EntityColor Obj\Model\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture Obj\HatEntity,Obj\HatTexture
+			EntityTexture Obj\Model\HatEntity,Obj\Model\HatTexture
 		EndIf
-		ScaleEntity Obj\HatEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
+		ScaleEntity Obj\Model\HatEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
 		
-		;RotateEntity Obj\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
-;		RotateEntity Obj\HatEntity,0,0,0
-;		TurnEntity Obj\HatEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
+		;RotateEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
+;		RotateEntity Obj\Model\HatEntity,0,0,0
+;		TurnEntity Obj\Model\HatEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
 ;		TuObj\Attributes\YawAdjustel,0,Obj\Attributes\YawAdjust-90,0
 		
-		;bone=FindChild(Obj\Entity,"hat_bone")
+		;bone=FindChild(Obj\Model\Entity,"hat_bone")
 	
-;		PositionEntity Obj\HatEntity,0+Obj\Attributes\XAdjust,300+Obj\AttribuObj\Attributes\YawAdjustectZ+.1+.84*Obj\Attributes\ZScale/.035,0-Obj\Attributes\YAdjust
+;		PositionEntity Obj\Model\HatEntity,0+Obj\Attributes\XAdjust,300+Obj\AttribuObj\Attributes\YawAdjustectZ+.1+.84*Obj\Attributes\ZScale/.035,0-Obj\Attributes\YAdjust
 
-		TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
+		TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 
 	EndIf
 	
-	If Obj\AccEntity>0
+	If Obj\Model\AccEntity>0
 		
-		If Obj\AccTexture=0
-			EntityColor Obj\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
+		If Obj\Model\AccTexture=0
+			EntityColor Obj\Model\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture Obj\AccEntity,Obj\AccTexture
+			EntityTexture Obj\Model\AccEntity,Obj\Model\AccTexture
 		EndIf
-		ScaleEntity Obj\AccEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
+		ScaleEntity Obj\Model\AccEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
 		
-		;RotateEntity Obj\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
-;		RotateEntity Obj\AccEntity,0,0,0
-;		TurnEntity Obj\AccEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
-;		TurnEntity Obj\AccEntity,0,Obj\Attributes\YawAdjust-90,0
+		;RotateEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
+;		RotateEntity Obj\Model\AccEntity,0,0,0
+;		TurnEntity Obj\Model\AccEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
+;		TurnEntity Obj\Model\AccEntity,0,Obj\Attributes\YawAdjust-90,0
 		
-		;bone=FindChild(Obj\Entity,"hat_bone")
+		;bone=FindChild(Obj\Model\Entity,"hat_bone")
 	
 		;PositionEntity Obj\Attributes\YawAdjustentAccModel,0+Obj\Attributes\XAdjust,300+Obj\Attributes\ZAdjust+Obj\Position\Z+.1+.84*Obj\Attributes\ZScale/.035,0-Obj\Attributes\YAdjust
 
-		TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
+		TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 
 	EndIf
 
@@ -14945,30 +14961,30 @@ End Function
 
 Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	
-	If Obj\Entity>0 
-		FreeEntity Obj\Entity
-		Obj\Entity=0
+	If Obj\Model\Entity>0 
+		FreeEntity Obj\Model\Entity
+		Obj\Model\Entity=0
 	EndIf
-	If Obj\Texture>0 
-		FreeTexture Obj\Texture
-		Obj\Texture=0
+	If Obj\Model\Texture>0 
+		FreeTexture Obj\Model\Texture
+		Obj\Model\Texture=0
 	EndIf
 	
-	If Obj\HatEntity>0
-		FreeEntity Obj\HatEntity
-		Obj\HatEntity=0
+	If Obj\Model\HatEntity>0
+		FreeEntity Obj\Model\HatEntity
+		Obj\Model\HatEntity=0
 	EndIf
-	If Obj\AccEntity>0
-		FreeEntity Obj\AccEntity
-		Obj\AccEntity=0
+	If Obj\Model\AccEntity>0
+		FreeEntity Obj\Model\AccEntity
+		Obj\Model\AccEntity=0
 	EndIf
-	If Obj\HatTexture>0
-		FreeTexture Obj\HatTexture
-		Obj\HatTexture=0
+	If Obj\Model\HatTexture>0
+		FreeTexture Obj\Model\HatTexture
+		Obj\Model\HatTexture=0
 	EndIf
-	If Obj\AccTexture>0
-		FreeTexture Obj\AccTexture
-		Obj\AccTexture=0
+	If Obj\Model\AccTexture>0
+		FreeTexture Obj\Model\AccTexture
+		Obj\Model\AccTexture=0
 	EndIf
 
 
@@ -14983,7 +14999,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		If Obj\Attributes\LogicSubType=16+32 And Obj\Attributes\Data2=1 Then Obj\Attributes\LogicSubType=17+32
 		If Obj\Attributes\LogicSubType=17+32 And Obj\Attributes\Data2=0 Then Obj\Attributes\LogicSubType=16+32
 
-		Obj\Entity=CreateButtonMesh(Obj\Attributes\LogicSubType,Obj\Attributes\Data0,Obj\Attributes\Data1,Obj\Attributes\Data2,Obj\Attributes\Data3)
+		Obj\Model\Entity=CreateButtonMesh(Obj\Attributes\LogicSubType,Obj\Attributes\Data0,Obj\Attributes\Data1,Obj\Attributes\Data2,Obj\Attributes\Data3)
 		
 		
 	Else If Obj\Attributes\ModelName$="!CustomModel"
@@ -14995,19 +15011,19 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 			
 			Obj\Attributes\TextData0="Default"
 		EndIf
-		Obj\Entity=LoadMesh("UserData\Custom\Models\"+Obj\Attributes\TextData0+".3ds")
-		Obj\Texture=LoadTexture("UserData\Custom\Models\"+Obj\Attributes\TextData0+".jpg")
-		EntityTexture Obj\Entity,Obj\Texture
+		Obj\Model\Entity=LoadMesh("UserData\Custom\Models\"+Obj\Attributes\TextData0+".3ds")
+		Obj\Model\Texture=LoadTexture("UserData\Custom\Models\"+Obj\Attributes\TextData0+".jpg")
+		EntityTexture Obj\Model\Entity,Obj\Model\Texture
 
 		
 	
 	
 	Else If Obj\Attributes\ModelName$="!Teleport"
-		Obj\Entity=CreateTeleporterMesh(Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateTeleporterMesh(Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!Item"
-		Obj\Entity=CreatePickupItemMesh(Obj\Attributes\Data2)
+		Obj\Model\Entity=CreatePickupItemMesh(Obj\Attributes\Data2)
 	Else If Obj\Attributes\ModelName$="!Stinker" Or Obj\Attributes\ModelName$="!NPC"
-		Obj\Entity=CopyEntity(StinkerMesh)
+		Obj\Model\Entity=CopyEntity(StinkerMesh)
 		
 		; possible prevention for the body000A.jpg error
 		If Obj\Attributes\Data0>8 Obj\Attributes\Data0=1
@@ -15018,29 +15034,29 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 		
 		If Obj\Attributes\Data0=5
-			Obj\Texture=Waterfalltexture(0) ;MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
+			Obj\Model\Texture=Waterfalltexture(0) ;MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
 		Else If Obj\Attributes\Data0=6
-			Obj\Texture=Waterfalltexture(1) ;MyLoadTexture("Data\leveltextures\waterfalllava.jpg",1)
+			Obj\Model\Texture=Waterfalltexture(1) ;MyLoadTexture("Data\leveltextures\waterfalllava.jpg",1)
 
 		Else
-			Obj\Texture=MyLoadTexture("data/models/stinker/body00"+Str$(Obj\Attributes\Data0)+Chr$(65+Obj\Attributes\Data1)+".jpg",1)
+			Obj\Model\Texture=MyLoadTexture("data/models/stinker/body00"+Str$(Obj\Attributes\Data0)+Chr$(65+Obj\Attributes\Data1)+".jpg",1)
 		EndIf
-		EntityTexture GetChild(Obj\Entity,3),Obj\Texture
+		EntityTexture GetChild(Obj\Model\Entity,3),Obj\Model\Texture
 		
 		
 		
 		If Obj\Attributes\Data2>0	; hat
-			Obj\HatEntity=CreateAccEntity(Obj\Attributes\Data2)
-			Obj\HatTexture=CreateHatTexture(Obj\Attributes\Data2,Obj\Attributes\Data3)
+			Obj\Model\HatEntity=CreateAccEntity(Obj\Attributes\Data2)
+			Obj\Model\HatTexture=CreateHatTexture(Obj\Attributes\Data2,Obj\Attributes\Data3)
 			
-			;TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
+			;TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 		EndIf
 		
 		If Obj\Attributes\Data4>0 ;100 ; acc
-			Obj\AccEntity=CreateAccEntity(Obj\Attributes\Data4)
-			Obj\AccTexture=CreateGlassesTexture(Obj\Attributes\Data4,Obj\Attributes\Data5)
+			Obj\Model\AccEntity=CreateAccEntity(Obj\Attributes\Data4)
+			Obj\Model\AccTexture=CreateGlassesTexture(Obj\Attributes\Data4,Obj\Attributes\Data5)
 			
-			;TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
+			;TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 		EndIf
 
 		
@@ -15049,216 +15065,216 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	
 	
 	Else If Obj\Attributes\ModelName$="!ColourGate"
-		Obj\Entity=CreateColourGateMesh(Obj\Attributes\Data2,Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateColourGateMesh(Obj\Attributes\Data2,Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!Transporter"
-		Obj\Entity=CreateTransporterMesh(Obj\Attributes\Data0,3)
-		RotateMesh Obj\Entity,0,90*Obj\Attributes\Data2,0
+		Obj\Model\Entity=CreateTransporterMesh(Obj\Attributes\Data0,3)
+		RotateMesh Obj\Model\Entity,0,90*Obj\Attributes\Data2,0
 		
 	Else If Obj\Attributes\ModelName$="!Conveyor"
 		If Obj\Attributes\Data4=4
-			Obj\Entity=CreateCloudMesh(Obj\Attributes\Data0)
+			Obj\Model\Entity=CreateCloudMesh(Obj\Attributes\Data0)
 		Else
-			Obj\Entity=CreateTransporterMesh(Obj\Attributes\Data0,Obj\Attributes\Data4)
+			Obj\Model\Entity=CreateTransporterMesh(Obj\Attributes\Data0,Obj\Attributes\Data4)
 		EndIf
-		RotateMesh Obj\Entity,0,-90*Obj\Attributes\Data2,0
-		If Obj\Attributes\LogicType=46 ScaleMesh Obj\Entity,.5,.5,.5
+		RotateMesh Obj\Model\Entity,0,-90*Obj\Attributes\Data2,0
+		If Obj\Attributes\LogicType=46 ScaleMesh Obj\Model\Entity,.5,.5,.5
 
 	Else If Obj\Attributes\ModelName$="!Autodoor"
-		Obj\Entity=CopyEntity(AutodoorMesh)
+		Obj\Model\Entity=CopyEntity(AutodoorMesh)
 		
 		
 		
 	Else If Obj\Attributes\ModelName$="!Key"
-		Obj\Entity=CreateKeyMesh(Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateKeyMesh(Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!KeyCard" 
-		Obj\Entity=CreateKeyCardMesh(Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateKeyCardMesh(Obj\Attributes\Data0)
 
 		
 	Else If Obj\Attributes\ModelName$="!StinkerWee"
-		Obj\Entity=CopyEntity(StinkerWeeMesh)
-		EntityTexture Obj\Entity,StinkerWeeTexture(Obj\Attributes\Data8+1)
+		Obj\Model\Entity=CopyEntity(StinkerWeeMesh)
+		EntityTexture Obj\Model\Entity,StinkerWeeTexture(Obj\Attributes\Data8+1)
 	Else If Obj\Attributes\ModelName$="!Cage"
-		Obj\Entity=CopyEntity(CageMesh)
+		Obj\Model\Entity=CopyEntity(CageMesh)
 		Else If Obj\Attributes\ModelName$="!StarGate"
-		Obj\Entity=CopyEntity(StarGateMesh)
+		Obj\Model\Entity=CopyEntity(StarGateMesh)
 	Else If Obj\Attributes\ModelName$="!Scritter"
-		Obj\Entity=CopyEntity(ScritterMesh)
-		EntityTexture Obj\Entity,ScritterTexture(Obj\Attributes\Data0)
+		Obj\Model\Entity=CopyEntity(ScritterMesh)
+		EntityTexture Obj\Model\Entity,ScritterTexture(Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!RainbowBubble"
-		Obj\Entity=CreateSphere()
-		;ScaleMesh Obj\Entity,.4,.4,.4
-		;PositionMesh Obj\Entity,0,1,0
-		ScaleMesh Obj\Entity,.5,.5,.5
-		EntityTexture Obj\Entity,Rainbowtexture2
+		Obj\Model\Entity=CreateSphere()
+		;ScaleMesh Obj\Model\Entity,.4,.4,.4
+		;PositionMesh Obj\Model\Entity,0,1,0
+		ScaleMesh Obj\Model\Entity,.5,.5,.5
+		EntityTexture Obj\Model\Entity,Rainbowtexture2
 		
 	Else If Obj\Attributes\ModelName$="!IceBlock"
-		Obj\Entity=CreateIceBlockMesh(Obj\Attributes\Data3)
+		Obj\Model\Entity=CreateIceBlockMesh(Obj\Attributes\Data3)
 		
 	Else If Obj\Attributes\ModelName$="!PlantFloat"
-		Obj\Entity=CreatePlantFloatMesh()
-		;Obj\Entity=CreateSphere()
-		;ScaleMesh Obj\Entity,.4,.1,.4
-;		PositionMesh Obj\Entity,0,1,0
-		;EntityTexture Obj\Entity,Rainbowtexture
+		Obj\Model\Entity=CreatePlantFloatMesh()
+		;Obj\Model\Entity=CreateSphere()
+		;ScaleMesh Obj\Model\Entity,.4,.1,.4
+;		PositionMesh Obj\Model\Entity,0,1,0
+		;EntityTexture Obj\Model\Entity,Rainbowtexture
 		
 	Else If Obj\Attributes\ModelName$="!IceFloat"
-		Obj\Entity=CreateIceFloatMesh()
-		;Obj\Entity=CreateSphere()
-		;ScaleMesh Obj\Entity,.4,.1,.4
-;		PositionMesh Obj\Entity,0,1,0
+		Obj\Model\Entity=CreateIceFloatMesh()
+		;Obj\Model\Entity=CreateSphere()
+		;ScaleMesh Obj\Model\Entity,.4,.1,.4
+;		PositionMesh Obj\Model\Entity,0,1,0
 
 
 
 
 	Else If Obj\Attributes\ModelName$="!Chomper"
-		Obj\Entity=CopyEntity(ChomperMesh)
+		Obj\Model\Entity=CopyEntity(ChomperMesh)
 		If Obj\Attributes\LogicSubType=1 
-			EntityTexture Obj\Entity,WaterChomperTexture
+			EntityTexture Obj\Model\Entity,WaterChomperTexture
 		Else If Obj\Attributes\Data1=3 
-			EntityTexture Obj\Entity,MechaChomperTexture
+			EntityTexture Obj\Model\Entity,MechaChomperTexture
 		Else
-			EntityTexture Obj\Entity,ChomperTexture
+			EntityTexture Obj\Model\Entity,ChomperTexture
 		EndIf
 	Else If Obj\Attributes\ModelName$="!Bowler"
-		Obj\Entity=CopyEntity(BowlerMesh)
+		Obj\Model\Entity=CopyEntity(BowlerMesh)
 		Direction=Obj\Attributes\Data0
 		If Obj\Attributes\Data1<>2
 			Direction=Direction*2
 		EndIf
 		Obj\Attributes\YawAdjust=(-45*Direction +3600) Mod 360
 	Else If Obj\Attributes\ModelName$="!Turtle"
-		Obj\Entity=CopyEntity(TurtleMesh)
+		Obj\Model\Entity=CopyEntity(TurtleMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 	Else If Obj\Attributes\ModelName$="!Thwart"
-		Obj\Entity=CopyEntity(ThwartMesh)
-		EntityTexture Obj\Entity,ThwartTexture(Obj\Attributes\Data2)
+		Obj\Model\Entity=CopyEntity(ThwartMesh)
+		EntityTexture Obj\Model\Entity,ThwartTexture(Obj\Attributes\Data2)
 	Else If Obj\Attributes\ModelName$="!Tentacle"
-		Obj\Entity=CopyEntity(TentacleMesh)
-		Animate GetChild(Obj\Entity,3),1,.1,1,0
+		Obj\Model\Entity=CopyEntity(TentacleMesh)
+		Animate GetChild(Obj\Model\Entity,3),1,.1,1,0
 	Else If Obj\Attributes\ModelName$="!Lurker"
-		Obj\Entity=CopyEntity(LurkerMesh)
+		Obj\Model\Entity=CopyEntity(LurkerMesh)
 	Else If Obj\Attributes\ModelName$="!Ghost"
-		Obj\Entity=CopyEntity(GhostMesh)
+		Obj\Model\Entity=CopyEntity(GhostMesh)
 	Else If Obj\Attributes\ModelName$="!Wraith"
-		Obj\Entity=CopyEntity(WraithMesh)
-		EntityTexture Obj\Entity,WraithTexture(Obj\Attributes\Data2)
+		Obj\Model\Entity=CopyEntity(WraithMesh)
+		EntityTexture Obj\Model\Entity,WraithTexture(Obj\Attributes\Data2)
 
 	
 
 	Else If Obj\Attributes\ModelName$="!Crab"
-		Obj\Entity=CopyEntity(CrabMesh)
-		If Obj\Attributes\LogicSubType=0 Then EntityTexture Obj\Entity,CrabTexture2
+		Obj\Model\Entity=CopyEntity(CrabMesh)
+		If Obj\Attributes\LogicSubType=0 Then EntityTexture Obj\Model\Entity,CrabTexture2
 	Else If Obj\Attributes\ModelName$="!Troll"
-		Obj\Entity=CopyEntity(TrollMesh)
+		Obj\Model\Entity=CopyEntity(TrollMesh)
 	Else If Obj\Attributes\ModelName$="!Kaboom"
-		Obj\Entity=CopyEntity(KaboomMesh)
-		EntityTexture Obj\Entity,KaboomTexture(Obj\Attributes\Data0)
+		Obj\Model\Entity=CopyEntity(KaboomMesh)
+		EntityTexture Obj\Model\Entity,KaboomTexture(Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!BabyBoomer"
-		Obj\Entity=CopyEntity(KaboomMesh)
-		EntityTexture Obj\Entity,KaboomTexture(1)
+		Obj\Model\Entity=CopyEntity(KaboomMesh)
+		EntityTexture Obj\Model\Entity,KaboomTexture(1)
 
 
 
 	Else If Obj\Attributes\ModelName$="!FireFlower"
-		Obj\Entity=CopyEntity(FireFlowerMesh)
+		Obj\Model\Entity=CopyEntity(FireFlowerMesh)
 		If Obj\Attributes\LogicSubType<>1
 			Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data0 +3600) Mod 360
 		Else
 			Obj\Attributes\YawAdjust=0
 		EndIf
 		If Obj\Attributes\Data1=1
-			EntityTexture Obj\Entity,FireFlowerTexture2
+			EntityTexture Obj\Model\Entity,FireFlowerTexture2
 		EndIf
 		
 	Else If Obj\Attributes\ModelName$="!BurstFlower"
-		Obj\Entity=CopyEntity(BurstFlowerMesh)
+		Obj\Model\Entity=CopyEntity(BurstFlowerMesh)
 
 	Else If Obj\Attributes\ModelName$="!Busterfly"
-		Obj\Entity=CopyEntity(BusterflyMesh)
-		;AnimateMD2 Obj\Entity,2,.4,2,9
+		Obj\Model\Entity=CopyEntity(BusterflyMesh)
+		;AnimateMD2 Obj\Model\Entity,2,.4,2,9
 		
 		
 	Else If Obj\Attributes\ModelName$="!GlowWorm"  Or Obj\Attributes\ModelName$="!Zipper"
-		Obj\Entity=CreateSphere(12)
-		ScaleMesh Obj\Entity,.1,.1,.1
-		EntityColor Obj\Entity,Obj\Attributes\Data5,Obj\Attributes\Data6,Obj\Attributes\Data7
+		Obj\Model\Entity=CreateSphere(12)
+		ScaleMesh Obj\Model\Entity,.1,.1,.1
+		EntityColor Obj\Model\Entity,Obj\Attributes\Data5,Obj\Attributes\Data6,Obj\Attributes\Data7
 	Else If Obj\Attributes\ModelName$="!Void"
-		;Obj\Entity=CreateSphere(12)
-		;ScaleMesh Obj\Entity,.4,.15,.4
-		Obj\Entity=CreateVoidMesh()
+		;Obj\Model\Entity=CreateSphere(12)
+		;ScaleMesh Obj\Model\Entity,.4,.15,.4
+		Obj\Model\Entity=CreateVoidMesh()
 	Else If Obj\Attributes\ModelName$="!Rubberducky"
-		Obj\Entity=CopyEntity(RubberduckyMesh)
+		Obj\Model\Entity=CopyEntity(RubberduckyMesh)
 
 	Else If Obj\Attributes\ModelName$="!Barrel1"
-		Obj\Entity=CopyEntity(BarrelMesh)
-		EntityTexture Obj\Entity,BarrelTexture1
+		Obj\Model\Entity=CopyEntity(BarrelMesh)
+		EntityTexture Obj\Model\Entity,BarrelTexture1
 	Else If Obj\Attributes\ModelName$="!Barrel2"
-		Obj\Entity=CopyEntity(BarrelMesh)
-		EntityTexture Obj\Entity,BarrelTexture2
+		Obj\Model\Entity=CopyEntity(BarrelMesh)
+		EntityTexture Obj\Model\Entity,BarrelTexture2
 	Else If Obj\Attributes\ModelName$="!Barrel3"
-		Obj\Entity=CopyEntity(BarrelMesh)
-		EntityTexture Obj\Entity,BarrelTexture3
+		Obj\Model\Entity=CopyEntity(BarrelMesh)
+		EntityTexture Obj\Model\Entity,BarrelTexture3
 	Else If Obj\Attributes\ModelName$="!Cuboid"
-		Obj\Entity=CreateCube()
-		ScaleMesh Obj\Entity,0.4,0.4,0.4
-		PositionMesh Obj\Entity,0,0.5,0
+		Obj\Model\Entity=CreateCube()
+		ScaleMesh Obj\Model\Entity,0.4,0.4,0.4
+		PositionMesh Obj\Model\Entity,0,0.5,0
 		If Obj\Attributes\Data0<0 Or Obj\Attributes\Data0>8 Then Obj\Attributes\Data0=0
-		EntityTexture Obj\Entity,TeleporterTexture(Obj\Attributes\Data0)
+		EntityTexture Obj\Model\Entity,TeleporterTexture(Obj\Attributes\Data0)
 		
 	Else If Obj\Attributes\ModelName$="!Prism"
-		Obj\Entity=CopyEntity(PrismMesh)
-		EntityTexture Obj\Entity,PrismTexture
+		Obj\Model\Entity=CopyEntity(PrismMesh)
+		EntityTexture Obj\Model\Entity,PrismTexture
 			
 	Else If  Obj\Attributes\ModelName$="!Obstacle10" 
-		Obj\Entity=CopyEntity(  ObstacleMesh(10 ))
-		EntityTexture Obj\Entity, MushroomTex(  (Abs(Obj\Attributes\Data0)) Mod 3)
+		Obj\Model\Entity=CopyEntity(  ObstacleMesh(10 ))
+		EntityTexture Obj\Model\Entity, MushroomTex(  (Abs(Obj\Attributes\Data0)) Mod 3)
 
 	
 
 		
 	Else If  Obj\Attributes\ModelName$="!Obstacle51" Or Obj\Attributes\ModelName$="!Obstacle55" Or Obj\Attributes\ModelName$="!Obstacle59"
-		Obj\Entity=CopyEntity(  ObstacleMesh((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)+Obj\Attributes\Data0)  )
-		EntityTexture Obj\Entity, ObstacleTexture((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)+Obj\Attributes\Data1)
+		Obj\Model\Entity=CopyEntity(  ObstacleMesh((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)+Obj\Attributes\Data0)  )
+		EntityTexture Obj\Model\Entity, ObstacleTexture((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)+Obj\Attributes\Data1)
 
 	Else If Left$(Obj\Attributes\ModelName$,9)="!Obstacle"
-		Obj\Entity=CopyEntity(ObstacleMesh((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)))
+		Obj\Model\Entity=CopyEntity(ObstacleMesh((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)))
 
 	Else If Obj\Attributes\ModelName$="!WaterFall"
-		Obj\Entity=CreateWaterFallMesh(Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateWaterFallMesh(Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!Star"
-		Obj\Entity=CopyEntity(StarMesh)
-		EntityTexture Obj\Entity,GoldStarTexture
+		Obj\Model\Entity=CopyEntity(StarMesh)
+		EntityTexture Obj\Model\Entity,GoldStarTexture
 	Else If Obj\Attributes\ModelName$="!Wisp"
-		Obj\Entity=CopyEntity(StarMesh)
-		EntityTexture Obj\Entity,WispTexture(Obj\Attributes\Data0)
+		Obj\Model\Entity=CopyEntity(StarMesh)
+		EntityTexture Obj\Model\Entity,WispTexture(Obj\Attributes\Data0)
 	
 	
 	Else If Obj\Attributes\ModelName$="!Portal Warp"
-		Obj\Entity=CopyEntity(PortalWarpMesh)
+		Obj\Model\Entity=CopyEntity(PortalWarpMesh)
 		If Obj\Attributes\Data1=0
-			EntityTexture Obj\Entity,StarTexture
+			EntityTexture Obj\Model\Entity,StarTexture
 		Else
-			EntityTexture Obj\Entity,RainbowTexture
+			EntityTexture Obj\Model\Entity,RainbowTexture
 		EndIf
 		
 	Else If Obj\Attributes\ModelName$="!Sun Sphere1"
-		Obj\Entity=CreateSphere()
-		EntityColor Obj\Entity,Obj\Attributes\Data0,Obj\Attributes\Data1,Obj\Attributes\Data2
-		EntityBlend Obj\Entity,3
+		Obj\Model\Entity=CreateSphere()
+		EntityColor Obj\Model\Entity,Obj\Attributes\Data0,Obj\Attributes\Data1,Obj\Attributes\Data2
+		EntityBlend Obj\Model\Entity,3
 		
 	Else If Obj\Attributes\ModelName$="!Sun Sphere2"
-		Obj\Entity=CreateSphere()
-		ScaleMesh Obj\Entity,.5,.5,.5
+		Obj\Model\Entity=CreateSphere()
+		ScaleMesh Obj\Model\Entity,.5,.5,.5
 
 
 
 	Else If Obj\Attributes\ModelName$="!Coin"
-		Obj\Entity=CopyEntity(CoinMesh)
-		EntityTexture Obj\Entity,GoldCoinTexture
-		If Obj\Attributes\LogicType=425 EntityTexture Obj\Entity,Retrorainbowcointexture
+		Obj\Model\Entity=CopyEntity(CoinMesh)
+		EntityTexture Obj\Model\Entity,GoldCoinTexture
+		If Obj\Attributes\LogicType=425 EntityTexture Obj\Model\Entity,Retrorainbowcointexture
 	Else If Obj\Attributes\ModelName$="!Token"
-		Obj\Entity=CopyEntity(CoinMesh)
-		EntityTexture Obj\Entity,TokenCoinTexture
+		Obj\Model\Entity=CopyEntity(CoinMesh)
+		EntityTexture Obj\Model\Entity,TokenCoinTexture
 	Else If Obj\Attributes\ModelName$="!Gem"
 		;If Obj\Attributes\Data0<0 Or Obj\Attributes\Data0>2 Then Obj\Attributes\Data0=0
 		;If Obj\Attributes\Data1<0 Or Obj\Attributes\Data1>7 Then Obj\Attributes\Data1=0
@@ -15267,56 +15283,56 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Data0=Obj\Attributes\Data0
 		If Data0<0 Or Data0>2 Then Data0=0
 		
-		Obj\Entity=CopyEntity(GemMesh(Data0))
+		Obj\Model\Entity=CopyEntity(GemMesh(Data0))
 		
 		Data1=Obj\Attributes\Data1
 		If Data1<0 Or Data1>8
-			EntityColor Obj\Entity,ModelErrorR,ModelErrorG,ModelErrorB
+			EntityColor Obj\Model\Entity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture Obj\Entity,TeleporterTexture(Data1)
+			EntityTexture Obj\Model\Entity,TeleporterTexture(Data1)
 		EndIf
 	Else If Obj\Attributes\ModelName$="!Crystal"
-		Obj\Entity=CopyEntity(GemMesh(2))
+		Obj\Model\Entity=CopyEntity(GemMesh(2))
 		If Obj\Attributes\Data0=0
-			EntityTexture Obj\Entity,rainbowtexture
+			EntityTexture Obj\Model\Entity,rainbowtexture
 		Else
-			EntityTexture Obj\Entity,ghosttexture
+			EntityTexture Obj\Model\Entity,ghosttexture
 		EndIf
 			
 
 
 	Else If Obj\Attributes\ModelName$="!Sign"
-		Obj\Entity=CreateSignMesh(Obj\Attributes\Data0,Obj\Attributes\Data1)
+		Obj\Model\Entity=CreateSignMesh(Obj\Attributes\Data0,Obj\Attributes\Data1)
 
 
 	Else If Obj\Attributes\ModelName$="!CustomItem"
-		Obj\Entity=CreateCustomItemMesh(Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateCustomItemMesh(Obj\Attributes\Data0)
 
 		
 	Else If Obj\Attributes\ModelName$="!SteppingStone"
-		Obj\Entity=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
+		Obj\Model\Entity=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		If Obj\Attributes\Data0<0 Or Obj\Attributes\Data0>3
 			;Obj\Attributes\Data0=0
-			EntityColor Obj\Entity,ModelErrorR,ModelErrorG,ModelErrorB
+			EntityColor Obj\Model\Entity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
-			EntityTexture Obj\Entity,SteppingStoneTexture(Obj\Attributes\Data0)
+			EntityTexture Obj\Model\Entity,SteppingStoneTexture(Obj\Attributes\Data0)
 		EndIf
 	Else If Obj\Attributes\ModelName$="!Spring" 
-		Obj\Entity=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
-		RotateMesh Obj\Entity,90,0,0
+		Obj\Model\Entity=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
+		RotateMesh Obj\Model\Entity,90,0,0
 		Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data2 +3600) Mod 360
 
 
-		EntityTexture Obj\Entity,Springtexture
+		EntityTexture Obj\Model\Entity,Springtexture
 	Else If Obj\Attributes\ModelName$="!Suctube" 
-		Obj\Entity=CreateSuctubemesh(Obj\Attributes\Data3,Obj\Attributes\Data0,True)
+		Obj\Model\Entity=CreateSuctubemesh(Obj\Attributes\Data3,Obj\Attributes\Data0,True)
 		
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data2 +3600) Mod 360
 		
-		Redosuctubemesh(Obj\Entity, Obj\Attributes\Data0, Obj\Attributes\Active, Obj\Attributes\Data2, Obj\Attributes\YawAdjust)
+		Redosuctubemesh(Obj\Model\Entity, Obj\Attributes\Data0, Obj\Attributes\Active, Obj\Attributes\Data2, Obj\Attributes\YawAdjust)
 
 	Else If Obj\Attributes\ModelName$="!SuctubeX" 
-		Obj\Entity=CreateSuctubeXmesh(Obj\Attributes\Data3)
+		Obj\Model\Entity=CreateSuctubeXmesh(Obj\Attributes\Data3)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data2 +3600) Mod 360
 
 
@@ -15324,123 +15340,123 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 
 		
 	Else If Obj\Attributes\ModelName$="!FlipBridge"
-		;Obj\Entity=CreateCube()
-		;ScaleMesh Obj\Entity,.35,.1,.5
+		;Obj\Model\Entity=CreateCube()
+		;ScaleMesh Obj\Model\Entity,.35,.1,.5
 		
-		Obj\Entity=CreateFlipBridgeMesh(Obj\Attributes\Data0)
-		;EntityTexture Obj\Entity,GateTexture
+		Obj\Model\Entity=CreateFlipBridgeMesh(Obj\Attributes\Data0)
+		;EntityTexture Obj\Model\Entity,GateTexture
 		
 		Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data2 +3600) Mod 360
 	
 	Else If Obj\Attributes\ModelName$="!Door"
-		Obj\Entity=MyLoadmesh("data\models\houses\door01.3ds",0)
+		Obj\Model\Entity=MyLoadmesh("data\models\houses\door01.3ds",0)
 		
 	Else If Obj\Attributes\ModelName$="!Cylinder"
-		Obj\Entity=CopyEntity(cylinder)
+		Obj\Model\Entity=CopyEntity(cylinder)
 		
 	Else If Obj\Attributes\ModelName$="!Square"
-		Obj\Entity=MyLoadmesh("Data\models\squares\square1.b3d",0)
+		Obj\Model\Entity=MyLoadmesh("Data\models\squares\square1.b3d",0)
 		
 	Else If Obj\Attributes\ModelName$="!SpellBall"
-		Obj\Entity=CreateSpellBallMesh(7) ; use white magic spellball mesh
+		Obj\Model\Entity=CreateSpellBallMesh(7) ; use white magic spellball mesh
 		
 	Else If Obj\Attributes\ModelName$="!FencTrue
-		Obj\Entity=CopyEntity(fence1)
+		Obj\Model\Entity=CopyEntity(fence1)
 	Else If Obj\Attributes\ModelName$="!Fence2"
-		Obj\Entity=CopyEntity(fence2)
+		Obj\Model\Entity=CopyEntity(fence2)
 	Else If Obj\Attributes\ModelName$="!Fencepost"
-		Obj\Entity=CopyEntity(fencepost)
+		Obj\Model\Entity=CopyEntity(fencepost)
 	Else If Obj\Attributes\ModelName$="!Fountain"
-		Obj\Entity=MyLoadmesh("data\models\houses\fountain01.b3d",0)
-		EntityTexture Obj\Entity,FountainTexture
+		Obj\Model\Entity=MyLoadmesh("data\models\houses\fountain01.b3d",0)
+		EntityTexture Obj\Model\Entity,FountainTexture
 		
 	Else If Obj\Attributes\ModelName$="!Retrobox"
-		Obj\Entity=CopyEntity(RetroBoxMesh)
+		Obj\Model\Entity=CopyEntity(RetroBoxMesh)
 		
 	Else If Obj\Attributes\ModelName$="!Retrocoily"
-		Obj\Entity=CopyEntity(RetroCoilyMesh)
+		Obj\Model\Entity=CopyEntity(RetroCoilyMesh)
 		
 	Else If Obj\Attributes\ModelName$="!Obj\Attributes\YawAdjusttObjectModel=CopyEntity(RetroScougeMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 	
 	Else If Obj\Attributes\ModelName$="!Retrozbot"
-		Obj\Entity=CopyEntity(RetroZbotMesh)
+		Obj\Model\Entity=CopyEntity(RetroZbotMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 		
 	Else If Obj\Attributes\ModelName$="!Retroufo"
-		Obj\Entity=CopyEntity(RetroUFOMesh)
+		Obj\Model\Entity=CopyEntity(RetroUFOMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 	
 	Else If Obj\Attributes\ModelName$="!Retrolasergate"
-		Obj\Entity=CreateretrolasergateMesh(Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateretrolasergateMesh(Obj\Attributes\Data0)
 		
 	Else If Obj\Attributes\ModelName$="!Weebot"
-		Obj\Entity=CopyEntity(WeebotMesh)
+		Obj\Model\Entity=CopyEntity(WeebotMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 		
 	Else If Obj\Attributes\ModelName$="!Zapbot"
-		Obj\Entity=CopyEntity(ZapbotMesh)
+		Obj\Model\Entity=CopyEntity(ZapbotMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 
 	Else If Obj\Attributes\ModelName$="!Pushbot"
-		Obj\Entity=CreatePushbotMesh(Obj\Attributes\Data0,Obj\Attributes\Data3)
+		Obj\Model\Entity=CreatePushbotMesh(Obj\Attributes\Data0,Obj\Attributes\Data3)
 		Obj\Attributes\YawAdjust=-Obj\Attributes\Data2*90
 		
 	Else If Obj\Attributes\ModelName$="!ZbotNPC"
-		Obj\Entity=CopyEntity(ZbotNPCMesh)
-		EntityTexture Obj\Entity,ZBotNPCTexture(Obj\Attributes\Data2)
+		Obj\Model\Entity=CopyEntity(ZbotNPCMesh)
+		EntityTexture Obj\Model\Entity,ZBotNPCTexture(Obj\Attributes\Data2)
 	
 	Else If Obj\Attributes\ModelName$="!Mothership"
-		Obj\Entity=CopyEntity(MothershipMesh)
+		Obj\Model\Entity=CopyEntity(MothershipMesh)
 
 
 		
 	Else If Obj\Attributes\ModelName="!FloingOrb" ; not toObj\Attributes\YawAdjustingBubble
-		Obj\Entity=CreateSphere()
-		ScaleMesh Obj\Entity,.3,.3,.3
-		EntityColor Obj\Entity,255,0,0
+		Obj\Model\Entity=CreateSphere()
+		ScaleMesh Obj\Model\Entity,.3,.3,.3
+		EntityColor Obj\Model\Entity,255,0,0
 	
 	Else If Obj\Attributes\ModelName="!MagicMirror"
-		Obj\Entity=CreateMagicMirrorMesh()
+		Obj\Model\Entity=CreateMagicMirrorMesh()
 
 	
 	
 	Else If Obj\Attributes\ModelName$="!SkyMachineMap"
-		Obj\Entity=CreateCube()
-		ScaleMesh Obj\Entity,2.5,.01,2.5
-		PositionMesh Obj\Entity,0,0,-1
-		EntityTexture Obj\Entity,SkyMachineMapTexture
-		EntityBlend Obj\Entity,3
+		Obj\Model\Entity=CreateCube()
+		ScaleMesh Obj\Model\Entity,2.5,.01,2.5
+		PositionMesh Obj\Model\Entity,0,0,-1
+		EntityTexture Obj\Model\Entity,SkyMachineMapTexture
+		EntityBlend Obj\Model\Entity,3
 		
 	
 	Else If Obj\Attributes\ModelName$="!GrowFlower"
-		Obj\Entity=CreateGrowFlowerMesh(Obj\Attributes\Data0)
+		Obj\Model\Entity=CreateGrowFlowerMesh(Obj\Attributes\Data0)
 
 	Else If Obj\Attributes\ModelName$="!FloingBubble"
-		Obj\Entity=CreateFloingBubbleMesh()
+		Obj\Model\Entity=CreateFloingBubbleMesh()
 
 		
 	Else If Obj\Attributes\ModelName$="!None"
-		Obj\Entity=CreateNoneMesh()
+		Obj\Model\Entity=CreateNoneMesh()
 		
 		If Obj\Attributes\LogicType=50 ; spellball
-			UseMagicColor(Obj\Entity,Obj\Attributes\LogicSubType)
+			UseMagicColor(Obj\Model\Entity,Obj\Attributes\LogicSubType)
 		EndIf
 		
 	Else ;unknown model
-		Obj\Entity=CreateErrorMesh()
+		Obj\Model\Entity=CreateErrorMesh()
 	
 
 	EndIf
 
 	If Obj\Attributes\ModelName$="!FlipBridge"
-		TextureTarget=GetChild(Obj\Entity,1)
+		TextureTarget=GetChild(Obj\Model\Entity,1)
 	Else
-		TextureTarget=Obj\Entity
+		TextureTarget=Obj\Model\Entity
 	EndIf
 
 	If Obj\Attributes\TexName$="!None" 
-		Obj\Texture=0
+		Obj\Model\Texture=0
 	Else If Obj\Attributes\TexName$="!Door"
 		If Obj\Attributes\Data5<0 Then Obj\Attributes\Data5=0
 		If Obj\Attributes\Data5>2 Then Obj\Attributes\Data5=2
@@ -15496,16 +15512,16 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 		If Lower(Right(tname$,4))=".png"
 			; if png load texture with alpha map
-			Obj\Texture=LoadTexture(tname$,3)
+			Obj\Model\Texture=LoadTexture(tname$,3)
 		Else
-			Obj\Texture=LoadTexture(tname$,4)
+			Obj\Model\Texture=LoadTexture(tname$,4)
 		EndIf
-		EntityTexture TextureTarget,Obj\Texture
+		EntityTexture TextureTarget,Obj\Model\Texture
 		
 	Else If Obj\Attributes\TexName$<>"" And Obj\Attributes\TexName$<>"!None" And Left$(Obj\Attributes\TexName$,1)<>"!"  And Obj\Attributes\ModelName$<>"!Button"
 		If myFileType(Obj\Attributes\TexName$)=1 Or FileType(Obj\Attributes\TexName$)=1
-			Obj\Texture=myLoadTexture(Obj\Attributes\TexName$,4)
-			EntityTexture TextureTarget,Obj\Texture
+			Obj\Model\Texture=myLoadTexture(Obj\Attributes\TexName$,4)
+			EntityTexture TextureTarget,Obj\Model\Texture
 		Else
 			Print "WARNING!"
 			Print "Couldn't load texture: " + Obj\Attributes\TexName$
@@ -15519,21 +15535,21 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	If Obj\Attributes\ScaleAdjust=0.0 Then Obj\Attributes\ScaleAdjust=1.0
 	
 	If Obj\Attributes\ModelName$<>"!None"
-		ScaleEntity Obj\Entity,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust
-		;RotateEntity Obj\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
-		RotateEntity Obj\Entity,0,0,0
-		TurnEntity Obj\Entity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
-		TurnEntity Obj\Entity,0,Obj\Attributes\YawAdjust,0
+		ScaleEntity Obj\Model\Entity,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust
+		;RotateEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
+		RotateEntity Obj\Model\Entity,0,0,0
+		TurnEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
+		TurnEntity Obj\Model\Entity,0,Obj\Attributes\YawAdjust,0
 		
-		If Obj\Attributes\ModelName$="!Kaboom" Or Obj\Attributes\ModelName$="!BabyBoomer" Then TurnEntity Obj\Entity,0,90,0
+		If Obj\Attributes\ModelName$="!Kaboom" Or Obj\Attributes\ModelName$="!BabyBoomer" Then TurnEntity Obj\Model\Entity,0,90,0
 
 
-	;	PositionEntity Obj\Entity,Obj\Attributes\XAdjust,Obj\Attributes\ZAdjust+Obj\Position\Z,-Obj\Attributes\YAdjust
+	;	PositionEntity Obj\Model\Entity,Obj\Attributes\XAdjust,Obj\Attributes\ZAdjust+Obj\Position\Z,-Obj\Attributes\YAdjust
 		
 	EndIf
 	
 	
-	PositionEntity Obj\Entity,x#+Obj\Attributes\XAdjust,z#+Obj\Attributes\ZAdjust,-y#-Obj\Attributes\YAdjust
+	PositionEntity Obj\Model\Entity,x#+Obj\Attributes\XAdjust,z#+Obj\Attributes\ZAdjust,-y#-Obj\Attributes\YAdjust
 	
 	BuildObjectAccessories(Obj)
 
@@ -17020,13 +17036,13 @@ Function BuildLevelObjectModel(Dest)
 	
 	UpdateObjectVisibility(Obj)
 	
-	;PositionEntity Obj\Entity,ObjectSumX#(Obj),ObjectSumZ#(Obj),-ObjectSumY#(Obj)
+	;PositionEntity Obj\Model\Entity,ObjectSumX#(Obj),ObjectSumZ#(Obj),-ObjectSumY#(Obj)
 	
-	;If Obj\HatEntity>0
-	;	TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
+	;If Obj\Model\HatEntity>0
+	;	TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 	;EndIf
-	;If Obj\AccEntity>0
-	;	TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
+	;If Obj\Model\AccEntity>0
+	;	TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 	;EndIf
 
 End Function
@@ -26347,10 +26363,10 @@ Function ControlVoid(i)
 	SimulatedObjectZScale(i)=(1.3+.6*Sin((leveltimer*2+SimulatedobjectData(i,0)) Mod 360));*(1.0+Float(ObjectData(i,2)))
 
 		
-	TurnEntity Obj\Entity,0,.1,0
+	TurnEntity Obj\Model\Entity,0,.1,0
 	
 	If Obj\Attributes\ModelName$="!Void"
-		surface=GetSurface(Obj\Entity,1)
+		surface=GetSurface(Obj\Model\Entity,1)
 		For i=0 To 17
 			VertexCoords surface,i*2,VertexX(surface,i*2),(1+.6*Sin(i*80+((LevelTimer*4) Mod 360))),VertexZ(surface,i*2)
 		Next
@@ -26778,7 +26794,7 @@ End Function
 Function ControlWisp(i)
 
 	Obj.GameObject=LevelObjects(i)
-	EntityFX Obj\Entity,1
+	EntityFX Obj\Model\Entity,1
 	
 	If Leveltimer Mod 360 =0
 		a=Rand(0,100)
@@ -26849,7 +26865,7 @@ Function ControlRetroLaserGate(i)
 	
 	Obj.GameObject=LevelObjects(i)
 	; This behavior is OpenWA-exclusive.
-	EntityAlpha Obj\Entity,0.5
+	EntityAlpha Obj\Model\Entity,0.5
 			
 End Function
 
@@ -26873,8 +26889,8 @@ Function ControlRainbowBubble(i)
 		SimulatedObjectData(i,2)=Rand(0,360)
 	EndIf
 
-	EntityAlpha Obj\Entity,.8
-	EntityBlend Obj\Entity,3
+	EntityAlpha Obj\Model\Entity,.8
+	EntityBlend Obj\Model\Entity,3
 	
 	l=leveltimer/4+SimulatedObjectData(i,2)
 	
@@ -27022,7 +27038,7 @@ Function ControlPlantFloat(i)
 	If SimulatedObjectData(i,2)=0 Then SimulatedObjectData(i,2)=Rand(1,360)
 
 	l=leveltimer+SimulatedObjectData(i,2)
-	EntityColor Obj\Entity,128+120*Cos(l Mod 360),128+120*Sin(l Mod 360),200+50*Cos(l Mod 360)
+	EntityColor Obj\Model\Entity,128+120*Cos(l Mod 360),128+120*Sin(l Mod 360),200+50*Cos(l Mod 360)
 	
 	;ObjectPitch(i)=4*ObjectData(i,2)*Sin((LevelTimer + ObjectData(i,1)) Mod 360)
 	;Objectroll(i)=6*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
@@ -27170,7 +27186,7 @@ Function ControlStinkerWee(i)
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		SimulatedObjectMovementSpeed(i)=35	
 		SimulatedObjectSubType(i)=0  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged
-		MaybeAnimateMD2(Obj\Entity,1,Rnd(.002,.008),217,219,1)
+		MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.002,.008),217,219,1)
 		SimulatedObjectCurrentAnim(i)=1 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
 		SimulatedObjectXScale(i)=0.025
 		SimulatedObjectYScale(i)=0.025
@@ -27199,7 +27215,7 @@ Function ControlStinkerWee(i)
 	
 	If Obj\Attributes\Caged=True And SimulatedObjectSubType(i)<>4 And SimulatedObjectSubType(i)<>5
 		; just Caged
-		EntityTexture Obj\Entity,StinkerWeeTextureSad(SimulatedObjectData(i,8)+1)
+		EntityTexture Obj\Model\Entity,StinkerWeeTextureSad(SimulatedObjectData(i,8)+1)
 		;PlaySoundFX(66,Pos\TileX,Pos\TileY)
 		If SimulatedObjectSubType(i)=2
 			SimulatedObjectSubType(i)=5
@@ -27207,14 +27223,14 @@ Function ControlStinkerWee(i)
 			SimulatedObjectSubType(i)=4
 		EndIf
 		
-		MaybeAnimateMD2(Obj\Entity,1,.2,108,114,1)
+		MaybeAnimateMD2(Obj\Model\Entity,1,.2,108,114,1)
 	EndIf
 	If Obj\Attributes\Caged=False And (SimulatedObjectSubType(i)=4 Or SimulatedObjectSubType(i)=5)
 		; just released
-		EntityTexture Obj\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
+		EntityTexture Obj\Model\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
 
 		SimulatedObjectSubType(i)=SimulatedObjectSubType(i)-3
-		MaybeAnimateMD2(Obj\Entity,1,.4,1,20,1)
+		MaybeAnimateMD2(Obj\Model\Entity,1,.4,1,20,1)
 		SimulatedObjectCurrentAnim(i)=4
 		;SimulatedObjectMovementTypeData(i)=0
 	EndIf
@@ -27226,17 +27242,17 @@ Function ControlStinkerWee(i)
 	EndIf
 	
 	If SimulatedObjectSubType(i)=0 
-		EntityTexture Obj\Entity,StinkerWeeTextureSleep(SimulatedObjectData(i,8)+1)
+		EntityTexture Obj\Model\Entity,StinkerWeeTextureSleep(SimulatedObjectData(i,8)+1)
 
 	Else
-		EntityTexture Obj\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
+		EntityTexture Obj\Model\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
 
 	EndIf
 	
 	If SimulatedObjectSubType(i)=3 ; asleep after walking
 		; fall asleep now
 		;EntityTexture ObjectEntity(i),StinkerWeeTextureSleep
-		MaybeAnimateMD2(Obj\Entity,3,.2,201,217,1)
+		MaybeAnimateMD2(Obj\Model\Entity,3,.2,201,217,1)
 		SimulatedObjectCurrentAnim(i)=7
 		SimulatedObjectData(i,0)=0
 		SimulatedObjectData(i,1)=0
@@ -27263,7 +27279,7 @@ Function ControlStinkerWee(i)
 				
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>1
-				MaybeAnimateMD2(Obj\Entity,1,Rnd(.002,.008),217,219,1)
+				MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.002,.008),217,219,1)
 				SimulatedObjectCurrentAnim(i)=1
 			EndIf
 			If SimulatedObjectYaw(i)<>180 Then TurnObjectTowardDirection(i,0,1,5,0)
@@ -27276,7 +27292,7 @@ Function ControlStinkerWee(i)
 				TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,3,0)
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>3 And SimulatedObjectCurrentAnim(i)<>4 And SimulatedObjectCurrentAnim(i)<>5 And SimulatedObjectCurrentAnim(i)<>7
-				MaybeAnimateMD2(Obj\Entity,1,Rnd(.01,.08),141,160,1)
+				MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.01,.08),141,160,1)
 				SimulatedObjectCurrentAnim(i)=3
 				SimulatedObjectData(i,0)=0
 			Else If SimulatedObjectCurrentAnim(i)=3
@@ -27285,10 +27301,10 @@ Function ControlStinkerWee(i)
 					; do an animation
 					If (Rand(0,100)<50) ; wave
 						;PlaySoundFX(Rand(50,54),Pos\TileX,Pos\TileY)
-						MaybeAnimateMD2(Obj\Entity,3,.2,101,120,1)
+						MaybeAnimateMD2(Obj\Model\Entity,3,.2,101,120,1)
 						SimulatedObjectCurrentAnim(i)=4
 					Else If SimulatedObjectSubtype(i)=2	; tap
-						MaybeAnimateMD2(Obj\Entity,1,.2,121,140,1)
+						MaybeAnimateMD2(Obj\Model\Entity,1,.2,121,140,1)
 						SimulatedObjectCurrentAnim(i)=5
 					EndIf			
 				EndIf
@@ -27296,7 +27312,7 @@ Function ControlStinkerWee(i)
 				SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
 				If SimulatedObjectData(i,0)>100
 					SimulatedObjectData(i,0)=0
-					MaybeAnimateMD2(Obj\Entity,1,Rnd(.01,.03),141,160,1)
+					MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.01,.03),141,160,1)
 					SimulatedObjectCurrentAnim(i)=3
 				EndIf
 ;			Else If SimulatedObjectCurrentAnim(i)=5
@@ -27426,19 +27442,19 @@ Function ControlCrab(i)
 		; 4-retract
 		; 5-come out
 		If Obj\Attributes\Frozen>0
-			MaybeAnimateMD2(Obj\Entity,2,.01,1,2)
+			MaybeAnimateMD2(Obj\Model\Entity,2,.01,1,2)
 			SimulatedObjectCurrentAnim(i)=0
 		Else If Obj\Attributes\MovementTimer=0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=3) And SimulatedObjectdata(i,1)<2
 			
 			
-			MaybeAnimateMD2(Obj\Entity,2,Rnd(.02,.04),1,13)
+			MaybeAnimateMD2(Obj\Model\Entity,2,Rnd(.02,.04),1,13)
 			SimulatedObjectCurrentAnim(i)=1
 			
 			
 		Else If SimulatedObjectCurrentAnim(i)=2 
 			SimulatedObjectCurrentAnim(i)=3
 		Else If Obj\Attributes\MovementTimer>0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=1 Or SimulatedObjectCurrentAnim(i)=20)
-			MaybeAnimateMD2(Obj\Entity,1,1,1,30)
+			MaybeAnimateMD2(Obj\Model\Entity,1,1,1,30)
 			SimulatedObjectCurrentAnim(i)=2
 		Else If SimulatedObjectCurrentAnim(i)>=5 And SimulatedObjectCurrentAnim(i)<20
 			; delay for coming out anim so it doesn' immediately go into walking
@@ -27517,7 +27533,7 @@ Function ControlFireFlower(i)
 
 	If (SimulatedObjectTimer(i)>=0 And SimulatedObjectData(i,2)=0) Or (SimulatedObjectData(i,2)=2 And SimulatedObjectTimer(i)=Attributes\TimerMax1)
 		SimulatedObjectData(i,2)=1
-		MaybeAnimateMD2(Obj\Entity,1,.2,1,20,1)
+		MaybeAnimateMD2(Obj\Model\Entity,1,.2,1,20,1)
 	EndIf
 	
 	;If ObjectActive(i)<1001
@@ -27560,7 +27576,7 @@ Function ControlFireFlower(i)
 	If SimulatedObjectTimer(i)<0
 
 		If SimulatedObjectData(i,2)=1
-			MaybeAnimateMD2(Obj\Entity,1,.5,21,60,1)
+			MaybeAnimateMD2(Obj\Model\Entity,1,.5,21,60,1)
 			SimulatedObjectData(i,2)=0
 		EndIf
 	
@@ -27650,7 +27666,7 @@ Function ToggleObject(i)
 		If SimulatedObjectActive(i)<0 Then SimulatedObjectActive(i)=0
 	EndIf
 	If Attributes\LogicType=281 And Attributes\ModelName$="!SucTube"
-		Redosuctubemesh(Obj\Entity, SimulatedObjectData(i,0), SimulatedObjectActive(i), SimulatedObjectData(i,2), SimulatedObjectYawAdjust(i))
+		Redosuctubemesh(Obj\Model\Entity, SimulatedObjectData(i,0), SimulatedObjectActive(i), SimulatedObjectData(i,2), SimulatedObjectYawAdjust(i))
 	EndIf
 	
 End Function
@@ -27727,7 +27743,7 @@ Function ControlFlipBridge(i)
 	EndIf
 	
 	If Attributes\ModelName$="!FlipBridge"
-		ScaleEntity GetChild(Obj\Entity,1),1.0,1.0,YScale#
+		ScaleEntity GetChild(Obj\Model\Entity,1),1.0,1.0,YScale#
 	Else
 		SimulatedObjectScaleYAdjust(i)=YScale#
 	EndIf
@@ -27772,7 +27788,7 @@ Function ControlBabyBoomer(i)
 	EndIf
 	
 	If SimulatedObjectData(i,8)>0
-		;EntityTexture Obj\Entity,KaboomTextureSquint
+		;EntityTexture Obj\Model\Entity,KaboomTextureSquint
 		; lit and burning
 		For j=1 To 5
 			If Rand(0,100)<SimulatedObjectData(i,8)
@@ -27903,7 +27919,7 @@ Function ControlThwart(i)
 			EndIf
 			If SimulatedObjectTimer(i)=-1
 				If Attributes\ModelName$="!Thwart"
-					MaybeAnimateMD2(Obj\Entity,3,1,81,120,1)
+					MaybeAnimateMD2(Obj\Model\Entity,3,1,81,120,1)
 				EndIf
 			EndIf
 		
@@ -27941,7 +27957,7 @@ Function ControlTroll(i)
 			EndIf
 			If SimulatedObjectTimer(i)=-1
 				If Attributes\ModelName$="!Troll"
-					MaybeAnimateMD2(Obj\Entity,3,1,81,119,1)
+					MaybeAnimateMD2(Obj\Model\Entity,3,1,81,119,1)
 				EndIf
 			EndIf
 		
@@ -28004,7 +28020,7 @@ Function ControlZipper(i)
 		
 		Obj.GameObject=LevelObjects(i)
 		
-		EntityBlend Obj\Entity,3
+		EntityBlend Obj\Model\Entity,3
 		
 		SimulatedObjectData(i,1)=Rand(0,360)
 		SimulatedObjectData(i,2)=Rand(1,4)
@@ -28038,9 +28054,9 @@ Function ControlButterfly(i)
 			SimulatedObjectZScale(i)=.01
 			SimulatedObjectRoll2(i)=90
 			
-			;AnimateMD2 Obj\Entity,2,.4,2,9
+			;AnimateMD2 Obj\Model\Entity,2,.4,2,9
 		Else
-			EntityBlend Obj\Entity,3
+			EntityBlend Obj\Model\Entity,3
 		EndIf
 		
 		SimulatedObjectData(i,1)=Rand(0,360)
@@ -28089,7 +28105,7 @@ Function ControlChomper(i)
 	Pos.GameObjectPosition=Obj\Position
 
 	If SimulatedObjectTileTypeCollision(i)=0
-		;AnimateMD2 Obj\Entity,1,.6,1,29
+		;AnimateMD2 Obj\Model\Entity,1,.6,1,29
 		SimulatedObjectYawAdjust(i)=0
 		SimulatedObjectMovementSpeed(i)=20+5*SimulatedObjectData(i,0)
 		;SimulatedPos\TileX=Floor(SimulatedObjectX(i))
@@ -28099,20 +28115,20 @@ Function ControlChomper(i)
 		;SimulatedObjectMovementType(i)=13
 		If SimulatedObjectData(i,1)=1
 			;SimulatedObjectObjectTypeCollision(i)=2^1+2^6+2^4
-			EntityBlend Obj\Entity,3
+			EntityBlend Obj\Model\Entity,3
 			
 		EndIf
 		If SimulatedObjectData(i,1)=2
-			EntityFX Obj\Entity,1
+			EntityFX Obj\Model\Entity,1
 		EndIf
 	EndIf
 	
 	
 	If SimulatedObjectData(i,1)=1
 		If leveltimer Mod 360<180
-			EntityAlpha Obj\Entity,Abs(Sin(LevelTimer Mod 360))
+			EntityAlpha Obj\Model\Entity,Abs(Sin(LevelTimer Mod 360))
 		Else
-			EntityAlpha Obj\Entity,0.3*Abs(Sin(LevelTimer Mod 360))
+			EntityAlpha Obj\Model\Entity,0.3*Abs(Sin(LevelTimer Mod 360))
 
 		EndIf
 	EndIf
@@ -28144,7 +28160,7 @@ Function ControlNPC(i)
 			SimulatedObjectFrozen(i)=1000*SimulatedObjectFrozen(i)
 		EndIf
 		SimulatedObjectCurrentAnim(i)=11
-		MaybeAnimate(GetChild(Obj\Entity,3),3,1,11)
+		MaybeAnimate(GetChild(Obj\Model\Entity,3),3,1,11)
 		;PlaySoundFX(85,ObjectX(i),ObjectY(i))
 
 	EndIf
@@ -28152,7 +28168,7 @@ Function ControlNPC(i)
 		; revert
 		SimulatedObjectFrozen(i)=0
 		SimulatedObjectCurrentAnim(i)=10
-		MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
+		MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 
 	EndIf
 ;	If SimulatedObjectFrozen(i)>2 Or SimulatedObjectFrozen(i)<0
@@ -28205,14 +28221,14 @@ Function ControlNPC(i)
 	If Attributes\Flying/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
-			MaybeAnimate(GetChild(Obj\Entity,3),1,1,11)
+			MaybeAnimate(GetChild(Obj\Model\Entity,3),1,1,11)
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 		TurnObjectTowardDirection(i,-(Pos\TileX-Pos\TileX2),-(Pos\TileY-Pos\TileY2),10,-SimulatedObjectYawAdjust(i))
 	Else If Attributes\Flying/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>13
-			MaybeAnimate(GetChild(Obj\Entity,3),3,2,13)
+			MaybeAnimate(GetChild(Obj\Model\Entity,3),3,2,13)
 			SimulatedObjectCurrentAnim(i)=13
 		EndIf
 
@@ -28257,18 +28273,18 @@ Function ControlNPC(i)
 			; Just Swaying
 			If SimulatedObjectCurrentAnim(i)<>10
 				SimulatedObjectCurrentAnim(i)=10
-				MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 			EndIf
 		Case 1
 			; Wave from time to Time
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 120 =0 
 					SimulatedObjectCurrentAnim(i)=8
-					MaybeAnimate(GetChild(Obj\Entity,3),3,.2,8)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.2,8)
 				EndIf
-			Else If Animating (GetChild(Obj\Entity,3))=False
+			Else If Animating (GetChild(Obj\Model\Entity,3))=False
 				SimulatedObjectCurrentAnim(i)=10
-				MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 			EndIf
 
 
@@ -28276,19 +28292,19 @@ Function ControlNPC(i)
 			; Wave All The Time
 			If SimulatedObjectCurrentAnim(i)<>15
 				SimulatedObjectCurrentAnim(i)=15
-				MaybeAnimate(GetChild(Obj\Entity,3),2,.2,15)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),2,.2,15)
 			EndIf
 		Case 3
 			; Foottap from time to Time
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=9
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,9)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.4,9)
 				EndIf
 			Else 
 				If Rand(0,1000)<2
 					SimulatedObjectCurrentAnim(i)=10
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 				EndIf
 			EndIf
 	
@@ -28296,7 +28312,7 @@ Function ControlNPC(i)
 			; Foottap All The Time
 			If SimulatedObjectCurrentAnim(i)<>9
 				SimulatedObjectCurrentAnim(i)=9
-				MaybeAnimate(GetChild(Obj\Entity,3),1,.2,9)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.2,9)
 			EndIf
 			
 		Case 5
@@ -28304,41 +28320,41 @@ Function ControlNPC(i)
 			If SimulatedObjectCurrentAnim(i)<>12
 				SimulatedObjectCurrentAnim(i)=12
 				If SimulatedObjectData(i,7)>=20
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,12)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.4,12)
 				Else
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.2,12)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.2,12)
 				EndIf
 			EndIf
 		Case 6
 			; Just Sit
 			If SimulatedObjectCurrentAnim(i)<>14
 				SimulatedObjectCurrentAnim(i)=14
-				MaybeAnimate(GetChild(Obj\Entity,3),3,.2,14)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.2,14)
 			EndIf
 		Case 7
 			; Sit if far from player, otherwise stand
 			
 			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
 				SimulatedObjectCurrentAnim(i)=14
-				MaybeAnimate(GetChild(Obj\Entity,3),3,.4,14)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.4,14)
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>114 And dist<=3
 				SimulatedObjectCurrentAnim(i)=114
-				MaybeAnimate(GetChild(Obj\Entity,3),3,-.4,14)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,-.4,14)
 			EndIf
 		Case 8
 			; Sit if far from player, otherwise stand and wave fast
 			Dist=maximum2(Abs(Pos\TileX-PlayerTileX()),Abs(Pos\TileY-PlayerTileY()))
 			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
 				SimulatedObjectCurrentAnim(i)=14
-				MaybeAnimate(GetChild(Obj\Entity,3),3,.4,14)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.4,14)
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>114 And dist<=3
 				SimulatedObjectCurrentAnim(i)=114
-				MaybeAnimate(GetChild(Obj\Entity,3),3,-.4,14)
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,-.4,14)
 			EndIf
-			If SimulatedObjectCurrentAnim(i)=114 And Animating(GetChild(Obj\Entity,3))=False
-				MaybeAnimate(GetChild(Obj\Entity,3),3,.4,15)
+			If SimulatedObjectCurrentAnim(i)=114 And Animating(GetChild(Obj\Model\Entity,3))=False
+				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.4,15)
 			EndIf
 
 
@@ -28349,13 +28365,13 @@ Function ControlNPC(i)
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=11
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,11)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.4,11)
 					If SimulatedObjectData(i,y)<10 Then SimulatedObjectData(i,7)=SimulatedObjectData(i,7)+20
 				EndIf
 			Else 
 				If Leveltimer Mod 120 =0 
 					SimulatedObjectCurrentAnim(i)=10
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.05,10)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 					SimulatedObjectData(i,7)=SimulatedObjectData(i,7)-20
 					SimulatedObjectZ(i)=0
 				EndIf
@@ -28366,9 +28382,9 @@ Function ControlNPC(i)
 			If SimulatedObjectCurrentAnim(i)<>11
 				SimulatedObjectCurrentAnim(i)=11
 				If SimulatedObjectData(i,7)>=20
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.4,11)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.4,11)
 				Else
-					MaybeAnimate(GetChild(Obj\Entity,3),1,.2,11)
+					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.2,11)
 				EndIf
 
 			EndIf
@@ -28404,7 +28420,7 @@ Function ControlKaboom(i)
 			;ObjectMovementTimer(i)=0
 			;ObjectSubType(i)=0  
 			SimulatedObjectCurrentAnim(i)=10
-			AnimateMD2 Obj\Entity,0,.2,1,2
+			AnimateMD2 Obj\Model\Entity,0,.2,1,2
 
 		EndIf
 		
@@ -28444,16 +28460,16 @@ Function ControlKaboom(i)
 	If Attributes\Flying/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
-			;Animate GetChild(Obj\Entity,3),1,1,11
-			AnimateMD2 Obj\Entity,3,2,31,60
+			;Animate GetChild(Obj\Model\Entity,3),1,1,11
+			AnimateMD2 Obj\Model\Entity,3,2,31,60
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 		TurnObjectTowardDirection(i,-(Pos\TileX-Pos\TileX2),-(Pos\TileY-Pos\TileY2),10,-SimulatedObjectYawAdjust(i))
 	Else If Attributes\Flying/10=2
 		; on ice
 		If SimulatedObjectCurrentAnim(i)<>11
-			;Animate GetChild(Obj\Entity,3),3,2,13
-			AnimateMD2 Obj\Entity,3,2,31,60
+			;Animate GetChild(Obj\Model\Entity,3),3,2,13
+			AnimateMD2 Obj\Model\Entity,3,2,31,60
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 
@@ -28496,29 +28512,29 @@ Function ControlKaboom(i)
 			; Just Swaying
 			If SimulatedObjectCurrentAnim(i)<>10
 				SimulatedObjectCurrentAnim(i)=10
-				;Animate GetChild(Obj\Entity,3),1,.05,10
-				AnimateMD2 Obj\Entity,0,.2,1,2
+				;Animate GetChild(Obj\Model\Entity,3),1,.05,10
+				AnimateMD2 Obj\Model\Entity,0,.2,1,2
 			EndIf
 		
 		Case 1
 			; Just Sit
 			If SimulatedObjectCurrentAnim(i)<>13
 				SimulatedObjectCurrentAnim(i)=13
-				;Animate GetChild(Obj\Entity,3),3,.2,14
-				AnimateMD2 Obj\Entity,3,.5,31,50
+				;Animate GetChild(Obj\Model\Entity,3),3,.2,14
+				AnimateMD2 Obj\Model\Entity,3,.5,31,50
 			EndIf
 		Case 2
 			; Sit if far from player, otherwise stand
 			
 			If SimulatedObjectCurrentAnim(i)<>13 And dist>3
 				SimulatedObjectCurrentAnim(i)=13
-				;Animate GetChild(Obj\Entity,3),3,.4,14
-				AnimateMD2 Obj\Entity,3,.5,31,50
+				;Animate GetChild(Obj\Model\Entity,3),3,.4,14
+				AnimateMD2 Obj\Model\Entity,3,.5,31,50
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>113 And dist<=3
 				SimulatedObjectCurrentAnim(i)=113
-				;Animate GetChild(Obj\Entity,3),3,-.4,14
-				AnimateMD2 Obj\Entity,3,-.5,50,31
+				;Animate GetChild(Obj\Model\Entity,3),3,-.4,14
+				AnimateMD2 Obj\Model\Entity,3,-.5,50,31
 			EndIf
 		
 
@@ -28527,15 +28543,15 @@ Function ControlKaboom(i)
 			If SimulatedObjectCurrentAnim(i)=10
 				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=15
-					;Animate GetChild(Obj\Entity,3),1,.4,11
-					AnimateMD2 Obj\Entity,2,.5,55,70
+					;Animate GetChild(Obj\Model\Entity,3),1,.4,11
+					AnimateMD2 Obj\Model\Entity,2,.5,55,70
 					
 				EndIf
 			Else 
 				If Leveltimer Mod 240 =0 
 					SimulatedObjectCurrentAnim(i)=10
-					;Animate GetChild(Obj\Entity,3),1,.05,10
-					AnimateMD2 Obj\Entity,3,-.2,70,53
+					;Animate GetChild(Obj\Model\Entity,3),1,.05,10
+					AnimateMD2 Obj\Model\Entity,3,-.2,70,53
 					
 					
 				EndIf
@@ -28545,15 +28561,15 @@ Function ControlKaboom(i)
 			; Shiver All The Time
 			If SimulatedObjectCurrentAnim(i)<>15
 				SimulatedObjectCurrentAnim(i)=15
-				AnimateMD2 Obj\Entity,2,.5,59,70
+				AnimateMD2 Obj\Model\Entity,2,.5,59,70
 				
 			EndIf
 		Case 5
 			; Bounce
 			If SimulatedObjectCurrentAnim(i)<>16
 				SimulatedObjectCurrentAnim(i)=16
-				;Animate GetChild(Obj\Entity,3),3,.2,14
-				AnimateMD2 Obj\Entity,2,.5,31,50
+				;Animate GetChild(Obj\Model\Entity,3),3,.2,14
+				AnimateMD2 Obj\Model\Entity,2,.5,31,50
 			EndIf
 
 		End Select
@@ -28614,7 +28630,7 @@ Function ControlMirror(i)
 	Case 1,2,3,4,5	; fire, ice, time, acid, home
 		;ObjectActivationSpeed(i)=4
 		;ActivateObject(i)
-		EntityTexture Obj\Entity,MirrorTexture(SimulatedObjectSubtype(i))
+		EntityTexture Obj\Model\Entity,MirrorTexture(SimulatedObjectSubtype(i))
 		PositionTexture MirrorTexture(SimulatedObjectSubtype(i)),Sin(Leveltimer/10.0),Cos(leveltimer/17.0)
 		ScaleTexture mirrortexture(Simulatedobjectsubtype(i)),0.5+0.1*Sin(leveltimer/7.0),0.5+0.1*Cos(leveltimer/11.0)
 		RotateTexture mirrortexture(Simulatedobjectsubtype(i)),leveltimer / 24.0
@@ -28665,7 +28681,7 @@ Function ControlGhost(i)
 		EndIf
 		
 		If SimulationLevel>=2	
-			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
 		
@@ -28684,7 +28700,7 @@ Function ControlGhost(i)
 		SimulatedObjectData(i,8)=1
 		;ObjectMovementTYpe(i)=13
 		If SimulationLevel>=2
-			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		If SimulatedObjectData(i,9)<50 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)+2
 		
@@ -28726,7 +28742,7 @@ Function ControlWraith(i)
 	
 	If SimulatedObjectStatus(i)=0
 		If SimulationLevel>=2
-			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 			
 		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
@@ -28746,7 +28762,7 @@ Function ControlWraith(i)
 	Else If SimulatedObjectStatus(i)=1
 		
 		If SimulationLevel>=2
-			EntityAlpha Obj\Entity,Float(SimulatedObjectData(i,9))/60.0
+			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		
 		
@@ -29097,9 +29113,9 @@ Function ControlObjects()
 				
 				Case 21
 					If Attributes\ModelName$="!NPC" Or Attributes\ModelName$="!Tentacle"
-						Entity=GetChild(Obj\Entity,3)
+						Entity=GetChild(Obj\Model\Entity,3)
 					Else
-						Entity=Obj\Entity
+						Entity=Obj\Model\Entity
 					EndIf
 					; Fade in
 					EntityAlpha Entity,Float(SimulatedObjectActive(i))/1001.0
@@ -29241,18 +29257,18 @@ Function ControlObjects()
 			
 			SimulateObjectPosition(i)
 			SimulateObjectRotation(i)
-			ScaleEntity Obj\Entity,ObjXScale#,ObjZScale#,ObjYScale#
+			ScaleEntity Obj\Model\Entity,ObjXScale#,ObjZScale#,ObjYScale#
 			
 			SimulatedObjectLastActive(i)=SimulatedObjectActive(i)
 			
 		;Else
 		;	AddParticle(2,ObjectXAdjust(i)+Pos\TileX+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-Pos\TileY-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
 		
-			If Obj\HatEntity>0
-				TransformAccessoryEntityOntoBone(Obj\HatEntity,Obj\Entity)
+			If Obj\Model\HatEntity>0
+				TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 			EndIf
-			If Obj\AccEntity>0
-				TransformAccessoryEntityOntoBone(Obj\AccEntity,Obj\Entity)
+			If Obj\Model\AccEntity>0
+				TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 			EndIf
 			
 		EndIf
