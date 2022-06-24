@@ -403,12 +403,6 @@ Global LevelMusic,LevelWeather
 
 Global Leveltimer
 
-Global NofGrabbedObjects=0
-Dim GrabbedObjects(MaxNofObjects)
-Global CurrentGrabbedObject=-1
-Global CurrentGrabbedObjectModified=False
-Global CurrentDraggedObject=-1
-
 Global BrushWidth=1
 Global BrushHeight=1
 Global CustomBrushEditorMode=-1
@@ -808,6 +802,9 @@ Dim LevelObjects.GameObject(MaxNofObjects)
 Dim BrushObjectModels.GameObjectModel(MaxNofObjects)
 Dim BrushObjectAttributes.GameObjectAttributes(MaxNofObjects)
 
+Global NofPreviewObjects=0
+Dim PreviewObjects(MaxNofObjects)
+
 For i=0 To MaxNofObjects
 	LevelObjects.GameObject(i)=New GameObject
 	LevelObjects.GameObject(i)\Model=New GameObjectModel
@@ -816,6 +813,12 @@ For i=0 To MaxNofObjects
 	BrushObjectModels.GameObjectModels(i)=New GameObjectModel
 	BrushObjectAttributes.GameObjectAttributes(i)=New GameObjectAttributes
 Next
+
+Global NofGrabbedObjects=0
+Dim GrabbedObjects(MaxNofObjects)
+Global CurrentGrabbedObject=-1
+Global CurrentGrabbedObjectModified=False
+Global CurrentDraggedObject=-1
 
 
 Type ObjectAdjusterInt
@@ -1378,6 +1381,11 @@ Function ClearBrushSurface()
 	ClearSurface BrushSurface
 	BrushSurfaceVertexCount=0
 	
+	For i=0 To NofPreviewObjects-1
+		FreeEntity PreviewObjects(i)
+	Next
+	NofPreviewObjects=0
+	
 End Function
 
 Function ShowBrushSurface()
@@ -1424,6 +1432,30 @@ Function AddTileToBrushSurfaceActual(i,j)
 	Y#=LevelTileExtrusion(i,j)+LevelTileHeight(i,j)
 	If Y#<>0.0
 		AddSquareToBrushSurface(i,j,Y#)
+	EndIf
+	
+	If EditorMode=3
+		BrushXStart=GetBrushXStart()
+		BrushYStart=GetBrushYStart()
+		OffsetX=BrushSpaceXOffset(BrushXStart)
+		OffsetY=BrushSpaceYOffset(BrushYStart)
+		For i=0 To BrushWidth-1
+			For j=0 To BrushHeight-1
+				For k=0 To NofBrushObjects-1
+					x=BrushSpaceWrapX(i+OffsetX)
+					y=BrushSpaceWrapY(j+OffsetY)
+					If BrushObjectTileXOffset(k)=x And BrushObjectTileYOffset(k)=y
+						If NofPreviewObjects<MaxNofObjects-NofObjects
+							Preview=CopyEntity(BrushObjectModels(k)\Entity)
+							EntityAlpha Preview,0.2
+							PositionEntityWithXYZAdjust(Preview,BrushXStart+i+0.5,BrushYStart+j+0.5,0,BrushObjectAttributes(k))
+							PreviewObjects(NofPreviewObjects)=Preview
+							NofPreviewObjects=NofPreviewObjects+1
+						EndIf
+					EndIf
+				Next
+			Next
+		Next
 	EndIf
 
 End Function
@@ -4598,33 +4630,27 @@ Function EditorLocalControls()
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Next
 					ElseIf BrushMode=BrushModeCustom
-						BrushXStart=BrushCursorX-BrushWidth/2
-						BrushYStart=BrushCursorY-BrushHeight/2
-						If BrushWrap=BrushWrapModulus
-							OffsetX=BrushXStart-BrushCopyOriginX
-							OffsetY=BrushYStart-BrushCopyOriginY
-						Else
-							OffsetX=0
-							OffsetY=0
-						EndIf
+						BrushXStart=GetBrushXStart()
+						BrushYStart=GetBrushYStart()
+						OffsetX=BrushSpaceXOffset(BrushXStart)
+						OffsetY=BrushSpaceYOffset(BrushYStart)
 						If EditorMode=0
 							For i=0 To BrushWidth-1
 								For j=0 To BrushHeight-1
-									GrabLevelTileFromBrush(EuclideanRemainderInt(i+OffsetX,BrushCopyWidth),EuclideanRemainderInt(j+OffsetY,BrushCopyHeight))
+									x=BrushSpaceWrapX(i+OffsetX)
+									y=BrushSpaceWrapY(j+OffsetY)
+									GrabLevelTileFromBrush(x,y)
 									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
 								Next
 							Next
 						ElseIf EditorMode=3
-;							For k=0 To NofBrushObjects-1
-;								GrabObjectFromBrush(k)
-;								PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushCopyWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushCopyHeight)))
-;							Next
 							For i=0 To BrushWidth-1
 								For j=0 To BrushHeight-1
 									For k=0 To NofBrushObjects-1
-										If BrushObjectTileXOffset(k)=EuclideanRemainderInt(i+OffsetX,BrushCopyWidth) And BrushObjectTileYOffset(k)=EuclideanRemainderInt(j+OffsetY,BrushCopyHeight)
+										x=BrushSpaceWrapX(i+OffsetX)
+										y=BrushSpaceWrapY(j+OffsetY)
+										If BrushObjectTileXOffset(k)=x And BrushObjectTileYOffset(k)=y
 											GrabObjectFromBrush(k)
-											;PlaceObject(Float#(BrushXStart)+EuclideanRemainderFloat#(BrushObjectXOffset#(k)-Float#(OffsetX),Float#(BrushCopyWidth)),Float#(BrushYStart)+EuclideanRemainderFloat#(BrushObjectYOffset#(k)-Float#(OffsetY),Float#(BrushCopyHeight)))
 											PlaceObject(BrushXStart+i,BrushYStart+j)
 										EndIf
 									Next
@@ -6553,6 +6579,51 @@ Function PositionIsEqual(x1,y1,x2,y2)
 
 	Return x1=x2 And y1=y2
 
+End Function
+
+
+Function GetBrushXStart()
+
+	Return BrushCursorX-BrushWidth/2
+
+End Function
+
+Function GetBrushYStart()
+
+	Return BrushCursorY-BrushHeight/2
+
+End Function
+
+Function BrushSpaceWrapX(X)
+
+	Return EuclideanRemainderInt(X,BrushCopyWidth)
+
+End Function
+
+Function BrushSpaceWrapY(Y)
+
+	Return EuclideanRemainderInt(Y,BrushCopyHeight)
+
+End Function
+
+Function BrushSpaceXOffset(BrushXStart)
+	
+	If BrushWrap=BrushWrapModulus
+		Return BrushXStart-BrushCopyOriginX
+	Else
+		Return 0
+	EndIf
+	
+End Function
+
+Function BrushSpaceYOffset(BrushYStart)
+	
+	If BrushWrap=BrushWrapModulus
+		Return BrushYStart-BrushCopyOriginY
+	Else
+		Return 0
+	EndIf
+	
 End Function
 
 
@@ -15551,10 +15622,16 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	EndIf
 	
 	
-	PositionEntity Obj\Model\Entity,x#+Obj\Attributes\XAdjust,z#+Obj\Attributes\ZAdjust,-y#-Obj\Attributes\YAdjust
+	PositionEntityWithXYZAdjust(Obj\Model\Entity,x#,y#,z#,Obj\Attributes)
 	
 	BuildObjectAccessories(Obj)
 
+End Function
+
+Function PositionEntityWithXYZAdjust(Entity,x#,y#,z#,Attributes.GameObjectAttributes)
+
+	PositionEntity Entity,x#+Attributes\XAdjust,z#+Attributes\ZAdjust,-y#-Attributes\YAdjust
+	
 End Function
 
 Function FinalizeCurrentObject()
