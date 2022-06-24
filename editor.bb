@@ -10330,40 +10330,32 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 
 End Function
 
-Function FreeModel(Obj.GameObject)
+Function FreeModel(Model.GameObjectModel)
 
-	If Obj\Model\Entity>0
-		FreeEntity Obj\Model\Entity
-		Obj\Model\Entity=0
+	If Model\Entity>0 
+		FreeEntity Model\Entity
+		Model\Entity=0
+	EndIf
+	If Model\Texture>0 
+		FreeTexture Model\Texture
+		Model\Texture=0
 	EndIf
 	
-	If Obj\Model\Texture>0
-		FreeTexture Obj\Model\Texture
-		Obj\Model\Texture=0
+	If Model\HatEntity>0
+		FreeEntity Model\HatEntity
+		Model\HatEntity=0
 	EndIf
-
-	;ShowMessage("Checking ObjectHatEntity for freeing on "+i+": "+ObjectHatEntity, 1000)
-	If Obj\Model\HatEntity>0
-		FreeEntity Obj\Model\HatEntity
-		Obj\Model\HatEntity=0
+	If Model\AccEntity>0
+		FreeEntity Model\AccEntity
+		Model\AccEntity=0
 	EndIf
-
-	;ShowMessage("Checking ObjectAccEntity for freeing on "+i+": "+ObjectAccEntity, 1000)
-	If Obj\Model\AccEntity>0
-		FreeEntity Obj\Model\AccEntity
-		Obj\Model\AccEntity=0
+	If Model\HatTexture>0
+		FreeTexture Model\HatTexture
+		Model\HatTexture=0
 	EndIf
-	
-	;ShowMessage("Checking ObjectHatTexture for freeing on "+i+": "+ObjectHatTexture, 1000)
-	If Obj\Model\HatTexture>0
-		FreeTexture Obj\Model\HatTexture
-		Obj\Model\HatTexture=0
-	EndIf
-
-	;ShowMessage("Checking ObjectAccTexture for freeing on "+i+": "+ObjectAccTexture, 1000)
-	If Obj\Model\AccTexture>0
-		FreeTexture Obj\Model\AccTexture
-		Obj\Model\AccTexture=0
+	If Model\AccTexture>0
+		FreeTexture Model\AccTexture
+		Model\AccTexture=0
 	EndIf
 
 End Function
@@ -10372,7 +10364,7 @@ Function FreeObject(i)
 
 	Obj.GameObject=LevelObjects(i)
 
-	FreeModel(Obj)
+	FreeModel(Obj\Model)
 	
 	tilex=Obj\Position\TileX
 	tiley=Obj\Position\TileY
@@ -10578,7 +10570,7 @@ Function PasteObjectData(Dest)
 	;	ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
 	;Next
 	
-	FreeModel(LevelObjects(Dest))
+	FreeModel(LevelObjects(Dest)\Model)
 	
 	UpdateObjectEntityToCurrent(Dest)
 	
@@ -14960,36 +14952,8 @@ Function BuildObjectAccessories(Obj.GameObject)
 End Function
 
 Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
-	
-	If Obj\Model\Entity>0 
-		FreeEntity Obj\Model\Entity
-		Obj\Model\Entity=0
-	EndIf
-	If Obj\Model\Texture>0 
-		FreeTexture Obj\Model\Texture
-		Obj\Model\Texture=0
-	EndIf
-	
-	If Obj\Model\HatEntity>0
-		FreeEntity Obj\Model\HatEntity
-		Obj\Model\HatEntity=0
-	EndIf
-	If Obj\Model\AccEntity>0
-		FreeEntity Obj\Model\AccEntity
-		Obj\Model\AccEntity=0
-	EndIf
-	If Obj\Model\HatTexture>0
-		FreeTexture Obj\Model\HatTexture
-		Obj\Model\HatTexture=0
-	EndIf
-	If Obj\Model\AccTexture>0
-		FreeTexture Obj\Model\AccTexture
-		Obj\Model\AccTexture=0
-	EndIf
 
-
-
-	
+	FreeModel(Obj\Model)
 	
 	
 
@@ -17052,7 +17016,7 @@ Function UpdateLevelObjectModel(Dest)
 
 	;ShowMessage("Freeing object model "+Dest+": "+ObjectModelName$(Dest),10)
 
-	FreeModel(LevelObjects(Dest))
+	FreeModel(LevelObjects(Dest)\Model)
 	
 	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),10)
 	
