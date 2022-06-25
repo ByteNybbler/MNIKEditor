@@ -4825,6 +4825,7 @@ Function EditorLocalControls()
 				SetEditorMode(0)
 				LeftMouseReleased=False
 				BuildCurrentTileModel()
+				SetBrushToCurrentTile()
 				ScaleEntity CursorMeshPillar(0),1,1,1
 			EndIf
 		Else
@@ -4859,6 +4860,7 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTile\Terrain\Rotation=(CurrentTile\Terrain\Rotation+1) Mod 8
 			BuildCurrentTileModel()
+			SetBrushToCurrentTile()
 			SetEditorMode(0)
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
@@ -4866,6 +4868,7 @@ Function EditorLocalControls()
 			If CtrlDown()
 				CurrentTile\Terrain\Texture=InputInt("Enter Texture ID: ")
 				BuildCurrentTileModel()
+				SetBrushToCurrentTile()
 			Else
 				Camera1To3Proj()
 				SetEditorMode(1)
@@ -4892,6 +4895,7 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTile\Terrain\SideRotation=(CurrentTile\Terrain\SideRotation+1) Mod 8
 			BuildCurrentTileModel()
+			SetBrushToCurrentTile()
 			SetEditorMode(0)
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
@@ -4899,6 +4903,7 @@ Function EditorLocalControls()
 			If CtrlDown()
 				CurrentTile\Terrain\SideTexture=InputInt("Enter SideTexture ID: ")
 				BuildCurrentTileModel()
+				SetBrushToCurrentTile()
 			Else
 				Camera1To3Proj()
 				SetEditorMode(2)
@@ -4906,6 +4911,7 @@ Function EditorLocalControls()
 		ElseIf MouseScroll<>0
 			CurrentTile\Terrain\SideTexture=CurrentTile\Terrain\SideTexture+MouseScroll
 			BuildCurrentTileModel()
+			SetBrushToCurrentTile()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -4923,12 +4929,14 @@ Function EditorLocalControls()
 			CurrentTile\Water\Rotation=(CurrentTile\Water\Rotation+1) Mod 8
 			RightMouseReleased=False
 			BuildCurrentTileModel()
+			SetBrushToCurrentTile()
 			SetEditorMode(0)
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
 			CurrentTile\Water\Texture=(CurrentTile\Water\Texture+1) Mod 8
 			LeftMouseReleased=False
-			BuildCurrentTIleModel()
+			BuildCurrentTileModel()
+			SetBrushToCurrentTile()
 			SetEditorMode(0)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -4943,12 +4951,11 @@ Function EditorLocalControls()
 
 	; CurrentTile\Terrain\Extrusion
 	If MX>=StartX And MX<StartX+100 And MY>=StartY And MY<StartY+15
-		;CurrentTile\Terrain\Extrusion=Float(Floor(CurrentTile\Terrain\Extrusion2/10))/10.0
 		CurrentTile\Terrain\Extrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTile\Terrain\Extrusion#, 0.1, 1.0, 150)
-		;CurrentTile\Terrain\Extrusion2=CurrentTile\Terrain\Extrusion*100
-		;If CurrentTile\Terrain\Extrusion#<Infinity
-		;	CurrentTile\Terrain\Extrusion=Float(Floor(CurrentTile\Terrain\Extrusion2/10))/10.0
-		;EndIf
+		
+		If WasAdjusted()
+			SetBrushToCurrentTile()
+		EndIf
 		
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -4965,13 +4972,14 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
-
  	EndIf
 	; CurrentTile\Terrain\Height
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY And MY<StartY+15
 		CurrentTile\Terrain\Height#=AdjustFloat#("Enter Height: ", CurrentTile\Terrain\Height#, 0.1, 1.0, 150)
-		;CurrentTile\Terrain\Height2=CurrentTile\Terrain\Height*100
-		;CurrentTile\Terrain\Height=Float(Floor(CurrentTile\Terrain\Height2/10))/10.0
+		
+		If WasAdjusted()
+			SetBrushToCurrentTile()
+		EndIf
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -4981,6 +4989,7 @@ Function EditorLocalControls()
 				Else
 					StepSizeTileHeight#=0.0
 				EndIf
+				SetBrushToCurrentTile()
 			Else
 				If MaybeUnuseAllTileAttributes(CurrentTileHeightUse)
 					CurrentTileHeightUse=1-CurrentTileHeightUse
@@ -4988,7 +4997,6 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
-
  	EndIf
 	; CurrentTile\Terrain\Logic
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+15 And MY<StartY+30
@@ -5015,6 +5023,7 @@ Function EditorLocalControls()
 						CurrentTile\Terrain\Logic=0
 				End Select
 			EndIf
+			SetBrushToCurrentTile()
 			
 			LeftMouseReleased=False
 			RightMouseReleased=False
@@ -5037,6 +5046,8 @@ Function EditorLocalControls()
 				Default
 					CurrentTile\Terrain\Logic=0
 			End Select
+			SetBrushToCurrentTile()
+			
 			LeftMouseReleased=False
 			RightMouseReleased=False
 			SetEditorMode(0)
@@ -5054,8 +5065,10 @@ Function EditorLocalControls()
 	; CurrentTile\Terrain\Random
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+170 And MY<StartY+185
 		CurrentTile\Terrain\Random#=AdjustFloat#("Enter Random: ", CurrentTile\Terrain\Random#, 0.01, 0.1, 150)
-		;CurrentTile\Terrain\Random2=CurrentTile\Terrain\Random*1000
-		;CurrentTile\Terrain\Random=Float(Floor(CurrentTile\Terrain\Random2/10))/100.0
+		
+		If WasAdjusted()
+			SetBrushToCurrentTile()
+		EndIf
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -5073,6 +5086,7 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 		EndIf
 
+		SetBrushToCurrentTile()
  	EndIf
 	; CurrentTile\Terrain\Rounding
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+185 And MY<StartY+200
@@ -5081,6 +5095,7 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTile\Terrain\Rounding=1-CurrentTile\Terrain\Rounding
 			SetEditorMode(0)
+			SetBrushToCurrentTile()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -5089,7 +5104,6 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
-
 	EndIf
 	; CurrentTile\Terrain\EdgeRandom
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+185 And MY<StartY+200
@@ -5098,6 +5112,7 @@ Function EditorLocalControls()
 			RightMouseReleased=False
 			CurrentTile\Terrain\EdgeRandom=1-CurrentTile\Terrain\EdgeRandom
 			SetEditorMode(0)
+			SetBrushToCurrentTile()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -5106,14 +5121,15 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
-
 	EndIf
 	
 	; CurrentTile\Water\Height
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+200 And MY<StartY+215
 		CurrentTile\Water\Height#=AdjustFloat#("Enter WHeight: ", CurrentTile\Water\Height#, 0.1, 1.0, 150)
-		;CurrentTile\Water\Height2=CurrentTile\Water\Height*100
-		;CurrentTile\Water\Height=Float(Floor(CurrentTile\Water\Height2/10))/10.0
+		
+		If WasAdjusted()
+			SetBrushToCurrentTile()
+		EndIf
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -5131,12 +5147,15 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 		EndIf
 
+		SetBrushToCurrentTile()
  	EndIf
 	; CurrentTile\Water\Turbulence
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+200 And MY<StartY+215
 		CurrentTile\Water\Turbulence#=AdjustFloat#("Enter WTurb: ", CurrentTile\Water\Turbulence#, 0.1, 1.0, 150)
-		;CurrentTile\Water\Turbulence2=CurrentTile\Water\Turbulence*100
-		;CurrentTile\Water\Turbulence=Float(Floor(CurrentTile\Water\Turbulence2/10))/10.0
+		
+		If WasAdjusted()
+			SetBrushToCurrentTile()
+		EndIf
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -12992,8 +13011,19 @@ Function InputFloat#(title$)
 	Return Result#
 End Function
 
+Global SomethingWasAdjusted=False
+
+Function WasAdjusted()
+
+	Result=SomethingWasAdjusted
+	SomethingWasAdjusted=False
+	Return Result
+
+End Function
 
 Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
+
+	SomethingWasAdjusted=False
 
 	Fast=False
 	If ShiftDown() Then Fast=True
@@ -13005,15 +13035,21 @@ Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 	
 	If LeftMouse=True
 		If RawInput=True
+			SomethingWasAdjusted=True
 			Return InputInt(ValueName$)
 		Else
+			SomethingWasAdjusted=True
 			Delay DelayTime
 			Return CurrentValue+Adj
 		EndIf
 	EndIf
 	If RightMouse=True
+		SomethingWasAdjusted=True
 		Delay DelayTime
 		Return CurrentValue-Adj
+	EndIf
+	If MouseScroll<>0
+		SomethingWasAdjusted=True
 	EndIf
 	Return CurrentValue+MouseScroll*Adj
 
@@ -13039,6 +13075,8 @@ End Function
 
 Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
 
+	SomethingWasAdjusted=False
+
 	Fast=False
 	If ShiftDown() Then Fast=True
 	RawInput=False
@@ -13049,15 +13087,21 @@ Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#
 	
 	If LeftMouse=True
 		If RawInput=True
+			SomethingWasAdjusted=True
 			Return InputFloat#(ValueName$)
 		Else
+			SomethingWasAdjusted=True
 			Delay DelayTime
 			Return CurrentValue+Adj
 		EndIf
 	EndIf
 	If RightMouse=True
+		SomethingWasAdjusted=True
 		Delay DelayTime
 		Return CurrentValue-Adj
+	EndIf
+	If MouseScroll<>0
+		SomethingWasAdjusted=True
 	EndIf
 	Return CurrentValue+MouseScroll*Adj
 
