@@ -15626,7 +15626,7 @@ End Function
 Function CalculateCommandTargetIDs(Command,Data1)
 
 	Select Command
-	Case 1,2,3,4,5,51,52,61,62,63
+	Case 1,2,3,4,5,16,51,52,61,62,63
 		CurrentObjectTargetIDCount=1
 		CurrentObjectTargetID(0)=Data1
 	Case 64
@@ -23756,6 +23756,8 @@ Function GetCommandName$(id)
 		Return "Adjust Music"
 	Case 13
 		Return "Change Weather"
+	Case 16
+		Return "(MOD) Set Cam"
 	Case 21
 		Return "Start Dialog"
 	Case 22
@@ -23821,7 +23823,7 @@ End Function
 
 Function GetCMDData1Name$(id)
 	Select id
-	Case 1,2,3,4,5,51,52,64
+	Case 1,2,3,4,5,16,51,52,64
 		Return "Target ID"
 	Case 6
 		Return "Red"
@@ -25051,7 +25053,7 @@ Function GetCommandColor(id,index)
 		r=0
 		g=dark
 		b=0
-	Case 6,9,10,11,12,13 ; environment
+	Case 6,9,10,11,12,13,16 ; environment
 		; cyan
 		r=0
 		g=255 ;200 ;120 ;dark ;255
