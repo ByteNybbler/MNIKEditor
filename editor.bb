@@ -995,8 +995,8 @@ Global NofBrushObjects=0
 
 Global BrushCopyOriginX
 Global BrushCopyOriginY
-Global BrushCopyWidth
-Global BrushCopyHeight
+Global BrushCopyWidth=1
+Global BrushCopyHeight=1
 
 
 ; Object PRESETS
@@ -1418,7 +1418,7 @@ Function AddSquareToBrushSurface(i,j,y#)
 	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j
 	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j-1
 	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j-1
-	;StartingVertex=(i+j*101)*4
+	
 	StartingVertex=BrushSurfaceVertexCount
 	AddTriangle BrushSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
 	AddTriangle BrushSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
@@ -1426,31 +1426,21 @@ Function AddSquareToBrushSurface(i,j,y#)
 
 End Function
 
-Function AddTileToBrushSurfaceActual(x,y)
-
+Function AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
+;xzx
 	AddSquareToBrushSurface(x,y,0.0)
 	
 	If EditorMode=3
-		BrushXStart=GetBrushXStart()
-		BrushYStart=GetBrushYStart()
-		OffsetX=BrushSpaceXOffset(BrushXStart)
-		OffsetY=BrushSpaceYOffset(BrushYStart)
-		For i=0 To BrushWidth-1
-			For j=0 To BrushHeight-1
-				For k=0 To NofBrushObjects-1
-					BrushSpaceX=BrushSpaceWrapX(i+OffsetX)
-					BrushSpaceY=BrushSpaceWrapY(j+OffsetY)
-					If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
-						If NofPreviewObjects<MaxNofObjects-NofObjects
-							Preview=CopyEntity(BrushObjectModels(k)\Entity)
-							EntityAlpha Preview,0.2
-							PositionEntityWithXYZAdjust(Preview,BrushXStart+i+0.5,BrushYStart+j+0.5,0,BrushObjectAttributes(k))
-							PreviewObjects(NofPreviewObjects)=Preview
-							NofPreviewObjects=NofPreviewObjects+1
-						EndIf
-					EndIf
-				Next
-			Next
+		For k=0 To NofBrushObjects-1
+			If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
+				If NofPreviewObjects<MaxNofObjects-NofObjects
+					Preview=CopyEntity(BrushObjectModels(k)\Entity)
+					EntityAlpha Preview,0.3
+					PositionEntityWithXYZAdjust(Preview,x+0.5,y+0.5,0,BrushObjectAttributes(k))
+					PreviewObjects(NofPreviewObjects)=Preview
+					NofPreviewObjects=NofPreviewObjects+1
+				EndIf
+			EndIf
 		Next
 	EndIf
 	
@@ -1463,26 +1453,29 @@ Function AddTileToBrushSurfaceActual(x,y)
 
 End Function
 
-Function AddTileToBrushSurface(i,j)
+Function AddTileToBrushSurface(x,y)
 
 	If BrushMode=BrushModeSetMirror
 		Return
 	EndIf
+	
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
 
-	AddTileToBrushSurfaceActual(i,j)
+	AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
 	
 	If DupeMode=DupeModeX
-		TargetX=MirrorAcrossInt(i,MirrorPositionX)
-		AddTileToBrushSurfaceActual(TargetX,j)
+		TargetX=MirrorAcrossInt(x,MirrorPositionX)
+		AddTileToBrushSurfaceActual(TargetX,y,BrushSpaceX,BrushSpaceY)
 	ElseIf DupeMode=DupeModeY
-		TargetY=MirrorAcrossInt(j,MirrorPositionY)
-		AddTileToBrushSurfaceActual(i,TargetY)
+		TargetY=MirrorAcrossInt(y,MirrorPositionY)
+		AddTileToBrushSurfaceActual(x,TargetY,BrushSpaceX,BrushSpaceY)
 	ElseIf DupeMode=DupeModeXPlusY
-		TargetX=MirrorAcrossInt(i,MirrorPositionX)
-		TargetY=MirrorAcrossInt(j,MirrorPositionY)
-		AddTileToBrushSurfaceActual(TargetX,j)
-		AddTileToBrushSurfaceActual(i,TargetY)
-		AddTileToBrushSurfaceActual(TargetX,TargetY)
+		TargetX=MirrorAcrossInt(x,MirrorPositionX)
+		TargetY=MirrorAcrossInt(y,MirrorPositionY)
+		AddTileToBrushSurfaceActual(TargetX,y,BrushSpaceX,BrushSpaceY)
+		AddTileToBrushSurfaceActual(x,TargetY,BrushSpaceX,BrushSpaceY)
+		AddTileToBrushSurfaceActual(TargetX,TargetY,BrushSpaceX,BrushSpaceY)
 	EndIf
 
 End Function
@@ -3808,8 +3801,8 @@ Function GenerateBrushSurface()
 				AddTileToBrushSurface(thisx,thisy)
 			Next
 		ElseIf BrushMode=BrushModeNormal Or BrushMode=BrushModeCustom
-			BrushXStart=BrushCursorX-BrushWidth/2
-			BrushYStart=BrushCursorY-BrushHeight/2
+			BrushXStart=GetBrushXStart()
+			BrushYStart=GetBrushYStart()
 			For i=0 To BrushWidth-1
 				For j=0 To BrushHeight-1
 					AddTileToBrushSurface(BrushXStart+i,BrushYStart+j)
@@ -4630,26 +4623,26 @@ Function EditorLocalControls()
 					ElseIf BrushMode=BrushModeCustom
 						BrushXStart=GetBrushXStart()
 						BrushYStart=GetBrushYStart()
-						OffsetX=BrushSpaceXOffset(BrushXStart)
-						OffsetY=BrushSpaceYOffset(BrushYStart)
+						BrushXEnd=GetBrushXEnd(BrushXStart)
+						BrushYEnd=GetBrushYEnd(BrushYStart)
 						If EditorMode=0
-							For i=0 To BrushWidth-1
-								For j=0 To BrushHeight-1
-									x=BrushSpaceWrapX(i+OffsetX)
-									y=BrushSpaceWrapY(j+OffsetY)
-									GrabLevelTileFromBrush(x,y)
-									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
+							For i=BrushXStart To BrushXEnd
+								For j=BrushYStart To BrushYEnd
+									BrushSpaceX=LevelSpaceToBrushSpaceX(i)
+									BrushSpaceY=LevelSpaceToBrushSpaceY(j)
+									GrabLevelTileFromBrush(BrushSpaceX,BrushSpaceY)
+									ChangeLevelTile(i,j,True)
 								Next
 							Next
 						ElseIf EditorMode=3
-							For i=0 To BrushWidth-1
-								For j=0 To BrushHeight-1
+							For i=BrushXStart To BrushXEnd
+								For j=BrushYStart To BrushYEnd
 									For k=0 To NofBrushObjects-1
-										x=BrushSpaceWrapX(i+OffsetX)
-										y=BrushSpaceWrapY(j+OffsetY)
-										If BrushObjectTileXOffset(k)=x And BrushObjectTileYOffset(k)=y
+										BrushSpaceX=LevelSpaceToBrushSpaceX(i)
+										BrushSpaceY=LevelSpaceToBrushSpaceY(j)
+										If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
 											GrabObjectFromBrush(k)
-											PlaceObject(BrushXStart+i,BrushYStart+j)
+											PlaceObject(i,j)
 										EndIf
 									Next
 								Next
@@ -4667,8 +4660,8 @@ Function EditorLocalControls()
 					ElseIf BrushMode=BrushModeSetMirror
 						SetBrushMode(BrushModeNormal)
 					Else ; normal brush
-						BrushXStart=BrushCursorX-BrushWidth/2
-						BrushYStart=BrushCursorY-BrushHeight/2
+						BrushXStart=GetBrushXStart()
+						BrushYStart=GetBrushYStart()
 						For i=0 To BrushWidth-1
 							For j=0 To BrushHeight-1
 								If EditorMode=0
@@ -4765,17 +4758,22 @@ Function EditorLocalControls()
 					SetBrushMode(BrushModeNormal)
 				Else
 					; set custom brush
+					;xzx
 					NofBrushObjects=0
-					BrushXStart=BrushCursorX-BrushWidth/2
-					BrushYStart=BrushCursorY-BrushHeight/2
-					BrushCopyOriginX=BrushXStart
-					BrushCopyOriginY=BrushYStart
+					BrushXStart=GetBrushXStart()
+					BrushYStart=GetBrushYStart()
+					BrushXEnd=GetBrushXEnd(BrushXStart)
+					BrushYEnd=GetBrushYEnd(BrushYStart)
+					BrushCopyOriginX=BrushCursorX ;BrushXStart
+					BrushCopyOriginY=BrushCursorY ;BrushYStart
 					BrushCopyWidth=BrushWidth
 					BrushCopyHeight=BrushHeight
 					If EditorMode=0
-						For i=0 To BrushWidth-1
-							For j=0 To BrushHeight-1
-								CopyLevelTileToBrush(BrushXStart+i,BrushYStart+j,i,j)
+						For i=BrushXStart To BrushXEnd
+							For j=BrushYStart To BrushYEnd
+								BrushSpaceX=LevelSpaceToBrushSpaceX(i)
+								BrushSpaceY=LevelSpaceToBrushSpaceY(j)
+								CopyLevelTileToBrush(i,j,BrushSpaceX,BrushSpaceY)
 							Next
 						Next
 						
@@ -4786,7 +4784,9 @@ Function EditorLocalControls()
 							ObjTileX=LevelObjects(k)\Position\TileX
 							ObjTileY=LevelObjects(k)\Position\TileY
 							If ObjTileX>=BrushXStart And ObjTileX<BrushXStart+BrushWidth And ObjTileY>=BrushYStart And ObjTileY<BrushYStart+BrushHeight
-								CopyObjectDataToBrush(k,NofBrushObjects,ObjTileX-BrushXStart,ObjTileY-BrushYStart)
+								BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX)
+								BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY)
+								CopyObjectDataToBrush(k,NofBrushObjects,BrushSpaceX,BrushSpaceY)
 								NofBrushObjects=NofBrushObjects+1
 							EndIf
 						Next
@@ -6592,6 +6592,18 @@ Function GetBrushYStart()
 
 End Function
 
+Function GetBrushXEnd(BrushXStart)
+
+	Return BrushXStart+BrushWidth-1
+
+End Function
+
+Function GetBrushYEnd(BrushYStart)
+
+	Return BrushYStart+BrushHeight-1
+
+End Function
+
 Function BrushSpaceWrapX(X)
 
 	Return EuclideanRemainderInt(X,BrushCopyWidth)
@@ -6601,6 +6613,26 @@ End Function
 Function BrushSpaceWrapY(Y)
 
 	Return EuclideanRemainderInt(Y,BrushCopyHeight)
+
+End Function
+
+Function LevelSpaceToBrushSpaceX(X)
+
+	If BrushWrap=BrushWrapModulus
+		Return BrushSpaceWrapX(X-BrushCopyOriginX)
+	Else
+		Return BrushSpaceWrapX(X-BrushCursorX)
+	EndIf
+
+End Function
+
+Function LevelSpaceToBrushSpaceY(Y)
+
+	If BrushWrap=BrushWrapModulus
+		Return BrushSpaceWrapY(Y-BrushCopyOriginY)
+	Else
+		Return BrushSpaceWrapY(Y-BrushCursorY)
+	EndIf
 
 End Function
 
