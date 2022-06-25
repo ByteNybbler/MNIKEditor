@@ -1424,7 +1424,7 @@ Function AddSquareToBrushSurface(i,j,y#)
 	
 	If EditorMode=0
 		TheSurface=BrushTextureSurface
-		yoffset#=0.005
+		;yoffset#=0.005
 	
 		AddVertex TheSurface,i,y#+BrushMeshOffsetY#-yoffset#,-j
 		AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#-yoffset#,-j
@@ -2566,7 +2566,10 @@ Function CreateBrushMesh()
 	
 	BrushTextureMesh=CreateMesh()
 	BrushTextureSurface=CreateSurface(BrushTextureMesh)
-	EntityAlpha BrushTextureMesh,BrushMeshAlpha
+	EntityAlpha BrushTextureMesh,0.6 ;BrushMeshAlpha
+	
+	; This translation is needed to prevent z-fighting and to give Blitz3D a hint about the sorting order between the two transparent entities.
+	TranslateEntity BrushTextureMesh,0,-0.005,0
 
 End Function
 
