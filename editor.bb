@@ -8294,6 +8294,10 @@ End Function
 
 Function ChangeLevelTile(i,j,update)
 
+	If Not PassesPlacementDensityTest()
+		Return
+	EndIf
+
 	BrushSpaceX=LevelSpaceToBrushSpaceX(i)
 	BrushSpaceY=LevelSpaceToBrushSpaceY(j)
 
@@ -8332,10 +8336,6 @@ Function ChangeLevelTileActual(i,j,update)
 	If j<0
 		Return
 	ElseIf j>LevelHeight-1
-		Return
-	EndIf
-	
-	If Not PassesPlacementDensityTest()
 		Return
 	EndIf
 	
@@ -9194,6 +9194,10 @@ End Function
 
 Function PlaceObject(x#,y#)
 
+	If Not PassesPlacementDensityTest()
+		Return
+	EndIf
+
 	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
 	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
 
@@ -9250,10 +9254,6 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 ;			Return False
 ;		EndIf
 ;	EndIf
-	
-	If Not PassesPlacementDensityTest()
-		Return
-	EndIf
 	
 	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
 	SourcePosition.GameObjectPosition=SourceObject\Position
@@ -10474,11 +10474,31 @@ Function DeleteObject(i)
 End Function
 
 Function DeleteObjectAt(x,y)
-
+	
 	If Not PassesPlacementDensityTest()
 		Return
 	EndIf
+	
+	DeleteObjectAtActual(x,y)
+	
+	If DupeMode=DupeModeX
+		TargetX=MirrorAcrossInt(x,MirrorPositionX)
+		DeleteObjectAtActual(TargetX,y)
+	ElseIf DupeMode=DupeModeY
+		TargetY=MirrorAcrossInt(y,MirrorPositionY)
+		DeleteObjectAtActual(x,TargetY)
+	ElseIf DupeMode=DupeModeXPlusY
+		TargetX=MirrorAcrossInt(x,MirrorPositionX)
+		TargetY=MirrorAcrossInt(y,MirrorPositionY)
+		DeleteObjectAtActual(TargetX,y)
+		DeleteObjectAtActual(x,TargetY)
+		DeleteObjectAtActual(TargetX,TargetY)
+	EndIf
+	
+End Function
 
+Function DeleteObjectAtActual(x,y)
+	
 	DeleteCount=0
 	For i=0 To NofObjects-1
 		Pos.GameObjectPosition=LevelObjects(i)\Position
@@ -10491,7 +10511,7 @@ Function DeleteObjectAt(x,y)
 	Next
 	;ShowMessage(DeleteCount, 1000)
 	Return DeleteCount
-
+	
 End Function
 
 Function MoveObjectData(Source,Dest)
