@@ -2528,6 +2528,15 @@ Function InitializeGraphicsCameras()
 
 End Function
 
+Function CreateBrushMesh()
+
+	BrushMesh=CreateMesh()
+	BrushSurface=CreateSurface(BrushMesh)
+	EntityAlpha BrushMesh,BrushMeshAlpha
+	;EntityColor BrushMesh,255,255,200
+
+End Function
+
 Function InitializeGraphicsEntities()
 
 	Light=CreateLight()
@@ -2563,10 +2572,7 @@ Function InitializeGraphicsEntities()
 		HideEntity CursorMeshTexturePicker
 	Next
 	
-	BrushMesh=CreateMesh()
-	BrushSurface=CreateSurface(BrushMesh)
-	EntityAlpha BrushMesh,BrushMeshAlpha
-	EntityColor BrushMesh,255,255,200
+	CreateBrushMesh()
 	
 	CurrentObjectMarkerMesh=CreateCylinder()
 	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
@@ -3255,6 +3261,16 @@ Function SetEditorMode(NewMode)
 		Camera1Proj=Camera1SavedProjMode
 		Camera3Proj=0
 		UpdateCameraProj()
+		
+		ClearBrushSurface()
+	EndIf
+	
+	If NewMode=0
+		EntityTexture BrushMesh,LevelTexture
+	ElseIf NewMode=1 Or NewMode=2 Or NewMode=3
+		; Regenerate the entire brush mesh just to not have a texture. Thanks Blitz3d!
+		FreeEntity BrushMesh
+		CreateBrushMesh()
 	EndIf
 	
 	EditorMode=NewMode
@@ -7095,7 +7111,7 @@ Function CreateLevelTileTop(i,j)
 				height=0
 			EndIf
 
-			CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8)
+			CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8,LevelDetail)
 								
 			
 			AddVertex(mySurface,i+Float(i2)/Float(LevelDetail)+xoverlap,height+zoverlap,-(j+Float(j2)/Float(LevelDetail))+yoverlap,ChunkTileu,ChunkTilev)
@@ -7137,15 +7153,15 @@ Function CreateLevelTileSides(i,j)
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion,-j+random,ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
@@ -7155,7 +7171,7 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion,-j+random,ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
@@ -7173,15 +7189,15 @@ Function CreateLevelTileSides(i,j)
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion,-(j+Float(LevelDetail-j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
@@ -7191,7 +7207,7 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
@@ -7212,14 +7228,14 @@ Function CreateLevelTileSides(i,j)
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang,ChunkTileU,ChunkTileV)
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang,ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion,-(j+1+random),ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
@@ -7229,7 +7245,7 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion,-(j+1+random),ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
@@ -7247,15 +7263,15 @@ Function CreateLevelTileSides(i,j)
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,0,j2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,0,j2+1)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,0,j2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion,-(j+Float(j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,0,j2+1)
@@ -7265,7 +7281,7 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion,-(j+Float(j2+1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
@@ -7306,21 +7322,21 @@ Function UpdateLevelTileSides(i,j)
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2-1,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
@@ -7333,7 +7349,7 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
@@ -7353,21 +7369,21 @@ Function UpdateLevelTileSides(i,j)
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion+z2,-(j+Float(LevelDetail-j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
@@ -7380,7 +7396,7 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion+z2,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
@@ -7402,19 +7418,19 @@ Function UpdateLevelTileSides(i,j)
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
@@ -7426,7 +7442,7 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
@@ -7453,19 +7469,19 @@ Function UpdateLevelTileSides(i,j)
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,0,j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,0,j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion+z2,-(j+Float(j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
@@ -7477,7 +7493,7 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion+z2,-(j+Float(j2+1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
@@ -7872,7 +7888,7 @@ Function UpdateLevelTileTexture(i,j)
 
 	For j2=0 To LevelDetail
 		For i2=0 To LevelDetail
-			CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8)
+			CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8,LevelDetail)
 			vertex=GetLevelVertex(i,j,i2,j2)
 			VertexTexCoords LevelSurface(j),vertex,ChunkTileU,ChunkTileV
 		Next
@@ -7993,103 +8009,6 @@ Function EuclideanRemainderFloat#(Value#,Divisor#)
 
 End Function
 
-
-Function CreateLevelTileClassic(i,j)
-
-	; add block
-	
-	; top face
-	
-	
-	CalculateUV(LevelTiles(i,j)\Terrain\Texture,0,0,LevelTiles(i,j)\Terrain\Rotation,8)
-	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\Texture,1,0,LevelTiles(i,j)\Terrain\Rotation,8)
-	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\Texture,0,1,LevelTiles(i,j)\Terrain\Rotation,8)
-	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\Texture,1,1,LevelTiles(i,j)\Terrain\Rotation,8)
-	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
-	
-	AddTriangle (LevelSurface(j),i*20+0,i*20+1,i*20+2)
-	AddTriangle (LevelSurface(j),i*20+1,i*20+3,i*20+2)
-
-
-
-	
-	
-	; north face
-	If j=0
-		z#=0.0
-	Else
-		z#=LevelTiles(i,j-1)\Terrain\Extrusion
-	EndIf
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,z,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,0,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,z,-j,ChunkTileU,ChunkTileV)
-	
-	AddTriangle (LevelSurface(j),i*20+4,i*20+5,i*20+6)
-	AddTriangle (LevelSurface(j),i*20+5,i*20+7,i*20+6)
-	
-	
-	; east face
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,0,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,0,-j,ChunkTileU,ChunkTileV)
-	
-	AddTriangle (LevelSurface(j),i*20+8,i*20+9,i*20+10)
-	AddTriangle (LevelSurface(j),i*20+9,i*20+11,i*20+10)
-	
-	; south face
-	If j=99
-		z#=0.0
-	Else
-		z#=LevelTiles(i,j+1)\Terrain\Extrusion
-	EndIf
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,z,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i+1,z,-j-1,ChunkTileU,ChunkTileV)
-	
-	AddTriangle (LevelSurface(j),i*20+12,i*20+13,i*20+14)
-	AddTriangle (LevelSurface(j),i*20+13,i*20+15,i*20+14)
-	
-	; west face
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,0,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
-	AddVertex (LevelSurface(j),i,0,-j-1,ChunkTileU,ChunkTileV)
-	
-	AddTriangle (LevelSurface(j),i*20+16,i*20+17,i*20+18)
-	AddTriangle (LevelSurface(j),i*20+17,i*20+19,i*20+18)
-
-
-	
-	; replicating the behavior of in-game vertex normals
-	For k=0 To 19
-		VertexNormal LevelSurface(j),i*20+k,0.0,1.0,0.0
-	Next
-
-End Function
-
-
 Function UpdateWaterMeshGlow(Entity)
 
 	If WaterGlow=True 
@@ -8168,21 +8087,6 @@ Function BuildLevelModel()
 	Next
 	UpdateAllWaterMeshGlow()
 	UpdateAllWaterMeshTransparent()
-	
-	
-	
-	
-	;VerticesPerTop=(LevelDetail+1)*(LevelDetail+1)
-	;VerticesPerSide=(LevelDetail+1)*2
-	
-;	For j=0 To LevelHeight-1
-;		ClearSurface LevelSurface(j)
-;		For i=0 To LevelWidth-1
-;			CreateLevelTileClassic(i,j)
-;		Next
-;		;UpdateNormals LevelMesh(j)
-;		EntityTexture LevelMesh(j),LevelTexture
-;	Next
 
 	
 	For j=0 To LevelHeight-1
@@ -8211,20 +8115,18 @@ Function BuildLevelModel()
 	Next
 	
 	
-	OldLevelDetail=LevelDetail
-	LevelDetail=1
 	; water
 	For j=0 To LevelHeight-1
 		ClearSurface WaterSurface(j)
 		For i=0 To LevelWidth-1
 			; top face
-			CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4,1)
 			AddVertex (WaterSurface(j),i,LevelTiles(i,j)\Water\Height,-j,ChunkTileU,ChunkTileV)
-			CalculateUV(LevelTiles(i,j)\Water\Texture,1,0,LevelTiles(i,j)\Water\Rotation,4)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,1,0,LevelTiles(i,j)\Water\Rotation,4,1)
 			AddVertex (WaterSurface(j),i+1,LevelTiles(i,j)\Water\Height,-j,ChunkTileU,ChunkTileV)
-			CalculateUV(LevelTiles(i,j)\Water\Texture,0,1,LevelTiles(i,j)\Water\Rotation,4)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,0,1,LevelTiles(i,j)\Water\Rotation,4,1)
 			AddVertex (WaterSurface(j),i,LevelTiles(i,j)\Water\Height,-j-1,ChunkTileU,ChunkTileV)
-			CalculateUV(LevelTiles(i,j)\Water\Texture,1,1,LevelTiles(i,j)\Water\Rotation,4)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,1,1,LevelTiles(i,j)\Water\Rotation,4,1)
 			AddVertex (WaterSurface(j),i+1,LevelTiles(i,j)\Water\Height,-j-1,ChunkTileU,ChunkTileV)
 			
 			AddTriangle (WaterSurface(j),i*4+0,i*4+1,i*4+2)
@@ -8240,7 +8142,6 @@ Function BuildLevelModel()
 		
 		TranslateEntity WaterMesh(j),0,-0.04,0
 	Next
-	LevelDetail=OldLevelDetail
 	
 	; logic
 	For j=0 To LevelHeight-1
@@ -14477,11 +14378,8 @@ Function UpdateWaterTile(i,j)
 	
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
 	
-	OldLevelDetail=LevelDetail
-	LevelDetail=1
-	
 	; top face
-	CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4)
+	CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4,1)
 	VertexCoords WaterSurface(j),i*4+0,i,LevelTiles(i,j)\Water\Height,-j
 	VertexTexCoords WaterSurface(j),i*4+0,ChunkTileU,ChunkTileV
 	If LevelTiles(i,j)\Water\Texture>=0
@@ -14490,7 +14388,7 @@ Function UpdateWaterTile(i,j)
 		VertexColor WaterSurface(j),i*4+0,0,0,0
 	EndIf
 	
-	CalculateUV(LevelTiles(i,j)\Water\Texture,1,0,LevelTiles(i,j)\Water\Rotation,4)
+	CalculateUV(LevelTiles(i,j)\Water\Texture,1,0,LevelTiles(i,j)\Water\Rotation,4,1)
 	VertexCoords WaterSurface(j),i*4+1,i+1,LevelTiles(i,j)\Water\Height,-j
 	VertexTexCoords WaterSurface(j),i*4+1,ChunkTileU,ChunkTileV
 	If LevelTiles(i,j)\Water\Texture>=0
@@ -14499,7 +14397,7 @@ Function UpdateWaterTile(i,j)
 		VertexColor WaterSurface(j),i*4+1,0,0,0
 	EndIf
 
-	CalculateUV(LevelTiles(i,j)\Water\Texture,0,1,LevelTiles(i,j)\Water\Rotation,4)
+	CalculateUV(LevelTiles(i,j)\Water\Texture,0,1,LevelTiles(i,j)\Water\Rotation,4,1)
 	VertexCoords WaterSurface(j),i*4+2,i,LevelTiles(i,j)\Water\Height,-j-1
 	VertexTexCoords WaterSurface(j),i*4+2,ChunkTileU,ChunkTileV
 	If LevelTiles(i,j)\Water\Texture>=0
@@ -14508,7 +14406,7 @@ Function UpdateWaterTile(i,j)
 		VertexColor WaterSurface(j),i*4+2,0,0,0
 	EndIf
 
-	CalculateUV(LevelTiles(i,j)\Water\Texture,1,1,LevelTiles(i,j)\Water\Rotation,4)
+	CalculateUV(LevelTiles(i,j)\Water\Texture,1,1,LevelTiles(i,j)\Water\Rotation,4,1)
 	VertexCoords WaterSurface(j),i*4+3,i+1,LevelTiles(i,j)\Water\Height,-j-1
 	VertexTexCoords WaterSurface(j),i*4+3,ChunkTileU,ChunkTileV
 	If LevelTiles(i,j)\Water\Texture>=0
@@ -14516,8 +14414,6 @@ Function UpdateWaterTile(i,j)
 	Else
 		VertexColor WaterSurface(j),i*4+3,0,0,0
 	EndIf
-	
-	LevelDetail=OldLevelDetail
 
 End Function
 
@@ -14860,32 +14756,29 @@ Function BuildCurrentTileModel()
 	i=0
 	ClearSurface CurrentSurface
 	
-	OldLevelDetail=LevelDetail
-	LevelDetail=1
-	
 	; add block
 	
 	; top face
-	CalculateUV(CurrentTile\Terrain\Texture,0,0,CurrentTile\Terrain\Rotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,0,0,CurrentTile\Terrain\Rotation,8,1)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\Texture,1,0,CurrentTile\Terrain\Rotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,1,0,CurrentTile\Terrain\Rotation,8,1)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\Texture,0,1,CurrentTile\Terrain\Rotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,0,1,CurrentTile\Terrain\Rotation,8,1)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\Texture,1,1,CurrentTile\Terrain\Rotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,1,1,CurrentTile\Terrain\Rotation,8,1)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (CurrentSurface,i*20+0,i*20+1,i*20+2)
 	AddTriangle (CurrentSurface,i*20+1,i*20+3,i*20+2)
 	
 	; north face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,99,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,99,1,ChunkTileU,ChunkTileV)
 
 	
@@ -14894,13 +14787,13 @@ Function BuildCurrentTileModel()
 	
 	
 	; east face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,99,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,99,1,ChunkTileU,ChunkTileV)
 
 	
@@ -14908,13 +14801,13 @@ Function BuildCurrentTileModel()
 	AddTriangle (CurrentSurface,i*20+9,i*20+11,i*20+10)
 	
 	; south face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,99,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,99,-1,ChunkTileU,ChunkTileV)
 
 	
@@ -14922,13 +14815,13 @@ Function BuildCurrentTileModel()
 	AddTriangle (CurrentSurface,i*20+13,i*20+15,i*20+14)
 	
 	; west face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,99,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,99,-1,ChunkTileU,ChunkTileV)
 
 	
@@ -14939,20 +14832,18 @@ Function BuildCurrentTileModel()
 	UpdateNormals CurrentMesh
 	EntityTexture CurrentMesh,LevelTexture
 	
-	LevelDetail=OldLevelDetail
-	
 	; and the water tile
 	; top face
 	
 	mySurface=CurrentWaterTileSurface
 
-	CalculateUV(CurrentTile\Water\Texture,0,0,CurrentTile\Water\Rotation,4)
+	CalculateUV(CurrentTile\Water\Texture,0,0,CurrentTile\Water\Rotation,4,LevelDetail)
 	VertexTexCoords mySurface,0,ChunkTileU,ChunkTileV
-	CalculateUV(CurrentTile\Water\Texture,LevelDetail,0,CurrentTile\Water\Rotation,4)
+	CalculateUV(CurrentTile\Water\Texture,LevelDetail,0,CurrentTile\Water\Rotation,4,LevelDetail)
 	VertexTexCoords mySurface,1,ChunkTileU,ChunkTileV
-	CalculateUV(CurrentTile\Water\Texture,0,LevelDetail,CurrentTile\Water\Rotation,4)
+	CalculateUV(CurrentTile\Water\Texture,0,LevelDetail,CurrentTile\Water\Rotation,4,LevelDetail)
 	VertexTexCoords mySurface,2,ChunkTileU,ChunkTileV
-	CalculateUV(CurrentTile\Water\Texture,LevelDetail,LevelDetail,CurrentTile\Water\Rotation,4)
+	CalculateUV(CurrentTile\Water\Texture,LevelDetail,LevelDetail,CurrentTile\Water\Rotation,4,LevelDetail)
 	VertexTexCoords mySurface,3,ChunkTileU,ChunkTileV
 	
 	EntityTexture CurrentWaterTile,WaterTexture
@@ -16326,10 +16217,10 @@ End Function
 
 			
 
-Function CalculateUV(Texture,i2,j2,Rotation,size)
+Function CalculateUV(Texture,i2,j2,Rotation,size,Detail)
 
 	; calculuates UV coordinates of a point on "texture" (0-7... ie the field on the 256x256 big texture)
-	; at position i2/j2 (with resolution LevelDetail) and given Rotation (0-7)
+	; at position i2/j2 (with resolution Detail) and given Rotation (0-7)
 	
 	; returns results as Globals ChunkTileU/ChunkTileV
 	uoverlap#=0
@@ -16354,37 +16245,35 @@ Function CalculateUV(Texture,i2,j2,Rotation,size)
 		EndIf
 	EndIf
 	
-	;LevelDetail=1
-	
 	Select Rotation
 	Case 0
-		ChunkTileu#=Float((Texture Mod size))/size+(Float(i2)/Float(LevelDetail))/size+uoverlap
-		ChunkTilev#=Float((Texture)/size)/size+(Float(j2)/Float(LevelDetail))/size+voverlap
+		ChunkTileu#=Float((Texture Mod size))/size+(Float(i2)/Float(Detail))/size+uoverlap
+		ChunkTilev#=Float((Texture)/size)/size+(Float(j2)/Float(Detail))/size+voverlap
 	Case 1
-		ChunkTileu#=Float(((Texture Mod size)+0))/size+(Float(j2)/Float(LevelDetail))/size+voverlap
-		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(i2)/Float(LevelDetail))/size-uoverlap
+		ChunkTileu#=Float(((Texture Mod size)+0))/size+(Float(j2)/Float(Detail))/size+voverlap
+		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(i2)/Float(Detail))/size-uoverlap
 	Case 2
-		ChunkTileu#=Float(((Texture Mod size)+1))/size-(Float(i2)/Float(LevelDetail))/size-uoverlap
-		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(j2)/Float(LevelDetail))/size-voverlap
+		ChunkTileu#=Float(((Texture Mod size)+1))/size-(Float(i2)/Float(Detail))/size-uoverlap
+		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(j2)/Float(Detail))/size-voverlap
 	Case 3
-		ChunkTileu#=Float(((Texture Mod size))+1)/size-(Float(j2)/Float(LevelDetail))/size-voverlap
-		ChunkTilev#=Float((Texture)/size)/size+(Float(i2)/Float(LevelDetail))/size+uoverlap
+		ChunkTileu#=Float(((Texture Mod size))+1)/size-(Float(j2)/Float(Detail))/size-voverlap
+		ChunkTilev#=Float((Texture)/size)/size+(Float(i2)/Float(Detail))/size+uoverlap
 	Case 4
-		ChunkTileu#=Float(((Texture Mod size))+1)/size-(Float(i2)/Float(LevelDetail))/size-uoverlap
-		ChunkTilev#=Float((Texture)/size)/size+(Float(j2)/Float(LevelDetail))/size+voverlap
+		ChunkTileu#=Float(((Texture Mod size))+1)/size-(Float(i2)/Float(Detail))/size-uoverlap
+		ChunkTilev#=Float((Texture)/size)/size+(Float(j2)/Float(Detail))/size+voverlap
 	Case 7
-		ChunkTileu#=Float(((Texture Mod size))+0)/size+(Float(j2)/Float(LevelDetail))/size+voverlap
-		ChunkTilev#=Float(((Texture)/size)+0)/size+(Float(i2)/Float(LevelDetail))/size+uoverlap
+		ChunkTileu#=Float(((Texture Mod size))+0)/size+(Float(j2)/Float(Detail))/size+voverlap
+		ChunkTilev#=Float(((Texture)/size)+0)/size+(Float(i2)/Float(Detail))/size+uoverlap
 	Case 6
-		ChunkTileu#=Float(((Texture Mod size)+0))/size+(Float(i2)/Float(LevelDetail))/size+uoverlap
-		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(j2)/Float(LevelDetail))/size-voverlap
+		ChunkTileu#=Float(((Texture Mod size)+0))/size+(Float(i2)/Float(Detail))/size+uoverlap
+		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(j2)/Float(Detail))/size-voverlap
 	Case 5
-		ChunkTileu#=Float(((Texture Mod size))+1)/size-(Float(j2)/Float(LevelDetail))/size-voverlap
-		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(i2)/Float(LevelDetail))/size-uoverlap
+		ChunkTileu#=Float(((Texture Mod size))+1)/size-(Float(j2)/Float(Detail))/size-voverlap
+		ChunkTilev#=Float(((Texture)/size)+1)/size-(Float(i2)/Float(Detail))/size-uoverlap
 
 	Default
-		ChunkTileu#=Float((Texture Mod size))/size+(Float(i2)/Float(LevelDetail))/size+uoverlap
-		ChunkTilev#=Float((Texture)/size)/size+(Float(j2)/Float(LevelDetail))/size+voverlap
+		ChunkTileu#=Float((Texture Mod size))/size+(Float(i2)/Float(Detail))/size+uoverlap
+		ChunkTilev#=Float((Texture)/size)/size+(Float(j2)/Float(Detail))/size+voverlap
 	End Select
 
 End Function
