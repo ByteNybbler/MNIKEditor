@@ -4194,7 +4194,6 @@ Function PositionCursorEntity(i,x,y)
 	ShowEntity CursorMeshPillar(i)
 	ShowEntity CursorMeshOpaque(i)
 	PositionEntity CursorMeshPillar(i),x+.5,GetLevelTileTotalHeight(x,y),-y-.5
-	;ScaleEntity CursorMeshPillar(i),BrushWidth,1,BrushHeight
 	PositionEntity CursorMeshOpaque(i),x+.5,0,-y-.5
 
 End Function
@@ -4426,7 +4425,7 @@ Function EditorLocalRendering()
 	StartX=SidebarX+215 ;715
 	StartY=SidebarY+20
 	Text StartX+4,StartY-15," GLOBALS" ;719,5," GLOBALS"
-	Color RectOnR,RectOnG,RectOnB
+	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
 	Rect StartX,StartY,80,35,True
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+20,StartY+2,"Width"
@@ -4435,7 +4434,7 @@ Function EditorLocalRendering()
 	CenteredText(StartX+40,StartY+15,Str$(LevelWidth))
 	
 	StartY=50
-	Color RectOnR,RectOnG,RectOnB
+	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
 	Rect StartX,StartY,80,35,True
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+16,StartY+2,"Height"
