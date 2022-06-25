@@ -356,7 +356,7 @@ Const BrushModeRow=8
 Const BrushModeColumn=9
 
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
-Const BrushModeCustom=-1 ; Placed here to be adjacent to normal brush mode.
+; These are placed here to be adjacent to normal brush mode.
 Const BrushModeTestLevel=-2
 Const BrushModeSetMirror=-3
 
@@ -405,7 +405,6 @@ Global Leveltimer
 
 Global BrushWidth=1
 Global BrushHeight=1
-Global CustomBrushEditorMode=-1
 
 Global RandomActive=False
 Global RandomActiveMin=0
@@ -993,10 +992,10 @@ Dim BrushObjectTileXOffset(1000),BrushObjectTileYOffset(1000)
 
 Global NofBrushObjects=0
 
-Global BrushCopyOriginX
-Global BrushCopyOriginY
-Global BrushCopyWidth=1
-Global BrushCopyHeight=1
+Global BrushSpaceOriginX
+Global BrushSpaceOriginY
+Global BrushSpaceWidth=1
+Global BrushSpaceHeight=1
 
 
 ; Object PRESETS
@@ -1422,6 +1421,9 @@ Function AddSquareToBrushSurface(i,j,y#)
 	StartingVertex=BrushSurfaceVertexCount
 	AddTriangle BrushSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
 	AddTriangle BrushSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
+	
+	
+	
 	BrushSurfaceVertexCount=BrushSurfaceVertexCount+4
 
 End Function
@@ -3257,10 +3259,6 @@ Function SetEditorMode(NewMode)
 			EditorModeBeforeMasterEdit=EditorMode
 		EndIf
 	EndIf
-		
-	If BrushMode=BrushModeCustom And (NewMode=EditorModeTile Or NewMode=EditorModeObject) And NewMode<>CustomBrushEditorMode
-		SetBrushMode(BrushModeNormal)
-	EndIf
 	
 	If NewMode=0 Or NewMode=3 ; If EditorMode=1 Or EditorMode=2
 		Camera1Proj=Camera1SavedProjMode
@@ -3800,7 +3798,7 @@ Function GenerateBrushSurface()
 				thisy=FloodedStackY(i)
 				AddTileToBrushSurface(thisx,thisy)
 			Next
-		ElseIf BrushMode=BrushModeNormal Or BrushMode=BrushModeCustom
+		ElseIf BrushMode=BrushModeNormal
 			BrushXStart=GetBrushXStart()
 			BrushYStart=GetBrushYStart()
 			For i=0 To BrushWidth-1
@@ -4143,9 +4141,9 @@ Function DrawStepSize(x,y,StepSize#)
 End Function
 
 
-Function RunStepSize()
+Function RunStepSize() ;BrushSpaceX,BrushSpaceY
 
-	;If IsAnyStepSizeActive()
+	;xzx
 	CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
 	CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
 	CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
@@ -4620,34 +4618,6 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Next
-					ElseIf BrushMode=BrushModeCustom
-						BrushXStart=GetBrushXStart()
-						BrushYStart=GetBrushYStart()
-						BrushXEnd=GetBrushXEnd(BrushXStart)
-						BrushYEnd=GetBrushYEnd(BrushYStart)
-						If EditorMode=0
-							For i=BrushXStart To BrushXEnd
-								For j=BrushYStart To BrushYEnd
-									BrushSpaceX=LevelSpaceToBrushSpaceX(i)
-									BrushSpaceY=LevelSpaceToBrushSpaceY(j)
-									GrabLevelTileFromBrush(BrushSpaceX,BrushSpaceY)
-									ChangeLevelTile(i,j,True)
-								Next
-							Next
-						ElseIf EditorMode=3
-							For i=BrushXStart To BrushXEnd
-								For j=BrushYStart To BrushYEnd
-									For k=0 To NofBrushObjects-1
-										BrushSpaceX=LevelSpaceToBrushSpaceX(i)
-										BrushSpaceY=LevelSpaceToBrushSpaceY(j)
-										If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
-											GrabObjectFromBrush(k)
-											PlaceObject(i,j)
-										EndIf
-									Next
-								Next
-							Next
-						EndIf
 					ElseIf BrushMode=BrushModeTestLevel
 						If AskToSaveLevelAndExit()
 							; Just in case the user is cheeky and decides to use Test Level At Brush in a brand new wlv.
@@ -4754,47 +4724,39 @@ Function EditorLocalControls()
 			
 			If ReturnKey=True And ReturnKeyReleased=True
 				ReturnKeyReleased=False
-				If BrushMode=BrushModeCustom
-					SetBrushMode(BrushModeNormal)
-				Else
-					; set custom brush
-					;xzx
-					NofBrushObjects=0
-					BrushXStart=GetBrushXStart()
-					BrushYStart=GetBrushYStart()
-					BrushXEnd=GetBrushXEnd(BrushXStart)
-					BrushYEnd=GetBrushYEnd(BrushYStart)
-					BrushCopyOriginX=BrushCursorX ;BrushXStart
-					BrushCopyOriginY=BrushCursorY ;BrushYStart
-					BrushCopyWidth=BrushWidth
-					BrushCopyHeight=BrushHeight
-					If EditorMode=0
-						For i=BrushXStart To BrushXEnd
-							For j=BrushYStart To BrushYEnd
-								BrushSpaceX=LevelSpaceToBrushSpaceX(i)
-								BrushSpaceY=LevelSpaceToBrushSpaceY(j)
-								CopyLevelTileToBrush(i,j,BrushSpaceX,BrushSpaceY)
-							Next
+
+				; set custom brush
+				NofBrushObjects=0
+				BrushXStart=GetBrushXStart()
+				BrushYStart=GetBrushYStart()
+				BrushXEnd=GetBrushXEnd(BrushXStart)
+				BrushYEnd=GetBrushYEnd(BrushYStart)
+				BrushSpaceOriginX=BrushCursorX
+				BrushSpaceOriginY=BrushCursorY
+				BrushSpaceWidth=BrushWidth
+				BrushSpaceHeight=BrushHeight
+				If EditorMode=0
+					For i=BrushXStart To BrushXEnd
+						For j=BrushYStart To BrushYEnd
+							BrushSpaceX=LevelSpaceToBrushSpaceX(i)
+							BrushSpaceY=LevelSpaceToBrushSpaceY(j)
+							CopyLevelTileToBrush(i,j,BrushSpaceX,BrushSpaceY)
 						Next
-						
-						SetBrushMode(BrushModeCustom)
-						CustomBrushEditorMode=EditorMode
-					ElseIf EditorMode=3
-						For k=0 To NofObjects-1
-							ObjTileX=LevelObjects(k)\Position\TileX
-							ObjTileY=LevelObjects(k)\Position\TileY
-							If ObjTileX>=BrushXStart And ObjTileX<BrushXStart+BrushWidth And ObjTileY>=BrushYStart And ObjTileY<BrushYStart+BrushHeight
-								BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX)
-								BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY)
-								CopyObjectDataToBrush(k,NofBrushObjects,BrushSpaceX,BrushSpaceY)
-								NofBrushObjects=NofBrushObjects+1
-							EndIf
-						Next
-						
-						If NofBrushObjects<>0
-							SetBrushMode(BrushModeCustom)
-							CustomBrushEditorMode=EditorMode
+					Next
+				ElseIf EditorMode=3
+					For k=0 To NofObjects-1
+						ObjTileX=LevelObjects(k)\Position\TileX
+						ObjTileY=LevelObjects(k)\Position\TileY
+						If ObjTileX>=BrushXStart And ObjTileX<BrushXStart+BrushWidth And ObjTileY>=BrushYStart And ObjTileY<BrushYStart+BrushHeight
+							BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX)
+							BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY)
+							CopyObjectDataToBrush(k,NofBrushObjects,BrushSpaceX,BrushSpaceY)
+							NofBrushObjects=NofBrushObjects+1
 						EndIf
+					Next
+					
+					If NofBrushObjects=0
+						SetBrushToCurrentObject()
 					EndIf
 				EndIf
 			EndIf
@@ -6606,20 +6568,20 @@ End Function
 
 Function BrushSpaceWrapX(X)
 
-	Return EuclideanRemainderInt(X,BrushCopyWidth)
+	Return EuclideanRemainderInt(X,BrushSpaceWidth)
 
 End Function
 
 Function BrushSpaceWrapY(Y)
 
-	Return EuclideanRemainderInt(Y,BrushCopyHeight)
+	Return EuclideanRemainderInt(Y,BrushSpaceHeight)
 
 End Function
 
 Function LevelSpaceToBrushSpaceX(X)
 
 	If BrushWrap=BrushWrapModulus
-		Return BrushSpaceWrapX(X-BrushCopyOriginX)
+		Return BrushSpaceWrapX(X-BrushSpaceOriginX)
 	Else
 		Return BrushSpaceWrapX(X-BrushCursorX)
 	EndIf
@@ -6629,31 +6591,11 @@ End Function
 Function LevelSpaceToBrushSpaceY(Y)
 
 	If BrushWrap=BrushWrapModulus
-		Return BrushSpaceWrapY(Y-BrushCopyOriginY)
+		Return BrushSpaceWrapY(Y-BrushSpaceOriginY)
 	Else
 		Return BrushSpaceWrapY(Y-BrushCursorY)
 	EndIf
 
-End Function
-
-Function BrushSpaceXOffset(BrushXStart)
-	
-	If BrushWrap=BrushWrapModulus
-		Return BrushXStart-BrushCopyOriginX
-	Else
-		Return 0
-	EndIf
-	
-End Function
-
-Function BrushSpaceYOffset(BrushYStart)
-	
-	If BrushWrap=BrushWrapModulus
-		Return BrushYStart-BrushCopyOriginY
-	Else
-		Return 0
-	EndIf
-	
 End Function
 
 
@@ -8346,18 +8288,22 @@ End Function
 
 Function ChangeLevelTile(i,j,update)
 
+	BrushSpaceX=LevelSpaceToBrushSpaceX(i)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(j)
+
 	If StepPer=StepPerTile
 		RunStepSize()
+		;RunStepSize(BrushSpaceX,BrushSpaceY)
 	EndIf
+	
+	GrabLevelTileFromBrush(BrushSpaceX,BrushSpaceY)
 
 	ChangeLevelTileActual(i,j,update)
 	
 	If DupeMode=DupeModeX
-		;TargetX=LevelWidth-1-i
 		TargetX=MirrorAcrossInt(i,MirrorPositionX)
 		ChangeLevelTileActual(TargetX,j,update)
 	ElseIf DupeMode=DupeModeY
-		;TargetY=LevelHeight-1-j
 		TargetY=MirrorAcrossInt(j,MirrorPositionY)
 		ChangeLevelTileActual(i,TargetY,update)
 	ElseIf DupeMode=DupeModeXPlusY
@@ -8752,6 +8698,7 @@ Function LoadTilePreset()
 	CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
 
 
+	SetBrushToCurrentTile()
 	BuildCurrentTileModel()
 
 End Function
@@ -9125,7 +9072,7 @@ Function LoadObjectPreset()
 	
 	
 	BuildCurrentObjectModel()
-	
+	SetBrushToCurrentObject()
 
 End Function
 
@@ -9299,36 +9246,51 @@ End Function
 
 Function PlaceObject(x#,y#)
 
-	PlaceObjectActual(x#,y#)
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
+
+	PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
 	
 	If DupeMode=DupeModeX
 		TargetX#=MirrorAcrossFloat#(x#,MirrorPositionX)
 		If TargetX#<>x#
-			PlaceObjectActual(TargetX#,y#)
+			PlaceObjectActual(TargetX#,y#,BrushSpaceX,BrushSpaceY)
 		EndIf
 	ElseIf DupeMode=DupeModeY
 		TargetY#=MirrorAcrossFloat#(y#,MirrorPositionY)
 		If TargetY#<>y#
-			PlaceObjectActual(x#,LevelHeight-1-y#)
+			PlaceObjectActual(x#,LevelHeight-1-y#,BrushSpaceX,BrushSpaceY)
 		EndIf
 	ElseIf DupeMode=DupeModeXPlusY
 		TargetX#=MirrorAcrossFloat#(x#,MirrorPositionX)
 		TargetY#=MirrorAcrossFloat#(y#,MirrorPositionY)
 		If TargetX#<>x#
-			PlaceObjectActual(TargetX#,y#)
+			PlaceObjectActual(TargetX#,y#,BrushSpaceX,BrushSpaceY)
 		EndIf
 		If TargetY#<>y#
-			PlaceObjectActual(x#,TargetY#)
+			PlaceObjectActual(x#,TargetY#,BrushSpaceX,BrushSpaceY)
 		EndIf
 		If TargetX#<>x# And TargetY#<>y#
-			PlaceObjectActual(TargetX#,TargetY#)
+			PlaceObjectActual(TargetX#,TargetY#,BrushSpaceX,BrushSpaceY)
 		EndIf
 	EndIf
 
 End Function
 
 
-Function PlaceObjectActual(x#,y#)
+Function PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
+
+	For k=0 To NofBrushObjects-1
+		If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
+			GrabObjectFromBrush(k)
+			PlaceThisObject(x,y,CurrentObject)
+		EndIf
+	Next
+
+End Function
+
+
+Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 
 	If NofObjects>=MaxNofObjects
 		ShowMessageOnce(MaxNofObjects+" object limit reached; refusing to place any more", 1000)
@@ -9345,8 +9307,8 @@ Function PlaceObjectActual(x#,y#)
 		Return
 	EndIf
 	
-	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
-	SourcePosition.GameObjectPosition=CurrentObject\Position
+	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
+	SourcePosition.GameObjectPosition=SourceObject\Position
 
 	If ObjectAdjusterLogicType\RandomEnabled
 		SourceAttributes\LogicType=RandomObjectAdjusterInt(ObjectAdjusterLogicType)
@@ -10343,7 +10305,7 @@ Function GrabObject(x#,y#)
 	;EndIf
 
 	BuildCurrentObjectModel()
-	
+	SetBrushToCurrentObject()
 
 End Function
 
@@ -13354,12 +13316,41 @@ Function ConfirmFindAndReplace()
 End Function
 
 
-Function AdjustObjectAdjuster(i)
+Function CurrentObjectWasChanged()
 
-	; avoid false positives from pressing enter
-	If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
-		CurrentGrabbedObjectModified=True
-	EndIf
+	CurrentGrabbedObjectModified=True
+	SetBrushToCurrentObject()
+
+End Function
+
+Function SetBrushToCurrentObject()
+
+	NofBrushObjects=1
+	BrushSpaceWidth=1
+	BrushSpaceHeight=1
+	CopyObjectAttributes(CurrentObject\Attributes,BrushObjectAttributes(0))
+	CopyObjectModel(CurrentObject\Model,BrushObjectModels(0))
+	HideObjectModel(BrushObjectModels(0))
+
+End Function
+
+Function CurrentTileWasChanged()
+
+	SetBrushToCurrentTile()
+
+End Function
+
+Function SetBrushToCurrentTile()
+
+	BrushSpaceWidth=1
+	BrushSpaceHeight=1
+	;xzx
+	;CopyTile(CurrentTile,BrushTile(0,0))
+
+End Function
+
+
+Function AdjustObjectAdjuster(i)
 
 	Fast=False
 	If ShiftDown() Then Fast=True
@@ -14492,7 +14483,11 @@ Function AdjustObjectAdjuster(i)
 		
 	End Select
 	
-	BuildCurrentObjectModel()
+	; avoid false positives from pressing enter
+	If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+		BuildCurrentObjectModel()
+		CurrentObjectWasChanged()
+	EndIf
 
 End Function 
 
@@ -15833,19 +15828,19 @@ Function SetCurrentObjectTargetLocation(x,y)
 	Case 50 ; spellball
 		CurrentObject\Attributes\Data0=x
 		CurrentObject\Attributes\Data1=y
-		CurrentGrabbedObjectModified=True	
+		CurrentObjectWasChanged()	
 	Case 51,52 ; magic shooter, meteor shooter
 		CurrentObject\Attributes\Data1=x
 		CurrentObject\Attributes\Data2=y
-		CurrentGrabbedObjectModified=True
+		CurrentObjectWasChanged()
 	Case 90 ; button
 		If CurrentObject\Attributes\LogicSubType=10 ; levelexit
 			CalculateLevelExitTo(1,2,3,4,CurrentLevelNumber,x,y)
-			CurrentGrabbedObjectModified=True
+			CurrentObjectWasChanged()
 		ElseIf CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=0 ; NPC move
 			CurrentObject\Attributes\Data2=x
 			CurrentObject\Attributes\Data3=y
-			CurrentGrabbedObjectModified=True
+			CurrentObjectWasChanged()
 		ElseIf CurrentObject\Attributes\LogicSubType=15 ; general command
 			SetCurrentObjectTargetLocationCmd(CurrentObject\Attributes\Data0,1,2,3,4,x,y)
 		Else
@@ -15867,11 +15862,11 @@ Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,D4,x,y)
 	Select Cmd
 	Case 7
 		CalculateLevelExitTo(D1,D2,D3,D4,CurrentLevelNumber,x,y)
-		CurrentGrabbedObjectModified=True
+		CurrentObjectWasChanged()
 	Case 11,61
 		SetDataByIndex(CurrentObject\Attributes,D2,x)
 		SetDataByIndex(CurrentObject\Attributes,D3,y)
-		CurrentGrabbedObjectModified=True
+		CurrentObjectWasChanged()
 	Default
 		GenerateLevelExitTo(CurrentLevelNumber,x,y)
 	End Select
@@ -16524,8 +16519,6 @@ Function GetBrushModeName$(Value)
 		Return ">BLOCK<"
 	Case BrushModeFill
 		Return "FILL"
-	Case BrushModeCustom
-		Return "CUSTOM"
 	Case BrushModeInlineSoft
 		Return "INLINE SOFT"
 	Case BrushModeInlineHard
@@ -16590,11 +16583,6 @@ Function GetBrushModeColor$(Value,index)
 		r=0
 		g=255
 		b=0
-	ElseIf Value=BrushModeCustom
-		; purple
-		r=255
-		g=0
-		b=255
 	ElseIf Value=BrushModeTestLevel
 		; rainbow
 		r=GetAnimatedRainbowRed()
@@ -16642,7 +16630,7 @@ End Function
 Function ChangeBrushModeByDelta(Delta)
 
 	SetBrushMode(BrushMode+Delta)
-	While BrushMode=BrushModeBlockPlacing Or BrushMode=BrushModeCustom
+	While BrushMode=BrushModeBlockPlacing
 		SetBrushMode(BrushMode+Delta)
 	Wend
 	
@@ -26199,7 +26187,7 @@ Function RetrieveDefaultTrueMovement()
 		Return False
 	End Select
 	
-	CurrentGrabbedObjectModified=True
+	CurrentObjectWasChanged()
 	BuildCurrentObjectModel()
 	Return True
 
