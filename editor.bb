@@ -1373,6 +1373,8 @@ Global BrushMesh
 Global BrushSurface
 Global BrushSurfaceVertexCount=0
 
+Const BrushMeshAlpha#=0.3
+Const BrushMeshObjectAlpha#=0.5
 Const BrushMeshOffsetY#=0.01
 
 Function ClearBrushSurface()
@@ -1437,7 +1439,7 @@ Function AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
 			If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
 				If NofPreviewObjects<MaxNofObjects-NofObjects
 					Preview=CopyEntity(BrushObjectModels(k)\Entity)
-					EntityAlpha Preview,0.3
+					EntityAlpha Preview,BrushMeshObjectAlpha#
 					PositionEntityWithXYZAdjust(Preview,x+0.5,y+0.5,0,BrushObjectAttributes(k))
 					PreviewObjects(NofPreviewObjects)=Preview
 					NofPreviewObjects=NofPreviewObjects+1
@@ -2557,7 +2559,7 @@ Function InitializeGraphicsEntities()
 		; Pillar
 		CursorMeshPillar(i)=CreateCube()
 		ScaleMesh CursorMeshPillar(i),0.1,10,0.1
-		EntityAlpha CursorMeshPillar(i),.3
+		EntityAlpha CursorMeshPillar(i),BrushMeshAlpha
 		EntityColor CursorMeshPillar(i),255,255,200
 		
 		; Little square at the center of the brush
@@ -2567,14 +2569,14 @@ Function InitializeGraphicsEntities()
 		; The square region that the brush covers, used only by the texture picker
 		CursorMeshTexturePicker=CreateCube()
 		ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
-		EntityAlpha CursorMeshTexturePicker,.3
+		EntityAlpha CursorMeshTexturePicker,BrushMeshAlpha
 		EntityColor CursorMeshTexturePicker,255,255,200
 		HideEntity CursorMeshTexturePicker
 	Next
 	
 	BrushMesh=CreateMesh()
 	BrushSurface=CreateSurface(BrushMesh)
-	EntityAlpha BrushMesh,.3
+	EntityAlpha BrushMesh,BrushMeshAlpha
 	EntityColor BrushMesh,255,255,200
 	
 	CurrentObjectMarkerMesh=CreateCylinder()
