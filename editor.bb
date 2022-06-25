@@ -1436,7 +1436,7 @@ Function AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
 	EndIf
 	
 	If IsPositionInLevel(x,y)
-		SquareHeight#=LevelTileExtrusion(x,y)+LevelTileHeight(x,y)
+		SquareHeight#=GetTileTotalHeight(LevelTiles(x,y))
 		If SquareHeight#<>0.0
 			AddSquareToBrushSurface(x,y,SquareHeight#)
 		EndIf
@@ -2615,10 +2615,10 @@ Function InitializeGraphicsEntities()
 	CurrentWaterTile=CreateMesh()
 	CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
 	
-	AddVertex (CurrentWaterTileSurface,1,99.5,3,CurrentWaterTileTexture/4.0,0)
-	AddVertex (CurrentWaterTileSurface,3,99.5,3,CurrentWaterTileTexture/4.0+.25,0)
-	AddVertex (CurrentWaterTileSurface,1,99.5,1,CurrentWaterTileTexture/4.0,.25)
-	AddVertex (CurrentWaterTileSurface,3,99.5,1,CurrentWaterTileTexture/4.0+.25,.25)
+	AddVertex (CurrentWaterTileSurface,1,99.5,3,CurrentTile\Water\Texture/4.0,0)
+	AddVertex (CurrentWaterTileSurface,3,99.5,3,CurrentTile\Water\Texture/4.0+.25,0)
+	AddVertex (CurrentWaterTileSurface,1,99.5,1,CurrentTile\Water\Texture/4.0,.25)
+	AddVertex (CurrentWaterTileSurface,3,99.5,1,CurrentTile\Water\Texture/4.0+.25,.25)
 	AddTriangle (CurrentWaterTileSurface,0,1,2)
 	AddTriangle (CurrentWaterTileSurface,2,1,3)
 	UpdateNormals CurrentWaterTile
@@ -4193,9 +4193,15 @@ Function PositionCursorEntity(i,x,y)
 
 	ShowEntity CursorMeshPillar(i)
 	ShowEntity CursorMeshOpaque(i)
-	PositionEntity CursorMeshPillar(i),x+.5,LevelTileExtrusion(x,y)+LevelTileHeight(x,y),-y-.5
+	PositionEntity CursorMeshPillar(i),x+.5,GetTileTotalHeight(LevelTiles(x,y)),-y-.5
 	;ScaleEntity CursorMeshPillar(i),BrushWidth,1,BrushHeight
 	PositionEntity CursorMeshOpaque(i),x+.5,0,-y-.5
+
+End Function
+
+Function GetTileTotalHeight#(TheTile.Tile)
+
+	Return TheTile\Terrain\Extrusion+TheTile\Terrain\Height ;+TheTile\Terrain\Random
 
 End Function
 
@@ -4784,10 +4790,10 @@ Function EditorLocalControls()
 			If LeftMouse=True
 				If editormode=1
 					; main texture
-					CurrentTileTexture=tilepickx+tilepicky*8
+					CurrentTile\Terrain\Texture=tilepickx+tilepicky*8
 				Else If editormode=2
 					; main texture
-					CurrentTileSideTexture=tilepickx+tilepicky*8
+					CurrentTile\Terrain\SideTexture=tilepickx+tilepicky*8
 				EndIf
 				SetEditorMode(0)
 				LeftMouseReleased=False
@@ -4831,14 +4837,14 @@ Function EditorLocalControls()
 		If LeftMouse=True And LeftMouseReleased=True
 			; Texture
 			If CtrlDown()
-				CurrentTileTexture=InputInt("Enter Texture ID: ")
+				CurrentTile\Terrain\Texture=InputInt("Enter Texture ID: ")
 				BuildCurrentTileModel()
 			Else
 				Camera1To3Proj()
 				SetEditorMode(1)
 			EndIf
 		ElseIf MouseScroll<>0
-			CurrentTileTexture=CurrentTileTexture+MouseScroll
+			CurrentTile\Terrain\Texture=CurrentTile\Terrain\Texture+MouseScroll
 			BuildCurrentTileModel()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -4848,7 +4854,7 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
-		ShowTooltipRightAligned(StartX,StartY+95,"Texture ID: "+CurrentTileTexture)
+		ShowTooltipRightAligned(StartX,StartY+95,"Texture ID: "+CurrentTile\Terrain\Texture)
 	EndIf
 		
 	
@@ -4864,14 +4870,14 @@ Function EditorLocalControls()
 		If LeftMouse=True And LeftMouseReleased=True
 			; SideTexture
 			If CtrlDown()
-				CurrentTileSideTexture=InputInt("Enter SideTexture ID: ")
+				CurrentTile\Terrain\SideTexture=InputInt("Enter SideTexture ID: ")
 				BuildCurrentTileModel()
 			Else
 				Camera1To3Proj()
 				SetEditorMode(2)
 			EndIf
 		ElseIf MouseScroll<>0
-			CurrentTileSideTexture=CurrentTileSideTexture+MouseScroll
+			CurrentTile\Terrain\SideTexture=CurrentTile\Terrain\SideTexture+MouseScroll
 			BuildCurrentTileModel()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -4881,19 +4887,19 @@ Function EditorLocalControls()
 			EndIf
 			SetEditorMode(0)
 		EndIf
-		ShowTooltipRightAligned(StartX,StartY+140,"SideTexture ID: "+CurrentTileSideTexture)
+		ShowTooltipRightAligned(StartX,StartY+140,"SideTexture ID: "+CurrentTile\Terrain\SideTexture)
 	EndIf
 	
 	; WaterTexture/Rotation
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+40 And MY<StartY+115
 		If RightMouse=True And RightMouseReleased=True
-			CurrentWaterTileRotation=(CurrentWaterTileRotation+1) Mod 8
+			CurrentTile\Water\Rotation=(CurrentTile\Water\Rotation+1) Mod 8
 			RightMouseReleased=False
 			BuildCurrentTileModel()
 			SetEditorMode(0)
 		EndIf
 		If LeftMouse=True And LeftMouseReleased=True
-			CurrentWaterTileTexture=(CurrentWaterTileTexture+1) Mod 8
+			CurrentTile\Water\Texture=(CurrentTile\Water\Texture+1) Mod 8
 			LeftMouseReleased=False
 			BuildCurrentTIleModel()
 			SetEditorMode(0)
@@ -6308,8 +6314,8 @@ Function EditorLocalControls()
 			ElseIf Adjustment#<>0.0
 				For i=0 To LevelWidth-1
 					For j=0 To LevelHeight-1
-						LevelTileExtrusion(i,j)=LevelTileExtrusion(i,j)+Adjustment
-						WaterTileHeight(i,j)=WaterTileHeight(i,j)+Adjustment
+						LevelTiles(i,j)\Terrain\Extrusion=LevelTiles(i,j)\Terrain\Extrusion+Adjustment
+						LevelTiles(i,j)\Water\Height=LevelTiles(i,j)\Water\Height+Adjustment
 						;UpdateLevelTile(i,j)
 						;UpdateWaterTile(i,j)
 					Next
@@ -6841,7 +6847,7 @@ End Function
 
 Function LevelTileLogicHasVisuals(i,j)
 
-	Return LevelTileLogic(i,j)>0 And LevelTileLogic(i,j)<15
+	Return LevelTiles(i,j)\Terrain\Logic>0 And LevelTiles(i,j)\Terrain\Logic<15
 
 End Function
 
@@ -6975,7 +6981,7 @@ End Function
 
 Function ColorLevelTileLogic(i,j)
 
-	Select LevelTileLogic(i,j)
+	Select LevelTiles(i,j)\Terrain\Logic
 	Case 1 ; wall
 		red=255
 		green=0
@@ -7078,7 +7084,7 @@ Function CreateLevelTileTop(i,j)
 				height=0
 			EndIf
 
-			CalculateUV(LevelTileTexture(i,j),i2,j2,LevelTileRotation(i,j),8)
+			CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8)
 								
 			
 			AddVertex(mySurface,i+Float(i2)/Float(LevelDetail)+xoverlap,height+zoverlap,-(j+Float(j2)/Float(LevelDetail))+yoverlap,ChunkTileu,ChunkTilev)
@@ -7104,7 +7110,7 @@ Function CreateLevelTileSides(i,j)
 
 	; here we also calculate how much the bottom edge of the side wall should be pushed "out"
 	; the maxfactor is the maximum (corners are not pushed out)
-	If LevelTileEdgeRandom(i,j)=1
+	If LevelTiles(i,j)\Terrain\EdgeRandom=1
 		randommax#=0.2
 	Else
 		randommax#=0.0
@@ -7116,20 +7122,20 @@ Function CreateLevelTileSides(i,j)
 	random#=0 ; this is the random for the lower edge - set to zero and only caclulate for the second pixel,
 				; that way, the first pixel of the next square will have the same random factor
 	If j>0
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j-1) 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j-1)\Terrain\Extrusion 
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
-				CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
-				CalculateUV(LevelTileSideTexture(i,j),i2,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1),-j+random,ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion,-j+random,ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				If i2<LevelDetail-1
@@ -7138,8 +7144,8 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1),-j+random,ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion,-j+random,ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
@@ -7152,20 +7158,20 @@ Function CreateLevelTileSides(i,j)
 	; east side
 	random#=0
 	If i<LevelWidth-1
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i+1,j) 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i+1,j)\Terrain\Extrusion 
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
-				CalculateUV(LevelTileSideTexture(i,j),j2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
-				CalculateUV(LevelTileSideTexture(i,j),j2,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j),-(j+Float(LevelDetail-j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion,-(j+Float(LevelDetail-j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				If j2<LevelDetail-1
@@ -7174,8 +7180,8 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j),-(j+Float(LevelDetail-j2-1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
@@ -7191,19 +7197,19 @@ Function CreateLevelTileSides(i,j)
 	; south side
 	random#=0
 	If j<LevelHeight-1
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j+1) 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j+1)\Terrain\Extrusion 
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
-				CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang,ChunkTileU,ChunkTileV)
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang,ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
-				CalculateUV(LevelTileSideTexture(i,j),i2,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1),-(j+1+random),ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion,-(j+1+random),ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				If i2<LevelDetail-1
@@ -7212,8 +7218,8 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1),-(j+1+random),ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion,-(j+1+random),ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
@@ -7226,20 +7232,20 @@ Function CreateLevelTileSides(i,j)
 	; west side
 	random#=0
 	If i>0
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i-1,j) 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i-1,j)\Terrain\Extrusion 
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,0,j2)
-				CalculateUV(LevelTileSideTexture(i,j),j2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,0,j2+1)
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
 	
 				vertex=GetLevelVertex(i,j,0,j2)
-				CalculateUV(LevelTileSideTexture(i,j),j2,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j),-(j+Float(j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion,-(j+Float(j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 				
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				If j2<LevelDetail-1
@@ -7248,8 +7254,8 @@ Function CreateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j),-(j+Float(j2+1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion,-(j+Float(j2+1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
 				
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
@@ -7267,7 +7273,7 @@ Function UpdateLevelTileSides(i,j)
 
 	; here we also calculate how much the bottom edge of the side wall should be pushed "out"
 	; the maxfactor is the maximum (corners are not pushed out)
-	If LevelTileEdgeRandom(i,j)=1
+	If LevelTiles(i,j)\Terrain\EdgeRandom=1
 		randommax#=0.2
 	Else
 		randommax#=0.0
@@ -7281,30 +7287,30 @@ Function UpdateLevelTileSides(i,j)
 	random#=0 ; this is the random for the lower edge - set to zero and only caclulate for the second pixel,
 				; that way, the first pixel of the next square will have the same random factor
 	If j>0
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j-1)
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j-1)\Terrain\Extrusion
 			z2=0
-			If LevelTileExtrusion(i,j-1)>=LevelTileExtrusion(i,j) z2=-100
+			If LevelTiles(i,j-1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2-1,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTileSideTexture(i,j),i2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1)+z2,-j+random
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
@@ -7316,8 +7322,8 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j-1)+z2,-j+random
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
@@ -7328,30 +7334,30 @@ Function UpdateLevelTileSides(i,j)
 	; east side
 	random#=0
 	If i<LevelWidth-1
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i+1,j)
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i+1,j)\Terrain\Extrusion
 			z2=0
-			If LevelTileExtrusion(i+1,j)>=LevelTileExtrusion(i,j) z2=-100
+			If LevelTiles(i+1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTileSideTexture(i,j),j2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTileSideTexture(i,j),j2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j)+z2,-(j+Float(LevelDetail-j2)/Float(LevelDetail))
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion+z2,-(j+Float(LevelDetail-j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
@@ -7363,8 +7369,8 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i+1,j)+z2,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail))
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion+z2,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
@@ -7378,27 +7384,27 @@ Function UpdateLevelTileSides(i,j)
 	; south side
 	random#=0
 	If j<LevelHeight-1
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,j+1)
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j+1)\Terrain\Extrusion
 			z2=0
-			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) z2=-100
+			If LevelTiles(i,j+1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTileSideTexture(i,j),i2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1)+z2,-(j+1+random)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
@@ -7409,8 +7415,8 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),i2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i,j+1)+z2,-(j+1+random)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
@@ -7419,7 +7425,7 @@ Function UpdateLevelTileSides(i,j)
 		;	For i2=0 To LevelDetail-1
 		;		vertex=GetLevelVertex(i,j,i2,LevelDetail)
 		;		vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-		;		CalculateUV(LevelTileSideTexture(i,j),i2,0,LevelTileSideRotation(i,j),8)
+		;		CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 		;		VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
 		;		VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 		;	Next
@@ -7429,27 +7435,27 @@ Function UpdateLevelTileSides(i,j)
 	; west side
 	random#=0
 	If i>0
-		;If LevelTileExtrusion(i,j)>LevelTileExtrusion(i-1,j)
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i-1,j)\Terrain\Extrusion
 			z2=0
-			If LevelTileExtrusion(i-1,j)>=LevelTileExtrusion(i,j) z2=-100
+			If LevelTiles(i-1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,0,j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex)
-				CalculateUV(LevelTileSideTexture(i,j),j2,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,0,LevelTileSideRotation(i,j),8)
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 	
 				vertex=GetLevelVertex(i,j,0,j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
-				CalculateUV(LevelTileSideTexture(i,j),j2,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j)+z2,-(j+Float(j2)/Float(LevelDetail))
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion+z2,-(j+Float(j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				vertex=GetLevelVertex(i,j,0,j2+1)
@@ -7460,8 +7466,8 @@ Function UpdateLevelTileSides(i,j)
 					random#=0
 				EndIf
 	
-				CalculateUV(LevelTileSideTexture(i,j),j2+1,LevelDetail,LevelTileSideRotation(i,j),8)
-				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTileExtrusion(i,j)+LevelTileExtrusion(i-1,j)+z2,-(j+Float(j2+1)/Float(LevelDetail))
+				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8)
+				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion+z2,-(j+Float(j2+1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
 				
 				CurrentIndex=CurrentIndex+4
@@ -7507,23 +7513,23 @@ Function ShiftLevelTileByRandom(i,j)
 	For i2=0 To LevelDetail
 		For j2=0 To LevelDetail
 			If i2=0 And j2=0
-				random#=Minimum4(LevelTileRandom(IMinusOne,jMinusOne),LevelTileRandom(i,jMinusOne),LevelTileRandom(iMinusOne,j),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTiles(IMinusOne,jMinusOne)\Terrain\Random,LevelTiles(i,jMinusOne)\Terrain\Random,LevelTiles(iMinusOne,j)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else If j2=0 And i2=LevelDetail
-				random#=Minimum4(LevelTileRandom(IPlusOne,jMinusOne),LevelTileRandom(i,jMinusOne),LevelTileRandom(IPlusOne,j),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTiles(IPlusOne,jMinusOne)\Terrain\Random,LevelTiles(i,jMinusOne)\Terrain\Random,LevelTiles(IPlusOne,j)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else If j2=LevelDetail And i2=0
-				random#=Minimum4(LevelTileRandom(IMinusOne,jPlusOne),LevelTileRandom(iMinusOne,j),LevelTileRandom(i,jPlusOne),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTiles(IMinusOne,jPlusOne)\Terrain\Random,LevelTiles(iMinusOne,j)\Terrain\Random,LevelTiles(i,jPlusOne)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else If i2=LevelDetail And j2=LevelDetail
-				random#=Minimum4(LevelTileRandom(IPlusOne,jPlusOne),LevelTileRandom(i,jPlusOne),LevelTileRandom(IPlusOne,j),LevelTileRandom(i,j))
+				random#=Minimum4(LevelTiles(IPlusOne,jPlusOne)\Terrain\Random,LevelTiles(i,jPlusOne)\Terrain\Random,LevelTiles(IPlusOne,j)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else If j2=0
-				random#=Minimum2(LevelTileRandom(i,jMinusOne),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTiles(i,jMinusOne)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else If j2=LevelDetail
-				random#=Minimum2(LevelTileRandom(i,jPlusOne),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTiles(i,jPlusOne)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else If i2=0
-				random#=Minimum2(LevelTileRandom(IMinusOne,j),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTiles(IMinusOne,j)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else If i2=LevelDetail
-				random#=Minimum2(LevelTileRandom(IPlusOne,j),LevelTileRandom(i,j))
+				random#=Minimum2(LevelTiles(IPlusOne,j)\Terrain\Random,LevelTiles(i,j)\Terrain\Random)
 			Else
-				random#=LevelTileRandom(i,j)
+				random#=LevelTiles(i,j)\Terrain\Random
 			EndIf
 			
 			vertex=GetLevelVertex(i,j,i2,j2)
@@ -7541,19 +7547,19 @@ Function HeightAtRowVertex#(i,j,i2)
 	If i2<LevelDetail/2
 		; first half of tile, compare with left neighbour
 		If i=0 
-			OtherHeight#=LevelTileHeight(i,j) ;0.0
+			OtherHeight#=LevelTiles(i,j)\Terrain\Height ;0.0
 		Else
-			OtherHeight#=LevelTileHeight(i-1,j)
+			OtherHeight#=LevelTiles(i-1,j)\Terrain\Height
 		EndIf
-		Return OtherHeight+(LevelTileHeight(i,j)-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
+		Return OtherHeight+(LevelTiles(i,j)\Terrain\Height-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
 	Else
 		; second half of tile, compare with right neighbour
 		If i=LevelWidth-1 
-			OtherHeight#=LevelTileHeight(i,j) ;0.0
+			OtherHeight#=LevelTiles(i,j)\Terrain\Height ;0.0
 		Else
-			OtherHeight#=LevelTileHeight(i+1,j)
+			OtherHeight#=LevelTiles(i+1,j)\Terrain\Height
 		EndIf
-		Return LevelTileHeight(i,j)+(OtherHeight-LevelTileHeight(i,j))*Float(i2-LevelDetail/2)/Float(LevelDetail)
+		Return LevelTiles(i,j)\Terrain\Height+(OtherHeight-LevelTiles(i,j)\Terrain\Height)*Float(i2-LevelDetail/2)/Float(LevelDetail)
 		
 	EndIf
 
@@ -7575,7 +7581,7 @@ Function ShiftLevelTileByHeight(i,j)
 		VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+NewHeight,VertexZ(mySurface,vertex)
 
 		If j=LevelHeight-1
-			OtherHeight#=LevelTileHeight(i,j)
+			OtherHeight#=LevelTiles(i,j)\Terrain\Height
 		Else
 			OtherHeight#=HeightAtRowVertex#(i,j+1,i2)
 		EndIf
@@ -7593,7 +7599,7 @@ Function ShiftLevelTileByHeight(i,j)
 		Next
 		
 		If j=0
-			OtherHeight#=LevelTileHeight(i,j)
+			OtherHeight#=LevelTiles(i,j)\Terrain\Height
 		Else
 			OtherHeight#=HeightAtRowVertex#(i,j-1,i2)
 		EndIf
@@ -7615,8 +7621,8 @@ Function ShiftLevelTileByExtrude(i,j)
 	For j2=0 To LevelDetail
 		For i2=0 To LevelDetail
 			vertex=GetLevelVertex(i,j,i2,j2)
-			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
-			;VertexCoords mySurface,vertex,VertexX(mySurface,vertex),LevelTileExtrusion(i,j),VertexZ(mySurface,vertex)
+			VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+LevelTiles(i,j)\Terrain\Extrusion,VertexZ(mySurface,vertex)
+			;VertexCoords mySurface,vertex,VertexX(mySurface,vertex),LevelTiles(i,j)\Terrain\Extrusion,VertexZ(mySurface,vertex)
 		Next
 	Next
 
@@ -7642,7 +7648,7 @@ Function ResetLevelTile(i,j)
 				height=0
 			EndIf
 
-			;CalculateUV(LevelTileTexture(i,j),i2,j2,LevelTileRotation(i,j),8)
+			;CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8)
 								
 			vertex=GetLevelVertex(i,j,i2,j2)
 			VertexCoords mySurface,vertex,i+Float(i2)/Float(LevelDetail)+xoverlap,height+zoverlap,-(j+Float(j2)/Float(LevelDetail))+yoverlap
@@ -7659,11 +7665,11 @@ Function ShiftLevelTileEdges(i,j)
 	jMinusOne=Maximum2(j-1,0)
 	jPlusOne=Minimum2(j+1,LevelHeight-1)
 
-	If LevelTileRounding(i,j)=1		
+	If LevelTiles(i,j)\Terrain\Rounding=1		
 	
 			
 		; is there a drop-off NE corner:
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iPlusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne) And LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jMinusOne)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iPlusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jMinusOne)\Terrain\Extrusion And LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 			; yep: round-off
 			For i2=(LevelDetail/2)+1 To LevelDetail
 				For j2=(LevelDetail/2)+1 To Leveldetail
@@ -7683,7 +7689,7 @@ Function ShiftLevelTileEdges(i,j)
 
 			
 		; is there a drop-off SE corner:
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iPlusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jPlusOne) And LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jPlusOne)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iPlusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jPlusOne)\Terrain\Extrusion And LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 			; yep: round-off
 			For i2=(LevelDetail/2)+1 To LevelDetail
 				For j2=(LevelDetail/2)+1 To Leveldetail
@@ -7701,7 +7707,7 @@ Function ShiftLevelTileEdges(i,j)
 			
 		EndIf
 		; SW corner
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jPlusOne) And LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jPlusOne)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iMinusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jPlusOne)\Terrain\Extrusion And LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 			; yep: round-off
 			For i2=(LevelDetail/2)+1 To LevelDetail
 				For j2=(LevelDetail/2)+1 To Leveldetail
@@ -7720,7 +7726,7 @@ Function ShiftLevelTileEdges(i,j)
 		EndIf
 		
 		; is there a drop-off NW corner:
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j) And LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne) And LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jMinusOne)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iMinusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jMinusOne)\Terrain\Extrusion And LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 			; yep: round-off
 			For i2=(LevelDetail/2)+1 To LevelDetail
 				For j2=(LevelDetail/2)+1 To Leveldetail
@@ -7742,21 +7748,21 @@ Function ShiftLevelTileEdges(i,j)
 	
 	randommax#=0.1
 
-	If LevelTileEdgeRandom(i,j)=1
+	If LevelTiles(i,j)\Terrain\EdgeRandom=1
 		; north side
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jMinusOne)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jMinusOne)\Terrain\Extrusion
 			
 			j2=0
 			For i2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
 				If i2=0 
-					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jMinusOne)
+					If LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 						random#=1.0
 					Else 
 						random#=0
 					EndIf
 				Else If i2=LevelDetail
-					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jMinusOne)
+					If LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 						random#=1.0
 					Else
 						random#=0
@@ -7771,19 +7777,19 @@ Function ShiftLevelTileEdges(i,j)
 			
 		EndIf
 		; east side
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iPlusOne,j)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iPlusOne,j)\Terrain\Extrusion
 			
 			i2=LevelDetail
 			For j2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
 				If j2=0 
-					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jMinusOne)
+					If LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 						random#=1.0
 					Else 
 						random#=0
 					EndIf
 				Else If j2=LevelDetail
-					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jPlusOne)
+					If LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 						random#=1.0
 					Else
 						random#=0
@@ -7797,19 +7803,19 @@ Function ShiftLevelTileEdges(i,j)
 			
 		EndIf
 		; south side
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(i,jPlusOne)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jPlusOne)\Terrain\Extrusion
 			
 			j2=LevelDetail
 			For i2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
 				If i2=0 
-					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jPlusOne)
+					If LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 						random#=1.0
 					Else 
 						random#=0
 					EndIf
 				Else If i2=LevelDetail
-					If LevelTileExtrusion(iPlusOne,j)=LevelTileExtrusion(i,jPlusOne)
+					If LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 						random#=1.0
 					Else
 						random#=0
@@ -7822,19 +7828,19 @@ Function ShiftLevelTileEdges(i,j)
 			
 		EndIf
 		; west side
-		If LevelTileExtrusion(i,j)>LevelTileExtrusion(iMinusOne,j)
+		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iMinusOne,j)\Terrain\Extrusion
 			
 			i2=0
 			For j2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
 				If j2=0 
-					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jMinusOne)
+					If LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 						random#=1.0
 					Else 
 						random#=0
 					EndIf
 				Else If j2=LevelDetail
-					If LevelTileExtrusion(iMinusOne,j)=LevelTileExtrusion(i,jPlusOne)
+					If LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 						random#=1.0
 					Else
 						random#=0
@@ -7855,7 +7861,7 @@ Function UpdateLevelTileTexture(i,j)
 
 	For j2=0 To LevelDetail
 		For i2=0 To LevelDetail
-			CalculateUV(LevelTileTexture(i,j),i2,j2,LevelTileRotation(i,j),8)
+			CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8)
 			vertex=GetLevelVertex(i,j,i2,j2)
 			VertexTexCoords LevelSurface(j),vertex,ChunkTileU,ChunkTileV
 		Next
@@ -7984,14 +7990,14 @@ Function CreateLevelTileClassic(i,j)
 	; top face
 	
 	
-	CalculateUV(LevelTileTexture(i,j),0,0,LevelTileRotation(i,j),8)
-	AddVertex (LevelSurface(j),i,LevelTileExtrusion(i,j),-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileTexture(i,j),1,0,LevelTileRotation(i,j),8)
-	AddVertex (LevelSurface(j),i+1,LevelTileExtrusion(i,j),-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileTexture(i,j),0,1,LevelTileRotation(i,j),8)
-	AddVertex (LevelSurface(j),i,LevelTileExtrusion(i,j),-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileTexture(i,j),1,1,LevelTileRotation(i,j),8)
-	AddVertex (LevelSurface(j),i+1,LevelTileExtrusion(i,j),-j-1,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\Texture,0,0,LevelTiles(i,j)\Terrain\Rotation,8)
+	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\Texture,1,0,LevelTiles(i,j)\Terrain\Rotation,8)
+	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\Texture,0,1,LevelTiles(i,j)\Terrain\Rotation,8)
+	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\Texture,1,1,LevelTiles(i,j)\Terrain\Rotation,8)
+	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (LevelSurface(j),i*20+0,i*20+1,i*20+2)
 	AddTriangle (LevelSurface(j),i*20+1,i*20+3,i*20+2)
@@ -8004,15 +8010,15 @@ Function CreateLevelTileClassic(i,j)
 	If j=0
 		z#=0.0
 	Else
-		z#=LevelTileExtrusion(i,j-1)
+		z#=LevelTiles(i,j-1)\Terrain\Extrusion
 	EndIf
-	CalculateUV(LevelTileSideTexture(i,j),0,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i+1,LevelTileExtrusion(i,j),-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i,LevelTileExtrusion(i,j),-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),z,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,z,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i+1,0,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i,z,-j,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (LevelSurface(j),i*20+4,i*20+5,i*20+6)
@@ -8020,13 +8026,13 @@ Function CreateLevelTileClassic(i,j)
 	
 	
 	; east face
-	CalculateUV(LevelTileSideTexture(i,j),0,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i+1,LevelTileExtrusion(i,j),-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i+1,LevelTileExtrusion(i,j),-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),0,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i+1,0,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i+1,0,-j,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (LevelSurface(j),i*20+8,i*20+9,i*20+10)
@@ -8036,28 +8042,28 @@ Function CreateLevelTileClassic(i,j)
 	If j=99
 		z#=0.0
 	Else
-		z#=LevelTileExtrusion(i,j+1)
+		z#=LevelTiles(i,j+1)\Terrain\Extrusion
 	EndIf
-	CalculateUV(LevelTileSideTexture(i,j),0,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i,LevelTileExtrusion(i,j),-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i+1,LevelTileExtrusion(i,j),-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),0,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i+1,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i,z,-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i+1,z,-j-1,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (LevelSurface(j),i*20+12,i*20+13,i*20+14)
 	AddTriangle (LevelSurface(j),i*20+13,i*20+15,i*20+14)
 	
 	; west face
-	CalculateUV(LevelTileSideTexture(i,j),0,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i,LevelTileExtrusion(i,j),-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,0,LevelTileSideRotation(i,j),8)
-	AddVertex (LevelSurface(j),i,LevelTileExtrusion(i,j),-j-1,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),0,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,0,LevelTiles(i,j)\Terrain\SideRotation,8)
+	AddVertex (LevelSurface(j),i,LevelTiles(i,j)\Terrain\Extrusion,-j-1,ChunkTileU,ChunkTileV)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,0,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i,0,-j,ChunkTileU,ChunkTileV)
-	CalculateUV(LevelTileSideTexture(i,j),1,1,LevelTileSideRotation(i,j),8)
+	CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,1,1,LevelTiles(i,j)\Terrain\SideRotation,8)
 	AddVertex (LevelSurface(j),i,0,-j-1,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (LevelSurface(j),i*20+16,i*20+17,i*20+18)
@@ -8201,14 +8207,14 @@ Function BuildLevelModel()
 		ClearSurface WaterSurface(j)
 		For i=0 To LevelWidth-1
 			; top face
-			CalculateUV(WaterTileTexture(i,j),0,0,WaterTileRotation(i,j),4)
-			AddVertex (WaterSurface(j),i,WaterTileHeight(i,j),-j,ChunkTileU,ChunkTileV)
-			CalculateUV(WaterTileTexture(i,j),1,0,WaterTileRotation(i,j),4)
-			AddVertex (WaterSurface(j),i+1,WaterTileHeight(i,j),-j,ChunkTileU,ChunkTileV)
-			CalculateUV(WaterTileTexture(i,j),0,1,WaterTileRotation(i,j),4)
-			AddVertex (WaterSurface(j),i,WaterTileHeight(i,j),-j-1,ChunkTileU,ChunkTileV)
-			CalculateUV(WaterTileTexture(i,j),1,1,WaterTileRotation(i,j),4)
-			AddVertex (WaterSurface(j),i+1,WaterTileHeight(i,j),-j-1,ChunkTileU,ChunkTileV)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4)
+			AddVertex (WaterSurface(j),i,LevelTiles(i,j)\Water\Height,-j,ChunkTileU,ChunkTileV)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,1,0,LevelTiles(i,j)\Water\Rotation,4)
+			AddVertex (WaterSurface(j),i+1,LevelTiles(i,j)\Water\Height,-j,ChunkTileU,ChunkTileV)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,0,1,LevelTiles(i,j)\Water\Rotation,4)
+			AddVertex (WaterSurface(j),i,LevelTiles(i,j)\Water\Height,-j-1,ChunkTileU,ChunkTileV)
+			CalculateUV(LevelTiles(i,j)\Water\Texture,1,1,LevelTiles(i,j)\Water\Rotation,4)
+			AddVertex (WaterSurface(j),i+1,LevelTiles(i,j)\Water\Height,-j-1,ChunkTileU,ChunkTileV)
 			
 			AddTriangle (WaterSurface(j),i*4+0,i*4+1,i*4+2)
 			AddTriangle (WaterSurface(j),i*4+1,i*4+3,i*4+2)
@@ -8230,7 +8236,7 @@ Function BuildLevelModel()
 		ClearSurface LogicSurface(j)
 		For i=0 To LevelWidth-1
 		
-			;If LevelTileLogic(i,j)=1 Or LevelTileLogic(i,j)=2 Or LevelTileLogic(i,j)=11 Or LevelTileLogic(i,j)=12 Or LevelTileLogic(i,j)=13
+			;If LevelTiles(i,j)\Terrain\Logic=1 Or LevelTiles(i,j)\Terrain\Logic=2 Or LevelTiles(i,j)\Terrain\Logic=11 Or LevelTiles(i,j)\Terrain\Logic=12 Or LevelTiles(i,j)\Terrain\Logic=13
 			If LevelTileLogicHasVisuals(i,j)
 				nologicshow=0
 			Else
@@ -8238,10 +8244,10 @@ Function BuildLevelModel()
 			EndIf
 			; top face
 			; pick height of logic mesh as just over maxi(water,tile)
-			If WaterTileHeight(i,j)>LevelTileExtrusion(i,j)
-				height#=WaterTileHeight(i,j)+0.05
+			If LevelTiles(i,j)\Water\Height>LevelTiles(i,j)\Terrain\Extrusion
+				height#=LevelTiles(i,j)\Water\Height+0.05
 			Else
-				height#=LevelTileExtrusion(i,j)+0.05
+				height#=LevelTiles(i,j)\Terrain\Extrusion+0.05
 			EndIf
 			AddVertex (LogicSurface(j),i+nologicshow,height,-j)
 			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j)
@@ -8326,34 +8332,33 @@ Function ChangeLevelTileActual(i,j,update)
 	
 	; The Tile
 	If CurrentTileTextureUse=True
-		
-		LevelTileTexture(i,j)=CurrentTileTexture ; corresponding to squares in LevelTexture
-		LevelTileRotation(i,j)=CurrentTileRotation ; 0-3 , and 4-7 for "flipped"
+		LevelTiles(i,j)\Terrain\Texture=CurrentTile\Terrain\Texture ; corresponding to squares in LevelTexture
+		LevelTiles(i,j)\Terrain\Rotation=CurrentTileRotation ; 0-3 , and 4-7 for "flipped"
 	EndIf
 	If CurrentTileSideTextureUse=True
-		LevelTileSideTexture(i,j)=CurrentTileSideTexture ; texture for extrusion walls
-		LevelTileSideRotation(i,j)=CurrentTileSideRotation ; 0-3 , and 4-7 for "flipped"
+		LevelTiles(i,j)\Terrain\SideTexture=CurrentTile\Terrain\SideTexture ; texture for extrusion walls
+		LevelTiles(i,j)\Terrain\SideRotation=CurrentTileSideRotation ; 0-3 , and 4-7 for "flipped"
 	EndIf
 	If CurrentTileRandomUse=True
-		LevelTileRandom#(i,j)=CurrentTileRandom ; random height pertubation of tile
+		LevelTiles(i,j)\Terrain\Random=CurrentTileRandom ; random height pertubation of tile
 	EndIf
 	If CurrentTileHeightUse=True
-		If LevelTileHeight#(i,j)<>CurrentTileHeight
+		If LevelTiles(i,j)\Terrain\Height<>CurrentTileHeight
 			HeightWasChanged=True
 		EndIf
-		LevelTileHeight#(i,j)=CurrentTileHeight ; height of "center" - e.g. to make ditches and hills
+		LevelTiles(i,j)\Terrain\Height=CurrentTileHeight ; height of "center" - e.g. to make ditches and hills
 	EndIf
 	If CurrentTileExtrusionUse=True
-		LevelTileExtrusion#(i,j)=CurrentTileExtrusion; extrusion with walls around it 
+		LevelTiles(i,j)\Terrain\Extrusion=CurrentTileExtrusion; extrusion with walls around it 
 	EndIf
 	If CurrentTileRoundingUse=True
-		LevelTileRounding(i,j)=CurrentTileRounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
+		LevelTiles(i,j)\Terrain\Rounding=CurrentTileRounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
 	EndIf
 	If CurrentTileEdgeRandomUse=True
-		LevelTileEdgeRandom(i,j)=CurrentTileEdgeRandom; 0-no, 1-yes: are edges rippled
+		LevelTiles(i,j)\Terrain\EdgeRandom=CurrentTileEdgeRandom; 0-no, 1-yes: are edges rippled
 	EndIf
 	If CurrentTileLogicUse=True
-		LevelTileLogic(i,j)=CurrentTileLogic
+		LevelTiles(i,j)\Terrain\Logic=CurrentTileLogic
 	EndIf
 	If update=True 
 		UpdateLevelTile(i,j)
@@ -8365,7 +8370,7 @@ Function ChangeLevelTileActual(i,j,update)
 	
 		; Possibly update surrounding tiles (Height also needs to update diagonals)
 		If HasWest
-			If LevelTileExtrusion(i-1,j)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+			If LevelTiles(i-1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion ;Or HeightWasChanged
 				UpdateLevelTile(i-1,j)
 			EndIf
 			If HeightWasChanged
@@ -8378,7 +8383,7 @@ Function ChangeLevelTileActual(i,j,update)
 			EndIf
 		EndIf
 		If HasEast
-			If LevelTileExtrusion(i+1,j)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+			If LevelTiles(i+1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion ;Or HeightWasChanged
 				UpdateLevelTile(i+1,j)
 			EndIf
 			If HeightWasChanged
@@ -8391,12 +8396,12 @@ Function ChangeLevelTileActual(i,j,update)
 			EndIf
 		EndIf
 		If HasNorth
-			If LevelTileExtrusion(i,j-1)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+			If LevelTiles(i,j-1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion ;Or HeightWasChanged
 				UpdateLevelTile(i,j-1)
 			EndIf
 		EndIf
 		If HasSouth
-			If LevelTileExtrusion(i,j+1)>=LevelTileExtrusion(i,j) ;Or HeightWasChanged
+			If LevelTiles(i,j+1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion ;Or HeightWasChanged
 				UpdateLevelTile(i,j+1)
 			EndIf
 		EndIf
@@ -8415,11 +8420,11 @@ Function ChangeLevelTileActual(i,j,update)
 			
 	; the water
 	If CurrentWaterTileUse=True 
-		WaterTileTexture(i,j)=CurrentWaterTileTexture
-		WaterTileRotation(i,j)=CurrentWaterTileRotation
+		LevelTiles(i,j)\Water\Texture=CurrentTile\Water\Texture
+		LevelTiles(i,j)\Water\Rotation=CurrentTile\Water\Rotation
 	EndIf
-	If CurrentWaterTileHeightUse=True WaterTileHeight(i,j)=CurrentWaterTileHeight
-	If CurrentWaterTileTurbulenceUse=True WaterTileTurbulence(i,j)=CurrentWaterTileTurbulence
+	If CurrentWaterTileHeightUse=True LevelTiles(i,j)\Water\Height=CurrentWaterTileHeight
+	If CurrentWaterTileTurbulenceUse=True LevelTiles(i,j)\Water\Turbulence=CurrentWaterTileTurbulence
 	If update=True
 		UpdateWaterTile(i,j)
 		UpdateLogicTile(i,j)
@@ -8441,26 +8446,26 @@ Function GrabLevelTile(i,j)
 		j=LevelHeight-1
 	EndIf
 	
-	CurrentTileTexture=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
-	CurrentTileRotation=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	CurrentTileSideTexture=LevelTileSideTexture(i,j) ; texture for extrusion walls
-	CurrentTileSideRotation=LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	CurrentTileRandom=LevelTileRandom#(i,j) ; random height pertubation of tile
-	CurrentTileHeight=LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
-	CurrentTileExtrusion=LevelTileExtrusion#(i,j); extrusion with walls around it 
-	CurrentTileRounding=LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
-	CurrentTileEdgeRandom=LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
-	CurrentTileLogic=LevelTileLogic(i,j)
+	CurrentTile\Terrain\Texture=LevelTiles(i,j)\Terrain\Texture ; corresponding to squares in LevelTexture
+	CurrentTileRotation=LevelTiles(i,j)\Terrain\Rotation ; 0-3 , and 4-7 for "flipped"
+	CurrentTile\Terrain\SideTexture=LevelTiles(i,j)\Terrain\SideTexture ; texture for extrusion walls
+	CurrentTileSideRotation=LevelTiles(i,j)\Terrain\SideRotation ; 0-3 , and 4-7 for "flipped"
+	CurrentTileRandom=LevelTiles(i,j)\Terrain\Random ; random height pertubation of tile
+	CurrentTileHeight=LevelTiles(i,j)\Terrain\Height ; height of "center" - e.g. to make ditches and hills
+	CurrentTileExtrusion=LevelTiles(i,j)\Terrain\Extrusion; extrusion with walls around it 
+	CurrentTileRounding=LevelTiles(i,j)\Terrain\Rounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
+	CurrentTileEdgeRandom=LevelTiles(i,j)\Terrain\EdgeRandom; 0-no, 1-yes: are edges rippled
+	CurrentTileLogic=LevelTiles(i,j)\Terrain\Logic
 	
 	CurrentTileRandom2=CurrentTileRandom*1000
 	CurrentTileHeight2=CurrentTileHeight*100
 	CurrentTileExtrusion2=CurrentTileExtrusion*100
 	CurrentTileLogic2=CurrentTileLogic*10
 	
-	CurrentWaterTileTexture=WaterTileTexture(i,j)
-	CurrentWaterTileRotation=WaterTileRotation(i,j)
-	CurrentWaterTileHeight=WaterTileHeight(i,j)
-	CurrentWaterTileTurbulence=WaterTileTurbulence(i,j)
+	CurrentTile\Water\Texture=LevelTiles(i,j)\Water\Texture
+	CurrentTile\Water\Rotation=LevelTiles(i,j)\Water\Rotation
+	CurrentWaterTileHeight=LevelTiles(i,j)\Water\Height
+	CurrentWaterTileTurbulence=LevelTiles(i,j)\Water\Turbulence
 	CurrentWaterTileHeight2=CurrentWaterTileHeight*100
 	CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
 
@@ -8482,29 +8487,7 @@ Function GrabLevelTileFromBrush(i,j)
 		j=LevelHeight-1
 	EndIf
 	
-	CurrentTileTexture=BrushLevelTileTexture(i,j) ; corresponding to squares in LevelTexture
-	CurrentTileRotation=BrushLevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	CurrentTileSideTexture=BrushLevelTileSideTexture(i,j) ; texture for extrusion walls
-	CurrentTileSideRotation=BrushLevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	CurrentTileRandom=BrushLevelTileRandom#(i,j) ; random height pertubation of tile
-	CurrentTileHeight=BrushLevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
-	CurrentTileExtrusion=BrushLevelTileExtrusion#(i,j); extrusion with walls around it 
-	CurrentTileRounding=BrushLevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
-	CurrentTileEdgeRandom=BrushLevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
-	CurrentTileLogic=BrushLevelTileLogic(i,j)
-	
-	CurrentTileRandom2=CurrentTileRandom*1000
-	CurrentTileHeight2=CurrentTileHeight*100
-	CurrentTileExtrusion2=CurrentTileExtrusion*100
-	CurrentTileLogic2=CurrentTileLogic*10
-	
-	CurrentWaterTileTexture=BrushWaterTileTexture(i,j)
-	CurrentWaterTileRotation=BrushWaterTileRotation(i,j)
-	CurrentWaterTileHeight=BrushWaterTileHeight(i,j)
-	CurrentWaterTileTurbulence=BrushWaterTileTurbulence(i,j)
-	CurrentWaterTileHeight2=CurrentWaterTileHeight*100
-	CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
-
+	CopyTile(BrushTiles(i,j),CurrentTile)
 
 	BuildCurrentTileModel()
 
@@ -8523,21 +8506,7 @@ Function CopyLevelTileToBrush(i,j,iDest,jDest)
 		j=LevelHeight-1
 	EndIf
 	
-	BrushLevelTileTexture(iDest,jDest)=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
-	BrushLevelTileRotation(iDest,jDest)=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	BrushLevelTileSideTexture(iDest,jDest)=LevelTileSideTexture(i,j) ; texture for extrusion walls
-	BrushLevelTileSideRotation(iDest,jDest)=LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	BrushLevelTileRandom(iDest,jDest)=LevelTileRandom#(i,j) ; random height pertubation of tile
-	BrushLevelTileHeight(iDest,jDest)=LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
-	BrushLevelTileExtrusion(iDest,jDest)=LevelTileExtrusion#(i,j); extrusion with walls around it 
-	BrushLevelTileRounding(iDest,jDest)=LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
-	BrushLevelTileEdgeRandom(iDest,jDest)=LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
-	BrushLevelTileLogic(iDest,jDest)=LevelTileLogic(i,j)
-	
-	BrushWaterTileTexture(iDest,jDest)=WaterTileTexture(i,j)
-	BrushWaterTileRotation(iDest,jDest)=WaterTileRotation(i,j)
-	BrushWaterTileHeight(iDest,jDest)=WaterTileHeight(i,j)
-	BrushWaterTileTurbulence(iDest,jDest)=WaterTileTurbulence(i,j)
+	CopyTile(LevelTiles(i,j),BrushTiles(iDest,jDest))
 
 End Function
 
@@ -8549,29 +8518,8 @@ Function LevelTileIsInBrush(tilex,tiley,cursorx,cursory)
 End Function
 
 Function SetLevelTileAsTarget(i,j)
-	
-	TargetTileTexture=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
-	TargetTileRotation=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	TargetTileSideTexture=LevelTileSideTexture(i,j) ; texture for extrusion walls
-	TargetTileSideRotation=LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-	TargetTileRandom=LevelTileRandom#(i,j) ; random height pertubation of tile
-	TargetTileHeight=LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
-	TargetTileExtrusion=LevelTileExtrusion#(i,j); extrusion with walls around it 
-	TargetTileRounding=LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
-	TargetTileEdgeRandom=LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
-	TargetTileLogic=LevelTileLogic(i,j)
-	
-	;TargetTileRandom2=TargetTileRandom*1000
-	;TargetTileHeight2=TargetTileHeight*100
-	;TargetTileExtrusion2=TargetTileExtrusion*100
-	;TargetTileLogic2=TargetTileLogic*10
-	
-	TargetWaterTileTexture=WaterTileTexture(i,j)
-	TargetWaterTileRotation=WaterTileRotation(i,j)
-	TargetWaterTileHeight=WaterTileHeight(i,j)
-	TargetWaterTileTurbulence=WaterTileTurbulence(i,j)
-	;TargetWaterTileHeight2=TargetWaterTileHeight*100
-	;TargetWaterTileTurbulence2=TargetWaterTileTurbulence*100
+
+	CopyTile(LevelTiles(i,j),TargetTile)
 
 End Function
 
@@ -8593,47 +8541,47 @@ Function LevelTileMatchesTarget(i,j)
 	;	Return True
 	;EndIf
 
-	If TargetTileTextureUse And TargetTileTexture<>LevelTileTexture(i,j)
+	If TargetTileTextureUse And TargetTile\Terrain\Texture<>LevelTiles(i,j)\Terrain\Texture
 		Return False
 	EndIf
-	;If TargetTileRotation<>LevelTileRotation(i,j)
+	;If TargetTile\Terrain\Rotation<>LevelTiles(i,j)\Terrain\Rotation
 	;	Return False
 	;EndIf
-	If TargetTileSideTextureUse And TargetTileSideTexture<>LevelTileSideTexture(i,j)
+	If TargetTileSideTextureUse And TargetTile\Terrain\SideTexture<>LevelTiles(i,j)\Terrain\SideTexture
 		Return False
 	EndIf
-	;If TargetTileSideRotation<>LevelTileSideRotation(i,j)
+	;If TargetTile\Terrain\SideRotation<>LevelTiles(i,j)\Terrain\SideRotation
 	;	Return False
 	;EndIf
-	If TargetTileRandomUse And TargetTileRandom<>LevelTileRandom#(i,j)
+	If TargetTileRandomUse And TargetTile\Terrain\Random<>LevelTiles(i,j)\Terrain\Random
 		Return False
 	EndIf
-	If TargetTileHeightUse And TargetTileHeight<>LevelTileHeight#(i,j)
+	If TargetTileHeightUse And TargetTile\Terrain\Height<>LevelTiles(i,j)\Terrain\Height
 		Return False
 	EndIf
-	If TargetTileExtrusionUse And TargetTileExtrusion<>LevelTileExtrusion#(i,j)
+	If TargetTileExtrusionUse And TargetTile\Terrain\Extrusion<>LevelTiles(i,j)\Terrain\Extrusion
 		Return False
 	EndIf
-	If TargetTileRoundingUse And TargetTileRounding<>LevelTileRounding(i,j)
+	If TargetTileRoundingUse And TargetTile\Terrain\Rounding<>LevelTiles(i,j)\Terrain\Rounding
 		Return False
 	EndIf
-	If TargetTileEdgeRandomUse And TargetTileEdgeRandom<>LevelTileEdgeRandom(i,j)
+	If TargetTileEdgeRandomUse And TargetTile\Terrain\EdgeRandom<>LevelTiles(i,j)\Terrain\EdgeRandom
 		Return False
 	EndIf
-	If TargetTileLogicUse And TargetTileLogic<>LevelTileLogic(i,j)
+	If TargetTileLogicUse And TargetTile\Terrain\Logic<>LevelTiles(i,j)\Terrain\Logic
 		Return False
 	EndIf
 	
-	If TargetWaterTileUse And TargetWaterTileTexture<>WaterTileTexture(i,j)
+	If TargetWaterTileUse And TargetTile\Water\Texture<>LevelTiles(i,j)\Water\Texture
 		Return False
 	EndIf
-	;If TargetWaterTileRotation<>WaterTileRotation(i,j)
+	;If TargetTile\Water\Rotation<>LevelTiles(i,j)\Water\Rotation
 	;	Return False
 	;EndIf
-	If TargetWaterTileHeightUse And TargetWaterTileHeight<>WaterTileHeight(i,j)
+	If TargetWaterTileHeightUse And TargetTile\Water\Height<>LevelTiles(i,j)\Water\Height
 		Return False
 	EndIf
-	If TargetWaterTileTurbulenceUse And TargetWaterTileTurbulence<>WaterTileTurbulence(i,j)
+	If TargetWaterTileTurbulenceUse And TargetTile\Water\Turbulence<>LevelTiles(i,j)\Water\Turbulence
 		Return False
 	EndIf
 	
@@ -8645,12 +8593,12 @@ Function SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
 
 	For i=0 To LevelWidth-1
 		For j=0 To LevelHeight-1
-			If LevelTileExtrusion#(i,j)<0.0
-				LevelTileLogic(i,j)=LessThanZero
-			ElseIf LevelTileExtrusion#(i,j)=0.0
-				LevelTileLogic(i,j)=EqualToZero
-			ElseIf LevelTileExtrusion#(i,j)>0.0
-				LevelTileLogic(i,j)=GreaterThanZero
+			If LevelTiles(i,j)\Terrain\Extrusion<0.0
+				LevelTiles(i,j)\Terrain\Logic=LessThanZero
+			ElseIf LevelTiles(i,j)\Terrain\Extrusion=0.0
+				LevelTiles(i,j)\Terrain\Logic=EqualToZero
+			ElseIf LevelTiles(i,j)\Terrain\Extrusion>0.0
+				LevelTiles(i,j)\Terrain\Logic=GreaterThanZero
 			EndIf
 			UpdateLogicTile(i,j)
 		Next
@@ -8662,9 +8610,9 @@ Function LoadTilePreset()
 	
 	Filename$="Data\Editor\TilePresets\"+TilePresetCategoryName$(CurrentTilePresetCategory)+"\"+TilePresetTileName$(CurrentTilePresetTile)
 	file=ReadFile(filename$)
-	CurrentTileTexture=ReadInt(file)
+	CurrentTile\Terrain\Texture=ReadInt(file)
 	CurrentTileRotation=ReadInt(file) 
-	CurrentTileSideTexture=ReadInt(file)
+	CurrentTile\Terrain\SideTexture=ReadInt(file)
 	CurrentTileSideRotation=ReadInt(file)
 	CurrentTileRandom=ReadFloat(file)
 	CurrentTileHeight=ReadFloat(file)
@@ -8679,8 +8627,8 @@ Function LoadTilePreset()
 	CurrentTileExtrusion2=CurrentTileExtrusion*100
 	CurrentTileLogic2=CurrentTileLogic*10
 	
-	CurrentWaterTileTexture=ReadInt(file)
-	CurrentWaterTileRotation=ReadInt(file)
+	CurrentTile\Water\Texture=ReadInt(file)
+	CurrentTile\Water\Rotation=ReadInt(file)
 	CurrentWaterTileHeight=ReadFloat(file)
 	CurrentWaterTileTurbulence=ReadFloat(file)
 	CurrentWaterTileHeight2=CurrentWaterTileHeight*100
@@ -8702,9 +8650,9 @@ Function SaveTilePreset()
 	Filename$=Input ("FileName: ")
 	file=WriteFile ("data\editor\tilepresets\"+filename$+".tp1")
 	
-	WriteInt file,CurrentTileTexture
+	WriteInt file,CurrentTile\Terrain\Texture
 	WriteInt file,CurrentTileRotation
-	WriteInt file,CurrentTileSideTexture
+	WriteInt file,CurrentTile\Terrain\SideTexture
 	WriteInt file,CurrentTileSideRotation
 	WriteFloat file,CurrentTileRandom
 	WriteFloat file,CurrentTileHeight
@@ -8714,8 +8662,8 @@ Function SaveTilePreset()
 	WriteInt file,CurrentTileLogic
 	
 	
-	WriteInt file,CurrentWaterTileTexture
-	WriteInt file,CurrentWaterTileRotation
+	WriteInt file,CurrentTile\Water\Texture
+	WriteInt file,CurrentTile\Water\Rotation
 	WriteFloat file,CurrentWaterTileHeight
 	WriteFloat file,CurrentWaterTileTurbulence
 
@@ -13326,8 +13274,7 @@ Function SetBrushToCurrentTile()
 
 	BrushSpaceWidth=1
 	BrushSpaceHeight=1
-	;xzx
-	;CopyTile(CurrentTile,BrushTile(0,0))
+	CopyTile(CurrentTile,BrushTiles(0,0))
 
 End Function
 
@@ -14518,11 +14465,11 @@ End Function
 
 Function UpdateWaterVertices(i,j)
 	mySurface=WaterSurface(j)
-	VertexCoords mySurface,i*4+0,VertexX(mySurface,i*4+0),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180),VertexZ(mySurface,i*4+0)
-	VertexCoords mySurface,i*4+1,VertexX(mySurface,i*4+1),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90),VertexZ(mySurface,i*4+1)
+	VertexCoords mySurface,i*4+0,VertexX(mySurface,i*4+0),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180),VertexZ(mySurface,i*4+0)
+	VertexCoords mySurface,i*4+1,VertexX(mySurface,i*4+1),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90),VertexZ(mySurface,i*4+1)
 
-	VertexCoords mySurface,i*4+2,VertexX(mySurface,i*4+2),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180-180),VertexZ(mySurface,i*4+2)
-	VertexCoords mySurface,i*4+3,VertexX(mySurface,i*4+3),WaterTileHeight(i,j)+WaterTileTurbulence(i,j)*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90-180),VertexZ(mySurface,i*4+3)
+	VertexCoords mySurface,i*4+2,VertexX(mySurface,i*4+2),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180-180),VertexZ(mySurface,i*4+2)
+	VertexCoords mySurface,i*4+3,VertexX(mySurface,i*4+3),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90-180),VertexZ(mySurface,i*4+3)
 End Function
 
 Function UpdateWaterTile(i,j)
@@ -14533,37 +14480,37 @@ Function UpdateWaterTile(i,j)
 	LevelDetail=1
 	
 	; top face
-	CalculateUV(WaterTileTexture(i,j),0,0,WaterTileRotation(i,j),4)
-	VertexCoords WaterSurface(j),i*4+0,i,WaterTileHeight(i,j),-j
+	CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4)
+	VertexCoords WaterSurface(j),i*4+0,i,LevelTiles(i,j)\Water\Height,-j
 	VertexTexCoords WaterSurface(j),i*4+0,ChunkTileU,ChunkTileV
-	If WaterTileTexture(i,j)>=0
+	If LevelTiles(i,j)\Water\Texture>=0
 		VertexColor WaterSurface(j),i*4+0,255,255,255
 	Else
 		VertexColor WaterSurface(j),i*4+0,0,0,0
 	EndIf
 	
-	CalculateUV(WaterTileTexture(i,j),1,0,WaterTileRotation(i,j),4)
-	VertexCoords WaterSurface(j),i*4+1,i+1,WaterTileHeight(i,j),-j
+	CalculateUV(LevelTiles(i,j)\Water\Texture,1,0,LevelTiles(i,j)\Water\Rotation,4)
+	VertexCoords WaterSurface(j),i*4+1,i+1,LevelTiles(i,j)\Water\Height,-j
 	VertexTexCoords WaterSurface(j),i*4+1,ChunkTileU,ChunkTileV
-	If WaterTileTexture(i,j)>=0
+	If LevelTiles(i,j)\Water\Texture>=0
 		VertexColor WaterSurface(j),i*4+1,255,255,255
 	Else
 		VertexColor WaterSurface(j),i*4+1,0,0,0
 	EndIf
 
-	CalculateUV(WaterTileTexture(i,j),0,1,WaterTileRotation(i,j),4)
-	VertexCoords WaterSurface(j),i*4+2,i,WaterTileHeight(i,j),-j-1
+	CalculateUV(LevelTiles(i,j)\Water\Texture,0,1,LevelTiles(i,j)\Water\Rotation,4)
+	VertexCoords WaterSurface(j),i*4+2,i,LevelTiles(i,j)\Water\Height,-j-1
 	VertexTexCoords WaterSurface(j),i*4+2,ChunkTileU,ChunkTileV
-	If WaterTileTexture(i,j)>=0
+	If LevelTiles(i,j)\Water\Texture>=0
 		VertexColor WaterSurface(j),i*4+2,255,255,255
 	Else
 		VertexColor WaterSurface(j),i*4+2,0,0,0
 	EndIf
 
-	CalculateUV(WaterTileTexture(i,j),1,1,WaterTileRotation(i,j),4)
-	VertexCoords WaterSurface(j),i*4+3,i+1,WaterTileHeight(i,j),-j-1
+	CalculateUV(LevelTiles(i,j)\Water\Texture,1,1,LevelTiles(i,j)\Water\Rotation,4)
+	VertexCoords WaterSurface(j),i*4+3,i+1,LevelTiles(i,j)\Water\Height,-j-1
 	VertexTexCoords WaterSurface(j),i*4+3,ChunkTileU,ChunkTileV
-	If WaterTileTexture(i,j)>=0
+	If LevelTiles(i,j)\Water\Texture>=0
 		VertexColor WaterSurface(j),i*4+3,255,255,255
 	Else
 		VertexColor WaterSurface(j),i*4+3,0,0,0
@@ -14583,10 +14530,10 @@ Function UpdateLogicTile(i,j)
 		nologicshow=-300
 	EndIf
 	
-	If WaterTileHeight(i,j)>LevelTileExtrusion(i,j)
-		height#=WaterTileHeight(i,j)+0.05
+	If LevelTiles(i,j)\Water\Height>LevelTiles(i,j)\Terrain\Extrusion
+		height#=LevelTiles(i,j)\Water\Height+0.05
 	Else
-		height#=LevelTileExtrusion(i,j)+0.05
+		height#=LevelTiles(i,j)\Terrain\Extrusion+0.05
 	EndIf
 	VertexCoords LogicSurface(j),i*4,i+nologicshow,height,-j
 	VertexCoords LogicSurface(j),i*4+1,i+1+nologicshow,height,-j
@@ -14918,26 +14865,26 @@ Function BuildCurrentTileModel()
 	; add block
 	
 	; top face
-	CalculateUV(CurrentTileTexture,0,0,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,0,0,CurrentTileRotation,8)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileTexture,1,0,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,1,0,CurrentTileRotation,8)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileTexture,0,1,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,0,1,CurrentTileRotation,8)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileTexture,1,1,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,1,1,CurrentTileRotation,8)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (CurrentSurface,i*20+0,i*20+1,i*20+2)
 	AddTriangle (CurrentSurface,i*20+1,i*20+3,i*20+2)
 	
 	; north face
-	CalculateUV(CurrentTileSideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,99,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,99,1,ChunkTileU,ChunkTileV)
 
 	
@@ -14946,13 +14893,13 @@ Function BuildCurrentTileModel()
 	
 	
 	; east face
-	CalculateUV(CurrentTileSideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,99,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,99,1,ChunkTileU,ChunkTileV)
 
 	
@@ -14960,13 +14907,13 @@ Function BuildCurrentTileModel()
 	AddTriangle (CurrentSurface,i*20+9,i*20+11,i*20+10)
 	
 	; south face
-	CalculateUV(CurrentTileSideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,99,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,1,99,-1,ChunkTileU,ChunkTileV)
 
 	
@@ -14974,13 +14921,13 @@ Function BuildCurrentTileModel()
 	AddTriangle (CurrentSurface,i*20+13,i*20+15,i*20+14)
 	
 	; west face
-	CalculateUV(CurrentTileSideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,99,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTileSideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
 	AddVertex (CurrentSurface,-1,99,-1,ChunkTileU,ChunkTileV)
 
 	
@@ -14998,16 +14945,16 @@ Function BuildCurrentTileModel()
 	
 	mySurface=CurrentWaterTileSurface
 
-	CalculateUV(CurrentWaterTileTexture,0,0,CurrentWaterTileRotation,4)
+	CalculateUV(CurrentTile\Water\Texture,0,0,CurrentTile\Water\Rotation,4)
 	VertexTexCoords mySurface,0,ChunkTileU,ChunkTileV
-	CalculateUV(CurrentWaterTileTexture,LevelDetail,0,CurrentWaterTileRotation,4)
+	CalculateUV(CurrentTile\Water\Texture,LevelDetail,0,CurrentTile\Water\Rotation,4)
 	VertexTexCoords mySurface,1,ChunkTileU,ChunkTileV
-	CalculateUV(CurrentWaterTileTexture,0,LevelDetail,CurrentWaterTileRotation,4)
+	CalculateUV(CurrentTile\Water\Texture,0,LevelDetail,CurrentTile\Water\Rotation,4)
 	VertexTexCoords mySurface,2,ChunkTileU,ChunkTileV
-	CalculateUV(CurrentWaterTileTexture,LevelDetail,LevelDetail,CurrentWaterTileRotation,4)
+	CalculateUV(CurrentTile\Water\Texture,LevelDetail,LevelDetail,CurrentTile\Water\Rotation,4)
 	VertexTexCoords mySurface,3,ChunkTileU,ChunkTileV
 	
-	EntityTexture CurrentWaterTile,WaterTexture
+	EntityTexture CurrentWaterTile,CurrentWaterTexture
 	
 End Function
 
@@ -15924,25 +15871,25 @@ Function ResetLevel()
 
 	For i=0 To 99
 		For j=0 To 99
-			LevelTileTexture(i,j)=0 ; corresponding to squares in LevelTexture
-			LevelTileRotation(i,j)=0 ; 0-3 , and 4-7 for "flipped"
-			LevelTileSideTexture(i,j)=13 ; texture for extrusion walls
-			LevelTileSideRotation(i,j)=0 ; 0-3 , and 4-7 for "flipped"
-			LevelTileRandom#(i,j)=0 ; random height pertubation of tile
-			LevelTileHeight#(i,j)=0 ; height of "center" - e.g. to make ditches and hills
-			LevelTileExtrusion#(i,j)=0; extrusion with walls around it 
-			LevelTileRounding(i,j)=0; 0-no, 1-yes: are floors rounded if on a drop-off corner
-			LevelTileEdgeRandom(i,j)=0; 0-no, 1-yes: are edges rippled
-			LevelTileLogic(i,j)=0
+			LevelTiles(i,j)\Terrain\Texture=0 ; corresponding to squares in LevelTexture
+			LevelTiles(i,j)\Terrain\Rotation=0 ; 0-3 , and 4-7 for "flipped"
+			LevelTiles(i,j)\Terrain\SideTexture=13 ; texture for extrusion walls
+			LevelTiles(i,j)\Terrain\SideRotation=0 ; 0-3 , and 4-7 for "flipped"
+			LevelTiles(i,j)\Terrain\Random=0 ; random height pertubation of tile
+			LevelTiles(i,j)\Terrain\Height=0 ; height of "center" - e.g. to make ditches and hills
+			LevelTiles(i,j)\Terrain\Extrusion=0; extrusion with walls around it 
+			LevelTiles(i,j)\Terrain\Rounding=0; 0-no, 1-yes: are floors rounded if on a drop-off corner
+			LevelTiles(i,j)\Terrain\EdgeRandom=0; 0-no, 1-yes: are edges rippled
+			LevelTiles(i,j)\Terrain\Logic=0
 		Next
 	Next
 	
 	For i=0 To 99
 		For j=0 To 99
-			WaterTileHeight(i,j)=-0.2
-			WaterTileTexture(i,j)=0
-			WaterTileRotation(i,j)=0
-			WaterTileTurbulence#(i,j)=0.1
+			LevelTiles(i,j)\Water\Height=-0.2
+			LevelTiles(i,j)\Water\Texture=0
+			LevelTiles(i,j)\Water\Rotation=0
+			LevelTiles(i,j)\Water\Turbulence=0.1
 		Next
 	Next
 	
@@ -15952,48 +15899,37 @@ End Function
 
 Function CopyLevel()
 
-	For i=0 To 99
-		For j=0 To 99
-			CopyLevelTileTexture(i,j)=LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
-			CopyLevelTileRotation(i,j)=LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-			CopyLevelTileSideTexture(i,j)=LevelTileSideTexture(i,j) ; texture for extrusion walls
-			CopyLevelTileSideRotation(i,j)=LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-			CopyLevelTileRandom#(i,j)=LevelTileRandom#(i,j) ; random height pertubation of tile
-			CopyLevelTileHeight#(i,j)=LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
-			CopyLevelTileExtrusion#(i,j)=LevelTileExtrusion#(i,j); extrusion with walls around it 
-			CopyLevelTileRounding(i,j)=LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
-			CopyLevelTileEdgeRandom(i,j)=LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
-			CopyLevelTileLogic(i,j)=LevelTileLogic(i,j)
-		Next
-	Next
-	
-	For i=0 To 99
-		For j=0 To 99
-			CopyWaterTileHeight(i,j)=WaterTileHeight(i,j)
-			CopyWaterTileTexture(i,j)=WaterTileTexture(i,j)
-			CopyWaterTileRotation(i,j)=WaterTileRotation(i,j)
-			CopyWaterTileTurbulence#(i,j)=WaterTileTurbulence#(i,j)
+	For i=0 To MaxLevelCoordinate
+		For j=0 To MaxLevelCoordinate
+			CopyTile(LevelTiles(i,j),CopyLevelTiles(i,j))
 		Next
 	Next
 
 End Function
 
-Function CopyTile(SourceX,SourceY,DestX,DestY)
-	LevelTileTexture(DestX,DestY)=CopyLevelTileTexture(SourceX,SourceY) ; corresponding to squares in LevelTexture
-	LevelTileRotation(DestX,DestY)=CopyLevelTileRotation(SourceX,SourceY) ; 0-3 , and 4-7 for "flipped"
-	LevelTileSideTexture(DestX,DestY)=CopyLevelTileSideTexture(SourceX,SourceY) ; texture for extrusion walls
-	LevelTileSideRotation(DestX,DestY)=CopyLevelTileSideRotation(SourceX,SourceY) ; 0-3 , and 4-7 for "flipped"
-	LevelTileRandom#(DestX,DestY)=CopyLevelTileRandom#(SourceX,SourceY) ; random height pertubation of tile
-	LevelTileHeight#(DestX,DestY)=CopyLevelTileHeight#(SourceX,SourceY) ; height of "center" - e.g. to make ditches and hills
-	LevelTileExtrusion#(DestX,DestY)=CopyLevelTileExtrusion#(SourceX,SourceY); extrusion with walls around it 
-	LevelTileRounding(DestX,DestY)=CopyLevelTileRounding(SourceX,SourceY); 0-no, 1-yes: are floors rounded if on a drop-off corner
-	LevelTileEdgeRandom(DestX,DestY)=CopyLevelTileEdgeRandom(SourceX,SourceY); 0-no, 1-yes: are edges rippled
-	LevelTileLogic(DestX,DestY)=CopyLevelTileLogic(SourceX,SourceY)
+Function CopyTile(Source.Tile,Dest.Tile)
 
-	WaterTileHeight(DestX,DestY)=CopyWaterTileHeight(SourceX,SourceY)
-	WaterTileTexture(DestX,DestY)=CopyWaterTileTexture(SourceX,SourceY)
-	WaterTileRotation(DestX,DestY)=CopyWaterTileRotation(SourceX,SourceY)
-	WaterTileTurbulence#(DestX,DestY)=CopyWaterTileTurbulence#(SourceX,SourceY)
+	Dest.Tile\Terrain\Texture=Source.Tile\Terrain\Texture
+	Dest.Tile\Terrain\Rotation=Source.Tile\Terrain\Rotation
+	Dest.Tile\Terrain\SideTexture=Source.Tile\Terrain\SideTexture
+	Dest.Tile\Terrain\SideRotation=Source.Tile\Terrain\SideRotation
+	Dest.Tile\Terrain\Random=Source.Tile\Terrain\Random
+	Dest.Tile\Terrain\Height=Source.Tile\Terrain\Height
+	Dest.Tile\Terrain\Extrusion=Source.Tile\Terrain\Extrusion
+	Dest.Tile\Terrain\Rounding=Source.Tile\Terrain\Rounding
+	Dest.Tile\Terrain\EdgeRandom=Source.Tile\Terrain\EdgeRandom
+	Dest.Tile\Terrain\Logic=Source.Tile\Terrain\Logic
+
+	Dest.Tile\Water\Height=Source.Tile\Water\Height
+	Dest.Tile\Water\Texture=Source.Tile\Water\Texture
+	Dest.Tile\Water\Rotation=Source.Tile\Water\Rotation
+	Dest.Tile\Water\Turbulence=Source.Tile\Water\Turbulence
+
+End Function
+
+Function CopyLevelTile(SourceX,SourceY,DestX,DestY)
+
+	CopyTile(CopyLevelTiles(SourceX,SourceY),LevelTiles(DestX,DestY))
 
 End Function
 
@@ -16018,7 +15954,7 @@ Function ReSizeLevel()
 	For i=0 To LevelWidth-1
 		For j=0 To LevelHeight-1
 			If (WidthLeftChange>=0 Or i>=-WidthLeftChange) And (HeightTopChange>=0 Or j>=-HeightTopChange)
-				CopyTile(i,j,i+WidthLeftChange,j+HeightTopChange)
+				CopyLevelTile(i,j,i+WidthLeftChange,j+HeightTopChange)
 			EndIf
 		Next
 	Next
@@ -16066,28 +16002,28 @@ Function ReSizeLevel()
 		If WidthLeftChange>0
 			For j=0 To LevelHeightOld-1
 				For k=0 To WidthLeftChange-1
-					CopyTile(0,j,k,j)
+					CopyLevelTile(0,j,k,j)
 				Next
 			Next
 		EndIf
 		If WidthRightChange>0
 			For j=0 To LevelHeightOld-1
 				For k=0 To WidthRightChange-1
-					CopyTile(LevelWidthOld-1,j,LevelWidthOld+k,j)
+					CopyLevelTile(LevelWidthOld-1,j,LevelWidthOld+k,j)
 				Next
 			Next
 		EndIf
 		If HeightTopChange>0
 			For i=0 To LevelWidthOld-1
 				For k=0 To HeightTopChange-1
-					CopyTile(i,0,i,k)
+					CopyLevelTile(i,0,i,k)
 				Next
 			Next
 		EndIf
 		If HeightBottomChange>0
 			For i=0 To LevelWidthOld-1
 				For k=0 To HeightBottomChange-1
-					CopyTile(i,LevelHeightOld-1,i,LevelHeightOld+k)
+					CopyLevelTile(i,LevelHeightOld-1,i,LevelHeightOld+k)
 				Next
 			Next
 		EndIf
@@ -16289,8 +16225,7 @@ Function FlipLevelX()
 	ResetLevel()
 	For i=0 To LevelWidth-1
 		For j=0 To LevelHeight-1
-			CopyTile(LevelWidth-1-i,j,i,j)
-			
+			CopyLevelTile(LevelWidth-1-i,j,i,j)
 		Next
 	Next
 	ReBuildLevelModel()
@@ -16322,8 +16257,7 @@ Function FlipLevelY()
 	ResetLevel()
 	For i=0 To LevelWidth-1
 		For j=0 To LevelHeight-1
-			CopyTile(i,LevelHeight-1-j,i,j)
-			
+			CopyLevelTile(i,LevelHeight-1-j,i,j)
 		Next
 	Next
 	ReBuildLevelModel()
@@ -16356,7 +16290,7 @@ Function FlipLevelXY()
 	ResetLevel()
 	For i=0 To LevelWidth-1
 		For j=0 To LevelHeight-1
-			CopyTile(i,j,j,i)
+			CopyLevelTile(i,j,j,i)
 		Next
 	Next
 	x=LevelWidth
@@ -17490,18 +17424,18 @@ Function SaveLevel()
 	WriteInt file,LevelHeight
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			WriteInt file,LevelTileTexture(i,j) ; corresponding to squares in LevelTexture
-			WriteInt file,LevelTileRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-			WriteInt file,LevelTileSideTexture(i,j) ; texture for extrusion walls
-			WriteInt file,LevelTileSideRotation(i,j) ; 0-3 , and 4-7 for "flipped"
-			WriteFloat file,LevelTileRandom#(i,j) ; random height pertubation of tile
-			WriteFloat file,LevelTileHeight#(i,j) ; height of "center" - e.g. to make ditches and hills
-			WriteFloat file,LevelTileExtrusion#(i,j); extrusion with walls around it 
-			WriteInt file,LevelTileRounding(i,j); 0-no, 1-yes: are floors rounded if on a drop-off corner
-			WriteInt file,LevelTileEdgeRandom(i,j); 0-no, 1-yes: are edges rippled
+			WriteInt file,LevelTiles(i,j)\Terrain\Texture ; corresponding to squares in LevelTexture
+			WriteInt file,LevelTiles(i,j)\Terrain\Rotation ; 0-3 , and 4-7 for "flipped"
+			WriteInt file,LevelTiles(i,j)\Terrain\SideTexture ; texture for extrusion walls
+			WriteInt file,LevelTiles(i,j)\Terrain\SideRotation ; 0-3 , and 4-7 for "flipped"
+			WriteFloat file,LevelTiles(i,j)\Terrain\Random ; random height pertubation of tile
+			WriteFloat file,LevelTiles(i,j)\Terrain\Height ; height of "center" - e.g. to make ditches and hills
+			WriteFloat file,LevelTiles(i,j)\Terrain\Extrusion; extrusion with walls around it 
+			WriteInt file,LevelTiles(i,j)\Terrain\Rounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
+			WriteInt file,LevelTiles(i,j)\Terrain\EdgeRandom; 0-no, 1-yes: are edges rippled
 			
 			
-			WriteInt file,LevelTileLogic(i,j)
+			WriteInt file,LevelTiles(i,j)\Terrain\Logic
 			
 
 			
@@ -17510,10 +17444,10 @@ Function SaveLevel()
 	
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			WriteInt file,WaterTileTexture(i,j)
-			WriteInt file,WaterTileRotation(i,j)
-			WriteFloat file,WaterTileHeight(i,j)
-			WriteFloat file,WaterTileTurbulence(i,j)
+			WriteInt file,LevelTiles(i,j)\Water\Texture
+			WriteInt file,LevelTiles(i,j)\Water\Rotation
+			WriteFloat file,LevelTiles(i,j)\Water\Height
+			WriteFloat file,LevelTiles(i,j)\Water\Turbulence
 		Next
 	Next
 	
@@ -17793,16 +17727,16 @@ Function LoadLevel(levelnumber)
 	LevelHeight=ReadInt(File)
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			LevelTileTexture(i,j)=ReadInt(file) ; corresponding to squares in LevelTexture
-			LevelTileRotation(i,j)=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
-			LevelTileSideTexture(i,j)=ReadInt(file) ; texture for extrusion walls
-			LevelTileSideRotation(i,j)=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
-			LevelTileRandom#(i,j)=ReadFloat(file) ; random height pertubation of tile
-			LevelTileHeight#(i,j)=ReadFloat(file) ; height of "center" - e.g. to make ditches and hills
-			LevelTileExtrusion#(i,j)=ReadFloat(file); extrusion with walls around it 
-			LevelTileRounding(i,j)=ReadInt(file); 0-no, 1-yes: are floors rounded if on a drop-off corner
-			LevelTileEdgeRandom(i,j)=ReadInt(file); 0-no, 1-yes: are edges rippled
-			LevelTileLogic(i,j)=ReadInt(file)
+			LevelTiles(i,j)\Terrain\Texture=ReadInt(file) ; corresponding to squares in LevelTexture
+			LevelTiles(i,j)\Terrain\Rotation=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
+			LevelTiles(i,j)\Terrain\SideTexture=ReadInt(file) ; texture for extrusion walls
+			LevelTiles(i,j)\Terrain\SideRotation=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
+			LevelTiles(i,j)\Terrain\Random=ReadFloat(file) ; random height pertubation of tile
+			LevelTiles(i,j)\Terrain\Height=ReadFloat(file) ; height of "center" - e.g. to make ditches and hills
+			LevelTiles(i,j)\Terrain\Extrusion=ReadFloat(file); extrusion with walls around it 
+			LevelTiles(i,j)\Terrain\Rounding=ReadInt(file); 0-no, 1-yes: are floors rounded if on a drop-off corner
+			LevelTiles(i,j)\Terrain\EdgeRandom=ReadInt(file); 0-no, 1-yes: are edges rippled
+			LevelTiles(i,j)\Terrain\Logic=ReadInt(file)
 			
 			LevelTileObjectCount(i,j)=0
 			
@@ -17810,10 +17744,10 @@ Function LoadLevel(levelnumber)
 	Next
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
-			WaterTileTexture(i,j)=ReadInt(file)
-			WaterTileRotation(i,j)=ReadInt(file)
-			WaterTileHeight(i,j)=ReadFloat(file)
-			WaterTileTurbulence(i,j)=ReadFloat(file)
+			LevelTiles(i,j)\Water\Texture=ReadInt(file)
+			LevelTiles(i,j)\Water\Rotation=ReadInt(file)
+			LevelTiles(i,j)\Water\Height=ReadFloat(file)
+			LevelTiles(i,j)\Water\Turbulence=ReadFloat(file)
 		Next
 	Next
 	WaterFlow=ReadInt(file)
@@ -27791,7 +27725,7 @@ Function ControlSteppingStone(i)
 
 		; just submerged
 		If SimulatedObjectData(i,3)=0
-			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,WaterTileHeight(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))-0.2,-Floor(SimulatedObjectY(i))-0.5,0,.6,0,0,0,0,.006,0,0,0,50,4)
+			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,LevelTiles(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))\Water\Height-0.2,-Floor(SimulatedObjectY(i))-0.5,0,.6,0,0,0,0,.006,0,0,0,50,4)
 		EndIf
 	
 	EndIf
@@ -27800,7 +27734,7 @@ Function ControlSteppingStone(i)
 		
 		; just emerged
 		If SimulatedObjectData(i,3)=0
-			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,WaterTileHeight(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))-0.2,-Floor(SimulatedObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
+			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,LevelTiles(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))\Water\Height-0.2,-Floor(SimulatedObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
 		EndIf
 				
 	EndIf
