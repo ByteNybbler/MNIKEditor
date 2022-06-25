@@ -216,6 +216,7 @@ Global MasterDialogListStart=0
 Global MasterLevelListStart=0
 Const MaxDialog=999
 Const MaxLevel=999
+Const MaxInterchange=100
 Dim MasterDialogList(1000),MasterLevelList(1000)
 
 Const StateNotSpecial=0
@@ -282,9 +283,9 @@ Global CustomMapName$
 Const DefaultCameraFocusX=7
 Const DefaultCameraFocusY=10
 
-Dim LevelMesh(100),LevelSurface(100) ; one for each row
-Dim WaterMesh(100),WaterSurface(100)
-Dim LogicMesh(100),LogicSurface(100)
+Dim LevelMesh(MaxLevelCoordinate),LevelSurface(MaxLevelCoordinate) ; one for each row
+Dim WaterMesh(MaxLevelCoordinate),WaterSurface(MaxLevelCoordinate)
+Dim LogicMesh(MaxLevelCoordinate),LogicSurface(MaxLevelCoordinate)
 Global ShowLogicMesh=False
 Global ShowLevelMesh=True
 
@@ -512,6 +513,7 @@ Global LevelHeight=40 ; in tiles
 
 Const MaxLevelSize=101
 Const MaxLevelCoordinate=MaxLevelSize-1
+Const MaxTilesPerLevel=MaxLevelSize*MaxLevelSize
 
 Global LevelEdgeStyle=1
 
@@ -627,11 +629,11 @@ Global TargetWaterTileHeightUse=True
 Global TargetWaterTileTurbulenceUse=True
 
 ; used for flood fill algorithm
-Dim LevelTileVisited(100,100)
-Dim FloodStackX(10250) ; no pun intended hahahahaha
-Dim FloodStackY(10250)
-Dim FloodedStackX(10250) ; Stores positions to flood when done visiting. Useful for flood fill as used in inline mode.
-Dim FloodedStackY(10250)
+Dim LevelTileVisited(MaxLevelCoordinate,MaxLevelCoordinate)
+Dim FloodStackX(MaxTilesPerLevel) ; no pun intended hahahahaha
+Dim FloodStackY(MaxTilesPerLevel)
+Dim FloodedStackX(MaxTilesPerLevel) ; Stores positions to flood when done visiting. Useful for flood fill as used in inline mode.
+Dim FloodedStackY(MaxTilesPerLevel)
 Global FloodElementCount ; I wish I had OOP
 Global FloodedElementCount
 Global FloodOutsideAdjacent
@@ -7058,7 +7060,7 @@ End Function
 
 Function ReBuildLevelModel()
 
-	For i=0 To 99
+	For i=0 To MaxLevelCoordinate
 		FreeEntity LevelMesh(i)
 		FreeEntity WaterMesh(i)
 		FreeEntity LogicMesh(i)
@@ -8110,7 +8112,7 @@ End Function
 
 Function UpdateAllWaterMeshGlow()
 
-	For i=0 To 99
+	For i=0 To MaxLevelCoordinate
 		UpdateWaterMeshGlow(WaterMesh(i))
 	Next
 	UpdateWaterMeshGlow(CurrentWaterTile)
@@ -8119,7 +8121,7 @@ End Function
 
 Function UpdateAllWaterMeshTransparent()
 
-	For i=0 To 99
+	For i=0 To MaxLevelCoordinate
 		UpdateWaterMeshTransparent(WaterMesh(i))
 	Next
 	UpdateWaterMeshTransparent(CurrentWaterTile)
@@ -8146,7 +8148,7 @@ End Function
 Function BuildLevelModel()
 
 	
-	For i=0 To 99
+	For i=0 To MaxLevelCoordinate
 		LevelMesh(i)=CreateMesh()
 		LevelSurface(i)=CreateSurface(LevelMesh(i))
 		EntityFX LevelMesh(i),2
@@ -15878,8 +15880,8 @@ Function ResetLevel()
 
 	SetCurrentGrabbedObject(-1)
 
-	For i=0 To 99
-		For j=0 To 99
+	For i=0 To MaxLevelCoordinate
+		For j=0 To MaxLevelCoordinate
 			LevelTiles(i,j)\Terrain\Texture=0 ; corresponding to squares in LevelTexture
 			LevelTiles(i,j)\Terrain\Rotation=0 ; 0-3 , and 4-7 for "flipped"
 			LevelTiles(i,j)\Terrain\SideTexture=13 ; texture for extrusion walls
@@ -15893,8 +15895,8 @@ Function ResetLevel()
 		Next
 	Next
 	
-	For i=0 To 99
-		For j=0 To 99
+	For i=0 To MaxLevelCoordinate
+		For j=0 To MaxLevelCoordinate
 			LevelTiles(i,j)\Water\Height=-0.2
 			LevelTiles(i,j)\Water\Texture=0
 			LevelTiles(i,j)\Water\Rotation=0
@@ -15945,17 +15947,17 @@ End Function
 
 Function ReSizeLevel()
 
-	If LevelWidth+WidthLeftChange>100
-		WidthLeftChange=100-LevelWidth
+	If LevelWidth+WidthLeftChange>MaxLevelSize
+		WidthLeftChange=MaxLevelSize-LevelWidth
 	EndIf
-	If LevelWidth+WidthRightChange>100
-		WidthRightChange=100-LevelWidth
+	If LevelWidth+WidthRightChange>MaxLevelSize
+		WidthRightChange=MaxLevelSize-LevelWidth
 	EndIf
-	If LevelHeight+HeightTopChange>100
-		HeightTopChange=100-LevelHeight
+	If LevelHeight+HeightTopChange>MaxLevelSize
+		HeightTopChange=MaxLevelSize-LevelHeight
 	EndIf
-	If LevelHeight+HeightBottomChange>100
-		HeightBottomChange=100-LevelHeight
+	If LevelHeight+HeightBottomChange>MaxLevelSize
+		HeightBottomChange=MaxLevelSize-LevelHeight
 	EndIf
 
 	CopyLevel()
