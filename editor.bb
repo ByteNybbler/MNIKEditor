@@ -3314,13 +3314,11 @@ Function SetEditorMode(NewMode)
 		ClearBrushSurface()
 	EndIf
 	
-;	If NewMode=0
-;		EntityTexture BrushMesh,LevelTexture
-;	ElseIf NewMode=1 Or NewMode=2 Or NewMode=3
-;		; Regenerate the entire brush mesh just to not have a texture. Thanks Blitz3d!
-;		FreeEntity BrushMesh
-;		CreateBrushMesh()
-;	EndIf
+	If NewMode=0
+		SetBrushToCurrentTile()
+	ElseIf NewMode=3
+		SetBrushToCurrentObject()
+	EndIf
 	
 	EditorMode=NewMode
 	
