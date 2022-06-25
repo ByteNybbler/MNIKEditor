@@ -1413,7 +1413,17 @@ Function AddSquareToBrushSurface(i,j,y#)
 	AddTriangle BrushSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
 	AddTriangle BrushSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
 	
-	
+	If EditorMode=0
+		TheTile.Tile=BrushTiles(LevelSpaceToBrushSpaceX(i),LevelSpaceToBrushSpaceY(j))
+		CalculateUV(TheTile\Terrain\Texture,0,0,TheTile\Terrain\Rotation,8,1)
+		VertexTexCoords(BrushSurface,StartingVertex+0,ChunkTileU#,ChunkTileV#)
+		CalculateUV(TheTile\Terrain\Texture,1,0,TheTile\Terrain\Rotation,8,1)
+		VertexTexCoords(BrushSurface,StartingVertex+1,ChunkTileU#,ChunkTileV#)
+		CalculateUV(TheTile\Terrain\Texture,0,1,TheTile\Terrain\Rotation,8,1)
+		VertexTexCoords(BrushSurface,StartingVertex+2,ChunkTileU#,ChunkTileV#)
+		CalculateUV(TheTile\Terrain\Texture,1,1,TheTile\Terrain\Rotation,8,1)
+		VertexTexCoords(BrushSurface,StartingVertex+3,ChunkTileU#,ChunkTileV#)
+	EndIf
 	
 	BrushSurfaceVertexCount=BrushSurfaceVertexCount+4
 
@@ -4876,6 +4886,7 @@ Function EditorLocalControls()
 		ElseIf MouseScroll<>0
 			CurrentTile\Terrain\Texture=CurrentTile\Terrain\Texture+MouseScroll
 			BuildCurrentTileModel()
+			SetBrushToCurrentTile()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
