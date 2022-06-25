@@ -4798,7 +4798,6 @@ Function EditorLocalControls()
 				ReturnKeyReleased=False
 
 				; set custom brush
-				NofBrushObjects=0
 				BrushXStart=GetBrushXStart()
 				BrushYStart=GetBrushYStart()
 				BrushXEnd=GetBrushXEnd(BrushXStart)
@@ -4816,19 +4815,23 @@ Function EditorLocalControls()
 						Next
 					Next
 				ElseIf EditorMode=3
+					NofBrushObjects=0
+					
 					For k=0 To NofObjects-1
 						ObjTileX=LevelObjects(k)\Position\TileX
 						ObjTileY=LevelObjects(k)\Position\TileY
 						If ObjTileX>=BrushXStart And ObjTileX<BrushXStart+BrushWidth And ObjTileY>=BrushYStart And ObjTileY<BrushYStart+BrushHeight
 							BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX)
 							BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY)
-							CopyObjectDataToBrush(k,NofBrushObjects,BrushSpaceX,BrushSpaceY)
+							CopyObjectToBrush(LevelObjects(k),NofBrushObjects,BrushSpaceX,BrushSpaceY)
 							NofBrushObjects=NofBrushObjects+1
 						EndIf
 					Next
 					
 					If NofBrushObjects=0
 						SetBrushToCurrentObject()
+					;Else
+					;	ShowMessage(NofBrushObjects+" objects found in brush.",1000)
 					EndIf
 				EndIf
 			EndIf
@@ -10495,7 +10498,7 @@ Function MoveObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
 End Function
 
 
-Function CopyObjectDataToBrush(Source,Dest,XOffset,YOffset)
+Function CopyObjectToBrush(Source.GameObject,Dest,XOffset,YOffset)
 
 	;BrushObjectXOffset#(Dest)=XOffset#-0.5
 	;BrushObjectYOffset#(Dest)=YOffset#-0.5
@@ -10510,9 +10513,9 @@ Function CopyObjectDataToBrush(Source,Dest,XOffset,YOffset)
 	;BrushObjectTileX2(Dest)=ObjectTileX2(Source)
 	;BrushObjectTileY2(Dest)=ObjectTileY2(Source)
 	
-	CopyObjectAttributes(LevelObjects(Source)\Attributes,BrushObjects(Dest)\Attributes)
-	CopyObjectPosition(LevelObjects(Source)\Position,BrushObjects(Dest)\Position)
-	CopyObjectModel(LevelObjects(Source)\Model,BrushObjects(Dest)\Model)
+	CopyObjectAttributes(Source\Attributes,BrushObjects(Dest)\Attributes)
+	CopyObjectPosition(Source\Position,BrushObjects(Dest)\Position)
+	CopyObjectModel(Source\Model,BrushObjects(Dest)\Model)
 	HideObjectModel(BrushObjects(Dest)\Model)
 
 End Function
@@ -13257,10 +13260,7 @@ Function SetBrushToCurrentObject()
 	NofBrushObjects=1
 	BrushSpaceWidth=1
 	BrushSpaceHeight=1
-	CopyObjectAttributes(CurrentObject\Attributes,BrushObjects(0)\Attributes)
-	CopyObjectPosition(CurrentObject\Position,BrushObjects(0)\Position)
-	CopyObjectModel(CurrentObject\Model,BrushObjects(0)\Model)
-	HideObjectModel(BrushObjects(0)\Model)
+	CopyObjectToBrush(CurrentObject,0,0,0)
 
 End Function
 
