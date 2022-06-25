@@ -780,6 +780,16 @@ Field TileX,TileY,TileX2,TileY2
 
 End Type
 
+Function NewGameObject.GameObject()
+
+	Result.GameObject=New GameObject
+	Result\Model=New GameObjectModel
+	Result\Attributes=New GameObjectAttributes
+	Result\Position=New GameObjectPosition
+	Return Result
+
+End Function
+
 
 Global CurrentObject.GameObject=New GameObject
 CurrentObject\Model=New GameObjectModel
@@ -787,19 +797,18 @@ CurrentObject\Attributes=New GameObjectAttributes
 CurrentObject\Position=New GameObjectPosition
 
 Dim LevelObjects.GameObject(MaxNofObjects)
-Dim BrushObjectModels.GameObjectModel(MaxNofObjects)
-Dim BrushObjectAttributes.GameObjectAttributes(MaxNofObjects)
+Dim BrushObjects.GameObject(MaxNofObjects)
+;Dim BrushObjectModels.GameObjectModel(MaxNofObjects)
+;Dim BrushObjectAttributes.GameObjectAttributes(MaxNofObjects)
 
 Global NofPreviewObjects=0
 Dim PreviewObjects(MaxNofObjects)
 
 For i=0 To MaxNofObjects
-	LevelObjects.GameObject(i)=New GameObject
-	LevelObjects.GameObject(i)\Model=New GameObjectModel
-	LevelObjects.GameObject(i)\Attributes=New GameObjectAttributes
-	LevelObjects.GameObject(i)\Position=New GameObjectPosition
-	BrushObjectModels.GameObjectModels(i)=New GameObjectModel
-	BrushObjectAttributes.GameObjectAttributes(i)=New GameObjectAttributes
+	LevelObjects.GameObject(i)=NewGameObject()
+	BrushObjects.GameObject(i)=NewGameObject()
+	;BrushObjectModels.GameObjectModels(i)=New GameObjectModel
+	;BrushObjectAttributes.GameObjectAttributes(i)=New GameObjectAttributes
 Next
 
 Global NofGrabbedObjects=0
@@ -1457,9 +1466,9 @@ Function AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
 		For k=0 To NofBrushObjects-1
 			If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
 				If NofPreviewObjects<MaxNofObjects-NofObjects
-					Preview=CopyEntity(BrushObjectModels(k)\Entity)
+					Preview=CopyEntity(BrushObjects(k)\Model\Entity)
 					EntityAlpha Preview,BrushMeshObjectAlpha#
-					PositionEntityWithXYZAdjust(Preview,x+0.5,y+0.5,0,BrushObjectAttributes(k))
+					PositionEntityWithXYZAdjust(Preview,x+0.5,y+0.5,BrushObjects(k)\Position\Z,BrushObjects(k)\Attributes)
 					PreviewObjects(NofPreviewObjects)=Preview
 					NofPreviewObjects=NofPreviewObjects+1
 				EndIf
@@ -10193,7 +10202,8 @@ End Function
 
 Function GrabObjectFromBrush(i)	
 
-	CopyObjectAttributes(BrushObjectAttributes(i),CurrentObject\Attributes)
+	CopyObjectAttributes(BrushObjects(i)\Attributes,CurrentObject\Attributes)
+	CopyObjectPosition(BrushObjects(i)\Position,CurrentObject\Position)
 		
 	BuildCurrentObjectModel()
 
@@ -10500,9 +10510,10 @@ Function CopyObjectDataToBrush(Source,Dest,XOffset,YOffset)
 	;BrushObjectTileX2(Dest)=ObjectTileX2(Source)
 	;BrushObjectTileY2(Dest)=ObjectTileY2(Source)
 	
-	CopyObjectAttributes(LevelObjects(Source)\Attributes,BrushObjectAttributes(Dest))
-	CopyObjectModel(LevelObjects(Source)\Model,BrushObjectModels(Dest))
-	HideObjectModel(BrushObjectModels(Dest))
+	CopyObjectAttributes(LevelObjects(Source)\Attributes,BrushObjects(Dest)\Attributes)
+	CopyObjectPosition(LevelObjects(Source)\Position,BrushObjects(Dest)\Position)
+	CopyObjectModel(LevelObjects(Source)\Model,BrushObjects(Dest)\Model)
+	HideObjectModel(BrushObjects(Dest)\Model)
 
 End Function
 
@@ -13246,9 +13257,10 @@ Function SetBrushToCurrentObject()
 	NofBrushObjects=1
 	BrushSpaceWidth=1
 	BrushSpaceHeight=1
-	CopyObjectAttributes(CurrentObject\Attributes,BrushObjectAttributes(0))
-	CopyObjectModel(CurrentObject\Model,BrushObjectModels(0))
-	HideObjectModel(BrushObjectModels(0))
+	CopyObjectAttributes(CurrentObject\Attributes,BrushObjects(0)\Attributes)
+	CopyObjectPosition(CurrentObject\Position,BrushObjects(0)\Position)
+	CopyObjectModel(CurrentObject\Model,BrushObjects(0)\Model)
+	HideObjectModel(BrushObjects(0)\Model)
 
 End Function
 
