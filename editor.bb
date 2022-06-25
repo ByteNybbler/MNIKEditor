@@ -4193,7 +4193,7 @@ Function PositionCursorEntity(i,x,y)
 
 	ShowEntity CursorMeshPillar(i)
 	ShowEntity CursorMeshOpaque(i)
-	PositionEntity CursorMeshPillar(i),x+.5,GetTileTotalHeight(LevelTiles(x,y)),-y-.5
+	PositionEntity CursorMeshPillar(i),x+.5,GetLevelTileTotalHeight(x,y),-y-.5
 	;ScaleEntity CursorMeshPillar(i),BrushWidth,1,BrushHeight
 	PositionEntity CursorMeshOpaque(i),x+.5,0,-y-.5
 
@@ -4202,6 +4202,16 @@ End Function
 Function GetTileTotalHeight#(TheTile.Tile)
 
 	Return TheTile\Terrain\Extrusion+TheTile\Terrain\Height ;+TheTile\Terrain\Random
+
+End Function
+
+Function GetLevelTileTotalHeight#(x,y)
+
+	If IsPositionInLevel(x,y)
+		Return GetTileTotalHeight(LevelTiles(x,y))
+	Else
+		Return 0
+	EndIf
 
 End Function
 
@@ -14954,7 +14964,7 @@ Function BuildCurrentTileModel()
 	CalculateUV(CurrentTile\Water\Texture,LevelDetail,LevelDetail,CurrentTile\Water\Rotation,4)
 	VertexTexCoords mySurface,3,ChunkTileU,ChunkTileV
 	
-	EntityTexture CurrentWaterTile,CurrentWaterTexture
+	EntityTexture CurrentWaterTile,WaterTexture
 	
 End Function
 
