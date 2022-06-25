@@ -597,7 +597,7 @@ Global CurrentTileRoundingUse=True
 Global CurrentTileEdgeRandomUse=True
 Global CurrentTileLogicUse=True
 
-Global CurrentWaterTileUse=True
+Global CurrentWaterTileTextureUse=True
 Global CurrentWaterTileHeightUse=True
 Global CurrentWaterTileTurbulenceUse=True
 
@@ -2975,47 +2975,47 @@ Function EditorMainLoop()
 	StartY=20
 	If CurrentTileTextureUse=False Text StartX+10,StartY+70,"Not Used"
 	If CurrentTileSideTextureUse=False Text StartX+10,StartY+130,"Not Used"
-	If CurrentWaterTileUse=False Text StartX+120,StartY+100,"Not Used"
+	If CurrentWaterTileTextureUse=False Text StartX+120,StartY+100,"Not Used"
 	
-	Text StartX,StartY,"Xtrude: "+CurrentTileExtrusion
+	Text StartX,StartY,"Xtrude: "+CurrentTile\Terrain\Extrusion
 	If CurrentTileExtrusionUse=False Text StartX,StartY,"------------"
 	If StepSizeTileExtrusion#<>0.0 DrawStepSize(StartX,StartY+60,StepSizeTileExtrusion#)
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	Text StartX+48,StartY,"       Height: "+CurrentTileHeight
+	Text StartX+48,StartY,"       Height: "+CurrentTile\Terrain\Height
 	If CurrentTileHeightUse=False Text StartX+48,StartY,"       ------------"
 	If StepSizeTileHeight#<>0.0 DrawStepSize(StartX+160,StartY+60,StepSizeTileHeight#)
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	CurrentLogicName$=LogicIdToLogicName$(CurrentTileLogic)
+	CurrentLogicName$=LogicIdToLogicName$(CurrentTile\Terrain\Logic)
 	Text StartX+50,StartY+15,"Logic: "+CurrentLogicName$
 	If CurrentTileLogicUse=False Text StartX+50,StartY+15,"  ---------"
 	
-	Text StartX+50,StartY+170," Random: "+CurrentTileRandom
+	Text StartX+50,StartY+170," Random: "+CurrentTile\Terrain\Random
 	If CurrentTileRandomUse=False Text StartX+50,StartY+170,"--------------"
 	If StepSizeTileRandom#<>0.0 DrawStepSize(StartX+80,StartY+180,StepSizeTileRandom#)
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	If CurrentTileRounding=0
+	If CurrentTile\Terrain\Rounding=0
 		Text StartX,StartY+185,"Corner:Squar"
 	Else
 		Text StartX,StartY+185,"Corner:Round"
 	EndIf
 	If CurrentTileRoundingUse=False Text StartX,StartY+185,"------------"
 	
-	If CurrentTileEdgeRandom=0
+	If CurrentTile\Terrain\EdgeRandom=0
 		Text StartX+100,StartY+185," Edge:Smooth"
 	Else
 		Text StartX+100,StartY+185," Edge:Jagged"
 	EndIf
 	If CurrentTileEdgeRandomUse=False Text StartX+100,StartY+185,"------------"
 
-	Text StartX,StartY+200,"WHeight:"+CurrentWaterTileHeight
+	Text StartX,StartY+200,"WHeight:"+CurrentTile\Water\Height
 	If CurrentWaterTileHeightUse=False Text StartX,StartY+200,"------------"
 	If StepSizeWaterTileHeight#<>0.0 DrawStepSize(StartX,StartY+190,StepSizeWaterTileHeight#)
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	Text StartX+100,StartY+200," WTurb:"+CurrentWaterTileTurbulence
+	Text StartX+100,StartY+200," WTurb:"+CurrentTile\Water\Turbulence
 	If CurrentWaterTileTurbulenceUse=False Text StartX+100,StartY+200,"------------"
 	If StepSizeWaterTileTurbulence#<>0.0 DrawStepSize(StartX+170,StartY+180,StepSizeWaterTileTurbulence#)
 
@@ -4135,11 +4135,11 @@ End Function
 Function RunStepSize() ;BrushSpaceX,BrushSpaceY
 
 	;xzx
-	CurrentTileRandom#=CurrentTileRandom#+StepSizeTileRandom#
-	CurrentTileHeight#=CurrentTileHeight#+StepSizeTileHeight#
-	CurrentTileExtrusion#=CurrentTileExtrusion#+StepSizeTileExtrusion#
-	CurrentWaterTileHeight#=CurrentWaterTileHeight#+StepSizeWaterTileHeight#
-	CurrentWaterTileTurbulence#=CurrentWaterTileTurbulence#+StepSizeWaterTileTurbulence#
+	CurrentTile\Terrain\Random#=CurrentTile\Terrain\Random#+StepSizeTileRandom#
+	CurrentTile\Terrain\Height#=CurrentTile\Terrain\Height#+StepSizeTileHeight#
+	CurrentTile\Terrain\Extrusion#=CurrentTile\Terrain\Extrusion#+StepSizeTileExtrusion#
+	CurrentTile\Water\Height#=CurrentTile\Water\Height#+StepSizeWaterTileHeight#
+	CurrentTile\Water\Turbulence#=CurrentTile\Water\Turbulence#+StepSizeWaterTileTurbulence#
 
 End Function
 
@@ -4154,7 +4154,7 @@ Function SetUseStateOfAllTileAttributes(NewState)
 	CurrentTileRoundingUse=NewState
 	CurrentTileEdgeRandomUse=NewState
 	CurrentTileLogicUse=NewState
-	CurrentWaterTileUse=NewState
+	CurrentWaterTileTextureUse=NewState
 	CurrentWaterTileHeightUse=NewState
 	CurrentWaterTileTurbulenceUse=NewState
 
@@ -4839,9 +4839,9 @@ Function EditorLocalControls()
 	
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+35 And MY<StartY+100
 		If RightMouse=True And RightMouseReleased=True 
-			; CurrentTileRotation
+			; CurrentTile\Terrain\Rotation
 			RightMouseReleased=False
-			CurrentTileRotation=(CurrentTileRotation+1) Mod 8
+			CurrentTile\Terrain\Rotation=(CurrentTile\Terrain\Rotation+1) Mod 8
 			BuildCurrentTileModel()
 			SetEditorMode(0)
 		EndIf
@@ -4869,12 +4869,12 @@ Function EditorLocalControls()
 	EndIf
 		
 	
-	; CurrentTileSideRotation/Texture
+	; CurrentTile\Terrain\SideRotation/Texture
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+100 And MY<StartY+155
 		If RightMouse=True And RightMouseReleased=True
 			; SideRotation
 			RightMouseReleased=False
-			CurrentTileSideRotation=(CurrentTileSideRotation+1) Mod 8
+			CurrentTile\Terrain\SideRotation=(CurrentTile\Terrain\SideRotation+1) Mod 8
 			BuildCurrentTileModel()
 			SetEditorMode(0)
 		EndIf
@@ -4917,21 +4917,21 @@ Function EditorLocalControls()
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
-			If MaybeUnuseAllTileAttributes(CurrentWaterTileUse)
-				CurrentWaterTileUse=1-CurrentWaterTileUse
+			If MaybeUnuseAllTileAttributes(CurrentWaterTileTextureUse)
+				CurrentWaterTileTextureUse=1-CurrentWaterTileTextureUse
 			EndIf
 			SetEditorMode(0)
 		EndIf
 
 	EndIf
 
-	; CurrentTileExtrusion
+	; CurrentTile\Terrain\Extrusion
 	If MX>=StartX And MX<StartX+100 And MY>=StartY And MY<StartY+15
-		;CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
-		CurrentTileExtrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTileExtrusion#, 0.1, 1.0, 150)
-		;CurrentTileExtrusion2=CurrentTileExtrusion*100
-		;If CurrentTileExtrusion#<Infinity
-		;	CurrentTileExtrusion=Float(Floor(CurrentTileExtrusion2/10))/10.0
+		;CurrentTile\Terrain\Extrusion=Float(Floor(CurrentTile\Terrain\Extrusion2/10))/10.0
+		CurrentTile\Terrain\Extrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTile\Terrain\Extrusion#, 0.1, 1.0, 150)
+		;CurrentTile\Terrain\Extrusion2=CurrentTile\Terrain\Extrusion*100
+		;If CurrentTile\Terrain\Extrusion#<Infinity
+		;	CurrentTile\Terrain\Extrusion=Float(Floor(CurrentTile\Terrain\Extrusion2/10))/10.0
 		;EndIf
 		
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -4951,11 +4951,11 @@ Function EditorLocalControls()
 		EndIf
 
  	EndIf
-	; CurrentTileHeight
+	; CurrentTile\Terrain\Height
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY And MY<StartY+15
-		CurrentTileHeight#=AdjustFloat#("Enter Height: ", CurrentTileHeight#, 0.1, 1.0, 150)
-		;CurrentTileHeight2=CurrentTileHeight*100
-		;CurrentTileHeight=Float(Floor(CurrentTileHeight2/10))/10.0
+		CurrentTile\Terrain\Height#=AdjustFloat#("Enter Height: ", CurrentTile\Terrain\Height#, 0.1, 1.0, 150)
+		;CurrentTile\Terrain\Height2=CurrentTile\Terrain\Height*100
+		;CurrentTile\Terrain\Height=Float(Floor(CurrentTile\Terrain\Height2/10))/10.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -4974,29 +4974,29 @@ Function EditorLocalControls()
 		EndIf
 
  	EndIf
-	; CurrentTileLogic
+	; CurrentTile\Terrain\Logic
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+15 And MY<StartY+30
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			If CtrlDown()
-				CurrentTileLogic=InputInt("Enter Logic: ")
+				CurrentTile\Terrain\Logic=InputInt("Enter Logic: ")
 				ReturnKey=False
 				ReturnKeyReleased=False
 			Else
-				Select CurrentTileLogic
+				Select CurrentTile\Terrain\Logic
 					Case 0
-						CurrentTileLogic=1
+						CurrentTile\Terrain\Logic=1
 					Case 1
-						CurrentTileLogic=2
+						CurrentTile\Terrain\Logic=2
 					Case 2
-						CurrentTileLogic=5
+						CurrentTile\Terrain\Logic=5
 					Case 5
-						CurrentTileLogic=11
+						CurrentTile\Terrain\Logic=11
 					Case 11
-						CurrentTileLogic=12
+						CurrentTile\Terrain\Logic=12
 					Case 12
-						CurrentTileLogic=13
+						CurrentTile\Terrain\Logic=13
 					Default
-						CurrentTileLogic=0
+						CurrentTile\Terrain\Logic=0
 				End Select
 			EndIf
 			
@@ -5005,21 +5005,21 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 		EndIf
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-			Select CurrentTileLogic
+			Select CurrentTile\Terrain\Logic
 				Case 2
-					CurrentTileLogic=1
+					CurrentTile\Terrain\Logic=1
 				Case 5
-					CurrentTileLogic=2
+					CurrentTile\Terrain\Logic=2
 				Case 11
-					CurrentTileLogic=5
+					CurrentTile\Terrain\Logic=5
 				Case 12
-					CurrentTileLogic=11
+					CurrentTile\Terrain\Logic=11
 				Case 13
-					CurrentTileLogic=12
+					CurrentTile\Terrain\Logic=12
 				Case 0
-					CurrentTileLogic=13
+					CurrentTile\Terrain\Logic=13
 				Default
-					CurrentTileLogic=0
+					CurrentTile\Terrain\Logic=0
 			End Select
 			LeftMouseReleased=False
 			RightMouseReleased=False
@@ -5035,11 +5035,11 @@ Function EditorLocalControls()
 
  	EndIf
 
-	; CurrentTileRandom
+	; CurrentTile\Terrain\Random
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+170 And MY<StartY+185
-		CurrentTileRandom#=AdjustFloat#("Enter Random: ", CurrentTileRandom#, 0.01, 0.1, 150)
-		;CurrentTileRandom2=CurrentTileRandom*1000
-		;CurrentTileRandom=Float(Floor(CurrentTileRandom2/10))/100.0
+		CurrentTile\Terrain\Random#=AdjustFloat#("Enter Random: ", CurrentTile\Terrain\Random#, 0.01, 0.1, 150)
+		;CurrentTile\Terrain\Random2=CurrentTile\Terrain\Random*1000
+		;CurrentTile\Terrain\Random=Float(Floor(CurrentTile\Terrain\Random2/10))/100.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -5058,12 +5058,12 @@ Function EditorLocalControls()
 		EndIf
 
  	EndIf
-	; CurrentTileRounding
+	; CurrentTile\Terrain\Rounding
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+185 And MY<StartY+200
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			LeftMouseReleased=False
 			RightMouseReleased=False
-			CurrentTileRounding=1-CurrentTileRounding
+			CurrentTile\Terrain\Rounding=1-CurrentTile\Terrain\Rounding
 			SetEditorMode(0)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -5075,12 +5075,12 @@ Function EditorLocalControls()
 		EndIf
 
 	EndIf
-	; CurrentTileEdgeRandom
+	; CurrentTile\Terrain\EdgeRandom
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+185 And MY<StartY+200
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			LeftMouseReleased=False
 			RightMouseReleased=False
-			CurrentTileEdgeRandom=1-CurrentTileEdgeRandom
+			CurrentTile\Terrain\EdgeRandom=1-CurrentTile\Terrain\EdgeRandom
 			SetEditorMode(0)
 		EndIf
 		If ReturnKey=True And ReturnKeyReleased=True
@@ -5093,11 +5093,11 @@ Function EditorLocalControls()
 
 	EndIf
 	
-	; CurrentWaterTileHeight
+	; CurrentTile\Water\Height
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+200 And MY<StartY+215
-		CurrentWaterTileHeight#=AdjustFloat#("Enter WHeight: ", CurrentWaterTileHeight#, 0.1, 1.0, 150)
-		;CurrentWaterTileHeight2=CurrentWaterTileHeight*100
-		;CurrentWaterTileHeight=Float(Floor(CurrentWaterTileHeight2/10))/10.0
+		CurrentTile\Water\Height#=AdjustFloat#("Enter WHeight: ", CurrentTile\Water\Height#, 0.1, 1.0, 150)
+		;CurrentTile\Water\Height2=CurrentTile\Water\Height*100
+		;CurrentTile\Water\Height=Float(Floor(CurrentTile\Water\Height2/10))/10.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -5116,11 +5116,11 @@ Function EditorLocalControls()
 		EndIf
 
  	EndIf
-	; CurrentWaterTileTurbulence
+	; CurrentTile\Water\Turbulence
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+200 And MY<StartY+215
-		CurrentWaterTileTurbulence#=AdjustFloat#("Enter WTurb: ", CurrentWaterTileTurbulence#, 0.1, 1.0, 150)
-		;CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
-		;CurrentWaterTileTurbulence=Float(Floor(CurrentWaterTileTurbulence2/10))/10.0
+		CurrentTile\Water\Turbulence#=AdjustFloat#("Enter WTurb: ", CurrentTile\Water\Turbulence#, 0.1, 1.0, 150)
+		;CurrentTile\Water\Turbulence2=CurrentTile\Water\Turbulence*100
+		;CurrentTile\Water\Turbulence=Float(Floor(CurrentTile\Water\Turbulence2/10))/10.0
 
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
@@ -8344,32 +8344,32 @@ Function ChangeLevelTileActual(i,j,update)
 	; The Tile
 	If CurrentTileTextureUse=True
 		LevelTiles(i,j)\Terrain\Texture=CurrentTile\Terrain\Texture ; corresponding to squares in LevelTexture
-		LevelTiles(i,j)\Terrain\Rotation=CurrentTileRotation ; 0-3 , and 4-7 for "flipped"
+		LevelTiles(i,j)\Terrain\Rotation=CurrentTile\Terrain\Rotation ; 0-3 , and 4-7 for "flipped"
 	EndIf
 	If CurrentTileSideTextureUse=True
 		LevelTiles(i,j)\Terrain\SideTexture=CurrentTile\Terrain\SideTexture ; texture for extrusion walls
-		LevelTiles(i,j)\Terrain\SideRotation=CurrentTileSideRotation ; 0-3 , and 4-7 for "flipped"
+		LevelTiles(i,j)\Terrain\SideRotation=CurrentTile\Terrain\SideRotation ; 0-3 , and 4-7 for "flipped"
 	EndIf
 	If CurrentTileRandomUse=True
-		LevelTiles(i,j)\Terrain\Random=CurrentTileRandom ; random height pertubation of tile
+		LevelTiles(i,j)\Terrain\Random=CurrentTile\Terrain\Random ; random height pertubation of tile
 	EndIf
 	If CurrentTileHeightUse=True
-		If LevelTiles(i,j)\Terrain\Height<>CurrentTileHeight
+		If LevelTiles(i,j)\Terrain\Height<>CurrentTile\Terrain\Height
 			HeightWasChanged=True
 		EndIf
-		LevelTiles(i,j)\Terrain\Height=CurrentTileHeight ; height of "center" - e.g. to make ditches and hills
+		LevelTiles(i,j)\Terrain\Height=CurrentTile\Terrain\Height ; height of "center" - e.g. to make ditches and hills
 	EndIf
 	If CurrentTileExtrusionUse=True
-		LevelTiles(i,j)\Terrain\Extrusion=CurrentTileExtrusion; extrusion with walls around it 
+		LevelTiles(i,j)\Terrain\Extrusion=CurrentTile\Terrain\Extrusion; extrusion with walls around it 
 	EndIf
 	If CurrentTileRoundingUse=True
-		LevelTiles(i,j)\Terrain\Rounding=CurrentTileRounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
+		LevelTiles(i,j)\Terrain\Rounding=CurrentTile\Terrain\Rounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
 	EndIf
 	If CurrentTileEdgeRandomUse=True
-		LevelTiles(i,j)\Terrain\EdgeRandom=CurrentTileEdgeRandom; 0-no, 1-yes: are edges rippled
+		LevelTiles(i,j)\Terrain\EdgeRandom=CurrentTile\Terrain\EdgeRandom; 0-no, 1-yes: are edges rippled
 	EndIf
 	If CurrentTileLogicUse=True
-		LevelTiles(i,j)\Terrain\Logic=CurrentTileLogic
+		LevelTiles(i,j)\Terrain\Logic=CurrentTile\Terrain\Logic
 	EndIf
 	If update=True 
 		UpdateLevelTile(i,j)
@@ -8430,12 +8430,12 @@ Function ChangeLevelTileActual(i,j,update)
 			
 			
 	; the water
-	If CurrentWaterTileUse=True 
+	If CurrentWaterTileTextureUse=True 
 		LevelTiles(i,j)\Water\Texture=CurrentTile\Water\Texture
 		LevelTiles(i,j)\Water\Rotation=CurrentTile\Water\Rotation
 	EndIf
-	If CurrentWaterTileHeightUse=True LevelTiles(i,j)\Water\Height=CurrentWaterTileHeight
-	If CurrentWaterTileTurbulenceUse=True LevelTiles(i,j)\Water\Turbulence=CurrentWaterTileTurbulence
+	If CurrentWaterTileHeightUse=True LevelTiles(i,j)\Water\Height=CurrentTile\Water\Height
+	If CurrentWaterTileTurbulenceUse=True LevelTiles(i,j)\Water\Turbulence=CurrentTile\Water\Turbulence
 	If update=True
 		UpdateWaterTile(i,j)
 		UpdateLogicTile(i,j)
@@ -8457,31 +8457,10 @@ Function GrabLevelTile(i,j)
 		j=LevelHeight-1
 	EndIf
 	
-	CurrentTile\Terrain\Texture=LevelTiles(i,j)\Terrain\Texture ; corresponding to squares in LevelTexture
-	CurrentTileRotation=LevelTiles(i,j)\Terrain\Rotation ; 0-3 , and 4-7 for "flipped"
-	CurrentTile\Terrain\SideTexture=LevelTiles(i,j)\Terrain\SideTexture ; texture for extrusion walls
-	CurrentTileSideRotation=LevelTiles(i,j)\Terrain\SideRotation ; 0-3 , and 4-7 for "flipped"
-	CurrentTileRandom=LevelTiles(i,j)\Terrain\Random ; random height pertubation of tile
-	CurrentTileHeight=LevelTiles(i,j)\Terrain\Height ; height of "center" - e.g. to make ditches and hills
-	CurrentTileExtrusion=LevelTiles(i,j)\Terrain\Extrusion; extrusion with walls around it 
-	CurrentTileRounding=LevelTiles(i,j)\Terrain\Rounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
-	CurrentTileEdgeRandom=LevelTiles(i,j)\Terrain\EdgeRandom; 0-no, 1-yes: are edges rippled
-	CurrentTileLogic=LevelTiles(i,j)\Terrain\Logic
+	CopyTile(LevelTiles(i,j),CurrentTile)
 	
-	CurrentTileRandom2=CurrentTileRandom*1000
-	CurrentTileHeight2=CurrentTileHeight*100
-	CurrentTileExtrusion2=CurrentTileExtrusion*100
-	CurrentTileLogic2=CurrentTileLogic*10
-	
-	CurrentTile\Water\Texture=LevelTiles(i,j)\Water\Texture
-	CurrentTile\Water\Rotation=LevelTiles(i,j)\Water\Rotation
-	CurrentWaterTileHeight=LevelTiles(i,j)\Water\Height
-	CurrentWaterTileTurbulence=LevelTiles(i,j)\Water\Turbulence
-	CurrentWaterTileHeight2=CurrentWaterTileHeight*100
-	CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
-
-
 	BuildCurrentTileModel()
+	SetBrushToCurrentTile()
 
 End Function
 
@@ -8622,29 +8601,20 @@ Function LoadTilePreset()
 	Filename$="Data\Editor\TilePresets\"+TilePresetCategoryName$(CurrentTilePresetCategory)+"\"+TilePresetTileName$(CurrentTilePresetTile)
 	file=ReadFile(filename$)
 	CurrentTile\Terrain\Texture=ReadInt(file)
-	CurrentTileRotation=ReadInt(file) 
+	CurrentTile\Terrain\Rotation=ReadInt(file) 
 	CurrentTile\Terrain\SideTexture=ReadInt(file)
-	CurrentTileSideRotation=ReadInt(file)
-	CurrentTileRandom=ReadFloat(file)
-	CurrentTileHeight=ReadFloat(file)
-	CurrentTileExtrusion=ReadFloat(file)
-	CurrentTileRounding=ReadInt(file)
-	CurrentTileEdgeRandom=ReadInt(file)
-	CurrentTileLogic=ReadInt(file)
-	
-	
-	CurrentTileRandom2=CurrenTileRandom*1000
-	CurrentTileHeight2=CurrentTileHeight*100
-	CurrentTileExtrusion2=CurrentTileExtrusion*100
-	CurrentTileLogic2=CurrentTileLogic*10
+	CurrentTile\Terrain\SideRotation=ReadInt(file)
+	CurrentTile\Terrain\Random=ReadFloat(file)
+	CurrentTile\Terrain\Height=ReadFloat(file)
+	CurrentTile\Terrain\Extrusion=ReadFloat(file)
+	CurrentTile\Terrain\Rounding=ReadInt(file)
+	CurrentTile\Terrain\EdgeRandom=ReadInt(file)
+	CurrentTile\Terrain\Logic=ReadInt(file)
 	
 	CurrentTile\Water\Texture=ReadInt(file)
 	CurrentTile\Water\Rotation=ReadInt(file)
-	CurrentWaterTileHeight=ReadFloat(file)
-	CurrentWaterTileTurbulence=ReadFloat(file)
-	CurrentWaterTileHeight2=CurrentWaterTileHeight*100
-	CurrentWaterTileTurbulence2=CurrentWaterTileTurbulence*100
-
+	CurrentTile\Water\Height=ReadFloat(file)
+	CurrentTile\Water\Turbulence=ReadFloat(file)
 
 	SetBrushToCurrentTile()
 	BuildCurrentTileModel()
@@ -8662,21 +8632,21 @@ Function SaveTilePreset()
 	file=WriteFile ("data\editor\tilepresets\"+filename$+".tp1")
 	
 	WriteInt file,CurrentTile\Terrain\Texture
-	WriteInt file,CurrentTileRotation
+	WriteInt file,CurrentTile\Terrain\Rotation
 	WriteInt file,CurrentTile\Terrain\SideTexture
-	WriteInt file,CurrentTileSideRotation
-	WriteFloat file,CurrentTileRandom
-	WriteFloat file,CurrentTileHeight
-	WriteFloat file,CurrentTileExtrusion
-	WriteInt file,CurrentTileRounding
-	WriteInt file,CurrentTileEdgeRandom
-	WriteInt file,CurrentTileLogic
+	WriteInt file,CurrentTile\Terrain\SideRotation
+	WriteFloat file,CurrentTile\Terrain\Random
+	WriteFloat file,CurrentTile\Terrain\Height
+	WriteFloat file,CurrentTile\Terrain\Extrusion
+	WriteInt file,CurrentTile\Terrain\Rounding
+	WriteInt file,CurrentTile\Terrain\EdgeRandom
+	WriteInt file,CurrentTile\Terrain\Logic
 	
 	
 	WriteInt file,CurrentTile\Water\Texture
 	WriteInt file,CurrentTile\Water\Rotation
-	WriteFloat file,CurrentWaterTileHeight
-	WriteFloat file,CurrentWaterTileTurbulence
+	WriteFloat file,CurrentTile\Water\Height
+	WriteFloat file,CurrentTile\Water\Turbulence
 
 	CloseFile file
 End Function
@@ -14896,26 +14866,26 @@ Function BuildCurrentTileModel()
 	; add block
 	
 	; top face
-	CalculateUV(CurrentTile\Terrain\Texture,0,0,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,0,0,CurrentTile\Terrain\Rotation,8)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\Texture,1,0,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,1,0,CurrentTile\Terrain\Rotation,8)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\Texture,0,1,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,0,1,CurrentTile\Terrain\Rotation,8)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\Texture,1,1,CurrentTileRotation,8)
+	CalculateUV(CurrentTile\Terrain\Texture,1,1,CurrentTile\Terrain\Rotation,8)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
 	
 	AddTriangle (CurrentSurface,i*20+0,i*20+1,i*20+2)
 	AddTriangle (CurrentSurface,i*20+1,i*20+3,i*20+2)
 	
 	; north face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,99,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,99,1,ChunkTileU,ChunkTileV)
 
 	
@@ -14924,13 +14894,13 @@ Function BuildCurrentTileModel()
 	
 	
 	; east face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,99,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,99,1,ChunkTileU,ChunkTileV)
 
 	
@@ -14938,13 +14908,13 @@ Function BuildCurrentTileModel()
 	AddTriangle (CurrentSurface,i*20+9,i*20+11,i*20+10)
 	
 	; south face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,99,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,1,99,-1,ChunkTileU,ChunkTileV)
 
 	
@@ -14952,13 +14922,13 @@ Function BuildCurrentTileModel()
 	AddTriangle (CurrentSurface,i*20+13,i*20+15,i*20+14)
 	
 	; west face
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,0,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,0,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,99,1,ChunkTileU,ChunkTileV)
-	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTileSideRotation,8)
+	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8)
 	AddVertex (CurrentSurface,-1,99,-1,ChunkTileU,ChunkTileV)
 
 	
