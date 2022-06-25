@@ -510,61 +510,74 @@ GetTextureNames()
 Global LevelWidth=40 ; in tiles
 Global LevelHeight=40 ; in tiles
 
+Const MaxLevelSize=101
+Const MaxLevelCoordinate=MaxLevelSize-1
+
 Global LevelEdgeStyle=1
 
 Global WidthLeftChange,WidthRightChange,HeightTopChange,HeightBottomChange
 
 ; TILES
 ; ============
-Dim LevelTileTexture(100,100) ; corresponding to squares in LevelTexture
-Dim LevelTileRotation(100,100) ; 0-3 , and 4-7 for "flipped"
-Dim LevelTileSideTexture(100,100) ; texture for extrusion walls
-Dim LevelTileSideRotation(100,100) ; 0-3 , and 4-7 for "flipped"
-Dim LevelTileRandom#(100,100) ; random height pertubation of tile
-Dim LevelTileHeight#(100,100) ; height of "center" - e.g. to make ditches and hills
-Dim LevelTileExtrusion#(100,100); extrusion with walls around it 
-Dim LevelTileRounding(100,100); 0-no, 1-yes: are floors rounded if on a drop-off corner
-Dim LevelTileEdgeRandom(100,100); 0-no, 1-yes: are edges rippled
-Dim LevelTileLogic(100,100)
 
-Dim CopyLevelTileTexture(100,100) ; corresponding to squares in LevelTexture
-Dim CopyLevelTileRotation(100,100) ; 0-3 , and 4-7 for "flipped"
-Dim CopyLevelTileSideTexture(100,100) ; texture for extrusion walls
-Dim CopyLevelTileSideRotation(100,100) ; 0-3 , and 4-7 for "flipped"
-Dim CopyLevelTileRandom#(100,100) ; random height pertubation of tile
-Dim CopyLevelTileHeight#(100,100) ; height of "center" - e.g. to make ditches and hills
-Dim CopyLevelTileExtrusion#(100,100); extrusion with walls around it 
-Dim CopyLevelTileRounding(100,100); 0-no, 1-yes: are floors rounded if on a drop-off corner
-Dim CopyLevelTileEdgeRandom(100,100); 0-no, 1-yes: are edges rippled
-Dim CopyLevelTileLogic(100,100)
+Type TerrainTile
 
-Dim WaterTileTexture(100,100)
-Dim WaterTileRotation(100,100)
-Dim WaterTileHeight#(100,100)
-Dim WaterTileTurbulence#(100,100)
+Field Texture ; corresponding to squares in LevelTexture
+Field Rotation ; 0-3, and 4-7 for "flipped"
+Field SideTexture ; texture for extrusion walls
+Field SideRotation ; 0-3, and 4-7 for "flipped"
+Field Random# ; random height pertubation of tile
+Field Height# ; height of "center" - e.g. to make ditches and hills
+Field Extrusion# ; extrusion with walls around it
+Field Rounding ; 0-no, 1-yes: are floors rounded if on a drop-off corner
+Field EdgeRandom ; 0-no, 1-yes: are edges rippled
+Field Logic
 
-Dim CopyWaterTileTexture(100,100)
-Dim CopyWaterTileRotation(100,100)
-Dim CopyWaterTileHeight#(100,100)
-Dim CopyWaterTileTurbulence#(100,100)
+End Type
 
-Dim LevelTileObjectCount(100,100) ; for changing the marker color when there's more than one object present
+Type WaterTile
 
-Dim BrushLevelTileTexture(100,100) ; corresponding to squares in LevelTexture
-Dim BrushLevelTileRotation(100,100) ; 0-3 , and 4-7 for "flipped"
-Dim BrushLevelTileSideTexture(100,100) ; texture for extrusion walls
-Dim BrushLevelTileSideRotation(100,100) ; 0-3 , and 4-7 for "flipped"
-Dim BrushLevelTileRandom#(100,100) ; random height pertubation of tile
-Dim BrushLevelTileHeight#(100,100) ; height of "center" - e.g. to make ditches and hills
-Dim BrushLevelTileExtrusion#(100,100); extrusion with walls around it 
-Dim BrushLevelTileRounding(100,100); 0-no, 1-yes: are floors rounded if on a drop-off corner
-Dim BrushLevelTileEdgeRandom(100,100); 0-no, 1-yes: are edges rippled
-Dim BrushLevelTileLogic(100,100)
+Field Texture
+Field Rotation
+Field Height#
+Field Turbulence#
 
-Dim BrushWaterTileTexture(100,100)
-Dim BrushWaterTileRotation(100,100)
-Dim BrushWaterTileHeight#(100,100)
-Dim BrushWaterTileTurbulence#(100,100)
+End Type
+
+Type Tile
+
+Field Terrain.TerrainTile
+Field Water.WaterTile
+
+End Type
+
+Function NewTile.Tile()
+
+	Result.Tile=New Tile
+	Result\Terrain=New TerrainTile
+	Result\Terrain\Texture=8
+	Result\Terrain\SideTexture=6
+	Result\Water=New WaterTile
+	Return Result
+
+End Function
+
+Dim LevelTiles.Tile(MaxLevelCoordinate,MaxLevelCoordinate)
+Dim CopyLevelTiles.Tile(MaxLevelCoordinate,MaxLevelCoordinate)
+Dim BrushTiles.Tile(MaxLevelCoordinate,MaxLevelCoordinate)
+
+For i=0 To MaxLevelCoordinate
+	For j=0 To MaxLevelCoordinate
+		LevelTiles(i,j)=NewTile()
+		CopyLevelTiles(i,j)=NewTile()
+		BrushTiles(i,j)=NewTile()
+	Next
+Next
+
+Global CurrentTile.Tile=NewTile()
+Global TargetTile.Tile=NewTile()
+
+Dim LevelTileObjectCount(MaxLevelCoordinate,MaxLevelCoordinate) ; for changing the marker color when there's more than one object present
 
 Global ChunkTileU#,ChunkTileV#
 
@@ -572,17 +585,6 @@ Global CurrentMesh,CurrentSurface ; for tile rendering in tile camera
 
 Global LevelDetail=4
 Global CurrentVertex=0
-
-Global CurrentTileTexture=8
-Global CurrentTileRotation
-Global CurrentTileSideTexture=6
-Global CurrentTileSideRotation
-Global CurrentTileRandom#,CurrentTileRandom2
-Global CurrentTileHeight#,CurrentTileHeight2
-Global CurrentTileExtrusion#,CurrentTileExtrusion2
-Global CurrentTileRounding
-Global CurrentTileEdgeRandom
-Global CurrentTileLogic, CurrentTileLogic2
 
 Global CurrentTileTextureUse=True
 Global CurrentTileSideTextureUse=True
@@ -593,8 +595,6 @@ Global CurrentTileRoundingUse=True
 Global CurrentTileEdgeRandomUse=True
 Global CurrentTileLogicUse=True
 
-Global CurrentWaterTileTexture,CurrentWaterTileRotation,CurrentWaterTileHeight#,CurrentWaterTileTurbulence#
-Global CurrentWaterTileHeight2,CurrentWaterTileTurbulence2
 Global CurrentWaterTileUse=True
 Global CurrentWaterTileHeightUse=True
 Global CurrentWaterTileTurbulenceUse=True
@@ -613,17 +613,6 @@ Function IsAnyStepSizeActive()
 
 End Function
 
-Global TargetTileTexture=8
-Global TargetTileRotation
-Global TargetTileSideTexture=6
-Global TargetTileSideRotation
-Global TargetTileRandom#,TargetTileRandom2
-Global TargetTileHeight#,TargetTileHeight2
-Global TargetTileExtrusion#,TargetTileExtrusion2
-Global TargetTileRounding
-Global TargetTileEdgeRandom
-Global TargetTileLogic, TargetTileLogic2
-
 Global TargetTileTextureUse=True
 Global TargetTileSideTextureUse=True
 Global TargetTileHeightUse=True
@@ -633,8 +622,6 @@ Global TargetTileRoundingUse=True
 Global TargetTileEdgeRandomUse=True
 Global TargetTileLogicUse=True
 
-Global TargetWaterTile,TargetWaterTileTexture,TargetWaterTileRotation,TargetWaterTileHeight#,TargetWaterTileTurbulence#
-Global TargetWaterTileHeight2,TargetWaterTileTurbulence2
 Global TargetWaterTileUse=True
 Global TargetWaterTileHeightUse=True
 Global TargetWaterTileTurbulenceUse=True
@@ -13001,7 +12988,6 @@ Function DisplayObjectAdjuster(i)
 	CrossedOut=Randomized
 	
 	If CrossedOut
-		;Text StartX+8,StartY+15+(i-ObjectAdjusterStart)*15,"--------------------"
 		tex$=tex2$
 		Dashes$=""
 		For t=1 To Len(tex2$)
@@ -13012,14 +12998,8 @@ Function DisplayObjectAdjuster(i)
 		
 		Text StartX+92-HalfNameWidth,StartY,Dashes$
 		
-		;Text StartX+18-4*Len(LeftAdj$),TextY,LeftAdj$
-		;Text StartX+166-4*Len(RightAdj$),TextY,RightAdj$
-		
 		Text StartX+2,StartY,LeftAdj$
 		Text StartX+182-8*Len(RightAdj$),StartY,RightAdj$
-		
-		;Text StartX+80-HalfNameWidth-8*Len(LeftAdj$),TextY,LeftAdj$
-		;Text StartX+104+HalfNameWidth,TextY,RightAdj$
 		
 	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"TextData0" And ObjectAdjuster$(i)<>"TextData1"
 		tex$=tex2$+": "+tex$
