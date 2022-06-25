@@ -1362,6 +1362,9 @@ Global BrushMesh
 Global BrushSurface
 Global BrushSurfaceVertexCount=0
 
+Global BrushTextureMesh
+Global BrushTextureSurface
+
 Const BrushMeshAlpha#=0.3
 Const BrushMeshObjectAlpha#=0.5
 Const BrushMeshOffsetY#=0.01
@@ -1376,23 +1379,28 @@ Function ClearBrushSurface()
 	Next
 	NofPreviewObjects=0
 	
+	ClearSurface BrushTextureSurface
+	
 End Function
 
 Function ShowBrushSurface()
 
 	ShowEntity BrushMesh
+	ShowEntity BrushTextureMesh
 
 End Function
 
 Function HideBrushSurface()
 
 	HideEntity BrushMesh
+	HideEntity BrushTextureMesh
 	
 End Function
 
 Function FinishBrushSurface()
 	
 	UpdateNormals BrushMesh
+	UpdateNormals BrushTextureMesh
 	
 End Function
 
@@ -1403,26 +1411,38 @@ Function AddSquareToBrushSurface(i,j,y#)
 	If BrushSurfaceVertexCount=32000
 		Return
 	EndIf
-
+	
+	StartingVertex=BrushSurfaceVertexCount
+	
 	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j
 	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j
 	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j-1
 	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j-1
 	
-	StartingVertex=BrushSurfaceVertexCount
 	AddTriangle BrushSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
 	AddTriangle BrushSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
 	
 	If EditorMode=0
+		TheSurface=BrushTextureSurface
+		yoffset#=0.005
+	
+		AddVertex TheSurface,i,y#+BrushMeshOffsetY#-yoffset#,-j
+		AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#-yoffset#,-j
+		AddVertex TheSurface,i,y#+BrushMeshOffsetY#-yoffset#,-j-1
+		AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#-yoffset#,-j-1
+		
+		AddTriangle TheSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
+		AddTriangle TheSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
+		
 		TheTile.Tile=BrushTiles(LevelSpaceToBrushSpaceX(i),LevelSpaceToBrushSpaceY(j))
 		CalculateUV(TheTile\Terrain\Texture,0,0,TheTile\Terrain\Rotation,8,1)
-		VertexTexCoords(BrushSurface,StartingVertex+0,ChunkTileU#,ChunkTileV#)
+		VertexTexCoords(TheSurface,StartingVertex+0,ChunkTileU#,ChunkTileV#)
 		CalculateUV(TheTile\Terrain\Texture,1,0,TheTile\Terrain\Rotation,8,1)
-		VertexTexCoords(BrushSurface,StartingVertex+1,ChunkTileU#,ChunkTileV#)
+		VertexTexCoords(TheSurface,StartingVertex+1,ChunkTileU#,ChunkTileV#)
 		CalculateUV(TheTile\Terrain\Texture,0,1,TheTile\Terrain\Rotation,8,1)
-		VertexTexCoords(BrushSurface,StartingVertex+2,ChunkTileU#,ChunkTileV#)
+		VertexTexCoords(TheSurface,StartingVertex+2,ChunkTileU#,ChunkTileV#)
 		CalculateUV(TheTile\Terrain\Texture,1,1,TheTile\Terrain\Rotation,8,1)
-		VertexTexCoords(BrushSurface,StartingVertex+3,ChunkTileU#,ChunkTileV#)
+		VertexTexCoords(TheSurface,StartingVertex+3,ChunkTileU#,ChunkTileV#)
 	EndIf
 	
 	BrushSurfaceVertexCount=BrushSurfaceVertexCount+4
@@ -2543,7 +2563,10 @@ Function CreateBrushMesh()
 	BrushMesh=CreateMesh()
 	BrushSurface=CreateSurface(BrushMesh)
 	EntityAlpha BrushMesh,BrushMeshAlpha
-	;EntityColor BrushMesh,255,255,200
+	
+	BrushTextureMesh=CreateMesh()
+	BrushTextureSurface=CreateSurface(BrushTextureMesh)
+	EntityAlpha BrushTextureMesh,BrushMeshAlpha
 
 End Function
 
@@ -2743,6 +2766,10 @@ Function UpdateLevelTexture()
 
 	LevelTexture=myLoadTexture("data\Leveltextures\"+CurrentLevelTextureName$(),1)
 	EntityTexture TexturePlane,LevelTexture
+
+	EntityTexture BrushTextureMesh,LevelTexture
+	
+	;ShowMessage("LevelTexture update!",1000)
 
 End Function
 
@@ -3275,13 +3302,13 @@ Function SetEditorMode(NewMode)
 		ClearBrushSurface()
 	EndIf
 	
-	If NewMode=0
-		EntityTexture BrushMesh,LevelTexture
-	ElseIf NewMode=1 Or NewMode=2 Or NewMode=3
-		; Regenerate the entire brush mesh just to not have a texture. Thanks Blitz3d!
-		FreeEntity BrushMesh
-		CreateBrushMesh()
-	EndIf
+;	If NewMode=0
+;		EntityTexture BrushMesh,LevelTexture
+;	ElseIf NewMode=1 Or NewMode=2 Or NewMode=3
+;		; Regenerate the entire brush mesh just to not have a texture. Thanks Blitz3d!
+;		FreeEntity BrushMesh
+;		CreateBrushMesh()
+;	EndIf
 	
 	EditorMode=NewMode
 	
@@ -4576,6 +4603,7 @@ Function EditorLocalControls()
 					EntityColor CursorMeshOpaque(i),BrushR,BrushG,BrushB
 					EntityColor CursorMeshTexturePicker,BrushR,BrushG,BrushB
 					EntityColor BrushMesh,BrushR,BrushG,BrushB
+					EntityColor BrushTextureMesh,BrushR,BrushG,BrushB
 				Next
 				
 				Color TextLevelR,TextLevelG,TextLevelB
