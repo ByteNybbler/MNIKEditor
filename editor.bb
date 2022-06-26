@@ -578,6 +578,7 @@ Next
 
 Global CurrentTile.Tile=NewTile()
 Global TargetTile.Tile=NewTile()
+Global TempTile.Tile=NewTile()
 
 Dim LevelTileObjectCount(MaxLevelCoordinate,MaxLevelCoordinate) ; for changing the marker color when there's more than one object present
 
@@ -5943,10 +5944,34 @@ Function EditorLocalControls()
 			TheSubType=LevelObjects(i)\Attributes\LogicSubType
 			If TheType=90 And (TheSubType=10 Or (TheSubType=15 And LevelObjects(i)\Attributes\Data0=7)) ; LevelExit or CMD 7
 				TryLevelGoto(i,BrushCursorX,BrushCursorY,1,2,3)
-			ElseIf TheType=242 And LevelObjects(i)\Attributes\Data2=7 ; Cuboid
+			ElseIf TheType=242 And LevelObjects(i)\Attributes\Data2=7 ; Cuboid with CMD 7
 				TryLevelGoto(i,BrushCursorX,BrushCursorY,3,4,5)
 			EndIf
 		Next
+	EndIf
+	
+	If KeyPressed(33) ; F key
+		; Flip brush horizontally
+		BrushSpaceStartX=GetBrushSpaceXStart()
+		BrushSpaceStartY=GetBrushSpaceYStart()
+		BrushSpaceEndX=GetBrushSpaceXEnd(BrushSpaceStartX)
+		If EditorMode=0
+			For i=0 To BrushSpaceWidth/2-1
+				For j=0 To BrushSpaceHeight-1
+					X1=BrushSpaceWrapX(BrushSpaceStartX+i)
+					Y=BrushSpaceWrapY(BrushSpaceStartY+j)
+					X2=BrushSpaceWrapX(BrushSpaceEndX-i)
+					
+					SwapTiles(BrushTiles(X1,Y),BrushTiles(X2,Y))
+				Next
+			Next
+		ElseIf EditorMode=3
+			For k=0 To NofBrushObjects-1
+				TheThingy=(BrushWidth+1) Mod 2 ; what the fuck?
+				X2=BrushSpaceWrapX(BrushSpaceWidth-TheThingy-BrushObjectTileXOffset(k))
+				BrushObjectTileXOffset(k)=X2
+			Next
+		EndIf
 	EndIf
 	
 	If KeyPressed(15) ; tab key
@@ -6632,6 +6657,31 @@ Function PositionIsEqual(x1,y1,x2,y2)
 
 End Function
 
+
+Function GetBrushSpaceXStart()
+
+	; The parenthesis are necessary because otherwise BASIC will evaluate this differently for no reason. Great!
+	Return -(BrushSpaceWidth/2)
+
+End Function
+
+Function GetBrushSpaceYStart()
+
+	Return -(BrushSpaceHeight/2)
+
+End Function
+
+Function GetBrushSpaceXEnd(BrushXStart)
+
+	Return BrushXStart+BrushSpaceWidth-1
+
+End Function
+
+Function GetBrushSpaceYEnd(BrushYStart)
+
+	Return BrushYStart+BrushSpaceHeight-1
+
+End Function
 
 Function GetBrushXStart()
 
@@ -15911,6 +15961,14 @@ Function CopyTile(Source.Tile,Dest.Tile)
 	Dest.Tile\Water\Rotation=Source.Tile\Water\Rotation
 	Dest.Tile\Water\Turbulence=Source.Tile\Water\Turbulence
 
+End Function
+
+Function SwapTiles(Tile1.Tile,Tile2.Tile)
+	
+	CopyTile(Tile1,TempTile)
+	CopyTile(Tile2,Tile1)
+	CopyTile(TempTile,Tile2)
+	
 End Function
 
 Function CopyLevelTile(SourceX,SourceY,DestX,DestY)
