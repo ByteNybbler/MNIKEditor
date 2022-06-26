@@ -3310,13 +3310,11 @@ Function SetEditorMode(NewMode)
 		Camera1Proj=Camera1SavedProjMode
 		Camera3Proj=0
 		UpdateCameraProj()
-		
-		ClearBrushSurface()
 	EndIf
 	
-	If NewMode=0
+	If EditorMode=3 And NewMode=0
 		SetBrushToCurrentTile()
-	ElseIf NewMode=3
+	ElseIf EditorMode=0 And NewMode=3
 		SetBrushToCurrentObject()
 	EndIf
 	
