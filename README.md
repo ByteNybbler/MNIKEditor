@@ -43,6 +43,8 @@
 * F6: Toggle orthographic projection.
 * F7: Toggle wireframe mode.
 * T: Give the current object its default in-game TrueMovement values (TTC, OTC, MovementType, and MovementSpeed) based on its Type, SubType, and sometimes some Data values. This makes it very easy to do various small changes that previously required a lot of manual work setting the TTC and OTC. For instance, you can easily define different MovementSpeeds on objects that formerly did not allow that value to be adjusted without making advanced manual adjustments to TrueMovement. Objects like hyperspeed turtles, hyperspeed MooBots, and hyperspeed Wee Stinkers can be constructed with minimal effort. You can also modify the MovementTypes of these objects easily so that you can have stuff like Wee Stinkers that sleepwalk away from you until you wake them up.
+* F: Flip the brush horizontally.
+* V: Rotate the brush 90 degrees.
 * Ctrl+S: Save level.
 * Ctrl+T: Update the currently-grabbed object, save level, and activate the "Test Level At Cursor" brush mode.
 * Ctrl+O: Type in the number of the wlv you want to open.

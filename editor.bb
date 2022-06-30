@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="06/25/22"
+Global VersionDate$="06/30/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -5974,6 +5974,35 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
+	If KeyPressed(33) ; V key
+		; Rotate brush 90 degrees
+		; TODO: Write this code. xzx
+		BrushSpaceStartX=GetBrushSpaceXStart()
+		BrushSpaceStartY=GetBrushSpaceYStart()
+		BrushSpaceEndX=GetBrushSpaceXEnd(BrushSpaceStartX)
+		If EditorMode=0
+			For i=0 To BrushSpaceWidth-1
+				For j=0 To BrushSpaceHeight-1
+					X1=BrushSpaceWrapX(BrushSpaceStartX+i)
+					Y=BrushSpaceWrapY(BrushSpaceStartY+j)
+					X2=BrushSpaceWrapX(BrushSpaceEndX-i)
+					
+					SwapTiles(BrushTiles(X1,Y),BrushTiles(X2,Y))
+				Next
+			Next
+		ElseIf EditorMode=3
+			For k=0 To NofBrushObjects-1
+				TheThingy=(BrushWidth+1) Mod 2 ; what the fuck?
+				X2=BrushSpaceWrapX(BrushSpaceWidth-TheThingy-BrushObjectTileXOffset(k))
+				BrushObjectTileXOffset(k)=X2
+			Next
+		EndIf
+		
+		Temp=BrushSpaceWidth
+		BrushSpaceWidth=BrushSpaceHeight
+		BrushSpaceHeight=Temp
+	EndIf
+	
 	If KeyPressed(15) ; tab key
 		If EditorMode=EditorModeTile
 			SetEditorMode(EditorModeObject)
@@ -11115,14 +11144,25 @@ Function DisplayObjectAdjuster(i)
 				tex$="Rucksack"
 			Else If CurrentObject\Attributes\LogicSubType=509
 				tex$="Empty"
-
 			EndIf
-			
-
-
-
-			
-		
+		EndIf
+		If CurrentObject\Attributes\LogicType=190 ; Particle Emitter
+			Select CurrentObject\Attributes\LogicSubType
+			Case 1
+				tex$="Steam"
+			Case 2
+				tex$="Splish"
+			Case 3
+				tex$="Spray"
+			Case 4
+				tex$="Sparks"
+			Case 5
+				tex$="Blinker"
+			Case 6
+				tex$="CircleBurst"
+			Case 7
+				tex$="Spiral"
+			End Select
 		EndIf
 		If CurrentObject\Attributes\LogicType=200 ; Magic charger
 			If CurrentObject\Attributes\LogicSubType=0
@@ -11503,7 +11543,7 @@ Function DisplayObjectAdjuster(i)
 		
 		; Model checks are separated from Type checks so that the Type can override the model.
 		
-		If CurrentObject\Attributes\LogicType=51 Or CurrentObject\Attributes\LogicType=200 ;Or CurrentObject\Attributes\TexName$="!GloveTex" ; spellball generator or glovecharge
+		If CurrentObject\Attributes\LogicType=51 Or CurrentObject\Attributes\LogicType=200 Or CurrentObject\Attributes\LogicType=201 ; spellball generator or glovecharge or glove discharge
 			tex2$="Spell"
 			tex$=GetMagicNameAndId(CurrentObject\Attributes\Data0)
 		EndIf
@@ -12176,31 +12216,31 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="SourceY"
 		EndIf
-		If CurrentObject\Attributes\LogicType=190
-			tex2$="Sound"
-			If CurrentObject\Attributes\Data3=0 tex$="None"
-			If CurrentObject\Attributes\Data3=1 
+		If CurrentObject\Attributes\LogicType=190 ; Particle Spawner
+			If CurrentObject\Attributes\LogicSubType=4 Or CurrentObject\Attributes\LogicSubType=5
+				tex2$="Sound"
+				If CurrentObject\Attributes\Data3=0 tex$="None"
+			EndIf
+			
+			If CurrentObject\Attributes\Data3=1
 				If CurrentObject\Attributes\LogicSubType=4 tex$="Spark"
 				If CurrentObject\Attributes\LogicSubType=5 tex$="QuietMagic"
-
 			EndIf
-			If CurrentObject\Attributes\Data3=2 
+			If CurrentObject\Attributes\Data3=2
 				If CurrentObject\Attributes\LogicSubType=5 tex$="LoudMecha"
 			EndIf
-			If CurrentObject\Attributes\Data3=3 
+			If CurrentObject\Attributes\Data3=3
 				If CurrentObject\Attributes\LogicSubType=5 tex$="Var.Gong"
 			EndIf
-			If CurrentObject\Attributes\Data3=4 
+			If CurrentObject\Attributes\Data3=4
 				If CurrentObject\Attributes\LogicSubType=5 tex$="Grow Magic"
 			EndIf
-			If CurrentObject\Attributes\Data3=5 
+			If CurrentObject\Attributes\Data3=5
 				If CurrentObject\Attributes\LogicSubType=5 tex$="Floing Magic"
 			EndIf
-			If CurrentObject\Attributes\Data3=6 
+			If CurrentObject\Attributes\Data3=6
 				If CurrentObject\Attributes\LogicSubType=5 tex$="Gem"
 			EndIf
-
-
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=90 ; button
@@ -15553,13 +15593,8 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 			child=GetChild(TextureTarget,i)
 			EntityTexture child,StinkerTexture
 		Next
-	Else If Obj\Attributes\LogicType=200 ; magic glove
+	Else If Obj\Attributes\TexName$="!GloveTex"
 		EntityTexture TextureTarget,GloveTex
-			EntityFX TextureTarget,2
-			For i=0 To 3
-				Col=Obj\Attributes\Data0
-				VertexColor GetSurface(TextureTarget,1),i,GetMagicColor(Col,0),GetMagicColor(Col,1),GetMagicColor(Col,2)
-			Next
 
 	Else If Left(Obj\Attributes\TexName$,1)="?"
 		; custom texture For existing objects
@@ -15611,6 +15646,16 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 	EndIf
 	
+	If Obj\Attributes\LogicType=200 Or Obj\Attributes\LogicType=201 ; glovecharge or glovedischarge
+		EntityFX Obj\Model\Entity,2
+		For ii=0 To 3
+			Col=Obj\Attributes\Data0
+			red=GetMagicColor(Col,0)
+			green=GetMagicColor(Col,1)
+			blue=GetMagicColor(Col,2)
+			VertexColor GetSurface(Obj\Model\Entity,1),ii,red,green,blue
+		Next
+	EndIf
 	
 	PositionEntityWithXYZAdjust(Obj\Model\Entity,x#,y#,z#,Obj\Attributes)
 	
@@ -22475,6 +22520,7 @@ Function StartTestModeAt(level,x,y)
 	; Place a level transition at the adventure start coordinates.
 	GenerateLevelExitTo(level,x,y)
 	CurrentObject\Attributes\ZAdjust=1000.0 ; Move the LevelExit out of view in-game.
+	SetBrushToCurrentObject()
 	PreventPlacingObjectsOutsideLevel=False
 	PlaceObject(AdventureStartX,AdventureStartY)
 	SaveLevel()
@@ -25907,6 +25953,10 @@ Function RetrieveDefaultTrueMovement()
 
 	Select CurrentObject\Attributes\LogicType
 	
+	Case 1 ; Player
+		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
+		CurrentObject\Attributes\ObjectTypeCollision=2^3+2^4+2^5+2^6+2^8
+	
 	Case 50 ; Spellball
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^13+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=0 ; -1 in-game, but probably doesn't make a difference.
@@ -27049,6 +27099,8 @@ Function ControlGloveCharge(i)
 	SimulatedObjectZ(i)=0.04
 	
 	myparticle=16+SimulatedObjectData(i,0)
+	
+	SimulatedObjectData(i,3)=1
 	
 	j2=Rand(0,359)
 	If SubType=1 ; one time charge
