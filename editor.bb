@@ -3900,12 +3900,7 @@ Function CalculateBrushTargets()
 		EndIf
 	Else
 		FloodedElementsClear()
-	EndIf
-	
-	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
-		If FloodedElementCount=0
-			AddToFloodedStack(BrushCursorX,BrushCursorY)
-		EndIf
+		GenerateBrushSurface()
 	EndIf
 	
 	GenerateBrushPreview()
@@ -3915,6 +3910,12 @@ End Function
 Function GenerateBrushSurface()
 
 	ClearBrushSurface()
+	
+	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
+		If FloodedElementCount=0
+			AddToFloodedStack(BrushCursorX,BrushCursorY)
+		EndIf
+	EndIf
 	
 	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
 	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
