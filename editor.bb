@@ -2503,8 +2503,8 @@ Function InitializeGraphicsTextures()
 	ResetText("data/graphics/font.bmp")
 	
 	UpdateButtonGateTexture()
-	UpdateLevelTexture()
-	UpdateWaterTexture()
+	LoadLevelTextureDefault()
+	LoadWaterTextureDefault()
 
 End Function
 
@@ -2774,11 +2774,24 @@ Function CurrentWaterTextureName$()
 	
 End Function
 
-; TODO: Take custom textures into account.
-Function UpdateLevelTexture()
+Function LoadLevelTextureDefault()
 
 	LevelTexture=myLoadTexture("data\Leveltextures\"+CurrentLevelTextureName$(),1)
+
+End Function
+
+Function LoadWaterTextureDefault()
+
+	WaterTexture=MyLoadTexture("data\Leveltextures\"+CurrentWaterTextureName$(),1)
+
+End Function
+
+Function UpdateLevelTexture()
+
 	EntityTexture TexturePlane,LevelTexture
+	For j=0 To LevelHeight-1
+		EntityTexture LevelMesh(j),LevelTexture
+	Next
 
 	EntityTexture BrushTextureMesh,LevelTexture
 	
@@ -2786,12 +2799,27 @@ Function UpdateLevelTexture()
 
 End Function
 
-; TODO: Take custom textures into account.
+Function UpdateLevelTextureDefault()
+
+	LoadLevelTextureDefault()
+	UpdateLevelTexture()
+
+End Function
+
 Function UpdateWaterTexture()
-
-	WaterTexture=MyLoadTexture("data\Leveltextures\"+CurrentWaterTextureName$(),1)
+	
 	EntityTexture Currentwatertile,WaterTexture
+	For j=0 To LevelHeight-1
+		EntityTexture WaterMesh(j),WaterTexture
+	Next
+	
+End Function
 
+Function UpdateWaterTextureDefault()
+	
+	LoadWaterTextureDefault()
+	UpdateWaterTexture()
+	
 End Function
 
 
@@ -5285,7 +5313,7 @@ Function EditorLocalControls()
 				If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
 				
 				FreeTexture LevelTexture
-				UpdateLevelTexture()
+				UpdateLevelTextureDefault()
 				
 				For j=0 To LevelHeight-1
 					EntityTexture LevelMesh(j),LevelTexture
@@ -5300,7 +5328,7 @@ Function EditorLocalControls()
 				If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
 				
 				FreeTexture LevelTexture
-				UpdateLevelTexture()
+				UpdateLevelTextureDefault()
 				
 				For j=0 To LevelHeight-1
 					EntityTexture LevelMesh(j),LevelTexture
@@ -5320,7 +5348,7 @@ Function EditorLocalControls()
 				If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
 				
 				FreeTexture WaterTexture
-				UpdateWaterTexture()
+				UpdateWaterTextureDefault()
 				
 				For j=0 To LevelHeight-1
 					EntityTexture WaterMesh(j),WaterTexture
@@ -5335,7 +5363,7 @@ Function EditorLocalControls()
 				If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
 				
 				FreeTexture WaterTexture
-				UpdateWaterTexture()
+				UpdateWaterTextureDefault()
 				
 				For j=0 To LevelHeight-1
 					EntityTexture WaterMesh(j),WaterTexture
@@ -5374,19 +5402,16 @@ Function EditorLocalControls()
 					Rect 0,0,500,40,True
 					Color 255,255,0
 					Print "TEXTURE COULDN'T LOAD!"
-					UpdateLevelTexture()
+					UpdateLevelTextureDefault()
 					
 
 					Delay 2000
 				Else
 					currentleveltexture=-1
-				EndIf	
-				
-				EntityTexture TexturePlane,LevelTexture
-				For j=0 To LevelHeight-1
-					EntityTexture LevelMesh(j),LevelTexture
-				Next
+					UpdateLevelTexture()
+				EndIf
 			EndIf
+			
 			rightmousereleased=False
 			buildcurrenttilemodel()
 			UnsavedChanges=True
@@ -5417,24 +5442,18 @@ Function EditorLocalControls()
 					Rect 0,0,500,40,True
 					Color 255,255,0
 					Print "TEXTURE COULDN'T LOAD!"
-					UpdateWaterTexture()
+					UpdateWaterTextureDefault()
 					
 
 					Delay 2000
 				Else
 					currentwatertexture=-1
-				EndIf	
-				
-				EntityTexture Currentwatertile,WaterTexture
-				For j=0 To LevelHeight-1
-					EntityTexture WaterMesh(j),WaterTexture
-				Next
-
+					UpdateWaterTexture()
+				EndIf
 			EndIf
-			rightmousereleased=False
 			
+			rightmousereleased=False
 			buildcurrenttilemodel()
-
 			UnsavedChanges=True
 		EndIf
 
@@ -8290,7 +8309,7 @@ Function BuildLevelModel()
 		
 		TranslateEntity WaterMesh(j),0,-0.04,0
 	Next
-	
+		
 	; logic
 	For j=0 To LevelHeight-1
 		ClearSurface LogicSurface(j)
@@ -17841,7 +17860,6 @@ Function LoadLevel(levelnumber)
 		EndIf
 	Else
 		LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-		
 	EndIf
 	
 	watertexture=0
@@ -17860,9 +17878,6 @@ Function LoadLevel(levelnumber)
 	Else
 		waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
 	EndIf
-	
-	EntityTexture TexturePlane,LevelTexture
-	EntityTexture CurrentWaterTile,WaterTexture
 	
 	leftmousereleased=False
 		
@@ -18063,11 +18078,10 @@ Function LoadLevel(levelnumber)
 	CloseFile file
 	
 	ReBuildLevelModel()
-	For j=0 To LevelHeight-1
-		EntityTexture LevelMesh(j),LevelTexture
-		EntityTexture WaterMesh(j),WaterTexture
-
-	Next
+	
+	UpdateLevelTexture()
+	UpdateWaterTexture()
+	
 	BuildCurrentTileModel()
 	
 	For j=0 To LevelHeight-1
@@ -18104,9 +18118,9 @@ Function NewLevel(levelnumber)
 	LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
 	CurrentWaterTexture=0	
 	waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
-	EntityTexture TexturePlane,LevelTexture
-	EntityTexture CurrentWaterTile,WaterTexture
 
+	UpdateLevelTexture()
+	UpdateWaterTexture()
 
 	rebuildlevelmodel()
 	BuildCurrentTileModel()
