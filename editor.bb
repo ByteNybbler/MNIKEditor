@@ -2552,7 +2552,7 @@ Function InitializeGraphicsCameras()
 	Camera3 = CreateCamera() ; texture picker camera
 	CameraClsColor camera3,0,0,0 ;255,0,0
 	CameraViewport Camera3,0,0,LevelViewportWidth,LevelViewportHeight
-	CameraRange camera3,.1,20 ;1000
+	CameraRange camera3,.1,50 ;1000
 	RotateEntity Camera3,90,0,0
 	PositionEntity Camera3,0.5,210,-0.5
 	CameraZoom Camera3,20.0*TilePickerZoomScaling#
@@ -2613,14 +2613,14 @@ Function InitializeGraphicsEntities()
 		; Little square at the center of the brush
 		CursorMeshOpaque(i)=CreateCube()
 		ScaleMesh CursorMeshOpaque(i),.2,0.01,.2
-		
-		; The square region that the brush covers, used only by the texture picker
-		CursorMeshTexturePicker=CreateCube()
-		ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
-		EntityAlpha CursorMeshTexturePicker,BrushMeshAlpha
-		EntityColor CursorMeshTexturePicker,255,255,200
-		HideEntity CursorMeshTexturePicker
 	Next
+	
+	; The square region that the brush covers, used only by the texture picker
+	CursorMeshTexturePicker=CreateCube()
+	ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
+	EntityAlpha CursorMeshTexturePicker,BrushMeshAlpha
+	EntityColor CursorMeshTexturePicker,255,255,200
+	HideEntity CursorMeshTexturePicker
 	
 	CreateBrushMesh()
 	
@@ -4866,7 +4866,7 @@ Function EditorLocalControls()
 	
 	
 	; *************************************
-	; Selecting A Texture / Picking a Texture / Texture Picker
+	; Selecting A Texture / Picking a Texture / Texture Picker / Tile Picker
 	; *************************************
 	If EditorMode=1 Or EditorMode=2
 		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
@@ -4877,12 +4877,14 @@ Function EditorLocalControls()
 			DivisorY#=Float#(DivisorNumerator)/8.0
 			StepSize#=1.0/8.0
 			ScaleEntity CursorMeshPillar(0),0.0325,0.01,0.0325
+			ScaleEntity CursorMeshOpaque(0),0.0325,0.01,0.0325
 			ScaleEntity CursorMeshTexturePicker,0.0325,0.01,0.0325
 			tilepickx=Floor(nmx/DivisorX#)
 			tilepicky=Floor(nmy/DivisorY#)
 			tilepickx=ClampInt(0,7,tilepickx)
 			tilepicky=ClampInt(0,7,tilepicky)
 			PositionEntity CursorMeshPillar(0),tilepickx*StepSize#+StepSize#/2.0,200,-tilepicky*StepSize#-StepSize#/2.0,200
+			PositionEntity CursorMeshOpaque(0),tilepickx*StepSize#+StepSize#/2.0,200,-tilepicky*StepSize#-StepSize#/2.0,200
 			PositionEntity CursorMeshTexturePicker,tilepickx*StepSize#+StepSize#/2.0,200,-tilepicky*StepSize#-StepSize#/2.0,200
 			ShowEntity CursorMeshPillar(0)
 			ShowEntity CursorMeshOpaque(0)
