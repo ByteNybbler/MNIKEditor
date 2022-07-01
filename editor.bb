@@ -11446,7 +11446,6 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Scritter" Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Door" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!Cage"  Or CurrentObject\Attributes\TexName$="!FireTrap" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\LogicType=424 Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Autodoor" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"
 		If CurrentObject\Attributes\ModelName$="!Scritter" Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"		
 			tex2$="Colour"
 		EndIf
@@ -11774,7 +11773,6 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Door" Or CurrentObject\Attributes\ModelName$="!Key"  Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!Cage" Or CurrentObject\Attributes\TexName$="!FireTrap" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!Retrolasergate" Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Autodoor" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"
 		; spring or bridge or transporter or gate or key or teleporter or cage or fire trap or laser gate or moobot or suctube or conveyor
 		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=40 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=10 Or CurrentObject\Attributes\LogicType=172 Or CurrentObject\Attributes\LogicType=30 Or CurrentObject\Attributes\LogicType=140 Or CurrentObject\Attributes\LogicType=20 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=424 Or CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="SubColour"
@@ -12028,7 +12026,6 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Spring"  Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!FlipBridge"  Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Suctube"  Or CurrentObject\Attributes\ModelName$="!SuctubeX" Or CurrentObject\Attributes\ModelName$="!Conveyor"
 		; spring or transporter or flipbridge or moobot or suctube or suctubex or conveyor
 		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Direction"
@@ -12190,18 +12187,28 @@ Function DisplayObjectAdjuster(i)
 			tex2$="XAnim"
 		EndIf
 
-		; moobots or transporters or conveyor heads
-		If CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=45
+		; moobots or conveyor heads
+		If CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=45
 			tex2$="Turn"
 			If CurrentObject\Attributes\Data3=0
 				tex$="Left"
 			Else If CurrentObject\Attributes\Data3=1
-
 				tex$="Right"
 			Else If CurrentObject\Attributes\LogicType=432 ; only for pushbots
 				tex$="180"
 			EndIf
 		EndIf
+		If CurrentObject\Attributes\LogicType=210 ; Transporters
+			tex2$="Turn"
+			If CurrentObject\Attributes\Data3=0
+				tex$="180"
+			Else If CurrentObject\Attributes\Data3=1
+				tex$="(MOD) Left"
+			Else If CurrentObject\Attributes\Data3=2
+				tex$="(MOD) Right"
+			EndIf
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=46 ; conveyor tail
 			tex2$="Cycles"
 		EndIf
@@ -13729,15 +13736,14 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=63
 		EndIf
 		If CurrentObject\Attributes\ModelName$="!Gem"
+			; Shape
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
 		EndIf
-		If CurrentObject\Attributes\ModelName$="!Crystal"
-			If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
-			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
-
-
-		EndIf
+;		If CurrentObject\Attributes\ModelName$="!Crystal"
+;			If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
+;			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
+;		EndIf
 		If CurrentObject\Attributes\LogicType=260 ; Spikeyball
 			If CurrentObject\Attributes\Data1=2
 				If CurrentObject\Attributes\Data0>7 CurrentObject\Attributes\Data0=0
@@ -13752,6 +13758,7 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=7
 		EndIf
 		If CurrentObject\Attributes\LogicType=220 ; Turtle
+			; Direction
 			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
@@ -13783,11 +13790,6 @@ Function AdjustObjectAdjuster(i)
 			; Texture
 			If CurrentObject\Attributes\Data0>8 CurrentObject\Attributes\Data0=1
 			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=8
-		EndIf
-		
-		If CurrentObject\Attributes\LogicType=51 ; Magic Shooter
-			If CurrentObject\Attributes\Data0>9 CurrentObject\Attributes\Data0=0
-			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=9
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=470 Or CurrentObject\Attributes\LogicType=471 ; ghost or wraith
@@ -13900,8 +13902,8 @@ Function AdjustObjectAdjuster(i)
 		; transporter, pushbot
 		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=432
 			; direction 0-3
-			If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
-			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
+			;If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
+			;If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=90
