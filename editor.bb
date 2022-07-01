@@ -3345,13 +3345,14 @@ Function SetEditorMode(NewMode)
 		UpdateCameraProj()
 	EndIf
 	
-	If EditorMode=3 And NewMode=0
+	OldEditorMode=EditorMode
+	EditorMode=NewMode
+	
+	If OldEditorMode=3 And NewMode=0
 		SetBrushToCurrentTile()
-	ElseIf EditorMode=0 And NewMode=3
+	ElseIf OldEditorMode=0 And NewMode=3
 		SetBrushToCurrentObject()
 	EndIf
-	
-	EditorMode=NewMode
 	
 	UpdateCurrentGrabbedObjectMarkerVisibility()
 	
@@ -4822,6 +4823,7 @@ Function EditorLocalControls()
 							CopyLevelTileToBrush(i,j,BrushSpaceX,BrushSpaceY)
 						Next
 					Next
+					GenerateBrushPreview()
 				ElseIf EditorMode=3
 					NofBrushObjects=0
 					
@@ -4838,7 +4840,8 @@ Function EditorLocalControls()
 					
 					If NofBrushObjects=0
 						SetBrushToCurrentObject()
-					;Else
+					Else
+						GenerateBrushPreview()
 					;	ShowMessage(NofBrushObjects+" objects found in brush.",1000)
 					EndIf
 				EndIf
@@ -5974,9 +5977,11 @@ Function EditorLocalControls()
 				BrushObjectTileXOffset(k)=X2
 			Next
 		EndIf
+		
+		GenerateBrushPreview()
 	EndIf
 	
-	If KeyPressed(33) ; V key
+	If KeyPressed(47) ; V key
 		; Rotate brush 90 degrees
 		; TODO: Write this code. xzx
 		BrushSpaceStartX=GetBrushSpaceXStart()
@@ -6003,6 +6008,12 @@ Function EditorLocalControls()
 		Temp=BrushSpaceWidth
 		BrushSpaceWidth=BrushSpaceHeight
 		BrushSpaceHeight=Temp
+		
+		Temp=BrushWidth
+		SetBrushWidth(BrushHeight)
+		SetBrushHeight(Temp)
+		
+		GenerateBrushPreview()
 	EndIf
 	
 	If KeyPressed(15) ; tab key
@@ -13392,6 +13403,7 @@ Function SetBrushToCurrentObject()
 	BrushSpaceWidth=1
 	BrushSpaceHeight=1
 	CopyObjectToBrush(CurrentObject,0,0,0)
+	GenerateBrushPreview()
 
 End Function
 
@@ -13406,6 +13418,7 @@ Function SetBrushToCurrentTile()
 	BrushSpaceWidth=1
 	BrushSpaceHeight=1
 	CopyTile(CurrentTile,BrushTiles(0,0))
+	GenerateBrushPreview()
 
 End Function
 
