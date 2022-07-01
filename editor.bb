@@ -2548,7 +2548,7 @@ Function InitializeGraphicsCameras()
 	Camera3 = CreateCamera() ; texture picker camera
 	CameraClsColor camera3,0,0,0 ;255,0,0
 	CameraViewport Camera3,0,0,LevelViewportWidth,LevelViewportHeight
-	CameraRange camera3,.1,10 ;1000
+	CameraRange camera3,.1,20 ;1000
 	RotateEntity Camera3,90,0,0
 	PositionEntity Camera3,0.5,210,-0.5
 	CameraZoom Camera3,20.0*TilePickerZoomScaling#
