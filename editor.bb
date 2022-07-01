@@ -393,6 +393,7 @@ End Function
 Global PlacementDensity#=1.0
 
 Global BlockModeMesh,BlockModeSurface,BlockCornerX,BlockCornerY
+Global cornleft,cornright,cornup,corndown
 Global LevelTextureNum, WaterTextureNum
 Dim LevelTextureName$(30),WaterTextureName$(20)
 Global LevelTextureCustomName$,WaterTextureCustomName$
@@ -3783,6 +3784,31 @@ Function SetBrushCursorPosition(x,y)
 	BrushCursorX=x
 	BrushCursorY=y
 	
+	;HideEntity BlockModeMesh
+	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid And BrushMode=BrushModeBlockPlacing
+		; show the block
+		;ShowEntity BlockModeMesh
+		;EntityColor BlockModeMesh,BrushR,BrushG,BrushB
+		If BrushCursorX>BlockCornerx
+			cornleft=Blockcornerx
+			cornright=BrushCursorX
+		Else
+			cornleft=BrushCursorX
+			cornright=Blockcornerx
+		EndIf
+		If BrushCursorY>BlockCornery
+			cornup=BlockCornery
+			corndown=BrushCursorY
+		Else
+			cornup=BrushCursorY
+			corndown=blockcornery
+		EndIf
+		;VertexCoords BlockModeSurface,0,cornleft-0,0.1,-(cornup)
+		;VertexCoords BlockModeSurface,1,cornright+1,0.1,-(cornup)
+		;VertexCoords BlockModeSurface,2,cornleft-0,0.1,-(corndown+1)
+		;VertexCoords BlockModeSurface,3,cornright+1,0.1,-(corndown+1)
+	EndIf
+	
 	If PositionChanged
 		BrushCursorPositionWasChanged()
 	EndIf
@@ -3845,9 +3871,17 @@ Function CalculateBrushTargets()
 			Next
 		Next
 		GenerateBrushSurface()
-;	ElseIf BrushMode=BrushModeBlockPlacing
-;		xzxzx
-;		GenerateBrushSurface()
+	ElseIf BrushMode=BrushModeBlockPlacing
+		FloodedElementsClear()
+		For i=cornleft To cornright
+			For j=cornup To corndown
+				If FloodedElementCount<>MaxTilesPerLevel
+					AddToFloodedStack(i,j)
+				EndIf
+			Next
+		Next
+
+		GenerateBrushSurface()
 	ElseIf BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
 		; Don't redo the flood fill if it is unnecessary.
 		If Not FloodedStackHasTile(BrushCursorX,BrushCursorY)
@@ -3864,6 +3898,14 @@ Function CalculateBrushTargets()
 			EndIf
 			GenerateBrushSurface()
 		EndIf
+	Else
+		FloodedElementsClear()
+	EndIf
+	
+	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
+		If FloodedElementCount=0
+			AddToFloodedStack(BrushCursorX,BrushCursorY)
+		EndIf
 	EndIf
 	
 	GenerateBrushPreview()
@@ -3873,12 +3915,6 @@ End Function
 Function GenerateBrushSurface()
 
 	ClearBrushSurface()
-	
-	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
-		If FloodedElementCount=0
-			AddToFloodedStack(BrushCursorX,BrushCursorY)
-		EndIf
-	EndIf
 	
 	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
 	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
@@ -4664,31 +4700,6 @@ Function EditorLocalControls()
 				Color TextLevelR,TextLevelG,TextLevelB
 				Text LevelViewportWidth/2-4.5*8,LevelViewportHeight,"X:"+Str$(BrushCursorX)+", Y:"+Str$(BrushCursorY)
 				
-				HideEntity BlockModeMesh
-				If BrushMode=BrushModeBlockPlacing
-					; show the block
-					ShowEntity BlockModeMesh
-					EntityColor BlockModeMesh,BrushR,BrushG,BrushB
-					If BrushCursorX>BlockCornerx
-						cornleft=Blockcornerx
-						cornright=BrushCursorX
-					Else
-						cornleft=BrushCursorX
-						cornright=Blockcornerx
-					EndIf
-					If BrushCursorY>BlockCornery
-						cornup=BlockCornery
-						corndown=BrushCursorY
-					Else
-						cornup=BrushCursorY
-						corndown=blockcornery
-					EndIf
-					VertexCoords BlockModeSurface,0,cornleft-0,0.1,-(cornup)
-					VertexCoords BlockModeSurface,1,cornright+1,0.1,-(cornup)
-					VertexCoords BlockModeSurface,2,cornleft-0,0.1,-(corndown+1)
-					VertexCoords BlockModeSurface,3,cornright+1,0.1,-(corndown+1)
-				EndIf
-				
 				If LeftMouse=False
 					OnceTilePlacement=True
 				EndIf
@@ -4706,6 +4717,10 @@ Function EditorLocalControls()
 						; place one corner of block
 						BlockCornerX=BrushCursorX
 						BlockCornerY=BrushCursorY
+						cornleft=BlockCornerX
+						cornright=BlockCornerX
+						cornup=BlockCornerY
+						corndown=BlockCornerY
 						SetBrushMode(BrushModeBlockPlacing)
 						Delay 100
 					Else If BrushMode=BrushModeBlockPlacing
