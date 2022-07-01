@@ -21708,7 +21708,7 @@ Function MasterMainLoop()
 			StartTestMode()
 		EndIf
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33) And hubmode=False
-			If KeyDown(46) 
+			If CtrlDown()
 				PackContent=True
 			Else
 				PackContent=False
@@ -21954,7 +21954,7 @@ Function MasterAdvancedLoop()
 		EndIf
 		
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33) And hubmode=False
-			If KeyDown(46)
+			If CtrlDown()
 				PackContent=True
 			Else
 				PackContent=False
@@ -22343,7 +22343,7 @@ Function HubMainLoop()
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
 			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
-			If KeyDown(46)
+			If CtrlDown()
 				PackContent=True
 			Else
 				PackContent=False
@@ -25462,6 +25462,48 @@ Function CompileHub(PackContent)
 	Return True
 End Function
 
+Function MyCreateDir(dirpath$)
+	; creates all the sub directories along with their parent directories
+	For i=1 To Len(dirpath$)
+		If Mid$(dirpath$,i,1)=Chr$(47) Then
+			folder$=Left$(dirpath$,i-1)
+			d=ReadDir(folder$)
+			If d Then 
+				CloseDir(d)
+			Else
+			    CreateDir(folder$)
+				If FileType(folder$)=0 Then RuntimeError("Couldn't create directory: "+folder$)
+			EndIf
+		EndIf
+	Next
+End Function
+
+Function CleanDir(ex$)
+	; completely cleans the specified directory and also deletes it
+	dir=ReadDir(ex$)
+	Repeat
+		ex2$=NextFile$(dir)
+		If ex2$<>"" And ex2$<>"." And ex2$<>".."
+			filename$=ex$+Chr$(47)+ex2$
+			If FileType(filename$)=1
+				DeleteFile filename$
+			Else If FileType(filename$)=2
+				CleanDir(filename$)
+			EndIf
+		EndIf
+	Until ex2$=""
+	DeleteDir ex$
+End Function
+
+Function GetFileNameFromPath$(path$)
+	; fetches the exact file name from path and removes the rest of the path
+	For i=Len(path$) To 1 Step -1
+		If Mid$(path$,i,1)=Chr$(47) Or Mid$(path$,i,1)=Chr$(47)
+			Return Right$(path,Len(path$)-i)
+		EndIf
+	Next
+End Function
+
 Function CompileAdventure(PackCustomContent)
 
 	AdventureFileNameWithoutAuthor$=AdventureTitleWithoutAuthor$(AdventureFileName$)
@@ -25517,14 +25559,24 @@ Function CompileAdventure(PackCustomContent)
 		EndIf
 	Until ex$=""
 	
-	If PackCustomContent 
+	If PackCustomContent And NofCustomContentFiles>0
 		; read custom content
+		Print "Copying custom content files to: "+GlobalDirName$+"/Custom/Downloads Outbox/"+AdventureFileName$+"_Content"
+		If FileType(GlobalDirName$+"/Custom/Downloads Outbox/"+AdventureFileName$+"_Content")=2
+			CleanDir(GlobalDirName$+"/Custom/Downloads Outbox/"+AdventureFileName$+"_Content")
+		EndIf
+		CreateDir(GlobalDirName$+"/Custom/Downloads Outbox/"+AdventureFileName$+"_Content")
 		For i=0 To NofCustomContentFiles-1
-			Print "Reading... "+CustomContentFile$(i)
-			CompilerFileName$(NofCompilerFiles)=CustomContentFile$(i)
-			CompilerFileSize(NofCompilerFiles)=FileSize(CustomContentFile$(i))
-			NofCompilerFiles=NofCompilerFiles+1
+			Print "Copying... "+GetFileNameFromPath$(CustomContentFile$(i))
+			MyCreateDir GlobalDirName$+"/Custom/Downloads Outbox/"+AdventureFileName$+"_Content/"+CustomContentFile$(i)
+			CopyFile CustomContentFile$(i),GlobalDirName$+"/Custom/Downloads Outbox/"+AdventureFileName$+"_Content/"+CustomContentFile$(i)
 		Next
+		; now cleanup old Values
+		For i=0 To 499
+			CustomContentFile$(i)=""
+		Next
+		Print ""
+		Print ""
 	EndIf
 	
 	Delay 1000

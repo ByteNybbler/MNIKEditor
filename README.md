@@ -26,6 +26,7 @@
 * Ctrl+S: Save master.dat.
 * Ctrl+O: Type in the number of the wlv to edit, unless the mouse is hovering over the dialogs column, in which case type in the number of the dia to edit.
 * Ctrl+T: Save+Test.
+* Ctrl+Click the Compile+Exit button: Compile adventure and pack custom content.
 
 ## LEVEL EDITOR
 
