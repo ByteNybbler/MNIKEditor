@@ -11925,9 +11925,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=51 ; spellball generator
 			tex2$="Goal X"
 		EndIf
-
-		;If (Left$(CurrentObject\Attributes\ModelName$,6)="!Retro" And CurrentObject\Attributes\ModelName$<>"!Retrolasergate") Or CurrentObject\Attributes\ModelName$="!Weebot"  Or CurrentObject\Attributes\ModelName$="!Zapbot"
-
+		
 		; ufo or retro z-bot or zipbot or zapbot
 		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=423 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431
 			tex2$="Turning"
@@ -12026,12 +12024,28 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
 		
-		; spring or transporter or flipbridge or moobot or suctube or suctubex or conveyor
-		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
+		; spring or transporter or flipbridge or suctube or suctubex or conveyor
+		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Direction"
 			If CurrentObject\Attributes\LogicType=210 ; transporter
 				tex$=Str$(3-CurrentObject\Attributes\Data2)
 			EndIf
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=432 ; Moobot
+			tex2$="Direction"
+			Select CurrentObject\Attributes\Data2
+			Case 0
+				tex$="North"
+			Case 1
+				tex$="East"
+			Case 2
+				tex$="South"
+			Case 3
+				tex$="West"
+			Default
+				tex$=CurrentObject\Attributes\Data2+"/NoMove"
+			End Select
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
@@ -12186,15 +12200,23 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="XAnim"
 		EndIf
-
-		; moobots or conveyor heads
-		If CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=45
+		
+		If CurrentObject\Attributes\LogicType=45 ; Conveyor heads
 			tex2$="Turn"
 			If CurrentObject\Attributes\Data3=0
 				tex$="Left"
 			Else If CurrentObject\Attributes\Data3=1
 				tex$="Right"
-			Else If CurrentObject\Attributes\LogicType=432 ; only for pushbots
+			EndIf
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=432 ; Moobots
+			tex2$="Turn"
+			If CurrentObject\Attributes\Data3=0
+				tex$="Left"
+			Else If CurrentObject\Attributes\Data3=1
+				tex$="Right"
+			Else
 				tex$="180"
 			EndIf
 		EndIf
@@ -13902,8 +13924,8 @@ Function AdjustObjectAdjuster(i)
 		; transporter, pushbot
 		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=432
 			; direction 0-3
-			;If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
-			;If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
+			If CurrentObject\Attributes\Data2>3 CurrentObject\Attributes\Data2=0
+			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=3
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=90
