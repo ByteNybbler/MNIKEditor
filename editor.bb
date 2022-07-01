@@ -1382,15 +1382,21 @@ Const BrushMeshOffsetY#=0.01
 Function ClearBrushSurface()
 	
 	ClearSurface BrushSurface
-	BrushSurfaceVertexCount=0
 	
+	ClearBrushPreviewSurface()
+	
+End Function
+
+Function ClearBrushPreviewSurface()
+
 	For i=0 To NofPreviewObjects-1
 		FreeEntity PreviewObjects(i)
 	Next
 	NofPreviewObjects=0
 	
 	ClearSurface BrushTextureSurface
-	
+	BrushSurfaceVertexCount=0
+
 End Function
 
 Function ShowBrushSurface()
@@ -1414,7 +1420,7 @@ Function FinishBrushSurface()
 	
 End Function
 
-Function AddSquareToBrushSurface(i,j,y#)
+Function AddSquareToBrushSurface(TheSurface,i,j,y#,SetTexCoords)
 
 	; Stupid hack to prevent MAVs from too many vertices at immense brush sizes.
 	; It's meant to be a temporary solution but I might also just keep this forever. That's the nature of software engineering.
@@ -1424,26 +1430,15 @@ Function AddSquareToBrushSurface(i,j,y#)
 	
 	StartingVertex=BrushSurfaceVertexCount
 	
-	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j
-	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j
-	AddVertex BrushSurface,i,y#+BrushMeshOffsetY#,-j-1
-	AddVertex BrushSurface,i+1,y#+BrushMeshOffsetY#,-j-1
+	AddVertex TheSurface,i,y#+BrushMeshOffsetY#,-j
+	AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#,-j
+	AddVertex TheSurface,i,y#+BrushMeshOffsetY#,-j-1
+	AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#,-j-1
 	
-	AddTriangle BrushSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
-	AddTriangle BrushSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
-	
-	If EditorMode=0
-		TheSurface=BrushTextureSurface
-		;yoffset#=0.005
-	
-		AddVertex TheSurface,i,y#+BrushMeshOffsetY#-yoffset#,-j
-		AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#-yoffset#,-j
-		AddVertex TheSurface,i,y#+BrushMeshOffsetY#-yoffset#,-j-1
-		AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#-yoffset#,-j-1
+	AddTriangle TheSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
+	AddTriangle TheSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
 		
-		AddTriangle TheSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
-		AddTriangle TheSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
-		
+	If SetTexCoords
 		TheTile.Tile=BrushTiles(LevelSpaceToBrushSpaceX(i),LevelSpaceToBrushSpaceY(j))
 		CalculateUV(TheTile\Terrain\Texture,0,0,TheTile\Terrain\Rotation,8,1)
 		VertexTexCoords(TheSurface,StartingVertex+0,ChunkTileU#,ChunkTileV#)
@@ -1454,16 +1449,59 @@ Function AddSquareToBrushSurface(i,j,y#)
 		CalculateUV(TheTile\Terrain\Texture,1,1,TheTile\Terrain\Rotation,8,1)
 		VertexTexCoords(TheSurface,StartingVertex+3,ChunkTileU#,ChunkTileV#)
 	EndIf
-	
+
 	BrushSurfaceVertexCount=BrushSurfaceVertexCount+4
 
 End Function
 
-Function AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
-;xzx
-	AddSquareToBrushSurface(x,y,0.0)
+Function AddTileToBrushSurfaceActual(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
+
+	AddSquareToBrushSurface(TheSurface,x,y,0.0,SetTexCoords)
 	
-	If EditorMode=3
+	If IsPositionInLevel(x,y)
+		SquareHeight#=GetTileTotalHeight(LevelTiles(x,y))
+		If SquareHeight#<>0.0
+			AddSquareToBrushSurface(TheSurface,x,y,SquareHeight#,SetTexCoords)
+		EndIf
+	EndIf
+
+End Function
+
+Function AddTileToBrushSurface(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
+
+	If BrushMode=BrushModeSetMirror
+		Return
+	EndIf
+	
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
+
+	AddTileToBrushSurfaceActual(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
+	
+	If DupeMode=DupeModeX
+		TargetX=MirrorAcrossInt(x,MirrorPositionX)
+		AddTileToBrushSurfaceActual(TheSurface,TargetX,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
+	ElseIf DupeMode=DupeModeY
+		TargetY=MirrorAcrossInt(y,MirrorPositionY)
+		AddTileToBrushSurfaceActual(TheSurface,x,TargetY,BrushSpaceX,BrushSpaceY,SetTexCoords)
+	ElseIf DupeMode=DupeModeXPlusY
+		TargetX=MirrorAcrossInt(x,MirrorPositionX)
+		TargetY=MirrorAcrossInt(y,MirrorPositionY)
+		AddTileToBrushSurfaceActual(TheSurface,TargetX,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
+		AddTileToBrushSurfaceActual(TheSurface,x,TargetY,BrushSpaceX,BrushSpaceY,SetTexCoords)
+		AddTileToBrushSurfaceActual(TheSurface,TargetX,TargetY,BrushSpaceX,BrushSpaceY,SetTexCoords)
+	EndIf
+
+End Function
+
+Function AddTileToBrushPreview(x,y)
+
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
+
+	If EditorMode=0
+		AddTileToBrushSurface(BrushTextureSurface,x,y,BrushSpaceX,BrushSpaceY,True)
+	ElseIf EditorMode=3
 		For k=0 To NofBrushObjects-1
 			If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
 				If NofPreviewObjects<MaxNofObjects-NofObjects
@@ -1475,40 +1513,6 @@ Function AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
 				EndIf
 			EndIf
 		Next
-	EndIf
-	
-	If IsPositionInLevel(x,y)
-		SquareHeight#=GetTileTotalHeight(LevelTiles(x,y))
-		If SquareHeight#<>0.0
-			AddSquareToBrushSurface(x,y,SquareHeight#)
-		EndIf
-	EndIf
-
-End Function
-
-Function AddTileToBrushSurface(x,y)
-
-	If BrushMode=BrushModeSetMirror
-		Return
-	EndIf
-	
-	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
-	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
-
-	AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
-	
-	If DupeMode=DupeModeX
-		TargetX=MirrorAcrossInt(x,MirrorPositionX)
-		AddTileToBrushSurfaceActual(TargetX,y,BrushSpaceX,BrushSpaceY)
-	ElseIf DupeMode=DupeModeY
-		TargetY=MirrorAcrossInt(y,MirrorPositionY)
-		AddTileToBrushSurfaceActual(x,TargetY,BrushSpaceX,BrushSpaceY)
-	ElseIf DupeMode=DupeModeXPlusY
-		TargetX=MirrorAcrossInt(x,MirrorPositionX)
-		TargetY=MirrorAcrossInt(y,MirrorPositionY)
-		AddTileToBrushSurfaceActual(TargetX,y,BrushSpaceX,BrushSpaceY)
-		AddTileToBrushSurfaceActual(x,TargetY,BrushSpaceX,BrushSpaceY)
-		AddTileToBrushSurfaceActual(TargetX,TargetY,BrushSpaceX,BrushSpaceY)
 	EndIf
 
 End Function
@@ -3825,8 +3829,6 @@ Function BrushCursorStateWasChanged()
 	;ShowMessage("Brush cursor state changed",1000)
 	
 	CalculateBrushTargets()
-	
-	GenerateBrushSurface()
 
 End Function
 
@@ -3841,6 +3843,10 @@ Function CalculateBrushTargets()
 				AddToFloodedStack(BrushXStart+i,BrushYStart+j)
 			Next
 		Next
+		GenerateBrushSurface()
+;	ElseIf BrushMode=BrushModeBlockPlacing
+;		xzxzx
+;		GenerateBrushSurface()
 	ElseIf BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
 		; Don't redo the flood fill if it is unnecessary.
 		If Not FloodedStackHasTile(BrushCursorX,BrushCursorY)
@@ -3855,28 +3861,46 @@ Function CalculateBrushTargets()
 			ElseIf BrushMode=BrushModeColumn
 				FloodFillColumn(BrushCursorX,BrushCursorY)
 			EndIf
+			GenerateBrushSurface()
 		EndIf
 	EndIf
+	
+	GenerateBrushPreview()
 
 End Function
 
 Function GenerateBrushSurface()
-;xzxzx
+
 	ClearBrushSurface()
+	
+	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
+		If FloodedElementCount=0
+			AddToFloodedStack(BrushCursorX,BrushCursorY)
+		EndIf
+	EndIf
+	
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
 	
 	For i=0 To FloodedElementCount-1
 		thisx=FloodedStackX(i)
 		thisy=FloodedStackY(i)
-		AddTileToBrushSurface(thisx,thisy)
+		AddTileToBrushSurface(BrushSurface,thisx,thisy,BrushSpaceX,BrushSpaceY,False)
 	Next
 	
-	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
-		If FloodedElementCount=0
-			AddTileToBrushSurface(BrushCursorX,BrushCursorY)
-		EndIf
-	EndIf
-	
 	FinishBrushSurface()
+
+End Function
+
+Function GenerateBrushPreview()
+
+	ClearBrushPreviewSurface()
+
+	For i=0 To FloodedElementCount-1
+		thisx=FloodedStackX(i)
+		thisy=FloodedStackY(i)
+		AddTileToBrushPreview(thisx,thisy)
+	Next
 
 End Function
 
