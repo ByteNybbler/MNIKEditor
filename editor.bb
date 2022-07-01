@@ -1468,7 +1468,7 @@ Function AddTileToBrushSurfaceActual(x,y,BrushSpaceX,BrushSpaceY)
 			If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
 				If NofPreviewObjects<MaxNofObjects-NofObjects
 					Preview=CopyEntity(BrushObjects(k)\Model\Entity)
-					EntityAlpha Preview,BrushMeshObjectAlpha#
+					SetEntityAlphaWithModelName(Preview,BrushMeshObjectAlpha#,BrushObjects(k)\Attributes\ModelName$)
 					PositionEntityWithXYZAdjust(Preview,x+0.5,y+0.5,BrushObjects(k)\Position\Z,BrushObjects(k)\Attributes)
 					PreviewObjects(NofPreviewObjects)=Preview
 					NofPreviewObjects=NofPreviewObjects+1
@@ -9648,15 +9648,20 @@ Function UpdateObjectVisibility(Obj.GameObject)
 End Function
 
 
-Function UpdateObjectAlpha(Obj.GameObject)
+Function SetEntityAlphaWithModelName(Entity,Alpha#,ModelName$)
 
-	If Obj\Attributes\ModelName$="!NPC" Or Obj\Attributes\ModelName$="!Tentacle"
-		Entity=GetChild(Obj\Model\Entity,3)
-	Else
-		Entity=Obj\Model\Entity
+	If ModelName$="!NPC" Or ModelName$="!Tentacle"
+		Entity=GetChild(Entity,3)
 	EndIf
 
-	EntityAlpha Entity,BaseObjectAlpha#(Obj\Attributes)
+	EntityAlpha Entity,Alpha#
+
+End Function
+
+
+Function UpdateObjectAlpha(Obj.GameObject)
+
+	SetEntityAlphaWithModelName(Obj\Model\Entity,BaseObjectAlpha#(Obj\Attributes),Obj\Attributes\ModelName$)
 
 End Function
 
@@ -22520,9 +22525,8 @@ Function StartTestModeAt(level,x,y)
 	; Place a level transition at the adventure start coordinates.
 	GenerateLevelExitTo(level,x,y)
 	CurrentObject\Attributes\ZAdjust=1000.0 ; Move the LevelExit out of view in-game.
-	SetBrushToCurrentObject()
 	PreventPlacingObjectsOutsideLevel=False
-	PlaceObject(AdventureStartX,AdventureStartY)
+	PlaceThisObject(AdventureStartX,AdventureStartY,CurrentObject)
 	SaveLevel()
 	CurrentLevelNumber=level ; Necessary so that the editor knows what level to return to when re-opening after testing.
 	StartTestMode(x,y)
