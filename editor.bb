@@ -3813,6 +3813,9 @@ End Function
 Function BrushCursorProbablyModifiedTiles()
 
 	ClearBrushSurface()
+	
+	FloodedElementsClear()
+	
 	BrushCursorStateWasChanged()
 
 End Function
@@ -3821,73 +3824,54 @@ Function BrushCursorStateWasChanged()
 
 	;ShowMessage("Brush cursor state changed",1000)
 	
+	CalculateBrushTargets()
+	
 	GenerateBrushSurface()
 
 End Function
 
-Function GenerateBrushSurface()
+Function CalculateBrushTargets()
 
-	; Don't regenerate the brush surface if it is unnecessary.
-	If BrushSurfaceVertexCount<>0 And BrushMode=BrushModeFill
-		If FloodedStackHasTile(BrushCursorX,BrushCursorY)
-			Return
+	If BrushMode=BrushModeNormal
+		FloodedElementsClear()
+		BrushXStart=GetBrushXStart()
+		BrushYStart=GetBrushYStart()
+		For i=0 To BrushWidth-1
+			For j=0 To BrushHeight-1
+				AddToFloodedStack(BrushXStart+i,BrushYStart+j)
+			Next
+		Next
+	ElseIf BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
+		; Don't redo the flood fill if it is unnecessary.
+		If Not FloodedStackHasTile(BrushCursorX,BrushCursorY)
+			If BrushMode=BrushModeFill
+				FloodFill(BrushCursorX,BrushCursorY)
+			ElseIf IsBrushInInlineMode()
+				FloodFillInline(BrushCursorX,BrushCursorY,BrushMode=BrushModeInlineHard)
+			ElseIf IsBrushInOutlineMode()
+				FloodFillOutline(BrushCursorX,BrushCursorY,BrushMode=BrushModeOutlineHard)
+			ElseIf BrushMode=BrushModeRow
+				FloodFillRow(BrushCursorX,BrushCursorY)
+			ElseIf BrushMode=BrushModeColumn
+				FloodFillColumn(BrushCursorX,BrushCursorY)
+			EndIf
 		EndIf
 	EndIf
 
-	ClearBrushSurface()
+End Function
 
-	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid
-		If BrushMode=BrushModeFill
-			; recalculate flood fill region
-			
-			FloodFill(BrushCursorX,BrushCursorY)
-			
-			For i=0 To FloodedElementCount-1
-				thisx=FloodedStackX(i)
-				thisy=FloodedStackY(i)
-				AddTileToBrushSurface(thisx,thisy)
-			Next
-		ElseIf IsBrushInInlineMode()
-			FloodFillInline(BrushCursorX,BrushCursorY,BrushMode=BrushModeInlineHard)
-			
-			For i=0 To FloodedElementCount-1
-				thisx=FloodedStackX(i)
-				thisy=FloodedStackY(i)
-				AddTileToBrushSurface(thisx,thisy)
-			Next
-		ElseIf IsBrushInOutlineMode()
-			FloodFillOutline(BrushCursorX,BrushCursorY,BrushMode=BrushModeOutlineHard)
-			
-			For i=0 To FloodedElementCount-1
-				thisx=FloodedStackX(i)
-				thisy=FloodedStackY(i)
-				AddTileToBrushSurface(thisx,thisy)
-			Next
-		ElseIf BrushMode=BrushModeRow
-			FloodFillRow(BrushCursorX,BrushCursorY)
-		
-			For i=0 To FloodedElementCount-1
-				thisx=FloodedStackX(i)
-				thisy=FloodedStackY(i)
-				AddTileToBrushSurface(thisx,thisy)
-			Next
-		ElseIf BrushMode=BrushModeColumn
-			FloodFillColumn(BrushCursorX,BrushCursorY)
-		
-			For i=0 To FloodedElementCount-1
-				thisx=FloodedStackX(i)
-				thisy=FloodedStackY(i)
-				AddTileToBrushSurface(thisx,thisy)
-			Next
-		ElseIf BrushMode=BrushModeNormal
-			BrushXStart=GetBrushXStart()
-			BrushYStart=GetBrushYStart()
-			For i=0 To BrushWidth-1
-				For j=0 To BrushHeight-1
-					AddTileToBrushSurface(BrushXStart+i,BrushYStart+j)
-				Next
-			Next
-		Else
+Function GenerateBrushSurface()
+;xzxzx
+	ClearBrushSurface()
+	
+	For i=0 To FloodedElementCount-1
+		thisx=FloodedStackX(i)
+		thisy=FloodedStackY(i)
+		AddTileToBrushSurface(thisx,thisy)
+	Next
+	
+	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
+		If FloodedElementCount=0
 			AddTileToBrushSurface(BrushCursorX,BrushCursorY)
 		EndIf
 	EndIf
@@ -4707,14 +4691,6 @@ Function EditorLocalControls()
 						EndIf
 						SetBrushMode(BrushModeBlock)
 						Delay 100
-					Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
-						; flood fill
-						
-						For i=0 To FloodedElementCount-1
-							thisx=FloodedStackX(i)
-							thisy=FloodedStackY(i)
-							PlaceObjectOrChangeLevelTile(thisx,thisy)
-						Next
 					ElseIf BrushMode=BrushModeTestLevel
 						If AskToSaveLevelAndExit()
 							; Just in case the user is cheeky and decides to use Test Level At Brush in a brand new wlv.
@@ -4726,17 +4702,11 @@ Function EditorLocalControls()
 						EndIf
 					ElseIf BrushMode=BrushModeSetMirror
 						SetBrushMode(BrushModeNormal)
-					Else ; normal brush
-						BrushXStart=GetBrushXStart()
-						BrushYStart=GetBrushYStart()
-						For i=0 To BrushWidth-1
-							For j=0 To BrushHeight-1
-								If EditorMode=0
-									ChangeLevelTile(BrushXStart+i,BrushYStart+j,True)
-								ElseIf EditorMode=3
-									PlaceObject(BrushXStart+i,BrushYStart+j)
-								EndIf
-							Next
+					Else
+						For i=0 To FloodedElementCount-1
+							thisx=FloodedStackX(i)
+							thisy=FloodedStackY(i)
+							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Next
 					EndIf
 						
@@ -4799,22 +4769,11 @@ Function EditorLocalControls()
 					
 					SetBrushMode(BrushModeBlock)
 					Delay 100
-				Else If BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
-					; flood fill but it deletes
-					LeftMouseReleased=False
-					
+				Else
 					For i=0 To FloodedElementCount-1
 						thisx=FloodedStackX(i)
 						thisy=FloodedStackY(i)
 						DeleteObjectAt(thisx,thisy)
-					Next
-				Else ; normal brush
-					BrushXStart=BrushCursorX-BrushWidth/2
-					BrushYStart=BrushCursorY-BrushHeight/2
-					For i=0 To BrushWidth-1
-						For j=0 To BrushHeight-1
-							DeleteObjectAt(BrushXStart+i,BrushYStart+j)
-						Next
 					Next
 				EndIf
 			EndIf
