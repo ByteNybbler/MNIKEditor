@@ -12734,7 +12734,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431 ; UFO or Zipbot or Zapbot
-			tex2$="TrackTileID"
+			tex2$="TrackTextureID"
 			If CurrentObject\Attributes\Data9=-1
 				tex$="Current"
 			EndIf
@@ -13718,12 +13718,6 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
 		
-		;If CurrentObject\Attributes\ModelName$="!Obstacle48" ; (wysp ship)
-		;	If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
-		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
-		;
-		;EndIf
-		
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			SetThreeOtherDataIfNotEqual(1,2,3,0,OldData)
 		EndIf
@@ -13734,13 +13728,6 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0>63 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=63
 		EndIf
-		;If CurrentObject\Attributes\ModelName$="!StarGate"
-		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=0
-		;EndIf
-		;If CurrentObject\Attributes\ModelName$="!CustomItem"
-		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=62
-		;	If CurrentObject\Attributes\Data0>62 CurrentObject\Attributes\Data0=0
-		;EndIf
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
@@ -13764,14 +13751,12 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0>7 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=7
 		EndIf
-		;If CurrentObject\Attributes\ModelName$="!Turtle" Or (Left$(CurrentObject\Attributes\ModelName$,6)="!Retro" And CurrentObject\Attributes\LogicType<>424) Or CurrentObject\Attributes\ModelName$="!Weebot" Or CurrentObject\Attributes\ModelName$="!Zapbot"
-		; turtle or scouge or ufo or retro z-bot or zipbot or zapbot
-;		If CurrentObject\Attributes\LogicType=220 Or CurrentObject\Attributes\LogicType=421 Or CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=423 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431
-;			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
-;			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
-;		EndIf
+		If CurrentObject\Attributes\LogicType=220 ; Turtle
+			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
+		EndIf
 		If CurrentObject\Attributes\ModelName="!Kaboom"
-
+			; texture
 			If CurrentObject\Attributes\Data0>5 CurrentObject\Attributes\Data0=1
 			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=5
 		EndIf
@@ -13793,14 +13778,12 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
 		EndIf
-
 		
-
-
-		;If CurrentObject\Attributes\LogicType=310 ;CurrentObject\Attributes\ModelName$="!Rubberducky"
-		;	If CurrentObject\Attributes\Data0>1 CurrentObject\Attributes\Data0=0
-		;	If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=1
-		;EndIf
+		If CurrentObject\Attributes\ModelName$="!NPC"
+			; Texture
+			If CurrentObject\Attributes\Data0>8 CurrentObject\Attributes\Data0=1
+			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=8
+		EndIf
 		
 		If CurrentObject\Attributes\LogicType=51 ; Magic Shooter
 			If CurrentObject\Attributes\Data0>9 CurrentObject\Attributes\Data0=0
@@ -13808,10 +13791,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=470 Or CurrentObject\Attributes\LogicType=471 ; ghost or wraith
-			
 			If CurrentObject\Attributes\Data1<2 CurrentObject\Attributes\Data1=2
-			
-
 		EndIf
 
 
@@ -13873,11 +13853,11 @@ Function AdjustObjectAdjuster(i)
 
 		
 
-;		If CurrentObject\Attributes\ModelName$="!NPC"
-;			; Expression
-;			If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
-;			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
-;		EndIf
+		If CurrentObject\Attributes\ModelName$="!NPC"
+			; Expression
+			If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
+			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
+		EndIf
 		
 		; ufo or retro z-bot or zipbot or zapbot
 ;		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=423 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431
