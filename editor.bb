@@ -4231,14 +4231,23 @@ Function DrawStepSize(x,y,StepSize#)
 End Function
 
 
-Function RunStepSize() ;BrushSpaceX,BrushSpaceY
+Function RunStepSize()
+	
+	For i=0 To BrushSpaceWidth-1
+		For j=0 To BrushSpaceHeight-1
+			RunStepSizeForTile(BrushTiles(i,j))
+		Next
+	Next
+	
+End Function
 
-	;xzx
-	CurrentTile\Terrain\Random#=CurrentTile\Terrain\Random#+StepSizeTileRandom#
-	CurrentTile\Terrain\Height#=CurrentTile\Terrain\Height#+StepSizeTileHeight#
-	CurrentTile\Terrain\Extrusion#=CurrentTile\Terrain\Extrusion#+StepSizeTileExtrusion#
-	CurrentTile\Water\Height#=CurrentTile\Water\Height#+StepSizeWaterTileHeight#
-	CurrentTile\Water\Turbulence#=CurrentTile\Water\Turbulence#+StepSizeWaterTileTurbulence#
+Function RunStepSizeForTile(TheTile.Tile)
+
+	TheTile\Terrain\Random#=TheTile\Terrain\Random#+StepSizeTileRandom#
+	TheTile\Terrain\Height#=TheTile\Terrain\Height#+StepSizeTileHeight#
+	TheTile\Terrain\Extrusion#=TheTile\Terrain\Extrusion#+StepSizeTileExtrusion#
+	TheTile\Water\Height#=TheTile\Water\Height#+StepSizeWaterTileHeight#
+	TheTile\Water\Turbulence#=TheTile\Water\Turbulence#+StepSizeWaterTileTurbulence#
 
 End Function
 
