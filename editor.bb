@@ -414,10 +414,6 @@ Global Leveltimer
 Global BrushWidth=1
 Global BrushHeight=1
 
-Global RandomActive=False
-Global RandomActiveMin=0
-Global RandomActiveMax=1001
-
 Global RandomMoveXGoal=False
 Global RandomMoveXGoalMin=0
 Global RandomMoveXGoalMax=39
@@ -906,18 +902,32 @@ Function AdjustObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat,CurrentVa
 End Function
 
 
-Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,DelayTime)
+Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,SlowInt,FastInt,RawInput,ValueLow,ValueHigh,DelayTime)
 	
-	If (Not ObjectAdjuster\RandomEnabled) And ReturnKey=False
-		If (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
-			CurrentValue=1-CurrentValue
-			If MouseScroll=0
-				MouseDebounceSet(DelayTime)
+	If ObjectAdjuster\RandomEnabled
+		If OnLeftHalfAdjuster()
+			ObjectAdjuster\RandomMin=AdjustInt(ObjectAdjuster\Name$+" Min: ", ObjectAdjuster\RandomMin, SlowInt, FastInt, DelayTime)
+		Else
+			ObjectAdjuster\RandomMax=AdjustInt(ObjectAdjuster\Name$+" Max: ", ObjectAdjuster\RandomMax, SlowInt, FastInt, DelayTime)
+		EndIf
+	ElseIf ReturnKey=False And MouseDebounceFinished()
+		If RawInput=True
+			CurrentValue=InputInt(ObjectAdjuster\Name$+": ")
+		Else
+			If CurrentValue=ValueLow
+				CurrentValue=ValueHigh
+			Else
+				CurrentValue=ValueLow
 			EndIf
+		EndIf
+		If MouseScroll=0
+			MouseDebounceSet(DelayTime)
 		EndIf
 	EndIf
 	If ReturnPressed()
 		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
+		ObjectAdjuster\RandomMin=ObjectAdjuster\RandomMinDefault
+		ObjectAdjuster\RandomMax=ObjectAdjuster\RandomMaxDefault
 	EndIf
 	Return CurrentValue
 	
@@ -1003,6 +1013,7 @@ Global ObjectAdjusterButtonPush.ObjectAdjusterInt=NewObjectAdjusterInt("ButtonPu
 Global ObjectAdjusterTeleportable.ObjectAdjusterInt=NewObjectAdjusterInt("Teleportable",0,1)
 Global ObjectAdjusterTileTypeCollision.ObjectAdjusterInt=NewObjectAdjusterInt("TileTypeCollision",0,1)
 Global ObjectAdjusterObjectTypeCollision.ObjectAdjusterInt=NewObjectAdjusterInt("ObjectTypeCollision",0,1)
+Global ObjectAdjusterActive.ObjectAdjusterInt=NewObjectAdjusterInt("Active",0,1001)
 
 Global ObjectAdjusterYawAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
 Global ObjectAdjusterRollAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
@@ -9506,8 +9517,8 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 		SourceAttributes\ID=RandomObjectAdjusterInt(ObjectAdjusterID)
 	EndIf
 	
-	If RandomActive
-		SourceAttributes\Active=Rand(RandomActiveMin,RandomActiveMax)
+	If ObjectAdjusterActive\RandomEnabled
+		SourceAttributes\Active=RandomObjectAdjusterInt(ObjectAdjusterActive)
 	EndIf
 	If ObjectAdjusterActivationType\RandomEnabled
 		SourceAttributes\ActivationType=RandomObjectAdjusterInt(ObjectAdjusterActivationType)
@@ -11472,9 +11483,9 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$="Soon Yes ("+CurrentObject\Attributes\Active+")"
 		EndIf
-		Randomized=RandomActive
-		LeftAdj$=RandomActiveMin
-		RightAdj$=RandomActiveMax
+		Randomized=ObjectAdjusterActive\RandomEnabled
+		LeftAdj$=ObjectAdjusterActive\RandomMin
+		RightAdj$=ObjectAdjusterActive\RandomMax
 		
 	Case "ActivationSpeed"
 		tex$=Str$(CurrentObject\Attributes\ActivationSpeed)
@@ -11527,8 +11538,8 @@ Function DisplayObjectAdjuster(i)
 	Case "ButtonPush"
 		tex$=OneToYes$(CurrentObject\Attributes\ButtonPush)
 		Randomized=ObjectAdjusterButtonPush\RandomEnabled
-		LeftAdj$=""
-		RightAdj$=""
+		LeftAdj$=ObjectAdjusterButtonPush\RandomMin
+		RightAdj$=ObjectAdjusterButtonPush\RandomMax
 		
 	Case "WaterReact"
 		tex$=Str$(CurrentObject\Attributes\WaterReact)
@@ -11551,8 +11562,8 @@ Function DisplayObjectAdjuster(i)
 	Case "Teleportable"
 		tex$=OneToYes$(CurrentObject\Attributes\Teleportable)
 		Randomized=ObjectAdjusterTeleportable\RandomEnabled
-		LeftAdj$=""
-		RightAdj$=""
+		LeftAdj$=ObjectAdjusterTeleportable\RandomMin
+		RightAdj$=ObjectAdjusterTeleportable\RandomMax
 	
 	Case "Data0"
 		tex$=Str$(CurrentObject\Attributes\Data0)
@@ -13746,31 +13757,8 @@ Function AdjustObjectAdjuster(i)
 		
 
 	Case "Active"
-		If RandomActive
-			If OnLeftHalfAdjuster()
-				RandomActiveMin=AdjustInt("Active Min: ", RandomActiveMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomActiveMax=AdjustInt("Active Max: ", RandomActiveMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		ElseIf ReturnKey=False And MouseDebounceFinished()
-			If RawInput=True
-				CurrentObject\Attributes\Active=InputInt("Active: ")
-			Else
-				If CurrentObject\Attributes\Active=0
-					CurrentObject\Attributes\Active=1001
-				Else
-					CurrentObject\Attributes\Active=0
-				EndIf
-			EndIf
-			If MouseScroll=0
-				MouseDebounceSet(DelayTime)
-			EndIf
-		EndIf
-		If ReturnPressed()
-			RandomActive=Not RandomActive
-			RandomActiveMin=0
-			RandomActiveMax=1001
-		EndIf
+		CurrentObject\Attributes\Active=AdjustObjectAdjusterToggle(ObjectAdjusterActive,CurrentObject\Attributes\Active,SlowInt,FastInt,RawInput,0,1001,DelayTime)
+		
 	Case "ActivationSpeed"
 		SlowInt=SlowInt*2
 		FastInt=FastInt*2
@@ -13828,7 +13816,7 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\Timer=AdjustObjectAdjusterInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,SlowInt,FastInt,DelayTime)
 		
 	Case "ButtonPush"
-		CurrentObject\Attributes\ButtonPush=AdjustObjectAdjusterToggle(ObjectAdjusterButtonPush,CurrentObject\Attributes\ButtonPush,DelayTime)
+		CurrentObject\Attributes\ButtonPush=AdjustObjectAdjusterToggle(ObjectAdjusterButtonPush,CurrentObject\Attributes\ButtonPush,SlowInt,FastInt,RawInput,0,1,DelayTime)
 		
 	Case "WaterReact"
 		CurrentObject\Attributes\WaterReact=AdjustObjectAdjusterInt(ObjectAdjusterWaterReact,CurrentObject\Attributes\WaterReact,SlowInt,FastInt,DelayTime)
@@ -13837,7 +13825,7 @@ Function AdjustObjectAdjuster(i)
 	Case "Frozen"
 		CurrentObject\Attributes\Frozen=AdjustObjectAdjusterInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,SlowInt,FastInt,DelayTime)		
 	Case "Teleportable"
-		CurrentObject\Attributes\Teleportable=AdjustObjectAdjusterToggle(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,DelayTime)
+		CurrentObject\Attributes\Teleportable=AdjustObjectAdjusterToggle(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,SlowInt,FastInt,RawInput,0,1,DelayTime)
 		
 	Case "Data0"
 		OldData=CurrentObject\Attributes\Data0
