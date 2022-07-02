@@ -14153,11 +14153,11 @@ Function AdjustObjectAdjuster(i)
 
 	Case "Data7"
 		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
-			ObjectAdjusterData6\RandomMinDefault=0
-			ObjectAdjusterData6\RandomMaxDefault=30
+			ObjectAdjusterData7\RandomMinDefault=0
+			ObjectAdjusterData7\RandomMaxDefault=30
 		Else
-			ObjectAdjusterData6\RandomMinDefault=0
-			ObjectAdjusterData6\RandomMaxDefault=10
+			ObjectAdjusterData7\RandomMinDefault=0
+			ObjectAdjusterData7\RandomMaxDefault=10
 		EndIf
 
 		CurrentObject\Attributes\Data7=AdjustObjectAdjusterInt(ObjectAdjusterData7,CurrentObject\Attributes\Data7,SlowInt,FastInt,DelayTime)
