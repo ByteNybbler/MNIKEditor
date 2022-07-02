@@ -426,9 +426,6 @@ Global RandomMoveYGoal=False
 Global RandomMoveYGoalMin=0
 Global RandomMoveYGoalMax=39
 
-Global RandomTTC=False
-Global RandomOTC=False
-
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -911,7 +908,7 @@ End Function
 
 Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,DelayTime)
 	
-	If Not ObjectAdjuster\RandomEnabled And ReturnKey=False
+	If (Not ObjectAdjuster\RandomEnabled) And ReturnKey=False
 		If (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
 			CurrentValue=1-CurrentValue
 			If MouseScroll=0
@@ -924,6 +921,36 @@ Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValu
 	EndIf
 	Return CurrentValue
 	
+End Function
+
+
+Function AdjustObjectAdjusterBits(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,i,DelayTime)
+
+	If (Not ObjectAdjuster\RandomEnabled) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
+		StartX=SidebarX+10
+		StartY=SidebarY+305
+		StartY=StartY+15+(i-ObjectAdjusterStart)*15
+		tex2$="TTC"
+		tex$="00000 00000 00000"
+		
+		HalfNameWidth=4*Len(tex2$+": "+tex$)
+		BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
+		
+		BitPositionIndex=GetBitPositionIndex(BitStartX)
+		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
+		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
+			CurrentValue=CurrentValue Xor 2^BitIndex
+		EndIf
+		
+		If LeftMouse=True Or RightMouse=True
+			MouseDebounceSet(DelayTime)
+		EndIf
+	EndIf
+	If ReturnPressed()
+		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
+	EndIf
+	Return CurrentValue
+
 End Function
 
 
@@ -974,6 +1001,8 @@ Global ObjectAdjusterIndigo.ObjectAdjusterInt=NewObjectAdjusterInt("Indigo",0,1)
 Global ObjectAdjusterStatus.ObjectAdjusterInt=NewObjectAdjusterInt("Status",0,10)
 Global ObjectAdjusterButtonPush.ObjectAdjusterInt=NewObjectAdjusterInt("ButtonPush",0,1)
 Global ObjectAdjusterTeleportable.ObjectAdjusterInt=NewObjectAdjusterInt("Teleportable",0,1)
+Global ObjectAdjusterTileTypeCollision.ObjectAdjusterInt=NewObjectAdjusterInt("TileTypeCollision",0,1)
+Global ObjectAdjusterObjectTypeCollision.ObjectAdjusterInt=NewObjectAdjusterInt("ObjectTypeCollision",0,1)
 
 Global ObjectAdjusterYawAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
 Global ObjectAdjusterRollAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
@@ -9527,7 +9556,7 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 		SourceAttributes\MoveYGoal=Rand(RandomMoveYGoalMin,RandomMoveYGoalMax)
 	EndIf
 	
-	If RandomTTC
+	If ObjectAdjusterTileTypeCollision\RandomEnabled
 		SourceAttributes\TileTypeCollision=0
 		For i=0 To 14
 			If Rand(0,1)=0
@@ -9535,7 +9564,7 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 			EndIf
 		Next
 	EndIf
-	If RandomOTC
+	If ObjectAdjusterObjectTypeCollision\RandomEnabled
 		SourceAttributes\ObjectTypeCollision=0
 		For i=1 To 10
 			If Rand(0,1)=0
@@ -12920,14 +12949,14 @@ Function DisplayObjectAdjuster(i)
 	Case "TileTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\TileTypeCollision)
 		tex2$="TTC"
-		Randomized=RandomTTC
+		Randomized=ObjectAdjusterTileTypeCollision\RandomEnabled
 		LeftAdj$=""
 		RightAdj$=""
 		
 	Case "ObjectTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\ObjectTypeCollision)
 		tex2$="OTC"
-		Randomized=RandomOTC
+		Randomized=ObjectAdjusterObjectTypeCollision\RandomEnabled
 		LeftAdj$=""
 		RightAdj$=""
 		
@@ -14415,54 +14444,10 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\MovementTypeData=AdjustObjectAdjusterInt(ObjectAdjusterMovementTypeData,CurrentObject\Attributes\MovementTypeData,SlowInt,FastInt,DelayTime)
 		
 	Case "TileTypeCollision"
-		If (Not RandomTTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
-			StartX=SidebarX+10
-			StartY=SidebarY+305
-			StartY=StartY+15+(i-ObjectAdjusterStart)*15
-			tex2$="TTC"
-			tex$="00000 00000 00000"
-			
-			HalfNameWidth=4*Len(tex2$+": "+tex$)
-			BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
-			
-			BitPositionIndex=GetBitPositionIndex(BitStartX)
-			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
-			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-				CurrentObject\Attributes\TileTypeCollision=CurrentObject\Attributes\TileTypeCollision Xor 2^BitIndex
-			EndIf
-			
-			If LeftMouse=True Or RightMouse=True
-				MouseDebounceSet(DelayTime)
-			EndIf
-		EndIf
-		If ReturnPressed()
-			RandomTTC=Not RandomTTC
-		EndIf
+		CurrentObject\Attributes\TileTypeCollision=AdjustObjectAdjusterBits(ObjectAdjusterTileTypeCollision,CurrentObject\Attributes\TileTypeCollision,i,DelayTime)
 		
 	Case "ObjectTypeCollision"
-		If (Not RandomOTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
-			StartX=SidebarX+10
-			StartY=SidebarY+305
-			StartY=StartY+15+(i-ObjectAdjusterStart)*15
-			tex2$="OTC"
-			tex$="00000 00000 00000"
-			
-			HalfNameWidth=4*Len(tex2$+": "+tex$)
-			BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
-			
-			BitPositionIndex=GetBitPositionIndex(BitStartX)
-			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
-			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-				CurrentObject\Attributes\ObjectTypeCollision=CurrentObject\Attributes\ObjectTypeCollision Xor 2^BitIndex
-			EndIf
-			
-			If LeftMouse=True Or RightMouse=True
-				MouseDebounceSet(DelayTime)
-			EndIf
-		EndIf
-		If ReturnPressed()
-			RandomOTC=Not RandomOTC
-		EndIf
+		CurrentObject\Attributes\ObjectTypeCollision=AdjustObjectAdjusterBits(ObjectAdjusterObjectTypeCollision,CurrentObject\Attributes\ObjectTypeCollision,i,DelayTime)
 		
 	Case "ScaleAdjust"
 		CurrentObject\Attributes\ScaleAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterScaleAdjust,CurrentObject\Attributes\ScaleAdjust,SlowFloat#,FastFloat#,DelayTime)
