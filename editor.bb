@@ -21622,7 +21622,7 @@ Function MasterMainLoop()
 
 	
 	
-	If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5)
+	If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()<LowerButtonsCutoff
 		If CtrlDown() And mb>0
 			If OpenTypedLevel()
 				StartEditorMainLoop()
@@ -21685,7 +21685,7 @@ Function MasterMainLoop()
 	EndIf
 	
 	; load dialog
-	If MouseX()>LetterX(41.5) And MouseX()<GfxWidth
+	If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()<LowerButtonsCutoff
 		If (CtrlDown() And mb>0) Or HotkeyOpen()
 			If OpenTypedDialog()
 				StartDialog()
