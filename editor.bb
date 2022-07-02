@@ -13,6 +13,7 @@ Global VersionDate$="07/02/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
+
 Global VersionText$="WA Editor       MNIKSource v10.04 ("+VersionDate$+")"
 
 Global MASTERUSER=True
@@ -190,15 +191,15 @@ MouseTextEntryLineY(2,1)=3
 ; COMPILER DATA
 
 Global NofCompilerFiles
-Global NofCustomContentFiles 
+Global NofCustomContentFiles
+Dim CustomContentFile$(500)
+
 Dim CompilerFileName$(500)
 Dim CompilerFileSize(500)
 						
 Dim NofHubCompilerFiles(500)
 Dim HubCompilerFileName$(500,500)
 Dim HubCompilerFileSize(500,500)
-
-Dim CustomContentFile$(500)
 
 ; EDITOR MASTER DATA
 
@@ -25414,7 +25415,7 @@ Function CompileHub(PackContent)
 		If HubAdventuresFilenames$(i)<>""
 			
 			If PackContent
-				SearchForCustomContent(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i),True)
+				SearchForCustomContent(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i))
 			EndIf
 			dirfile=ReadDir(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i))
 			Print ""
@@ -25714,186 +25715,6 @@ Function CompileAdventure(PackCustomContent)
 	Repeat
 	Until MouseDown(1)=False
 	Return True
-End Function
-
-Function SearchForCustomContent(ex$,ishub=False)
-	If ishub=False NofCustomContentFiles=0
-	
-	Local cc=NofCustomContentFiles
-	
-	Local mydir = ReadDir(ex$)
-	
-	Repeat
-	
-	dirfile$ = NextFile(mydir)
-	filename$=ex$+"\"+dirfile$
-	
-	If Upper$(Right$(dirfile$,3))="WLV"
-
-	file=ReadFile (filename$)
-	LevelWidth=ReadInt(File)
-	If levelwidth>121
-		; WA3 VAULTS
-		LevelWidth=LevelWidth-121
-	EndIf
-
-	LevelHeight=ReadInt(File)
-	
-	; skip tiles and other unused things
-	SeekFile file,(FilePos(file)+(LevelWidth*LevelHeight)*(4*14)) + (4*3)
-	
-	; now get custom texture
-	currentleveltexture=-1
-	currentwatertexture=-1
-	a$=ReadString$(file)
-	For i=0 To nofleveltextures-1
-		If a$=levelTextureName$(i) Then CurrentLevelTexture=i
-	Next
-	If currentleveltexture=-1
-		LevelTextureCustomName$=a$
-	EndIf
-	
-	a$=ReadString$(file)
-	For i=0 To nofwatertextures-1
-		If a$=waterTextureName$(i) Then CurrentwaterTexture=i
-	Next
-	If currentwatertexture=-1
-		WaterTextureCustomName$=a$
-	EndIf
-	
-	; found custom leveltexture
-	If currentleveltexture=-1 And FileType(globaldirname$+"\custom\leveltextures\leveltex "+LevelTextureCustomName$+".bmp")=1
-		isthere=False
-		For ii=0 To cc
-			If CustomContentFile$(ii) = globaldirname$+"\custom\leveltextures\leveltex "+LevelTextureCustomName$+".bmp"
-				isthere=True
-			EndIf
-		Next
-		If isthere=False
-			CustomContentFile$(cc) = globaldirname$+"\custom\leveltextures\leveltex "+LevelTextureCustomName$+".bmp"
-			CustomContentFile$(cc+1) = globaldirname$+"\custom\leveltextures\backgroundtex "+LevelTextureCustomName$+"1.bmp"
-			CustomContentFile$(cc+2) = globaldirname$+"\custom\leveltextures\backgroundtex "+LevelTextureCustomName$+"2.bmp"
-			cc = cc + 3
-		EndIf
-		isthere=False
-	EndIf
-	
-	If currentwatertexture=-1 And FileType(globaldirname$+"\custom\leveltextures\watertex "+WaterTextureCustomName$+".jpg")
-		For ii=0 To cc
-			If CustomContentFile$(ii) = globaldirname$+"\custom\leveltextures\watertex "+WaterTextureCustomName$+".jpg"
-				isthere=True
-			EndIf
-		Next
-		If isthere=False
-			CustomContentFile$(cc) = globaldirname$+"\custom\leveltextures\watertex "+WaterTextureCustomName$+".jpg"
-			cc=cc+1
-		EndIf
-		isthere=True
-	EndIf
-		
-	
-	;OBJECTS
-	NofObjects=ReadInt(file)
-	For i=0 To NofObjects-1
-		
-		Dest=i
-		LevelObjects(i)\Attributes\ModelName$=ReadString$(file)
-		LevelObjects(i)\Attributes\TexName$=ReadString$(file)
-		
-		; skip unused adjusters
-		SeekFile file,FilePos(file)+((57+10)*4)
-		
-		LevelObjects(i)\Attributes\TextData0$=ReadString$(file)
-		LevelObjects(i)\Attributes\TextData1$=ReadString$(file)
-		LevelObjects(i)\Attributes\TextData2$=ReadString$(file)
-		LevelObjects(i)\Attributes\TextData3$=ReadString$(file)
-		
-		; skip unused adjusters
-		SeekFile file,FilePos(file)+(35*4)
-		
-		ReadString(file)
-		ReadString(file)
-		
-		For k=0 To 30
-			ReadString(file)
-		Next
-		
-		If Left$(LevelObjects(i)\Attributes\TexName$,1)<>"!"
-			For ii=0 To cc
-				If CustomContentFile$(ii)=LevelObjects(i)\Attributes\TexName$
-					isthere=True
-				EndIf
-			Next
-			If FileType(LevelObjects(i)\Attributes\TexName$)=1 And isthere=False
-				CustomContentFile$(cc)=LevelObjects(i)\Attributes\TexName$
-				cc=cc+1
-			EndIf
-			isthere=False
-		ElseIf Left$(LevelObjects(i)\Attributes\TexName$,1)="?"
-			If Lower(Right(LevelObjects(i)\Attributes\TexName$,4))=".jpg" Or Lower(Right(LevelObjects(i)\Attributes\TexName$,4))=".bmp" Or Lower(Right(LevelObjects(i)\Attributes\TexName$,4))=".png"
-				tname$="UserData\Custom\Objecttextures\"+Right(LevelObjects(i)\Attributes\TexName$,Len(LevelObjects(i)\Attributes\TexName$)-1)
-			Else
-				tname$="UserData\Custom\Objecttextures\"+Right(LevelObjects(i)\Attributes\TexName$,Len(LevelObjects(i)\Attributes\TexName$)-1)+".jpg"
-			EndIf
-			For ii=0 To cc
-				If CustomContentFile$(ii)=tname$
-					isthere=True
-				EndIf
-			Next
-			If FileType(tname)=1 And isthere=False
-				CustomContentFile$(cc)=tname$
-				cc=cc+1
-			EndIf
-			isthere=False				
-		EndIf
-		
-		If LevelObjects(i)\Attributes\ModelName$="!CustomModel"
-			;If FileType("UserData\Custom\Models\"+ObjectTextData(Dest,0)+".3ds")<>1 Or FileType("UserData\Custom\Models\"+ObjectTextData(Dest,0)+".jpg")<>1
-			;	ObjectTextData(Dest,0)="Default"
-			;EndIf
-			For ii=0 To cc
-				If CustomContentFile$(ii)="UserData\Custom\Models\"+LevelObjects(i)\Attributes\TextData0+".3ds"
-					isthere=True
-				EndIf
-			Next
-			If isthere=False
-			CustomContentFile$(cc)="UserData\Custom\Models\"+LevelObjects(i)\Attributes\TextData0+".3ds"
-			CustomContentFile$(cc+1)="UserData\Custom\Models\"+LevelObjects(i)\Attributes\TextData0+".jpg"
-			cc=cc+2
-			EndIf
-			isthere=False
-		EndIf
-		
-	Next
-	
-	CloseFile file
-	EndIf
-	
-	If Upper$(dirfile$)="MASTER.DAT"
-		file=ReadFile (filename$)
-		ReadString$(file)
-		For i=0 To 4
-				ReadString$(file)
-		Next
-		ReadString$(file) ;user (not loaded)
-			
-		CustomIconName$=ReadString$(file)
-		If CustomIconName$<>"Standard" And FileType(globaldirname$+"\custom\icons\icons "+CustomIconName$+".bmp")=1
-			CustomContentFile(cc)=globaldirname$+"\custom\icons\icons "+CustomIconName$+".bmp"
-			cc=cc+1
-		EndIf
-		CloseFile file
-	EndIf
-	
-	
-	Until dirfile$=""
-	
-	NofCustomContentFiles=cc
-	
-	;For i=0 To cc-1
-	;	Print "Custom Content is: " + CustomContentFile$(i)
-	;Next
-	
 End Function
 
 Function decode$(ex$)
@@ -29529,7 +29350,8 @@ End Function
 
 
 Include "particles.bb"
-		
+Include "customcontent.bb"
+
 
 .winning
 Data "None (e.g. collect star)","Rescue All Stinkers","Capture/Destroy Scritters","Collect All Gems","Destroy All Bricks","Destroy FireFlowers","Race","Capture/Destroy Crabs","Rescue All BabyBoomers","Destroy All ZBots"
