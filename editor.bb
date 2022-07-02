@@ -414,13 +414,6 @@ Global Leveltimer
 Global BrushWidth=1
 Global BrushHeight=1
 
-Dim RandomData(9)
-Dim RandomDataMin(9)
-Dim RandomDataMax(9)
-For i=0 To 9
-	RandomDataMax(i)=10
-Next
-
 Dim LogicName$(14)
 LogicName$(0)="Floor"
 LogicName$(1)="Wall"
@@ -969,6 +962,27 @@ Function RandomObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat)
 End Function
 
 
+Function SetAdjusterDisplayInt(ObjectAdjuster.ObjectAdjusterInt)
+
+	CurrentAdjusterRandomized=ObjectAdjuster\RandomEnabled
+	LeftAdj$=ObjectAdjuster\RandomMin
+	RightAdj$=ObjectAdjuster\RandomMax
+
+End Function
+
+Function SetAdjusterDisplayFloat(ObjectAdjuster.ObjectAdjusterFloat)
+
+	CurrentAdjusterRandomized=ObjectAdjuster\RandomEnabled
+	LeftAdj$=ObjectAdjuster\RandomMin
+	RightAdj$=ObjectAdjuster\RandomMax
+
+End Function
+
+
+Global CurrentAdjusterRandomized=False
+Global LeftAdj$=""
+Global RightAdj$=""
+
 
 Global ObjectAdjusterDefensePower.ObjectAdjusterInt=NewObjectAdjusterInt("DefensePower",0,33)
 Global ObjectAdjusterAttackPower.ObjectAdjusterInt=NewObjectAdjusterInt("AttackPower",0,33)
@@ -1008,6 +1022,16 @@ Global ObjectAdjusterObjectTypeCollision.ObjectAdjusterInt=NewObjectAdjusterInt(
 Global ObjectAdjusterActive.ObjectAdjusterInt=NewObjectAdjusterInt("Active",0,1001)
 Global ObjectAdjusterMoveXGoal.ObjectAdjusterInt=NewObjectAdjusterInt("MoveXGoal",0,39)
 Global ObjectAdjusterMoveYGoal.ObjectAdjusterInt=NewObjectAdjusterInt("MoveYGoal",0,39)
+Global ObjectAdjusterData0.ObjectAdjusterInt=NewObjectAdjusterInt("Data0",0,10)
+Global ObjectAdjusterData1.ObjectAdjusterInt=NewObjectAdjusterInt("Data1",0,10)
+Global ObjectAdjusterData2.ObjectAdjusterInt=NewObjectAdjusterInt("Data2",0,10)
+Global ObjectAdjusterData3.ObjectAdjusterInt=NewObjectAdjusterInt("Data3",0,10)
+Global ObjectAdjusterData4.ObjectAdjusterInt=NewObjectAdjusterInt("Data4",0,10)
+Global ObjectAdjusterData5.ObjectAdjusterInt=NewObjectAdjusterInt("Data5",0,10)
+Global ObjectAdjusterData6.ObjectAdjusterInt=NewObjectAdjusterInt("Data6",0,10)
+Global ObjectAdjusterData7.ObjectAdjusterInt=NewObjectAdjusterInt("Data7",0,10)
+Global ObjectAdjusterData8.ObjectAdjusterInt=NewObjectAdjusterInt("Data8",0,10)
+Global ObjectAdjusterData9.ObjectAdjusterInt=NewObjectAdjusterInt("Data9",0,10)
 
 Global ObjectAdjusterYawAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
 Global ObjectAdjusterRollAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
@@ -9428,35 +9452,35 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 		SourceAttributes\RollAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterRollAdjust)
 	EndIf
 	
-	If RandomData(0)
-		SourceAttributes\Data0=Rand(RandomDataMin(0),RandomDataMax(0))
+	If ObjectAdjusterData0\RandomEnabled
+		SourceAttributes\Data0=RandomObjectAdjusterInt(ObjectAdjusterData0)
 	EndIf
-	If RandomData(1)
-		SourceAttributes\Data1=Rand(RandomDataMin(1),RandomDataMax(1))
+	If ObjectAdjusterData1\RandomEnabled
+		SourceAttributes\Data1=RandomObjectAdjusterInt(ObjectAdjusterData1)
 	EndIf
-	If RandomData(2)
-		SourceAttributes\Data2=Rand(RandomDataMin(2),RandomDataMax(2))
+	If ObjectAdjusterData2\RandomEnabled
+		SourceAttributes\Data2=RandomObjectAdjusterInt(ObjectAdjusterData2)
 	EndIf
-	If RandomData(3)
-		SourceAttributes\Data3=Rand(RandomDataMin(3),RandomDataMax(3))
+	If ObjectAdjusterData3\RandomEnabled
+		SourceAttributes\Data3=RandomObjectAdjusterInt(ObjectAdjusterData3)
 	EndIf
-	If RandomData(4)
-		SourceAttributes\Data4=Rand(RandomDataMin(4),RandomDataMax(4))
+	If ObjectAdjusterData4\RandomEnabled
+		SourceAttributes\Data4=RandomObjectAdjusterInt(ObjectAdjusterData4)
 	EndIf
-	If RandomData(5)
-		SourceAttributes\Data5=Rand(RandomDataMin(5),RandomDataMax(5))
+	If ObjectAdjusterData5\RandomEnabled
+		SourceAttributes\Data5=RandomObjectAdjusterInt(ObjectAdjusterData5)
 	EndIf
-	If RandomData(6)
-		SourceAttributes\Data6=Rand(RandomDataMin(6),RandomDataMax(6))
+	If ObjectAdjusterData6\RandomEnabled
+		SourceAttributes\Data6=RandomObjectAdjusterInt(ObjectAdjusterData6)
 	EndIf
-	If RandomData(7)
-		SourceAttributes\Data7=Rand(RandomDataMin(7),RandomDataMax(7))
+	If ObjectAdjusterData7\RandomEnabled
+		SourceAttributes\Data7=RandomObjectAdjusterInt(ObjectAdjusterData7)
 	EndIf
-	If RandomData(8)
-		SourceAttributes\Data8=Rand(RandomDataMin(8),RandomDataMax(8))
+	If ObjectAdjusterData8\RandomEnabled
+		SourceAttributes\Data8=RandomObjectAdjusterInt(ObjectAdjusterData8)
 	EndIf
-	If RandomData(9)
-		SourceAttributes\Data9=Rand(RandomDataMin(9),RandomDataMax(9))
+	If ObjectAdjusterData9\RandomEnabled
+		SourceAttributes\Data9=RandomObjectAdjusterInt(ObjectAdjusterData9)
 	EndIf
 	
 	If ObjectAdjusterXScale\RandomEnabled
@@ -11030,11 +11054,15 @@ End Function
 Function DisplayObjectAdjuster(i)
 
 	tex2$=ObjectAdjuster$(i)
-	Randomized=False
+	
+	CurrentAdjusterRandomized=False
+	LeftAdj$=""
+	RightAdj$=""
+	
 	StartX=SidebarX+10
 	StartY=SidebarY+305
 	StartY=StartY+15+(i-ObjectAdjusterStart)*15
-
+	
 	Select ObjectAdjuster$(i)
 	Case "TextureName"
 		tex2$="Texture"
@@ -11052,51 +11080,33 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "X"
 		tex$=Str$(CurrentObject\Position\X)
-		Randomized=ObjectAdjusterX\RandomEnabled
-		LeftAdj$=ObjectAdjusterX\RandomMin
-		RightAdj$=ObjectAdjusterX\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterX)
 	Case "Y"
 		tex$=Str$(CurrentObject\Position\Y)
-		Randomized=ObjectAdjusterY\RandomEnabled
-		LeftAdj$=ObjectAdjusterY\RandomMin
-		RightAdj$=ObjectAdjusterY\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterY)
 	Case "Z"
 		tex$=Str$(CurrentObject\Position\Z)
-		Randomized=ObjectAdjusterZ\RandomEnabled
-		LeftAdj$=ObjectAdjusterZ\RandomMin
-		RightAdj$=ObjectAdjusterZ\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterZ)
 	
 	Case "XAdjust"
 		tex$=Str$(CurrentObject\Attributes\XAdjust)
-		Randomized=ObjectAdjusterXAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterXAdjust\RandomMin
-		RightAdj$=ObjectAdjusterXAdjust\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterXAdjust)
 	Case "YAdjust"
 		tex$=Str$(CurrentObject\Attributes\YAdjust)
-		Randomized=ObjectAdjusterYAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterYAdjust\RandomMin
-		RightAdj$=ObjectAdjusterYAdjust\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterYAdjust)
 	Case "ZAdjust"
 		tex$=Str$(CurrentObject\Attributes\ZAdjust)
-		Randomized=ObjectAdjusterZAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterZAdjust\RandomMin
-		RightAdj$=ObjectAdjusterZAdjust\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterZAdjust)
 	
 	Case "XScale"
 		tex$=Str$(CurrentObject\Attributes\XScale)
-		Randomized=ObjectAdjusterXScale\RandomEnabled
-		LeftAdj$=ObjectAdjusterXScale\RandomMin
-		RightAdj$=ObjectAdjusterXScale\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterXScale)
 	Case "YScale"
 		tex$=Str$(CurrentObject\Attributes\YScale)
-		Randomized=ObjectAdjusterYScale\RandomEnabled
-		LeftAdj$=ObjectAdjusterYScale\RandomMin
-		RightAdj$=ObjectAdjusterYScale\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterYScale)
 	Case "ZScale"
 		tex$=Str$(CurrentObject\Attributes\ZScale)
-		Randomized=ObjectAdjusterZScale\RandomEnabled
-		LeftAdj$=ObjectAdjusterZScale\RandomMin
-		RightAdj$=ObjectAdjusterZScale\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterZScale)
 		
 	Case "DefensePower"
 		tex$=Str$(CurrentObject\Attributes\DefensePower)
@@ -11152,23 +11162,15 @@ Function DisplayObjectAdjuster(i)
 
 		End Select
 		
-		Randomized=ObjectAdjusterDefensePower\RandomEnabled
-		LeftAdj$=ObjectAdjusterDefensePower\RandomMin
-		RightAdj$=ObjectAdjusterDefensePower\RandomMax
-		
-		
+		SetAdjusterDisplayInt(ObjectAdjusterDefensePower)
 		
 	Case "AttackPower"
 		tex$=Str$(CurrentObject\Attributes\AttackPower)
-		Randomized=ObjectAdjusterAttackPower\RandomEnabled
-		LeftAdj$=ObjectAdjusterAttackPower\RandomMin
-		RightAdj$=ObjectAdjusterAttackPower\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterAttackPower)
 		
 	Case "DestructionType"
 		tex$=Str$(CurrentObject\Attributes\DestructionType)
-		Randomized=ObjectAdjusterDestructionType\RandomEnabled
-		LeftAdj$=ObjectAdjusterDestructionType\RandomMin
-		RightAdj$=ObjectAdjusterDestructionType\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterDestructionType)
 		
 		Select CurrentObject\Attributes\DestructionType
 			Case 0
@@ -11178,39 +11180,26 @@ Function DisplayObjectAdjuster(i)
 			Case 2
 				tex$="MODDED" ; Purple
 		End Select
-
-
+		
 	Case "YawAdjust"
 		tex$=Str$(CurrentObject\Attributes\YawAdjust)
-		Randomized=ObjectAdjusterYawAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterYawAdjust\RandomMin
-		RightAdj$=ObjectAdjusterYawAdjust\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterYawAdjust)
 	Case "PitchAdjust"
 		tex$=Str$(CurrentObject\Attributes\PitchAdjust)
-		Randomized=ObjectAdjusterPitchAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterPitchAdjust\RandomMin
-		RightAdj$=ObjectAdjusterPitchAdjust\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterPitchAdjust)
 	Case "RollAdjust"
 		tex$=Str$(CurrentObject\Attributes\RollAdjust)
-		Randomized=ObjectAdjusterRollAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterRollAdjust\RandomMin
-		RightAdj$=ObjectAdjusterRollAdjust\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterRollAdjust)
 	
 	Case "ID"
 		tex$=Str$(CurrentObject\Attributes\ID)
-		Randomized=ObjectAdjusterID\RandomEnabled
-		LeftAdj$=ObjectAdjusterID\RandomMin
-		RightAdj$=ObjectAdjusterID\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterID)
 	Case "Type"
 		tex$=Str$(CurrentObject\Attributes\LogicType)+"/"+GetTypeString$(CurrentObject\Attributes\LogicType)
-		Randomized=ObjectAdjusterLogicType\RandomEnabled
-		LeftAdj$=ObjectAdjusterLogicType\RandomMin
-		RightAdj$=ObjectAdjusterLogicType\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterLogicType)
 	Case "SubType"
 		tex$=Str$(CurrentObject\Attributes\LogicSubType)
-		Randomized=ObjectAdjusterLogicSubType\RandomEnabled
-		LeftAdj$=ObjectAdjusterLogicSubType\RandomMin
-		RightAdj$=ObjectAdjusterLogicSubType\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterLogicSubType)
 		
 		If CurrentObject\Attributes\ModelName$="!Crab"
 			tex2$="Color"
@@ -11435,27 +11424,17 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="AudioTimeOffset"
-		EndIf
-
-
-			
+		EndIf			
 		
 	Case "TimerMax1"
 		tex$=Str$(CurrentObject\Attributes\TimerMax1)
-		Randomized=ObjectAdjusterTimerMax1\RandomEnabled
-		LeftAdj$=ObjectAdjusterTimerMax1\RandomMin
-		RightAdj$=ObjectAdjusterTimerMax1\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterTimerMax1)
 	Case "TimerMax2"
 		tex$=Str$(CurrentObject\Attributes\TimerMax2)
-		Randomized=ObjectAdjusterTimerMax2\RandomEnabled
-		LeftAdj$=ObjectAdjusterTimerMax2\RandomMin
-		RightAdj$=ObjectAdjusterTimerMax2\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterTimerMax2)
 	Case "Timer"
 		tex$=Str$(CurrentObject\Attributes\Timer)
-		Randomized=ObjectAdjusterTimer\RandomEnabled
-		LeftAdj$=ObjectAdjusterTimer\RandomMin
-		RightAdj$=ObjectAdjusterTimer\RandomMax
-
+		SetAdjusterDisplayInt(ObjectAdjusterTimer)
 
 	Case "TextData0"
 		; custom model
@@ -11477,15 +11456,11 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$="Soon Yes ("+CurrentObject\Attributes\Active+")"
 		EndIf
-		Randomized=ObjectAdjusterActive\RandomEnabled
-		LeftAdj$=ObjectAdjusterActive\RandomMin
-		RightAdj$=ObjectAdjusterActive\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterActive)
 		
 	Case "ActivationSpeed"
 		tex$=Str$(CurrentObject\Attributes\ActivationSpeed)
-		Randomized=ObjectAdjusterActivationSpeed\RandomEnabled
-		LeftAdj$=ObjectAdjusterActivationSpeed\RandomMin
-		RightAdj$=ObjectAdjusterActivationSpeed\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterActivationSpeed)
 		
 	Case "ActivationType"
 		If CurrentObject\Attributes\ActivationType=1
@@ -11523,47 +11498,31 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObject\Attributes\ActivationType)
 		EndIf
-		Randomized=ObjectAdjusterActivationType\RandomEnabled
-		LeftAdj$=ObjectAdjusterActivationType\RandomMin
-		RightAdj$=ObjectAdjusterActivationType\RandomMax
-
-
-
+		SetAdjusterDisplayInt(ObjectAdjusterActivationType)
+		
 	Case "ButtonPush"
 		tex$=OneToYes$(CurrentObject\Attributes\ButtonPush)
-		Randomized=ObjectAdjusterButtonPush\RandomEnabled
-		LeftAdj$=ObjectAdjusterButtonPush\RandomMin
-		RightAdj$=ObjectAdjusterButtonPush\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterButtonPush)
 		
 	Case "WaterReact"
 		tex$=Str$(CurrentObject\Attributes\WaterReact)
-		Randomized=ObjectAdjusterWaterReact\RandomEnabled
-		LeftAdj$=ObjectAdjusterWaterReact\RandomMin
-		RightAdj$=ObjectAdjusterWaterReact\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterWaterReact)
 		
 	Case "Freezable"
 		tex$=Str$(CurrentObject\Attributes\Freezable)
-		Randomized=ObjectAdjusterFreezable\RandomEnabled
-		LeftAdj$=ObjectAdjusterFreezable\RandomMin
-		RightAdj$=ObjectAdjusterFreezable\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterFreezable)
 		
 	Case "Frozen"
 		tex$=Str$(CurrentObject\Attributes\Frozen)
-		Randomized=ObjectAdjusterFrozen\RandomEnabled
-		LeftAdj$=ObjectAdjusterFrozen\RandomMin
-		RightAdj$=ObjectAdjusterFrozen\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterFrozen)
 		
 	Case "Teleportable"
 		tex$=OneToYes$(CurrentObject\Attributes\Teleportable)
-		Randomized=ObjectAdjusterTeleportable\RandomEnabled
-		LeftAdj$=ObjectAdjusterTeleportable\RandomMin
-		RightAdj$=ObjectAdjusterTeleportable\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterTeleportable)
 	
 	Case "Data0"
 		tex$=Str$(CurrentObject\Attributes\Data0)
-		Randomized=RandomData(0)
-		LeftAdj$=RandomDataMin(0)
-		RightAdj$=RandomDataMax(0)
+		SetAdjusterDisplayInt(ObjectAdjusterData0)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="YawAnim"
@@ -11852,9 +11811,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data1"
 		tex$=Str$(CurrentObject\Attributes\Data1)
-		Randomized=RandomData(1)
-		LeftAdj$=RandomDataMin(1)
-		RightAdj$=RandomDataMax(1)
+		SetAdjusterDisplayInt(ObjectAdjusterData1)
 
 		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			tex2$="Texture"
@@ -12092,11 +12049,9 @@ Function DisplayObjectAdjuster(i)
 
 
 		
-	Case "Data2" 
+	Case "Data2"
 		tex$=Str$(CurrentObject\Attributes\Data2)
-		Randomized=RandomData(2)
-		LeftAdj$=RandomDataMin(2)
-		RightAdj$=RandomDataMax(2)
+		SetAdjusterDisplayInt(ObjectAdjusterData2)
 		
 		If CurrentObject\Attributes\ModelName$="!ColourGate"
 			tex2$="Frame"
@@ -12308,9 +12263,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data3"
 		tex$=Str$(CurrentObject\Attributes\Data3)
-		Randomized=RandomData(3)
-		LeftAdj$=RandomDataMin(3)
-		RightAdj$=RandomDataMax(3)
+		SetAdjusterDisplayInt(ObjectAdjusterData3)
 		
 		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
 			tex2$="Style"
@@ -12462,9 +12415,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data4"
 		tex$=Str$(CurrentObject\Attributes\Data4)
-		Randomized=RandomData(4)
-		LeftAdj$=RandomDataMin(4)
-		RightAdj$=RandomDataMax(4)
+		SetAdjusterDisplayInt(ObjectAdjusterData4)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="YAnim"
@@ -12561,9 +12512,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data5"
 		tex$=Str$(CurrentObject\Attributes\Data5)
-		Randomized=RandomData(5)
-		LeftAdj$=RandomDataMin(5)
-		RightAdj$=RandomDataMax(5)
+		SetAdjusterDisplayInt(ObjectAdjusterData5)
 		
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			tex2$="Colour2"
@@ -12649,9 +12598,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Data6"
 		tex$=Str$(CurrentObject\Attributes\Data6)
-		Randomized=RandomData(6)
-		LeftAdj$=RandomDataMin(6)
-		RightAdj$=RandomDataMax(6)
+		SetAdjusterDisplayInt(ObjectAdjusterData6)
 		
 		If CurrentObject\Attributes\ModelName$="!GlowWorm" Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Green"
@@ -12721,9 +12668,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data7"
 		tex$=Str$(CurrentObject\Attributes\Data7)
-		Randomized=RandomData(7)
-		LeftAdj$=RandomDataMin(7)
-		RightAdj$=RandomDataMax(7)
+		SetAdjusterDisplayInt(ObjectAdjusterData7)
 		
 		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Blue"
@@ -12776,9 +12721,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data8"
 		tex$=Str$(CurrentObject\Attributes\Data8)
-		Randomized=RandomData(8)
-		LeftAdj$=RandomDataMin(8)
-		RightAdj$=RandomDataMax(8)
+		SetAdjusterDisplayInt(ObjectAdjusterData8)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="ZSpeed"
@@ -12864,9 +12807,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data9"
 		tex$=Str$(CurrentObject\Attributes\Data9)
-		Randomized=RandomData(9)
-		LeftAdj$=RandomDataMin(9)
-		RightAdj$=RandomDataMax(9)
+		SetAdjusterDisplayInt(ObjectAdjusterData9)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="Deadly"
@@ -12927,49 +12868,37 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\Talkable)
 		EndIf
 		
-		Randomized=ObjectAdjusterTalkable\RandomEnabled
-		LeftAdj$=ObjectAdjusterTalkable\RandomMin
-		RightAdj$=ObjectAdjusterTalkable\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterTalkable)
 		
 	Case "MovementType"
 		tex$=CurrentObject\Attributes\MovementType+"/"+GetMovementTypeString$(CurrentObject\Attributes\MovementType)
 		tex2$="MvmtType"
-		
-		Randomized=ObjectAdjusterMovementType\RandomEnabled
-		LeftAdj$=ObjectAdjusterMovementType\RandomMin
-		RightAdj$=ObjectAdjusterMovementType\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterMovementType)
 	Case "MovementTypeData"
 		tex$=Str$(CurrentObject\Attributes\MovementTypeData)
-		Randomized=ObjectAdjusterMovementTypeData\RandomEnabled
-		LeftAdj$=ObjectAdjusterMovementTypeData\RandomMin
-		RightAdj$=ObjectAdjusterMovementTypeData\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterMovementTypeData)
 		
 	Case "MovementSpeed"
 		tex$=Str$(CurrentObject\Attributes\MovementSpeed)
-		
-		Randomized=ObjectAdjusterMovementSpeed\RandomEnabled
-		LeftAdj$=ObjectAdjusterMovementSpeed\RandomMin
-		RightAdj$=ObjectAdjusterMovementSpeed\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterMovementSpeed)
 		
 	Case "TileTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\TileTypeCollision)
 		tex2$="TTC"
-		Randomized=ObjectAdjusterTileTypeCollision\RandomEnabled
+		CurrentAdjusterRandomized=ObjectAdjusterTileTypeCollision\RandomEnabled
 		LeftAdj$=""
 		RightAdj$=""
 		
 	Case "ObjectTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\ObjectTypeCollision)
 		tex2$="OTC"
-		Randomized=ObjectAdjusterObjectTypeCollision\RandomEnabled
+		CurrentAdjusterRandomized=ObjectAdjusterObjectTypeCollision\RandomEnabled
 		LeftAdj$=""
 		RightAdj$=""
 		
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObject\Attributes\ScaleAdjust)
-		Randomized=ObjectAdjusterScaleAdjust\RandomEnabled
-		LeftAdj$=ObjectAdjusterScaleAdjust\RandomMin
-		RightAdj$=ObjectAdjusterScaleAdjust\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterScaleAdjust)
 	Case "Exclamation"
 		If CurrentObject\Attributes\Exclamation=-1
 			tex$="None"
@@ -12977,9 +12906,7 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\Exclamation)
 		EndIf
 		
-		Randomized=ObjectAdjusterExclamation\RandomEnabled
-		LeftAdj$=ObjectAdjusterExclamation\RandomMin
-		RightAdj$=ObjectAdjusterExclamation\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterExclamation)
 		
 	Case "Linked"
 		If CurrentObject\Attributes\Linked=-1
@@ -12990,9 +12917,7 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\Linked)
 		EndIf
 		
-		Randomized=ObjectAdjusterLinked\RandomEnabled
-		LeftAdj$=ObjectAdjusterLinked\RandomMin
-		RightAdj$=ObjectAdjusterLinked\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterLinked)
 		
 	Case "LinkBack"
 		If CurrentObject\Attributes\LinkBack=-1
@@ -13003,63 +12928,43 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\LinkBack)
 		EndIf
 		
-		Randomized=ObjectAdjusterLinkBack\RandomEnabled
-		LeftAdj$=ObjectAdjusterLinkBack\RandomMin
-		RightAdj$=ObjectAdjusterLinkBack\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterLinkBack)
 	
 	Case "Parent"
 		tex$=Str$(CurrentObject\Attributes\Parent)
-		Randomized=ObjectAdjusterParent\RandomEnabled
-		LeftAdj$=ObjectAdjusterParent\RandomMin
-		RightAdj$=ObjectAdjusterParent\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterParent)
 		
 	Case "Child"
 		tex$=Str$(CurrentObject\Attributes\Child)
-		Randomized=ObjectAdjusterChild\RandomEnabled
-		LeftAdj$=ObjectAdjusterChild\RandomMin
-		RightAdj$=ObjectAdjusterChild\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterChild)
 		
 	Case "DX"
 		tex$=Str$(CurrentObject\Attributes\DX)
-		Randomized=ObjectAdjusterDX\RandomEnabled
-		LeftAdj$=ObjectAdjusterDX\RandomMin
-		RightAdj$=ObjectAdjusterDX\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterDX)
 		
 	Case "DY"
 		tex$=Str$(CurrentObject\Attributes\DY)
-		Randomized=ObjectAdjusterDY\RandomEnabled
-		LeftAdj$=ObjectAdjusterDY\RandomMin
-		RightAdj$=ObjectAdjusterDY\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterDY)
 		
 	Case "DZ"
 		tex$=Str$(CurrentObject\Attributes\DZ)
-		Randomized=ObjectAdjusterDZ\RandomEnabled
-		LeftAdj$=ObjectAdjusterDZ\RandomMin
-		RightAdj$=ObjectAdjusterDZ\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterDZ)
 		
 	Case "MoveXGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveXGoal)
-		Randomized=ObjectAdjusterMoveXGoal\RandomEnabled
-		LeftAdj$=ObjectAdjusterMoveXGoal\RandomMin
-		RightAdj$=ObjectAdjusterMoveXGoal\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterMoveXGoal)
 		
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveYGoal)
-		Randomized=ObjectAdjusterMoveYGoal\RandomEnabled
-		LeftAdj$=ObjectAdjusterMoveYGoal\RandomMin
-		RightAdj$=ObjectAdjusterMoveYGoal\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterMoveYGoal)
 		
 	Case "Data10"
 		tex$=Str$(CurrentObject\Attributes\Data10)
-		Randomized=ObjectAdjusterData10\RandomEnabled
-		LeftAdj$=ObjectAdjusterData10\RandomMin
-		RightAdj$=ObjectAdjusterData10\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterData10)
 		
 	Case "Caged"
 		tex$=Str$(CurrentObject\Attributes\Caged)
-		Randomized=ObjectAdjusterCaged\RandomEnabled
-		LeftAdj$=ObjectAdjusterCaged\RandomMin
-		RightAdj$=ObjectAdjusterCaged\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterCaged)
 		
 	Case "Dead"
 		tex$=Str$(CurrentObject\Attributes\Dead)
@@ -13069,21 +12974,15 @@ Function DisplayObjectAdjuster(i)
 			Case 3
 				tex$="Sinking"
 		End Select
-		Randomized=ObjectAdjusterDead\RandomEnabled
-		LeftAdj$=ObjectAdjusterDead\RandomMin
-		RightAdj$=ObjectAdjusterDead\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterDead)
 		
 	Case "DeadTimer"
 		tex$=Str$(CurrentObject\Attributes\DeadTimer)
-		Randomized=ObjectAdjusterDeadTimer\RandomEnabled
-		LeftAdj$=ObjectAdjusterDeadTimer\RandomMin
-		RightAdj$=ObjectAdjusterDeadTimer\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterDeadTimer)
 		
 	Case "MovementTimer"
 		tex$=Str$(CurrentObject\Attributes\MovementTimer)
-		Randomized=ObjectAdjusterMovementTimer\RandomEnabled
-		LeftAdj$=ObjectAdjusterMovementTimer\RandomMin
-		RightAdj$=ObjectAdjusterMovementTimer\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterMovementTimer)
 		
 	Case "Flying"
 		State$="Grounded"
@@ -13102,33 +13001,23 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		tex$=CurrentObject\Attributes\Flying+" ("+State+")"
-		Randomized=ObjectAdjusterFlying\RandomEnabled
-		LeftAdj$=ObjectAdjusterFlying\RandomMin
-		RightAdj$=ObjectAdjusterFlying\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterFlying)
 		
 	Case "Indigo"
 		tex$=Str$(CurrentObject\Attributes\Indigo)
-		Randomized=ObjectAdjusterIndigo\RandomEnabled
-		LeftAdj$=ObjectAdjusterIndigo\RandomMin
-		RightAdj$=ObjectAdjusterIndigo\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterIndigo)
 		
 	Case "Speed"
 		tex$=Str$(CurrentObject\Attributes\Speed)
-		Randomized=ObjectAdjusterSpeed\RandomEnabled
-		LeftAdj$=ObjectAdjusterSpeed\RandomMin
-		RightAdj$=ObjectAdjusterSpeed\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterSpeed)
 		
 	Case "Radius"
 		tex$=Str$(CurrentObject\Attributes\Radius)
-		Randomized=ObjectAdjusterRadius\RandomEnabled
-		LeftAdj$=ObjectAdjusterRadius\RandomMin
-		RightAdj$=ObjectAdjusterRadius\RandomMax
+		SetAdjusterDisplayFloat(ObjectAdjusterRadius)
 		
 	Case "Status"
 		tex$=Str$(CurrentObject\Attributes\Status)
-		Randomized=ObjectAdjusterStatus\RandomEnabled
-		LeftAdj$=ObjectAdjusterStatus\RandomMin
-		RightAdj$=ObjectAdjusterStatus\RandomMax
+		SetAdjusterDisplayInt(ObjectAdjusterStatus)
 
 
 		If CurrentObject\Attributes\LogicType=50 ; spellball
@@ -13173,7 +13062,7 @@ Function DisplayObjectAdjuster(i)
 		Color TextAdjusterR,TextAdjusterG,TextAdjusterB
 	EndIf
 	
-	CrossedOut=Randomized
+	CrossedOut=CurrentAdjusterRandomized
 	
 	If CrossedOut
 		tex$=tex2$
@@ -13423,58 +13312,6 @@ Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#
 		SomethingWasAdjusted=True
 	EndIf
 	Return CurrentValue+MouseScroll*Adj
-
-End Function
-
-
-Function AdjustObjectData(i, NormalSpeed, FastSpeed, DelayTime)
-
-	If RandomData(i)
-		If OnLeftHalfAdjuster()
-			RandomDataMin(i)=AdjustInt("Data"+i+" Min: ", RandomDataMin(i), NormalSpeed, FastSpeed, DelayTime)
-		Else
-			RandomDataMax(i)=AdjustInt("Data"+i+" Max: ", RandomDataMax(i), NormalSpeed, FastSpeed, DelayTime)
-		EndIf
-	Else
-		SetDataByIndex(CurrentObject\Attributes,i,AdjustInt("Data"+i+": ", GetDataByIndex(CurrentObject\Attributes,i), NormalSpeed, FastSpeed, DelayTime))
-	EndIf
-	If ReturnPressed()
-		RandomData(i)=Not RandomData(i)
-		RandomDataMin(i)=0
-		RandomDataMax(i)=10
-		
-		If CurrentObject\Attributes\ModelName$="!NPC"
-			Select i
-			Case 2
-				; Use vanilla ranges
-				; Hats
-				RandomDataMin(2)=0
-				RandomDataMax(2)=56
-			Case 4
-				; Glasses
-				RandomDataMin(4)=101
-				RandomDataMax(4)=116
-			End Select
-		EndIf
-		
-		Select CurrentObject\Attributes\LogicType
-		Case 110 ; Stinker NPC
-			Select i
-			Case 6
-				; WalkAnim
-				RandomDataMin(6)=0
-				RandomDataMax(6)=2
-			Case 7
-				; Turn
-				RandomDataMin(7)=0
-				RandomDataMax(7)=30
-			Case 8
-				; IdleAnim
-				RandomDataMin(8)=0
-				RandomDataMax(8)=10
-			End Select
-		End Select
-	EndIf
 
 End Function
 
@@ -13825,7 +13662,7 @@ Function AdjustObjectAdjuster(i)
 		OldData=CurrentObject\Attributes\Data0
 		
 		;CurrentObject\Attributes\Data0=AdjustInt("Data0: ", CurrentObject\Attributes\Data0, SlowInt, FastInt, DelayTime)
-		AdjustObjectData(0, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data0=AdjustObjectAdjusterInt(ObjectAdjusterData0,CurrentObject\Attributes\Data0,SlowInt,FastInt,DelayTime)
 		
 		CurrentObject\Attributes\ModelName$=CurrentObject\Attributes\ModelName$
 		CurrentObject\Attributes\LogicType=CurrentObject\Attributes\LogicType
@@ -13917,7 +13754,7 @@ Function AdjustObjectAdjuster(i)
 
 	Case "Data1"
 		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
-		AdjustObjectData(1, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data1=AdjustObjectAdjusterInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
@@ -14000,8 +13837,18 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data2"
+		If CurrentObject\Attributes\ModelName$="!NPC"
+			; Use vanilla ranges
+			; Hats
+			ObjectAdjusterData2\RandomMinDefault=0
+			ObjectAdjusterData2\RandomMaxDefault=56
+		Else
+			ObjectAdjusterData2\RandomMinDefault=0
+			ObjectAdjusterData2\RandomMaxDefault=10
+		EndIf
+	
 		;CurrentObject\Attributes\Data2=AdjustInt("Data2: ", CurrentObject\Attributes\Data2, SlowInt, FastInt, DelayTime)
-		AdjustObjectData(2, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data2=AdjustObjectAdjusterInt(ObjectAdjusterData2,CurrentObject\Attributes\Data2,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=410 ; Spring or FlipBridge
 			; direction 0-7
@@ -14076,7 +13923,7 @@ Function AdjustObjectAdjuster(i)
 
 	Case "Data3"
 		;CurrentObject\Attributes\Data3=AdjustInt("Data3: ", CurrentObject\Attributes\Data3, SlowInt, FastInt, DelayTime)
-		AdjustObjectData(3, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data3=AdjustObjectAdjusterInt(ObjectAdjusterData3,CurrentObject\Attributes\Data3,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\LogicType=190
 			If CurrentObject\Attributes\Data3<0 Then CurrentObject\Attributes\Data3=0
@@ -14137,6 +13984,15 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data4"
+		If CurrentObject\Attributes\ModelName$="!NPC"
+			; Glasses
+			ObjectAdjusterData4\RandomMinDefault=101
+			ObjectAdjusterData4\RandomMaxDefault=116
+		Else
+			ObjectAdjusterData4\RandomMinDefault=0
+			ObjectAdjusterData4\RandomMaxDefault=10
+		EndIf
+	
 		Adj=1
 		AdjFast=10
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=10 ; LevelExit
@@ -14147,7 +14003,7 @@ Function AdjustObjectAdjuster(i)
 		OldData=CurrentObject\Attributes\Data4
 		
 		;CurrentObject\Attributes\Data4=AdjustInt("Data4: ", CurrentObject\Attributes\Data4, Adj, AdjFast, DelayTime)
-		AdjustObjectData(4, Adj, AdjFast, DelayTime)
+		CurrentObject\Attributes\Data4=AdjustObjectAdjusterInt(ObjectAdjusterData4,CurrentObject\Attributes\Data4,Adj,AdjFast,DelayTime)
 
 		If CurrentObject\Attributes\LogicType=90
 			If CurrentObject\Attributes\LogicSubType=10 ; LevelExit
@@ -14209,7 +14065,7 @@ Function AdjustObjectAdjuster(i)
 
 	Case "Data5"
 		;CurrentObject\Attributes\Data5=AdjustInt("Data5: ", CurrentObject\Attributes\Data5, SlowInt, FastInt, DelayTime)
-		AdjustObjectData(5, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data5=AdjustObjectAdjusterInt(ObjectAdjusterData5,CurrentObject\Attributes\Data5,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If (CurrentObject\Attributes\LogicSubType Mod 32)=15
@@ -14254,8 +14110,16 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data6"
+		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
+			ObjectAdjusterData6\RandomMinDefault=0
+			ObjectAdjusterData6\RandomMaxDefault=2
+		Else
+			ObjectAdjusterData6\RandomMinDefault=0
+			ObjectAdjusterData6\RandomMaxDefault=10
+		EndIf
+	
 		;CurrentObject\Attributes\Data6=AdjustInt("Data6: ", CurrentObject\Attributes\Data6, 1, 10, 150)
-		AdjustObjectData(6, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data6=AdjustObjectAdjusterInt(ObjectAdjusterData6,CurrentObject\Attributes\Data6,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 ; NPC Modifier
 			If CurrentObject\Attributes\Data0=0 ; NPC Move
@@ -14288,8 +14152,15 @@ Function AdjustObjectAdjuster(i)
 
 
 	Case "Data7"
-		;CurrentObject\Attributes\Data7=AdjustInt("Data7: ", CurrentObject\Attributes\Data7, 1, 10, 150)
-		AdjustObjectData(7, SlowInt, FastInt, DelayTime)
+		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
+			ObjectAdjusterData6\RandomMinDefault=0
+			ObjectAdjusterData6\RandomMaxDefault=30
+		Else
+			ObjectAdjusterData6\RandomMinDefault=0
+			ObjectAdjusterData6\RandomMaxDefault=10
+		EndIf
+
+		CurrentObject\Attributes\Data7=AdjustObjectAdjusterInt(ObjectAdjusterData7,CurrentObject\Attributes\Data7,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier
 			; turn
@@ -14349,7 +14220,7 @@ Function AdjustObjectAdjuster(i)
 	Case "Data8"
 		;CurrentObject\Attributes\Data8=AdjustInt("Data8: ", CurrentObject\Attributes\Data8, 1, 10, 150)
 		PrevValue=CurrentObject\Attributes\Data8
-		AdjustObjectData(8, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data8=AdjustObjectAdjusterInt(ObjectAdjusterData8,CurrentObject\Attributes\Data8,SlowInt,FastInt,DelayTime)
 		NewValue=CurrentObject\Attributes\Data8
 
 		If CurrentObject\Attributes\LogicType=90 Or CurrentObject\Attributes\LogicType=210 ; button or transporter
@@ -14395,7 +14266,7 @@ Function AdjustObjectAdjuster(i)
 
 	Case "Data9"
 		;CurrentObject\Attributes\Data9=AdjustInt("Data9: ", CurrentObject\Attributes\Data9, 1, 10, 150)
-		AdjustObjectData(9, SlowInt, FastInt, DelayTime)
+		CurrentObject\Attributes\Data9=AdjustObjectAdjusterInt(ObjectAdjusterData9,CurrentObject\Attributes\Data9,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\ModelName$="!CustomModel" And CurrentObject\Attributes\LogicType=160
 			; Deadly
