@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/02/22"
+Global VersionDate$="07/03/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -428,8 +428,6 @@ Global RandomMoveYGoalMax=39
 
 Global RandomTTC=False
 Global RandomOTC=False
-Global RandomButtonPush=False
-Global RandomTeleportable=False
 
 Dim RandomData(9)
 Dim RandomDataMin(9)
@@ -911,6 +909,24 @@ Function AdjustObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat,CurrentVa
 End Function
 
 
+Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,DelayTime)
+	
+	If Not ObjectAdjuster\RandomEnabled And ReturnKey=False
+		If (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
+			CurrentValue=1-CurrentValue
+			If MouseScroll=0
+				MouseDebounceSet(DelayTime)
+			EndIf
+		EndIf
+	EndIf
+	If ReturnPressed()
+		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
+	EndIf
+	Return CurrentValue
+	
+End Function
+
+
 Function RandomObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt)
 
 	Return Rand(ObjectAdjuster\RandomMin,ObjectAdjuster\RandomMax)
@@ -956,6 +972,8 @@ Global ObjectAdjusterMovementTimer.ObjectAdjusterInt=NewObjectAdjusterInt("Movem
 Global ObjectAdjusterFlying.ObjectAdjusterInt=NewObjectAdjusterInt("Flying",0,20)
 Global ObjectAdjusterIndigo.ObjectAdjusterInt=NewObjectAdjusterInt("Indigo",0,1)
 Global ObjectAdjusterStatus.ObjectAdjusterInt=NewObjectAdjusterInt("Status",0,10)
+Global ObjectAdjusterButtonPush.ObjectAdjusterInt=NewObjectAdjusterInt("ButtonPush",0,1)
+Global ObjectAdjusterTeleportable.ObjectAdjusterInt=NewObjectAdjusterInt("Teleportable",0,1)
 
 Global ObjectAdjusterYawAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
 Global ObjectAdjusterRollAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
@@ -6051,7 +6069,7 @@ Function EditorLocalControls()
 	
 	If KeyPressed(47) ; V key
 		; Rotate brush 90 degrees
-		; TODO: Write this code. xzx
+		; TODO: Write this code.
 		BrushSpaceStartX=GetBrushSpaceXStart()
 		BrushSpaceStartY=GetBrushSpaceYStart()
 		BrushSpaceEndX=GetBrushSpaceXEnd(BrushSpaceStartX)
@@ -9487,11 +9505,11 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 		SourceAttributes\TimerMax2=RandomObjectAdjusterInt(ObjectAdjusterTimerMax2)
 	EndIf
 	
-	If RandomTeleportable
-		SourceAttributes\Teleportable=Rand(0,1)
+	If ObjectAdjusterTeleportable\RandomEnabled
+		SourceAttributes\Teleportable=RandomObjectAdjusterInt(ObjectAdjusterTeleportable)
 	EndIf
-	If RandomButtonPush
-		SourceAttributes\ButtonPush=Rand(0,1)
+	If ObjectAdjusterButtonPush\RandomEnabled
+		SourceAttributes\ButtonPush=RandomObjectAdjusterInt(ObjectAdjusterButtonPush)
 	EndIf
 	
 	If ObjectAdjusterTalkable\RandomEnabled
@@ -11479,7 +11497,7 @@ Function DisplayObjectAdjuster(i)
 
 	Case "ButtonPush"
 		tex$=OneToYes$(CurrentObject\Attributes\ButtonPush)
-		Randomized=RandomButtonPush
+		Randomized=ObjectAdjusterButtonPush\RandomEnabled
 		LeftAdj$=""
 		RightAdj$=""
 		
@@ -11503,7 +11521,7 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "Teleportable"
 		tex$=OneToYes$(CurrentObject\Attributes\Teleportable)
-		Randomized=RandomTeleportable
+		Randomized=ObjectAdjusterTeleportable\RandomEnabled
 		LeftAdj$=""
 		RightAdj$=""
 	
@@ -13781,18 +13799,8 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\Timer=AdjustObjectAdjusterInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,SlowInt,FastInt,DelayTime)
 		
 	Case "ButtonPush"
-		If Not RandomButtonPush And ReturnKey=False
-			If (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
-				CurrentObject\Attributes\ButtonPush=1-CurrentObject\Attributes\ButtonPush
-				If MouseScroll=0
-					MouseDebounceSet(DelayTime)
-				EndIf
-			EndIf
-		EndIf
-		If ReturnPressed()
-			RandomButtonPush=Not RandomButtonPush
-		EndIf
-
+		CurrentObject\Attributes\ButtonPush=AdjustObjectAdjusterToggle(ObjectAdjusterButtonPush,CurrentObject\Attributes\ButtonPush,DelayTime)
+		
 	Case "WaterReact"
 		CurrentObject\Attributes\WaterReact=AdjustObjectAdjusterInt(ObjectAdjusterWaterReact,CurrentObject\Attributes\WaterReact,SlowInt,FastInt,DelayTime)
 	Case "Freezable"
@@ -13800,17 +13808,7 @@ Function AdjustObjectAdjuster(i)
 	Case "Frozen"
 		CurrentObject\Attributes\Frozen=AdjustObjectAdjusterInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,SlowInt,FastInt,DelayTime)		
 	Case "Teleportable"
-		If Not RandomTeleportable And ReturnKey=False
-			If (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
-				CurrentObject\Attributes\Teleportable=1-CurrentObject\Attributes\Teleportable
-				If MouseScroll=0
-					MouseDebounceSet(DelayTime)
-				EndIf
-			EndIf
-		EndIf
-		If ReturnPressed()
-			RandomTeleportable=Not RandomTeleportable
-		EndIf
+		CurrentObject\Attributes\Teleportable=AdjustObjectAdjusterToggle(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,DelayTime)
 		
 	Case "Data0"
 		OldData=CurrentObject\Attributes\Data0
@@ -17468,7 +17466,7 @@ Function CameraControls()
 		EndIf
 		
 		If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
-			; reset camera rotation and position
+			; reset camera position and rotation
 			If Target=Camera1
 				RotateEntity Camera1,65,0,0
 				CenterCameraInLevel()
