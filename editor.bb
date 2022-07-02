@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/01/22"
+Global VersionDate$="07/02/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -17347,7 +17347,11 @@ Function CameraControls()
 	my = MouseY()
 	
 	Adj#=0.1
-	If ShiftDown() Then Adj=0.4
+	IntAdj=1
+	If ShiftDown()
+		Adj#=0.4
+		IntAdj=4
+	EndIf
 	
 	; Still doesn't really work, and also doesn't behave well with orthographic mode yet.
 	;If KeyPressed(idk) ; Formerly 20, which is T
@@ -17406,25 +17410,30 @@ Function CameraControls()
 		EndIf
 		If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
 			
-			TurnEntity Target,1,0,0
+			TurnEntity Target,IntAdj,0,0
 		EndIf
 		If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
 		
-			TurnEntity Target,-1,0,0
+			TurnEntity Target,-IntAdj,0,0
 		EndIf
 		If KeyDown(181) ;Or KeyDown(3) ; numpad /
-			
-			TurnEntity Target,0,1,0
+			RotateEntity Target,EntityPitch#(Target),EntityYaw#(Target)+IntAdj,EntityRoll#(Target)
 		EndIf
 		If KeyDown(55) ;Or KeyDown(4) ; numpad *
-			
-			TurnEntity Target,0,-1,0
+			RotateEntity Target,EntityPitch#(Target),EntityYaw#(Target)-IntAdj,EntityRoll#(Target)
 		EndIf
 		
 		If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
-			; reset camera rotation
+			; reset camera rotation and position
 			If Target=Camera1
 				RotateEntity Camera1,65,0,0
+				CenterCameraInLevel()
+				If Camera1Proj=2 ; orthographic
+					TheY#=Camera1StartY*2
+				Else ; probably perspective
+					TheY#=Camera1StartY
+				EndIf
+				PositionEntity Camera1,EntityX(Camera1),TheY#,EntityZ(Camera1)
 			ElseIf Target=Camera4
 				RotateEntity Camera4,25,0,0
 				PositionEntity Camera4,0,303.8,-8
@@ -17731,6 +17740,13 @@ Function SaveLevel()
 End Function
 
 
+Function CenterCameraInLevel()
+
+	PositionCameraInLevel(LevelWidth/2,LevelHeight/2)
+
+End Function
+
+
 Function AccessLevelAt(levelnumber,FocusOnTileX,FocusOnTileY)
 
 	AccessLevel(levelnumber)
@@ -17742,7 +17758,7 @@ End Function
 Function AccessLevelAtCenter(levelnumber)
 
 	AccessLevel(levelnumber)
-	PositionCameraInLevel(LevelWidth/2,LevelHeight/2)
+	CenterCameraInLevel()
 
 End Function
 
