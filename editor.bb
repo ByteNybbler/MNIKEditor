@@ -301,11 +301,12 @@ Global ShowObjectMesh=ShowObjectNormal
 
 Const BrushWrapRelative=0
 Const BrushWrapModulus=1
-Const BrushWrapMirrorX=2
-Const BrushWrapMirrorY=3
-Const BrushWrapMirrorXY=4
+Const BrushWrapRandom=2
+Const BrushWrapMirrorX=200
+Const BrushWrapMirrorY=300
+Const BrushWrapMirrorXY=400
 
-Const BrushWrapMax=1
+Const BrushWrapMax=2
 Global BrushWrap=BrushWrapRelative
 
 Const StepPerPlacement=0
@@ -1441,7 +1442,7 @@ Function AddSquareToBrushSurface(TheSurface,i,j,y#,SetTexCoords)
 	AddTriangle TheSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
 		
 	If SetTexCoords
-		TheTile.Tile=BrushTiles(LevelSpaceToBrushSpaceX(i),LevelSpaceToBrushSpaceY(j))
+		TheTile.Tile=BrushTiles(LevelSpaceToBrushSpaceX(i,BrushWrap),LevelSpaceToBrushSpaceY(j,BrushWrap))
 		CalculateUV(TheTile\Terrain\Texture,0,0,TheTile\Terrain\Rotation,8,1)
 		VertexTexCoords(TheSurface,StartingVertex+0,ChunkTileU#,ChunkTileV#)
 		CalculateUV(TheTile\Terrain\Texture,1,0,TheTile\Terrain\Rotation,8,1)
@@ -1475,8 +1476,8 @@ Function AddTileToBrushSurface(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoor
 		Return
 	EndIf
 	
-	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
-	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x,BrushWrap)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y,BrushWrap)
 
 	AddTileToBrushSurfaceActual(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
 	
@@ -1498,8 +1499,8 @@ End Function
 
 Function AddTileToBrushPreview(x,y)
 
-	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
-	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x,BrushWrap)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y,BrushWrap)
 
 	If EditorMode=0
 		AddTileToBrushSurface(BrushTextureSurface,x,y,BrushSpaceX,BrushSpaceY,True)
@@ -3195,6 +3196,8 @@ Function EditorMainLoop()
 		Line1$="RELATIVE"
 	Case BrushWrapModulus
 		Line1$="MODULUS"
+	Case BrushWrapRandom
+		Line1$="RANDOM"
 	Case BrushWrapMirrorX
 		Line1$="MIRROR X"
 	Case BrushWrapMirrorY
@@ -3918,8 +3921,8 @@ Function GenerateBrushSurface()
 		EndIf
 	EndIf
 	
-	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
-	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x,BrushWrap)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y,BrushWrap)
 	
 	For i=0 To FloodedElementCount-1
 		thisx=FloodedStackX(i)
@@ -4867,8 +4870,8 @@ Function EditorLocalControls()
 				If EditorMode=0
 					For i=BrushXStart To BrushXEnd
 						For j=BrushYStart To BrushYEnd
-							BrushSpaceX=LevelSpaceToBrushSpaceX(i)
-							BrushSpaceY=LevelSpaceToBrushSpaceY(j)
+							BrushSpaceX=LevelSpaceToBrushSpaceX(i,BrushWrapRelative)
+							BrushSpaceY=LevelSpaceToBrushSpaceY(j,BrushWrapRelative)
 							CopyLevelTileToBrush(i,j,BrushSpaceX,BrushSpaceY)
 						Next
 					Next
@@ -4880,8 +4883,8 @@ Function EditorLocalControls()
 						ObjTileX=LevelObjects(k)\Position\TileX
 						ObjTileY=LevelObjects(k)\Position\TileY
 						If ObjTileX>=BrushXStart And ObjTileX<BrushXStart+BrushWidth And ObjTileY>=BrushYStart And ObjTileY<BrushYStart+BrushHeight
-							BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX)
-							BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY)
+							BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX,BrushWrapRelative)
+							BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY,BrushWrapRelative)
 							CopyObjectToBrush(LevelObjects(k),NofBrushObjects,BrushSpaceX,BrushSpaceY)
 							NofBrushObjects=NofBrushObjects+1
 						EndIf
@@ -6811,23 +6814,29 @@ Function BrushSpaceWrapY(Y)
 
 End Function
 
-Function LevelSpaceToBrushSpaceX(X)
+Function LevelSpaceToBrushSpaceX(X,WrapMode)
 
-	If BrushWrap=BrushWrapModulus
+	Select WrapMode
+	Case BrushWrapModulus
 		Return BrushSpaceWrapX(X-BrushSpaceOriginX)
-	Else
+	Case BrushWrapRelative
 		Return BrushSpaceWrapX(X-BrushCursorX)
-	EndIf
+	Case BrushWrapRandom
+		Return Rand(0,BrushSpaceWidth-1)
+	End Select
 
 End Function
 
-Function LevelSpaceToBrushSpaceY(Y)
+Function LevelSpaceToBrushSpaceY(Y,WrapMode)
 
-	If BrushWrap=BrushWrapModulus
+	Select WrapMode
+	Case BrushWrapModulus
 		Return BrushSpaceWrapY(Y-BrushSpaceOriginY)
-	Else
+	Case BrushWrapRelative
 		Return BrushSpaceWrapY(Y-BrushCursorY)
-	EndIf
+	Case BrushWrapRandom
+		Return Rand(0,BrushSpaceHeight-1)
+	End Select
 
 End Function
 
@@ -8408,8 +8417,8 @@ Function ChangeLevelTile(i,j,update)
 		Return
 	EndIf
 
-	BrushSpaceX=LevelSpaceToBrushSpaceX(i)
-	BrushSpaceY=LevelSpaceToBrushSpaceY(j)
+	BrushSpaceX=LevelSpaceToBrushSpaceX(i,BrushWrap)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(j,BrushWrap)
 
 	If StepPer=StepPerTile
 		RunStepSize()
@@ -9278,8 +9287,8 @@ Function PlaceObject(x#,y#)
 		Return
 	EndIf
 
-	BrushSpaceX=LevelSpaceToBrushSpaceX(x)
-	BrushSpaceY=LevelSpaceToBrushSpaceY(y)
+	BrushSpaceX=LevelSpaceToBrushSpaceX(x,BrushWrap)
+	BrushSpaceY=LevelSpaceToBrushSpaceY(y,BrushWrap)
 
 	PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
 	
