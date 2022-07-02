@@ -414,14 +414,6 @@ Global Leveltimer
 Global BrushWidth=1
 Global BrushHeight=1
 
-Global RandomMoveXGoal=False
-Global RandomMoveXGoalMin=0
-Global RandomMoveXGoalMax=39
-
-Global RandomMoveYGoal=False
-Global RandomMoveYGoalMin=0
-Global RandomMoveYGoalMax=39
-
 Dim RandomData(9)
 Dim RandomDataMin(9)
 Dim RandomDataMax(9)
@@ -1014,6 +1006,8 @@ Global ObjectAdjusterTeleportable.ObjectAdjusterInt=NewObjectAdjusterInt("Telepo
 Global ObjectAdjusterTileTypeCollision.ObjectAdjusterInt=NewObjectAdjusterInt("TileTypeCollision",0,1)
 Global ObjectAdjusterObjectTypeCollision.ObjectAdjusterInt=NewObjectAdjusterInt("ObjectTypeCollision",0,1)
 Global ObjectAdjusterActive.ObjectAdjusterInt=NewObjectAdjusterInt("Active",0,1001)
+Global ObjectAdjusterMoveXGoal.ObjectAdjusterInt=NewObjectAdjusterInt("MoveXGoal",0,39)
+Global ObjectAdjusterMoveYGoal.ObjectAdjusterInt=NewObjectAdjusterInt("MoveYGoal",0,39)
 
 Global ObjectAdjusterYawAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
 Global ObjectAdjusterRollAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
@@ -9560,11 +9554,11 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 		SourceAttributes\MovementSpeed=RandomObjectAdjusterInt(ObjectAdjusterMovementSpeed)
 	EndIf
 	
-	If RandomMoveXGoal
-		SourceAttributes\MoveXGoal=Rand(RandomMoveXGoalMin,RandomMoveXGoalMax)
+	If ObjectAdjusterMoveXGoal\RandomEnabled
+		SourceAttributes\MoveXGoal=RandomObjectAdjusterInt(ObjectAdjusterMoveXGoal)
 	EndIf
-	If RandomMoveYGoal
-		SourceAttributes\MoveYGoal=Rand(RandomMoveYGoalMin,RandomMoveYGoalMax)
+	If ObjectAdjusterMoveYGoal\RandomEnabled
+		SourceAttributes\MoveYGoal=RandomObjectAdjusterInt(ObjectAdjusterMoveYGoal)
 	EndIf
 	
 	If ObjectAdjusterTileTypeCollision\RandomEnabled
@@ -13045,15 +13039,15 @@ Function DisplayObjectAdjuster(i)
 		
 	Case "MoveXGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveXGoal)
-		Randomized=RandomMoveXGoal
-		LeftAdj$=RandomMoveXGoalMin
-		RightAdj$=RandomMoveXGoalMax
+		Randomized=ObjectAdjusterMoveXGoal\RandomEnabled
+		LeftAdj$=ObjectAdjusterMoveXGoal\RandomMin
+		RightAdj$=ObjectAdjusterMoveXGoal\RandomMax
 		
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveYGoal)
-		Randomized=RandomMoveYGoal
-		LeftAdj$=RandomMoveYGoalMin
-		RightAdj$=RandomMoveYGoalMax
+		Randomized=ObjectAdjusterMoveYGoal\RandomEnabled
+		LeftAdj$=ObjectAdjusterMoveYGoal\RandomMin
+		RightAdj$=ObjectAdjusterMoveYGoal\RandomMax
 		
 	Case "Data10"
 		tex$=Str$(CurrentObject\Attributes\Data10)
@@ -14461,35 +14455,11 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\DZ=AdjustObjectAdjusterFloat(ObjectAdjusterDZ,CurrentObject\Attributes\DZ,SlowFloat#,FastFloat#,DelayTime)
 		
 	Case "MoveXGoal"
-		If RandomMoveXGoal
-			If OnLeftHalfAdjuster()
-				RandomMoveXGoalMin=AdjustInt("MoveXGoal Min: ", RandomMoveXGoalMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomMoveXGoalMax=AdjustInt("MoveXGoal Max: ", RandomMoveXGoalMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObject\Attributes\MoveXGoal=AdjustInt("MoveXGoal: ", CurrentObject\Attributes\MoveXGoal, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomMoveXGoal=Not RandomMoveXGoal
-			RandomMoveXGoalMin=0
-			RandomMoveXGoalMax=LevelWidth-1
-		EndIf
+		ObjectAdjusterMoveXGoal\RandomMaxDefault=LevelWidth-1
+		CurrentObject\Attributes\MoveXGoal=AdjustObjectAdjusterInt(ObjectAdjusterMoveXGoal,CurrentObject\Attributes\MoveXGoal,SlowInt,FastInt,DelayTime)
 	Case "MoveYGoal"
-		If RandomMoveYGoal
-			If OnLeftHalfAdjuster()
-				RandomMoveYGoalMin=AdjustInt("MoveYGoal Min: ", RandomMoveYGoalMin, SlowInt, FastInt, DelayTime)
-			Else
-				RandomMoveYGoalMax=AdjustInt("MoveYGoal Max: ", RandomMoveYGoalMax, SlowInt, FastInt, DelayTime)
-			EndIf
-		Else
-			CurrentObject\Attributes\MoveYGoal=AdjustInt("MoveYGoal: ", CurrentObject\Attributes\MoveYGoal, SlowInt, FastInt, DelayTime)
-		EndIf
-		If ReturnPressed()
-			RandomMoveYGoal=Not RandomMoveYGoal
-			RandomMoveYGoalMin=0
-			RandomMoveYGoalMax=LevelHeight-1
-		EndIf
+		ObjectAdjusterMoveYGoal\RandomMaxDefault=LevelHeight-1
+		CurrentObject\Attributes\MoveYGoal=AdjustObjectAdjusterInt(ObjectAdjusterMoveYGoal,CurrentObject\Attributes\MoveYGoal,SlowInt,FastInt,DelayTime)
 		
 	Case "Data10"
 		CurrentObject\Attributes\Data10=AdjustObjectAdjusterInt(ObjectAdjusterData10,CurrentObject\Attributes\Data10,SlowInt,FastInt,DelayTime)
