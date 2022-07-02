@@ -309,11 +309,14 @@ Const BrushWrapMirrorXY=400
 Const BrushWrapMax=2
 Global BrushWrap=BrushWrapRelative
 
-Const StepPerPlacement=0
-Const StepPerTile=1
+Const StepPerClick=0
+Const StepPerPlacement=1
+Const StepPerTile=2
 
-Const StepPerMax=1
+Const StepPerMax=2
 Global StepPer=StepPerPlacement
+
+Global DidStepPerClick=False
 
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
@@ -3212,6 +3215,8 @@ Function EditorMainLoop()
 		Line1$="PLACEMENT"
 	ElseIf StepPer=StepPerTile
 		Line1$="TILE"
+	ElseIf StepPer=StepPerClick
+		Line1$="CLICK"
 	EndIf
 	CenteredText(ToolbarStepPerX,ToolbarStepPerY,"STEP PER")
 	CenteredText(ToolbarStepPerX,ToolbarStepPerY+15,Line1$)
@@ -4731,13 +4736,19 @@ Function EditorLocalControls()
 				
 				If LeftMouse=False
 					OnceTilePlacement=True
+					DidStepPerClick=False
+				ElseIf DidStepPerClick=False
+					DidStepPerClick=True
+					If StepPer=StepPerClick
+						RunStepSize()
+					EndIf
 				EndIf
 				
 				If LeftMouse=True And LeftMouseReleased=True And (EditorMode<>0 Or OnceTilePlacement=True)
 					OnceTilePlacement=False
 					
-					If EditorMode=EditorModeTile
-						If StepPer=StepPerPlacement And BrushMode<>BrushModeBlock ; Don't want to run a step size when just trying to select a block region.
+					If EditorMode=EditorModeTile And BrushMode<>BrushModeBlock ; Don't want to run a step size when just trying to select a block region.
+						If StepPer=StepPerPlacement
 							RunStepSize()
 						EndIf
 					EndIf
