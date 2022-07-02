@@ -21,6 +21,7 @@ SeedRnd MilliSecs() ; Seed the randomizer with the current system time in millis
 
 Global LeftMouse,LeftMouseReleased,RightMouse,RightMouseReleased
 Global MouseScroll=0
+Global MouseDebounceTimer=0
 Global ReturnKey,ReturnKeyReleased,DeleteKey,DeleteKeyReleased
 Const KeyCount=237 ; How many keys to track for their state.
 Dim KeyReleased(KeyCount)
@@ -4202,22 +4203,46 @@ Function ReturnPressed()
 
 End Function
 
+Function MouseDebounceFinished()
+
+	Return MouseDebounceTimer=0
+
+End Function
+
+Function MouseDebounceSet(Timer)
+
+	MouseDebounceTimer=Timer
+
+End Function
+
 
 Function EditorGlobalControls()
 
 	ShowingError=False
+	
+	If MouseDebounceTimer>0
+		MouseDebounceTimer=MouseDebounceTimer-1
+	EndIf
 
 	If MouseDown(1)=True
 		LeftMouse=True
 	Else
-		LeftMouse=False
+		If LeftMouse=True
+			LeftMouse=False
+			MouseDebounceTimer=0
+		EndIf
+		
 		LeftMouseReleased=True
 	EndIf
 
 	If MouseDown(2)=True
 		RightMouse=True
 	Else
-		RightMouse=False
+		If RightMouse=True
+			RightMouse=False
+			MouseDebounceTimer=0
+		EndIf
+			
 		RightMouseReleased=True
 	EndIf
 	
@@ -4716,6 +4741,7 @@ Function EditorLocalControls()
 				
 					If BrushMode=BrushModeBlock
 						; place one corner of block
+						LeftMouseReleased=False
 						BlockCornerX=BrushCursorX
 						BlockCornerY=BrushCursorY
 						cornleft=BlockCornerX
@@ -4723,9 +4749,9 @@ Function EditorLocalControls()
 						cornup=BlockCornerY
 						corndown=BlockCornerY
 						SetBrushMode(BrushModeBlockPlacing)
-						Delay 100
 					Else If BrushMode=BrushModeBlockPlacing
 						; fill block
+						LeftMouseReleased=False
 						If EditorMode=0
 							For i=cornleft To cornright
 								For j=cornup To corndown
@@ -4740,7 +4766,6 @@ Function EditorLocalControls()
 							Next
 						EndIf
 						SetBrushMode(BrushModeBlock)
-						Delay 100
 					ElseIf BrushMode=BrushModeTestLevel
 						If AskToSaveLevelAndExit()
 							; Just in case the user is cheeky and decides to use Test Level At Brush in a brand new wlv.
@@ -4818,7 +4843,6 @@ Function EditorLocalControls()
 						Next
 					
 					SetBrushMode(BrushModeBlock)
-					Delay 100
 				Else
 					For i=0 To FloodedElementCount-1
 						thisx=FloodedStackX(i)
@@ -4932,6 +4956,8 @@ Function EditorLocalControls()
 	StartX=SidebarX+10
 	StartY=SidebarY+20
 	
+	DelayTime=10
+	
 	If MX>=StartX And MX<StartX+200 And MY<StartY+220
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 			SetEditorMode(0)
@@ -5043,7 +5069,7 @@ Function EditorLocalControls()
 
 	; CurrentTile\Terrain\Extrusion
 	If MX>=StartX And MX<StartX+100 And MY>=StartY And MY<StartY+15
-		CurrentTile\Terrain\Extrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTile\Terrain\Extrusion#, 0.1, 1.0, 150)
+		CurrentTile\Terrain\Extrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTile\Terrain\Extrusion#, 0.1, 1.0, DelayTime)
 		
 		If WasAdjusted()
 			SetBrushToCurrentTile()
@@ -5067,7 +5093,7 @@ Function EditorLocalControls()
  	EndIf
 	; CurrentTile\Terrain\Height
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY And MY<StartY+15
-		CurrentTile\Terrain\Height#=AdjustFloat#("Enter Height: ", CurrentTile\Terrain\Height#, 0.1, 1.0, 150)
+		CurrentTile\Terrain\Height#=AdjustFloat#("Enter Height: ", CurrentTile\Terrain\Height#, 0.1, 1.0, DelayTime)
 		
 		If WasAdjusted()
 			SetBrushToCurrentTile()
@@ -5156,7 +5182,7 @@ Function EditorLocalControls()
 
 	; CurrentTile\Terrain\Random
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+170 And MY<StartY+185
-		CurrentTile\Terrain\Random#=AdjustFloat#("Enter Random: ", CurrentTile\Terrain\Random#, 0.01, 0.1, 150)
+		CurrentTile\Terrain\Random#=AdjustFloat#("Enter Random: ", CurrentTile\Terrain\Random#, 0.01, 0.1, DelayTime)
 		
 		If WasAdjusted()
 			SetBrushToCurrentTile()
@@ -5217,7 +5243,7 @@ Function EditorLocalControls()
 	
 	; CurrentTile\Water\Height
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+200 And MY<StartY+215
-		CurrentTile\Water\Height#=AdjustFloat#("Enter WHeight: ", CurrentTile\Water\Height#, 0.1, 1.0, 150)
+		CurrentTile\Water\Height#=AdjustFloat#("Enter WHeight: ", CurrentTile\Water\Height#, 0.1, 1.0, DelayTime)
 		
 		If WasAdjusted()
 			SetBrushToCurrentTile()
@@ -5243,7 +5269,7 @@ Function EditorLocalControls()
  	EndIf
 	; CurrentTile\Water\Turbulence
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+200 And MY<StartY+215
-		CurrentTile\Water\Turbulence#=AdjustFloat#("Enter WTurb: ", CurrentTile\Water\Turbulence#, 0.1, 1.0, 150)
+		CurrentTile\Water\Turbulence#=AdjustFloat#("Enter WTurb: ", CurrentTile\Water\Turbulence#, 0.1, 1.0, DelayTime)
 		
 		If WasAdjusted()
 			SetBrushToCurrentTile()
@@ -5474,7 +5500,7 @@ Function EditorLocalControls()
 		If my>165 And my<195 ;my<185 
 			If mx>FlStartX+8 And mx<FlStartX+24
 				OldValue=WaterFlow
-				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, 150)
+				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, DelayTime)
 				ShowTooltipCenterAligned(FlStartX+16,FlStartY+8,"Water Flow Speed: "+Waterflow)
 				If OldValue<>WaterFlow
 					UnsavedChanges=True
@@ -5502,7 +5528,7 @@ Function EditorLocalControls()
 			EndIf
 			If mx>FlStartX+80 And mx<FlStartX+100
 				OldValue=LevelEdgeStyle
-				LevelEdgeStyle=AdjustInt("Enter LevelEdgeStyle: ", LevelEdgeStyle, 1, 10, 150)
+				LevelEdgeStyle=AdjustInt("Enter LevelEdgeStyle: ", LevelEdgeStyle, 1, 10, DelayTime)
 				If LevelEdgeStyle<1
 					LevelEdgeStyle=4
 				ElseIf LevelEdgeStyle>4
@@ -6312,13 +6338,13 @@ Function EditorLocalControls()
 	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY+50)
 		; dupe mode
 		
-		NewValue=AdjustInt("Enter dupe mode: ",DupeMode,1,1,100)
+		NewValue=AdjustInt("Enter dupe mode: ",DupeMode,1,1,10)
 		If NewValue<>DupeMode
 			SetDupeMode(NewValue)
 		EndIf
 	EndIf
 
-	If IsMouseOverToolbarItem(ToolbarBrushSizeX,ToolbarBrushSizeY)
+	If IsMouseOverToolbarItem(ToolbarBrushSizeX,ToolbarBrushSizeY) And MouseDebounceFinished()
 		; brush size
 		If ShiftDown()
 			Adj=10
@@ -6334,7 +6360,7 @@ Function EditorLocalControls()
 			If ShouldChangeBrushHeight
 				SetBrushHeight(BrushHeight+Adj)
 			EndIf
-			If MouseScroll=0 Then Delay 100
+			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			If ShouldChangeBrushWidth
@@ -6343,7 +6369,7 @@ Function EditorLocalControls()
 			If ShouldChangeBrushHeight
 				SetBrushHeight(BrushHeight-Adj)
 			EndIf
-			If MouseScroll=0 Then Delay 100
+			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
 		
@@ -6361,7 +6387,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If IsMouseOverToolbarItem(ToolbarShowMarkersX,ToolbarShowMarkersY)
+	If IsMouseOverToolbarItem(ToolbarShowMarkersX,ToolbarShowMarkersY) And MouseDebounceFinished()
 		; show/hide markers
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			ShowObjectPositions=Not ShowObjectPositions
@@ -6375,15 +6401,14 @@ Function EditorLocalControls()
 					HideEntity ObjectPositionMarker(j)
 				Next
 			EndIf
-
 			
-			If MouseScroll=0 Then Delay 100
+			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
 	
 	If IsMouseOverToolbarItem(ToolbarShowObjectsX,ToolbarShowObjectsY)
 		; show/hide objects
-		NewValue=AdjustInt("Enter object mesh visibility level: ", ShowObjectMesh, 1, 10, 100)
+		NewValue=AdjustInt("Enter object mesh visibility level: ", ShowObjectMesh, 1, 10, DelayTime)
 		If NewValue>ShowObjectMeshMax
 			NewValue=0
 		ElseIf NewValue<0
@@ -6399,7 +6424,7 @@ Function EditorLocalControls()
 	EndIf
 	
 	
-	If IsMouseOverToolbarItem(ToolbarShowLogicX,ToolbarShowLogicY)
+	If IsMouseOverToolbarItem(ToolbarShowLogicX,ToolbarShowLogicY) And MouseDebounceFinished()
 		; show/hide logic
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			ShowLogicMesh=Not ShowLogicMesh
@@ -6413,13 +6438,12 @@ Function EditorLocalControls()
 					HideEntity LogicMesh(j)
 				Next
 			EndIf
-
 			
-			If MouseScroll=0 Then Delay 100
+			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
 	
-	If IsMouseOverToolbarItem(ToolbarShowLevelX,ToolbarShowLevelY)
+	If IsMouseOverToolbarItem(ToolbarShowLevelX,ToolbarShowLevelY) And MouseDebounceFinished()
  		 ; show/hide level
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			ShowLevelMesh=Not ShowLevelMesh
@@ -6433,15 +6457,14 @@ Function EditorLocalControls()
 					HideEntity LEvelMesh(j)
 				Next
 			EndIf
-
-			
-			If MouseScroll=0 Then Delay 100
+						
+			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
 	
 	If IsMouseOverToolbarItem(ToolbarSimulationLevelX,ToolbarSimulationLevelY)
 		; simulation level
-		NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, 150)
+		NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, DelayTime)
 		If NewValue>SimulationLevelMax
 			NewValue=0
 		ElseIf NewValue<0
@@ -6473,7 +6496,7 @@ Function EditorLocalControls()
 	
 	If IsMouseOverToolbarItem(ToolbarBrushWrapX,ToolbarBrushWrapY)
 		; brush wrap
-		BrushWrap=AdjustInt("Enter Brush Wrap: ", BrushWrap, 1, 10, 150)
+		BrushWrap=AdjustInt("Enter Brush Wrap: ", BrushWrap, 1, 10, DelayTime)
 		If BrushWrap>BrushWrapMax
 			BrushWrap=0
 		ElseIf BrushWrap<0
@@ -6483,7 +6506,7 @@ Function EditorLocalControls()
 	
 	If IsMouseOverToolbarItem(ToolbarStepPerX,ToolbarStepPerY)
 		; step per
-		StepPer=AdjustInt("Enter Step Per: ", StepPer, 1, 10, 150)
+		StepPer=AdjustInt("Enter Step Per: ", StepPer, 1, 10, DelayTime)
 		If StepPer>StepPerMax
 			StepPer=0
 		ElseIf StepPer<0
@@ -6531,7 +6554,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If IsMouseOverToolbarItem(ToolbarIDFilterX,ToolbarIDFilterY)
+	If IsMouseOverToolbarItem(ToolbarIDFilterX,ToolbarIDFilterY) And MouseDebounceFinished()
 		; id filter
 		If LeftMouse=True And LeftMouseReleased=True
 			If IDFilterEnabled=False Or CtrlDown()
@@ -6544,7 +6567,7 @@ Function EditorLocalControls()
 			For j=0 To NofObjects-1
 				UpdateObjectVisibility(LevelObjects(j))
 			Next
-			Delay 100
+			MouseDebounceSet(10)
 		EndIf
 		If IDFilterEnabled
 			If MouseScroll<>0
@@ -6563,14 +6586,14 @@ Function EditorLocalControls()
 				For j=0 To NofObjects-1
 					UpdateObjectVisibility(LevelObjects(j))
 				Next
-				Delay 100
+				MouseDebounceSet(10)
 			EndIf
 		EndIf
 	EndIf
 	
 	If IsMouseOverToolbarItem(ToolbarDensityX,ToolbarDensityY)
 		; placement density
-		Value#=AdjustFloat#("Enter placement density (0.0 to 1.0): ",PlacementDensity#,0.05,0.2,100)
+		Value#=AdjustFloat#("Enter placement density (0.0 to 1.0): ",PlacementDensity#,0.05,0.2,DelayTime)
 		SetPlacementDensity(Value#)
 	EndIf
 	
@@ -8094,8 +8117,6 @@ Function GetLevelVertex(i,j,i2,j2)
 	;n=(i+j*(LevelWidth))*(LevelDetail+1)*(LevelDetail+1) ; get to start of tile
 	n=i*(LevelDetail+1)*(LevelDetail+1)
 	n=n+j2*(LevelDetail+1)+i2
-;	Print n
-;	Delay 10
 	Return n
 End Function
 
@@ -13262,15 +13283,15 @@ Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 		If RawInput=True
 			SomethingWasAdjusted=True
 			Return InputInt(ValueName$)
-		Else
+		ElseIf MouseDebounceFinished()
 			SomethingWasAdjusted=True
-			Delay DelayTime
+			MouseDebounceSet(DelayTime)
 			Return CurrentValue+Adj
 		EndIf
 	EndIf
-	If RightMouse=True
+	If RightMouse=True And MouseDebounceFinished()
 		SomethingWasAdjusted=True
-		Delay DelayTime
+		MouseDebounceSet(DelayTime)
 		Return CurrentValue-Adj
 	EndIf
 	If MouseScroll<>0
@@ -13314,15 +13335,15 @@ Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#
 		If RawInput=True
 			SomethingWasAdjusted=True
 			Return InputFloat#(ValueName$)
-		Else
+		ElseIf MouseDebounceFinished()
 			SomethingWasAdjusted=True
-			Delay DelayTime
+			MouseDebounceSet(DelayTime)
 			Return CurrentValue+Adj
 		EndIf
 	EndIf
-	If RightMouse=True
+	If RightMouse=True And MouseDebounceFinished()
 		SomethingWasAdjusted=True
-		Delay DelayTime
+		MouseDebounceSet(DelayTime)
 		Return CurrentValue-Adj
 	EndIf
 	If MouseScroll<>0
@@ -13457,7 +13478,7 @@ Function AdjustObjectAdjuster(i)
 	RawInput=False
 	If CtrlDown() Then RawInput=True
 	
-	DelayTime=150
+	DelayTime=10 ;150
 	SlowInt=1
 	FastInt=10
 	FastID=50
@@ -13663,7 +13684,7 @@ Function AdjustObjectAdjuster(i)
 			Else
 				RandomActiveMax=AdjustInt("Active Max: ", RandomActiveMax, SlowInt, FastInt, DelayTime)
 			EndIf
-		ElseIf ReturnKey=False
+		ElseIf ReturnKey=False And MouseDebounceFinished()
 			If RawInput=True
 				CurrentObject\Attributes\Active=InputInt("Active: ")
 			Else
@@ -13674,7 +13695,7 @@ Function AdjustObjectAdjuster(i)
 				EndIf
 			EndIf
 			If MouseScroll=0
-				Delay DelayTime
+				MouseDebounceSet(DelayTime)
 			EndIf
 		EndIf
 		If ReturnPressed()
@@ -13740,10 +13761,10 @@ Function AdjustObjectAdjuster(i)
 		
 	Case "ButtonPush"
 		If Not RandomButtonPush And ReturnKey=False
-			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+			If (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
 				CurrentObject\Attributes\ButtonPush=1-CurrentObject\Attributes\ButtonPush
 				If MouseScroll=0
-					Delay 150
+					MouseDebounceSet(DelayTime)
 				EndIf
 			EndIf
 		EndIf
@@ -13759,10 +13780,10 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\Frozen=AdjustObjectAdjusterInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,SlowInt,FastInt,DelayTime)		
 	Case "Teleportable"
 		If Not RandomTeleportable And ReturnKey=False
-			If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
+			If (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
 				CurrentObject\Attributes\Teleportable=1-CurrentObject\Attributes\Teleportable
 				If MouseScroll=0
-					Delay 150
+					MouseDebounceSet(DelayTime)
 				EndIf
 			EndIf
 		EndIf
@@ -14375,7 +14396,7 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\MovementTypeData=AdjustObjectAdjusterInt(ObjectAdjusterMovementTypeData,CurrentObject\Attributes\MovementTypeData,SlowInt,FastInt,DelayTime)
 		
 	Case "TileTypeCollision"
-		If (Not RandomTTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0)
+		If (Not RandomTTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
 			StartX=SidebarX+10
 			StartY=SidebarY+305
 			StartY=StartY+15+(i-ObjectAdjusterStart)*15
@@ -14392,7 +14413,7 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 			
 			If LeftMouse=True Or RightMouse=True
-				Delay DelayTime
+				MouseDebounceSet(DelayTime)
 			EndIf
 		EndIf
 		If ReturnPressed()
@@ -14400,7 +14421,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "ObjectTypeCollision"
-		If (Not RandomOTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0)
+		If (Not RandomOTC) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
 			StartX=SidebarX+10
 			StartY=SidebarY+305
 			StartY=StartY+15+(i-ObjectAdjusterStart)*15
@@ -14417,7 +14438,7 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 			
 			If LeftMouse=True Or RightMouse=True
-				Delay DelayTime
+				MouseDebounceSet(DelayTime)
 			EndIf
 		EndIf
 		If ReturnPressed()
@@ -15627,6 +15648,8 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 			Obj\Model\Texture=myLoadTexture(Obj\Attributes\TexName$,4)
 			EntityTexture TextureTarget,Obj\Model\Texture
 		Else
+			Locate 0,0
+			Color 255,255,255
 			Print "WARNING!"
 			Print "Couldn't load texture: " + Obj\Attributes\TexName$
 			Print "The adventure may be unplayable in game"
@@ -20229,16 +20252,16 @@ Function AdventureSelectScreen()
 	
 	
 	If hubmode=False
-		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44)
+		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44) And MouseDebounceFinished()
 			If MouseDown(1) Or MouseScroll>0
 				SetAdventureCurrentArchive(AdventureCurrentArchive+1)
 				GetAdventures()
-				If MouseScroll=0 Then Delay 100
+				If MouseScroll=0 Then MouseDebounceSet(10)
 			EndIf
 			If MouseDown(2) Or MouseScroll<0
 				SetAdventureCurrentArchive(AdventureCurrentArchive-1)
 				GetAdventures()
-				If MouseScroll=0 Then Delay 100
+				If MouseScroll=0 Then MouseDebounceSet(10)
 			EndIf
 		EndIf
 		;If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(36) And AdventureCurrentArchive=0
@@ -21372,16 +21395,20 @@ Function MasterMainLoop()
 	If MouseDown(2) mb=2
 	If MouseDown(3) mb=3
 	
+	DelayTime=10
+	
 	; level list start
 	If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5)
-		If (MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25 And mb>0) Or MouseScroll<0
-			MasterLevelListStart=MasterLevelListStart+adj
-			If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
-			If MouseScroll=0 Then Delay 150
-		Else If (MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And mb>0) Or MouseScroll>0
-			MasterLevelListStart=MasterLevelListStart-adj
-			If MasterLevelListStart<0 Then MasterLevelListStart=0
-			If MouseScroll=0 Then Delay 150
+		If MouseDebounceFinished()
+			If (MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25 And mb>0) Or MouseScroll<0
+				MasterLevelListStart=MasterLevelListStart+adj
+				If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
+				If MouseScroll=0 Then MouseDebounceSet(DelayTime)
+			Else If (MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And mb>0) Or MouseScroll>0
+				MasterLevelListStart=MasterLevelListStart-adj
+				If MasterLevelListStart<0 Then MasterLevelListStart=0
+				If MouseScroll=0 Then MouseDebounceSet(DelayTime)
+			EndIf
 		EndIf
 		If KeyPressed(201) ; page up
 			MasterLevelListStart=MasterLevelListStart-20
@@ -21395,14 +21422,16 @@ Function MasterMainLoop()
 	
 	; dialog list start
 	If MouseX()>LetterX(41.5) And MouseX()<GfxWidth
-		If (MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25 And mb>0) Or MouseScroll<0
-			MasterDialogListStart=MasterDialogListStart+adj
-			If MasterDialogListStart>MaxDialog-20 Then MasterDialogListStart=MaxDialog-20
-			If MouseScroll=0 Then Delay 150
-		Else If (MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And mb>0) Or MouseScroll>0
-			MasterDialogListStart=MasterDialogListStart-adj
-			If MasterDialogListStart<0 Then MasterDialogListStart=0
-			If MouseScroll=0 Then Delay 150
+		If MouseDebounceFinished()
+			If (MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25 And mb>0) Or MouseScroll<0
+				MasterDialogListStart=MasterDialogListStart+adj
+				If MasterDialogListStart>MaxDialog-20 Then MasterDialogListStart=MaxDialog-20
+				If MouseScroll=0 Then MouseDebounceSet(DelayTime)
+			Else If (MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And mb>0) Or MouseScroll>0
+				MasterDialogListStart=MasterDialogListStart-adj
+				If MasterDialogListStart<0 Then MasterDialogListStart=0
+				If MouseScroll=0 Then MouseDebounceSet(DelayTime)
+			EndIf
 		EndIf
 		If KeyPressed(201) ; page up
 			MasterDialogListStart=MasterDialogListStart-20
@@ -21433,13 +21462,13 @@ Function MasterMainLoop()
 	; startpos
 	If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
 		If MouseX()>LetterX(0) And MouseX()<LetterX(7)
-			adventurestartx=AdjustInt("Adventure start X: ", adventurestartx, 1, 10, 150)
+			adventurestartx=AdjustInt("Adventure start X: ", adventurestartx, 1, 10, DelayTime)
 		EndIf
 		If MouseX()>LetterX(8) And MouseX()<LetterX(15)
-			adventurestarty=AdjustInt("Adventure start Y: ", adventurestarty, 1, 10, 150)
+			adventurestarty=AdjustInt("Adventure start Y: ", adventurestarty, 1, 10, DelayTime)
 		EndIf
 		If MouseX()>LetterX(16) And MouseX()<LetterX(23)
-			adventurestartdir=AdjustInt("Adventure start direction: ", adventurestartdir, 45, 45, 150)
+			adventurestartdir=AdjustInt("Adventure start direction: ", adventurestartdir, 45, 45, DelayTime)
 			adventurestartdir=adventurestartdir Mod 360
 			; this if block is necessary because Mod can return negative numbers for some terrible reason
 			If adventurestartdir<0
@@ -21464,22 +21493,22 @@ Function MasterMainLoop()
 				TooltipY=YMin
 				If MouseX()>XMin And MouseX()<XMax And MouseY()>YMin And MouseY()<YMax
 					If j=0 And i=0
-						Adventureexitwonlevel=AdjustInt("Adventure exit won level: ", Adventureexitwonlevel, 1, 10, 150)
+						Adventureexitwonlevel=AdjustInt("Adventure exit won level: ", Adventureexitwonlevel, 1, 10, DelayTime)
 					EndIf
 					If j=0 And i=1
-						Adventureexitwonx=AdjustInt("Adventure exit won X: ", Adventureexitwonx, 1, 10, 150)
+						Adventureexitwonx=AdjustInt("Adventure exit won X: ", Adventureexitwonx, 1, 10, DelayTime)
 					EndIf
 					If j=0 And i=2
-						Adventureexitwony=AdjustInt("Adventure exit won Y: ", Adventureexitwony, 1, 10, 150)
+						Adventureexitwony=AdjustInt("Adventure exit won Y: ", Adventureexitwony, 1, 10, DelayTime)
 					EndIf
 					If j=1 And i=0
-						Adventureexitlostlevel=AdjustInt("Adventure exit lost level: ", Adventureexitlostlevel, 1, 10, 150)
+						Adventureexitlostlevel=AdjustInt("Adventure exit lost level: ", Adventureexitlostlevel, 1, 10, DelayTime)
 					EndIf
 					If j=1 And i=1
-						Adventureexitlostx=AdjustInt("Adventure exit lost X: ", Adventureexitlostx, 1, 10, 150)
+						Adventureexitlostx=AdjustInt("Adventure exit lost X: ", Adventureexitlostx, 1, 10, DelayTime)
 					EndIf
 					If j=1 And i=2
-						Adventureexitlosty=AdjustInt("Adventure exit lost Y: ", Adventureexitlosty, 1, 10, 150)
+						Adventureexitlosty=AdjustInt("Adventure exit lost Y: ", Adventureexitlosty, 1, 10, DelayTime)
 					EndIf
 					If j=2 Or j=3 Or j=4
 						Select i
@@ -21501,7 +21530,7 @@ Function MasterMainLoop()
 							cmdbit$="Data4"
 							ShowTooltipCenterAligned(TooltipX,TooltipY,GetCMDData4NameAndValue$(AdventureWonCommand(j-2,1),AdventureWonCommand(j-2,5),": "))
 						End Select
-						Adventurewoncommand(j-2,i)=AdjustInt("Adventure won command "+cmdbit$+": ", Adventurewoncommand(j-2,i), 1, 10, 150)
+						Adventurewoncommand(j-2,i)=AdjustInt("Adventure won command "+cmdbit$+": ", Adventurewoncommand(j-2,i), 1, 10, DelayTime)
 					EndIf
 				EndIf
 				
@@ -21516,14 +21545,14 @@ Function MasterMainLoop()
 	
 	; adventure goal
 	If MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And MouseX()<LetterX(25)
-		AdventureGoal=AdjustInt("Adventure goal: ", AdventureGoal, 1, 10, 150)
+		AdventureGoal=AdjustInt("Adventure goal: ", AdventureGoal, 1, 10, DelayTime)
 		If AdventureGoal<=-1 Then AdventureGoal=nofwinningconditions-1
 		If AdventureGoal>=Nofwinningconditions Then adventuregoal=0
 	EndIf
 	
 	; GateKeyVersion
 	If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15 And MouseX()>LetterX(26) And MouseX()<LetterX(38)
-		GateKeyVersion=AdjustInt("Gate/key version: ", GateKeyVersion, 1, 10, 150)
+		GateKeyVersion=AdjustInt("Gate/key version: ", GateKeyVersion, 1, 10, DelayTime)
 		If GateKeyVersion<=0 Then GateKeyVersion=3
 		If GateKeyVersion>=4 Then GateKeyVersion=1
 		FreeTexture buttontexture
@@ -22008,7 +22037,7 @@ Function MasterAdvancedLoop()
 		
 		For i=0 To 5
 			For j=0 To 2
-				If MouseX()>LetterX(10+i*5) And MouseX()<LetterX(14+i*5) And MouseY()>LetterHeight*9+(j+2)*LetterHeight And MouseY()<LetterHeight*10+(j+2)*LetterHeight
+				If MouseX()>LetterX(10+i*5) And MouseX()<LetterX(14+i*5) And MouseY()>LetterHeight*9+(j+2)*LetterHeight And MouseY()<LetterHeight*10+(j+2)*LetterHeight And MouseDebounceFinished()
 					;Locate 0,0
 					;Print "j="+j+" i="+i
 					If j=0 And i=0
@@ -22032,9 +22061,8 @@ Function MasterAdvancedLoop()
 						If mb=1 CustomGlyphCMD(SelectedGlyph,i-1)=CustomGlyphCMD(SelectedGlyph,i-1)+adj
 						If mb=2 CustomGlyphCMD(SelectedGlyph,i-1)=CustomGlyphCMD(SelectedGlyph,i-1)-adj
 					EndIf
-					Delay 150
-				EndIf
-				
+					MouseDebounceSet(10)
+				EndIf				
 			Next
 		Next
 		
@@ -22266,15 +22294,15 @@ Function HubMainLoop()
 				adj=adj*10
 			EndIf
 			HubAdvStart=HubAdvStart+adj
-		ElseIf mb>0
+		ElseIf mb>0 And MouseDebounceFinished()
 			If MouseY()>LetterHeight*10 And MouseY()<LetterHeight*11
 				HubAdvStart=HubAdvStart-adj
-				Delay 150
+				MouseDebounceSet(10)
 			EndIf
 		
 			If MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 				HubAdvStart=HubAdvStart+adj
-				Delay 150
+				MouseDebounceSet(10)
 			EndIf
 			
 			;If CtrlDown()
@@ -23496,16 +23524,17 @@ Function DialogMainLoop()
 	EndIf
 
 	RawInput=CtrlDown()
+	DelayTime=10
 
 	; Change InterChange
 	If MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
-		target=AdjustInt("Interchange: ", WhichInterChange, 1, 10, 150)
+		target=AdjustInt("Interchange: ", WhichInterChange, 1, 10, DelayTime)
 		SetInterChange(target)
 	EndIf
 	
 	; Change Answer
 	If MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
-		target=AdjustInt("Answer: ", WhichAnswer, 1, 10, 150)
+		target=AdjustInt("Answer: ", WhichAnswer, 1, 10, DelayTime)
 		SetAnswer(target)
 	EndIf
 	; Change AnswerData
@@ -23517,7 +23546,7 @@ Function DialogMainLoop()
 		Select MouseXToUse
 		Case 0
 			OldValue=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
-			InterChangeReplyFunction(WhichInterChange,WhichAnswer)=AdjustInt("FNC: ", InterChangeReplyFunction(WhichInterChange,WhichAnswer), 1, 10, 150)
+			InterChangeReplyFunction(WhichInterChange,WhichAnswer)=AdjustInt("FNC: ", InterChangeReplyFunction(WhichInterChange,WhichAnswer), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyFunction(WhichInterChange,WhichAnswer)
 				UnsavedChanges=True
 			EndIf
@@ -23525,7 +23554,7 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
 		Case 1
 			OldValue=InterChangeReplyData(WhichInterChange,WhichAnswer)
-			InterChangeReplyData(WhichInterChange,WhichAnswer)=AdjustInt("Data: ", InterChangeReplyData(WhichInterChange,WhichAnswer), 1, 10, 150)
+			InterChangeReplyData(WhichInterChange,WhichAnswer)=AdjustInt("Data: ", InterChangeReplyData(WhichInterChange,WhichAnswer), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyData(WhichInterChange,WhichAnswer)
 				UnsavedChanges=True
 			EndIf
@@ -23533,7 +23562,7 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToDataName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
 		Case 2
 			OldValue=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
-			InterChangeReplyCommand(WhichInterChange,WhichAnswer)=AdjustInt("CMD: ", InterChangeReplyCommand(WhichInterChange,WhichAnswer), 1, 10, 150)
+			InterChangeReplyCommand(WhichInterChange,WhichAnswer)=AdjustInt("CMD: ", InterChangeReplyCommand(WhichInterChange,WhichAnswer), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 				UnsavedChanges=True
 			EndIf
@@ -23541,7 +23570,7 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCommandName$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 3
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
-			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=AdjustInt("Data1: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), 1, 10, 150)
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=AdjustInt("Data1: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
 				UnsavedChanges=True
 			EndIf
@@ -23549,7 +23578,7 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData1NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), ": "))
 		Case 4
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
-			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, 150)
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
 				UnsavedChanges=True
 			EndIf
@@ -23557,7 +23586,7 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData2NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), ": "))
 		Case 5
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
-			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, 150)
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
 				UnsavedChanges=True
 			EndIf
@@ -23565,7 +23594,7 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData3NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), ": "))
 		Case 6
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
-			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, 150)
+			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
 				UnsavedChanges=True
 			EndIf
@@ -23583,7 +23612,7 @@ Function DialogMainLoop()
 	
 	; Change Askabout
 	If MouseY()>LetterHeight*22 And MouseY()<LetterHeight*23 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
-		target=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, 150)
+		target=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, DelayTime)
 		SetAskabout(target)
 	EndIf
 	; Change AskaboutData
@@ -23591,7 +23620,7 @@ Function DialogMainLoop()
 		TooltipY=LetterHeight*28.5
 		If MouseX()<LetterX(8)
 			OldValue=AskAboutActive(WhichAskAbout)
-			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, 150)
+			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, DelayTime)
 			If OldValue<>AskAboutActive(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
@@ -23600,7 +23629,7 @@ Function DialogMainLoop()
 
 		Else If MouseX()<LetterX(22.5)
 			OldValue=AskAboutInterChange(WhichAskAbout)
-			AskAboutInterChange(WhichAskAbout)=AdjustInt("Interchange: ", AskAboutInterChange(WhichAskAbout), 1, 10, 150)
+			AskAboutInterChange(WhichAskAbout)=AdjustInt("Interchange: ", AskAboutInterChange(WhichAskAbout), 1, 10, DelayTime)
 			If OldValue<>AskAboutInterChange(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
@@ -23608,7 +23637,7 @@ Function DialogMainLoop()
 			ShowTooltipCenterAligned(LetterX(15.25),TooltipY,"Destination Interchange")
 		Else If MouseX()<LetterX(38)
 			OldValue=AskAboutRepeat(WhichAskAbout)
-			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, 150)
+			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, DelayTime)
 			If OldValue<>AskAboutRepeat(WhichAskAbout)
 				UnsavedChanges=True
 			EndIf
