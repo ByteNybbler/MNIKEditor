@@ -17272,10 +17272,10 @@ Function CameraControls()
 		
 			TurnEntity Target,-IntAdj,0,0
 		EndIf
-		If KeyDown(181) ;Or KeyDown(3) ; numpad /
+		If KeyDown(181) Or KeyDown(23) ;Or KeyDown(3) ; numpad / or I
 			RotateEntity Target,EntityPitch#(Target),EntityYaw#(Target)+IntAdj,EntityRoll#(Target)
 		EndIf
-		If KeyDown(55) ;Or KeyDown(4) ; numpad *
+		If KeyDown(55) Or KeyDown(24) ;Or KeyDown(4) ; numpad * or O
 			RotateEntity Target,EntityPitch#(Target),EntityYaw#(Target)-IntAdj,EntityRoll#(Target)
 		EndIf
 		
@@ -17283,13 +17283,15 @@ Function CameraControls()
 			; reset camera position and rotation
 			If Target=Camera1
 				RotateEntity Camera1,65,0,0
-				CenterCameraInLevel()
-				If Camera1Proj=2 ; orthographic
-					TheY#=Camera1StartY*2
-				Else ; probably perspective
-					TheY#=Camera1StartY
+				If ShiftDown()
+					CenterCameraInLevel()
+					If Camera1Proj=2 ; orthographic
+						TheY#=Camera1StartY*2
+					Else ; probably perspective
+						TheY#=Camera1StartY
+					EndIf
+					PositionEntity Camera1,EntityX(Camera1),TheY#,EntityZ(Camera1)
 				EndIf
-				PositionEntity Camera1,EntityX(Camera1),TheY#,EntityZ(Camera1)
 			ElseIf Target=Camera4
 				RotateEntity Camera4,25,0,0
 				PositionEntity Camera4,0,303.8,-8
