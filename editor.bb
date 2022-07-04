@@ -662,7 +662,7 @@ Until NofTilePresetTiles>0
 Global NofObjects=0
 Const MaxNofObjects=1000
 
-Dim ObjectAdjusterString$(1000,30)
+Dim ObjectAdjusterString$(MaxNofObjects,30)
 
 Global HighlightWopAdjusters=True
 Global NofWopAdjusters=0
@@ -674,34 +674,34 @@ Global CurrentObjectMoveXYGoalMarker
 Global WhereWeEndedUpMarker ; For traveling with G between LevelExits.
 Global WhereWeEndedUpAlpha#=0.0
 
-Dim SimulatedObjectXScale#(1000)
-Dim SimulatedObjectZScale#(1000)
-Dim SimulatedObjectYScale#(1000)
-Dim SimulatedObjectXAdjust#(1000)
-Dim SimulatedObjectZAdjust#(1000)
-Dim SimulatedObjectYAdjust#(1000)
-Dim SimulatedObjectPitchAdjust#(1000)
-Dim SimulatedObjectYawAdjust#(1000)
-Dim SimulatedObjectRollAdjust#(1000)
-Dim SimulatedObjectX#(1000),SimulatedObjectY#(1000),SimulatedObjectZ#(1000)
-Dim SimulatedObjectPitch#(1000)
-Dim SimulatedObjectYaw#(1000)
-Dim SimulatedObjectRoll#(1000)
-Dim SimulatedObjectPitch2#(1000),SimulatedObjectYaw2#(1000),SimulatedObjectRoll2#(1000)
-Dim SimulatedObjectActive(1000),SimulatedObjectLastActive(1000)
-Dim SimulatedObjectStatus(1000)
-Dim SimulatedObjectTimer(1000)
-Dim SimulatedObjectData(1000,10)
-Dim SimulatedObjectCurrentAnim(1000)
-Dim SimulatedObjectMovementSpeed(1000)
-Dim SimulatedObjectMoveXGoal(1000),SimulatedObjectMoveYGoal(1000)
-Dim SimulatedObjectData10(1000)
-Dim SimulatedObjectSubType(1000)
-Dim SimulatedObjectTileTypeCollision(1000)
-Dim SimulatedObjectExclamation(1000)
-Dim SimulatedObjectFrozen(1000)
-;Dim SimulatedObjectScaleAdjust#(1000) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
-Dim SimulatedObjectScaleXAdjust#(1000),SimulatedObjectScaleYAdjust#(1000),SimulatedObjectScaleZAdjust#(1000)
+Dim SimulatedObjectXScale#(MaxNofObjects)
+Dim SimulatedObjectZScale#(MaxNofObjects)
+Dim SimulatedObjectYScale#(MaxNofObjects)
+Dim SimulatedObjectXAdjust#(MaxNofObjects)
+Dim SimulatedObjectZAdjust#(MaxNofObjects)
+Dim SimulatedObjectYAdjust#(MaxNofObjects)
+Dim SimulatedObjectPitchAdjust#(MaxNofObjects)
+Dim SimulatedObjectYawAdjust#(MaxNofObjects)
+Dim SimulatedObjectRollAdjust#(MaxNofObjects)
+Dim SimulatedObjectX#(MaxNofObjects),SimulatedObjectY#(MaxNofObjects),SimulatedObjectZ#(MaxNofObjects)
+Dim SimulatedObjectPitch#(MaxNofObjects)
+Dim SimulatedObjectYaw#(MaxNofObjects)
+Dim SimulatedObjectRoll#(MaxNofObjects)
+Dim SimulatedObjectPitch2#(MaxNofObjects),SimulatedObjectYaw2#(MaxNofObjects),SimulatedObjectRoll2#(MaxNofObjects)
+Dim SimulatedObjectActive(MaxNofObjects),SimulatedObjectLastActive(MaxNofObjects)
+Dim SimulatedObjectStatus(MaxNofObjects)
+Dim SimulatedObjectTimer(MaxNofObjects)
+Dim SimulatedObjectData(MaxNofObjects,10)
+Dim SimulatedObjectCurrentAnim(MaxNofObjects)
+Dim SimulatedObjectMovementSpeed(MaxNofObjects)
+Dim SimulatedObjectMoveXGoal(MaxNofObjects),SimulatedObjectMoveYGoal(MaxNofObjects)
+Dim SimulatedObjectData10(MaxNofObjects)
+Dim SimulatedObjectSubType(MaxNofObjects)
+Dim SimulatedObjectTileTypeCollision(MaxNofObjects)
+Dim SimulatedObjectExclamation(MaxNofObjects)
+Dim SimulatedObjectFrozen(MaxNofObjects)
+;Dim SimulatedObjectScaleAdjust#(MaxNofObjects) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
+Dim SimulatedObjectScaleXAdjust#(MaxNofObjects),SimulatedObjectScaleYAdjust#(MaxNofObjects),SimulatedObjectScaleZAdjust#(MaxNofObjects)
 
 
 Type GameObject
@@ -802,10 +802,18 @@ Global CurrentGrabbedObjectModified=False
 Global CurrentDraggedObject=-1
 
 
+Global CurrentAdjusterRandomized=False
+Global CurrentAdjusterAbsolute=True
+Global CurrentAdjusterZero=False
+Global LeftAdj$=""
+Global RightAdj$=""
+
+
 Type ObjectAdjusterInt
 
 Field Name$
 Field RandomEnabled,RandomMin,RandomMax,RandomMinDefault,RandomMaxDefault
+Field Absolute
 
 End Type
 
@@ -814,6 +822,15 @@ Type ObjectAdjusterFloat
 
 Field Name$
 Field RandomEnabled,RandomMin#,RandomMax#,RandomMinDefault#,RandomMaxDefault#
+Field Absolute
+
+End Type
+
+Type ObjectAdjusterString
+
+Field Name$
+Field RandomEnabled
+Field Absolute
 
 End Type
 
@@ -827,6 +844,7 @@ Function NewObjectAdjusterInt.ObjectAdjusterInt(Name$,RandomMin,RandomMax)
 	Result\RandomMax=RandomMax
 	Result\RandomMinDefault=RandomMin
 	Result\RandomMaxDefault=RandomMax
+	Result\Absolute=True
 	Return Result
 
 End Function
@@ -840,6 +858,17 @@ Function NewObjectAdjusterFloat.ObjectAdjusterFloat(Name$,RandomMin#,RandomMax#)
 	Result\RandomMax#=RandomMax
 	Result\RandomMinDefault#=RandomMin
 	Result\RandomMaxDefault#=RandomMax
+	Result\Absolute=True
+	Return Result
+
+End Function
+
+Function NewObjectAdjusterString.ObjectAdjusterString(Name$)
+
+	Result.ObjectAdjusterString=New ObjectAdjusterString
+	Result\Name$=Name$
+	Result\RandomEnabled=False
+	Result\Absolute=True
 	Return Result
 
 End Function
@@ -962,26 +991,46 @@ Function RandomObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat)
 End Function
 
 
-Function SetAdjusterDisplayInt(ObjectAdjuster.ObjectAdjusterInt)
+Function SetAdjusterDisplayInt$(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,tex$)
 
 	CurrentAdjusterRandomized=ObjectAdjuster\RandomEnabled
+	CurrentAdjusterAbsolute=ObjectAdjuster\Absolute
+	CurrentAdjusterZero=(CurrentValue=0)
 	LeftAdj$=ObjectAdjuster\RandomMin
 	RightAdj$=ObjectAdjuster\RandomMax
+	If CurrentAdjusterAbsolute
+		Return tex$
+	Else
+		Return CurrentValue
+	EndIf
 
 End Function
 
-Function SetAdjusterDisplayFloat(ObjectAdjuster.ObjectAdjusterFloat)
+Function SetAdjusterDisplayFloat$(ObjectAdjuster.ObjectAdjusterFloat,CurrentValue#,tex$)
 
 	CurrentAdjusterRandomized=ObjectAdjuster\RandomEnabled
+	CurrentAdjusterAbsolute=ObjectAdjuster\Absolute
+	CurrentAdjusterZero=(CurrentValue=0)
 	LeftAdj$=ObjectAdjuster\RandomMin
 	RightAdj$=ObjectAdjuster\RandomMax
+	If CurrentAdjusterAbsolute
+		Return tex$
+	Else
+		Return CurrentValue
+	EndIf
 
 End Function
 
+Function SetAdjusterDisplayString$(ObjectAdjuster.ObjectAdjusterString,CurrentValue$,tex$)
 
-Global CurrentAdjusterRandomized=False
-Global LeftAdj$=""
-Global RightAdj$=""
+	CurrentAdjusterRandomized=ObjectAdjuster\RandomEnabled
+	CurrentAdjusterAbsolute=ObjectAdjuster\Absolute
+	CurrentAdjusterZero=False
+	LeftAdj$=""
+	RightAdj$=""
+	Return tex$
+
+End Function
 
 
 Global ObjectAdjusterDefensePower.ObjectAdjusterInt=NewObjectAdjusterInt("DefensePower",0,33)
@@ -1051,6 +1100,11 @@ Global ObjectAdjusterDY.ObjectAdjusterFloat=NewObjectAdjusterFloat("DY",-1.0,1.0
 Global ObjectAdjusterDZ.ObjectAdjusterFloat=NewObjectAdjusterFloat("DZ",-1.0,1.0)
 Global ObjectAdjusterSpeed.ObjectAdjusterFloat=NewObjectAdjusterFloat("Speed",-0.5,0.5)
 Global ObjectAdjusterRadius.ObjectAdjusterFloat=NewObjectAdjusterFloat("Radius",-0.5,0.5)
+
+Global ObjectAdjusterTextureName.ObjectAdjusterString=NewObjectAdjusterString("TextureName")
+Global ObjectAdjusterModelName.ObjectAdjusterString=NewObjectAdjusterString("ModelName")
+Global ObjectAdjusterTextData0.ObjectAdjusterString=NewObjectAdjusterString("TextData0")
+Global ObjectAdjusterTextData1.ObjectAdjusterString=NewObjectAdjusterString("TextData1")
 
 Dim CurrentObjectTargetID(3)
 Global CurrentObjectTargetIDCount=0
@@ -11056,6 +11110,8 @@ Function DisplayObjectAdjuster(i)
 	tex2$=ObjectAdjuster$(i)
 	
 	CurrentAdjusterRandomized=False
+	CurrentAdjusterAbsolute=True
+	CurrentAdjusterZero=False
 	LeftAdj$=""
 	RightAdj$=""
 	
@@ -11067,46 +11123,42 @@ Function DisplayObjectAdjuster(i)
 	Case "TextureName"
 		tex2$="Texture"
 		tex$=CurrentObject\Attributes\TexName$
-		;If Left$(tex$,1)="?" ; object re-texture
-		;	tex$=Right$(tex$,Len(tex$)-1)
-		;EndIf
+		tex$=SetAdjusterDisplayString(ObjectAdjusterTextureName,CurrentObject\Attributes\TexName$,tex$)
 	
 	Case "ModelName"
 		tex2$="Model"
 		tex$=CurrentObject\Attributes\ModelName$
-		;If Left$(tex$,1)="?" ; object re-model
-		;	tex$=Right$(tex$,Len(tex$)-1)
-		;EndIf
+		tex$=SetAdjusterDisplayString(ObjectAdjusterModelName,CurrentObject\Attributes\ModelName$,tex$)
 		
 	Case "X"
 		tex$=Str$(CurrentObject\Position\X)
-		SetAdjusterDisplayFloat(ObjectAdjusterX)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterX,CurrentObject\Position\X,tex$)
 	Case "Y"
 		tex$=Str$(CurrentObject\Position\Y)
-		SetAdjusterDisplayFloat(ObjectAdjusterY)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterY,CurrentObject\Position\Y,tex$)
 	Case "Z"
 		tex$=Str$(CurrentObject\Position\Z)
-		SetAdjusterDisplayFloat(ObjectAdjusterZ)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterZ,CurrentObject\Position\Z,tex$)
 	
 	Case "XAdjust"
 		tex$=Str$(CurrentObject\Attributes\XAdjust)
-		SetAdjusterDisplayFloat(ObjectAdjusterXAdjust)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterXAdjust,CurrentObject\Attributes\XAdjust,tex$)
 	Case "YAdjust"
 		tex$=Str$(CurrentObject\Attributes\YAdjust)
-		SetAdjusterDisplayFloat(ObjectAdjusterYAdjust)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterYAdjust,CurrentObject\Attributes\YAdjust,tex$)
 	Case "ZAdjust"
 		tex$=Str$(CurrentObject\Attributes\ZAdjust)
-		SetAdjusterDisplayFloat(ObjectAdjusterZAdjust)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,tex$)
 	
 	Case "XScale"
 		tex$=Str$(CurrentObject\Attributes\XScale)
-		SetAdjusterDisplayFloat(ObjectAdjusterXScale)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterXScale,CurrentObject\Attributes\XScale,tex$)
 	Case "YScale"
 		tex$=Str$(CurrentObject\Attributes\YScale)
-		SetAdjusterDisplayFloat(ObjectAdjusterYScale)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterYScale,CurrentObject\Attributes\YScale,tex$)
 	Case "ZScale"
 		tex$=Str$(CurrentObject\Attributes\ZScale)
-		SetAdjusterDisplayFloat(ObjectAdjusterZScale)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterZScale,CurrentObject\Attributes\ZScale,tex$)
 		
 	Case "DefensePower"
 		tex$=Str$(CurrentObject\Attributes\DefensePower)
@@ -11162,15 +11214,14 @@ Function DisplayObjectAdjuster(i)
 
 		End Select
 		
-		SetAdjusterDisplayInt(ObjectAdjusterDefensePower)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterDefensePower,CurrentObject\Attributes\DefensePower,tex$)
 		
 	Case "AttackPower"
 		tex$=Str$(CurrentObject\Attributes\AttackPower)
-		SetAdjusterDisplayInt(ObjectAdjusterAttackPower)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterAttackPower,CurrentObject\Attributes\AttackPower,tex$)
 		
 	Case "DestructionType"
 		tex$=Str$(CurrentObject\Attributes\DestructionType)
-		SetAdjusterDisplayInt(ObjectAdjusterDestructionType)
 		
 		Select CurrentObject\Attributes\DestructionType
 			Case 0
@@ -11181,25 +11232,26 @@ Function DisplayObjectAdjuster(i)
 				tex$="MODDED" ; Purple
 		End Select
 		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterDestructionType,CurrentObject\Attributes\DestructionType,tex$)
+		
 	Case "YawAdjust"
 		tex$=Str$(CurrentObject\Attributes\YawAdjust)
-		SetAdjusterDisplayFloat(ObjectAdjusterYawAdjust)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterYawAdjust,CurrentObject\Attributes\YawAdjust,tex$)
 	Case "PitchAdjust"
 		tex$=Str$(CurrentObject\Attributes\PitchAdjust)
-		SetAdjusterDisplayFloat(ObjectAdjusterPitchAdjust)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterPitchAdjust,CurrentObject\Attributes\PitchAdjust,tex$)
 	Case "RollAdjust"
 		tex$=Str$(CurrentObject\Attributes\RollAdjust)
-		SetAdjusterDisplayFloat(ObjectAdjusterRollAdjust)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterRollAdjust,CurrentObject\Attributes\RollAdjust,tex$)
 	
 	Case "ID"
 		tex$=Str$(CurrentObject\Attributes\ID)
-		SetAdjusterDisplayInt(ObjectAdjusterID)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterID,CurrentObject\Attributes\ID,tex$)
 	Case "Type"
 		tex$=Str$(CurrentObject\Attributes\LogicType)+"/"+GetTypeString$(CurrentObject\Attributes\LogicType)
-		SetAdjusterDisplayInt(ObjectAdjusterLogicType)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterLogicType,CurrentObject\Attributes\LogicType,tex$)
 	Case "SubType"
 		tex$=Str$(CurrentObject\Attributes\LogicSubType)
-		SetAdjusterDisplayInt(ObjectAdjusterLogicSubType)
 		
 		If CurrentObject\Attributes\ModelName$="!Crab"
 			tex2$="Color"
@@ -11424,26 +11476,30 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="AudioTimeOffset"
-		EndIf			
+		EndIf
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterLogicSubType,CurrentObject\Attributes\LogicSubType,tex$)
 		
 	Case "TimerMax1"
 		tex$=Str$(CurrentObject\Attributes\TimerMax1)
-		SetAdjusterDisplayInt(ObjectAdjusterTimerMax1)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimerMax1,CurrentObject\Attributes\TimerMax1,tex$)
 	Case "TimerMax2"
 		tex$=Str$(CurrentObject\Attributes\TimerMax2)
-		SetAdjusterDisplayInt(ObjectAdjusterTimerMax2)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimerMax2,CurrentObject\Attributes\TimerMax2,tex$)
 	Case "Timer"
 		tex$=Str$(CurrentObject\Attributes\Timer)
-		SetAdjusterDisplayInt(ObjectAdjusterTimer)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,tex$)
 
 	Case "TextData0"
 		; custom model
 		tex2$=""
 		tex$=CurrentObject\Attributes\TextData0$
+		tex$=SetAdjusterDisplayString(ObjectAdjusterTextData0,CurrentObject\Attributes\TextData0$,tex$)
 		
 	Case "TextData1"
 		tex2$=""
 		tex$=CurrentObject\Attributes\TextData1$
+		tex$=SetAdjusterDisplayString(ObjectAdjusterTextData1,CurrentObject\Attributes\TextData1$,tex$)
 
 		
 	Case "Active"
@@ -11456,11 +11512,11 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$="Soon Yes ("+CurrentObject\Attributes\Active+")"
 		EndIf
-		SetAdjusterDisplayInt(ObjectAdjusterActive)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterActive,CurrentObject\Attributes\Active,tex$)
 		
 	Case "ActivationSpeed"
 		tex$=Str$(CurrentObject\Attributes\ActivationSpeed)
-		SetAdjusterDisplayInt(ObjectAdjusterActivationSpeed)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterActivationSpeed,CurrentObject\Attributes\ActivationSpeed,tex$)
 		
 	Case "ActivationType"
 		If CurrentObject\Attributes\ActivationType=1
@@ -11498,31 +11554,30 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObject\Attributes\ActivationType)
 		EndIf
-		SetAdjusterDisplayInt(ObjectAdjusterActivationType)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterActivationType,CurrentObject\Attributes\ActivationType,tex$)
 		
 	Case "ButtonPush"
 		tex$=OneToYes$(CurrentObject\Attributes\ButtonPush)
-		SetAdjusterDisplayInt(ObjectAdjusterButtonPush)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterButtonPush,CurrentObject\Attributes\ButtonPush,tex$)
 		
 	Case "WaterReact"
 		tex$=Str$(CurrentObject\Attributes\WaterReact)
-		SetAdjusterDisplayInt(ObjectAdjusterWaterReact)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterWaterReact,CurrentObject\Attributes\WaterReact,tex$)
 		
 	Case "Freezable"
 		tex$=Str$(CurrentObject\Attributes\Freezable)
-		SetAdjusterDisplayInt(ObjectAdjusterFreezable)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterFreezable,CurrentObject\Attributes\Freezable,tex$)
 		
 	Case "Frozen"
 		tex$=Str$(CurrentObject\Attributes\Frozen)
-		SetAdjusterDisplayInt(ObjectAdjusterFrozen)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,tex$)
 		
 	Case "Teleportable"
 		tex$=OneToYes$(CurrentObject\Attributes\Teleportable)
-		SetAdjusterDisplayInt(ObjectAdjusterTeleportable)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,tex$)
 	
 	Case "Data0"
 		tex$=Str$(CurrentObject\Attributes\Data0)
-		SetAdjusterDisplayInt(ObjectAdjusterData0)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="YawAnim"
@@ -11803,15 +11858,13 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=52 ; meteor shooter
 			tex2$="StartZ"
 		EndIf
-
-
-
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData0,CurrentObject\Attributes\Data0,tex$)
 
 
 
 	Case "Data1"
 		tex$=Str$(CurrentObject\Attributes\Data1)
-		SetAdjusterDisplayInt(ObjectAdjusterData1)
 
 		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			tex2$="Texture"
@@ -12045,13 +12098,12 @@ Function DisplayObjectAdjuster(i)
 			tex2$="TargetX"
 		EndIf
 		
-		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,tex$)
 
 
 		
 	Case "Data2"
 		tex$=Str$(CurrentObject\Attributes\Data2)
-		SetAdjusterDisplayInt(ObjectAdjusterData2)
 		
 		If CurrentObject\Attributes\ModelName$="!ColourGate"
 			tex2$="Frame"
@@ -12258,12 +12310,11 @@ Function DisplayObjectAdjuster(i)
 			tex2$="TargetY"
 		EndIf
 
-
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData2,CurrentObject\Attributes\Data2,tex$)
 
 		
 	Case "Data3"
 		tex$=Str$(CurrentObject\Attributes\Data3)
-		SetAdjusterDisplayInt(ObjectAdjusterData3)
 		
 		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
 			tex2$="Style"
@@ -12411,11 +12462,10 @@ Function DisplayObjectAdjuster(i)
 			tex2$="TargetZ"
 		EndIf
 
-
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData3,CurrentObject\Attributes\Data3,tex$)
 
 	Case "Data4"
 		tex$=Str$(CurrentObject\Attributes\Data4)
-		SetAdjusterDisplayInt(ObjectAdjusterData4)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="YAnim"
@@ -12508,11 +12558,12 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalX1"
 		EndIf
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData4,CurrentObject\Attributes\Data4,tex$)
 
 
 	Case "Data5"
 		tex$=Str$(CurrentObject\Attributes\Data5)
-		SetAdjusterDisplayInt(ObjectAdjusterData5)
 		
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			tex2$="Colour2"
@@ -12593,12 +12644,11 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalY1"
 		EndIf
-
-
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData5,CurrentObject\Attributes\Data5,tex$)
 		
 	Case "Data6"
 		tex$=Str$(CurrentObject\Attributes\Data6)
-		SetAdjusterDisplayInt(ObjectAdjusterData6)
 		
 		If CurrentObject\Attributes\ModelName$="!GlowWorm" Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Green"
@@ -12664,11 +12714,11 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalX2"
 		EndIf
-
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData6,CurrentObject\Attributes\Data6,tex$)
 
 	Case "Data7"
 		tex$=Str$(CurrentObject\Attributes\Data7)
-		SetAdjusterDisplayInt(ObjectAdjusterData7)
 		
 		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Blue"
@@ -12716,12 +12766,11 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=441 ; Sun Sphere 1
 			tex2$="TimeOffset"
 		EndIf
-
-
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData7,CurrentObject\Attributes\Data7,tex$)
 
 	Case "Data8"
 		tex$=Str$(CurrentObject\Attributes\Data8)
-		SetAdjusterDisplayInt(ObjectAdjusterData8)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="ZSpeed"
@@ -12802,12 +12851,11 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=471 ; Wraith
 			tex2$="TimeOffset"
 		EndIf
-
-
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData8,CurrentObject\Attributes\Data8,tex$)
 
 	Case "Data9"
 		tex$=Str$(CurrentObject\Attributes\Data9)
-		SetAdjusterDisplayInt(ObjectAdjusterData9)
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="Deadly"
@@ -12858,7 +12906,8 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=470 Or CurrentObject\Attributes\LogicType=471 ; Ghost or Wraith
 			tex2$="Visibility"
 		EndIf
-
+		
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData9,CurrentObject\Attributes\Data9,tex$)
 		
 	Case "Talkable"
 		tex2$="Dialog"
@@ -12868,37 +12917,33 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\Talkable)
 		EndIf
 		
-		SetAdjusterDisplayInt(ObjectAdjusterTalkable)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterTalkable,CurrentObject\Attributes\Talkable,tex$)
 		
 	Case "MovementType"
 		tex$=CurrentObject\Attributes\MovementType+"/"+GetMovementTypeString$(CurrentObject\Attributes\MovementType)
 		tex2$="MvmtType"
-		SetAdjusterDisplayInt(ObjectAdjusterMovementType)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterMovementType,CurrentObject\Attributes\MovementType,tex$)
 	Case "MovementTypeData"
 		tex$=Str$(CurrentObject\Attributes\MovementTypeData)
-		SetAdjusterDisplayInt(ObjectAdjusterMovementTypeData)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterMovementTypeData,CurrentObject\Attributes\MovementTypeData,tex$)
 		
 	Case "MovementSpeed"
 		tex$=Str$(CurrentObject\Attributes\MovementSpeed)
-		SetAdjusterDisplayInt(ObjectAdjusterMovementSpeed)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterMovementSpeed,CurrentObject\Attributes\MovementSpeed,tex$)
 		
 	Case "TileTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\TileTypeCollision)
 		tex2$="TTC"
-		CurrentAdjusterRandomized=ObjectAdjusterTileTypeCollision\RandomEnabled
-		LeftAdj$=""
-		RightAdj$=""
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterTileTypeCollision,CurrentObject\Attributes\TileTypeCollision,tex$)
 		
 	Case "ObjectTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\ObjectTypeCollision)
 		tex2$="OTC"
-		CurrentAdjusterRandomized=ObjectAdjusterObjectTypeCollision\RandomEnabled
-		LeftAdj$=""
-		RightAdj$=""
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterObjectTypeCollision,CurrentObject\Attributes\ObjectTypeCollision,tex$)
 		
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObject\Attributes\ScaleAdjust)
-		SetAdjusterDisplayFloat(ObjectAdjusterScaleAdjust)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterScaleAdjust,CurrentObject\Attributes\ScaleAdjust,tex$)
 	Case "Exclamation"
 		If CurrentObject\Attributes\Exclamation=-1
 			tex$="None"
@@ -12906,7 +12951,7 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\Exclamation)
 		EndIf
 		
-		SetAdjusterDisplayInt(ObjectAdjusterExclamation)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterExclamation,CurrentObject\Attributes\Exclamation,tex$)
 		
 	Case "Linked"
 		If CurrentObject\Attributes\Linked=-1
@@ -12917,7 +12962,7 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\Linked)
 		EndIf
 		
-		SetAdjusterDisplayInt(ObjectAdjusterLinked)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterLinked,CurrentObject\Attributes\Linked,tex$)
 		
 	Case "LinkBack"
 		If CurrentObject\Attributes\LinkBack=-1
@@ -12928,43 +12973,43 @@ Function DisplayObjectAdjuster(i)
 			tex$=Str$(CurrentObject\Attributes\LinkBack)
 		EndIf
 		
-		SetAdjusterDisplayInt(ObjectAdjusterLinkBack)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterLinkBack,CurrentObject\Attributes\LinkBack,tex$)
 	
 	Case "Parent"
 		tex$=Str$(CurrentObject\Attributes\Parent)
-		SetAdjusterDisplayInt(ObjectAdjusterParent)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterParent,CurrentObject\Attributes\Parent,tex$)
 		
 	Case "Child"
 		tex$=Str$(CurrentObject\Attributes\Child)
-		SetAdjusterDisplayInt(ObjectAdjusterChild)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterChild,CurrentObject\Attributes\Child,tex$)
 		
 	Case "DX"
 		tex$=Str$(CurrentObject\Attributes\DX)
-		SetAdjusterDisplayFloat(ObjectAdjusterDX)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterDX,CurrentObject\Attributes\DX,tex$)
 		
 	Case "DY"
 		tex$=Str$(CurrentObject\Attributes\DY)
-		SetAdjusterDisplayFloat(ObjectAdjusterDY)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterDY,CurrentObject\Attributes\DY,tex$)
 		
 	Case "DZ"
 		tex$=Str$(CurrentObject\Attributes\DZ)
-		SetAdjusterDisplayFloat(ObjectAdjusterDZ)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterDZ,CurrentObject\Attributes\DZ,tex$)
 		
 	Case "MoveXGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveXGoal)
-		SetAdjusterDisplayInt(ObjectAdjusterMoveXGoal)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterMoveXGoal,CurrentObject\Attributes\MoveXGoal,tex$)
 		
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveYGoal)
-		SetAdjusterDisplayInt(ObjectAdjusterMoveYGoal)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterMoveYGoal,CurrentObject\Attributes\MoveYGoal,tex$)
 		
 	Case "Data10"
 		tex$=Str$(CurrentObject\Attributes\Data10)
-		SetAdjusterDisplayInt(ObjectAdjusterData10)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData10,CurrentObject\Attributes\Data10,tex$)
 		
 	Case "Caged"
 		tex$=Str$(CurrentObject\Attributes\Caged)
-		SetAdjusterDisplayInt(ObjectAdjusterCaged)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterCaged,CurrentObject\Attributes\Caged,tex$)
 		
 	Case "Dead"
 		tex$=Str$(CurrentObject\Attributes\Dead)
@@ -12974,15 +13019,15 @@ Function DisplayObjectAdjuster(i)
 			Case 3
 				tex$="Sinking"
 		End Select
-		SetAdjusterDisplayInt(ObjectAdjusterDead)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterDead,CurrentObject\Attributes\Dead,tex$)
 		
 	Case "DeadTimer"
 		tex$=Str$(CurrentObject\Attributes\DeadTimer)
-		SetAdjusterDisplayInt(ObjectAdjusterDeadTimer)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterDeadTimer,CurrentObject\Attributes\DeadTimer,tex$)
 		
 	Case "MovementTimer"
 		tex$=Str$(CurrentObject\Attributes\MovementTimer)
-		SetAdjusterDisplayInt(ObjectAdjusterMovementTimer)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterMovementTimer,CurrentObject\Attributes\MovementTimer,tex$)
 		
 	Case "Flying"
 		State$="Grounded"
@@ -13001,25 +13046,23 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		tex$=CurrentObject\Attributes\Flying+" ("+State+")"
-		SetAdjusterDisplayInt(ObjectAdjusterFlying)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterFlying,CurrentObject\Attributes\Flying,tex$)
 		
 	Case "Indigo"
 		tex$=Str$(CurrentObject\Attributes\Indigo)
-		SetAdjusterDisplayInt(ObjectAdjusterIndigo)
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterIndigo,CurrentObject\Attributes\Indigo,tex$)
 		
 	Case "Speed"
 		tex$=Str$(CurrentObject\Attributes\Speed)
-		SetAdjusterDisplayFloat(ObjectAdjusterSpeed)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterSpeed,CurrentObject\Attributes\Speed,tex$)
 		
 	Case "Radius"
 		tex$=Str$(CurrentObject\Attributes\Radius)
-		SetAdjusterDisplayFloat(ObjectAdjusterRadius)
+		tex$=SetAdjusterDisplayFloat(ObjectAdjusterRadius,CurrentObject\Attributes\Radius,tex$)
 		
 	Case "Status"
 		tex$=Str$(CurrentObject\Attributes\Status)
-		SetAdjusterDisplayInt(ObjectAdjusterStatus)
-
-
+		
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="FromPlayer"
 			If CurrentObject\Attributes\Status=0 tex$="No"
@@ -13051,7 +13094,7 @@ Function DisplayObjectAdjuster(i)
 			End Select
 		EndIf
 
-
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterStatus,CurrentObject\Attributes\Status,tex$)
 	
 	End Select	
 	
@@ -13079,7 +13122,15 @@ Function DisplayObjectAdjuster(i)
 		Text StartX+182-8*Len(RightAdj$),StartY,RightAdj$
 		
 	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"TextData0" And ObjectAdjuster$(i)<>"TextData1"
-		tex$=tex2$+": "+tex$
+		If CurrentAdjusterAbsolute
+			tex$=tex2$+": "+tex$
+		Else
+			If CurrentAdjusterZero
+				tex$=tex2$+": ..."
+			Else
+				tex$=tex2$+" += "+tex$
+			EndIf
+		EndIf
 	EndIf
 	
 	Text StartX+92-4*Len(tex$),StartY,tex$
@@ -16530,157 +16581,154 @@ Function GetAccessoryName$(AccessoryId)
 
 	Select AccessoryId
 	Case 0
-		tex$="None"
+		Return "None"
 	Case 1
-		tex$="Cap"
+		Return "Cap"
 	Case 2
-		tex$="Top Hat"
+		Return "Top Hat"
 	Case 3
-		tex$="Builder"
+		Return "Builder"
 	Case 4
-		tex$="Farmer"
+		Return "Farmer"
 	Case 5
-		tex$="Wizard"
+		Return "Wizard"
 	Case 6
-		tex$="Bowler"
+		Return "Bowler"
 	Case 7
-		tex$="BaseBall"
+		Return "BaseBall"
 	Case 8
-		tex$="Beanie"
+		Return "Beanie"
 	Case 9
-		tex$="Crown"
+		Return "Crown"
 	Case 10
-		tex$="Cape"
+		Return "Cape"
 	Case 11
-		tex$="Clown"
+		Return "Clown"
 	Case 12
-		tex$="Jewels"
+		Return "Jewels"
 	Case 13
-		tex$="Feather"
+		Return "Feather"
 	Case 14
-		tex$="Flowerpot"
+		Return "Flowerpot"
 	Case 15
-		tex$="SillyBase"
+		Return "SillyBase"
 	Case 16
-		tex$="Pirate"
+		Return "Pirate"
 	Case 17
-		tex$="Safari"
+		Return "Safari"
 	Case 18
-		tex$="RobinHood"
+		Return "RobinHood"
 	Case 19
-		tex$="Snowball"
+		Return "Snowball"
 	Case 20
-		tex$="Sombrero"
+		Return "Sombrero"
 	Case 21
-		tex$="ZBot"
+		Return "ZBot"
 	Case 22
-		tex$="Santa"
+		Return "Santa"
 	Case 23
-		tex$="Captain"
+		Return "Captain"
 	Case 24
-		tex$="Bicorn"
+		Return "Bicorn"
 	Case 25
-		tex$="Cowboy"
+		Return "Cowboy"
 	Case 26
-		tex$="FlatRed"
+		Return "FlatRed"
 	Case 27
-		tex$="Flower1"
+		Return "Flower1"
 	Case 28
-		tex$="Flower2"
+		Return "Flower2"
 	Case 29
-		tex$="Legion"
+		Return "Legion"
 	Case 30
-		tex$="Hat-Ring"
+		Return "Hat-Ring"
 	Case 31
-		tex$="BandRing1"
+		Return "BandRing1"
 	Case 32
-		tex$="BandRing2"
+		Return "BandRing2"
 	Case 33
-		tex$="Fedora"
+		Return "Fedora"
 	Case 34
-		tex$="Leaf"
+		Return "Leaf"
 	Case 35
-		tex$="Nest"
+		Return "Nest"
 	Case 36
-		tex$="Pirate1"
+		Return "Pirate1"
 	Case 37
-		tex$="Pirate2"
+		Return "Pirate2"
 	Case 38
-		tex$="Sailor1"
+		Return "Sailor1"
 	Case 39
-		tex$="Sailor2"
+		Return "Sailor2"
 	Case 40
-		tex$="Wrap"
+		Return "Wrap"
 	Case 41
-		tex$="Sunhat"
+		Return "Sunhat"
 	Case 42
-		tex$="Helmet"
+		Return "Helmet"
 	Case 43
-		tex$="Fez"
+		Return "Fez"
 	Case 44
-		tex$="Sunhat2"
+		Return "Sunhat2"
 	Case 45
-		tex$="Chef"
+		Return "Chef"
 	Case 46
-		tex$="Bowtie"
+		Return "Bowtie"
 	Case 47
-		tex$="Helmet2"
+		Return "Helmet2"
 	Case 48
-		tex$="Headphone"
+		Return "Headphone"
 	Case 49
-		tex$="Viking"
+		Return "Viking"
 	Case 50
-		tex$="Welder"
+		Return "Welder"
 	Case 51
-		tex$="Punk"
+		Return "Punk"
 	Case 52
-		tex$="Ninja"
+		Return "Ninja"
 	Case 53
-		tex$="Bike"
+		Return "Bike"
 	Case 54
-		tex$="RainbwCap"
+		Return "RainbwCap"
 	Case 55
-		tex$="Antenna"
+		Return "Antenna"
 	Case 56
-		tex$="Janet"
+		Return "Janet"
 	Case 101
-		tex$="Thick Frame"
+		Return "Thick Frame"
 	Case 102
-		tex$="Thin Large"
+		Return "Thin Large"
 	Case 103
-		tex$="Eyepatch L"
+		Return "Eyepatch L"
 	Case 104
-		tex$="Eyepatch R"
+		Return "Eyepatch R"
 	Case 105
-		tex$="Goggles"
+		Return "Goggles"
 	Case 106
-		tex$="Parrot"
+		Return "Parrot"
 	Case 107
-		tex$="Square"
+		Return "Square"
 	Case 108
-		tex$="Round"
+		Return "Round"
 	Case 109
-		tex$="Pink"
+		Return "Pink"
 	Case 110
-		tex$="Sword"
+		Return "Sword"
 	Case 111
-		tex$="Moustache"
+		Return "Moustache"
 	Case 112
-		tex$="Rose"
+		Return "Rose"
 	Case 113
-		tex$="3D"
+		Return "3D"
 	Case 114
-		tex$="Bolt"
+		Return "Bolt"
 	Case 115
-		tex$="Monocle"
+		Return "Monocle"
 	Case 116
-		tex$="Bowtie"
+		Return "Bowtie"
 	Default
-		tex$="NotVanilla"
-	
+		Return "NotVanilla"
 	End Select
-	
-	Return tex$
 
 End Function
 
@@ -16691,185 +16739,183 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 	Case 1
 		Select ColorId
 		Case 1
-			tex$="Blue"
+			Return "Blue"
 		Case 2
-			tex$="Rainbow"
+			Return "Rainbow"
 		Case 3
-			tex$="Red"
+			Return "Red"
 		Case 4
-			tex$="Green"
+			Return "Green"
 		Case 5
-			tex$="Orange"
+			Return "Orange"
 		Case 6
-			tex$="LightBlue"
+			Return "LightBlue"
 		Case 7
-			tex$="Purple"
+			Return "Purple"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		End Select
 	Case 2
 		Select ColorId
 		Case 1
-			tex$="Blue"
+			Return "Blue"
 		Case 2
-			tex$="Purple"
+			Return "Purple"
 		Case 3
-			tex$="Red"
+			Return "Red"
 		Case 4
-			tex$="Green"
+			Return "Green"
 		Case 5
-			tex$="Orange"
+			Return "Orange"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		End Select
 	Case 3
 		Select ColorId
 		Case 1
-			tex$="Red"
+			Return "Red"
 		Case 2
-			tex$="Green"
+			Return "Green"
 		Case 3
-			tex$="Blue"
+			Return "Blue"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		
 		End Select
 	Case 5
 		Select ColorId
 		Case 1
-			tex$="Red"
+			Return "Red"
 		Case 2
-			tex$="Orange"
+			Return "Orange"
 		Case 3
-			tex$="Yellow"
+			Return "Yellow"
 		Case 4
-			tex$="Green"
+			Return "Green"
 		Case 5
-			tex$="Blue"
+			Return "Blue"
 		Case 6
-			tex$="Indigo"
+			Return "Indigo"
 		Case 7
-			tex$="Purple"
+			Return "Purple"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 			
 		End Select
 	Case 6
 		Select ColorId
 		Case 1
-			tex$="Black"
+			Return "Black"
 		Case 2
-			tex$="Blue"
+			Return "Blue"
 		Case 3
-			tex$="Red"
+			Return "Red"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		
 		End Select
 	Case 7
 		Select ColorId
 		Case 1
-			tex$="WS"
+			Return "WS"
 		Case 2
-			tex$="Red"
+			Return "Red"
 		Case 3
-			tex$="Blue S"
+			Return "Blue S"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		
 		End Select
 	Case 10
 		Select ColorId
 		Case 1
-			tex$="Blue"
+			Return "Blue"
 		Case 2
-			tex$="Purple"
+			Return "Purple"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 			
 		End Select
 	Case 27
 		Select ColorId
 		Case 1
-			tex$="Red"
+			Return "Red"
 		Case 2
-			tex$="Purple"
+			Return "Purple"
 		Case 3
-			tex$="Gold"
+			Return "Gold"
 		Case 4
-			tex$="Green"
+			Return "Green"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		
 		End Select
 	Case 28
 		Select ColorId
 		Case 1
-			tex$="RedYel"
+			Return "RedYel"
 		Case 2
-			tex$="YelGreen"
+			Return "YelGreen"
 		Case 3
-			tex$="BluePurp"
+			Return "BluePurp"
 		Case 4
-			tex$="PurpRed"
+			Return "PurpRed"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		
 		End Select
 
 	Case 46
 		Select ColorId
 		Case 1
-			tex$="RedPink"
+			Return "RedPink"
 		Case 2
-			tex$="BlueGold"
+			Return "BlueGold"
 		Case 3
-			tex$="GreeWhit"
+			Return "GreeWhit"
 		Case 4
-			Tex$="Fall"
+			Return "Fall"
 		Case 5
-			tex$="Frosty"
+			Return "Frosty"
 		Case 6
-			tex$="FullPink"
+			Return "FullPink"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		
 		End Select
 
 	Case 101
 		Select ColorId
 		Case 1
-			tex$="Normal"
+			Return "Normal"
 		Case 2
-			tex$="Sunglass"
+			Return "Sunglass"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 		
 		End Select
 	Case 102
 		Select ColorId
 		Case 1
-			tex$="Black"
+			Return "Black"
 		Case 2
-			tex$="Red"
+			Return "Red"
 		Default
-			tex$="NotVanilla"
+			Return "NotVanilla"
 			
 		End Select
 
 	Default
 		If AccessoryId<1
-			tex$="None"
+			Return "None"
 		Else
 			If ColorId=1 And IsAccessoryIdVanilla(AccessoryId)
-				tex$="Default"
+				Return "Default"
 			Else
-				tex$="NotVanilla"
+				Return "NotVanilla"
 			EndIf
 		EndIf
 	End Select
-	
-	Return tex$
 
 End Function
 
@@ -17588,8 +17634,11 @@ Function SaveLevel()
 	
 	WriteString file,adventuretitle$
 	
-	WriteInt file,-2
-	WriteInt file,WidescreenRangeLevel
+	; NEVER save extra data at the end of the wlv file.
+	; Saving extra bytes at the end of the file confuses the vanilla player into changing the state of every tile in the level.
+	
+	;WriteInt file,-2
+	;WriteInt file,WidescreenRangeLevel
 	
 	CloseFile file
 
