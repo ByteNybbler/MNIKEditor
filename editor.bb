@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/03/22"
+Global VersionDate$="07/04/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -6111,6 +6111,30 @@ Function EditorLocalControls()
 	StartX=SidebarX+195 ;695
 	StartY=SidebarY+435
 	
+	If CtrlDown()
+		If KeyPressed(49) ; Ctrl+N
+			SetBrushMode(BrushModeNormal)
+		EndIf
+		If KeyPressed(48) ; Ctrl+B
+			ToggleBlockMode()
+		EndIf
+		If KeyPressed(33) ; Ctrl+F
+			ToggleFillMode()
+		EndIf
+		If KeyPressed(23) ; Ctrl+I
+			ToggleInlineHardMode()
+		EndIf
+		If KeyPressed(22) ; Ctrl+U
+			ToggleInlineSoftMode()
+		EndIf
+		If KeyPressed(37) ; Ctrl+K
+			ToggleOutlineHardMode()
+		EndIf
+		If KeyPressed(36) ; Ctrl+J
+			ToggleOutlineSoftMode()
+		EndIf
+	EndIf
+	
 	; Placed in code before the adjuster page switch button to eat the click before that.
 	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
 		; Update button
@@ -6414,30 +6438,6 @@ Function EditorLocalControls()
 	; *************************************
 	; load/SAVE/ETC	
 	; *************************************
-	
-	If CtrlDown()
-		If KeyPressed(49) ; Ctrl+N
-			SetBrushMode(BrushModeNormal)
-		EndIf
-		If KeyPressed(48) ; Ctrl+B
-			ToggleBlockMode()
-		EndIf
-		If KeyPressed(33) ; Ctrl+F
-			ToggleFillMode()
-		EndIf
-		If KeyPressed(23) ; Ctrl+I
-			ToggleInlineHardMode()
-		EndIf
-		If KeyPressed(22) ; Ctrl+U
-			ToggleInlineSoftMode()
-		EndIf
-		If KeyPressed(37) ; Ctrl+K
-			ToggleOutlineHardMode()
-		EndIf
-		If KeyPressed(36) ; Ctrl+J
-			ToggleOutlineSoftMode()
-		EndIf
-	EndIf
 	
 	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY-10)
 		; brush mode
