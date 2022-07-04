@@ -18014,14 +18014,8 @@ Function LoadLevel(levelnumber)
 
 	LevelMusic=ReadInt(file)
 	LevelWeather=ReadInt(file)
-
-	If Eof(file)=False
-		ReadString(file)
-		ReadInt(file)
-		WidescreenRangeLevel=ReadInt(file)
-	EndIf
 	
-	CloseFile file
+	LightingWasChanged()
 	
 	ReBuildLevelModel()
 	
@@ -18036,9 +18030,22 @@ Function LoadLevel(levelnumber)
 		Next
 	Next
 	
-	LightingWasChanged()
-	
 	UnsavedChanges=False
+
+	If Not Eof(file)
+		ReadString(file)
+	EndIf
+	
+	If Not Eof(file)
+		ReadInt(file)
+	EndIf
+	
+	If Not Eof(file)
+		WidescreenRangeLevel=ReadInt(file)
+		UnsavedChanges=True
+	EndIf
+	
+	CloseFile file
 	
 End Function
 
