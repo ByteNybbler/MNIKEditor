@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/04/22"
+Global VersionDate$="07/22/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -1054,6 +1054,7 @@ Global ObjectAdjusterMovementTypeData.ObjectAdjusterInt=NewObjectAdjusterInt("Mo
 Global ObjectAdjusterExclamation.ObjectAdjusterInt=NewObjectAdjusterInt("Exclamation",0,99)
 Global ObjectAdjusterLinked.ObjectAdjusterInt=NewObjectAdjusterInt("Linked",0,10)
 Global ObjectAdjusterLinkBack.ObjectAdjusterInt=NewObjectAdjusterInt("LinkBack",0,10)
+Global ObjectAdjusterShadow.ObjectAdjusterInt=NewObjectAdjusterInt("Shadow",0,10)
 Global ObjectAdjusterParent.ObjectAdjusterInt=NewObjectAdjusterInt("Parent",0,10)
 Global ObjectAdjusterChild.ObjectAdjusterInt=NewObjectAdjusterInt("Child",0,10)
 Global ObjectAdjusterData10.ObjectAdjusterInt=NewObjectAdjusterInt("Data10",0,10)
@@ -1081,6 +1082,8 @@ Global ObjectAdjusterData6.ObjectAdjusterInt=NewObjectAdjusterInt("Data6",0,10)
 Global ObjectAdjusterData7.ObjectAdjusterInt=NewObjectAdjusterInt("Data7",0,10)
 Global ObjectAdjusterData8.ObjectAdjusterInt=NewObjectAdjusterInt("Data8",0,10)
 Global ObjectAdjusterData9.ObjectAdjusterInt=NewObjectAdjusterInt("Data9",0,10)
+Global ObjectAdjusterCurrentAnim.ObjectAdjusterInt=NewObjectAdjusterInt("CurrentAnim",0,10)
+Global ObjectAdjusterStandardAnim.ObjectAdjusterInt=NewObjectAdjusterInt("StandardAnim",0,10)
 
 Global ObjectAdjusterYawAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("YawAdjust",0.0,360.0)
 Global ObjectAdjusterRollAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("RollAdjust",0.0,360.0)
@@ -1092,6 +1095,9 @@ Global ObjectAdjusterXScale.ObjectAdjusterFloat=NewObjectAdjusterFloat("XScale",
 Global ObjectAdjusterYScale.ObjectAdjusterFloat=NewObjectAdjusterFloat("YScale",0.5,1.5)
 Global ObjectAdjusterZScale.ObjectAdjusterFloat=NewObjectAdjusterFloat("ZScale",0.5,1.5)
 Global ObjectAdjusterScaleAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("ScaleAdjust",0.5,1.5)
+Global ObjectAdjusterScaleXAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("ScaleXAdjust",0.5,1.5)
+Global ObjectAdjusterScaleYAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("ScaleYAdjust",0.5,1.5)
+Global ObjectAdjusterScaleZAdjust.ObjectAdjusterFloat=NewObjectAdjusterFloat("ScaleZAdjust",0.5,1.5)
 Global ObjectAdjusterX.ObjectAdjusterFloat=NewObjectAdjusterFloat("X",-0.5,0.5)
 Global ObjectAdjusterY.ObjectAdjusterFloat=NewObjectAdjusterFloat("Y",-0.5,0.5)
 Global ObjectAdjusterZ.ObjectAdjusterFloat=NewObjectAdjusterFloat("Z",-0.5,0.5)
@@ -10860,18 +10866,404 @@ End Function
 Function PasteObjectData(Dest)
 
 	;xyz position is not changed
-	;ObjectTileX(Dest)=CurrentObject\Position\TileX
-	;ObjectTileY(Dest)=CurrentObject\Position\TileY
-	;ObjectTileX2(Dest)=CurrentObject\Position\TileX2
-	;ObjectTileY2(Dest)=CurrentObject\Position\TileY2
-	CopyObjectAttributes(CurrentObject\Attributes,LevelObjects(Dest)\Attributes)
-
-	;FreeClothes(Dest)
 	
-	;ObjectHatEntity(Dest)=CurrentObjectHatEntity
-	;ObjectAccEntity(Dest)=CurrentObjectAccEntity
-	;ObjectHatTexture(Dest)=CurrentObjectHatTexture
-	;ObjectAccTexture(Dest)=CurrentObjectAccTexture
+	;CopyObjectAttributes(CurrentObject\Attributes,LevelObjects(Dest)\Attributes)
+	
+	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
+	DestAttributes.GameObjectAttributes=LevelObjects(Dest)\Attributes
+	
+	If ObjectAdjusterModelName\Absolute
+		DestAttributes\ModelName$=SourceAttributes\ModelName$
+	EndIf
+	If ObjectAdjusterTextureName\Absolute
+		DestAttributes\TexName$=SourceAttributes\TexName$
+	EndIf
+	
+	If ObjectAdjusterXScale\Absolute
+		DestAttributes\XScale#=SourceAttributes\XScale#
+	Else
+		DestAttributes\XScale#=DestAttributes\XScale#+SourceAttributes\XScale#
+	EndIf
+	If ObjectAdjusterYScale\Absolute
+		DestAttributes\YScale#=SourceAttributes\YScale#
+	Else
+		DestAttributes\YScale#=DestAttributes\YScale#+SourceAttributes\YScale#
+	EndIf
+	If ObjectAdjusterZScale\Absolute
+		DestAttributes\ZScale#=SourceAttributes\ZScale#
+	Else
+		DestAttributes\ZScale#=DestAttributes\ZScale#+SourceAttributes\ZScale#
+	EndIf
+	
+	If ObjectAdjusterXAdjust\Absolute
+		DestAttributes\XAdjust#=SourceAttributes\XAdjust#
+	Else
+		DestAttributes\XAdjust#=DestAttributes\XAdjust#+SourceAttributes\XAdjust#
+	EndIf
+	If ObjectAdjusterYAdjust\Absolute
+		DestAttributes\YAdjust#=SourceAttributes\YAdjust#
+	Else
+		DestAttributes\YAdjust#=DestAttributes\YAdjust#+SourceAttributes\YAdjust#
+	EndIf
+	If ObjectAdjusterZAdjust\Absolute
+		DestAttributes\ZAdjust#=SourceAttributes\ZAdjust#
+	Else
+		DestAttributes\ZAdjust#=DestAttributes\ZAdjust#+SourceAttributes\ZAdjust#
+	EndIf
+	
+	If ObjectAdjusterPitchAdjust\Absolute
+		DestAttributes\PitchAdjust#=SourceAttributes\PitchAdjust#
+	Else
+		DestAttributes\PitchAdjust#=DestAttributes\PitchAdjust#+SourceAttributes\PitchAdjust#
+	EndIf
+	If ObjectAdjusterYawAdjust\Absolute
+		DestAttributes\YawAdjust#=SourceAttributes\YawAdjust#
+	Else
+		DestAttributes\YawAdjust#=DestAttributes\YawAdjust#+SourceAttributes\YawAdjust#
+	EndIf
+	If ObjectAdjusterRollAdjust\Absolute
+		DestAttributes\RollAdjust#=SourceAttributes\RollAdjust#
+	Else
+		DestAttributes\RollAdjust#=DestAttributes\RollAdjust#+SourceAttributes\RollAdjust#
+	EndIf
+	
+	If ObjectAdjusterDX\Absolute
+		DestAttributes\DX#=SourceAttributes\DX#
+	Else
+		DestAttributes\DX#=DestAttributes\DX#+SourceAttributes\DX#
+	EndIf
+	If ObjectAdjusterDY\Absolute
+		DestAttributes\DY#=SourceAttributes\DY#
+	Else
+		DestAttributes\DY#=DestAttributes\DY#+SourceAttributes\DY#
+	EndIf
+	If ObjectAdjusterDZ\Absolute
+		DestAttributes\DZ#=SourceAttributes\DZ#
+	Else
+		DestAttributes\DZ#=DestAttributes\DZ#+SourceAttributes\DZ#
+	EndIf
+	
+	DestAttributes\Pitch#=SourceAttributes\Pitch#
+	DestAttributes\Yaw#=SourceAttributes\Yaw#
+	DestAttributes\Roll#=SourceAttributes\Roll#
+	DestAttributes\Pitch2#=SourceAttributes\Pitch2#
+	DestAttributes\Yaw2#=SourceAttributes\Yaw2#
+	DestAttributes\Roll2#=SourceAttributes\Roll2#
+	DestAttributes\XGoal#=SourceAttributes\XGoal#
+	DestAttributes\YGoal#=SourceAttributes\YGoal#
+	DestAttributes\ZGoal#=SourceAttributes\ZGoal#
+	
+	If ObjectAdjusterMovementType\Absolute
+		DestAttributes\MovementType=SourceAttributes\MovementType
+	Else
+		DestAttributes\MovementType=DestAttributes\MovementType+SourceAttributes\MovementType
+	EndIf
+	If ObjectAdjusterMovementTypeData\Absolute
+		DestAttributes\MovementTypeData=SourceAttributes\MovementTypeData
+	Else
+		DestAttributes\MovementTypeData=DestAttributes\MovementTypeData+SourceAttributes\MovementTypeData
+	EndIf
+	
+	DestAttributes\Speed#=SourceAttributes\Speed#
+	DestAttributes\Radius#=SourceAttributes\Radius#
+	DestAttributes\RadiusType=SourceAttributes\RadiusType
+	
+	If ObjectAdjusterData10\Absolute
+		DestAttributes\Data10=SourceAttributes\Data10
+	Else
+		DestAttributes\Data10=DestAttributes\Data10+SourceAttributes\Data10
+	EndIf
+	
+	DestAttributes\PushDX#=SourceAttributes\PushDX#
+	DestAttributes\PushDY#=SourceAttributes\PushDY#
+	DestAttributes\AttackPower=SourceAttributes\AttackPower
+	
+	If ObjectAdjusterDefensePower\Absolute
+		DestAttributes\DefensePower=SourceAttributes\DefensePower
+	Else
+		DestAttributes\DefensePower=DestAttributes\DefensePower+SourceAttributes\DefensePower
+	EndIf
+	If ObjectAdjusterDestructionType\Absolute
+		DestAttributes\DestructionType=SourceAttributes\DestructionType
+	Else
+		DestAttributes\DestructionType=DestAttributes\DestructionType+SourceAttributes\DestructionType
+	EndIf
+	If ObjectAdjusterID\Absolute
+		DestAttributes\ID=SourceAttributes\ID
+	Else
+		DestAttributes\ID=DestAttributes\ID+SourceAttributes\ID
+	EndIf
+	If ObjectAdjusterLogicType\Absolute
+		DestAttributes\LogicType=SourceAttributes\LogicType
+	Else
+		DestAttributes\LogicType=DestAttributes\LogicType+SourceAttributes\LogicType
+	EndIf
+	If ObjectAdjusterLogicSubType\Absolute
+		DestAttributes\LogicSubType=SourceAttributes\LogicSubType
+	Else
+		DestAttributes\LogicSubType=DestAttributes\LogicSubType+SourceAttributes\LogicSubType
+	EndIf
+	If ObjectAdjusterActive\Absolute
+		DestAttributes\Active=SourceAttributes\Active
+	Else
+		DestAttributes\Active=DestAttributes\Active+SourceAttributes\Active
+	EndIf
+	
+	DestAttributes\LastActive=SourceAttributes\LastActive
+	
+	If ObjectAdjusterActivationType\Absolute
+		DestAttributes\ActivationType=SourceAttributes\ActivationType
+	Else
+		DestAttributes\ActivationType=DestAttributes\Active+SourceAttributes\ActivationType
+	EndIf
+	If ObjectAdjusterActivationSpeed\Absolute
+		DestAttributes\ActivationSpeed=SourceAttributes\ActivationSpeed
+	Else
+		DestAttributes\ActivationSpeed=DestAttributes\Active+SourceAttributes\ActivationSpeed
+	EndIf
+	If ObjectAdjusterStatus\Absolute
+		DestAttributes\Status=SourceAttributes\Status
+	Else
+		DestAttributes\Status=DestAttributes\Status+SourceAttributes\Status
+	EndIf
+	If ObjectAdjusterTimer\Absolute
+		DestAttributes\Timer=SourceAttributes\Timer
+	Else
+		DestAttributes\Timer=DestAttributes\Timer+SourceAttributes\Timer
+	EndIf
+	If ObjectAdjusterTimerMax1\Absolute
+		DestAttributes\TimerMax1=SourceAttributes\TimerMax1
+	Else
+		DestAttributes\TimerMax1=DestAttributes\TimerMax1+SourceAttributes\TimerMax1
+	EndIf
+	If ObjectAdjusterTimerMax2\Absolute
+		DestAttributes\TimerMax2=SourceAttributes\TimerMax2
+	Else
+		DestAttributes\TimerMax2=DestAttributes\TimerMax2+SourceAttributes\TimerMax2
+	EndIf
+	If ObjectAdjusterTeleportable\Absolute
+		DestAttributes\Teleportable=SourceAttributes\Teleportable
+	Else
+		DestAttributes\Teleportable=DestAttributes\Teleportable+SourceAttributes\Teleportable
+	EndIf
+	If ObjectAdjusterButtonPush\Absolute
+		DestAttributes\ButtonPush=SourceAttributes\ButtonPush
+	Else
+		DestAttributes\ButtonPush=DestAttributes\ButtonPush+SourceAttributes\ButtonPush
+	EndIf
+	If ObjectAdjusterWaterReact\Absolute
+		DestAttributes\WaterReact=SourceAttributes\WaterReact
+	Else
+		DestAttributes\WaterReact=DestAttributes\WaterReact+SourceAttributes\WaterReact
+	EndIf
+	
+	DestAttributes\Telekinesisable=SourceAttributes\Telekinesisable
+	DestAttributes\Freezable=SourceAttributes\Freezable
+	DestAttributes\Reactive=SourceAttributes\Reactive
+	
+	
+	If ObjectAdjusterChild\Absolute
+		DestAttributes\Child=SourceAttributes\Child
+	Else
+		DestAttributes\Child=DestAttributes\Child+SourceAttributes\Child
+	EndIf
+	If ObjectAdjusterParent\Absolute
+		DestAttributes\Parent=SourceAttributes\Parent
+	Else
+		DestAttributes\Parent=DestAttributes\Parent+SourceAttributes\Parent
+	EndIf
+	
+	If ObjectAdjusterData0\Absolute
+		DestAttributes\Data0=SourceAttributes\Data0
+	Else
+		DestAttributes\Data0=DestAttributes\Data0+SourceAttributes\Data0
+	EndIf
+	If ObjectAdjusterData1\Absolute
+		DestAttributes\Data1=SourceAttributes\Data1
+	Else
+		DestAttributes\Data1=DestAttributes\Data1+SourceAttributes\Data1
+	EndIf
+	If ObjectAdjusterData2\Absolute
+		DestAttributes\Data2=SourceAttributes\Data2
+	Else
+		DestAttributes\Data2=DestAttributes\Data2+SourceAttributes\Data2
+	EndIf
+	If ObjectAdjusterData3\Absolute
+		DestAttributes\Data3=SourceAttributes\Data3
+	Else
+		DestAttributes\Data3=DestAttributes\Data3+SourceAttributes\Data3
+	EndIf
+	If ObjectAdjusterData4\Absolute
+		DestAttributes\Data4=SourceAttributes\Data4
+	Else
+		DestAttributes\Data4=DestAttributes\Data4+SourceAttributes\Data4
+	EndIf
+	If ObjectAdjusterData5\Absolute
+		DestAttributes\Data5=SourceAttributes\Data5
+	Else
+		DestAttributes\Data5=DestAttributes\Data5+SourceAttributes\Data5
+	EndIf
+	If ObjectAdjusterData6\Absolute
+		DestAttributes\Data6=SourceAttributes\Data6
+	Else
+		DestAttributes\Data6=DestAttributes\Data6+SourceAttributes\Data6
+	EndIf
+	If ObjectAdjusterData7\Absolute
+		DestAttributes\Data7=SourceAttributes\Data7
+	Else
+		DestAttributes\Data7=DestAttributes\Data7+SourceAttributes\Data7
+	EndIf
+	If ObjectAdjusterData8\Absolute
+		DestAttributes\Data8=SourceAttributes\Data8
+	Else
+		DestAttributes\Data8=DestAttributes\Data8+SourceAttributes\Data8
+	EndIf
+	If ObjectAdjusterData9\Absolute
+		DestAttributes\Data9=SourceAttributes\Data9
+	Else
+		DestAttributes\Data9=DestAttributes\Data9+SourceAttributes\Data9
+	EndIf
+	
+	If ObjectAdjusterTextData0\Absolute
+		DestAttributes\TextData0$=SourceAttributes\TextData0$
+	EndIf
+	If ObjectAdjusterTextData1\Absolute
+		DestAttributes\TextData1$=SourceAttributes\TextData1$
+	EndIf
+	
+	DestAttributes\TextData2$=SourceAttributes\TextData2$
+	DestAttributes\TextData3$=SourceAttributes\TextData3$
+	
+	If ObjectAdjusterTalkable\Absolute
+		DestAttributes\Talkable=SourceAttributes\Talkable
+	Else
+		DestAttributes\Talkable=DestAttributes\Talkable+SourceAttributes\Talkable
+	EndIf
+	If ObjectAdjusterCurrentAnim\Absolute
+		DestAttributes\CurrentAnim=SourceAttributes\CurrentAnim
+	Else
+		DestAttributes\CurrentAnim=DestAttributes\CurrentAnim+SourceAttributes\CurrentAnim
+	EndIf
+	If ObjectAdjusterStandardAnim\Absolute
+		DestAttributes\StandardAnim=SourceAttributes\StandardAnim
+	Else
+		DestAttributes\StandardAnim=DestAttributes\StandardAnim+SourceAttributes\StandardAnim
+	EndIf
+	If ObjectAdjusterMovementTimer\Absolute
+		DestAttributes\MovementTimer=SourceAttributes\MovementTimer
+	Else
+		DestAttributes\MovementTimer=DestAttributes\MovementTimer+SourceAttributes\MovementTimer
+	EndIf
+	If ObjectAdjusterMovementSpeed\Absolute
+		DestAttributes\MovementSpeed=SourceAttributes\MovementSpeed
+	Else
+		DestAttributes\MovementSpeed=DestAttributes\MovementSpeed+SourceAttributes\MovementSpeed
+	EndIf
+	
+	If ObjectAdjusterMoveXGoal\Absolute
+		DestAttributes\MoveXGoal=SourceAttributes\MoveXGoal
+	Else
+		DestAttributes\MoveXGoal=DestAttributes\MoveXGoal+SourceAttributes\MoveXGoal
+	EndIf
+	If ObjectAdjusterMoveYGoal\Absolute
+		DestAttributes\MoveYGoal=SourceAttributes\MoveYGoal
+	Else
+		DestAttributes\MoveYGoal=DestAttributes\MoveYGoal+SourceAttributes\MoveYGoal
+	EndIf
+	
+	If ObjectAdjusterTileTypeCollision\Absolute
+		DestAttributes\TileTypeCollision=SourceAttributes\TileTypeCollision
+	Else
+		DestAttributes\TileTypeCollision=DestAttributes\TileTypeCollision+SourceAttributes\TileTypeCollision
+	EndIf
+	If ObjectAdjusterObjectTypeCollision\Absolute
+		DestAttributes\ObjectTypeCollision=SourceAttributes\ObjectTypeCollision
+	Else
+		DestAttributes\ObjectTypeCollision=DestAttributes\ObjectTypeCollision+SourceAttributes\ObjectTypeCollision
+	EndIf
+	
+	If ObjectAdjusterCaged\Absolute
+		DestAttributes\Caged=SourceAttributes\Caged
+	Else
+		DestAttributes\Caged=DestAttributes\Caged+SourceAttributes\Caged
+	EndIf
+	If ObjectAdjusterDead\Absolute
+		DestAttributes\Dead=SourceAttributes\Dead
+	Else
+		DestAttributes\Dead=DestAttributes\Dead+SourceAttributes\Dead
+	EndIf
+	If ObjectAdjusterDeadTimer\Absolute
+		DestAttributes\DeadTimer=SourceAttributes\DeadTimer
+	Else
+		DestAttributes\DeadTimer=DestAttributes\DeadTimer+SourceAttributes\DeadTimer
+	EndIf
+	If ObjectAdjusterExclamation\Absolute
+		DestAttributes\Exclamation=SourceAttributes\Exclamation
+	Else
+		DestAttributes\Exclamation=DestAttributes\Exclamation+SourceAttributes\Exclamation
+	EndIf
+	If ObjectAdjusterShadow\Absolute
+		DestAttributes\Shadow=SourceAttributes\Shadow
+	Else
+		DestAttributes\Shadow=DestAttributes\Shadow+SourceAttributes\Shadow
+	EndIf
+	If ObjectAdjusterLinked\Absolute
+		DestAttributes\Linked=SourceAttributes\Linked
+	Else
+		DestAttributes\Linked=DestAttributes\Linked+SourceAttributes\Linked
+	EndIf
+	If ObjectAdjusterLinkBack\Absolute
+		DestAttributes\LinkBack=SourceAttributes\LinkBack
+	Else
+		DestAttributes\LinkBack=DestAttributes\LinkBack+SourceAttributes\LinkBack
+	EndIf
+	If ObjectAdjusterFlying\Absolute
+		DestAttributes\Flying=SourceAttributes\Flying
+	Else
+		DestAttributes\Flying=DestAttributes\Flying+SourceAttributes\Flying
+	EndIf
+	If ObjectAdjusterFrozen\Absolute
+		DestAttributes\Frozen=SourceAttributes\Frozen
+	Else
+		DestAttributes\Frozen=DestAttributes\Frozen+SourceAttributes\Frozen
+	EndIf
+	If ObjectAdjusterIndigo\Absolute
+		DestAttributes\Indigo=SourceAttributes\Indigo
+	Else
+		DestAttributes\Indigo=DestAttributes\Indigo+SourceAttributes\Indigo
+	EndIf
+	
+	DestAttributes\FutureInt24=SourceAttributes\FutureInt24
+	DestAttributes\FutureInt25=SourceAttributes\FutureInt25
+	
+	If ObjectAdjusterScaleAdjust\Absolute
+		DestAttributes\ScaleAdjust=SourceAttributes\ScaleAdjust
+	Else
+		DestAttributes\ScaleAdjust=DestAttributes\ScaleAdjust+SourceAttributes\ScaleAdjust
+	EndIf
+	If ObjectAdjusterScaleXAdjust\Absolute
+		DestAttributes\ScaleXAdjust=SourceAttributes\ScaleXAdjust
+	Else
+		DestAttributes\ScaleXAdjust=DestAttributes\ScaleXAdjust+SourceAttributes\ScaleXAdjust
+	EndIf
+	If ObjectAdjusterScaleYAdjust\Absolute
+		DestAttributes\ScaleYAdjust=SourceAttributes\ScaleYAdjust
+	Else
+		DestAttributes\ScaleYAdjust=DestAttributes\ScaleYAdjust+SourceAttributes\ScaleYAdjust
+	EndIf
+	If ObjectAdjusterScaleZAdjust\Absolute
+		DestAttributes\ScaleZAdjust=SourceAttributes\ScaleZAdjust
+	Else
+		DestAttributes\ScaleZAdjust=DestAttributes\ScaleZAdjust+SourceAttributes\ScaleZAdjust
+	EndIf
+	DestAttributes\FutureFloat5=SourceAttributes\FutureFloat5
+	DestAttributes\FutureFloat6=SourceAttributes\FutureFloat6
+	DestAttributes\FutureFloat7=SourceAttributes\FutureFloat7
+	DestAttributes\FutureFloat8=SourceAttributes\FutureFloat8
+	DestAttributes\FutureFloat9=SourceAttributes\FutureFloat9
+	DestAttributes\FutureFloat10=SourceAttributes\FutureFloat10
+	DestAttributes\FutureString1$=SourceAttributes\FutureString1$
+	DestAttributes\FutureString2$=SourceAttributes\FutureString2$
 		
 	;For i=0 To 30
 	;	ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
