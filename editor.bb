@@ -2861,7 +2861,7 @@ Function InitializeGraphicsEntities()
 	EntityColor CurrentGrabbedObjectMarkers(0),100,255,100
 	EntityFX CurrentGrabbedObjectMarkers(0),16 ; disable back-face culling
 	HideEntity CurrentGrabbedObjectMarkers(0)
-	For i=1 To MaxNofObjects
+	For i=1 To MaxNofObjects-1
 		CurrentGrabbedObjectMarkers(i)=CopyEntity(CurrentGrabbedObjectMarkers(0))
 	Next
 
@@ -5039,12 +5039,21 @@ Function EditorLocalControls()
 					
 					If BrushMode=BrushModeBlockPlacing
 						SetBrushMode(BrushModeBlock)
-					Else				
+					Else
 						If EditorMode=0
 							GrabLevelTile(BrushCursorX,BrushCursorY)
 						ElseIf EditorMode=3
 							PrepareObjectSelection()
-							GrabObject(BrushCursorX,BrushCursorY)
+							If BrushMode=BrushModeNormal
+								GrabObject(BrushCursorX,BrushCursorY)
+							Else
+								For i=0 To FloodedElementCount-1
+									thisx=FloodedStackX(i)
+									thisy=FloodedStackY(i)
+									GrabObject(thisx,thisy)
+									;xzx
+								Next
+							EndIf
 						EndIf
 					EndIf
 				EndIf
@@ -7216,7 +7225,7 @@ Function UpdateCurrentGrabbedObjectMarkerVisibility()
 	For i=0 To MaxNofObjects-1
 		CurrentGrabbedObjectMarker=CurrentGrabbedObjectMarkers(i)
 		
-		If IsObjectSelected(i) And EditorMode=3 ; CurrentGrabbedObject<>-1
+		If IsObjectSelected(i) And EditorMode=3
 			ShowEntity CurrentGrabbedObjectMarker
 			SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,LevelObjects(i),0.0)
 		Else
@@ -16223,7 +16232,9 @@ Function ShowWorldAdjusterPositions()
 
 	Select CurrentObject\Attributes\LogicType
 	Case 50 ; spellball
-		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+		If CurrentObject\Attributes\Data0<>-1 And CurrentObject\Attributes\Data1<>-1
+			SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
 		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2)
 	Case 90 ; button
