@@ -32,7 +32,11 @@
 
 * Left click: Place objects or tiles. Several objects can be placed on the same tile. Using a larger brush size will place a wider spread of objects or tiles at once.
 * Right click: Grab the object or tile at the center of the cursor. This is the easiest way to copy and paste an object or tile. If there are multiple objects stacked on the same tile, right-clicking multiple times will cycle through them.
-* Hold right click and drag: Move the grabbed object with the cursor.
+* Hold right click and drag: Move the grabbed objects with the cursor.
+* Shift + right click: Select all objects on the tile at the center of the cursor.
+* Ctrl + right click: Add or remove an object from the tile at the center of the cursor to or from the current selection.
+* Ctrl + Shift + right click: Add all objects from the tile at the center of the cursor to the current selection.
+* Tilde + right click: Select all objects.
 * Middle click: Generate adjuster settings for a LevelExit leading to the current level at the cursor's current coordinates. It will also automatically attempt to infer the player's facing direction based on whether it finds an existing LevelExit on an adjacent tile. If a LevelExit wop is already in use, only the relevant adjuster settings will be changed. The only times a LevelExit will not be generated is when the current object is a magic shooter, meteor shooter, or an object that performs any of CMD 7, CMD 11, or CMD 61 (including the NPC move command). In these cases, middle-clicking will simply set the destination of the current object. This makes it easy to do things like chain together a long series of movement commands.
 * Delete: Delete all objects covered by the cursor brush. If the mouse is hovering over the OBJECTS menu, this will only delete the currently-grabbed object. This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one. Pressing Delete while creating a block in block mode will delete all objects in the selected region. Pressing Delete in fill mode will delete all objects in the selected tile region.
 * Enter: Copy all objects or tiles that are being hovered over by the brush, depending on whether the editor is in object mode or tile mode. This lets you paste those objects or tiles anywhere else. Try it out with a large brush size!

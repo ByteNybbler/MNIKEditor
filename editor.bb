@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/22/22"
+Global VersionDate$="07/26/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -795,12 +795,99 @@ For i=0 To MaxNofObjects
 	;BrushObjectAttributes.GameObjectAttributes(i)=New GameObjectAttributes
 Next
 
-Global NofGrabbedObjects=0
-Dim GrabbedObjects(MaxNofObjects)
-Global CurrentGrabbedObject=-1
+Global NofSelectedObjects=0
+Dim SelectedObjects(MaxNofObjects)
 Global CurrentGrabbedObjectModified=False
-Global CurrentDraggedObject=-1
 
+Dim CurrentGrabbedObjectMarkers(MaxNofObjects)
+
+; Whether objects are currently being dragged.
+Global ObjectDragging=False
+
+Function GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
+
+	For i=0 To NofSelectedObjects-1
+		If SelectedObjects(i)=LevelObjectIndex
+			Return i
+		EndIf
+	Next
+	
+	Return -1
+
+End Function
+
+Function IsObjectSelected(LevelObjectIndex)
+
+	Return GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)<>-1
+
+End Function
+
+Function IsOnlyObjectSelected(LevelObjectIndex)
+
+	Return NofSelectedObjects=1 And IsObjectSelected(LevelObjectIndex)
+
+End Function
+
+Function ClearObjectSelection()
+
+	NofSelectedObjects=0
+	CurrentGrabbedObjectModified=False
+
+End Function
+
+Function AddSelectObject(LevelObjectIndex)
+
+	If Not IsObjectSelected(LevelObjectIndex)
+		AddSelectObjectInner(LevelObjectIndex)
+	EndIf
+
+End Function
+
+Function AddSelectObjectInner(LevelObjectIndex)
+
+	SelectedObjects(NofSelectedObjects)=LevelObjectIndex
+	NofSelectedObjects=NofSelectedObjects+1
+	ReadObjectIntoCurrentObject(LevelObjectIndex)
+	ObjectDragging=True
+
+End Function
+
+Function RemoveSelectObject(LevelObjectIndex)
+
+	Index=GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
+	If Index<>-1
+		RemoveSelectObjectInner(Index)
+	EndIf
+
+End Function
+
+Function RemoveSelectObjectInner(Index)
+	
+	For i=Index To NofLevelObjects-2
+		SelectedObjects(i)=SelectedObjects(i+1)
+	Next
+	NofLevelObjects=NofLevelObjects-1
+	
+End Function
+
+Function ToggleSelectObject(LevelObjectIndex)
+	
+	Index=GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
+	If Index=-1
+		AddSelectObjectInner(LevelObjectIndex)
+	Else
+		RemoveSelectObjectInner(Index)
+	EndIf
+
+End Function
+
+Function PrepareObjectSelection()
+
+	If (Not CtrlDown())
+		ClearObjectSelection()
+	EndIf
+
+End Function
 
 Global CurrentAdjusterRandomized=False
 Global CurrentAdjusterAbsolute=True
@@ -1698,8 +1785,6 @@ ScaleMesh ObjectPositionMarkerMesh,0.08,90,0.08
 ;EntityAlpha ObjectPositionMarkerMesh,.3
 ;EntityColor ObjectPositionMarkerMesh,100,255,100
 HideEntity ObjectPositionMarkerMesh
-
-Global CurrentGrabbedObjectMarker
 
 
 
@@ -2771,22 +2856,25 @@ Function InitializeGraphicsEntities()
 	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
 	PositionEntity CurrentObjectMarkerMesh,0,300,0
 	
-	CurrentGrabbedObjectMarker=CreateCube()
-	ScaleMesh CurrentGrabbedObjectMarker,0.5,90,0.5
-	EntityColor CurrentGrabbedObjectMarker,100,255,100
-	EntityFX CurrentGrabbedObjectMarker,16 ; disable back-face culling
-	HideEntity CurrentGrabbedObjectMarker
+	CurrentGrabbedObjectMarkers(0)=CreateCube()
+	ScaleMesh CurrentGrabbedObjectMarkers(0),0.5,90,0.5
+	EntityColor CurrentGrabbedObjectMarkers(0),100,255,100
+	EntityFX CurrentGrabbedObjectMarkers(0),16 ; disable back-face culling
+	HideEntity CurrentGrabbedObjectMarkers(0)
+	For i=1 To MaxNofObjects
+		CurrentGrabbedObjectMarkers(i)=CopyEntity(CurrentGrabbedObjectMarkers(0))
+	Next
 
-	WorldAdjusterPositionMarker(0)=CopyEntity(CurrentGrabbedObjectMarker)
+	WorldAdjusterPositionMarker(0)=CopyEntity(CurrentGrabbedObjectMarkers(0))
 	EntityColor WorldAdjusterPositionMarker(0),100,200,255
 	For i=1 To 3
 		WorldAdjusterPositionMarker(i)=CopyEntity(WorldAdjusterPositionMarker(0))
 	Next
 	
-	CurrentObjectMoveXYGoalMarker=CopyEntity(CurrentGrabbedObjectMarker)
+	CurrentObjectMoveXYGoalMarker=CopyEntity(CurrentGrabbedObjectMarkers(0))
 	EntityColor CurrentObjectMoveXYGoalMarker,255,100,100
 	
-	WhereWeEndedUpMarker=CopyEntity(CurrentGrabbedObjectMarker)
+	WhereWeEndedUpMarker=CopyEntity(CurrentGrabbedObjectMarkers(0))
 	EntityColor WhereWeEndedUpMarker,255,255,0
 	ShowEntity WhereWeEndedUpMarker
 	
@@ -3075,7 +3163,9 @@ Function EditorMainLoop()
 	EndIf
 	
 	MarkerAlpha#=0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
-	EntityAlpha CurrentGrabbedObjectMarker,MarkerAlpha#
+	For i=0 To MaxNofObjects-1
+		EntityAlpha CurrentGrabbedObjectMarkers(i),MarkerAlpha#
+	Next
 	For i=0 To 3
 		EntityAlpha WorldAdjusterPositionMarker(i),MarkerAlpha#
 	Next
@@ -4718,7 +4808,7 @@ Function EditorLocalRendering()
 	Rect StartX,StartY,100,20,True
 	Color TextLevelR,TextLevelG,TextLevelB
 	
-	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
+	If NofSelectedObjects<>0 And CurrentGrabbedObjectModified
 		Text StartX+50,StartY+2,"Update"
 	EndIf
 	
@@ -4768,8 +4858,8 @@ Function EditorLocalRendering()
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+92-11*4,StartY,"ADJUSTMENTS"
 	
-	If CurrentGrabbedObject<>-1
-		Text StartX+2,StartY,"#"+CurrentGrabbedObject
+	If NofSelectedObjects=1
+		Text StartX+2,StartY,"#"+SelectedObjects(0)
 	EndIf
 	
 	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
@@ -4953,6 +5043,7 @@ Function EditorLocalControls()
 						If EditorMode=0
 							GrabLevelTile(BrushCursorX,BrushCursorY)
 						ElseIf EditorMode=3
+							PrepareObjectSelection()
 							GrabObject(BrushCursorX,BrushCursorY)
 						EndIf
 					EndIf
@@ -4960,19 +5051,22 @@ Function EditorLocalControls()
 				If EditorMode=3
 					; object dragging
 					If RightMouse
-						If CurrentDraggedObject<>-1
-							DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
-							TileX=DraggedPosition\TileX
-							TileY=DraggedPosition\TileY
-							If (TileX<>BrushCursorX Or TileY<>BrushCursorY)
-								DecrementLevelTileObjectCount(TileX,TileY)
-								SetObjectPosition(CurrentDraggedObject,BrushCursorX,BrushCursorY);,0,0)
-								UpdateObjectPosition(CurrentDraggedObject)
-								SomeObjectWasChanged()
-							EndIf
+						If NofSelectedObjects<>0 And ObjectDragging=True
+							For i=0 To NofSelectedObjects-1
+								CurrentDraggedObject=SelectedObjects(i)
+								DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
+								TileX=DraggedPosition\TileX
+								TileY=DraggedPosition\TileY
+								If (TileX<>BrushCursorX Or TileY<>BrushCursorY)
+									DecrementLevelTileObjectCount(TileX,TileY)
+									SetObjectPosition(CurrentDraggedObject,BrushCursorX,BrushCursorY);,0,0)
+									UpdateObjectPosition(CurrentDraggedObject)
+									SomeObjectWasChanged()
+								EndIf
+							Next
 						EndIf
 					Else
-						CurrentDraggedObject=-1
+						ObjectDragging=False
 					EndIf
 				EndIf
 				
@@ -6081,9 +6175,11 @@ Function EditorLocalControls()
 			SetEditorMode(3)
 		EndIf
 		If my<SidebarY+455
-			If DeleteKey=True And DeleteKeyReleased=True And CurrentGrabbedObject<>-1
+			If DeleteKey=True And DeleteKeyReleased=True And NofSelectedObjects<>0
 				DeleteKeyReleased=False
-				DeleteObject(CurrentGrabbedObject)
+				For i=0 To NofSelectedObjects-1
+					DeleteObject(SelectedObjects(i))
+				Next
 				SetEditorMode(3)
 			EndIf
 		EndIf
@@ -6142,22 +6238,22 @@ Function EditorLocalControls()
 	EndIf
 	
 	; Placed in code before the adjuster page switch button to eat the click before that.
-	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
+	If NofSelectedObjects<>0 And CurrentGrabbedObjectModified
 		; Update button
 		If mx>=StartX+44 And Mx<StartX+100 And my>=StartY And my<StartY+20
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
-				UpdateCurrentGrabbedObject()
+				UpdateSelectedObjects()
 			EndIf
 		EndIf
 		If KeyDown(19) ; R key
-			UpdateCurrentGrabbedObject()
+			UpdateSelectedObjects()
 		EndIf
 	EndIf
 	
 	If KeyPressed(20) ; T key
 		If CtrlDown() ; Ctrl+T
-			UpdateCurrentGrabbedObjectIfExists()
+			UpdateSelectedObjectsIfExists()
 			SaveLevel()
 			SetBrushMode(BrushModeTestLevel)
 		Else
@@ -6308,7 +6404,7 @@ Function EditorLocalControls()
 				If SubstringMatchesAnywhere(Query$,ObjectPresetCategoryName$(i))
 					CurrentObjectPresetCategory=i
 					
-					SetCurrentGrabbedObject(-1)
+					ClearObjectSelection()
 					CurrentObjectPresetObject=0
 					i=CurrentObjectPresetCategory
 					
@@ -6324,7 +6420,7 @@ Function EditorLocalControls()
 		EndIf
 	
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-			SetCurrentGrabbedObject(-1)
+			ClearObjectSelection()
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory-1
 			If CurrentObjectPresetCategory=-1 Then CurrentObjectPresetCategory=NofObjectPresetCategories-1
 			RightMouseReleased=False
@@ -6344,7 +6440,7 @@ Function EditorLocalControls()
 		EndIf
 
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
-			SetCurrentGrabbedObject(-1)
+			ClearObjectSelection()
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory+1
 			If CurrentObjectPresetCategory=NofObjectPresetCategories Then CurrentObjectPresetCategory=0
 			LeftMouseReleased=False
@@ -6414,7 +6510,7 @@ Function EditorLocalControls()
 		EndIf	
 
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-			SetCurrentGrabbedObject(-1)
+			ClearObjectSelection()
 			CurrentObjectPresetObject=CurrentObjectPresetObject-1
 			If CurrentObjectPresetObject=-1 Then CurrentObjectPresetObject=NofObjectPresetObjects-1
 			RightMouseReleased=False
@@ -6425,7 +6521,7 @@ Function EditorLocalControls()
 		EndIf
 
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
-			SetCurrentGrabbedObject(-1)
+			ClearObjectSelection()
 			CurrentObjectPresetObject=CurrentObjectPresetObject+1
 			If CurrentObjectPresetObject=NofObjectPresetObjects Then CurrentObjectPresetObject=0
 			LeftMouseReleased=False
@@ -6797,7 +6893,7 @@ Function SaveLevelAndExit()
 			SaveLevel()
 			Return True
 		ElseIf Confirm="R"
-			UpdateCurrentGrabbedObject()
+			UpdateSelectedObjects()
 			SaveLevel()
 			Return True
 		Else
@@ -6841,7 +6937,7 @@ Function AskToSaveLevelAndExit()
 		If Confirm="E"
 			Return True
 		ElseIf Confirm="R"
-			UpdateCurrentGrabbedObject()
+			UpdateSelectedObjects()
 			SaveLevel()
 			Return True
 		Else
@@ -6889,7 +6985,7 @@ End Function
 
 Function CurrentObjectCanBeUpdated()
 
-	Return CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
+	Return NofSelectedObjects<>0 And CurrentGrabbedObjectModified
 
 End Function
 
@@ -7099,10 +7195,16 @@ End Function
 
 
 Function SetCurrentGrabbedObject(i)
+	
+	If CtrlDown() And (Not ShiftDown())
+		ToggleSelectObject(i)
+	Else
+		AddSelectObject(i)
+	EndIf
 
-	CurrentGrabbedObject=i
-	CurrentGrabbedObjectModified=False
-	CurrentDraggedObject=i
+	;CurrentGrabbedObject=i
+	;CurrentGrabbedObjectModified=False
+	;CurrentDraggedObject=i
 	
 	UpdateCurrentGrabbedObjectMarkerVisibility()
 
@@ -7111,12 +7213,16 @@ End Function
 
 Function UpdateCurrentGrabbedObjectMarkerVisibility()
 
-	If CurrentGrabbedObject=-1 Or EditorMode<>3
-		HideEntity CurrentGrabbedObjectMarker
-	Else
-		ShowEntity CurrentGrabbedObjectMarker
-		SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,LevelObjects(CurrentGrabbedObject),0.0)
-	EndIf
+	For i=0 To MaxNofObjects-1
+		CurrentGrabbedObjectMarker=CurrentGrabbedObjectMarkers(i)
+		
+		If IsObjectSelected(i) And EditorMode=3 ; CurrentGrabbedObject<>-1
+			ShowEntity CurrentGrabbedObjectMarker
+			SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,LevelObjects(i),0.0)
+		Else
+			HideEntity CurrentGrabbedObjectMarker
+		EndIf
+	Next
 
 End Function
 
@@ -10000,8 +10106,8 @@ Function UpdateObjectPosition(Dest)
 	
 	PositionObjectPositionMarker(Dest)
 	
-	If Dest=CurrentGrabbedObject
-		UpdateCurrentGrabbedObjectMarkerPosition()
+	If IsObjectSelected(Dest)
+		UpdateCurrentGrabbedObjectMarkerPosition(Dest)
 	EndIf
 
 End Function
@@ -10432,6 +10538,17 @@ Function ObjectIsAtFloat(Obj.GameObject,x#,y#)
 
 End Function
 
+Function GetFirstObjectAtFloat(x#,y#)
+
+	For i=0 To NofObjects-1
+		If ObjectIsAtFloat(LevelObjects(i),x#,y#)
+			Return i
+		EndIf
+	Next
+	Return -1
+
+End Function
+
 Function TryGrabObjectLoop(x#,y#,Target)
 	For i=0 To NofObjects-1
 		If ObjectIsAtFloat(LevelObjects(i),x#,y#) And i>Target
@@ -10444,21 +10561,37 @@ End Function
 
 Function GrabObject(x#,y#)
 	
-	;CachedGrabbedObject=CurrentGrabbedObject
-	Flag=TryGrabObjectLoop(x#,y#,CurrentGrabbedObject)
-	If Flag=False
-		; restart the cycle
-		Flag=TryGrabObjectLoop(x#,y#,-1)
+	If ShiftDown()
+		For i=0 To NofObjects-1
+			If ObjectIsAtFloat(LevelObjects(i),x#,y#)
+				SetCurrentGrabbedObject(i)
+			EndIf
+		Next
+	Else If NofSelectedObjects<2
+		If NofSelectedObjects=0
+			CurrentGrabbedObject=-1
+		Else
+			CurrentGrabbedObject=SelectedObjects(0)
+		EndIf
+		
+		Flag=TryGrabObjectLoop(x#,y#,CurrentGrabbedObject)
+		If Flag=False
+			; restart the cycle
+			Flag=TryGrabObjectLoop(x#,y#,-1)
+		EndIf
+;		If Flag=False
+;			; no object found
+;			Return
+;		EndIf
+	Else
+		TryGrabObjectLoop(x#,y#,-1)
 	EndIf
-	If Flag=False
-		; no object found
-		;SetCurrentGrabbedObject(CachedGrabbedObject)
-		Return
-	EndIf
+
+End Function
 	
+Function ReadObjectIntoCurrentObject(Dest)
+
 	NofWopAdjusters=0
-	
-	Dest=CurrentGrabbedObject
 
 	CopyObjectAttributes(LevelObjects(Dest)\Attributes,CurrentObject\Attributes)
 	CopyObjectPosition(LevelObjects(Dest)\Position,CurrentObject\Position)
@@ -10649,10 +10782,14 @@ Function DeleteObject(i)
 
 	;ShowMessage("Setting current grabbed object...", 100)
 	
-	If i=CurrentGrabbedObject
-		SetCurrentGrabbedObject(-1)
-	Else If i<CurrentGrabbedObject
-		SetCurrentGrabbedObject(CurrentGrabbedObject-1)
+	If IsObjectSelected(i)
+		RemoveSelectObject(i)
+	Else
+		For j=i To NofSelectedObjects-1
+			If i<SelectedObjects(j)
+				SelectedObjects(j)=SelectedObjects(j)-1
+			EndIf
+		Next
 	EndIf
 	
 	NofObjects=NofObjects-1
@@ -10845,19 +10982,22 @@ Function CopyObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
 End Function
 
 
-Function UpdateCurrentGrabbedObject()
+Function UpdateSelectedObjects()
 
 	SetEditorMode(3)
-	PasteObjectData(CurrentGrabbedObject)
+	For i=0 To NofSelectedObjects-1
+		CurrentGrabbedObject=SelectedObjects(i)
+		PasteObjectData(CurrentGrabbedObject)
+	Next
 	CurrentGrabbedObjectModified=False
 
 End Function
 
 
-Function UpdateCurrentGrabbedObjectIfExists()
+Function UpdateSelectedObjectsIfExists()
 
-	If CurrentGrabbedObject<>-1 And CurrentGrabbedObjectModified
-		UpdateCurrentGrabbedObject()
+	If NofSelectedObjects<>0 And CurrentGrabbedObjectModified
+		UpdateSelectedObjects()
 	EndIf
 
 End Function
@@ -11273,16 +11413,16 @@ Function PasteObjectData(Dest)
 	
 	UpdateObjectEntityToCurrent(Dest)
 	
-	UpdateCurrentGrabbedObjectMarkerPosition()
+	UpdateCurrentGrabbedObjectMarkerPosition(Dest)
 	
 	SomeObjectWasChanged()
 
 	
 End Function
 
-Function UpdateCurrentGrabbedObjectMarkerPosition()
+Function UpdateCurrentGrabbedObjectMarkerPosition(i)
 
-	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,LevelObjects(CurrentGrabbedObject),0.0)
+	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarkers(i),LevelObjects(i),0.0)
 
 End Function
 
@@ -16246,14 +16386,14 @@ Function GenerateLevelExitTo(level,x,y)
 
 	BlankObjectPreset("!Button",90,10)
 	CalculateLevelExitTo(1,2,3,4,level,x,y)
-	SetCurrentGrabbedObject(-1)
+	ClearObjectSelection()
 
 End Function
 
 
 Function ResetLevel()
 
-	SetCurrentGrabbedObject(-1)
+	ClearObjectSelection()
 
 	For i=0 To MaxLevelCoordinate
 		For j=0 To MaxLevelCoordinate
@@ -16545,7 +16685,7 @@ Function RawSetObjectTileX(i,tilex)
 	If Obj\Attributes\LogicType=50 ; spellball
 		Obj\Attributes\Data2=Obj\Position\TileX
 		Obj\Attributes\Data4=Obj\Position\TileX
-		If CurrentObject\Attributes\LogicType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
+		If CurrentObject\Attributes\LogicType=50 And (IsOnlyObjectSelected(i) Or i=NofObjects)
 			CurrentObject\Attributes\Data2=Obj\Attributes\Data2
 			CurrentObject\Attributes\Data4=Obj\Attributes\Data4
 		EndIf
@@ -16562,7 +16702,7 @@ Function RawSetObjectTileY(i,tiley)
 	If Obj\Attributes\LogicType=50 ; spellball
 		Obj\Attributes\Data3=Obj\Position\TileY
 		Obj\Attributes\Data5=Obj\Position\TileY
-		If CurrentObject\Attributes\LogicType=50 And (i=CurrentGrabbedObject Or i=NofObjects)
+		If CurrentObject\Attributes\LogicType=50 And (IsOnlyObjectSelected(i) Or i=NofObjects)
 			CurrentObject\Attributes\Data3=Obj\Attributes\Data3
 			CurrentObject\Attributes\Data5=Obj\Attributes\Data5
 		EndIf
