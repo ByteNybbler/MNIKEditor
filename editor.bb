@@ -5000,6 +5000,7 @@ Function EditorLocalControls()
 								Next
 							Next
 						ElseIf EditorMode=3
+							PrepareObjectSelection()
 							For i=cornleft To cornright
 								For j=cornup To corndown
 									PlaceObject(i,j)
@@ -5019,6 +5020,7 @@ Function EditorLocalControls()
 					ElseIf BrushMode=BrushModeSetMirror
 						SetBrushMode(BrushModeNormal)
 					Else
+						PrepareObjectSelection()
 						For i=0 To FloodedElementCount-1
 							thisx=FloodedStackX(i)
 							thisy=FloodedStackY(i)
@@ -5045,13 +5047,12 @@ Function EditorLocalControls()
 						ElseIf EditorMode=3
 							PrepareObjectSelection()
 							If BrushMode=BrushModeNormal
-								GrabObject(BrushCursorX,BrushCursorY)
+								GrabObject(BrushCursorX,BrushCursorY,ShiftDown())
 							Else
 								For i=0 To FloodedElementCount-1
 									thisx=FloodedStackX(i)
 									thisy=FloodedStackY(i)
-									GrabObject(thisx,thisy)
-									;xzx
+									GrabObject(thisx,thisy,True)
 								Next
 							EndIf
 						EndIf
@@ -10572,9 +10573,13 @@ Function TryGrabObjectLoop(x#,y#,Target)
 	Return False
 End Function
 
-Function GrabObject(x#,y#)
+Function GrabObject(x#,y#,SelectAllOnTile)
+
+	If LevelTileObjectCount(Floor(x#),Floor(y#))=0
+		Return
+	EndIf
 	
-	If ShiftDown()
+	If SelectAllOnTile
 		For i=0 To NofObjects-1
 			If ObjectIsAtFloat(LevelObjects(i),x#,y#)
 				SetCurrentGrabbedObject(i)
