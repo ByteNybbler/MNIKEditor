@@ -799,10 +799,51 @@ Global NofSelectedObjects=0
 Dim SelectedObjects(MaxNofObjects)
 Global CurrentGrabbedObjectModified=False
 
+Global SelectionMinTileX=101
+Global SelectionMinTileY=101
+Global SelectionMaxTileX=-1
+Global SelectionMaxTileY=-1
+
 Dim CurrentGrabbedObjectMarkers(MaxNofObjects)
 
 ; Whether objects are currently being dragged.
 Global ObjectDragging=False
+
+Function ResetSelectionSize()
+
+	SelectionMinTileX=101
+	SelectionMinTileY=101
+	SelectionMaxTileX=-1
+	SelectionMaxTileY=-1
+
+End Function
+
+Function UpdateSelectionSize(LevelObjectIndex)
+
+	Pos.GameObjectPosition=LevelObjects(LevelObjectIndex)\Position
+	If Pos\TileX<SelectionMinTileX
+		SelectionMinTileX=Pos\TileX
+	EndIf
+	If Pos\TileX>SelectionMaxTileX
+		SelectionMaxTileX=Pos\TileX
+	EndIf
+	If Pos\TileY<SelectionMinTileY
+		SelectionMinTileY=Pos\TileY
+	EndIf
+	If Pos\TileY>SelectionMaxTileY
+		SelectionMaxTileY=Pos\TileY
+	EndIf
+
+End Function
+
+Function RecalculateSelectionSize()
+
+	ResetSelectionSize()
+	For i=0 To NofSelectedObjects-1
+		UpdateSelectionSize(SelectedObjects(i))
+	Next
+
+End Function
 
 Function GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
 
@@ -835,6 +876,7 @@ Function ClearObjectSelection()
 	For i=0 To MaxNofObjects-1
 		HideSelectedObjectMarker(i)
 	Next
+	ResetSelectionSize()
 
 End Function
 
@@ -849,9 +891,10 @@ End Function
 Function AddSelectObjectInner(LevelObjectIndex)
 
 	SelectedObjects(NofSelectedObjects)=LevelObjectIndex
-	NofSelectedObjects=NofSelectedObjects+1
 	ReadObjectIntoCurrentObject(LevelObjectIndex)
 	ShowSelectedObjectMarker(LevelObjectIndex)
+	UpdateSelectionSize(LevelObjectIndex)
+	NofSelectedObjects=NofSelectedObjects+1
 	ObjectDragging=True
 
 End Function
@@ -883,6 +926,7 @@ Function ToggleSelectObject(LevelObjectIndex)
 	Else
 		RemoveSelectObjectInner(Index)
 		HideSelectedObjectMarker(LevelObjectIndex)
+		RecalculateSelectionSize()
 	EndIf
 
 End Function
@@ -5112,10 +5156,10 @@ Function EditorLocalControls()
 				DeleteKeyReleased=False
 				If BrushMode=BrushModeBlockPlacing
 					For i=cornleft To cornright
-							For j=cornup To corndown
-								DeleteObjectAt(i,j)
-							Next
+						For j=cornup To corndown
+							DeleteObjectAt(i,j)
 						Next
+					Next
 					
 					SetBrushMode(BrushModeBlock)
 				Else
@@ -5125,6 +5169,8 @@ Function EditorLocalControls()
 						DeleteObjectAt(thisx,thisy)
 					Next
 				EndIf
+				
+				RecalculateSelectionSize()
 			EndIf
 			
 			If ReturnKey=True And ReturnKeyReleased=True
@@ -5166,7 +5212,7 @@ Function EditorLocalControls()
 						SetBrushToCurrentObject()
 					Else
 						GenerateBrushPreview()
-					;	ShowMessage(NofBrushObjects+" objects found in brush.",1000)
+						;ShowMessage(NofBrushObjects+" objects found in brush.",1000)
 					EndIf
 				EndIf
 			EndIf
@@ -6210,6 +6256,7 @@ Function EditorLocalControls()
 				For i=0 To NofSelectedObjects-1
 					DeleteObject(SelectedObjects(i))
 				Next
+				RecalculateSelectionSize()
 				SetEditorMode(3)
 			EndIf
 		EndIf
@@ -6264,6 +6311,24 @@ Function EditorLocalControls()
 		EndIf
 		If KeyPressed(36) ; Ctrl+J
 			ToggleOutlineSoftMode()
+		EndIf
+		
+		If KeyPressed(46) ; Ctrl+C
+			; Copy all selected objects to custom brush.
+			If EditorMode=3 And NofSelectedObjects<>0
+				NofBrushObjects=NofSelectedObjects
+				BrushSpaceWidth=SelectionMaxTileX-SelectionMinTileX+1
+				BrushSpaceHeight=SelectionMaxTileY-SelectionMinTileY+1
+				BrushWidth=BrushSpaceWidth
+				BrushHeight=BrushSpaceHeight
+				For i=0 To NofSelectedObjects-1
+					LevelObject.GameObject=LevelObjects(SelectedObjects(i))
+					BrushSpaceX=LevelSpaceToBrushSpaceX(LevelObject\Position\TileX-SelectionMinTileX,BrushWrapRelative)
+					BrushSpaceY=LevelSpaceToBrushSpaceY(LevelObject\Position\TileY-SelectionMinTileY,BrushWrapRelative)
+					CopyObjectToBrush(LevelObject,i,BrushSpaceX,BrushSpaceY)
+				Next
+				BrushCursorStateWasChanged()
+			EndIf
 		EndIf
 	EndIf
 	
@@ -16629,24 +16694,26 @@ Function ReSizeLevel()
 			LevelObjects(i)\Position\X=LevelObjects(i)\Position\X+WidthLeftChange
 			ChangeObjectTileX(i,LevelObjects(i)\Position\TileX+WidthLeftChange) ; Also handles spellballs etc.
 			ResizeLevelFixObjectTargets(LevelObjects(i))
-			;If Floor(ObjectX(i))<0 Or Floor(ObjectX(i))>=LevelWidth
-			;	DeleteObject(i)
-			;Else
+			If Floor(LevelObjects(i)\Position\X)<0 Or Floor(LevelObjects(i)\Position\X)>100
+				DeleteObject(i)
+			Else
 				UpdateObjectPosition(i)
-			;EndIf
+			EndIf
 		Next
+		RecalculateSelectionSize()
 	EndIf
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
 			LevelObjects(i)\Position\Y=LevelObjects(i)\Position\Y+HeightTopChange
 			ChangeObjectTileY(i,LevelObjects(i)\Position\TileY+HeightTopChange)
 			ResizeLevelFixObjectTargets(LevelObjects(i))
-			;If Floor(ObjectY(i))<0 Or Floor(ObjectY(i))>=LevelHeight
-			;	DeleteObject(i)
-			;Else
+			If Floor(LevelObjects(i)\Position\Y)<0 Or Floor(LevelObjects(i)\Position\Y)>100
+				DeleteObject(i)
+			Else
 				UpdateObjectPosition(i)
-			;EndIf
+			EndIf
 		Next
+		RecalculateSelectionSize()
 	EndIf
 	
 	ResizeLevelFixObjectTargets(CurrentObject)
