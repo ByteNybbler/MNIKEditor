@@ -322,7 +322,7 @@ Global DidStepPerClick=False
 Global ShowObjectPositions=False ; this is the marker feature suggested by Samuel
 Global BorderExpandOption=0 ;0-current, 1-duplicate
 
-Global PreventPlacingObjectsOutsideLevel=False
+Global PreventPlacingObjectsOutsideLevel=True
 
 Function ToolbarPositionX(StepsFromToolbarLeft)
 	
@@ -9515,6 +9515,12 @@ Function IsPositionInLevel(x,y)
 
 End Function
 
+Function IsPositionInLevelArrayBounds(x,y)
+
+	Return x>=0 And y>=0 And x<=100 And y<=100
+
+End Function
+
 Function SetObjectPosition(i,x#,y#)
 
 	floorx=Floor(x)
@@ -9601,11 +9607,9 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 		Return
 	EndIf
 
-;	If PreventPlacingObjectsOutsideLevel
-;		If Not IsPositionInLevel(floorx,floory)
-;			Return False
-;		EndIf
-;	EndIf
+	If PreventPlacingObjectsOutsideLevel And (Not IsPositionInLevelArrayBounds(Floor(x#),Floor(y#)))
+		Return
+	EndIf
 	
 	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
 	SourcePosition.GameObjectPosition=SourceObject\Position
@@ -22974,7 +22978,7 @@ End Function
 Const OriginalMasterDat$="__master_ORIGINAL__.bak"
 Const Original1Wlv$="__1_ORIGINAL__.bak"
 
-; This is hacky, but it should work regardless of the player executable's version.
+; This is hacky, but it should work regardless of the modded executable's version.
 Function StartTestModeAt(level,x,y)
 
 	RestoreOriginalMaster()
@@ -22984,6 +22988,7 @@ Function StartTestModeAt(level,x,y)
 	DuplicateMaster("master",OriginalMasterDat$)
 	; Change adventure start coordinates to be far out-of-bounds.
 	; Using coordinates that are farther out than about -100 seems to cause MAVs in-game.
+	; Objects at negative coordinates like this DO NOT work in vanilla without MAVing!
 	AdventureStartX=-100
 	AdventureStartY=-50
 	; master.dat gets saved in StartTestMode, so we don't have to save it here.
