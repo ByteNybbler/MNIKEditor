@@ -832,6 +832,9 @@ Function ClearObjectSelection()
 
 	NofSelectedObjects=0
 	CurrentGrabbedObjectModified=False
+	For i=0 To MaxNofObjects-1
+		HideSelectedObjectMarker(i)
+	Next
 
 End Function
 
@@ -848,6 +851,7 @@ Function AddSelectObjectInner(LevelObjectIndex)
 	SelectedObjects(NofSelectedObjects)=LevelObjectIndex
 	NofSelectedObjects=NofSelectedObjects+1
 	ReadObjectIntoCurrentObject(LevelObjectIndex)
+	ShowSelectedObjectMarker(LevelObjectIndex)
 	ObjectDragging=True
 
 End Function
@@ -857,6 +861,7 @@ Function RemoveSelectObject(LevelObjectIndex)
 	Index=GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
 	If Index<>-1
 		RemoveSelectObjectInner(Index)
+		HideSelectedObjectMarker(LevelObjectIndex)
 	EndIf
 
 End Function
@@ -877,6 +882,7 @@ Function ToggleSelectObject(LevelObjectIndex)
 		AddSelectObjectInner(LevelObjectIndex)
 	Else
 		RemoveSelectObjectInner(Index)
+		HideSelectedObjectMarker(LevelObjectIndex)
 	EndIf
 
 End Function
@@ -3591,7 +3597,7 @@ Function SetEditorMode(NewMode)
 		SetBrushToCurrentObject()
 	EndIf
 	
-	UpdateCurrentGrabbedObjectMarkerVisibility()
+	UpdateAllSelectedObjectMarkersVisibility()
 	
 	; Edge case: the mouse will be hidden when typing in the editor's real-time textboxes. This line accounts for that.
 	ShowPointer()
@@ -5046,14 +5052,28 @@ Function EditorLocalControls()
 							GrabLevelTile(BrushCursorX,BrushCursorY)
 						ElseIf EditorMode=3
 							PrepareObjectSelection()
-							If BrushMode=BrushModeNormal
-								GrabObject(BrushCursorX,BrushCursorY,ShiftDown())
+							If KeyDown(41) ; tilde key
+								If LevelTileObjectCount(BrushCursorX,BrushCursorY)<>0
+									GrabObject(BrushCursorX,BrushCursorY,False)
+									TargetObject.GameObject=LevelObjects(SelectedObjects(NofSelectedObjects-1))
+									For i=0 To NofObjects-1
+										Obj.GameObject=LevelObjects(i)
+										Attributes.GameObjectAttributes=Obj\Attributes
+										If Attributes\LogicType=TargetObject\Attributes\LogicType And Attributes\ModelName=TargetObject\Attributes\ModelName
+											SetCurrentGrabbedObject(i)
+										EndIf
+									Next
+								EndIf
 							Else
-								For i=0 To FloodedElementCount-1
-									thisx=FloodedStackX(i)
-									thisy=FloodedStackY(i)
-									GrabObject(thisx,thisy,True)
-								Next
+								If BrushMode=BrushModeNormal
+									GrabObject(BrushCursorX,BrushCursorY,ShiftDown())
+								Else
+									For i=0 To FloodedElementCount-1
+										thisx=FloodedStackX(i)
+										thisy=FloodedStackY(i)
+										GrabObject(thisx,thisy,True)
+									Next
+								EndIf
 							EndIf
 						EndIf
 					EndIf
@@ -7212,26 +7232,35 @@ Function SetCurrentGrabbedObject(i)
 		AddSelectObject(i)
 	EndIf
 
-	;CurrentGrabbedObject=i
-	;CurrentGrabbedObjectModified=False
-	;CurrentDraggedObject=i
-	
-	UpdateCurrentGrabbedObjectMarkerVisibility()
+End Function
+
+Function ShowSelectedObjectMarker(i)
+
+	ShowEntity CurrentGrabbedObjectMarkers(i)
+	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarkers(i),LevelObjects(i),0.0)
 
 End Function
 
+Function HideSelectedObjectMarker(i)
 
-Function UpdateCurrentGrabbedObjectMarkerVisibility()
+	HideEntity CurrentGrabbedObjectMarkers(i)
+
+End Function
+
+Function UpdateSelectedObjectMarkerVisibility(i)
+	
+	If IsObjectSelected(i) And EditorMode=3
+		ShowSelectedObjectMarker(i)
+	Else
+		HideSelectedObjectMarker(i)
+	EndIf
+	
+End Function
+
+Function UpdateAllSelectedObjectMarkersVisibility()
 
 	For i=0 To MaxNofObjects-1
-		CurrentGrabbedObjectMarker=CurrentGrabbedObjectMarkers(i)
-		
-		If IsObjectSelected(i) And EditorMode=3
-			ShowEntity CurrentGrabbedObjectMarker
-			SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarker,LevelObjects(i),0.0)
-		Else
-			HideEntity CurrentGrabbedObjectMarker
-		EndIf
+		UpdateSelectedObjectMarkerVisibility(i)
 	Next
 
 End Function
@@ -7283,7 +7312,7 @@ End Function
 
 Function FindAndReplaceKeyDown()
 
-	Return KeyDown(41) ; tilde
+	Return KeyDown(41) ; tilde key
 
 End Function
 
