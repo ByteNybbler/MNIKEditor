@@ -796,6 +796,7 @@ Next
 Global NofSelectedObjects=0
 Dim SelectedObjects(MaxNofObjects)
 Global CurrentGrabbedObjectModified=False
+Global PreviousSelectedObject=-1
 Global NewSelectedObjectCount=0
 
 Global SelectionMinTileX=101
@@ -893,6 +894,7 @@ Function AddSelectObjectInner(LevelObjectIndex)
 	ReadObjectIntoCurrentObject(LevelObjects(LevelObjectIndex))
 	ShowSelectedObjectMarker(LevelObjectIndex)
 	UpdateSelectionSize(LevelObjectIndex)
+	PreviousSelectedObject=LevelObjectIndex
 	NofSelectedObjects=NofSelectedObjects+1
 	NewSelectedObjectCount=NewSelectedObjectCount+1
 	ObjectDragging=True
@@ -6321,21 +6323,7 @@ Function EditorLocalControls()
 		EndIf
 		
 		If KeyPressed(46) ; Ctrl+C
-			; Copy all selected objects to custom brush.
-			If EditorMode=3 And NofSelectedObjects<>0
-				NofBrushObjects=NofSelectedObjects
-				BrushSpaceWidth=SelectionMaxTileX-SelectionMinTileX+1
-				BrushSpaceHeight=SelectionMaxTileY-SelectionMinTileY+1
-				BrushWidth=BrushSpaceWidth
-				BrushHeight=BrushSpaceHeight
-				For i=0 To NofSelectedObjects-1
-					LevelObject.GameObject=LevelObjects(SelectedObjects(i))
-					BrushSpaceX=LevelSpaceToBrushSpaceX(LevelObject\Position\TileX-SelectionMinTileX,BrushWrapRelative)
-					BrushSpaceY=LevelSpaceToBrushSpaceY(LevelObject\Position\TileY-SelectionMinTileY,BrushWrapRelative)
-					CopyObjectToBrush(LevelObject,i,BrushSpaceX,BrushSpaceY)
-				Next
-				BrushCursorStateWasChanged()
-			EndIf
+			CopySelectedObjectsToBrush()
 		EndIf
 	EndIf
 	
@@ -10675,24 +10663,16 @@ Function GrabObject(x#,y#,SelectAllOnTile)
 				AddOrToggleSelectObject(i)
 			EndIf
 		Next
-	Else If NofSelectedObjects<2
-		If NofSelectedObjects=0
-			CurrentGrabbedObject=-1
-		Else
-			CurrentGrabbedObject=SelectedObjects(0)
-		EndIf
-		
-		Flag=TryGrabObjectLoop(x#,y#,CurrentGrabbedObject)
+	Else
+		Flag=TryGrabObjectLoop(x#,y#,PreviousSelectedObject)
 		If Flag=False
 			; restart the cycle
 			Flag=TryGrabObjectLoop(x#,y#,-1)
+;			If Flag=False
+;				; no object found
+;				Return
+;			EndIf
 		EndIf
-;		If Flag=False
-;			; no object found
-;			Return
-;		EndIf
-	Else
-		TryGrabObjectLoop(x#,y#,-1)
 	EndIf
 
 End Function
@@ -11068,6 +11048,26 @@ Function CopyObjectToBrush(Source.GameObject,Dest,XOffset,YOffset)
 	CopyObjectPosition(Source\Position,BrushObjects(Dest)\Position)
 	CopyObjectModel(Source\Model,BrushObjects(Dest)\Model)
 	HideObjectModel(BrushObjects(Dest)\Model)
+
+End Function
+
+
+Function CopySelectedObjectsToBrush()
+
+	If EditorMode=3 And NofSelectedObjects<>0
+		NofBrushObjects=NofSelectedObjects
+		BrushSpaceWidth=SelectionMaxTileX-SelectionMinTileX+1
+		BrushSpaceHeight=SelectionMaxTileY-SelectionMinTileY+1
+		BrushWidth=BrushSpaceWidth
+		BrushHeight=BrushSpaceHeight
+		For i=0 To NofSelectedObjects-1
+			LevelObject.GameObject=LevelObjects(SelectedObjects(i))
+			BrushSpaceX=LevelSpaceToBrushSpaceX(LevelObject\Position\TileX-SelectionMinTileX,BrushWrapRelative)
+			BrushSpaceY=LevelSpaceToBrushSpaceY(LevelObject\Position\TileY-SelectionMinTileY,BrushWrapRelative)
+			CopyObjectToBrush(LevelObject,i,BrushSpaceX,BrushSpaceY)
+		Next
+		BrushCursorStateWasChanged()
+	EndIf
 
 End Function
 
