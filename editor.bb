@@ -911,10 +911,10 @@ End Function
 
 Function RemoveSelectObjectInner(Index)
 	
-	For i=Index To NofLevelObjects-2
+	For i=Index To NofSelectedObjects-2
 		SelectedObjects(i)=SelectedObjects(i+1)
 	Next
-	NofLevelObjects=NofLevelObjects-1
+	NofSelectedObjects=NofSelectedObjects-1
 	
 End Function
 
@@ -6258,9 +6258,11 @@ Function EditorLocalControls()
 		If my<SidebarY+455
 			If DeleteKey=True And DeleteKeyReleased=True And NofSelectedObjects<>0
 				DeleteKeyReleased=False
-				For i=0 To NofSelectedObjects-1
-					DeleteObject(SelectedObjects(i))
-				Next
+				
+				While NofSelectedObjects<>0
+					DeleteObject(SelectedObjects(0))
+				Wend
+				
 				RecalculateSelectionSize()
 				SetEditorMode(3)
 			EndIf
@@ -10889,6 +10891,15 @@ Function DeleteObject(i)
 
 	FreeObject(i)
 	
+	If IsObjectSelected(i)
+		RemoveSelectObject(i)
+	EndIf
+	For j=0 To NofSelectedObjects-1
+		If i<SelectedObjects(j)
+			SelectedObjects(j)=SelectedObjects(j)-1
+		EndIf
+	Next
+	
 	;ShowMessage("Moving object data...", 100)
 
 	For j=i+1 To NofObjects-1
@@ -10896,16 +10907,6 @@ Function DeleteObject(i)
 	Next
 
 	;ShowMessage("Setting current grabbed object...", 100)
-	
-	If IsObjectSelected(i)
-		RemoveSelectObject(i)
-	Else
-		For j=i To NofSelectedObjects-1
-			If i<SelectedObjects(j)
-				SelectedObjects(j)=SelectedObjects(j)-1
-			EndIf
-		Next
-	EndIf
 	
 	NofObjects=NofObjects-1
 	

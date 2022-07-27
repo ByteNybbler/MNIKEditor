@@ -38,7 +38,7 @@
 * Ctrl + Shift + right click: Add all objects from the tile at the center of the cursor to the current selection.
 * Tilde + right click: Select all objects that have the same Type and ModelName as the clicked object.
 * Middle click: Generate adjuster settings for a LevelExit leading to the current level at the cursor's current coordinates. It will also automatically attempt to infer the player's facing direction based on whether it finds an existing LevelExit on an adjacent tile. If a LevelExit wop is already in use, only the relevant adjuster settings will be changed. The only times a LevelExit will not be generated is when the current object is a magic shooter, meteor shooter, or an object that performs any of CMD 7, CMD 11, or CMD 61 (including the NPC move command). In these cases, middle-clicking will simply set the destination of the current object. This makes it easy to do things like chain together a long series of movement commands.
-* Delete: Delete all objects covered by the cursor brush. If the mouse is hovering over the OBJECTS menu, this will only delete the currently-grabbed object. This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one. Pressing Delete while creating a block in block mode will delete all objects in the selected region. Pressing Delete in fill mode will delete all objects in the selected tile region.
+* Delete: Delete all objects covered by the cursor. Pressing Delete while creating a block in block mode will delete all objects in the selected region. Pressing Delete in any fill mode will delete all objects in the selected tile region.
 * Enter: Copy all objects or tiles that are being hovered over by the brush, depending on whether the editor is in object mode or tile mode. This lets you paste those objects or tiles anywhere else. Try it out with a large brush size!
 * R: Update the currently-grabbed object. This does the same thing as pressing the Update button.
 * Tab: Switch between object mode and tile mode.
@@ -83,6 +83,7 @@
 
 * Enter: Toggle the randomized state of the object adjuster being hovered over with the mouse. Any objects placed will choose a random value from the range that you define.
 * Scroll the mouse wheel: Scroll through objects and object categories.
+* Delete while hovering mouse over OBJECTS menu: Delete the currently-selected object(s). This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one.
 * Ctrl+Click on "Object": Enter an object name or a few characters of an object name to instantly jump to that object. All object categories will be searched.
 * Ctrl+Click on "Category": Enter a category name or a few characters of a category name to instantly jump to that object category.
 * Tilde+Click: Find and replace a specific value of the chosen adjuster for all objects in the wlv. Only works on text-based adjusters.
