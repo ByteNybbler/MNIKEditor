@@ -16063,7 +16063,8 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	Else If Obj\Attributes\ModelName$="!Retrocoily"
 		Obj\Model\Entity=CopyEntity(RetroCoilyMesh)
 		
-	Else If Obj\Attributes\ModelName$="!Obj\Attributes\YawAdjusttObjectModel=CopyEntity(RetroScougeMesh)
+	Else If Obj\Attributes\ModelName$="!Retroscouge"
+		Obj\Model\Entity=CopyEntity(RetroScougeMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 	
 	Else If Obj\Attributes\ModelName$="!Retrozbot"
