@@ -1044,6 +1044,9 @@ Function AdjustObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,S
 		EndIf
 	Else
 		CurrentValue=AdjustInt(ObjectAdjuster\Name$+": ", CurrentValue, SlowInt, FastInt, DelayTime)
+		If UsedRawInput
+			ObjectAdjuster\Absolute=True
+		EndIf
 	EndIf
 	If ReturnPressed()
 		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
@@ -1065,6 +1068,9 @@ Function AdjustObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat,CurrentVa
 		EndIf
 	Else
 		CurrentValue#=AdjustFloat#(ObjectAdjuster\Name$+": ", CurrentValue, SlowFloat#, FastFloat#, DelayTime)
+		If UsedRawInput
+			ObjectAdjuster\Absolute=True
+		EndIf
 	EndIf
 	If ReturnPressed()
 		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
@@ -13997,6 +14003,7 @@ Function InputFloat#(title$)
 End Function
 
 Global SomethingWasAdjusted=False
+Global UsedRawInput=False
 
 Function WasAdjusted()
 
@@ -14009,6 +14016,7 @@ End Function
 Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 
 	SomethingWasAdjusted=False
+	UsedRawInput=False
 
 	Fast=False
 	If ShiftDown() Then Fast=True
@@ -14021,6 +14029,7 @@ Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 	If LeftMouse=True
 		If RawInput=True
 			SomethingWasAdjusted=True
+			UsedRawInput=True
 			Return InputInt(ValueName$)
 		ElseIf MouseDebounceFinished()
 			SomethingWasAdjusted=True
@@ -14061,6 +14070,7 @@ End Function
 Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#, FastSpeed#, DelayTime)
 
 	SomethingWasAdjusted=False
+	UsedRawInput=False
 
 	Fast=False
 	If ShiftDown() Then Fast=True
@@ -14073,6 +14083,7 @@ Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#
 	If LeftMouse=True
 		If RawInput=True
 			SomethingWasAdjusted=True
+			UsedRawInput=True
 			Return InputFloat#(ValueName$)
 		ElseIf MouseDebounceFinished()
 			SomethingWasAdjusted=True
@@ -14096,6 +14107,7 @@ End Function
 Function InputTextureName(Prompt$)
 
 	CurrentObject\Attributes\TexName$=InputString$(Prompt$)
+	ObjectAdjusterTextureName\Absolute=True
 	If Left$(CurrentObject\Attributes\TexName$,1)="/"
 		CurrentObject\Attributes\TexName$="userdata/custom/models/"+Right$(CurrentObject\Attributes\TexName$,Len(CurrentObject\Attributes\TexName$)-1)
 	Else
@@ -14108,6 +14120,7 @@ End Function
 Function InputModelName(Prompt$)
 
 	CurrentObject\Attributes\ModelName$=InputString$(Prompt$)
+	ObjectAdjusterModelName\Absolute=True
 	If CurrentObject\Attributes\ModelName$="!CustomModel"
 		CurrentObjectTextData0=InputString$("Enter custom model name (e.g. Default): ")
 	ElseIf Left$(CurrentObject\Attributes\ModelName$,1)="/" Or Left$(CurrentObject\Attributes\ModelName$,1)="?"
@@ -14184,7 +14197,8 @@ Function AdjustObjectAdjuster(i)
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObject\Attributes\TextData0
-					CurrentObjectTextData0=InputString$("Replacement TextData0: ")
+					CurrentObject\Attributes\TextData0$=InputString$("Replacement TextData0: ")
+					ObjectAdjusterTextData0\Absolute=True
 					For j=0 To NofObjects-1
 						LevelObject.GameObject=LevelObjects(j)
 						If LevelObject\Attributes\TextData0$=Target$
@@ -14195,6 +14209,7 @@ Function AdjustObjectAdjuster(i)
 				EndIf
 			Else
 				CurrentObject\Attributes\TextData0=InputString$("TextData0: ")
+				ObjectAdjusterTextData0\Absolute=True
 			EndIf
 		EndIf
 	Case "TextData1"
@@ -14202,7 +14217,8 @@ Function AdjustObjectAdjuster(i)
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObject\Attributes\TextData1$
-					CurrentObjectTextData1$=InputString$("Replacement TextData1: ")
+					CurrentObject\Attributes\TextData1$=InputString$("Replacement TextData1: ")
+					ObjectAdjusterTextData1\Absolute=True
 					For j=0 To NofObjects-1
 						LevelObject.GameObject=LevelObjects(j)
 						If LevelObject\Attributes\TextData1$=Target$
@@ -14213,6 +14229,7 @@ Function AdjustObjectAdjuster(i)
 				EndIf
 			Else
 				CurrentObject\Attributes\TextData1$=InputString$("TextData1: ")
+				ObjectAdjusterTextData1\Absolute=True
 			EndIf
 		EndIf
 	Case "TextureName"
