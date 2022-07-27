@@ -5121,7 +5121,7 @@ Function EditorLocalControls()
 									Next
 								EndIf
 							EndIf
-							If AreAllObjectAdjustersAbsolute()
+							If NewSelectedObjectCount<>0 And AreAllObjectAdjustersAbsolute()
 								SetBrushToCurrentObject()
 							EndIf
 						EndIf
@@ -6504,7 +6504,6 @@ Function EditorLocalControls()
 				If SubstringMatchesAnywhere(Query$,ObjectPresetCategoryName$(i))
 					CurrentObjectPresetCategory=i
 					
-					ClearObjectSelection()
 					CurrentObjectPresetObject=0
 					i=CurrentObjectPresetCategory
 					
@@ -6519,7 +6518,6 @@ Function EditorLocalControls()
 		EndIf
 	
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-			ClearObjectSelection()
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory-1
 			If CurrentObjectPresetCategory=-1 Then CurrentObjectPresetCategory=NofObjectPresetCategories-1
 			RightMouseReleased=False
@@ -6538,7 +6536,6 @@ Function EditorLocalControls()
 		EndIf
 
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
-			ClearObjectSelection()
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory+1
 			If CurrentObjectPresetCategory=NofObjectPresetCategories Then CurrentObjectPresetCategory=0
 			LeftMouseReleased=False
@@ -6604,7 +6601,6 @@ Function EditorLocalControls()
 		EndIf	
 
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
-			ClearObjectSelection()
 			CurrentObjectPresetObject=CurrentObjectPresetObject-1
 			If CurrentObjectPresetObject=-1 Then CurrentObjectPresetObject=NofObjectPresetObjects-1
 			RightMouseReleased=False
@@ -6614,7 +6610,6 @@ Function EditorLocalControls()
 		EndIf
 
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
-			ClearObjectSelection()
 			CurrentObjectPresetObject=CurrentObjectPresetObject+1
 			If CurrentObjectPresetObject=NofObjectPresetObjects Then CurrentObjectPresetObject=0
 			LeftMouseReleased=False
@@ -9464,7 +9459,8 @@ Function LoadObjectPreset()
 	
 	
 	BuildCurrentObjectModel()
-	SetBrushToCurrentObject()
+	;SetBrushToCurrentObject()
+	CurrentObjectWasChanged()
 
 End Function
 
@@ -14075,7 +14071,10 @@ End Function
 Function CurrentObjectWasChanged()
 
 	CurrentGrabbedObjectModified=True
-	SetBrushToCurrentObject()
+	
+	If AreAllObjectAdjustersAbsolute()
+		SetBrushToCurrentObject()
+	EndIf
 
 End Function
 
