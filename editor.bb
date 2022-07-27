@@ -5111,8 +5111,8 @@ Function EditorLocalControls()
 									Next
 								EndIf
 							Else
-								If BrushMode=BrushModeNormal
-									GrabObject(BrushCursorX,BrushCursorY,ShiftDown())
+								If BrushMode=BrushModeNormal And (Not ShiftDown())
+									GrabObject(BrushCursorX,BrushCursorY,False)
 								Else
 									For i=0 To FloodedElementCount-1
 										thisx=FloodedStackX(i)
