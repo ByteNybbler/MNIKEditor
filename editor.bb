@@ -370,6 +370,12 @@ Const BrushModeSetMirror=-3
 Const MaxBrushMode=9
 Global BrushMode=BrushModeNormal
 
+Const BlockPlacingModeNone=-1
+Const BlockPlacingModePlace=0
+Const BlockPlacingModeCopy=1
+Const BlockPlacingModeDelete=2
+Global BlockPlacingMode=BlockPlacingModeNone
+
 Const DupeModeNone=0
 Const DupeModeX=1
 Const DupeModeY=2
@@ -394,6 +400,19 @@ End Function
 
 Function IsBrushInOutlineMode()
 	Return BrushMode=BrushModeOutlineSoft Or BrushMode=BrushModeOutlineHard
+End Function
+
+Function StartBlockModeBlock(NewBlockPlacingMode)
+
+	BlockCornerX=BrushCursorX
+	BlockCornerY=BrushCursorY
+	cornleft=BlockCornerX
+	cornright=BlockCornerX
+	cornup=BlockCornerY
+	corndown=BlockCornerY
+	SetBrushMode(BrushModeBlockPlacing)
+	BlockPlacingMode=NewBlockPlacingMode
+
 End Function
 
 Global PlacementDensity#=1.0
@@ -4063,6 +4082,7 @@ Function SetBrushMode(NewBrushMode)
 
 	FloodedElementsClear()
 	BrushMode=NewBrushMode
+	BlockPlacingMode=BlockPlacingModeNone
 	BrushCursorStateWasChanged()
 	
 End Function
@@ -5019,6 +5039,24 @@ Function EditorLocalControls()
 				Text LevelViewportWidth/2-4.5*8,LevelViewportHeight,"X:"+Str$(BrushCursorX)+", Y:"+Str$(BrushCursorY)
 				
 				If LeftMouse=False
+					If BlockPlacingMode=BlockPlacingModePlace
+						If EditorMode=0
+							For i=cornleft To cornright
+								For j=cornup To corndown
+									ChangeLevelTile(i,j,True)
+								Next
+							Next
+						ElseIf EditorMode=3
+							PrepareObjectSelection()
+							For i=cornleft To cornright
+								For j=cornup To corndown
+									PlaceObject(i,j)
+								Next
+							Next
+						EndIf
+						SetBrushMode(BrushModeBlock)
+					EndIf
+				
 					OnceTilePlacement=True
 					DidStepPerClick=False
 				ElseIf DidStepPerClick=False
@@ -5038,33 +5076,8 @@ Function EditorLocalControls()
 					EndIf
 				
 					If BrushMode=BrushModeBlock
-						; place one corner of block
 						LeftMouseReleased=False
-						BlockCornerX=BrushCursorX
-						BlockCornerY=BrushCursorY
-						cornleft=BlockCornerX
-						cornright=BlockCornerX
-						cornup=BlockCornerY
-						corndown=BlockCornerY
-						SetBrushMode(BrushModeBlockPlacing)
-					Else If BrushMode=BrushModeBlockPlacing
-						; fill block
-						LeftMouseReleased=False
-						If EditorMode=0
-							For i=cornleft To cornright
-								For j=cornup To corndown
-									ChangeLevelTile(i,j,True)
-								Next
-							Next
-						ElseIf EditorMode=3
-							PrepareObjectSelection()
-							For i=cornleft To cornright
-								For j=cornup To corndown
-									PlaceObject(i,j)
-								Next
-							Next
-						EndIf
-						SetBrushMode(BrushModeBlock)
+						StartBlockModeBlock(BlockPlacingModePlace)
 					ElseIf BrushMode=BrushModeTestLevel
 						If AskToSaveLevelAndExit()
 							; Just in case the user is cheeky and decides to use Test Level At Brush in a brand new wlv.
@@ -5093,48 +5106,48 @@ Function EditorLocalControls()
 						BrushCursorProbablyModifiedTiles()
 					EndIf
 				EndIf
-				If RightMouse=True And RightMouseReleased=True
-					RightMouseReleased=False
-					
-					If BrushMode=BrushModeBlockPlacing
-						SetBrushMode(BrushModeBlock)
-					Else
+				If RightMouse=True
+					If RightMouseReleased=True
+						RightMouseReleased=False
+						
 						If EditorMode=0
 							GrabLevelTile(BrushCursorX,BrushCursorY)
 						ElseIf EditorMode=3
-							PrepareObjectSelection()
-							If KeyDown(41) ; tilde key
-								If LevelTileObjectCount(BrushCursorX,BrushCursorY)<>0
-									GrabObject(BrushCursorX,BrushCursorY,False)
-									TargetObject.GameObject=LevelObjects(SelectedObjects(NofSelectedObjects-1))
-									For i=0 To NofObjects-1
-										Obj.GameObject=LevelObjects(i)
-										Attributes.GameObjectAttributes=Obj\Attributes
-										If Attributes\LogicType=TargetObject\Attributes\LogicType And Attributes\ModelName=TargetObject\Attributes\ModelName
-											AddOrToggleSelectObject(i)
-										EndIf
-									Next
-								EndIf
-							Else
-								If BrushMode=BrushModeNormal And (Not ShiftDown())
-									GrabObject(BrushCursorX,BrushCursorY,False)
+							If BrushMode=BrushModeBlock
+								PrepareObjectSelection()
+								StartBlockModeBlock(BlockPlacingModeCopy)
+							ElseIf BrushMode<>BrushModeBlockPlacing
+								PrepareObjectSelection()
+								If KeyDown(41) ; tilde key
+									If LevelTileObjectCount(BrushCursorX,BrushCursorY)<>0
+										GrabObject(BrushCursorX,BrushCursorY,False)
+										TargetObject.GameObject=LevelObjects(SelectedObjects(NofSelectedObjects-1))
+										For i=0 To NofObjects-1
+											Obj.GameObject=LevelObjects(i)
+											Attributes.GameObjectAttributes=Obj\Attributes
+											If Attributes\LogicType=TargetObject\Attributes\LogicType And Attributes\ModelName=TargetObject\Attributes\ModelName
+												AddOrToggleSelectObject(i)
+											EndIf
+										Next
+									EndIf
 								Else
-									For i=0 To FloodedElementCount-1
-										thisx=FloodedStackX(i)
-										thisy=FloodedStackY(i)
-										GrabObject(thisx,thisy,True)
-									Next
+									If BrushMode=BrushModeNormal And (Not ShiftDown())
+										GrabObject(BrushCursorX,BrushCursorY,False)
+									Else
+										For i=0 To FloodedElementCount-1
+											thisx=FloodedStackX(i)
+											thisy=FloodedStackY(i)
+											GrabObject(thisx,thisy,True)
+										Next
+									EndIf
 								EndIf
-							EndIf
-							If NewSelectedObjectCount<>0 And AreAllObjectAdjustersAbsolute()
-								SetBrushToCurrentObject()
+								If NewSelectedObjectCount<>0 And AreAllObjectAdjustersAbsolute()
+									SetBrushToCurrentObject()
+								EndIf
 							EndIf
 						EndIf
-					EndIf
-				EndIf
-				If EditorMode=3
-					; object dragging
-					If RightMouse
+					ElseIf EditorMode=3
+						; object dragging
 						If NofSelectedObjects<>0 And ObjectDragging=True
 							For i=0 To NofSelectedObjects-1
 								CurrentDraggedObject=SelectedObjects(i)
@@ -5149,9 +5162,18 @@ Function EditorLocalControls()
 								EndIf
 							Next
 						EndIf
-					Else
-						ObjectDragging=False
 					EndIf
+				Else
+					If BlockPlacingMode=BlockPlacingModeCopy
+						For i=0 To FloodedElementCount-1
+							thisx=FloodedStackX(i)
+							thisy=FloodedStackY(i)
+							GrabObject(thisx,thisy,True)
+						Next
+						SetBrushMode(BrushModeBlock)
+					EndIf
+					
+					ObjectDragging=False
 				EndIf
 				
 				If MouseDown(3) ; middle click / ; middle mouse
@@ -5162,25 +5184,30 @@ Function EditorLocalControls()
 				BrushCursorOffMap()
 			EndIf
 	
-			If DeleteKey=True And DeleteKeyReleased=True
-				DeleteKeyReleased=False
-				If BrushMode=BrushModeBlockPlacing
+			If DeleteKey=True
+				If DeleteKeyReleased=True
+					DeleteKeyReleased=False
+					If BrushMode=BrushModeBlock
+						StartBlockModeBlock(BlockPlacingModeDelete)
+					ElseIf BrushMode<>BrushModeBlockPlacing
+						For i=0 To FloodedElementCount-1
+							thisx=FloodedStackX(i)
+							thisy=FloodedStackY(i)
+							DeleteObjectAt(thisx,thisy)
+						Next
+					EndIf
+					
+					RecalculateSelectionSize()
+				EndIf
+			Else
+				If BlockPlacingMode=BlockPlacingModeDelete
 					For i=cornleft To cornright
 						For j=cornup To corndown
 							DeleteObjectAt(i,j)
 						Next
 					Next
-					
 					SetBrushMode(BrushModeBlock)
-				Else
-					For i=0 To FloodedElementCount-1
-						thisx=FloodedStackX(i)
-						thisy=FloodedStackY(i)
-						DeleteObjectAt(thisx,thisy)
-					Next
 				EndIf
-				
-				RecalculateSelectionSize()
 			EndIf
 			
 			If ReturnKey=True And ReturnKeyReleased=True
