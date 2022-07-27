@@ -1272,12 +1272,14 @@ Global ObjectAdjusterModelName.ObjectAdjusterString=NewObjectAdjusterString("Mod
 Global ObjectAdjusterTextData0.ObjectAdjusterString=NewObjectAdjusterString("TextData0")
 Global ObjectAdjusterTextData1.ObjectAdjusterString=NewObjectAdjusterString("TextData1")
 
-Dim CurrentObjectTargetID(3)
-Global CurrentObjectTargetIDCount=0
+Const CurrentObjectTargetIDCount=4
+Dim CurrentObjectTargetID(CurrentObjectTargetIDCount-1)
+Dim CurrentObjectTargetIDEnabled(CurrentObjectTargetIDCount-1)
 
 Const PlayerActivateId=-2
-Dim CurrentObjectActivateId(2)
-Global CurrentObjectActivateIdCount=0
+Const CurrentObjectActivateIdCount=3
+Dim CurrentObjectActivateId(CurrentObjectActivateIdCount-1)
+Dim CurrentObjectActivateIdEnabled(CurrentObjectActivateIdCount-1)
 
 Global IDFilterEnabled=False
 Global IDFilterInverted=False
@@ -3293,7 +3295,7 @@ Function EditorMainLoop()
 			
 			HitTargetID=False
 			For j=0 To CurrentObjectTargetIDCount-1
-				If MyEffectiveId=CurrentObjectTargetID(j)
+				If CurrentObjectTargetIDEnabled(j) And MyEffectiveId=CurrentObjectTargetID(j)
 					HitTargetID=True
 				
 					CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
@@ -3310,7 +3312,7 @@ Function EditorMainLoop()
 			
 			If Not HitTargetID
 				For j=0 To CurrentObjectActivateIDCount-1
-					If MyEffectiveId=CurrentObjectActivateID(j) And CurrentObjectActivateID(j)>0
+					If CurrentObjectActivateIDEnabled(j) And MyEffectiveId=CurrentObjectActivateID(j) And CurrentObjectActivateID(j)>0
 						HitTargetID=True
 					
 						CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
@@ -11631,14 +11633,30 @@ Function AdjusterAppearsInWop(adjuster$)
 End Function
 
 
-Function TooltipTargetsEffectiveID(StartX,StartY,EffectiveID)
+Function TooltipTargetsEffectiveID(StartX,StartY,Index)
+
+	If CurrentObjectTargetIDEnabled(Index)
+		TooltipTargetsEffectiveIDInner(StartX,StartY,CurrentObjectTargetID(Index))
+	EndIf
+
+End Function
+
+Function TooltipTargetsEffectiveIDInner(StartX,StartY,EffectiveID)
 
 	Count=CountObjectEffectiveIDs(EffectiveID)
 	ShowTooltipRightAligned(StartX,StartY,"Targets effective ID "+EffectiveID+", which matches "+Count+" "+MaybePluralize$("object",Count)+" in this level.")
 
 End Function
 
-Function TooltipHasActivateID(StartX,StartY,ActivateID)
+Function TooltipHasActivateID(StartX,StartY,Index)
+
+	If CurrentObjectActivateIDEnabled(Index)
+		TooltipHasActivateIDInner(StartX,StartY,CurrentObjectActivateID(Index))
+	EndIf
+
+End Function
+
+Function TooltipHasActivateIDInner(StartX,StartY,ActivateID)
 
 	If ActivateID>0
 		Count=CountObjectEffectiveIDs(ActivateID)
@@ -11663,33 +11681,31 @@ Function HoverOverObjectAdjuster(i)
 	Case "Data0"
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; ColorX2Y or Rotator or ???
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
 		EndIf
 		
 	Case "Data1"
-		If CurrentObjectTargetIDCount<>0
-			If CurrentObject\Attributes\LogicType=90
-				If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
-					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(1))
-				ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 Or (CurrentObject\Attributes\LogicSubType Mod 32)=15 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; NPC Modifier, General Command, or Rotator
-					TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
-				EndIf
+		If CurrentObject\Attributes\LogicType=90
+			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,1)
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 Or (CurrentObject\Attributes\LogicSubType Mod 32)=15 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; NPC Modifier, General Command, or Rotator
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
 		EndIf
 	
 	Case "Data2"
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,2)
 			Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data2)))
 			EndIf
@@ -11697,14 +11713,14 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data3"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(3))
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,3)
 		ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
 			If CurrentObjectTargetIDCount<>0
-				TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute And ObjectAdjusterData3\Absolute
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)))
 			EndIf
@@ -11712,12 +11728,12 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data4"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(0))
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 		ElseIf IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data4)
+			TooltipHasActivateID(StartX,TooltipLeftY,0)
 		EndIf
 	
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data4)))
 			EndIf
@@ -11725,12 +11741,12 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data5"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(1))
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,1)
 		ElseIf IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data5)
+			TooltipHasActivateID(StartX,TooltipLeftY,1)
 		EndIf
 	
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute And ObjectAdjusterData5\Absolute
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)))
 			EndIf
@@ -11738,19 +11754,19 @@ Function HoverOverObjectAdjuster(i)
 		
 	Case "Data6"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(2))
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,2)
 		ElseIf IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data6)
+			TooltipHasActivateID(StartX,TooltipLeftY,2)
 		EndIf
 		
 	Case "Data7"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,CurrentObjectTargetID(3))
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,3)
 		EndIf
 		
 	Case "Data8"
-		If CurrentObject\Attributes\LogicType=90
-			TooltipHasActivateID(StartX,TooltipLeftY,CurrentObject\Attributes\Data8)
+		If CurrentObject\Attributes\LogicType=90 And ObjectAdjusterLogicType\Absolute
+			TooltipHasActivateID(StartX,TooltipLeftY,0)
 		EndIf
 	
 	Case "TileTypeCollision"
@@ -11780,25 +11796,35 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 		
 	Case "Type"
-		Count=CountObjectTypes(CurrentObject\Attributes\LogicType)
-		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this Type.")
+		If ObjectAdjusterLogicType\Absolute
+			Count=CountObjectTypes(CurrentObject\Attributes\LogicType)
+			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this Type.")
+		EndIf
 	
 	Case "SubType"
-		Count=CountObjectLogics(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this object logic.")
+		If ObjectAdjusterLogicType\Absolute And ObjectAdjusterLogicSubType\Absolute
+			Count=CountObjectLogics(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
+			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this object logic.")
+		EndIf
 		
 	Case "ModelName"
-		Count=CountObjectModelNames(CurrentObject\Attributes\ModelName$)
-		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this ModelName.")
+		If ObjectAdjusterModelName\Absolute
+			Count=CountObjectModelNames(CurrentObject\Attributes\ModelName$)
+			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this ModelName.")
+		EndIf
 	
 	Case "TextureName"
-		Count=CountObjectTextureNames(CurrentObject\Attributes\TexName$)
-		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this TextureName.")
+		If ObjectAdjusterTextureName\Absolute
+			Count=CountObjectTextureNames(CurrentObject\Attributes\TexName$)
+			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this TextureName.")
+		EndIf
 		
 	Case "ID"
-		EffectiveID=CalculateEffectiveID(CurrentObject\Attributes)
-		Count=CountObjectEffectiveIDs(EffectiveID)
-		ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this effective ID, which is "+EffectiveID+".")
+		If ObjectAdjusterID\Absolute
+			EffectiveID=CalculateEffectiveID(CurrentObject\Attributes)
+			Count=CountObjectEffectiveIDs(EffectiveID)
+			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this effective ID, which is "+EffectiveID+".")
+		EndIf
 		
 	End Select
 
@@ -16303,42 +16329,57 @@ Function ColorToID(Col,SubCol)
 End Function
 
 
-Function CalculateCurrentObjectTargetIDs()	
+Function CalculateCurrentObjectTargetIDs()
+
+	;CurrentObjectTargetIDCount=0
+	For i=0 To CurrentObjectTargetIDCount-1
+		CurrentObjectTargetIDEnabled(i)=False
+	Next
 	
-	If CurrentObject\Attributes\LogicType=90
-		If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
-			CurrentObjectTargetIDCount=4
-			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
-			CurrentObjectTargetID(1)=ColorToID(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data5)
-			CurrentObjectTargetID(2)=ColorToID(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data6)
-			CurrentObjectTargetID(3)=ColorToID(CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data7)
-		Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
-			CurrentObjectTargetIDCount=1
-			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
-		Else If (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; Rotator or ???
-			CurrentObjectTargetIDCount=1
-			CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
-		Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
-			CalculateCommandTargetIDs(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
-		Else If (CurrentObject\Attributes\LogicSubType Mod 32)=11 ; NPC Modifier
-			If CurrentObject\Attributes\Data0=2 ; NPC Exclamation
-				If CurrentObject\Attributes\Data1=-1 ; Ignore if targeting the player
-					CurrentObjectTargetIDCount=0
-				Else
-					CurrentObjectTargetIDCount=1
-					CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
+	If ObjectAdjusterLogicType\Absolute
+		If CurrentObject\Attributes\LogicType=90
+			If ObjectAdjusterLogicSubType\Absolute
+				If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
+					;CurrentObjectTargetIDCount=4
+					CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
+					CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData0\Absolute And ObjectAdjusterData4\Absolute
+					CurrentObjectTargetID(1)=ColorToID(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data5)
+					CurrentObjectTargetIDEnabled(1)=ObjectAdjusterData1\Absolute And ObjectAdjusterData5\Absolute
+					CurrentObjectTargetID(2)=ColorToID(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data6)
+					CurrentObjectTargetIDEnabled(2)=ObjectAdjusterData2\Absolute And ObjectAdjusterData6\Absolute
+					CurrentObjectTargetID(3)=ColorToID(CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data7)
+					CurrentObjectTargetIDEnabled(3)=ObjectAdjusterData3\Absolute And ObjectAdjusterData7\Absolute
+				Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
+					;CurrentObjectTargetIDCount=1
+					CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
+					CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData0\Absolute And ObjectAdjusterData2\Absolute
+				Else If (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; Rotator or ???
+					;CurrentObjectTargetIDCount=1
+					CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+					CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+				Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command 
+					CalculateCommandTargetIDs(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+					CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+				Else If (CurrentObject\Attributes\LogicSubType Mod 32)=11 ; NPC Modifier
+					If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+						If CurrentObject\Attributes\Data0=2 ; NPC Exclamation
+							If CurrentObject\Attributes\Data1<>-1 ; Ignore if targeting the player
+								;CurrentObjectTargetIDCount=1
+								CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
+								CurrentObjectTargetIDEnabled(0)=True
+							EndIf
+						Else
+							;CurrentObjectTargetIDCount=1
+							CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
+							CurrentObjectTargetIDEnabled(0)=True
+						EndIf
+					EndIf
 				EndIf
-			Else
-				CurrentObjectTargetIDCount=1
-				CurrentObjectTargetID(0)=CurrentObject\Attributes\Data1
 			EndIf
-		Else
-			CurrentObjectTargetIDCount=0
+		ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
+			CalculateCommandTargetIDs(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
+			CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData2\Absolute And ObjectAdjusterData3\Absolute
 		EndIf
-	ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
-		CalculateCommandTargetIDs(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
-	Else
-		CurrentObjectTargetIDCount=0
 	EndIf
 	
 End Function
@@ -16347,33 +16388,40 @@ Function CalculateCommandTargetIDs(Command,Data1)
 
 	Select Command
 	Case 1,2,3,4,5,16,51,52,61,62,63
-		CurrentObjectTargetIDCount=1
+		;CurrentObjectTargetIDCount=1
 		CurrentObjectTargetID(0)=Data1
 	Case 64
-		If Data1=-1 ; Ignore if targeting the player
-			CurrentObjectTargetIDCount=0
-		Else
-			CurrentObjectTargetIDCount=1
+		If Data1<>-1 ; Ignore if targeting the player
+			;CurrentObjectTargetIDCount=1
 			CurrentObjectTargetID(0)=Data1
 		EndIf
-	Default
-		CurrentObjectTargetIDCount=0
 	End Select
 
 End Function
 
 Function CalculateCurrentObjectActivateIDs()
+
+	;CurrentObjectActivateIdCount=0
+	For i=0 To CurrentObjectActivateIDCount-1
+		CurrentObjectActivateIDEnabled(i)=False
+	Next
 	
-	If CurrentObject\Attributes\LogicType=90 Or CurrentObject\Attributes\LogicType=210 ; button or transporter
-		CurrentObjectActivateIdCount=1
-		CurrentObjectActivateId(0)=CurrentObject\Attributes\Data8
-	ElseIf IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-		CurrentObjectActivateIdCount=3
-		CurrentObjectActivateId(0)=CurrentObject\Attributes\Data4
-		CurrentObjectActivateId(1)=CurrentObject\Attributes\Data5
-		CurrentObjectActivateId(2)=CurrentObject\Attributes\Data6
-	Else
-		CurrentObjectActivateIdCount=0
+	If ObjectAdjusterLogicType\Absolute
+		If CurrentObject\Attributes\LogicType=90 Or CurrentObject\Attributes\LogicType=210 ; button or transporter
+			;CurrentObjectActivateIdCount=1
+			CurrentObjectActivateId(0)=CurrentObject\Attributes\Data8
+			CurrentObjectActivateIdEnabled(0)=ObjectAdjusterData8\Absolute
+		ElseIf ObjectAdjusterLogicSubType\Absolute
+			If IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
+				;CurrentObjectActivateIdCount=3
+				CurrentObjectActivateId(0)=CurrentObject\Attributes\Data4
+				CurrentObjectActivateIdEnabled(0)=ObjectAdjusterData4\Absolute
+				CurrentObjectActivateId(1)=CurrentObject\Attributes\Data5
+				CurrentObjectActivateIdEnabled(1)=ObjectAdjusterData5\Absolute
+				CurrentObjectActivateId(2)=CurrentObject\Attributes\Data6
+				CurrentObjectActivateIdEnabled(2)=ObjectAdjusterData6\Absolute
+			EndIf
+		EndIf
 	EndIf
 	
 End Function
