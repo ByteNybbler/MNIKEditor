@@ -3335,7 +3335,8 @@ Function EditorMainLoop()
 						; display object IDs
 						StringOnObject$=CalculateEffectiveId(LevelObjects(i)\Attributes)
 					ElseIf ShowObjectMesh=ShowObjectMeshCount
-						StringOnObject$=LevelTileObjectCount(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
+						; display object counts
+						StringOnObject$="x"+LevelTileObjectCount(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
 					EndIf
 					OutlinedText(x#-4*Len(StringOnObject$),y#,StringOnObject$,255,255,255)
 				EndIf
@@ -4914,6 +4915,8 @@ Function EditorLocalRendering()
 	
 	If NofSelectedObjects=1
 		Text StartX+2,StartY,"#"+SelectedObjects(0)
+	ElseIf NofSelectedObjects>1
+		Text StartX+2,StartY,"x"+NofSelectedObjects
 	EndIf
 	
 	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
