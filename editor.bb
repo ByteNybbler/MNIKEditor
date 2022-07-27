@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/26/22"
+Global VersionDate$="07/27/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -775,10 +775,8 @@ Function NewGameObject.GameObject()
 End Function
 
 
-Global CurrentObject.GameObject=New GameObject
-CurrentObject\Model=New GameObjectModel
-CurrentObject\Attributes=New GameObjectAttributes
-CurrentObject\Position=New GameObjectPosition
+Global CurrentObject.GameObject=NewGameObject()
+Global TempObject.GameObject=NewGameObject()
 
 Dim LevelObjects.GameObject(MaxNofObjects)
 Dim BrushObjects.GameObject(MaxNofObjects)
@@ -798,6 +796,7 @@ Next
 Global NofSelectedObjects=0
 Dim SelectedObjects(MaxNofObjects)
 Global CurrentGrabbedObjectModified=False
+Global NewSelectedObjectCount=0
 
 Global SelectionMinTileX=101
 Global SelectionMinTileY=101
@@ -891,10 +890,11 @@ End Function
 Function AddSelectObjectInner(LevelObjectIndex)
 
 	SelectedObjects(NofSelectedObjects)=LevelObjectIndex
-	ReadObjectIntoCurrentObject(LevelObjectIndex)
+	ReadObjectIntoCurrentObject(LevelObjects(LevelObjectIndex))
 	ShowSelectedObjectMarker(LevelObjectIndex)
 	UpdateSelectionSize(LevelObjectIndex)
 	NofSelectedObjects=NofSelectedObjects+1
+	NewSelectedObjectCount=NewSelectedObjectCount+1
 	ObjectDragging=True
 
 End Function
@@ -936,6 +936,8 @@ Function PrepareObjectSelection()
 	If (Not CtrlDown())
 		ClearObjectSelection()
 	EndIf
+	
+	NewSelectedObjectCount=0
 
 End Function
 
@@ -5104,7 +5106,7 @@ Function EditorLocalControls()
 										Obj.GameObject=LevelObjects(i)
 										Attributes.GameObjectAttributes=Obj\Attributes
 										If Attributes\LogicType=TargetObject\Attributes\LogicType And Attributes\ModelName=TargetObject\Attributes\ModelName
-											SetCurrentGrabbedObject(i)
+											AddOrToggleSelectObject(i)
 										EndIf
 									Next
 								EndIf
@@ -5118,6 +5120,9 @@ Function EditorLocalControls()
 										GrabObject(thisx,thisy,True)
 									Next
 								EndIf
+							EndIf
+							If AreAllObjectAdjustersAbsolute()
+								SetBrushToCurrentObject()
 							EndIf
 						EndIf
 					EndIf
@@ -6507,7 +6512,6 @@ Function EditorLocalControls()
 					
 					SetEditorMode(3)
 					LoadObjectPreset()
-					BuildCurrentObjectModel()
 					
 					Exit
 				EndIf
@@ -6530,7 +6534,6 @@ Function EditorLocalControls()
 			Until NofObjectPresetObjects>0
 			SetEditorMode(3)
 			LoadObjectPreset()
-			BuildCurrentObjectModel()
 
 		EndIf
 
@@ -6550,7 +6553,6 @@ Function EditorLocalControls()
 			Until NofObjectPresetObjects>0
 			SetEditorMode(3)
 			LoadObjectPreset()
-			BuildCurrentObjectModel()
 
 		EndIf
 	EndIf
@@ -6575,7 +6577,6 @@ Function EditorLocalControls()
 						
 						SetEditorMode(3)
 						LoadObjectPreset()
-						BuildCurrentObjectModel()
 						
 						Return
 					EndIf
@@ -6591,7 +6592,6 @@ Function EditorLocalControls()
 						
 						SetEditorMode(3)
 						LoadObjectPreset()
-						BuildCurrentObjectModel()
 						
 						Return
 					EndIf
@@ -6601,7 +6601,6 @@ Function EditorLocalControls()
 			CurrentObjectPresetCategory=FormerCategory
 			ReadObjectPresetDirectory(CurrentObjectPresetCategory)
 			CurrentObjectPresetObject=FormerObject
-			;LoadObjectPreset()
 		EndIf	
 
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
@@ -6612,7 +6611,6 @@ Function EditorLocalControls()
 			
 			SetEditorMode(3)
 			LoadObjectPreset()
-			BuildCurrentObjectModel()
 		EndIf
 
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
@@ -6623,7 +6621,6 @@ Function EditorLocalControls()
 			
 			SetEditorMode(3)
 			LoadObjectPreset()
-			BuildCurrentObjectModel()
 		EndIf
 	EndIf
 
@@ -7289,7 +7286,7 @@ Function ReadObjectPresetDirectory(index)
 End Function
 
 
-Function SetCurrentGrabbedObject(i)
+Function AddOrToggleSelectObject(i)
 	
 	If CtrlDown() And (Not ShiftDown())
 		ToggleSelectObject(i)
@@ -9687,8 +9684,12 @@ Function PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
 
 	For k=0 To NofBrushObjects-1
 		If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
-			GrabObjectFromBrush(k)
-			PlaceThisObject(x,y,CurrentObject)
+			;GrabObjectFromBrush(k)
+			
+			;Obj.GameObject=BrushObjects(k)
+			
+			CopyObjectFromBrush(k,TempObject)
+			PlaceThisObject(x,y,TempObject)
 		EndIf
 	Next
 
@@ -9933,21 +9934,18 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	;	ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
 	;Next
 	
-	; this is only here because of randomized rotation
-	BuildCurrentObjectModel()
-	
 	
 	ThisObject=NofObjects
 	NofObjects=NofObjects+1
 	
 	
+	BuildLevelObjectModel(ThisObject)
+	
+	
 	CreateObjectPositionMarker(ThisObject)
 	
 	
-	UpdateObjectEntityToCurrent(ThisObject)
-	
-	
-	SetCurrentGrabbedObject(ThisObject)
+	AddOrToggleSelectObject(ThisObject)
 	
 	
 	SomeObjectWasChanged()
@@ -10660,7 +10658,7 @@ End Function
 Function TryGrabObjectLoop(x#,y#,Target)
 	For i=0 To NofObjects-1
 		If ObjectIsAtFloat(LevelObjects(i),x#,y#) And i>Target
-			SetCurrentGrabbedObject(i)
+			AddOrToggleSelectObject(i)
 			Return True
 		EndIf
 	Next
@@ -10676,7 +10674,7 @@ Function GrabObject(x#,y#,SelectAllOnTile)
 	If SelectAllOnTile
 		For i=0 To NofObjects-1
 			If ObjectIsAtFloat(LevelObjects(i),x#,y#)
-				SetCurrentGrabbedObject(i)
+				AddOrToggleSelectObject(i)
 			EndIf
 		Next
 	Else If NofSelectedObjects<2
@@ -10701,12 +10699,12 @@ Function GrabObject(x#,y#,SelectAllOnTile)
 
 End Function
 	
-Function ReadObjectIntoCurrentObject(Dest)
+Function ReadObjectIntoCurrentObject(Obj.GameObject)
 
 	NofWopAdjusters=0
 
-	CopyObjectAttributes(LevelObjects(Dest)\Attributes,CurrentObject\Attributes)
-	CopyObjectPosition(LevelObjects(Dest)\Position,CurrentObject\Position)
+	CopyObjectAttributes(Obj\Attributes,CurrentObject\Attributes)
+	CopyObjectPosition(Obj\Position,CurrentObject\Position)
 	
 	CurrentObject\Position\X#=CurrentObject\Position\X#-x-0.5
 	CurrentObject\Position\Y#=CurrentObject\Position\Y#-y-0.5
@@ -10740,18 +10738,27 @@ Function ReadObjectIntoCurrentObject(Dest)
 	;EndIf
 
 	BuildCurrentObjectModel()
-	SetBrushToCurrentObject()
 
 End Function
 
 
 
-Function GrabObjectFromBrush(i)	
+Function CopyObjectFromBrush(i,DestObject.GameObject)
 
-	CopyObjectAttributes(BrushObjects(i)\Attributes,CurrentObject\Attributes)
-	CopyObjectPosition(BrushObjects(i)\Position,CurrentObject\Position)
-		
-	BuildCurrentObjectModel()
+	CopyObjectAttributes(BrushObjects(i)\Attributes,DestObject\Attributes)
+	CopyObjectPosition(BrushObjects(i)\Position,DestObject\Position)
+
+End Function
+
+Function GrabObjectFromBrush(i)
+
+	;CopyObjectAttributes(BrushObjects(i)\Attributes,CurrentObject\Attributes)
+	;CopyObjectPosition(BrushObjects(i)\Position,CurrentObject\Position)
+	
+	;BuildCurrentObjectModel()
+	
+	
+	ReadObjectIntoCurrentObject(BrushObjects(i))
 
 End Function
 
@@ -11523,13 +11530,35 @@ Function PasteObjectData(Dest)
 	
 	FreeObjectModel(LevelObjects(Dest)\Model)
 	
-	UpdateObjectEntityToCurrent(Dest)
+	BuildLevelObjectModel(Dest)
 	
 	UpdateCurrentGrabbedObjectMarkerPosition(Dest)
 	
 	SomeObjectWasChanged()
 
 	
+End Function
+
+Function AreAllObjectAdjustersAbsolute()
+
+	For ObjAdjusterInt.ObjectAdjusterInt=Each ObjectAdjusterInt
+		If Not ObjAdjusterInt\Absolute
+			Return False
+		EndIf
+	Next
+	For ObjAdjusterFloat.ObjectAdjusterFloat=Each ObjectAdjusterFloat
+		If Not ObjAdjusterFloat\Absolute
+			Return False
+		EndIf
+	Next
+	For ObjAdjusterString.ObjectAdjusterString=Each ObjectAdjusterString
+		If Not ObjAdjusterString\Absolute
+			Return False
+		EndIf
+	Next
+
+	Return True
+
 End Function
 
 Function UpdateCurrentGrabbedObjectMarkerPosition(i)
