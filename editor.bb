@@ -5291,8 +5291,8 @@ Function EditorLocalControls()
 				If EditorMode=0
 					For i=BrushXStart To BrushXEnd
 						For j=BrushYStart To BrushYEnd
-							BrushSpaceX=LevelSpaceToBrushSpaceX(i,BrushWrapRelative)
-							BrushSpaceY=LevelSpaceToBrushSpaceY(j,BrushWrapRelative)
+							BrushSpaceX=LevelSpaceToBrushSpaceX(i,BrushWrapModulus)
+							BrushSpaceY=LevelSpaceToBrushSpaceY(j,BrushWrapModulus)
 							CopyLevelTileToBrush(i,j,BrushSpaceX,BrushSpaceY)
 						Next
 					Next
@@ -5304,8 +5304,8 @@ Function EditorLocalControls()
 						ObjTileX=LevelObjects(k)\Position\TileX
 						ObjTileY=LevelObjects(k)\Position\TileY
 						If ObjTileX>=BrushXStart And ObjTileX<BrushXStart+BrushWidth And ObjTileY>=BrushYStart And ObjTileY<BrushYStart+BrushHeight
-							BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX,BrushWrapRelative)
-							BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY,BrushWrapRelative)
+							BrushSpaceX=LevelSpaceToBrushSpaceX(ObjTileX,BrushWrapModulus)
+							BrushSpaceY=LevelSpaceToBrushSpaceY(ObjTileY,BrushWrapModulus)
 							CopyObjectToBrush(LevelObjects(k),NofBrushObjects,BrushSpaceX,BrushSpaceY)
 							NofBrushObjects=NofBrushObjects+1
 						EndIf
@@ -11125,16 +11125,19 @@ End Function
 
 Function CopySelectedObjectsToBrush()
 
+	; set custom brush
 	If EditorMode=3 And NofSelectedObjects<>0
 		NofBrushObjects=NofSelectedObjects
 		BrushSpaceWidth=SelectionMaxTileX-SelectionMinTileX+1
 		BrushSpaceHeight=SelectionMaxTileY-SelectionMinTileY+1
+		BrushSpaceOriginX=SelectionMinTileX+BrushSpaceWidth/2
+		BrushSpaceOriginY=SelectionMinTileY+BrushSpaceHeight/2
 		BrushWidth=BrushSpaceWidth
 		BrushHeight=BrushSpaceHeight
 		For i=0 To NofSelectedObjects-1
 			LevelObject.GameObject=LevelObjects(SelectedObjects(i))
-			BrushSpaceX=LevelSpaceToBrushSpaceX(LevelObject\Position\TileX-SelectionMinTileX,BrushWrapRelative)
-			BrushSpaceY=LevelSpaceToBrushSpaceY(LevelObject\Position\TileY-SelectionMinTileY,BrushWrapRelative)
+			BrushSpaceX=LevelSpaceToBrushSpaceX(LevelObject\Position\TileX,BrushWrapModulus)
+			BrushSpaceY=LevelSpaceToBrushSpaceY(LevelObject\Position\TileY,BrushWrapModulus)
 			CopyObjectToBrush(LevelObject,i,BrushSpaceX,BrushSpaceY)
 		Next
 		BrushCursorStateWasChanged()
