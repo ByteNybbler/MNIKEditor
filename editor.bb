@@ -868,6 +868,7 @@ End Function
 Function RecalculateObjectAdjusterModes()
 
 	ReadyToCopyFirstSelected=True
+	CurrentGrabbedObjectModified=False
 
 	For i=0 To NofSelectedObjects-1
 		ReadObjectIntoCurrentObject(LevelObjects(SelectedObjects(i)))
@@ -925,13 +926,16 @@ End Function
 Function AddSelectObjectInner(LevelObjectIndex)
 
 	SelectedObjects(NofSelectedObjects)=LevelObjectIndex
-	ReadObjectIntoCurrentObject(LevelObjects(LevelObjectIndex))
+	;ReadObjectIntoCurrentObject(LevelObjects(LevelObjectIndex))
 	ShowSelectedObjectMarker(LevelObjectIndex)
 	UpdateSelectionSize(LevelObjectIndex)
 	PreviousSelectedObject=LevelObjectIndex
 	NofSelectedObjects=NofSelectedObjects+1
 	NewSelectedObjectCount=NewSelectedObjectCount+1
 	ObjectDragging=True
+	
+	; Doing this discards any non-Updated changes to previously-selected objects.
+	RecalculateObjectAdjusterModes()
 
 End Function
 
@@ -11171,7 +11175,7 @@ Function UpdateSelectedObjects()
 		PasteObjectData(CurrentGrabbedObject)
 	Next
 	;If AreAllObjectAdjustersAbsolute() ; Allows reapplication of the same relative change.
-	CurrentGrabbedObjectModified=False
+	;	CurrentGrabbedObjectModified=False
 	;EndIf
 	
 	; Zero all relative object adjusters.
