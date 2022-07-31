@@ -5206,6 +5206,9 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							GrabObject(thisx,thisy,True)
 						Next
+						If NewSelectedObjectCount<>0 And AreAllObjectAdjustersAbsolute()
+							SetBrushToCurrentObject()
+						EndIf
 						SetBrushMode(BrushModeBlock)
 					EndIf
 					
