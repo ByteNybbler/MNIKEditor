@@ -3362,19 +3362,33 @@ Function EditorMainLoop()
 				Next
 			EndIf
 			
-			If Not HitTargetID
-				If i=CurrentObject\Attributes\Linked Or i=CurrentObject\Attributes\LinkBack
+			If (Not HitTargetID)
+				If (i=CurrentObject\Attributes\Linked And ObjectAdjusterLinked\Absolute) Or (i=CurrentObject\Attributes\LinkBack And ObjectAdjusterLinkBack\Absolute)
 					HitTargetID=True
 					
 					CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 					x#=ProjectedX#()
 					y#=ProjectedY#()
-					If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
-						StringOnObject$="#"+i
-						x#=x#-4*Len(StringOnObject$)
-		
-						OutlinedText(x#,y#,StringOnObject$,255,0,0)
+					
+					StringOnObject$="#"+i
+					HalfLength=4*Len(StringOnObject$)
+					
+					If x#<HalfLength
+						x#=HalfLength
 					EndIf
+					If x#>LevelViewportWidth-HalfLength
+						x#=LevelViewportWidth-HalfLength
+					EndIf
+					If y#<0
+						y#=0
+					EndIf
+					If y#>ProjectedTextLimitY
+						y#=ProjectedTextLimitY
+					EndIf
+					
+					x#=x#-HalfLength
+	
+					OutlinedText(x#,y#,StringOnObject$,255,0,0)
 				EndIf
 			EndIf
 			
