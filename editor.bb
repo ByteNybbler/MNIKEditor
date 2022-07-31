@@ -11144,7 +11144,12 @@ Function UpdateSelectedObjects()
 		CurrentGrabbedObject=SelectedObjects(i)
 		PasteObjectData(CurrentGrabbedObject)
 	Next
+	;If AreAllObjectAdjustersAbsolute() ; Allows reapplication of the same relative change.
 	CurrentGrabbedObjectModified=False
+	;EndIf
+	
+	; Zero all relative object adjusters.
+	RecalculateObjectAdjusterModes()
 
 End Function
 
