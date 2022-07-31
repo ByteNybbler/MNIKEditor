@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/27/22"
+Global VersionDate$="07/31/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -817,6 +817,7 @@ Dim SelectedObjects(MaxNofObjects)
 Global CurrentGrabbedObjectModified=False
 Global PreviousSelectedObject=-1
 Global NewSelectedObjectCount=0
+Global ReadyToCopyFirstSelected=True
 
 Global SelectionMinTileX=101
 Global SelectionMinTileY=101
@@ -864,6 +865,16 @@ Function RecalculateSelectionSize()
 
 End Function
 
+Function RecalculateObjectAdjusterModes()
+
+	ReadyToCopyFirstSelected=True
+
+	For i=0 To NofSelectedObjects-1
+		ReadObjectIntoCurrentObject(LevelObjects(SelectedObjects(i)))
+	Next
+
+End Function
+
 Function GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
 
 	For i=0 To NofSelectedObjects-1
@@ -896,6 +907,8 @@ Function ClearObjectSelection()
 		HideSelectedObjectMarker(i)
 	Next
 	ResetSelectionSize()
+	MakeAllObjectAdjustersAbsolute()
+	ReadyToCopyFirstSelected=True
 
 End Function
 
@@ -936,6 +949,8 @@ Function RemoveSelectObjectInner(Index)
 		SelectedObjects(i)=SelectedObjects(i+1)
 	Next
 	NofSelectedObjects=NofSelectedObjects-1
+	
+	RecalculateObjectAdjusterModes()
 	
 End Function
 
@@ -1093,11 +1108,16 @@ Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValu
 	ElseIf ReturnKey=False And MouseDebounceFinished()
 		If RawInput=True
 			CurrentValue=InputInt(ObjectAdjuster\Name$+": ")
+			ObjectAdjuster\Absolute=True
 		Else
-			If CurrentValue=ValueLow
-				CurrentValue=ValueHigh
+			If ObjectAdjuster\Absolute
+				If CurrentValue=ValueLow
+					CurrentValue=ValueHigh
+				Else
+					CurrentValue=ValueLow
+				EndIf
 			Else
-				CurrentValue=ValueLow
+				CurrentValue=AdjustInt(ObjectAdjuster\Name$+": ", CurrentValue, SlowInt, FastInt, DelayTime)
 			EndIf
 		EndIf
 		If MouseScroll=0
@@ -1116,7 +1136,7 @@ End Function
 
 Function AdjustObjectAdjusterBits(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,i,DelayTime)
 
-	If (Not ObjectAdjuster\RandomEnabled) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
+	If ObjectAdjuster\Absolute And (Not ObjectAdjuster\RandomEnabled) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
 		StartX=SidebarX+10
 		StartY=SidebarY+305
 		StartY=StartY+15+(i-ObjectAdjusterStart)*15
@@ -1135,6 +1155,10 @@ Function AdjustObjectAdjusterBits(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,
 		If LeftMouse=True Or RightMouse=True
 			MouseDebounceSet(DelayTime)
 		EndIf
+	EndIf
+	If CtrlDown()
+		CurrentValue=InputInt(ObjectAdjuster\Name$+": ")
+		ObjectAdjuster\Absolute=True
 	EndIf
 	If ReturnPressed()
 		ObjectAdjuster\RandomEnabled=Not ObjectAdjuster\RandomEnabled
@@ -1191,10 +1215,14 @@ Function SetAdjusterDisplayString$(ObjectAdjuster.ObjectAdjusterString,CurrentVa
 
 	CurrentAdjusterRandomized=ObjectAdjuster\RandomEnabled
 	CurrentAdjusterAbsolute=ObjectAdjuster\Absolute
-	CurrentAdjusterZero=False
+	CurrentAdjusterZero=True
 	LeftAdj$=""
 	RightAdj$=""
-	Return tex$
+	If CurrentAdjusterAbsolute
+		Return tex$
+	Else
+		Return "..."
+	EndIf
 
 End Function
 
@@ -9708,10 +9736,6 @@ Function PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
 
 	For k=0 To NofBrushObjects-1
 		If BrushObjectTileXOffset(k)=BrushSpaceX And BrushObjectTileYOffset(k)=BrushSpaceY
-			;GrabObjectFromBrush(k)
-			
-			;Obj.GameObject=BrushObjects(k)
-			
 			CopyObjectFromBrush(k,TempObject)
 			PlaceThisObject(x,y,TempObject)
 		EndIf
@@ -10717,43 +10741,32 @@ End Function
 	
 Function ReadObjectIntoCurrentObject(Obj.GameObject)
 
-	NofWopAdjusters=0
-
-	CopyObjectAttributes(Obj\Attributes,CurrentObject\Attributes)
-	CopyObjectPosition(Obj\Position,CurrentObject\Position)
-	
-	CurrentObject\Position\X#=CurrentObject\Position\X#-x-0.5
-	CurrentObject\Position\Y#=CurrentObject\Position\Y#-y-0.5
+	If ReadyToCopyFirstSelected=True
+		ReadyToCopyFirstSelected=False
 		
-	;NofObjectAdjusters=0
-	;ObjectAdjusterStart=0
-	;For i=0 To 30
-	;	ObjectAdjuster$(i)=ObjectAdjusterString$(Dest,i)
-	;	If ObjectAdjuster$(i) <>""
-	;		NofObjectAdjusters=NofObjectAdjusters+1
-	;	EndIf
-	;Next
-	;
-	;If CurrentObject\Attributes\LogicType=110
-	;	ObjectAdjuster$(18)="DefensePower"
-	;EndIf
-	;If CurrentObject\Attributes\LogicType=433
-	;	ObjectAdjuster$(12)="DefensePower"
-	;EndIf
-	;If CurrentObject\Attributes\LogicType=330
-	;	ObjectAdjuster$(7)="DefensePower"
-	;EndIf
-	;If CurrentObject\Attributes\LogicType=390
-	;	ObjectAdjuster$(12)="DefensePower"
-	;EndIf
-	;If CurrentObject\Attributes\LogicType=380
-	;	ObjectAdjuster$(10)="DefensePower"
-	;EndIf
-	;If CurrentObject\Attributes\LogicType=290
-	;	ObjectAdjuster$(11)="DefensePower"
-	;EndIf
-
-	BuildCurrentObjectModel()
+		NofWopAdjusters=0
+	
+		CopyObjectAttributes(Obj\Attributes,CurrentObject\Attributes)
+		CopyObjectPosition(Obj\Position,CurrentObject\Position)
+	
+		CurrentObject\Position\X#=CurrentObject\Position\X#-x-0.5
+		CurrentObject\Position\Y#=CurrentObject\Position\Y#-y-0.5
+		
+		;NofObjectAdjusters=0
+		;ObjectAdjusterStart=0
+		;For i=0 To 30
+		;	ObjectAdjuster$(i)=ObjectAdjusterString$(Dest,i)
+		;	If ObjectAdjuster$(i) <>""
+		;		NofObjectAdjusters=NofObjectAdjusters+1
+		;	EndIf
+		;Next
+		
+		MakeAllObjectAdjustersAbsolute()
+		
+		BuildCurrentObjectModel()
+	Else
+		CompareObjectToCurrent(Obj)
+	EndIf
 
 End Function
 
@@ -10763,18 +10776,6 @@ Function CopyObjectFromBrush(i,DestObject.GameObject)
 
 	CopyObjectAttributes(BrushObjects(i)\Attributes,DestObject\Attributes)
 	CopyObjectPosition(BrushObjects(i)\Position,DestObject\Position)
-
-End Function
-
-Function GrabObjectFromBrush(i)
-
-	;CopyObjectAttributes(BrushObjects(i)\Attributes,CurrentObject\Attributes)
-	;CopyObjectPosition(BrushObjects(i)\Position,CurrentObject\Position)
-	
-	;BuildCurrentObjectModel()
-	
-	
-	ReadObjectIntoCurrentObject(BrushObjects(i))
 
 End Function
 
@@ -11574,6 +11575,302 @@ Function PasteObjectData(Dest)
 	
 End Function
 
+Function CompareObjectToCurrent(Obj.GameObject)
+
+	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
+	DestAttributes.GameObjectAttributes=Obj\Attributes
+
+	If DestAttributes\ModelName$<>SourceAttributes\ModelName$
+		ObjectAdjusterModelName\Absolute=False
+	EndIf
+	If DestAttributes\TexName$<>SourceAttributes\TexName$
+		ObjectAdjusterTextureName\Absolute=False
+	EndIf
+	
+	If DestAttributes\XScale#<>SourceAttributes\XScale#
+		ObjectAdjusterXScale\Absolute=False
+		SourceAttributes\XScale=0
+	EndIf
+	If DestAttributes\YScale#<>SourceAttributes\YScale#
+		ObjectAdjusterYScale\Absolute=False
+		SourceAttributes\YScale=0
+	EndIf
+	If DestAttributes\ZScale#<>SourceAttributes\ZScale#
+		ObjectAdjusterZScale\Absolute=False
+		SourceAttributes\ZScale=0
+	EndIf
+	
+	If DestAttributes\XAdjust#<>SourceAttributes\XAdjust#
+		ObjectAdjusterXAdjust\Absolute=False
+		SourceAttributes\XAdjust=0
+	EndIf
+	If DestAttributes\YAdjust#<>SourceAttributes\YAdjust#
+		ObjectAdjusterYAdjust\Absolute=False
+		SourceAttributes\YAdjust=0
+	EndIf
+	If DestAttributes\ZAdjust#<>SourceAttributes\ZAdjust#
+		ObjectAdjusterZAdjust\Absolute=False
+		SourceAttributes\ZAdjust=0
+	EndIf
+	
+	If DestAttributes\PitchAdjust#<>SourceAttributes\PitchAdjust#
+		ObjectAdjusterPitchAdjust\Absolute=False
+		SourceAttributes\PitchAdjust=0
+	EndIf
+	If DestAttributes\YawAdjust#<>SourceAttributes\YawAdjust#
+		ObjectAdjusterYawAdjust\Absolute=False
+		SourceAttributes\YawAdjust=0
+	EndIf
+	If DestAttributes\RollAdjust#<>SourceAttributes\RollAdjust#
+		ObjectAdjusterRollAdjust\Absolute=False
+		SourceAttributes\RollAdjust=0
+	EndIf
+	
+	If DestAttributes\DX#<>SourceAttributes\DX#
+		ObjectAdjusterDX\Absolute=False
+		SourceAttributes\DX=0
+	EndIf
+	If DestAttributes\DY#<>SourceAttributes\DY#
+		ObjectAdjusterDY\Absolute=False
+		SourceAttributes\DY=0
+	EndIf
+	If DestAttributes\DZ#<>SourceAttributes\DZ#
+		ObjectAdjusterDZ\Absolute=False
+		SourceAttributes\DZ=0
+	EndIf
+	
+	If DestAttributes\MovementType<>SourceAttributes\MovementType
+		ObjectAdjusterMovementType\Absolute=False
+		SourceAttributes\MovementType=0
+	EndIf
+	If DestAttributes\MovementTypeData<>SourceAttributes\MovementTypeData
+		ObjectAdjusterMovementTypeData\Absolute=False
+		SourceAttributes\MovementTypeData=0
+	EndIf
+	
+	If DestAttributes\Data10<>SourceAttributes\Data10
+		ObjectAdjusterData10\Absolute=False
+		SourceAttributes\Data10=0
+	EndIf
+	
+	If DestAttributes\DefensePower<>SourceAttributes\DefensePower
+		ObjectAdjusterDefensePower\Absolute=False
+		SourceAttributes\DefensePower=0
+	EndIf
+	If DestAttributes\DestructionType<>SourceAttributes\DestructionType
+		ObjectAdjusterDestructionType\Absolute=False
+		SourceAttributes\DestructionType=0
+	EndIf
+	If DestAttributes\ID<>SourceAttributes\ID
+		ObjectAdjusterID\Absolute=False
+		SourceAttributes\ID=0
+	EndIf
+	If DestAttributes\LogicType<>SourceAttributes\LogicType
+		ObjectAdjusterLogicType\Absolute=False
+		SourceAttributes\LogicType=0
+	EndIf
+	If DestAttributes\LogicSubType<>SourceAttributes\LogicSubType
+		ObjectAdjusterLogicSubType\Absolute=False
+		SourceAttributes\LogicSubType=0
+	EndIf
+	If DestAttributes\Active<>SourceAttributes\Active
+		ObjectAdjusterActive\Absolute=False
+		SourceAttributes\Active=0
+	EndIf
+	
+	If DestAttributes\ActivationType<>SourceAttributes\ActivationType
+		ObjectAdjusterActivationType\Absolute=False
+		SourceAttributes\ActivationType=0
+	EndIf
+	If DestAttributes\ActivationSpeed<>SourceAttributes\ActivationSpeed
+		ObjectAdjusterActivationSpeed\Absolute=False
+		SourceAttributes\ActivationSpeed=0
+	EndIf
+	If DestAttributes\Status<>SourceAttributes\Status
+		ObjectAdjusterStatus\Absolute=False
+		SourceAttributes\Status=0
+	EndIf
+	If DestAttributes\Timer<>SourceAttributes\Timer
+		ObjectAdjusterTimer\Absolute=False
+		SourceAttributes\Timer=0
+	EndIf
+	If DestAttributes\TimerMax1<>SourceAttributes\TimerMax1
+		ObjectAdjusterTimerMax1\Absolute=False
+		SourceAttributes\TimerMax1=0
+	EndIf
+	If DestAttributes\TimerMax2<>SourceAttributes\TimerMax2
+		ObjectAdjusterTimerMax2\Absolute=False
+		SourceAttributes\TimerMax2=0
+	EndIf
+	If DestAttributes\Teleportable<>SourceAttributes\Teleportable
+		ObjectAdjusterTeleportable\Absolute=False
+		SourceAttributes\Teleportable=0
+	EndIf
+	If DestAttributes\ButtonPush<>SourceAttributes\ButtonPush
+		ObjectAdjusterButtonPush\Absolute=False
+		SourceAttributes\ButtonPush=0
+	EndIf
+	If DestAttributes\WaterReact<>SourceAttributes\WaterReact
+		ObjectAdjusterWaterReact\Absolute=False
+		SourceAttributes\WaterReact=0
+	EndIf
+	
+	If DestAttributes\Child<>SourceAttributes\Child
+		ObjectAdjusterChild\Absolute=False
+		SourceAttributes\Child=0
+	EndIf
+	If DestAttributes\Parent<>SourceAttributes\Parent
+		ObjectAdjusterParent\Absolute=False
+		SourceAttributes\Parent=0
+	EndIf
+	
+	If DestAttributes\Data0<>SourceAttributes\Data0
+		ObjectAdjusterData0\Absolute=False
+		SourceAttributes\Data0=0
+	EndIf
+	If DestAttributes\Data1<>SourceAttributes\Data1
+		ObjectAdjusterData1\Absolute=False
+		SourceAttributes\Data1=0
+	EndIf
+	If DestAttributes\Data2<>SourceAttributes\Data2
+		ObjectAdjusterData2\Absolute=False
+		SourceAttributes\Data2=0
+	EndIf
+	If DestAttributes\Data3<>SourceAttributes\Data3
+		ObjectAdjusterData3\Absolute=False
+		SourceAttributes\Data3=0
+	EndIf
+	If DestAttributes\Data4<>SourceAttributes\Data4
+		ObjectAdjusterData4\Absolute=False
+		SourceAttributes\Data4=0
+	EndIf
+	If DestAttributes\Data5<>SourceAttributes\Data5
+		ObjectAdjusterData5\Absolute=False
+		SourceAttributes\Data5=0
+	EndIf
+	If DestAttributes\Data6<>SourceAttributes\Data6
+		ObjectAdjusterData6\Absolute=False
+		SourceAttributes\Data6=0
+	EndIf
+	If DestAttributes\Data7<>SourceAttributes\Data7
+		ObjectAdjusterData7\Absolute=False
+		SourceAttributes\Data7=0
+	EndIf
+	If DestAttributes\Data8<>SourceAttributes\Data8
+		ObjectAdjusterData8\Absolute=False
+		SourceAttributes\Data8=0
+	EndIf
+	If DestAttributes\Data9<>SourceAttributes\Data9
+		ObjectAdjusterData9\Absolute=False
+		SourceAttributes\Data9=0
+	EndIf
+	
+	If DestAttributes\TextData0$<>SourceAttributes\TextData0$
+		ObjectAdjusterTextData0\Absolute=False
+	EndIf
+	If DestAttributes\TextData1$<>SourceAttributes\TextData1$
+		ObjectAdjusterTextData1\Absolute=False
+	EndIf
+	
+	If DestAttributes\Talkable<>SourceAttributes\Talkable
+		ObjectAdjusterTalkable\Absolute=False
+		SourceAttributes\Talkable=0
+	EndIf
+	If DestAttributes\CurrentAnim<>SourceAttributes\CurrentAnim
+		ObjectAdjusterCurrentAnim\Absolute=False
+		SourceAttributes\CurrentAnim=0
+	EndIf
+	If DestAttributes\StandardAnim<>SourceAttributes\StandardAnim
+		ObjectAdjusterStandardAnim\Absolute=False
+		SourceAttributes\StandardAnim=0
+	EndIf
+	If DestAttributes\MovementTimer<>SourceAttributes\MovementTimer
+		ObjectAdjusterMovementTimer\Absolute=False
+		SourceAttributes\MovementTimer=0
+	EndIf
+	If DestAttributes\MovementSpeed<>SourceAttributes\MovementSpeed
+		ObjectAdjusterMovementSpeed\Absolute=False
+		SourceAttributes\MovementSpeed=0
+	EndIf
+	
+	If DestAttributes\MoveXGoal<>SourceAttributes\MoveXGoal
+		ObjectAdjusterMoveXGoal\Absolute=False
+		SourceAttributes\MoveXGoal=0
+	EndIf
+	If DestAttributes\MoveYGoal<>SourceAttributes\MoveYGoal
+		ObjectAdjusterMoveYGoal\Absolute=False
+		SourceAttributes\MoveYGoal=0
+	EndIf
+	
+	If DestAttributes\TileTypeCollision<>SourceAttributes\TileTypeCollision
+		ObjectAdjusterTileTypeCollision\Absolute=False
+		SourceAttributes\TileTypeCollision=0
+	EndIf
+	If DestAttributes\ObjectTypeCollision<>SourceAttributes\ObjectTypeCollision
+		ObjectAdjusterObjectTypeCollision\Absolute=False
+		SourceAttributes\ObjectTypeCollision=0
+	EndIf
+	
+	If DestAttributes\Caged<>SourceAttributes\Caged
+		ObjectAdjusterCaged\Absolute=False
+		SourceAttributes\Caged=0
+	EndIf
+	If DestAttributes\Dead<>SourceAttributes\Dead
+		ObjectAdjusterDead\Absolute=False
+		SourceAttributes\Dead=0
+	EndIf
+	If DestAttributes\DeadTimer<>SourceAttributes\DeadTimer
+		ObjectAdjusterDeadTimer\Absolute=False
+		SourceAttributes\DeadTimer=0
+	EndIf
+	If DestAttributes\Exclamation<>SourceAttributes\Exclamation
+		ObjectAdjusterExclamation\Absolute=False
+		SourceAttributes\Exclamation=0
+	EndIf
+	If DestAttributes\Shadow<>SourceAttributes\Shadow
+		ObjectAdjusterShadow\Absolute=False
+		SourceAttributes\Shadow=0
+	EndIf
+	If DestAttributes\Linked<>SourceAttributes\Linked
+		ObjectAdjusterLinked\Absolute=False
+		SourceAttributes\Linked=0
+	EndIf
+	If DestAttributes\LinkBack<>SourceAttributes\LinkBack
+		ObjectAdjusterLinkBack\Absolute=False
+		SourceAttributes\LinkBack=0
+	EndIf
+	If DestAttributes\Flying<>SourceAttributes\Flying
+		ObjectAdjusterFlying\Absolute=False
+		SourceAttributes\Flying=0
+	EndIf
+	If DestAttributes\Frozen<>SourceAttributes\Frozen
+		ObjectAdjusterFrozen\Absolute=False
+		SourceAttributes\Frozen=0
+	EndIf
+	If DestAttributes\Indigo<>SourceAttributes\Indigo
+		ObjectAdjusterIndigo\Absolute=False
+		SourceAttributes\Indigo=0
+	EndIf
+	
+	If DestAttributes\ScaleAdjust<>SourceAttributes\ScaleAdjust
+		ObjectAdjusterScaleAdjust\Absolute=False
+		SourceAttributes\ScaleAdjust=0
+	EndIf
+	If DestAttributes\ScaleXAdjust<>SourceAttributes\ScaleXAdjust
+		ObjectAdjusterScaleXAdjust\Absolute=False
+		SourceAttributes\ScaleXAdjust=0
+	EndIf
+	If DestAttributes\ScaleYAdjust<>SourceAttributes\ScaleYAdjust
+		ObjectAdjusterScaleYAdjust\Absolute=False
+		SourceAttributes\ScaleYAdjust=0
+	EndIf
+	If DestAttributes\ScaleZAdjust<>SourceAttributes\ScaleZAdjust
+		ObjectAdjusterScaleZAdjust\Absolute=False
+		SourceAttributes\ScaleZAdjust=0
+	EndIf
+
+End Function
+
 Function AreAllObjectAdjustersAbsolute()
 
 	For ObjAdjusterInt.ObjectAdjusterInt=Each ObjectAdjusterInt
@@ -11593,6 +11890,20 @@ Function AreAllObjectAdjustersAbsolute()
 	Next
 
 	Return True
+
+End Function
+
+Function MakeAllObjectAdjustersAbsolute()
+
+	For ObjAdjusterInt.ObjectAdjusterInt=Each ObjectAdjusterInt
+		ObjAdjusterInt\Absolute=True
+	Next
+	For ObjAdjusterFloat.ObjectAdjusterFloat=Each ObjectAdjusterFloat
+		ObjAdjusterFloat\Absolute=True
+	Next
+	For ObjAdjusterString.ObjectAdjusterString=Each ObjectAdjusterString
+		ObjAdjusterString\Absolute=True
+	Next
 
 End Function
 
@@ -11776,29 +12087,33 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 	
 	Case "TileTypeCollision"
-		tex2$="TTC"
-		tex$="00000 00000 00000"
+		If ObjectAdjusterTileTypeCollision\Absolute
+			tex2$="TTC"
+			tex$="00000 00000 00000"
+				
+			HalfNameWidth=4*Len(tex2$+": "+tex$)
+			BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
 			
-		HalfNameWidth=4*Len(tex2$+": "+tex$)
-		BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
-		
-		BitPositionIndex=GetBitPositionIndex(BitStartX)
-		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
-		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,LogicIdToLogicName$(BitIndex))
+			BitPositionIndex=GetBitPositionIndex(BitStartX)
+			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
+			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
+				ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,LogicIdToLogicName$(BitIndex))
+			EndIf
 		EndIf
 		
 	Case "ObjectTypeCollision"
-		tex2$="OTC"
-		tex$="00000 00000 00000"
+		If ObjectAdjusterObjectTypeCollision\Absolute
+			tex2$="OTC"
+			tex$="00000 00000 00000"
+				
+			HalfNameWidth=4*Len(tex2$+": "+tex$)
+			BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
 			
-		HalfNameWidth=4*Len(tex2$+": "+tex$)
-		BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
-		
-		BitPositionIndex=GetBitPositionIndex(BitStartX)
-		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
-		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
-			ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,ObjectTypeCollisionBitToName$(BitIndex))
+			BitPositionIndex=GetBitPositionIndex(BitStartX)
+			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
+			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
+				ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,ObjectTypeCollisionBitToName$(BitIndex))
+			EndIf
 		EndIf
 		
 	Case "Type"
@@ -12289,7 +12604,7 @@ Function DisplayObjectAdjuster(i)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterActivationType,CurrentObject\Attributes\ActivationType,tex$)
 		
 	Case "ButtonPush"
-		tex$=OneToYes$(CurrentObject\Attributes\ButtonPush)
+		tex$=CurrentObject\Attributes\ButtonPush+"/"+OneToYes$(CurrentObject\Attributes\ButtonPush)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterButtonPush,CurrentObject\Attributes\ButtonPush,tex$)
 		
 	Case "WaterReact"
@@ -12305,7 +12620,7 @@ Function DisplayObjectAdjuster(i)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,tex$)
 		
 	Case "Teleportable"
-		tex$=OneToYes$(CurrentObject\Attributes\Teleportable)
+		tex$=CurrentObject\Attributes\Teleportable+"/"+OneToYes$(CurrentObject\Attributes\Teleportable)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,tex$)
 	
 	Case "Data0"
