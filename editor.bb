@@ -9544,6 +9544,8 @@ Function LoadObjectPreset()
 	CloseFile file
 	
 	
+	MakeAllObjectAdjustersAbsolute()
+	
 	BuildCurrentObjectModel()
 	;SetBrushToCurrentObject()
 	CurrentObjectWasChanged()
