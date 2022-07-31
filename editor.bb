@@ -872,6 +872,8 @@ Function RecalculateObjectAdjusterModes()
 	For i=0 To NofSelectedObjects-1
 		ReadObjectIntoCurrentObject(LevelObjects(SelectedObjects(i)))
 	Next
+	
+	BuildCurrentObjectModel()
 
 End Function
 
@@ -974,6 +976,17 @@ Function PrepareObjectSelection()
 	EndIf
 	
 	NewSelectedObjectCount=0
+
+End Function
+
+Function FinishObjectSelection()
+
+	If NewSelectedObjectCount<>0
+		BuildCurrentObjectModel()
+		If AreAllObjectAdjustersAbsolute()
+			SetBrushToCurrentObject()
+		EndIf
+	EndIf
 
 End Function
 
@@ -5191,9 +5204,7 @@ Function EditorLocalControls()
 										Next
 									EndIf
 								EndIf
-								If NewSelectedObjectCount<>0 And AreAllObjectAdjustersAbsolute()
-									SetBrushToCurrentObject()
-								EndIf
+								FinishObjectSelection()
 							EndIf
 						EndIf
 					ElseIf EditorMode=3
@@ -5220,9 +5231,7 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							GrabObject(thisx,thisy,True)
 						Next
-						If NewSelectedObjectCount<>0 And AreAllObjectAdjustersAbsolute()
-							SetBrushToCurrentObject()
-						EndIf
+						FinishObjectSelection()
 						SetBrushMode(BrushModeBlock)
 					EndIf
 					
@@ -10780,7 +10789,7 @@ Function ReadObjectIntoCurrentObject(Obj.GameObject)
 		
 		MakeAllObjectAdjustersAbsolute()
 		
-		BuildCurrentObjectModel()
+		;BuildCurrentObjectModel()
 	Else
 		CompareObjectToCurrent(Obj)
 	EndIf
