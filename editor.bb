@@ -4378,29 +4378,19 @@ Function BrushCursorPositionWasChanged()
 		
 		For i=0 To LevelWidth-1
 			For j=0 To LevelHeight-1
-				If DraggedTilesEnabled(i,j)
-					ChangeLevelTileActual(i,j,True)
-				EndIf
-				UpdateTile(i,j)
-			Next
-		Next
-		
-		CopyTile(CurrentTile,TempTile)
-		For i=0 To LevelWidth-1
-			For j=0 To LevelHeight-1
 				TargetX=i+DeltaX
 				TargetY=j+DeltaY
 				If IsPositionInLevel(TargetX,TargetY)
 					If DraggedTilesEnabled(i,j)
-						CopyTile(DraggedTiles(i,j),CurrentTile)
-						ChangeLevelTileActual(TargetX,TargetY,True)
+						CopyTile(DraggedTiles(i,j),LevelTiles(TargetX,TargetY))
+						UpdateTile(TargetX,TargetY)
 						
 						;ShowMessage(i+","+j+" to "+TargetX+","+TargetY+" with texture "+DraggedTiles(i,j)\Terrain\Texture,1000)
 					EndIf
 				EndIf
+				UpdateTile(i,j)
 			Next
 		Next
-		CopyTile(TempTile,CurrentTile)
 		
 		SomeTileWasChanged()
 	EndIf
@@ -5410,6 +5400,7 @@ Function EditorLocalControls()
 								
 								DraggedTilesEnabled(thisx,thisy)=True
 								CopyTile(LevelTiles(thisx,thisy),DraggedTiles(thisx,thisy))
+								CopyTile(CurrentTile,CopyLevelTiles(thisx,thisy))
 								
 								If LevelTileObjectCount(thisx,thisy)<>0
 									For j=0 To NofObjects-1
@@ -5421,7 +5412,6 @@ Function EditorLocalControls()
 							Next
 							StartObjectDrag()
 							
-							;NofDraggedTiles=FloodedElementCount
 							TileDragging=True
 						ElseIf EditorMode=3
 							If BrushMode=BrushModeBlock
