@@ -5492,16 +5492,18 @@ Function EditorLocalControls()
 								thisx=FloodedStackX(i)
 								thisy=FloodedStackY(i)
 								
-								DraggedTilesEnabled(thisx,thisy)=True
-								CopyTile(LevelTiles(thisx,thisy),DraggedTiles(thisx,thisy))
-								CopyTile(CurrentTile,CopyLevelTiles(thisx,thisy))
-								
-								If LevelTileObjectCount(thisx,thisy)<>0
-									For j=0 To NofObjects-1
-										If ObjectIsAtFloat(LevelObjects(j),thisx,thisy)
-											AddDragObject(j)
-										EndIf
-									Next
+								If IsPositionInLevelArrayBounds(thisx,thisy)
+									DraggedTilesEnabled(thisx,thisy)=True
+									CopyTile(LevelTiles(thisx,thisy),DraggedTiles(thisx,thisy))
+									CopyTile(CurrentTile,CopyLevelTiles(thisx,thisy))
+									
+									If LevelTileObjectCount(thisx,thisy)<>0
+										For j=0 To NofObjects-1
+											If ObjectIsAtFloat(LevelObjects(j),thisx,thisy)
+												AddDragObject(j)
+											EndIf
+										Next
+									EndIf
 								EndIf
 							Next
 							StartObjectDrag()
