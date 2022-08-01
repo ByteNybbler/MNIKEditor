@@ -4383,11 +4383,15 @@ Function BrushCursorPositionWasChanged()
 				If IsPositionInLevel(TargetX,TargetY)
 					If DraggedTilesEnabled(i,j)
 						CopyTile(DraggedTiles(i,j),LevelTiles(TargetX,TargetY))
-						UpdateTile(TargetX,TargetY)
 						
 						;ShowMessage(i+","+j+" to "+TargetX+","+TargetY+" with texture "+DraggedTiles(i,j)\Terrain\Texture,1000)
 					EndIf
 				EndIf
+			Next
+		Next
+		
+		For i=0 To LevelWidth-1
+			For j=0 To LevelHeight-1
 				UpdateTile(i,j)
 			Next
 		Next
