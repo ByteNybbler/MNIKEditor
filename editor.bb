@@ -3110,8 +3110,93 @@ Function InitializeGraphicsEntities()
 	EntityFX LightPillar,16 ; disable back-face culling
 	HideEntity LightPillar
 	
-	For i=0 To MaxNofObjects-1
-		CurrentGrabbedObjectMarkers(i)=CopyEntity(LightPillar)
+	
+	CurrentGrabbedObjectMarkers(0)=CreateMesh()
+	
+	; Lots and lots of duplicated code here. Haha, whoops!
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,-0.5,0,-0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,0.5,0,-0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,-0.5,0,0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,0.5,0,0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	RotateMesh CurrentGrabbedObjectMarkers(0),90,0,0
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,-0.5,0,-0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,0.5,0,-0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,-0.5,0,0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,0.5,0,0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	RotateMesh CurrentGrabbedObjectMarkers(0),0,0,90
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,-0.5,0,-0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,0.5,0,-0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,-0.5,0,0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	Pole=CreateCube()
+	ScaleMesh Pole,0.025,0.5,0.025
+	PositionMesh Pole,0.5,0,0.5
+	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
+	FreeEntity Pole
+	
+	EntityColor CurrentGrabbedObjectMarkers(0),100,255,100
+	EntityFX CurrentGrabbedObjectMarkers(0),1 ; fullbright
+	EntityOrder CurrentGrabbedObjectMarkers(0),-1 ; disable depth sorting
+	HideEntity(CurrentGrabbedObjectMarkers(0))
+	
+	For i=1 To MaxNofObjects-1
+		CurrentGrabbedObjectMarkers(i)=CopyEntity(CurrentGrabbedObjectMarkers(0))
 	Next
 
 	WorldAdjusterPositionMarker(0)=CopyEntity(LightPillar)
@@ -3160,6 +3245,8 @@ Function InitializeGraphicsEntities()
 	AddTriangle (CurrentWaterTileSurface,0,1,2)
 	AddTriangle (CurrentWaterTileSurface,2,1,3)
 	UpdateNormals CurrentWaterTile
+	
+	FreeEntity LightPillar
 
 End Function
 
@@ -3412,9 +3499,9 @@ Function EditorMainLoop()
 	EndIf
 	
 	MarkerAlpha#=0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
-	For i=0 To MaxNofObjects-1
-		EntityAlpha CurrentGrabbedObjectMarkers(i),MarkerAlpha#
-	Next
+	;For i=0 To MaxNofObjects-1
+	;	EntityAlpha CurrentGrabbedObjectMarkers(i),MarkerAlpha#
+	;Next
 	For i=0 To 3
 		EntityAlpha WorldAdjusterPositionMarker(i),MarkerAlpha#
 	Next
