@@ -4379,12 +4379,13 @@ Function BrushCursorPositionWasChanged()
 		For i=0 To LevelWidth-1
 			For j=0 To LevelHeight-1
 				If DraggedTilesEnabled(i,j)
-					ChangeLevelTile(i,j,True)
+					ChangeLevelTileActual(i,j,True)
 				EndIf
 				UpdateTile(i,j)
 			Next
 		Next
 		
+		CopyTile(CurrentTile,TempTile)
 		For i=0 To LevelWidth-1
 			For j=0 To LevelHeight-1
 				TargetX=i+DeltaX
@@ -4399,6 +4400,7 @@ Function BrushCursorPositionWasChanged()
 				EndIf
 			Next
 		Next
+		CopyTile(TempTile,CurrentTile)
 		
 		SomeTileWasChanged()
 	EndIf
