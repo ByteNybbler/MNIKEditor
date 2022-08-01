@@ -10104,6 +10104,54 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
 	SourcePosition.GameObjectPosition=SourceObject\Position
 
+	RandomizeObjectData(SourceObject)
+	
+	NewObject.GameObject=LevelObjects(NofObjects)
+	
+	CopyObjectAttributes(SourceAttributes,NewObject\Attributes)
+	CopyObjectPosition(SourcePosition,NewObject\Position)
+	
+	SetObjectPosition(NofObjects,x#,y#)
+	
+	NewObject\Model\HatEntity=0
+	NewObject\Model\HatTexture=0
+	NewObject\Model\AccEntity=0
+	NewObject\Model\AccTexture=0
+
+	NewObject\Position\OldX#=-999
+	NewObject\Position\OldY#=-999
+	NewObject\Position\OldZ#=-999
+	
+	;For i=0 To 30
+	;	ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
+	;Next
+	
+	
+	ThisObject=NofObjects
+	NofObjects=NofObjects+1
+	
+	
+	BuildLevelObjectModel(ThisObject)
+	
+	
+	CreateObjectPositionMarker(ThisObject)
+	
+	
+	AddOrToggleSelectObject(ThisObject)
+	
+	
+	SomeObjectWasChanged()
+	
+	
+
+End Function
+
+
+Function RandomizeObjectData(SourceObj.GameObject)
+
+	SourceAttributes.GameObjectAttributes=SourceObj\Attributes
+	SourcePosition.GameObjectPosition=SourceObj\Position
+
 	If ObjectAdjusterLogicType\RandomEnabled
 		SourceAttributes\LogicType=RandomObjectAdjusterInt(ObjectAdjusterLogicType)
 	EndIf
@@ -10306,45 +10354,6 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	If ObjectAdjusterScaleAdjust\RandomEnabled
 		SourceAttributes\ScaleAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterScaleAdjust)
 	EndIf
-	
-	
-	NewObject.GameObject=LevelObjects(NofObjects)
-	
-	CopyObjectAttributes(SourceAttributes,NewObject\Attributes)
-	CopyObjectPosition(SourcePosition,NewObject\Position)
-	
-	SetObjectPosition(NofObjects,x#,y#)
-	
-	NewObject\Model\HatEntity=0
-	NewObject\Model\HatTexture=0
-	NewObject\Model\AccEntity=0
-	NewObject\Model\AccTexture=0
-
-	NewObject\Position\OldX#=-999
-	NewObject\Position\OldY#=-999
-	NewObject\Position\OldZ#=-999
-	
-	;For i=0 To 30
-	;	ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
-	;Next
-	
-	
-	ThisObject=NofObjects
-	NofObjects=NofObjects+1
-	
-	
-	BuildLevelObjectModel(ThisObject)
-	
-	
-	CreateObjectPositionMarker(ThisObject)
-	
-	
-	AddOrToggleSelectObject(ThisObject)
-	
-	
-	SomeObjectWasChanged()
-	
-	
 
 End Function
 
@@ -11935,6 +11944,8 @@ Function PasteObjectData(Dest)
 	;For i=0 To 30
 	;	ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
 	;Next
+	
+	RandomizeObjectData(DestObject)
 	
 	FreeObjectModel(LevelObjects(Dest)\Model)
 	
