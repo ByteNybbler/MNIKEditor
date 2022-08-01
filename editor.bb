@@ -3190,6 +3190,8 @@ Function InitializeGraphicsEntities()
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
 	
+	PositionMesh CurrentGrabbedObjectMarkers(0),0,0.5,0
+	
 	EntityColor CurrentGrabbedObjectMarkers(0),100,255,100
 	EntityFX CurrentGrabbedObjectMarkers(0),1 ; fullbright
 	EntityOrder CurrentGrabbedObjectMarkers(0),-1 ; disable depth sorting
@@ -7692,7 +7694,7 @@ End Function
 Function ShowSelectedObjectMarker(i)
 
 	ShowEntity CurrentGrabbedObjectMarkers(i)
-	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarkers(i),LevelObjects(i),0.0)
+	UpdateCurrentGrabbedObjectMarkerPosition(i)
 
 End Function
 
