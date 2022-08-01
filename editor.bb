@@ -3191,6 +3191,7 @@ Function InitializeGraphicsEntities()
 	FreeEntity Pole
 	
 	PositionMesh CurrentGrabbedObjectMarkers(0),0,0.5,0
+	ScaleMesh CurrentGrabbedObjectMarkers(0),0.95,0.95,0.95
 	
 	EntityColor CurrentGrabbedObjectMarkers(0),100,255,100
 	EntityFX CurrentGrabbedObjectMarkers(0),1 ; fullbright
