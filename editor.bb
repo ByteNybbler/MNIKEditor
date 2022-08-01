@@ -11523,12 +11523,19 @@ End Function
 
 Function PasteObjectData(Dest)
 
-	;xyz position is not changed
+	;xy position is not changed
 	
 	;CopyObjectAttributes(CurrentObject\Attributes,LevelObjects(Dest)\Attributes)
 	
-	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
-	DestAttributes.GameObjectAttributes=LevelObjects(Dest)\Attributes
+	SourceObject.GameObject=CurrentObject
+	DestObject.GameObject=LevelObjects(Dest)
+	
+	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
+	DestAttributes.GameObjectAttributes=DestObject\Attributes
+	
+	If ObjectAdjusterZ\Absolute
+		DestObject\Position\Z=SourceObject\Position\Z
+	EndIf
 	
 	If ObjectAdjusterModelName\Absolute
 		DestAttributes\ModelName$=SourceAttributes\ModelName$
@@ -11940,8 +11947,15 @@ End Function
 
 Function CompareObjectToCurrent(Obj.GameObject)
 
-	SourceAttributes.GameObjectAttributes=CurrentObject\Attributes
-	DestAttributes.GameObjectAttributes=Obj\Attributes
+	SourceObject.GameObject=CurrentObject
+	DestObject.GameObject=Obj
+	
+	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
+	DestAttributes.GameObjectAttributes=DestObject\Attributes
+	
+	If DestObject\Position\Z<>SourceObject\Position\Z
+		ObjectAdjusterZ\Absolute=False
+	EndIf
 
 	If DestAttributes\ModelName$<>SourceAttributes\ModelName$
 		ObjectAdjusterModelName\Absolute=False
