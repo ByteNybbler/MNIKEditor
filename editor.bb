@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="07/31/22"
+Global VersionDate$="08/01/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -1018,12 +1018,6 @@ Function AddSelectObjectInner(LevelObjectIndex)
 	NofSelectedObjects=NofSelectedObjects+1
 	NewSelectedObjectCount=NewSelectedObjectCount+1
 	
-	NofDraggedObjects=NofSelectedObjects
-	For i=0 To NofDraggedObjects-1
-		DraggedObjects(i)=SelectedObjects(i)
-	Next
-	StartObjectDrag()
-	
 	; Doing this discards any non-Updated changes to previously-selected objects.
 	RecalculateObjectAdjusterModes()
 
@@ -1113,6 +1107,12 @@ Function FinishObjectSelection()
 			SetBrushToCurrentObject()
 		EndIf
 	EndIf
+	
+	NofDraggedObjects=NofSelectedObjects
+	For i=0 To NofDraggedObjects-1
+		DraggedObjects(i)=SelectedObjects(i)
+	Next
+	StartObjectDrag()
 
 End Function
 
