@@ -3104,25 +3104,26 @@ Function InitializeGraphicsEntities()
 	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
 	PositionEntity CurrentObjectMarkerMesh,0,300,0
 	
-	CurrentGrabbedObjectMarkers(0)=CreateCube()
-	ScaleMesh CurrentGrabbedObjectMarkers(0),0.5,90,0.5
-	EntityColor CurrentGrabbedObjectMarkers(0),100,255,100
-	EntityFX CurrentGrabbedObjectMarkers(0),16 ; disable back-face culling
-	HideEntity CurrentGrabbedObjectMarkers(0)
-	For i=1 To MaxNofObjects-1
-		CurrentGrabbedObjectMarkers(i)=CopyEntity(CurrentGrabbedObjectMarkers(0))
+	LightPillar=CreateCube()
+	ScaleMesh LightPillar,0.5,90,0.5
+	EntityColor LightPillar,100,255,100
+	EntityFX LightPillar,16 ; disable back-face culling
+	HideEntity LightPillar
+	
+	For i=0 To MaxNofObjects-1
+		CurrentGrabbedObjectMarkers(i)=CopyEntity(LightPillar)
 	Next
 
-	WorldAdjusterPositionMarker(0)=CopyEntity(CurrentGrabbedObjectMarkers(0))
+	WorldAdjusterPositionMarker(0)=CopyEntity(LightPillar)
 	EntityColor WorldAdjusterPositionMarker(0),100,200,255
 	For i=1 To 3
 		WorldAdjusterPositionMarker(i)=CopyEntity(WorldAdjusterPositionMarker(0))
 	Next
 	
-	CurrentObjectMoveXYGoalMarker=CopyEntity(CurrentGrabbedObjectMarkers(0))
+	CurrentObjectMoveXYGoalMarker=CopyEntity(LightPillar)
 	EntityColor CurrentObjectMoveXYGoalMarker,255,100,100
 	
-	WhereWeEndedUpMarker=CopyEntity(CurrentGrabbedObjectMarkers(0))
+	WhereWeEndedUpMarker=CopyEntity(LightPillar)
 	EntityColor WhereWeEndedUpMarker,255,255,0
 	ShowEntity WhereWeEndedUpMarker
 	
@@ -5427,10 +5428,11 @@ Function EditorLocalControls()
 									If LevelTileObjectCount(BrushCursorX,BrushCursorY)<>0
 										GrabObject(BrushCursorX,BrushCursorY,False)
 										TargetObject.GameObject=LevelObjects(SelectedObjects(NofSelectedObjects-1))
+										TargetAttributes.GameObjectAttributes=TargetObject\Attributes
 										For i=0 To NofObjects-1
 											Obj.GameObject=LevelObjects(i)
 											Attributes.GameObjectAttributes=Obj\Attributes
-											If Attributes\LogicType=TargetObject\Attributes\LogicType And Attributes\ModelName=TargetObject\Attributes\ModelName
+											If Attributes\LogicType=TargetAttributes\LogicType And Attributes\ModelName=TargetAttributes\ModelName
 												AddOrToggleSelectObject(i)
 											EndIf
 										Next
@@ -17096,7 +17098,7 @@ End Function
 Function ShowCurrentObjectMoveXYGoal()
 
 	; Check if we're using a pathfinding MovementType.
-	If (CurrentObject\Attributes\MovementType>9 And CurrentObject\Attributes\MovementType<19) Or CurrentObject\Attributes\MoveXGoal<>0 Or CurrentObject\Attributes\MoveYGoal<>0
+	If (ObjectAdjusterMovementType\Absolute And CurrentObject\Attributes\MovementType>9 And CurrentObject\Attributes\MovementType<19) Or (ObjectAdjusterMoveXGoal\Absolute And ObjectAdjusterMoveYGoal\Absolute And (CurrentObject\Attributes\MoveXGoal<>0 Or CurrentObject\Attributes\MoveYGoal<>0))
 		ShowEntity CurrentObjectMoveXYGoalMarker
 		SetEntityPositionInWorld(CurrentObjectMoveXYGoalMarker,CurrentObject\Attributes\MoveXGoal+0.5,CurrentObject\Attributes\MoveYGoal+0.5,0.0)
 	Else
