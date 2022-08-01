@@ -838,6 +838,8 @@ Global DragMaxTileX=101
 Global DragMinTileY=-1
 Global DragMaxTileY=-1
 
+Global TileDragging=False
+
 Function ResetDragSize()
 
 	DragMinTileX=101
@@ -965,6 +967,21 @@ Function IsOnlyObjectSelected(LevelObjectIndex)
 
 End Function
 
+Function StartObjectDrag()
+
+	ObjectDragging=True
+	DragSpotX=BrushCursorX
+	DragSpotY=BrushCursorY
+	RecalculateDragSize()
+
+End Function
+
+Function ClearObjectDrag()
+
+	NofDraggedObjects=0
+
+End Function
+
 Function ClearObjectSelection()
 
 	NofSelectedObjects=0
@@ -994,14 +1011,11 @@ Function AddSelectObjectInner(LevelObjectIndex)
 	NofSelectedObjects=NofSelectedObjects+1
 	NewSelectedObjectCount=NewSelectedObjectCount+1
 	
-	ObjectDragging=True
-	DragSpotX=BrushCursorX
-	DragSpotY=BrushCursorY
 	NofDraggedObjects=NofSelectedObjects
 	For i=0 To NofDraggedObjects-1
 		DraggedObjects(i)=SelectedObjects(i)
 	Next
-	RecalculateDragSize()
+	StartObjectDrag()
 	
 	; Doing this discards any non-Updated changes to previously-selected objects.
 	RecalculateObjectAdjusterModes()
@@ -1027,6 +1041,21 @@ Function RemoveSelectObjectInner(Index)
 	
 	RecalculateObjectAdjusterModes()
 	
+End Function
+
+Function AddDragObject(LevelObjectIndex)
+
+	If Not IsObjectDragged(LevelObjectIndex)
+		AddDragObjectInner(LevelObjectIndex)
+	EndIf
+
+End Function
+
+Function AddDragObjectInner(LevelObjectIndex)
+
+	DraggedObjects(NofDraggedObjects)=LevelObjectIndex
+	NofDraggedObjects=NofDraggedObjects+1
+
 End Function
 
 Function RemoveDraggedObject(LevelObjectIndex)
@@ -5315,8 +5344,25 @@ Function EditorLocalControls()
 					If RightMouseReleased=True
 						RightMouseReleased=False
 						
+						; grab object or tile
+						
 						If EditorMode=0
 							GrabLevelTile(BrushCursorX,BrushCursorY)
+							
+							ClearObjectDrag()
+							For i=0 To FloodedElementCount-1
+								thisx=FloodedStackX(i)
+								thisy=FloodedStackY(i)
+								If LevelTileObjectCount(thisx,thisy)<>0
+									For j=0 To NofObjects-1
+										If ObjectIsAtFloat(LevelObjects(j),thisx,thisy)
+											AddDragObject(j)
+										EndIf
+									Next
+								EndIf
+							Next
+							StartObjectDrag()
+							TileDragging=True
 						ElseIf EditorMode=3
 							If BrushMode=BrushModeBlock
 								PrepareObjectSelection()
@@ -5362,6 +5408,10 @@ Function EditorLocalControls()
 					EndIf
 					
 					ObjectDragging=False
+					
+					If TileDragging=True
+						TileDragging=False
+					EndIf
 				EndIf
 				
 				If MouseDown(3) ; middle click / ; middle mouse
