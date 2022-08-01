@@ -570,11 +570,18 @@ Dim LevelTiles.Tile(MaxLevelCoordinate,MaxLevelCoordinate)
 Dim CopyLevelTiles.Tile(MaxLevelCoordinate,MaxLevelCoordinate)
 Dim BrushTiles.Tile(MaxLevelCoordinate,MaxLevelCoordinate)
 
+Dim DraggedTiles.Tile(MaxLevelCoordinate,MaxLevelCoordinate)
+Dim DraggedTilesEnabled(MaxLevelCoordinate,MaxLevelCoordinate)
+Global DraggedTilesSpotX=-1
+Global DraggedTilesSpotY=-1
+
 For i=0 To MaxLevelCoordinate
 	For j=0 To MaxLevelCoordinate
 		LevelTiles(i,j)=NewTile()
 		CopyLevelTiles(i,j)=NewTile()
 		BrushTiles(i,j)=NewTile()
+		DraggedTiles(i,j)=NewTile()
+		DraggedTilesEnabled(i,j)=False
 	Next
 Next
 
@@ -4309,9 +4316,6 @@ Function SetBrushCursorPosition(x,y)
 End Function
 
 Function BrushCursorPositionWasChanged()
-
-	OnceTilePlacement=True
-	BrushCursorStateWasChanged()
 	
 	; object dragging
 	If NofDraggedObjects<>0 And ObjectDragging=True
@@ -4365,6 +4369,40 @@ Function BrushCursorPositionWasChanged()
 		Next
 	EndIf
 	
+	; tile dragging
+	If TileDragging=True
+		PasteLevelFromCopy()
+		
+		DeltaX=BrushCursorX-DraggedTilesSpotX
+		DeltaY=BrushCursorY-DraggedTilesSpotY
+		
+		For i=0 To LevelWidth-1
+			For j=0 To LevelHeight-1
+				If DraggedTilesEnabled(i,j)
+					ChangeLevelTile(i,j,True)
+				EndIf
+				UpdateTile(i,j)
+			Next
+		Next
+		
+		For i=0 To LevelWidth-1
+			For j=0 To LevelHeight-1
+				TargetX=i+DeltaX
+				TargetY=j+DeltaY
+				If IsPositionInLevel(TargetX,TargetY)
+					If DraggedTilesEnabled(i,j)
+						CopyTile(DraggedTiles(i,j),CurrentTile)
+						ChangeLevelTileActual(TargetX,TargetY,True)
+						
+						;ShowMessage(i+","+j+" to "+TargetX+","+TargetY+" with texture "+DraggedTiles(i,j)\Terrain\Texture,1000)
+					EndIf
+				EndIf
+			Next
+		Next
+		
+		SomeTileWasChanged()
+	EndIf
+	
 	If BrushMode=BrushModeSetMirror
 		MirrorPositionX=BrushCursorX
 		MirrorPositionY=BrushCursorY
@@ -4375,6 +4413,9 @@ Function BrushCursorPositionWasChanged()
 		HideEntity MirrorEntityX
 		HideEntity MirrorEntityY
 	EndIf
+	
+	OnceTilePlacement=True
+	BrushCursorStateWasChanged()
 
 End Function
 
@@ -5349,10 +5390,25 @@ Function EditorLocalControls()
 						If EditorMode=0
 							GrabLevelTile(BrushCursorX,BrushCursorY)
 							
+							CopyLevel()
+							
+							DraggedTilesSpotX=BrushCursorX
+							DraggedTilesSpotY=BrushCursorY
+							
+							For i=0 To MaxLevelCoordinate
+								For j=0 To MaxLevelCoordinate
+									DraggedTilesEnabled(i,j)=False
+								Next
+							Next
+							
 							ClearObjectDrag()
 							For i=0 To FloodedElementCount-1
 								thisx=FloodedStackX(i)
 								thisy=FloodedStackY(i)
+								
+								DraggedTilesEnabled(thisx,thisy)=True
+								CopyTile(LevelTiles(thisx,thisy),DraggedTiles(thisx,thisy))
+								
 								If LevelTileObjectCount(thisx,thisy)<>0
 									For j=0 To NofObjects-1
 										If ObjectIsAtFloat(LevelObjects(j),thisx,thisy)
@@ -5362,6 +5418,8 @@ Function EditorLocalControls()
 								EndIf
 							Next
 							StartObjectDrag()
+							
+							;NofDraggedTiles=FloodedElementCount
 							TileDragging=True
 						ElseIf EditorMode=3
 							If BrushMode=BrushModeBlock
@@ -5408,10 +5466,7 @@ Function EditorLocalControls()
 					EndIf
 					
 					ObjectDragging=False
-					
-					If TileDragging=True
-						TileDragging=False
-					EndIf
+					TileDragging=False
 				EndIf
 				
 				If MouseDown(3) ; middle click / ; middle mouse
@@ -17241,6 +17296,17 @@ End Function
 Function CopyLevelTile(SourceX,SourceY,DestX,DestY)
 
 	CopyTile(CopyLevelTiles(SourceX,SourceY),LevelTiles(DestX,DestY))
+
+End Function
+
+Function PasteLevelFromCopy()
+
+	ResetLevel()
+	For i=0 To LevelWidth-1
+		For j=0 To LevelHeight-1
+			CopyLevelTile(i,j,i,j)
+		Next
+	Next
 
 End Function
 
