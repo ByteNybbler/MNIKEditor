@@ -814,20 +814,65 @@ Next
 
 Global NofSelectedObjects=0
 Dim SelectedObjects(MaxNofObjects)
+Global NofDraggedObjects=0
+Dim DraggedObjects(MaxNofObjects)
+
 Global CurrentGrabbedObjectModified=False
 Global PreviousSelectedObject=-1
 Global NewSelectedObjectCount=0
 Global ReadyToCopyFirstSelected=True
 
 Global SelectionMinTileX=101
-Global SelectionMinTileY=101
-Global SelectionMaxTileX=-1
+Global SelectionMaxTileX=101
+Global SelectionMinTileY=-1
 Global SelectionMaxTileY=-1
 
 Dim CurrentGrabbedObjectMarkers(MaxNofObjects)
 
 ; Whether objects are currently being dragged.
 Global ObjectDragging=False
+Global DragSpotX=-1
+Global DragSpotY=-1
+Global DragMinTileX=101
+Global DragMaxTileX=101
+Global DragMinTileY=-1
+Global DragMaxTileY=-1
+
+Function ResetDragSize()
+
+	DragMinTileX=101
+	DragMinTileY=101
+	DragMaxTileX=-1
+	DragMaxTileY=-1
+
+End Function
+
+Function UpdateDragSize(LevelObjectIndex)
+
+	Pos.GameObjectPosition=LevelObjects(LevelObjectIndex)\Position
+	If Pos\TileX<DragMinTileX
+		DragMinTileX=Pos\TileX
+	EndIf
+	If Pos\TileX>DragMaxTileX
+		DragMaxTileX=Pos\TileX
+	EndIf
+	If Pos\TileY<DragMinTileY
+		DragMinTileY=Pos\TileY
+	EndIf
+	If Pos\TileY>DragMaxTileY
+		DragMaxTileY=Pos\TileY
+	EndIf
+
+End Function
+
+Function RecalculateDragSize()
+
+	ResetDragSize()
+	For i=0 To NofDraggedObjects-1
+		UpdateDragSize(DraggedObjects(i))
+	Next
+
+End Function
 
 Function ResetSelectionSize()
 
@@ -890,9 +935,27 @@ Function GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
 
 End Function
 
+Function GetDraggedObjectIndexInDraggedObjects(LevelObjectIndex)
+
+	For i=0 To NofDraggedObjects-1
+		If DraggedObjects(i)=LevelObjectIndex
+			Return i
+		EndIf
+	Next
+	
+	Return -1
+
+End Function
+
 Function IsObjectSelected(LevelObjectIndex)
 
 	Return GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)<>-1
+
+End Function
+
+Function IsObjectDragged(LevelObjectIndex)
+
+	Return GetDraggedObjectIndexInDraggedObjects(LevelObjectIndex)<>-1
 
 End Function
 
@@ -909,7 +972,6 @@ Function ClearObjectSelection()
 	For i=0 To MaxNofObjects-1
 		HideSelectedObjectMarker(i)
 	Next
-	ResetSelectionSize()
 	MakeAllObjectAdjustersAbsolute()
 	ReadyToCopyFirstSelected=True
 
@@ -928,11 +990,18 @@ Function AddSelectObjectInner(LevelObjectIndex)
 	SelectedObjects(NofSelectedObjects)=LevelObjectIndex
 	;ReadObjectIntoCurrentObject(LevelObjects(LevelObjectIndex))
 	ShowSelectedObjectMarker(LevelObjectIndex)
-	UpdateSelectionSize(LevelObjectIndex)
 	PreviousSelectedObject=LevelObjectIndex
 	NofSelectedObjects=NofSelectedObjects+1
 	NewSelectedObjectCount=NewSelectedObjectCount+1
+	
 	ObjectDragging=True
+	DragSpotX=BrushCursorX
+	DragSpotY=BrushCursorY
+	NofDraggedObjects=NofSelectedObjects
+	For i=0 To NofDraggedObjects-1
+		DraggedObjects(i)=SelectedObjects(i)
+	Next
+	RecalculateDragSize()
 	
 	; Doing this discards any non-Updated changes to previously-selected objects.
 	RecalculateObjectAdjusterModes()
@@ -960,6 +1029,24 @@ Function RemoveSelectObjectInner(Index)
 	
 End Function
 
+Function RemoveDraggedObject(LevelObjectIndex)
+
+	Index=GetDraggedObjectIndexInDraggedObjects(LevelObjectIndex)
+	If Index<>-1
+		RemoveDraggedObjectInner(Index)
+	EndIf
+
+End Function
+
+Function RemoveDraggedObjectInner(Index)
+
+	For i=Index To NofDraggedObjects-2
+		DraggedObjects(i)=DraggedObjects(i+1)
+	Next
+	NofDraggedObjects=NofDraggedObjects-1
+
+End Function
+
 Function ToggleSelectObject(LevelObjectIndex)
 	
 	Index=GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
@@ -968,7 +1055,6 @@ Function ToggleSelectObject(LevelObjectIndex)
 	Else
 		RemoveSelectObjectInner(Index)
 		HideSelectedObjectMarker(LevelObjectIndex)
-		RecalculateSelectionSize()
 	EndIf
 
 End Function
@@ -4158,7 +4244,7 @@ End Function
 Function SetBrushCursorPosition(x,y)
 
 	PositionChanged=Not PositionIsEqual(x,y,BrushCursorX,BrushCursorY)
-
+	
 	BrushCursorX=x
 	BrushCursorY=y
 	
@@ -4197,6 +4283,58 @@ Function BrushCursorPositionWasChanged()
 
 	OnceTilePlacement=True
 	BrushCursorStateWasChanged()
+	
+	; object dragging
+	If NofDraggedObjects<>0 And ObjectDragging=True
+		OldX=DragSpotX
+		DragSpotDeltaX=BrushCursorX-DragSpotX
+		If DragSpotDeltaX>0
+			If DragMaxTileX+DragSpotDeltaX<=100
+				DragSpotX=DragSpotX+DragSpotDeltaX
+			Else
+				DragSpotX=100-(DragMaxTileX-DragSpotX)
+			EndIf
+		Else
+			If DragMinTileX+DragSpotDeltaX>=0
+				DragSpotX=DragSpotX+DragSpotDeltaX
+			Else
+				DragSpotX=DragSpotX-DragMinTileX
+			EndIf
+		EndIf
+		DragSpotDeltaX=DragSpotX-OldX
+		DragMinTileX=DragMinTileX+DragSpotDeltaX
+		DragMaxTileX=DragMaxTileX+DragSpotDeltaX
+		
+		OldY=DragSpotY
+		DragSpotDeltaY=BrushCursorY-DragSpotY
+		If DragSpotDeltaY>0
+			If DragMaxTileY+DragSpotDeltaY<=100
+				DragSpotY=DragSpotY+DragSpotDeltaY
+			Else
+				DragSpotY=100-(DragMaxTileY-DragSpotY)
+			EndIf
+		Else
+			If DragMinTileY+DragSpotDeltaY>=0
+				DragSpotY=DragSpotY+DragSpotDeltaY
+			Else
+				DragSpotY=DragSpotY-DragMinTileY
+			EndIf
+		EndIf
+		DragSpotDeltaY=DragSpotY-OldY
+		DragMinTileY=DragMinTileY+DragSpotDeltaY
+		DragMaxTileY=DragMaxTileY+DragSpotDeltaY
+	
+		For i=0 To NofDraggedObjects-1
+			CurrentDraggedObject=DraggedObjects(i)
+			DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
+			TileX=DraggedPosition\TileX
+			TileY=DraggedPosition\TileY
+			DecrementLevelTileObjectCount(TileX,TileY)
+			SetObjectPosition(CurrentDraggedObject,TileX+DragSpotDeltaX,TileY+DragSpotDeltaY)
+			UpdateObjectPosition(CurrentDraggedObject)
+			SomeObjectWasChanged()
+		Next
+	EndIf
 	
 	If BrushMode=BrushModeSetMirror
 		MirrorPositionX=BrushCursorX
@@ -5211,22 +5349,6 @@ Function EditorLocalControls()
 								FinishObjectSelection()
 							EndIf
 						EndIf
-					ElseIf EditorMode=3
-						; object dragging
-						If NofSelectedObjects<>0 And ObjectDragging=True
-							For i=0 To NofSelectedObjects-1
-								CurrentDraggedObject=SelectedObjects(i)
-								DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
-								TileX=DraggedPosition\TileX
-								TileY=DraggedPosition\TileY
-								If (TileX<>BrushCursorX Or TileY<>BrushCursorY)
-									DecrementLevelTileObjectCount(TileX,TileY)
-									SetObjectPosition(CurrentDraggedObject,BrushCursorX,BrushCursorY);,0,0)
-									UpdateObjectPosition(CurrentDraggedObject)
-									SomeObjectWasChanged()
-								EndIf
-							Next
-						EndIf
 					EndIf
 				Else
 					If BlockPlacingMode=BlockPlacingModeCopy
@@ -5263,7 +5385,7 @@ Function EditorLocalControls()
 						Next
 					EndIf
 					
-					RecalculateSelectionSize()
+					RecalculateDragSize()
 				EndIf
 			Else
 				If BlockPlacingMode=BlockPlacingModeDelete
@@ -6361,7 +6483,7 @@ Function EditorLocalControls()
 					DeleteObject(SelectedObjects(0))
 				Wend
 				
-				RecalculateSelectionSize()
+				RecalculateDragSize()
 				SetEditorMode(3)
 			EndIf
 		EndIf
@@ -10951,6 +11073,15 @@ Function DeleteObject(i)
 		EndIf
 	Next
 	
+	If IsObjectDragged(i)
+		RemoveDraggedObject(i)
+	EndIf
+	For j=0 To NofDraggedObjects-1
+		If i<DraggedObjects(j)
+			DraggedObjects(j)=DraggedObjects(j)-1
+		EndIf
+	Next
+	
 	;ShowMessage("Moving object data...", 100)
 
 	For j=i+1 To NofObjects-1
@@ -11127,6 +11258,8 @@ Function CopySelectedObjectsToBrush()
 
 	; set custom brush
 	If EditorMode=3 And NofSelectedObjects<>0
+		RecalculateSelectionSize()
+	
 		NofBrushObjects=NofSelectedObjects
 		BrushSpaceWidth=SelectionMaxTileX-SelectionMinTileX+1
 		BrushSpaceHeight=SelectionMaxTileY-SelectionMinTileY+1
@@ -17180,7 +17313,7 @@ Function ReSizeLevel()
 				UpdateObjectPosition(i)
 			EndIf
 		Next
-		RecalculateSelectionSize()
+		RecalculateDragSize()
 	EndIf
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
@@ -17193,7 +17326,7 @@ Function ReSizeLevel()
 				UpdateObjectPosition(i)
 			EndIf
 		Next
-		RecalculateSelectionSize()
+		RecalculateDragSize()
 	EndIf
 	
 	ResizeLevelFixObjectTargets(CurrentObject)
