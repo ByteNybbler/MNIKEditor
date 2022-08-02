@@ -10375,7 +10375,9 @@ Function CalculateEffectiveIDWith(TargetType,TargetID,Data0,Data1,TargetTileType
 			Return 500+5*Data0+Data1
 		EndIf
 	Case 40 ; stepping stone
-		Return 500+(8+Data0)*5+Data1	   
+		If TargetID=-1
+			Return 500+(8+Data0)*5+Data1
+		EndIf
 	Case 280 ; spring
 		Return 500+5*Data0+Data1
 	Case 301 ; rainbow float
