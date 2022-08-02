@@ -2389,7 +2389,7 @@ Dim ZbotNPCTexture(8)
 For i=0 To 7
 	ZbotNPCTexture(i)=myLoadTexture("data\models\zbots\zbotnpc.jpg",1)
 Next
-EntityTexture ZbotNPCMesh,ZBotNPCTexture(0)
+;EntityTexture ZbotNPCMesh,ZBotNPCTexture(0)
 HideEntity ZbotNPCMesh
 
 Global MothershipMesh=myLoadMesh("data\models\other\starship.3ds",0)
@@ -13322,6 +13322,18 @@ Function DisplayObjectAdjuster(i)
 			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
 		
+		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
+			tex2$="Exploding"
+			If CurrentObject\Attributes\Data0<=0
+				tex$="No"
+			ElseIf CurrentObject\Attributes\Data0<120
+				tex$="Yes"
+			Else
+				tex$="Always"
+			EndIf
+			tex$=CurrentObject\Attributes\Data0+"/"+tex$
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=434 ; mothership
 			tex2$="SpawnTimer" ; Formerly TimerMax
 			If CurrentObject\Attributes\Data0=0
@@ -13751,7 +13763,7 @@ Function DisplayObjectAdjuster(i)
 			Else
 				tex$="Fixed"
 			EndIf
-			
+			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=180 ; Sign
@@ -14168,15 +14180,13 @@ Function DisplayObjectAdjuster(i)
 		
 		; Thwart, Ice Troll, Z-Bot NPC
 		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 Or CurrentObject\Attributes\LogicType=433
-
 			tex2$="Shooter"
-			Select CurrentObject\Attributes\Data6
-			Case 0
-				tex$="No"
-			Case 1
+			If CurrentObject\Attributes\Data6>0
 				tex$="Yes"
-			
-			End Select
+			Else
+				tex$="No"
+			EndIf
+			tex$=CurrentObject\Attributes\Data6+"/"+tex$
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=10 And CurrentObject\Attributes\LogicSubType=9 ; Autodoor
@@ -14301,20 +14311,8 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Boom"
 			If CurrentObject\Attributes\Data8=0 tex$="No"
 			If CurrentObject\Attributes\Data8=1 tex$="Yes"
-				
-			
 			
 		EndIf
-		
-		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
-			
-			tex2$="IntroSound"
-			If CurrentObject\Attributes\Data8=0 tex$="On"
-			If CurrentObject\Attributes\Data8=1 tex$="Off"
-			
-		EndIf
-		
-		
 		
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="FromZapbot"
@@ -14561,7 +14559,7 @@ Function DisplayObjectAdjuster(i)
 			ElseIf CurrentObject\Attributes\Status<-199
 				tex$=CurrentObject\Attributes\Status+"/Eversplode"
 			ElseIf CurrentObject\Attributes\Status<0
-				tex$="Exploding "+Str$(-CurrentObject\Attributes\Status);+"/200"
+				tex$="Exploding "+Str$(-CurrentObject\Attributes\Status)
 			EndIf
 		EndIf
 		
@@ -15462,10 +15460,10 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 		
-		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
-			If CurrentObject\Attributes\Data2>1 CurrentObject\Attributes\Data2=0
-			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=1
-		EndIf
+;		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
+;			If CurrentObject\Attributes\Data2>1 CurrentObject\Attributes\Data2=0
+;			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=1
+;		EndIf
 		
 
 	Case "Data3"
@@ -15685,11 +15683,11 @@ Function AdjustObjectAdjuster(i)
 			;If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=2
 		EndIf
 
-		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 Or CurrentObject\Attributes\LogicType=433 ; Thwart or Ice Troll or Z-Bot NPC
-			; Shooter
-			If CurrentObject\Attributes\Data6>1 CurrentObject\Attributes\Data6=0
-			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=1
-		EndIf
+;		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 Or CurrentObject\Attributes\LogicType=433 ; Thwart or Ice Troll or Z-Bot NPC
+;			; Shooter
+;			If CurrentObject\Attributes\Data6>1 CurrentObject\Attributes\Data6=0
+;			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=1
+;		EndIf
 
 		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
 			If CurrentObject\Attributes\Data6>255 CurrentObject\Attributes\Data6=0
@@ -15796,9 +15794,8 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=5
 		EndIf
 
-		If CurrentObject\Attributes\LogicType=400 Or CurrentObject\Attributes\LogicType=433 ; Baby Boomer or Z-Bot NPC
+		If CurrentObject\Attributes\LogicType=400 ; Baby Boomer
 			; Boom?
-			; IntroSound
 			If CurrentObject\Attributes\Data8>1 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=1
 		EndIf
@@ -16458,7 +16455,7 @@ Function BuildObjectAccessories(Obj.GameObject)
 	If Obj\Model\HatEntity>0
 		
 		If Obj\Model\HatTexture=0
-			EntityColor Obj\Model\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
+			UseErrorColor(Obj\Model\HatEntity)
 		Else
 			EntityTexture Obj\Model\HatEntity,Obj\Model\HatTexture
 		EndIf
@@ -16480,7 +16477,7 @@ Function BuildObjectAccessories(Obj.GameObject)
 	If Obj\Model\AccEntity>0
 		
 		If Obj\Model\AccTexture=0
-			EntityColor Obj\Model\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
+			UseErrorColor(Obj\Model\AccEntity)
 		Else
 			EntityTexture Obj\Model\AccEntity,Obj\Model\AccTexture
 		EndIf
@@ -16797,7 +16794,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 		Data1=Obj\Attributes\Data1
 		If Data1<0 Or Data1>8
-			EntityColor Obj\Model\Entity,ModelErrorR,ModelErrorG,ModelErrorB
+			UseErrorColor(Obj\Model\Entity)
 		Else
 			EntityTexture Obj\Model\Entity,TeleporterTexture(Data1)
 		EndIf
@@ -16822,8 +16819,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	Else If Obj\Attributes\ModelName$="!SteppingStone"
 		Obj\Model\Entity=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		If Obj\Attributes\Data0<0 Or Obj\Attributes\Data0>3
-			;Obj\Attributes\Data0=0
-			EntityColor Obj\Model\Entity,ModelErrorR,ModelErrorG,ModelErrorB
+			UseErrorColor(Obj\Model\Entity)
 		Else
 			EntityTexture Obj\Model\Entity,SteppingStoneTexture(Obj\Attributes\Data0)
 		EndIf
@@ -16915,7 +16911,11 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 	Else If Obj\Attributes\ModelName$="!ZbotNPC"
 		Obj\Model\Entity=CopyEntity(ZbotNPCMesh)
-		EntityTexture Obj\Model\Entity,ZBotNPCTexture(Obj\Attributes\Data2)
+		If Obj\Attributes\Data2<0 Or Obj\Attributes\Data2>7
+			UseErrorColor(Obj\Model\Entity)
+		Else
+			EntityTexture Obj\Model\Entity,ZBotNPCTexture(Obj\Attributes\Data2)
+		EndIf
 	
 	Else If Obj\Attributes\ModelName$="!Mothership"
 		Obj\Model\Entity=CopyEntity(MothershipMesh)
@@ -30085,7 +30085,9 @@ Function ControlZbotNPC(i)
 		EndIf
 	EndIf
 	
-	TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
+	If SimulatedObjectData(i,2)=0
+		TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
+	EndIf
 
 End Function
 
