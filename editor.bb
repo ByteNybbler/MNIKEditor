@@ -12721,6 +12721,15 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
+		If CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
+			If CurrentObject\Attributes\LogicSubType=1
+				tex$="Sold Out"
+			Else
+				tex$="Available"
+			EndIf
+			tex$=CurrentObject\Attributes\LogicSubType+"/"+tex$
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=179 ; Custom Item
 			tex2$="Fn"
 			If CurrentObject\Attributes\LogicSubType>=0 And CurrentObject\Attributes\LogicSubType<30
