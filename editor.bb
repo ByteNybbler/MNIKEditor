@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/01/22"
+Global VersionDate$="08/02/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -12395,6 +12395,23 @@ Function HoverOverObjectAdjuster(i)
 			Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; ColorX2Y or Rotator or ???
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
+		ElseIf CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
+			tex$=""
+			If CurrentObjectTargetIDEnabled(0)
+				TargetID=CurrentObjectTargetID(0)
+				Count=CountObjectEffectiveIDs(TargetID)
+				tex$=tex$+"ID "+TargetID+" matches "+Count+"."
+			EndIf
+			For i=1 To CurrentObjectTargetIDCount-1
+				If CurrentObjectTargetIDEnabled(i)
+					TargetID=CurrentObjectTargetID(i)
+					Count=CountObjectEffectiveIDs(TargetID)
+					tex$=tex$+" ID "+TargetID+" matches "+Count+"."
+				EndIf
+			Next
+			If CurrentObjectTargetIDEnabled(0)
+				ShowTooltipRightAligned(StartX,TooltipLeftY,tex$)
+			EndIf
 		EndIf
 		
 	Case "Data1"
@@ -13178,11 +13195,25 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="GoalX"
 		EndIf
-		If CurrentObject\Attributes\LogicType=190 Or CurrentObject\Attributes\LogicType=164
+		If CurrentObject\Attributes\LogicType=190 Or CurrentObject\Attributes\LogicType=164 ; Particle Spawner or Fountain
 			tex2$="Particle ID"
 		EndIf
 		If CurrentObject\Attributes\LogicType=11 ; TollGate
 			tex2$="Cost"
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
+			tex2$="Activates"
+			Data0=CurrentObject\Attributes\Data0
+			tex$=Data0
+			While True
+				Data0=Data0+1
+				If ((Data0-200) Mod 3)=0
+					Exit
+				Else
+					tex$=tex$+", "+Data0
+				EndIf
+			Wend
 		EndIf
 
 		
@@ -17082,9 +17113,10 @@ Function CalculateCurrentObjectTargetIDs()
 					;CurrentObjectTargetIDCount=1
 					CurrentObjectTargetID(0)=ColorToID(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 					CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
-				Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command 
-					CalculateCommandTargetIDs(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
-					CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+				Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
+					If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+						CalculateCommandTargetIDs(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+					EndIf
 				Else If (CurrentObject\Attributes\LogicSubType Mod 32)=11 ; NPC Modifier
 					If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
 						If CurrentObject\Attributes\Data0=2 ; NPC Exclamation
@@ -17101,9 +17133,27 @@ Function CalculateCurrentObjectTargetIDs()
 					EndIf
 				EndIf
 			EndIf
+		ElseIf CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
+			If ObjectAdjusterData0\Absolute
+				Data0=CurrentObject\Attributes\Data0
+				CurrentObjectTargetID(0)=Data0
+				CurrentObjectTargetIDEnabled(0)=True
+				TargetCount=1
+				While True
+					Data0=Data0+1
+					If ((Data0-200) Mod 3)=0
+						Exit
+					Else
+						CurrentObjectTargetID(TargetCount)=Data0
+						CurrentObjectTargetIDEnabled(TargetCount)=True
+						TargetCount=TargetCount+1
+					EndIf
+				Wend
+			EndIf
 		ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
-			CalculateCommandTargetIDs(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
-			CurrentObjectTargetIDEnabled(0)=ObjectAdjusterData2\Absolute And ObjectAdjusterData3\Absolute
+			If ObjectAdjusterData2\Absolute And ObjectAdjusterData3\Absolute
+				CalculateCommandTargetIDs(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
+			EndIf
 		EndIf
 	EndIf
 	
@@ -17115,10 +17165,12 @@ Function CalculateCommandTargetIDs(Command,Data1)
 	Case 1,2,3,4,5,16,51,52,61,62,63
 		;CurrentObjectTargetIDCount=1
 		CurrentObjectTargetID(0)=Data1
+		CurrentObjectTargetIDEnabled(0)=True
 	Case 64
 		If Data1<>-1 ; Ignore if targeting the player
 			;CurrentObjectTargetIDCount=1
 			CurrentObjectTargetID(0)=Data1
+			CurrentObjectTargetIDEnabled(0)=True
 		EndIf
 	End Select
 
