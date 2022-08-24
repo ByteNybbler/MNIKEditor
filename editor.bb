@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/02/22"
+Global VersionDate$="08/24/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -7900,6 +7900,25 @@ Function GetAskAboutActiveName$(Active)
 	Default
 		If Active>-1
 			Return "Active if MasterAskAbout "+Active+" is active (modify with CMD 28, 29, or 30)"
+		Else
+			Return "???"
+		EndIf
+	End Select
+
+End Function
+
+Function GetAskAboutActiveNameShort$(Active)
+
+	Select Active
+	Case -2
+		Return "Active"
+	Case -1
+		Return "Inactive"
+	Default
+		If Active>-1
+			Return "MasterAA "+Active
+		Else
+			Return Active
 		EndIf
 	End Select
 
@@ -12420,7 +12439,12 @@ Function HoverOverObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,1)
-			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 Or (CurrentObject\Attributes\LogicSubType Mod 32)=15 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; NPC Modifier, General Command, or Rotator
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
+				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And CurrentObject\Attributes\Data0>20 And CurrentObject\Attributes\Data0<28
+					ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,0))
+				EndIf
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; NPC Modifier or Rotator
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
 		EndIf
@@ -12429,7 +12453,15 @@ Function HoverOverObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,2)
-			Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
+				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+					If CurrentObject\Attributes\Data0>=21 And CurrentObject\Attributes\Data0<=22 And CurrentObject\Attributes\Data2>-1
+						ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
+					ElseIf CurrentObject\Attributes\Data0>=23 And CurrentObject\Attributes\Data0<=27
+						ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewAskAbout$(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
+					EndIf
+				EndIf
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
 		EndIf
@@ -12441,8 +12473,14 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 		
 	Case "Data3"
-		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
-			TooltipTargetsEffectiveID(StartX,TooltipLeftY,3)
+		If CurrentObject\Attributes\LogicType=90
+			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
+				TooltipTargetsEffectiveID(StartX,TooltipLeftY,3)
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
+				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And ObjectAdjusterData3\Absolute And CurrentObject\Attributes\Data0=27
+					ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data3))
+				EndIf
+			EndIf
 		ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
 			If CurrentObjectTargetIDCount<>0
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
@@ -12557,6 +12595,17 @@ Function HoverOverObjectAdjuster(i)
 			EffectiveID=CalculateEffectiveID(CurrentObject\Attributes)
 			Count=CountObjectEffectiveIDs(EffectiveID)
 			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this effective ID, which is "+EffectiveID+".")
+		EndIf
+		
+	Case "Talkable"
+		If ObjectAdjusterTalkable\Absolute
+			TheDialog=CurrentObject\Attributes\Talkable
+			If TheDialog<>0
+				If TheDialog>=10001
+					TheDialog=TheDialog-10000
+				EndIf
+				ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(TheDialog,0))
+			EndIf
 		EndIf
 		
 	End Select
@@ -24406,6 +24455,91 @@ Function NewDialog()
 
 End Function
 
+Function TryLoadDialog(TargetDialog)
+
+	If DialogExists(TargetDialog)
+		If CurrentDialog<>TargetDialog
+			CurrentDialog=TargetDialog
+			LoadDialogFile()
+		EndIf
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
+
+Function DialogGetFirstLine$(Interchange)
+
+	For j=0 To 6
+		tex$=InterChangeTextLine$(Interchange,j)
+		If tex$<>""
+			Return tex$
+		EndIf
+	Next
+
+	Return "< EMPTY >"
+
+End Function
+
+Function DialogGetFirstTwoLines$(Interchange)
+
+	Result$=""
+	ResultCount=0
+	For j=0 To 6
+		tex$=InterChangeTextLine$(Interchange,j)
+		If tex$<>""
+			If ResultCount=0
+				Result$=tex$
+			Else
+				Result$=Result$+" "+tex$
+				Return Result$
+			EndIf
+			ResultCount=ResultCount+1
+		EndIf
+	Next
+
+	If Result$=""
+		Return "< EMPTY >"
+	Else
+		Return Result$
+	EndIf
+
+End Function
+
+Function PreviewDialog$(DialogNumber,InterchangeNumber)
+
+	If TryLoadDialog(DialogNumber)
+		If InterchangeNumber>-1 And InterchangeNumber<101
+			Return DialogGetFirstTwoLines$(InterchangeNumber)
+		Else
+			Return "< INVALID INTERCHANGE >"
+		EndIf
+	Else
+		Return "< DIALOG DOES NOT EXIST >"
+	EndIf
+
+End Function
+
+Function PreviewAskAbout$(DialogNumber,AskAboutNumber)
+
+	If TryLoadDialog(DialogNumber)
+		If AskAboutNumber>-1 And AskAboutNumber<101
+			tex$=AskAboutText$(AskAboutNumber)
+			If tex$=""
+				Return "< EMPTY >"
+			Else
+				Return tex$
+			EndIf
+		Else
+			Return "< INVALID ASKABOUT >"
+		EndIf
+	Else
+		Return "< DIALOG DOES NOT EXIST >"
+	EndIf
+
+End Function
+
 
 Function DialogTextCommandIsColor(k)
 
@@ -25633,6 +25767,8 @@ Function GetCmdData3ValueName$(Cmd, Data2, Data3)
 		Else
 			Return Data3+" kHz"
 		EndIf
+	Case 26
+		Return GetAskAboutActiveNameShort$(Data3)
 	Case 62
 		If Data3=-1
 			Return "No Change"
