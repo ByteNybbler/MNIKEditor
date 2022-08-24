@@ -105,11 +105,14 @@ Global TileColorB
 ; EDITOR DIALOG DATA
 
 Global CurrentDialog
+Global PreviewCurrentDialog
 
 Global DialogCurrentRed,DialogCurrentGreen,DialogCurrentBlue,DialogCurrentEffect
 
 Const MaxInterChanges=100
+Const MaxAskAbouts=100
 Global StartingInterChange
+
 Global NofInterchanges
 Dim NofInterChangeTextLines(MaxInterChanges)	
 Dim InterChangeTextLine$(MaxInterChanges,7)
@@ -121,13 +124,31 @@ Dim InterChangeReplyData(MaxInterChanges,8)
 Dim InterChangeReplyCommand(MaxInterChanges,8)		
 Dim InterChangeReplyCommandData(MaxInterChanges,8,4)
 
-Const MaxAskAbouts=100
 Global NofAskAbouts
 Global AskAboutTopText$
 Dim AskAboutText$(MaxAskAbouts)
 Dim AskAboutActive(MaxAskAbouts)
 Dim AskAboutInterchange(MaxAskAbouts)
 Dim AskAboutRepeat(MaxAskAbouts)
+
+
+Global PreviewNofInterchanges
+Dim PreviewNofInterChangeTextLines(MaxInterChanges)	
+Dim PreviewInterChangeTextLine$(MaxInterChanges,7)
+Dim PreviewDialogTextCommand$(MaxInterChanges,200),PreviewDialogTextCommandPos(MaxInterChanges,200), PreviewNofTextCommands(MaxInterChanges)
+Dim PreviewNofInterChangeReplies(MaxInterChanges)
+Dim PreviewInterChangeReplyText$(MaxInterChanges,8)
+Dim PreviewInterChangeReplyFunction(MaxInterChanges,8)		
+Dim PreviewInterChangeReplyData(MaxInterChanges,8)			
+Dim PreviewInterChangeReplyCommand(MaxInterChanges,8)		
+Dim PreviewInterChangeReplyCommandData(MaxInterChanges,8,4)
+
+Global PreviewNofAskAbouts
+Global PreviewAskAboutTopText$
+Dim PreviewAskAboutText$(MaxAskAbouts)
+Dim PreviewAskAboutActive(MaxAskAbouts)
+Dim PreviewAskAboutInterchange(MaxAskAbouts)
+Dim PreviewAskAboutRepeat(MaxAskAbouts)
 
 
 Global ColEffect=-1
@@ -22370,6 +22391,8 @@ Function StartMaster()
 	
 	ResetPreviousLevelNumberBuffer()
 	
+	PreviewCurrentDialog=0
+	
 	SetEditorMode(8)
 	
 	CopyingLevel=StateNotSpecial
@@ -22453,9 +22476,7 @@ Function StartMaster()
 				CustomGlyphCMD(i,j)=0
 			Next
 		Next
-		
 	EndIf
-
 
 End Function
 
@@ -24455,12 +24476,12 @@ Function NewDialog()
 
 End Function
 
-Function TryLoadDialog(TargetDialog)
+Function TryPreviewDialog(TargetDialog)
 
 	If DialogExists(TargetDialog)
-		If CurrentDialog<>TargetDialog
-			CurrentDialog=TargetDialog
-			LoadDialogFile()
+		If PreviewCurrentDialog<>TargetDialog
+			PreviewCurrentDialog=TargetDialog
+			PreviewDialogFile()
 		EndIf
 		Return True
 	Else
@@ -24472,7 +24493,7 @@ End Function
 Function DialogGetFirstLine$(Interchange)
 
 	For j=0 To 6
-		tex$=InterChangeTextLine$(Interchange,j)
+		tex$=PreviewInterChangeTextLine$(Interchange,j)
 		If tex$<>""
 			Return tex$
 		EndIf
@@ -24487,7 +24508,7 @@ Function DialogGetFirstTwoLines$(Interchange)
 	Result$=""
 	ResultCount=0
 	For j=0 To 6
-		tex$=InterChangeTextLine$(Interchange,j)
+		tex$=PreviewInterChangeTextLine$(Interchange,j)
 		If tex$<>""
 			If ResultCount=0
 				Result$=tex$
@@ -24509,7 +24530,7 @@ End Function
 
 Function PreviewDialog$(DialogNumber,InterchangeNumber)
 
-	If TryLoadDialog(DialogNumber)
+	If TryPreviewDialog(DialogNumber)
 		If InterchangeNumber>-1 And InterchangeNumber<101
 			Return DialogGetFirstTwoLines$(InterchangeNumber)
 		Else
@@ -24523,9 +24544,9 @@ End Function
 
 Function PreviewAskAbout$(DialogNumber,AskAboutNumber)
 
-	If TryLoadDialog(DialogNumber)
+	If TryPreviewDialog(DialogNumber)
 		If AskAboutNumber>-1 And AskAboutNumber<101
-			tex$=AskAboutText$(AskAboutNumber)
+			tex$=PreviewAskAboutText$(AskAboutNumber)
 			If tex$=""
 				Return "< EMPTY >"
 			Else
@@ -25351,6 +25372,44 @@ Function ClearDialogFile()
 	Next
 End Function
 
+Function ClearDialogPreview()
+	; first clear all data
+	PreviewNofInterchanges=1
+	For i=0 To MaxInterChanges ;-1
+		PreviewNofInterChangeTextLines(i)=0	
+		For j=0 To 6
+			PreviewInterChangeTextLine$(i,j)=""
+		Next
+		PreviewNofTextCommands(i)=0
+		For j=0 To 199
+			PreviewDialogTextCommand$(i,j)=""
+			PreviewDialogTextCommandPos(i,j)=-1
+		Next
+		PreviewNofInterChangeReplies(i)=1
+		For j=0 To 7
+			PreviewInterChangeReplyText$(i,j)=""
+			
+			; Make the default FNC end the dialog and return to this Interchange.
+			PreviewInterChangeReplyFunction(i,j)=1
+			PreviewInterChangeReplyData(i,j)=i
+			
+			PreviewInterChangeReplyCommand(i,j)=0
+			For k=0 To 3
+				PreviewInterChangeReplyCommandData(i,j,k)=0
+			Next
+		Next
+		
+	Next
+	PreviewNofAskAbouts=0
+	PreviewAskAboutTopText$=""
+	For i=0 To MaxAskAbouts-1
+		PreviewAskAboutText$(i)=""
+		PreviewAskAboutActive(i)=-2
+		PreviewAskAboutInterchange(i)=0
+		PreviewAskAboutRepeat(i)=-1
+	Next
+End Function
+
 Function LoadDialogFile()
 
 	ClearDialogFile()
@@ -25392,6 +25451,48 @@ Function LoadDialogFile()
 	CloseFile file
 	
 	UnsavedChanges=False
+
+End Function
+
+Function PreviewDialogFile()
+
+	ClearDialogPreview()
+		
+	; yep - load
+	file=ReadFile(GetAdventureDir$()+Str$(PreviewCurrentDialog)+".dia")
+
+	PreviewNofInterchanges=ReadInt(file)
+	For i=0 To PreviewNofInterchanges-1
+		PreviewNofInterChangeTextLines(i)=ReadInt(file)	
+		For j=0 To PreviewNofInterChangeTextLines(i)-1
+			PreviewInterChangeTextLine$(i,j)=ReadString$(file)
+		Next
+		PreviewNofTextCommands(i)=ReadInt(file)
+		
+		For j=0 To PreviewNofTextCommands(i)-1
+			PreviewDialogTextCommand$(i,j)=ReadString$(file)
+			PreviewDialogTextCommandPos(i,j)=ReadInt(file)
+		Next
+		PreviewNofInterChangeReplies(i)=ReadInt(file)
+		For j=0 To PreviewNofInterChangeReplies(i)-1
+			PreviewInterChangeReplyText$(i,j)=ReadString$(file)
+			PreviewInterChangeReplyFunction(i,j)=ReadInt(file)
+			PreviewInterChangeReplyData(i,j)=ReadInt(file)
+			PreviewInterChangeReplyCommand(i,j)=ReadInt(file)
+			For k=0 To 3
+				PreviewInterChangeReplyCommandData(i,j,k)=ReadInt(file)
+			Next
+		Next
+	Next
+	PreviewNofAskAbouts=ReadInt(file)
+	PreviewAskAboutTopText$=ReadString$(file)
+	For i=0 To PreviewNofAskAbouts-1
+		PreviewAskAboutText$(i)=ReadString$(File)
+		PreviewAskAboutActive(i)=ReadInt(file)
+		PreviewAskAboutInterchange(i)=ReadInt(file)
+		PreviewAskAboutRepeat(i)=ReadInt(file)
+	Next
+	CloseFile file
 
 End Function
 
