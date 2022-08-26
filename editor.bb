@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/25/22"
+Global VersionDate$="08/26/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -24526,16 +24526,51 @@ Function DialogGetFirstTwoLines$(Interchange)
 
 End Function
 
+Function CurrentDialogGetFirstTwoLines$(Interchange)
+
+	Result$=""
+	ResultCount=0
+	For j=0 To 6
+		tex$=InterChangeTextLine$(Interchange,j)
+		If tex$<>""
+			If ResultCount=0
+				Result$=tex$
+			Else
+				Result$=Result$+" "+tex$
+				Return Result$
+			EndIf
+			ResultCount=ResultCount+1
+		EndIf
+	Next
+
+	If Result$=""
+		Return "< EMPTY >"
+	Else
+		Return Result$
+	EndIf
+
+End Function
+
 Function PreviewDialog$(DialogNumber,InterchangeNumber)
 
 	If TryPreviewDialog(DialogNumber)
-		If InterchangeNumber>-1 And InterchangeNumber<101
+		If InterchangeNumber>=0 And InterchangeNumber<=100
 			Return DialogGetFirstTwoLines$(InterchangeNumber)
 		Else
 			Return "< INVALID INTERCHANGE >"
 		EndIf
 	Else
 		Return "< DIALOG DOES NOT EXIST >"
+	EndIf
+
+End Function
+
+Function PreviewCurrentDialog$(InterchangeNumber)
+
+	If InterchangeNumber>=0 And InterchangeNumber<=100
+		Return CurrentDialogGetFirstTwoLines$(InterchangeNumber)
+	Else
+		Return "< INVALID INTERCHANGE >"
 	EndIf
 
 End Function
@@ -25159,7 +25194,12 @@ Function DialogMainLoop()
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToDataName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
+			Fnc=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
+			tex$=ReplyFunctionToDataName$(Fnc)
+			If Fnc=1 Or Fnc=2
+				tex$=tex$+": "+PreviewCurrentDialog$(InterChangeReplyData(WhichInterchange,WhichAnswer))
+			EndIf
+			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		Case 2
 			OldValue=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 			InterChangeReplyCommand(WhichInterChange,WhichAnswer)=AdjustInt("CMD: ", InterChangeReplyCommand(WhichInterChange,WhichAnswer), 1, 10, DelayTime)
@@ -25253,7 +25293,7 @@ Function DialogMainLoop()
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(LetterX(15.25),TooltipY,"Destination Interchange")
+			ShowTooltipCenterAligned(LetterX(15.25),TooltipY,"Destination Interchange: "+PreviewCurrentDialog$(AskAboutInterChange(WhichAskAbout)))
 		Else If MouseX()<LetterX(38)
 			OldValue=AskAboutRepeat(WhichAskAbout)
 			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, DelayTime)
