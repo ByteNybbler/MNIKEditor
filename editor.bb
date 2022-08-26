@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/24/22"
+Global VersionDate$="08/25/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -12462,8 +12462,10 @@ Function HoverOverObjectAdjuster(i)
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,1)
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
-				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And CurrentObject\Attributes\Data0>20 And CurrentObject\Attributes\Data0<28
-					ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,0))
+				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+					If CurrentObject\Attributes\Data0>=21 And CurrentObject\Attributes\Data0<=27
+						ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,0))
+					EndIf
 				EndIf
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; NPC Modifier or Rotator
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
@@ -12475,12 +12477,8 @@ Function HoverOverObjectAdjuster(i)
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,2)
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
-				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
-					If CurrentObject\Attributes\Data0>=21 And CurrentObject\Attributes\Data0<=22 And CurrentObject\Attributes\Data2>-1
-						ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
-					ElseIf CurrentObject\Attributes\Data0>=23 And CurrentObject\Attributes\Data0<=27
-						ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewAskAbout$(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
-					EndIf
+				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And ObjectAdjusterData2\Absolute
+					ShowTooltipRightAligned(StartX,TooltipLeftY,GetCmdData2ExtraInfo$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
 				EndIf
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
@@ -25177,7 +25175,11 @@ Function DialogMainLoop()
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData1NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), ": "))
+			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
+			Data1=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
+			
+			tex$=GetCMDData1NameAndValue(Cmd, Data1, ": ")+WithJoinerIfNotEmpty$(GetCmdData1ExtraInfo$(Cmd,Data1),": ")
+			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		Case 4
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, DelayTime)
@@ -25185,7 +25187,12 @@ Function DialogMainLoop()
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData2NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), ": "))
+			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
+			Data1=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
+			Data2=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
+			
+			tex$=GetCMDData2NameAndValue(Cmd, Data2, ": ")+WithJoinerIfNotEmpty$(GetCmdData2ExtraInfo$(Cmd,Data1,Data2),": ")
+			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		Case 5
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, DelayTime)
@@ -25193,7 +25200,13 @@ Function DialogMainLoop()
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData3NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), ": "))
+			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
+			Data1=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
+			Data2=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
+			Data3=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
+			
+			tex$=GetCMDData3NameAndValue(Cmd, Data2, Data3, ": ")+WithJoinerIfNotEmpty$(GetCmdData3ExtraInfo$(Cmd,Data1,Data3),": ")
+			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		Case 6
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, DelayTime)
@@ -25201,7 +25214,11 @@ Function DialogMainLoop()
 				UnsavedChanges=True
 			EndIf
 			
-			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCMDData4NameAndValue(InterChangeReplyCommand(WhichInterChange,WhichAnswer), InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), ": "))
+			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
+			Data4=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
+			
+			tex$=GetCMDData4NameAndValue(Cmd, Data4, ": ")
+			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		End Select
 		
 		If Modified
@@ -26642,6 +26659,53 @@ End Function
 Function GetCMDData4NameAndValue$(Cmd,Data4,Joiner$)
 
 	Return GetCmdData4Name$(Cmd)+Joiner$+GetCmdData4ValueName$(Cmd,Data4)
+
+End Function
+
+Function GetCmdData1ExtraInfo$(Cmd,Data1)
+
+	Select Cmd
+	Case 21,22,23,24,25,26,27
+		Return PreviewDialog$(Data1,0)
+	End Select
+	
+	Return ""
+
+End Function
+
+Function GetCmdData2ExtraInfo$(Cmd,Data1,Data2)
+
+	Select Cmd
+	Case 21,22
+		If Data2>-1
+			Return PreviewDialog$(Data1,Data2)
+		EndIf
+	Case 23,24,25,26,27
+		Return PreviewAskAbout$(Data1,Data2)
+	End Select
+	
+	Return ""
+
+End Function
+
+Function GetCmdData3ExtraInfo$(Cmd,Data1,Data3)
+
+	Select Cmd
+	Case 27
+		Return PreviewDialog$(Data1,Data3)
+	End Select
+	
+	Return ""
+
+End Function
+
+Function WithJoinerIfNotEmpty$(TheString$,Joiner$)
+
+	If TheString$=""
+		Return TheString$
+	Else
+		Return Joiner$+TheString$
+	EndIf
 
 End Function
 
