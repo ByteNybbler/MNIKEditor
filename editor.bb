@@ -35,6 +35,7 @@ Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 
 Const EditorModeTile=0
 Const EditorModeObject=3
+Const EditorModeDialog=9
 
 Global EditorModeBeforeMasterEdit=0
 
@@ -668,6 +669,9 @@ Dim FloodedStackY(MaxTilesPerLevel)
 Global FloodElementCount ; I wish I had OOP
 Global FloodedElementCount
 Global FloodOutsideAdjacent
+
+Global ParticlePreview
+Global ParticlePreviewSurface
 
 ; TILE PRESETS
 ; ========================
@@ -3000,6 +3004,8 @@ Function InitializeGraphicsTextures()
 
 	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
 	ResetParticles("data/graphics/particles.bmp")
+	EntityTexture ParticlePreview,ParticleTexture
+	
 	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
 	ResetText("data/graphics/font.bmp")
 	
@@ -3271,6 +3277,23 @@ Function InitializeGraphicsEntities()
 	UpdateNormals CurrentWaterTile
 	
 	FreeEntity LightPillar
+	
+	ParticlePreview=CreateMesh()
+	ParticlePreviewSurface=CreateSurface(ParticlePreview)
+	ParticlePreviewSize#=10.0 ;0.04
+	AddVertex ParticlePreviewSurface,-ParticlePreviewSize#,ParticlePreviewSize#,0
+	AddVertex ParticlePreviewSurface,ParticlePreviewSize#,ParticlePreviewSize#,0
+	AddVertex ParticlePreviewSurface,-ParticlePreviewSize#,-ParticlePreviewSize#,0
+	AddVertex ParticlePreviewSurface,ParticlePreviewSize#,-ParticlePreviewSize#,0
+	
+	AddTriangle ParticlePreviewSurface,0,1,2
+	AddTriangle ParticlePreviewSurface,1,3,2
+	UpdateNormals ParticlePreview
+	
+	EntityOrder ParticlePreview,-10
+	EntityFX ParticlePreview,1
+	
+	HideEntity ParticlePreview
 
 End Function
 
@@ -3304,6 +3327,41 @@ Function ResolutionWasChanged()
 	
 	CalculateUIValues()
 	ResetGraphicsEntities()
+
+End Function
+
+Function ShowParticlePreview(x#,y#,tex)
+
+	Return ; This crap doesn't work. Thank you Blitz3D for making it incredibly difficult to draw textured rectangle UI.
+
+	u1#=Float(tex Mod 8)*0.125+nudge
+	u2#=u1+0.125-2*nudge
+	v1#=Float(Floor(tex/8))*0.125+nudge
+	v2#=v1+0.125-2*nudge
+
+	VertexTexCoords(ParticlePreviewSurface,0,u1#,v1#)
+	VertexTexCoords(ParticlePreviewSurface,1,u2#,v2#)
+	VertexTexCoords(ParticlePreviewSurface,2,u2#,v1#)
+	VertexTexCoords(ParticlePreviewSurface,3,u1#,v2#)
+	
+	ShowEntity ParticlePreview
+	
+	If EditorMode=EditorModeDialog
+		TargetEntity=camera
+	Else
+		TargetEntity=Camera1
+	EndIf
+	StartX#=EntityX#(TargetEntity)
+	StartY#=EntityY#(TargetEntity)
+	
+	CameraZoomLevel#=Camera1Zoom#
+	x#=x#/CameraZoomLevel
+	y#=y#/CameraZoomLevel
+	
+	;PositionEntity ParticlePreview,x*GfxZoomScaling#,y*GfxZoomScaling#,1
+	;PositionEntity ParticlePreview,x/GfxZoomScaling#,y/GfxZoomScaling#,1
+	;PositionEntity ParticlePreview,x,y,1
+	PositionEntity ParticlePreview,StartX#+x,StartY#+y,1
 
 End Function
 
@@ -12626,7 +12684,10 @@ Function HoverOverObjectAdjuster(i)
 				ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(TheDialog,0))
 			EndIf
 		EndIf
-		
+	
+	Case "Exclamation"
+		ShowParticlePreview(StartX,TooltipLeftY,CurrentObject\Attributes\Exclamation)
+	
 	End Select
 
 End Function
