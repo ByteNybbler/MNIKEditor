@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/26/22"
+Global VersionDate$="08/28/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -6849,7 +6849,7 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 	
-	If KeyDown(34) ; G key
+	If KeyPressed(34) ; G key
 		For i=0 To NofObjects-1
 			TheType=LevelObjects(i)\Attributes\LogicType
 			TheSubType=LevelObjects(i)\Attributes\LogicSubType
