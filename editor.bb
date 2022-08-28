@@ -14056,6 +14056,24 @@ Function DisplayObjectAdjuster(i)
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		EndIf
 		
+		If CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\ModelName$="!Pushbot" ; Moobots
+			tex2$="Turn"
+			If CurrentObject\Attributes\Data3=2
+				tex$="180"
+			Else
+				If CurrentObject\Attributes\Data3 Mod 2=0
+					tex$="Left"
+				Else
+					If CurrentObject\Attributes\Data3<0
+						tex$="NoMove"
+					Else
+						tex$="Right"
+					EndIf
+				EndIf
+			EndIf
+			tex$=CurrentObject\Attributes\Data3+"/"+tex$
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="XAnim"
 		EndIf
@@ -14069,16 +14087,6 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObject\Attributes\LogicType=432 ; Moobots
-			tex2$="Turn"
-			If CurrentObject\Attributes\Data3=0
-				tex$="Left"
-			Else If CurrentObject\Attributes\Data3=1
-				tex$="Right"
-			Else
-				tex$="180"
-			EndIf
-		EndIf
 		If CurrentObject\Attributes\LogicType=210 ; Transporters
 			tex2$="Turn"
 			If CurrentObject\Attributes\Data3=0
@@ -15727,16 +15735,16 @@ Function AdjustObjectAdjuster(i)
 				If CurrentObject\Attributes\Data3>9 CurrentObject\Attributes\Data3=0
 			End Select
 		EndIf
-		If  CurrentObject\Attributes\LogicType=230 ; FireFlower
+		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			; hitpoints
 			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
 		EndIf
 
-		If  CurrentObject\Attributes\LogicType=432 ; moobot
+;		If CurrentObject\Attributes\LogicType=432 ; moobot
 			; pushbot left/right turn,
-			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=2
-			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=0
-		EndIf
+;			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=2
+;			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=0
+;		EndIf
 		If  CurrentObject\Attributes\LogicType=45 ; conveyor lead
 			; turn direction
 			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=1
@@ -15748,7 +15756,7 @@ Function AdjustObjectAdjuster(i)
 ;			
 ;		EndIf
 
-		If  CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
+		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
 			; Suctube tex
 			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
 			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=2
