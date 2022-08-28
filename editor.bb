@@ -13908,6 +13908,7 @@ Function DisplayObjectAdjuster(i)
 			Default
 				tex$=CurrentObject\Attributes\Data2+"/NoMove"
 			End Select
+			;xzx
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
@@ -17142,7 +17143,12 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 
 	Else If Obj\Attributes\ModelName$="!Pushbot"
 		Obj\Model\Entity=CreatePushbotMesh(Obj\Attributes\Data0,Obj\Attributes\Data3)
-		Obj\Attributes\YawAdjust=-Obj\Attributes\Data2*90
+		
+		If Obj\Attributes\LogicType=432 ; Moobot
+			Obj\Attributes\YawAdjust=-Obj\Attributes\Data2*90
+		Else
+			Obj\Attributes\YawAdjust=0 ; Unfortunately hardcoded in adventures.bb.
+		EndIf
 		
 	Else If Obj\Attributes\ModelName$="!ZbotNPC"
 		Obj\Model\Entity=CopyEntity(ZbotNPCMesh)
