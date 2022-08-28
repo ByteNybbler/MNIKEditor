@@ -6771,6 +6771,21 @@ Function EditorLocalControls()
 			TooltipLeftY=StartY+30
 			Percent#=Float#(NofObjects)/Float#(MaxNofObjects)*100.0
 			ShowTooltipRightAligned(StartX,TooltipLeftY,NofObjects+"/"+MaxNofObjects+" ("+Percent#+"%) level object slots used")
+			If NofSelectedObjects=1 And LeftMouse=True And LeftMouseReleased=True And CtrlDown()
+				LeftMouseReleased=False
+				TakenString$=InputString$("Set object index: ")
+				If TakenString$<>""
+					TargetIndex=TakenString$
+					If TargetIndex>NofObjects-1
+						TargetIndex=NofObjects-1
+					ElseIf TargetIndex<0
+						TargetIndex=0
+					EndIf
+					SetObjectIndex(SelectedObjects(0),TargetIndex)
+					RemoveSelectObject(SelectedObjects(0))
+					AddSelectObject(TargetIndex)
+				EndIf
+			EndIf
 		EndIf
 	
 		For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
@@ -11358,6 +11373,89 @@ Function FreeObject(i)
 	If ObjectPositionMarker(i)>0
 		FreeEntity ObjectPositionMarker(i)
 		ObjectPositionMarker(i)=0
+	EndIf
+
+End Function
+
+; Move object indices around without deleting any of them.
+Function SetObjectIndex(SourceIndex,TargetIndex)
+
+	If TargetIndex<SourceIndex
+		MoveObjectData(SourceIndex,1000) ; Move to temp.
+		i=SourceIndex-1
+		While i>=TargetIndex
+			MoveObjectData(i,i+1)
+			i=i-1
+		Wend
+		MoveObjectData(1000,TargetIndex)
+		
+		For j=0 To NofObjects-1
+			Obj.GameObject=LevelObjects(j)
+			
+			If Obj\Attributes\Linked=SourceIndex
+				Obj\Attributes\Linked=TargetIndex
+			Else If Obj\Attributes\Linked>=TargetIndex And Obj\Attributes\Linked<SourceIndex
+				Obj\Attributes\Linked=Obj\Attributes\Linked+1
+			EndIf
+			
+			If Obj\Attributes\LinkBack=SourceIndex
+				Obj\Attributes\LinkBack=TargetIndex
+			Else If Obj\Attributes\LinkBack>=TargetIndex And Obj\Attributes\LinkBack<SourceIndex
+				Obj\Attributes\LinkBack=Obj\Attributes\LinkBack+1
+			EndIf
+			
+			If Obj\Attributes\Parent=SourceIndex
+				Obj\Attributes\Parent=TargetIndex
+			Else If Obj\Attributes\Parent>=TargetIndex And Obj\Attributes\Parent<SourceIndex
+				Obj\Attributes\Parent=Obj\Attributes\Parent+1
+			EndIf
+			
+			If Obj\Attributes\Child=SourceIndex
+				Obj\Attributes\Child=TargetIndex
+			Else If Obj\Attributes\Child>=TargetIndex And Obj\Attributes\Child<SourceIndex
+				Obj\Attributes\Child=Obj\Attributes\Child+1
+			EndIf
+		Next
+		
+		SomeObjectWasChanged()
+	ElseIf TargetIndex>SourceIndex
+		MoveObjectData(SourceIndex,1000) ; Move to temp.
+		i=SourceIndex+1
+		While i<=TargetIndex
+			MoveObjectData(i,i-1)
+			i=i+1
+		Wend
+		MoveObjectData(1000,TargetIndex)
+		
+		For j=0 To NofObjects-1
+			Obj.GameObject=LevelObjects(j)
+			
+			If Obj\Attributes\Linked=SourceIndex
+				Obj\Attributes\Linked=TargetIndex
+			Else If Obj\Attributes\Linked>SourceIndex And Obj\Attributes\Linked<=TargetIndex
+				Obj\Attributes\Linked=Obj\Attributes\Linked-1
+			EndIf
+			
+			If Obj\Attributes\LinkBack=SourceIndex
+				Obj\Attributes\LinkBack=TargetIndex
+			Else If Obj\Attributes\LinkBack>SourceIndex And Obj\Attributes\LinkBack<=TargetIndex
+				Obj\Attributes\LinkBack=Obj\Attributes\LinkBack-1
+			EndIf
+			
+			If Obj\Attributes\Parent=SourceIndex
+				Obj\Attributes\Parent=TargetIndex
+			Else If Obj\Attributes\Parent>SourceIndex And Obj\Attributes\Parent<=TargetIndex
+				Obj\Attributes\Parent=Obj\Attributes\Parent-1
+			EndIf
+			
+			If Obj\Attributes\Child=SourceIndex
+				Obj\Attributes\Child=TargetIndex
+			Else If Obj\Attributes\Child>SourceIndex And Obj\Attributes\Child<=TargetIndex
+				Obj\Attributes\Child=Obj\Attributes\Child-1
+			EndIf
+		Next
+		
+		SomeObjectWasChanged()
 	EndIf
 
 End Function

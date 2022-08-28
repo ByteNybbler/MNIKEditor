@@ -86,6 +86,7 @@
 * Delete while hovering mouse over OBJECTS menu: Delete the currently-selected object(s). This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one.
 * Ctrl+Click on "Object": Enter an object name or a few characters of an object name to instantly jump to that object. All object categories will be searched.
 * Ctrl+Click on "Category": Enter a category name or a few characters of a category name to instantly jump to that object category.
+* Ctrl+Click on the selected object's index: Set the selected object's index directly.
 * Tilde+Click: Find and replace a specific value of the chosen adjuster for all objects in the wlv. Only works on text-based adjusters.
 
 ### TILES MENU
