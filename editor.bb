@@ -2797,6 +2797,7 @@ Global hubmode
 Global HubFileName$, HubTitle$, HubDescription$, HubTotalAdventures, HubAdvStart, HubSelectedAdventure
 Const HubAdvMax=MaxCompilerFile ;500
 Dim HubAdventuresFilenames$(HubAdvMax)
+Dim HubAdventuresMissing(HubAdvMax)
 
 Global NoOfShards=7
 Global CustomShardEnabled
@@ -23858,7 +23859,16 @@ Function HubMainLoop()
 			DisplayText2(s$,0.5,11+i,100,100,100)
 		EndIf
 		If c<=HubTotalAdventures
-			DisplayText2(HubAdventuresFilenames$(c),5,11+i,210,210,210)
+			If HubAdventuresMissing(c)
+				ColorR=255
+				ColorG=0
+				ColorB=0
+			Else
+				ColorR=210
+				ColorG=210
+				ColorB=210
+			EndIf
+			DisplayText2(HubAdventuresFilenames$(c),5,11+i,ColorR,ColorG,ColorB)
 		EndIf
 	Next
 	
@@ -24414,37 +24424,57 @@ Function LoadMasterFile()
 
 End Function
 
+Function GetHubAdventurePath$(Filename$)
+
+	Return globaldirname$+"\custom\editing\current\"+Filename$
+
+End Function
+
+Function IsHubMissingAdventures()
+
+	For i=0 To HubTotalAdventures
+		If HubAdventuresMissing(i)=True
+			Return True
+		EndIf
+	Next
+	
+	Return False
+
+End Function
+
 Function LoadHubFile()
 	file=ReadFile(globaldirname$+"\Custom\editing\Hubs\"+HubFileName$+"\hub.dat")
 	version=ReadInt(file)
-	flag=False
+;	flag=False
 	If version=0
 		HubTitle$=ReadString(file)
 		HubDescription$=ReadString(file)
 		HubTotalAdventures=ReadInt(file)
 		For i=0 To HubTotalAdventures
 			HubAdventuresFilenames$(i)=ReadString(file)
-			If FileType(globaldirname$+"\custom\editing\current\"+HubAdventuresFilenames$(i))<>2
-				HubAdventuresFilenames$(i)="" ; remove
-				If HubTotalAdventures=i
+			HubAdventuresMissing(i)=False
+			If FileType(GetHubAdventurePath(HubAdventuresFilenames$(i)))<>2
+				HubAdventuresMissing(i)=True
+				;HubAdventuresFilenames$(i)="" ; remove
+;				If HubTotalAdventures=i
 					;find the new HubTotalAdventures
-					For i=HubTotalAdventures To 1 Step-1
-						If HubAdventuresFilenames$(i)<>""
-							Exit
-						EndIf
-						HubTotalAdventures=HubTotalAdventures-1
-					Next
-					flag=True
-				EndIf
+;					For i=HubTotalAdventures To 1 Step -1
+;						If HubAdventuresFilenames$(i)<>""
+;							Exit
+;						EndIf
+;						HubTotalAdventures=HubTotalAdventures-1
+;					Next
+;					flag=True
+;				EndIf
 			EndIf
 		Next
-		If flag
-			Cls
-			Locate 0,0
-			Print "Warning: At least one adventure is missing."
-			Print "Missing adventures are removed from the hub automatically."
-			Delay 3000
-		EndIf
+;		If flag
+;			Cls
+;			Locate 0,0
+;			Print "Warning: At least one adventure is missing."
+;			Print "Missing adventures are removed from the hub automatically."
+;			Delay 3000
+;		EndIf
 	Else
 		Cls
 		Locate 0,0
@@ -27215,15 +27245,8 @@ Function GetCommandColor(id,index)
 	
 End Function
 
-Function BuildHub()
-	Cls
-	Locate 0,0
-	Print ""
-	Print "Building..."
-	Print "------------"
-	Print ""
-	Print ""
-	
+Function HubChecks()
+
 	If HubTitle$=""
 		Print "ERROR: No Hub Title set."
 		Print "Aborting..."
@@ -27235,6 +27258,30 @@ Function BuildHub()
 		Print "ERROR: No Hub defined."
 		Print "Aborting..."
 		Delay 3000
+		Return False
+	EndIf
+	
+	If IsHubMissingAdventures()
+		Print "ERROR: Hub is missing adventures (see red names in hub editor)."
+		Print "Aborting..."
+		Delay 3000
+		Return False
+	EndIf
+
+	Return True
+
+End Function
+
+Function BuildHub()
+	Cls
+	Locate 0,0
+	Print ""
+	Print "Building..."
+	Print "------------"
+	Print ""
+	Print ""
+	
+	If HubChecks()=False
 		Return False
 	EndIf
 	
@@ -27281,7 +27328,7 @@ Function BuildHub()
 		If HubAdventuresFilenames$(i)<>""
 			
 			CreateDir(globaldirname$+"\Custom\hubs\"+fn$+"\"+AdvFilename$)
-			dirfile=ReadDir(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i))
+			dirfile=ReadDir(GetHubAdventurePath$(HubAdventuresFilenames$(i)))
 			Print "Building "+AdvFilename$+"..."
 
 			Repeat
@@ -27327,18 +27374,7 @@ Function CompileHub(PackContent)
 	Print "------------"
 	Print ""
 	
-	
-	If HubTitle$=""
-		Print "ERROR: No Hub Title set."
-		Print "Aborting..."
-		Delay 3000
-		Return False
-	EndIf
-	
-	If HubAdventuresFilenames$(0)=""
-		Print "ERROR: No Hub defined."
-		Print "Aborting..."
-		Delay 3000
+	If HubChecks()=False
 		Return False
 	EndIf
 	
@@ -27356,10 +27392,11 @@ Function CompileHub(PackContent)
 		EndIf
 		If HubAdventuresFilenames$(i)<>""
 			
+			ThePath$=GetHubAdventurePath$(HubAdventuresFilenames$(i))
 			If PackContent
-				SearchForCustomContent(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i))
+				SearchForCustomContent(ThePath$)
 			EndIf
-			dirfile=ReadDir(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i))
+			dirfile=ReadDir(ThePath$)
 			Print ""
 			Print "Reading "+AdvFilename$+"..."
 			NofHubCompilerFiles(i)=0
@@ -27369,7 +27406,7 @@ Function CompileHub(PackContent)
 					;CopyFile globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i)+"\"+ex$, globaldirname$+"\Custom\hubs\"+fn$+"\"+AdvFilename$+"\"+ex$
 					Print "Reading... "+ex$
 					HubCompilerFileName$(i,NofHubCompilerFiles(i))=ex$
-					HubCompilerFileSize(i,NofHubCompilerFiles(i))=FileSize(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i)+"\"+ex$)
+					HubCompilerFileSize(i,NofHubCompilerFiles(i))=FileSize(ThePath$+"\"+ex$)
 					NofHubCompilerFiles(i)=NofHubCompilerFiles(i)+1		
 				EndIf
 			Until ex$=""
@@ -27407,7 +27444,7 @@ Function CompileHub(PackContent)
 				WriteString file1,HubCompilerFileName$(k,i)
 				WriteInt file1,HubCompilerFileSize(k,i)
 		
-				file2=ReadFile(globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(k)+"\"+HubCompilerFileName$(k,i))
+				file2=ReadFile(GetHubAdventurePath$(HubAdventuresFilenames$(k))+"\"+HubCompilerFileName$(k,i))
 				
 				For j=0 To HubCompilerFileSize(k,i)-1
 					WriteByte file1,ReadByte (file2)
