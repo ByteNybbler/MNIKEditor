@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/28/22"
+Global VersionDate$="08/29/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -508,9 +508,14 @@ Global AdventureNameEntered$=""
 Global AdventureFileNamesListedStart
 Global AdventureNameSelected
 
-Global AdventureCurrentArchive=0
+
+Const AdventureCurrentArchiveCurrent=0
+Const AdventureCurrentArchiveArchive=1
+Const AdventureCurrentArchivePlayer=2
+Const AdventureCurrentArchiveDataAdventures=3
 Const MaxAdventureCurrentArchive=3
 
+Global AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 
 Global DisplayFullScreen=False
 
@@ -13911,7 +13916,6 @@ Function DisplayObjectAdjuster(i)
 			Default
 				tex$=CurrentObject\Attributes\Data2+"/NoMove"
 			End Select
-			;xzx
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
@@ -19927,14 +19931,14 @@ Function OpenTypedDialog()
 
 End Function
 
-Function GetAdventuresDir$()
+Function GetAdventuresDir$(CurrentArchive)
 
-	Select AdventureCurrentArchive
-	Case 1
+	Select CurrentArchive ; The corresponding global variable is AdventureCurrentArchive.
+	Case AdventureCurrentArchiveArchive
 		Return globaldirname$+"\Custom\Editing\Archive\"
-	Case 2
+	Case AdventureCurrentArchivePlayer
 		Return globaldirname$+"\Custom\Adventures\"
-	Case 3
+	Case AdventureCurrentArchiveDataAdventures
 		Return "Data\Adventures\"
 	Default
 		Return globaldirname$+"\Custom\Editing\Current\"
@@ -19942,11 +19946,17 @@ Function GetAdventuresDir$()
 
 End Function
 
+Function GetAdventureFolder$()
+	
+	ex2$=GetAdventuresDir$(AdventureCurrentArchive)
+	Return ex2$+AdventureFileName$
+	
+End Function
+
 Function GetAdventureDir$()
-
-	ex2$=GetAdventuresDir$()
-	Return ex2$+AdventureFileName$+"\"
-
+	
+	Return GetAdventureFolder$()+"\"
+	
 End Function
 
 Function MoveFile(numbersource,numberdest,ext$)
@@ -21800,11 +21810,11 @@ Function AdventureSelectScreen()
 ;		DisplayText2("/",35.5,5.9,TextMenusR,TextMenusG,TextMenusB)
 
 		Select AdventureCurrentArchive
-		Case 1
+		Case AdventureCurrentArchiveArchive
 			TheString$="Archive"
-		Case 2
+		Case AdventureCurrentArchivePlayer
 			TheString$="Player"
-		Case 3
+		Case AdventureCurrentArchiveDataAdventures
 			TheString$="Data/Adventures"
 		Default
 			TheString$="Current"
@@ -21896,17 +21906,17 @@ Function AdventureSelectScreen()
 		Else
 			If AdventureNameEntered$=""
 				DisplayText2(" INVALID ADVENTURE NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
-			Else If FileType(GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$)=2 
-				DisplayText2(" INVALID ADVENTURE NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
-			Else If FileType(GlobalDirName$+"\Custom\Editing\Archive\"+AdventureNameEntered$)=2
+			Else If FileType(GetAdventuresDir$(AdventureCurrentArchiveCurrent)+AdventureNameEntered$)=2
+				DisplayText2(" INVALID ADVENTURE NAME - Already in Current!",0,5,TextMenusR,TextMenusG,TextMenusB)
+			Else If FileType(GetAdventuresDir$(AdventureCurrentArchiveArchive)+AdventureNameEntered$)=2
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Archive!",0,5,TextMenusR,TextMenusG,TextMenusB)
-			Else If FileType(GlobalDirName$+"\Custom\Adventures\"+EditorUserName$+"#"+AdventureNameEntered$)=2
+			Else If FileType(GetAdventuresDir$(AdventureCurrentArchivePlayer)+EditorUserName$+"#"+AdventureNameEntered$)=2
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Player!",0,5,TextMenusR,TextMenusG,TextMenusB)
-			Else If FileType("Data\Adventures\"+AdventureNameEntered$)=2
+			Else If FileType(GetAdventuresDir$(AdventureCurrentArchiveDataAdventures)+AdventureNameEntered$)=2
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Data\Adventures!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else
 				DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
-				AdventureCurrentArchive=0 ; Set to current.
+				AdventureCurrentArchive=AdventureCurrentArchiveCurrent ; Set to current.
 				
 				CreateDir GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$
 	
@@ -22188,7 +22198,7 @@ Function AdventureSelectScreen2()
 				ex$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
 				
 				FromDir$=GetAdventureDir$()
-				If adventurecurrentarchive=0
+				If AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 					ToDir$=GlobalDirName$+"\Custom\Editing\Archive\"+ex$
 				Else
 					ToDir$=GlobalDirName$+"\Custom\Editing\Current\"+ex$
@@ -22208,7 +22218,7 @@ Function AdventureSelectScreen2()
 				Until ex2$=""
 				CloseDir dirfile
 				
-				If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
+				If AdventureCurrentArchive=AdventureCurrentArchiveCurrent Or AdventureCurrentArchive=AdventureCurrentArchiveArchive
 					DeleteDir FromDir$
 				EndIf
 				
@@ -22216,7 +22226,7 @@ Function AdventureSelectScreen2()
 				
 				SetEditorMode(5)
 			EndIf
-			If selected=2 And AdventureCurrentArchive=0
+			If selected=2 And AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 				SetEditorMode(7)
 			EndIf
 	
@@ -22293,7 +22303,7 @@ Function AdventureSelectScreen3()
 				DeleteDir GlobalDirName$+"\Custom\Editing\Hubs\"+ex$
 				GetHubs()
 			Else
-				TheDir$=GetAdventuresDir$()+ex$
+				TheDir$=GetAdventuresDir$(AdventureCurrentArchive)+ex$
 				dirfile=ReadDir(TheDir$)
 				Repeat
 					ex2$=NextFile$(dirfile)
@@ -22437,7 +22447,7 @@ Function GetAdventures()
 	NofAdventureFileNames=0
 	AdventureFileNamesListedStart=0
 	
-	TheDir$=GetAdventuresDir$()
+	TheDir$=GetAdventuresDir$(AdventureCurrentArchive)
 	dirfile=ReadDir(TheDir$)
 	
 	Repeat
@@ -24424,9 +24434,32 @@ Function LoadMasterFile()
 
 End Function
 
+Function AdventureCurrentArchiveToHubPrefix$()
+
+	Select AdventureCurrentArchive
+	Case AdventureCurrentArchiveArchive
+		Return ":Archive:"
+	Case AdventureCurrentArchivePlayer
+		Return ":Player:"
+	Case AdventureCurrentArchiveDataAdventures
+		Return ":Data:"
+	Default
+		Return ""
+	End Select
+
+End Function
+
 Function GetHubAdventurePath$(Filename$)
 
-	Return globaldirname$+"\custom\editing\current\"+Filename$
+	If Left$(Filename$,9)=":Archive:"
+		Return GetAdventuresDir$(AdventureCurrentArchiveArchive)+Filename$
+	ElseIf Left$(Filename$,8)=":Player:"
+		Return GetAdventuresDir$(AdventureCurrentArchivePlayer)+Filename$
+	ElseIf Left$(Filename$,6)=":Data:"
+		Return GetAdventuresDir$(AdventureCurrentArchiveDataAdventures)+Filename$
+	Else
+		Return GetAdventuresDir$(AdventureCurrentArchiveCurrent)+Filename$
+	EndIf
 
 End Function
 
@@ -27335,7 +27368,7 @@ Function BuildHub()
 				ex$=NextFile$(dirfile)
 				If Upper$(ex$)="MASTER.DAT" Or Upper$(Right$(ex$,4))=".WLV" Or Upper$(Right$(ex$,4))=".DIA"
 					Print "Copying... "+ex$
-					CopyFile globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i)+"\"+ex$, globaldirname$+"\Custom\hubs\"+fn$+"\"+AdvFilename$+"\"+ex$
+					CopyFile GetHubAdventurePath$(HubAdventuresFilenames$(i))+"\"+ex$, globaldirname$+"\Custom\hubs\"+fn$+"\"+AdvFilename$+"\"+ex$
 				EndIf
 			Until ex$=""
 			
@@ -27590,8 +27623,9 @@ Function CompileAdventure(PackCustomContent)
 		Return False
 	EndIf
 	
-	If FileType(globaldirname$+"\Custom\editing\current\"+AdventureFileName$+"\1.wlv")=0
-		
+	AdventureFolder$=GetAdventureFolder$()
+	
+	If FileType(AdventureFolder$+"\1.wlv")=0		
 		Print "ERROR: No Level 1 present."
 		Print "Aborting..."
 		Delay 3000
@@ -27599,15 +27633,15 @@ Function CompileAdventure(PackCustomContent)
 	EndIf
 	
 	If PackCustomContent
-		; find custom contentt
+		; find custom content
 		Print "Finding Custom Content..."
-		SearchForCustomContent(globaldirname$+"\custom\editing\current\"+AdventureFileName$)
+		SearchForCustomContent(AdventureFolder$)
 		Print "Number of Custom Content Files: " + NofCustomContentFiles
 		Print
 	EndIf
 	
 	; now go through directory and check names and sizes of files
-	dirfile=ReadDir(globaldirname$+"\Custom\editing\current\"+AdventureFileName$)
+	dirfile=ReadDir(AdventureFolder$)
 	
 	NofCompilerFiles=0
 	Repeat
@@ -27615,7 +27649,7 @@ Function CompileAdventure(PackCustomContent)
 		If Upper$(ex$)="MASTER.DAT" Or Upper$(Right$(ex$,4))=".WLV" Or Upper$(Right$(ex$,4))=".DIA"
 			Print "Reading... "+ex$
 			CompilerFileName$(NofCompilerFiles)=ex$
-			CompilerFileSize(NofCompilerFiles)=FileSize(globaldirname$+"\Custom\editing\current\"+AdventureFileName$+"\"+ex$)
+			CompilerFileSize(NofCompilerFiles)=FileSize(AdventureFolder$+"\"+ex$)
 			NofCompilerFiles=NofCompilerFiles+1			
 		EndIf
 	Until ex$=""
@@ -27663,7 +27697,7 @@ Function CompileAdventure(PackCustomContent)
 		WriteString file1,CompilerFileName$(i)
 		WriteInt file1,CompilerFileSize(i)
 
-		file2=ReadFile(globaldirname$+"\Custom\editing\current\"+AdventureFileName$+"\"+CompilerFileName$(i))
+		file2=ReadFile(AdventureFolder$+"\"+CompilerFileName$(i))
 		If Not file2
 			file2=ReadFile(CompilerFileName$(i))
 		EndIf
