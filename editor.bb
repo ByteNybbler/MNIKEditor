@@ -21799,7 +21799,7 @@ Function AdventureSelectScreen()
 	
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	
-	If hubmode=False
+;	If hubmode=False
 ;		If AdventureCurrentArchive=0
 ;			DisplayText2("Current",28,6,255,255,255)
 ;			DisplayText2("Archive",37,6,155,155,155)
@@ -21820,7 +21820,7 @@ Function AdventureSelectScreen()
 			TheString$="Current"
 		End Select
 		DisplayText2(TheString$,28,6,255,255,255)
-	EndIf
+;	EndIf
 	If NofAdventureFileNames>19
 		For i=0 To 18
 			displaytext2(":",2,8+i,TextMenusR,TextMenusG,TextMenusB)
@@ -21916,9 +21916,10 @@ Function AdventureSelectScreen()
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Data\Adventures!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else
 				DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
+				
 				AdventureCurrentArchive=AdventureCurrentArchiveCurrent ; Set to current.
 				
-				CreateDir GlobalDirName$+"\Custom\Editing\Current\"+AdventureNameEntered$
+				CreateDir GetAdventuresDir$(AdventureCurrentArchiveCurrent)+AdventureNameEntered$
 	
 				AdventureFileName$=AdventureNameEntered$
 				
@@ -21934,16 +21935,14 @@ Function AdventureSelectScreen()
 						StartMaster()
 						
 						If ThisEditorMode=12
-							HubAdventuresFilenames$(HubSelectedAdventure)=AdventureFileNamesListed$(AdventureNameSelected)
+							HubAdventuresFilenames$(HubSelectedAdventure)=AdventureCurrentArchiveToHubPrefix$()+AdventureFileNamesListed$(AdventureNameSelected)
+							HubAdventuresMissing(HubSelectedAdventure)=False
 							If HubSelectedAdventure>HubTotalAdventures
 								HubTotalAdventures=HubSelectedAdventure
 							EndIf
 						EndIf
 					EndIf
 				Next
-			
-			
-				
 			EndIf
 		EndIf
 		waitflag=True
@@ -21951,7 +21950,7 @@ Function AdventureSelectScreen()
 	
 	
 	
-	If hubmode=False
+;	If hubmode=False
 		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44) And MouseDebounceFinished()
 			If MouseDown(1) Or MouseScroll>0
 				SetAdventureCurrentArchive(AdventureCurrentArchive+1)
@@ -21968,7 +21967,7 @@ Function AdventureSelectScreen()
 		;	AdventureCurrentArchive=1
 		;	GetAdventures()
 		;EndIf
-	EndIf
+;	EndIf
 	
 	
 	If MouseDown(1)
@@ -22035,7 +22034,8 @@ Function AdventureSelectScreen()
 				Repeat
 				Until MouseDown(1)=0
 				SetEditorMode(11)
-				HubAdventuresFilenames$(HubSelectedAdventure)=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+				HubAdventuresFilenames$(HubSelectedAdventure)=AdventureCurrentArchiveToHubPrefix$()+AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
+				HubAdventuresMissing(HubSelectedAdventure)=False
 				If HubSelectedAdventure>HubTotalAdventures
 					HubTotalAdventures=HubSelectedAdventure
 				EndIf
@@ -22121,7 +22121,7 @@ Function AdventureSelectScreen2()
 	DisplayText2("               Choose Option:",0,6,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 
-	If AdventureCurrentArchive=0 Or AdventureCurrentArchive=3
+	If AdventureCurrentArchive=AdventureCurrentArchiveCurrent Or AdventureCurrentArchive=AdventureCurrentArchiveDataAdventures
 		If Selected=0
 			DisplayText2("EDIT",20,9,255,255,255)
 		Else
@@ -22129,13 +22129,13 @@ Function AdventureSelectScreen2()
 		EndIf
 	EndIf
 	If hubmode=False
-		If AdventureCurrentArchive=0
+		If AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 			If Selected=1 
 				DisplayText2("MOVE TO ARCHIVE",14.5,11,255,255,255)
 			Else
 				DisplayText2("MOVE TO ARCHIVE",14.5,11,155,155,155)
 			EndIf
-		ElseIf AdventureCurrentArchive=1
+		ElseIf AdventureCurrentArchive=AdventureCurrentArchiveArchive
 			If Selected=1
 				DisplayText2("MOVE TO CURRENT",14.5,11,255,255,255)
 			Else
@@ -22150,7 +22150,7 @@ Function AdventureSelectScreen2()
 		EndIf
 	EndIf
 	
-	If AdventureCurrentArchive=0
+	If AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 		If Selected=2
 			DisplayText2("DELETE",19,13,255,255,255)
 		Else
@@ -22180,7 +22180,7 @@ Function AdventureSelectScreen2()
 		EndIf
 		
 		If Selected=OldSelected
-			If selected=0 And AdventureCurrentArchive=0 Or AdventureCurrentArchive=3
+			If selected=0 And AdventureCurrentArchive=AdventureCurrentArchiveCurrent Or AdventureCurrentArchive=AdventureCurrentArchiveDataAdventures
 				If hubmode
 					HubFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
 					StartHub()
@@ -22199,9 +22199,9 @@ Function AdventureSelectScreen2()
 				
 				FromDir$=GetAdventureDir$()
 				If AdventureCurrentArchive=AdventureCurrentArchiveCurrent
-					ToDir$=GlobalDirName$+"\Custom\Editing\Archive\"+ex$
+					ToDir$=GetAdventuresDir$(AdventureCurrentArchiveArchive)+ex$
 				Else
-					ToDir$=GlobalDirName$+"\Custom\Editing\Current\"+ex$
+					ToDir$=GetAdventuresDir$(AdventureCurrentArchiveCurrent)+ex$
 				EndIf
 				
 				CreateDir ToDir$
@@ -22211,7 +22211,7 @@ Function AdventureSelectScreen2()
 					If ex2$<>"" And ex2$<>"." And ex2$<>".."
 						CopyFile FromDir$+ex2$,ToDir$+"\"+ex2$
 						
-						If AdventureCurrentArchive=0 Or AdventureCurrentArchive=1
+						If AdventureCurrentArchive=AdventureCurrentArchiveCurrent Or AdventureCurrentArchive=AdventureCurrentArchiveArchive
 							DeleteFile FromDir$+"\"+ex2$
 						EndIf
 					EndIf
@@ -22479,7 +22479,7 @@ Function GetHubs()
 
 	NofAdventureFileNames=0
 	AdventureFileNamesListedStart=0
-	AdventureCurrentArchive=0
+	AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 	
 	dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Hubs")
 	
@@ -24044,7 +24044,7 @@ Function HubMainLoop()
 		
 		; edit
 		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And HubSelectedAdventure>=0
-			AdventureFileName$=HubAdventuresFilenames$(HubSelectedAdventure)
+			AdventureFileName$=TrimHubAdventureName$(HubAdventuresFilenames$(HubSelectedAdventure))
 			MasterDialogListStart=0
 			MasterLevelListStart=0
 			StartMaster()
@@ -24434,6 +24434,12 @@ Function LoadMasterFile()
 
 End Function
 
+Function RemoveLeft$(TheString$,Length)
+
+	Return Right$(TheString$,Len(TheString$)-Length)
+
+End Function
+
 Function AdventureCurrentArchiveToHubPrefix$()
 
 	Select AdventureCurrentArchive
@@ -24452,13 +24458,31 @@ End Function
 Function GetHubAdventurePath$(Filename$)
 
 	If Left$(Filename$,9)=":Archive:"
-		Return GetAdventuresDir$(AdventureCurrentArchiveArchive)+Filename$
+		Return GetAdventuresDir$(AdventureCurrentArchiveArchive)+RemoveLeft$(Filename$,9)
 	ElseIf Left$(Filename$,8)=":Player:"
-		Return GetAdventuresDir$(AdventureCurrentArchivePlayer)+Filename$
+		Return GetAdventuresDir$(AdventureCurrentArchivePlayer)+RemoveLeft$(Filename$,8)
 	ElseIf Left$(Filename$,6)=":Data:"
-		Return GetAdventuresDir$(AdventureCurrentArchiveDataAdventures)+Filename$
+		Return GetAdventuresDir$(AdventureCurrentArchiveDataAdventures)+RemoveLeft$(Filename$,6)
 	Else
 		Return GetAdventuresDir$(AdventureCurrentArchiveCurrent)+Filename$
+	EndIf
+
+End Function
+
+Function TrimHubAdventureName$(Filename$)
+
+	If Left$(Filename$,9)=":Archive:"
+		AdventureCurrentArchive=AdventureCurrentArchiveArchive
+		Return RemoveLeft$(Filename$,9)
+	ElseIf Left$(Filename$,8)=":Player:"
+		AdventureCurrentArchive=AdventureCurrentArchivePlayer
+		Return RemoveLeft$(Filename$,8)
+	ElseIf Left$(Filename$,6)=":Data:"
+		AdventureCurrentArchive=AdventureCurrentArchiveDataAdventures
+		Return RemoveLeft$(Filename$,6)
+	Else
+		AdventureCurrentArchive=AdventureCurrentArchiveCurrent
+		Return Filename$
 	EndIf
 
 End Function
@@ -24486,7 +24510,7 @@ Function LoadHubFile()
 		For i=0 To HubTotalAdventures
 			HubAdventuresFilenames$(i)=ReadString(file)
 			HubAdventuresMissing(i)=False
-			If FileType(GetHubAdventurePath(HubAdventuresFilenames$(i)))<>2
+			If FileType(GetHubAdventurePath$(HubAdventuresFilenames$(i)))<>2
 				HubAdventuresMissing(i)=True
 				;HubAdventuresFilenames$(i)="" ; remove
 ;				If HubTotalAdventures=i
@@ -27436,7 +27460,6 @@ Function CompileHub(PackContent)
 			Repeat
 				ex$=NextFile$(dirfile)
 				If Upper$(ex$)="MASTER.DAT" Or Upper$(Right$(ex$,4))=".WLV" Or Upper$(Right$(ex$,4))=".DIA"
-					;CopyFile globaldirname$+"\Custom\editing\current\"+HubAdventuresFilenames$(i)+"\"+ex$, globaldirname$+"\Custom\hubs\"+fn$+"\"+AdvFilename$+"\"+ex$
 					Print "Reading... "+ex$
 					HubCompilerFileName$(i,NofHubCompilerFiles(i))=ex$
 					HubCompilerFileSize(i,NofHubCompilerFiles(i))=FileSize(ThePath$+"\"+ex$)
