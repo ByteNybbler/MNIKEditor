@@ -6385,6 +6385,22 @@ Function EditorLocalControls()
 	
 	StartX=SidebarX+212
 	
+	If mx>StartX And my>215-13 And my<228-13
+		If leftmouse=True And CtrlDown()
+			TheString$=InputString$("Enter color for all light values (or leave blank to cancel): ")
+			If TheString$<>""
+				LightValue=TheString$
+				LightRed=LightValue
+				LightGreen=LightValue
+				LightBlue=LightValue
+				AmbientRed=LightValue
+				AmbientGreen=LightValue
+				AmbientBlue=LightValue
+				LightingWasChanged()
+				UnsavedChanges=True
+			EndIf
+		EndIf
+	EndIf
 	If mx>StartX And my>215 And mx<StartX+24 And my<228
 		If leftmouse=True Or MouseScroll>0
 			If CtrlDown()
