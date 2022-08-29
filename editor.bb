@@ -212,16 +212,18 @@ MouseTextEntryLineY(2,1)=3
 
 ; COMPILER DATA
 
+Const MaxCompilerFile=700 ; 500
+
 Global NofCompilerFiles
 Global NofCustomContentFiles
-Dim CustomContentFile$(500)
+Dim CustomContentFile$(MaxCompilerFile)
 
-Dim CompilerFileName$(500)
-Dim CompilerFileSize(500)
+Dim CompilerFileName$(MaxCompilerFile)
+Dim CompilerFileSize(MaxCompilerFile)
 						
-Dim NofHubCompilerFiles(500)
-Dim HubCompilerFileName$(500,500)
-Dim HubCompilerFileSize(500,500)
+Dim NofHubCompilerFiles(MaxCompilerFile)
+Dim HubCompilerFileName$(MaxCompilerFile,MaxCompilerFile)
+Dim HubCompilerFileSize(MaxCompilerFile,MaxCompilerFile)
 
 ; EDITOR MASTER DATA
 
@@ -2793,7 +2795,7 @@ Next
 
 Global hubmode
 Global HubFileName$, HubTitle$, HubDescription$, HubTotalAdventures, HubAdvStart, HubSelectedAdventure
-Const HubAdvMax=500
+Const HubAdvMax=MaxCompilerFile ;500
 Dim HubAdventuresFilenames$(HubAdvMax)
 
 Global NoOfShards=7
