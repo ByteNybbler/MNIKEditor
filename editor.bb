@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/31/22"
+Global VersionDate$="09/01/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -3099,54 +3099,8 @@ Function CreateBrushMesh()
 
 End Function
 
-Function InitializeGraphicsEntities()
+Function GenerateCurrentGrabbedObjectMarkerEntity()
 
-	Light=CreateLight()
-	RotateEntity Light,80,15,0
-
-	TexturePlane=CreateMesh()
-	TexturePlaneSurface=CreateSurface(TexturePlane)
-	AddVertex TexturePlaneSurface,0,200,0,0,0
-	AddVertex TexturePlaneSurface,1,200,0,1,0
-	AddVertex TexturePlaneSurface,0,200,-1,0,1
-	AddVertex TexturePlaneSurface,1,200,-1,1,1
-	AddTriangle TexturePlaneSurface,0,1,2
-	AddTriangle TexturePlaneSurface,1,3,2
-	UpdateNormals TexturePlane
-	EntityPickMode TexturePlane,2
-	
-	For i=0 To 3
-		; Pillar
-		CursorMeshPillar(i)=CreateCube()
-		ScaleMesh CursorMeshPillar(i),0.1,10,0.1
-		EntityAlpha CursorMeshPillar(i),BrushMeshAlpha
-		EntityColor CursorMeshPillar(i),255,255,200
-		
-		; Little square at the center of the brush
-		CursorMeshOpaque(i)=CreateCube()
-		ScaleMesh CursorMeshOpaque(i),.2,0.01,.2
-	Next
-	
-	; The square region that the brush covers, used only by the texture picker
-	CursorMeshTexturePicker=CreateCube()
-	ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
-	EntityAlpha CursorMeshTexturePicker,BrushMeshAlpha
-	EntityColor CursorMeshTexturePicker,255,255,200
-	HideEntity CursorMeshTexturePicker
-	
-	CreateBrushMesh()
-	
-	CurrentObjectMarkerMesh=CreateCylinder()
-	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
-	PositionEntity CurrentObjectMarkerMesh,0,300,0
-	
-	LightPillar=CreateCube()
-	ScaleMesh LightPillar,0.5,90,0.5
-	EntityColor LightPillar,100,255,100
-	EntityFX LightPillar,16 ; disable back-face culling
-	HideEntity LightPillar
-	
-	
 	CurrentGrabbedObjectMarkers(0)=CreateMesh()
 	
 	; Lots and lots of duplicated code here. Haha, whoops!
@@ -3234,9 +3188,62 @@ Function InitializeGraphicsEntities()
 	EntityOrder CurrentGrabbedObjectMarkers(0),-1 ; disable depth sorting
 	HideEntity(CurrentGrabbedObjectMarkers(0))
 	
+	EntityAlpha CurrentGrabbedObjectMarkers(0),0.5
+	
 	For i=1 To MaxNofObjects-1
 		CurrentGrabbedObjectMarkers(i)=CopyEntity(CurrentGrabbedObjectMarkers(0))
 	Next
+
+End Function
+
+Function InitializeGraphicsEntities()
+
+	Light=CreateLight()
+	RotateEntity Light,80,15,0
+
+	TexturePlane=CreateMesh()
+	TexturePlaneSurface=CreateSurface(TexturePlane)
+	AddVertex TexturePlaneSurface,0,200,0,0,0
+	AddVertex TexturePlaneSurface,1,200,0,1,0
+	AddVertex TexturePlaneSurface,0,200,-1,0,1
+	AddVertex TexturePlaneSurface,1,200,-1,1,1
+	AddTriangle TexturePlaneSurface,0,1,2
+	AddTriangle TexturePlaneSurface,1,3,2
+	UpdateNormals TexturePlane
+	EntityPickMode TexturePlane,2
+	
+	For i=0 To 3
+		; Pillar
+		CursorMeshPillar(i)=CreateCube()
+		ScaleMesh CursorMeshPillar(i),0.1,10,0.1
+		EntityAlpha CursorMeshPillar(i),BrushMeshAlpha
+		EntityColor CursorMeshPillar(i),255,255,200
+		
+		; Little square at the center of the brush
+		CursorMeshOpaque(i)=CreateCube()
+		ScaleMesh CursorMeshOpaque(i),.2,0.01,.2
+	Next
+	
+	; The square region that the brush covers, used only by the texture picker
+	CursorMeshTexturePicker=CreateCube()
+	ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
+	EntityAlpha CursorMeshTexturePicker,BrushMeshAlpha
+	EntityColor CursorMeshTexturePicker,255,255,200
+	HideEntity CursorMeshTexturePicker
+	
+	CreateBrushMesh()
+	
+	CurrentObjectMarkerMesh=CreateCylinder()
+	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
+	PositionEntity CurrentObjectMarkerMesh,0,300,0
+	
+	LightPillar=CreateCube()
+	ScaleMesh LightPillar,0.5,90,0.5
+	EntityColor LightPillar,100,255,100
+	EntityFX LightPillar,16 ; disable back-face culling
+	HideEntity LightPillar
+	
+	GenerateCurrentGrabbedObjectMarkerEntity()	
 
 	WorldAdjusterPositionMarker(0)=CopyEntity(LightPillar)
 	EntityColor WorldAdjusterPositionMarker(0),100,200,255
