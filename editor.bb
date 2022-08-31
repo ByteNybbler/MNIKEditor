@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="08/29/22"
+Global VersionDate$="08/31/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -312,6 +312,7 @@ Const DefaultCameraFocusY=10
 Dim LevelMesh(MaxLevelCoordinate),LevelSurface(MaxLevelCoordinate) ; one for each row
 Dim WaterMesh(MaxLevelCoordinate),WaterSurface(MaxLevelCoordinate)
 Dim LogicMesh(MaxLevelCoordinate),LogicSurface(MaxLevelCoordinate)
+Dim DirtyNormals(MaxLevelCoordinate)
 Global ShowLogicMesh=False
 Global ShowLevelMesh=True
 
@@ -4608,6 +4609,13 @@ Function BrushCursorProbablyModifiedTiles()
 	FloodedElementsClear()
 	
 	BrushCursorStateWasChanged()
+	
+	For j=0 To MaxLevelCoordinate
+		If DirtyNormals(j)
+			DirtyNormals(j)=False
+			RecalculateNormals(j)
+		EndIf
+	Next
 
 End Function
 
@@ -9427,12 +9435,15 @@ Function ChangeLevelTileActual(i,j,update)
 		EndIf
 		
 		If SimulationLevel>=3
-			RecalculateNormals(j)
+			;RecalculateNormals(j)
+			DirtyNormals(j)=True
 			If HasNorth
-				RecalculateNormals(j-1)
+				;RecalculateNormals(j-1)
+				DirtyNormals(j-1)=True
 			EndIf
 			If HasSouth
-				RecalculateNormals(j+1)
+				;RecalculateNormals(j+1)
+				DirtyNormals(j+1)=True
 			EndIf
 		EndIf
 	EndIf
@@ -19918,7 +19929,6 @@ Function AccessLevel(levelnumber)
 		NewLevel(levelnumber)
 	EndIf
 	
-	FloodedElementsClear()
 	BrushCursorProbablyModifiedTiles()
 
 End Function
