@@ -15481,6 +15481,14 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\Teleportable=AdjustObjectAdjusterToggle(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,SlowInt,FastInt,RawInput,0,1,DelayTime)
 		
 	Case "Data0"
+		If CurrentObject\Attributes\LogicType=173 ; Gem
+			ObjectAdjusterData0\RandomMinDefault=0
+			ObjectAdjusterData0\RandomMaxDefault=2
+		Else
+			ObjectAdjusterData0\RandomMinDefault=0
+			ObjectAdjusterData0\RandomMaxDefault=10
+		EndIf
+		
 		OldData=CurrentObject\Attributes\Data0
 		
 		;CurrentObject\Attributes\Data0=AdjustInt("Data0: ", CurrentObject\Attributes\Data0, SlowInt, FastInt, DelayTime)
@@ -15575,6 +15583,14 @@ Function AdjustObjectAdjuster(i)
 			
 
 	Case "Data1"
+		If CurrentObject\Attributes\LogicType=173 ; Gem
+			ObjectAdjusterData1\RandomMinDefault=0
+			ObjectAdjusterData1\RandomMaxDefault=6
+		Else
+			ObjectAdjusterData1\RandomMinDefault=0
+			ObjectAdjusterData1\RandomMaxDefault=10
+		EndIf
+	
 		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data1=AdjustObjectAdjusterInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,SlowInt,FastInt,DelayTime)
 		
