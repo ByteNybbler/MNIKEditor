@@ -25034,9 +25034,12 @@ Function SortDialogTextCommands()
 	i=1
 	While i<NofTextCommands(WhichInterChange)
 		j=i
-		While j>0 And DialogTextCommandPos(WhichInterChange,j-1)>DialogTextCommandPos(WhichInterChange,j)
+		While DialogTextCommandPos(WhichInterChange,j-1)>DialogTextCommandPos(WhichInterChange,j)
 			SwapDialogTextCommand(j,j-1)
 			j=j-1
+			If j=0
+				Exit ; Needed instead of a conditional because Blitz3D doesn't short-circuit And...
+			EndIf
 		Wend
 		i=i+1
 	Wend
