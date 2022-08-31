@@ -140,3 +140,8 @@
 * Ctrl+U: Toggle UpDown.
 * Ctrl+L: Toggle LeftRight.
 * Ctrl+T: Toggle RT. This effect actually does nothing in-game, at least in vanilla.
+
+## HUB EDITOR
+
+* Right click: Right-clicking an adventure number will copy the adventure. Right-click the same adventure again to cancel the copy, or left-click a nonexistent adventure to copy to that adventure.
+* Middle click: Middle-clicking an adventure number will mark the adventure for swapping. Middle-click the same adventure again to cancel the swap, or left-click a different adventure to swap with that adventure. Swapping with nonexistent adventures is allowed.

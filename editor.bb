@@ -22694,6 +22694,7 @@ Function StartHub()
 	SetEditorMode(11)
 	HubAdvStart=0
 	HubSelectedAdventure=-1
+	CopyingLevel=StateNotSpecial
 	If FileType(globaldirname$+"\Custom\editing\Hubs\"+HubFileName$+"\hub.dat")=1
 		LoadHubFile()
 	Else
@@ -23891,13 +23892,29 @@ Function HubMainLoop()
 				s$=Str(c)
 			EndIf
 		EndIf
-		If flag
-			DisplayText2(s$,0.5,11+i,255,255,100)
+		If flag ; mouse over
+			ColorR=255
+			ColorG=255
+			ColorB=100
+		ElseIf CopyingLevel=StateCopying And CopiedLevel=c
+			ColorR=0
+			ColorG=255
+			ColorB=255
+		ElseIf CopyingLevel=StateSwapping And CopiedLevel=c
+			ColorR=255
+			ColorG=0
+			ColorB=255
 		ElseIf HubAdventuresFilenames$(c)<>"" And c<=HubTotalAdventures
-			DisplayText2(s$,0.5,11+i,210,210,210)
+			ColorR=210
+			ColorG=210
+			ColorB=210
 		Else
-			DisplayText2(s$,0.5,11+i,100,100,100)
+			ColorR=100
+			ColorG=100
+			ColorB=100
 		EndIf
+		DisplayText2(s$,0.5,11+i,ColorR,ColorG,ColorB)
+		
 		If c<=HubTotalAdventures
 			If HubAdventuresMissing(c)
 				ColorR=255
@@ -24020,6 +24037,7 @@ Function HubMainLoop()
 	mb=0
 	If MouseDown(1) mb=1
 	If MouseDown(2) mb=2
+	If MouseDown(3) mb=3
 	
 	;If MouseY()<22 And  MouseX()>540
 	;	SetEditorMode(8)
@@ -24061,16 +24079,80 @@ Function HubMainLoop()
 		For i=0 To 12
 			If MouseX()<LetterX(4) And MouseY()>LetterHeight*11+i*LetterHeight And MouseY()<=LetterHeight*12+i*LetterHeight
 				HubSelectedAdventure=HubAdvStart+i
-				If HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
+				If mb=1 And LeftMouseReleased=True
+					If CopyingLevel=StateCopying And HubAdventuresFilenames$(HubSelectedAdventure)=""
+						HubAdventuresFilenames$(HubSelectedAdventure)=HubAdventuresFilenames$(CopiedLevel)
+						HubAdventuresMissing(HubSelectedAdventure)=HubAdventuresMissing(CopiedLevel)
+						
+						CopyingLevel=StateNotSpecial
+						
+						If HubSelectedAdventure>HubTotalAdventures
+							HubTotalAdventures=HubSelectedAdventure
+						EndIf
+					ElseIf CopyingLevel=StateSwapping
+						TempFilename$=HubAdventuresFilenames$(HubSelectedAdventure)
+						TempMissing=HubAdventuresMissing(HubSelectedAdventure)
+						HubAdventuresFilenames$(HubSelectedAdventure)=HubAdventuresFilenames$(CopiedLevel)
+						HubAdventuresMissing(HubSelectedAdventure)=HubAdventuresMissing(CopiedLevel)
+						HubAdventuresFilenames$(CopiedLevel)=TempFilename$
+						HubAdventuresMissing(CopiedLevel)=TempMissing
+						
+						CopyingLevel=StateNotSpecial
+						
+						If HubSelectedAdventure>HubTotalAdventures
+							HubTotalAdventures=HubSelectedAdventure
+						EndIf
+					ElseIf HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
+						CopyingLevel=StateNotSpecial
+						SetAdventureCurrentArchive(0)
+						GetAdventures()
+						AdventureNameEntered$=""
+						SetEditorMode(12)
+					Else
+						CopyingLevel=StateNotSpecial
+					EndIf
+					
+					Repeat
+					Until MouseDown(1)=0
+					
+					mb=0
+					Exit
+				ElseIf HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
+					CopyingLevel=StateNotSpecial
 					SetAdventureCurrentArchive(0)
 					GetAdventures()
 					AdventureNameEntered$=""
 					SetEditorMode(12)
+				ElseIf mb=2 
+					If CopyingLevel=StateCopying And HubSelectedAdventure=CopiedLevel
+						CopyingLevel=StateNotSpecial
+					Else
+						CopyingLevel=StateCopying
+						CopiedLevel=HubSelectedAdventure
+					EndIf
+					
+					Repeat
+					Until MouseDown(2)=0
+					
+					mb=0
+					Exit
+				ElseIf mb=3
+					If CopyingLevel=StateSwapping And HubSelectedAdventure=CopiedLevel
+						CopyingLevel=StateNotSpecial
+					Else
+						CopyingLevel=StateSwapping
+						CopiedLevel=HubSelectedAdventure
+					EndIf
+					
+					Repeat
+					Until MouseDown(3)=0
+					
+					mb=0
+					Exit
 				EndIf
-				Repeat
-				Until MouseDown(1)=0 
 			EndIf
 		Next
+		
 		
 		; edit
 		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And HubSelectedAdventure>=0
