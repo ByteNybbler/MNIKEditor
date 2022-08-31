@@ -23390,15 +23390,19 @@ Function MasterMainLoop()
 	EndIf
 	
 	; load dialog
-	If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()<LowerButtonsCutoff
+	StartX=LetterX(41.5)
+	If MouseX()>StartX And MouseX()<GfxWidth And MouseY()<LowerButtonsCutoff
 		If (CtrlDown() And mb>0) Or HotkeyOpen()
 			If OpenTypedDialog()
 				StartDialog()
 			EndIf
 		Else
 			For i=1 To 20
-				If MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
+				StartY=LetterHeight*3+i*LetterHeight
+				If MouseY()>StartY And MouseY()<=StartY+LetterHeight
 					SelectedDialog = i+MasterDialogListStart
+					ShowTooltipRightAligned(StartX,StartY+LetterHeight*2,PreviewDialog$(SelectedDialog,0))
+					
 					If mb=1
 						If CopyingDialog=StateCopying And DialogExists(SelectedDialog)=False
 							; copy from CopiedDialog
