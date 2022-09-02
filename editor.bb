@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="09/02/22"
+Global VersionDate$="09/03/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -16259,11 +16259,16 @@ End Function
 
 Function UpdateWaterVertices(i,j)
 	mySurface=WaterSurface(j)
-	VertexCoords mySurface,i*4+0,VertexX(mySurface,i*4+0),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180),VertexZ(mySurface,i*4+0)
-	VertexCoords mySurface,i*4+1,VertexX(mySurface,i*4+1),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90),VertexZ(mySurface,i*4+1)
+	Turbulence#=LevelTiles(i,j)\Water\Turbulence
+	If Turbulence#<0.0
+		Turbulence=0.0
+	EndIf
+	
+	VertexCoords mySurface,i*4+0,VertexX(mySurface,i*4+0),LevelTiles(i,j)\Water\Height+Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180),VertexZ(mySurface,i*4+0)
+	VertexCoords mySurface,i*4+1,VertexX(mySurface,i*4+1),LevelTiles(i,j)\Water\Height+Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90),VertexZ(mySurface,i*4+1)
 
-	VertexCoords mySurface,i*4+2,VertexX(mySurface,i*4+2),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180-180),VertexZ(mySurface,i*4+2)
-	VertexCoords mySurface,i*4+3,VertexX(mySurface,i*4+3),LevelTiles(i,j)\Water\Height+LevelTiles(i,j)\Water\Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90-180),VertexZ(mySurface,i*4+3)
+	VertexCoords mySurface,i*4+2,VertexX(mySurface,i*4+2),LevelTiles(i,j)\Water\Height+Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180-180),VertexZ(mySurface,i*4+2)
+	VertexCoords mySurface,i*4+3,VertexX(mySurface,i*4+3),LevelTiles(i,j)\Water\Height+Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90-180),VertexZ(mySurface,i*4+3)
 End Function
 
 Function UpdateWaterTile(i,j)
