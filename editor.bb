@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="09/01/22"
+Global VersionDate$="09/02/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -3833,6 +3833,7 @@ Function EditorMainLoop()
 	CenteredText(ToolbarShowMarkersX,ToolbarShowMarkersY+15,"MARKERS")
 	
 	If ShowObjectMesh=0
+		Color 255,155,0
 		Line1$="HIDE"
 	Else
 		Line1$="SHOW"
@@ -3848,6 +3849,8 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarShowObjectsX,ToolbarShowObjectsY,Line1$)
 	CenteredText(ToolbarShowObjectsX,ToolbarShowObjectsY+15,Line2$)
+	
+	Color TextLevelR,TextLevelG,TextLevelB
 
 	If ShowLogicMesh=True
 		Line1$="SHOW"
