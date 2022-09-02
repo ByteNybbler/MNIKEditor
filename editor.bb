@@ -9907,6 +9907,10 @@ Function LoadObjectPreset()
 	CurrentObject\Attributes\FutureInt25=ReadInt(file)
 
 	CurrentObject\Attributes\ScaleAdjust=ReadFloat(file)
+	If CurrentObject\Attributes\ScaleAdjust=0.0
+		CurrentObject\Attributes\ScaleAdjust=1.0
+	EndIf
+	
 	CurrentObject\Attributes\ScaleXAdjust=ReadFloat(file)
 	CurrentObject\Attributes\ScaleYAdjust=ReadFloat(file)
 	CurrentObject\Attributes\ScaleZAdjust=ReadFloat(file)
@@ -17341,7 +17345,9 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 				
 	EndIf
 	
-	If Obj\Attributes\ScaleAdjust=0.0 Then Obj\Attributes\ScaleAdjust=1.0
+	;If ObjectAdjusterScaleAdjust\Absolute
+	;	If Obj\Attributes\ScaleAdjust=0.0 Then Obj\Attributes\ScaleAdjust=1.0
+	;EndIf
 	
 	If Obj\Attributes\ModelName$<>"!None"
 		ScaleEntity Obj\Model\Entity,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust
