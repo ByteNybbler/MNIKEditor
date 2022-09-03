@@ -13810,6 +13810,10 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
+		If CurrentObject\Attributes\LogicType=300 ; Brr float
+			tex2$="TimeOffset"
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=370 ; Crab
 			tex2$="Status"
 			If CurrentObject\Attributes\Data1=0
@@ -14028,6 +14032,17 @@ Function DisplayObjectAdjuster(i)
 			tex$="+"+Str$(CurrentObject\Attributes\Data2)
 		EndIf
 		
+		If CurrentObject\Attributes\LogicType=300 ; Brr float
+			tex2$="PitchAnim"
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=301 ; Rainbow float
+			tex2$="ColorOffset"
+			If CurrentObject\Attributes\Data2=0
+				tex$="Random"
+			EndIf
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=320 ; Void
 			tex2$="SizeAdjust"
 		EndIf
@@ -14221,6 +14236,9 @@ Function DisplayObjectAdjuster(i)
 			tex2$="HitPoints"
 		EndIf
 		
+		If CurrentObject\Attributes\LogicType=300 ; Brr float
+			tex2$="RollAnim"
+		EndIf
 		
 		If  CurrentObject\Attributes\LogicType=431 ; Zapbot
 			tex2$="Range"
