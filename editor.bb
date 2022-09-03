@@ -5258,59 +5258,10 @@ Function EditorLocalRendering()
 	;	Text 719,100,LevelWeatherString$
 	;EndIf
 	CenteredText(SidebarX+254,SidebarY+100,LevelWeatherString$)
-
-
-	Select LevelMusic
-	Case -1
-		Line1$="  Beach  "
-	Case 0
-		Line1$=" No Music"
-	Case 1
-		Line1$=" WA Intro"
-	Case 2
-		Line1$=" Pastoral"
-	Case 3
-		Line1$="WonderTown"
-	Case 4
-		Line1$="Dark/Sewer"
-	Case 5
-		Line1$="Cave/Woods"
-	Case 6
-		Line1$="Scary/Void"
-	Case 7
-		Line1$="WondrFalls"
-	Case 8
-		Line1$="  Jungle  "
-	Case 9
-		Line1$="KaboomTown"
-	Case 10
-		Line1$="Acid Pools"
-	Case 11
-		Line1$="  Retro  "
-	Case 12
-		Line1$="  Cave  "
-	Case 13
-		Line1$="POTZ Intro"
-	Case 14
-		Line1$=" Uo Sound"
-	Case 15
-		Line1$="Z-Ambience"
-	Case 16
-		Line1$="Z-Synchron"
-	Case 17
-		Line1$="RetroScary"
-	Case 18
-		Line1$="DesertWind"
-	Case 19
-		Line1$="DesertCave"
-	Case 20
-		Line1$="Star World"
-	Case 21
-		Line1$="  Piano   "
-	Default
-		Line1$=LevelMusic
-	End Select
-	Text SidebarX+219,SidebarY+115,Line1$
+	
+	Line1$=GetMusicName$(LevelMusic)
+	;Text SidebarX+219,SidebarY+115,Line1$
+	CenteredText(SidebarX+254,SidebarY+115,Line1$)
 	
 	
 	LevelEdgeStyleString$=GetLevelEdgeStyleChar$(LevelEdgeStyle)
@@ -26084,6 +26035,8 @@ Function GetCommandName$(id)
 		Return "Adjust Music"
 	Case 13
 		Return "Change Weather"
+	Case 14
+		Return "(MOD) Set Music"
 	Case 16
 		Return "(MOD) Set Cam"
 	Case 21
@@ -26167,6 +26120,8 @@ Function GetCMDData1Name$(id)
 		Return "TargetVolume"
 	Case 13
 		Return "Weather"
+	Case 14
+		Return "Music ID"
 	Case 21,22,23,24,25,26,27
 		Return "Dialog No"
 	Case 28,29,30
@@ -26286,6 +26241,8 @@ Function GetCmdData1ValueName$(Cmd, Data1)
 		EndIf
 	Case 13
 		Return GetWeatherName$(Data1)
+	Case 14
+		Return GetMusicName$(Data1)
 	Case 64
 		If Data1=-1
 			Return "Pla"
@@ -26583,6 +26540,61 @@ Function GetMovementTypeString$(value)
 		Return "MoobotWR"
 	Default
 		Return "NotVanilla"
+	End Select
+
+End Function
+
+Function GetMusicName$(value)
+
+	Select value
+	Case -1
+		Return "Beach"
+	Case 0
+		Return "No Music"
+	Case 1
+		Return "WA Intro"
+	Case 2
+		Return "Pastoral"
+	Case 3
+		Return "WonderTown"
+	Case 4
+		Return "Dark/Sewer"
+	Case 5
+		Return "Cave/Woods"
+	Case 6
+		Return "Scary/Void"
+	Case 7
+		Return "WondrFalls"
+	Case 8
+		Return "Jungle"
+	Case 9
+		Return "KaboomTown"
+	Case 10
+		Return "Acid Pools"
+	Case 11
+		Return "Retro"
+	Case 12
+		Return "Cave"
+	Case 13
+		Return "POTZ Intro"
+	Case 14
+		Return "Uo Sound"
+	Case 15
+		Return "Z-Ambience"
+	Case 16
+		Return "Z-Synchron"
+	Case 17
+		Return "RetroScary"
+	Case 18
+		Return "DesertWind"
+	Case 19
+		Return "DesertCave"
+	Case 20
+		Return "Star World"
+	Case 21
+		Return "Piano"
+	Default
+		Return value
 	End Select
 
 End Function
@@ -27430,7 +27442,7 @@ Function GetCommandColor(id,index)
 		r=0
 		g=dark
 		b=0
-	Case 6,9,10,11,12,13,16 ; environment
+	Case 6,9,10,11,12,13,14,16 ; environment
 		; cyan
 		r=0
 		g=255 ;200 ;120 ;dark ;255
