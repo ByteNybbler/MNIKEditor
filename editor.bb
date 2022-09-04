@@ -27207,7 +27207,7 @@ Function GetItemFnName$(value)
 	Case 1001
 		Return "Gloves"
 	Case 1002,1003,1004,1005,1006,1007,1008,1009,1010
-		Return "GloveIcon"
+		Return "GloveIcon"+(value-1001)
 	Case 2001
 		Return "Lamp"
 	Case 2002
