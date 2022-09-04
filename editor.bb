@@ -12626,6 +12626,13 @@ Function HoverOverObjectAdjuster(i)
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; NPC Modifier or Rotator
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
+		ElseIf IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
+			If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+				If CurrentObject\Attributes\Data0>=21 And CurrentObject\Attributes\Data0<=27
+					ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,0))
+				EndIf
+			EndIf
 		EndIf
 	
 	Case "Data2"
@@ -12638,6 +12645,10 @@ Function HoverOverObjectAdjuster(i)
 				EndIf
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
+			EndIf
+		ElseIf IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And ObjectAdjusterData2\Absolute
+				ShowTooltipRightAligned(StartX,TooltipLeftY,GetCmdData2ExtraInfo$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
 			EndIf
 		EndIf
 		
@@ -12655,6 +12666,10 @@ Function HoverOverObjectAdjuster(i)
 				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And ObjectAdjusterData3\Absolute And CurrentObject\Attributes\Data0=27
 					ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data3))
 				EndIf
+			EndIf
+		ElseIf IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And ObjectAdjusterData3\Absolute And CurrentObject\Attributes\Data0=27
+				ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data3))
 			EndIf
 		ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
 			If CurrentObjectTargetIDCount<>0
@@ -13415,6 +13430,11 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Colour"
 		EndIf
 		
+		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			tex2$="CMD"
+			tex$=Str(CurrentObject\Attributes\Data0)+"/"+GetCommandName$(CurrentObject\Attributes\Data0)
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				tex2$="Colour1"
@@ -13650,6 +13670,11 @@ Function DisplayObjectAdjuster(i)
 			Else
 				tex$="Yes"
 			EndIf
+		EndIf
+		
+		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			tex2$=GetCMDData1Name$(CurrentObject\Attributes\Data0)
+			tex$=GetCmdData1ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=90 ; button
@@ -13932,6 +13957,11 @@ Function DisplayObjectAdjuster(i)
 			End Select
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
+		
+		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			tex2$=GetCMDData2Name$(CurrentObject\Attributes\Data0)
+			tex$=GetCmdData2ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
+		EndIf
 
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -14158,6 +14188,11 @@ Function DisplayObjectAdjuster(i)
 				If CurrentObject\Attributes\LogicSubType=5 tex$="Gem"
 			EndIf
 		EndIf
+		
+		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			tex2$=GetCMDData3Name$(CurrentObject\Attributes\Data0)
+			tex$=GetCmdData3ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
+		EndIf
 
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -14178,11 +14213,12 @@ Function DisplayObjectAdjuster(i)
 				EndIf
 			Else If CurrentObject\Attributes\LogicSubType = 11 And CurrentObject\Attributes\Data0=2 ; NPC Modifier: NPC Exclamation
 				tex2$="Count"
-			Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15
+			Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
 				tex2$=GetCMDData3Name$(CurrentObject\Attributes\Data0)
 				tex$=GetCmdData3ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 			EndIf
 		EndIf
+		
 		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			tex2$="HitPoints"
 		EndIf
@@ -14229,6 +14265,11 @@ Function DisplayObjectAdjuster(i)
 			
 			tex$=CurrentObject\Attributes\Data4+"/"+tex$
 		EndIf
+		
+		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			tex2$=GetCMDData4Name$(CurrentObject\Attributes\Data0)
+			tex$=GetCmdData4ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
+		EndIf
 
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -14254,7 +14295,7 @@ Function DisplayObjectAdjuster(i)
 					;tex$=GetDirectionString$(CurrentObject\Attributes\Data4)
 					tex$=CurrentObject\Attributes\Data4
 				EndIf
-			Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15
+			Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
 				tex2$=GetCMDData4Name$(CurrentObject\Attributes\Data0)
 				tex$=GetCmdData4ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
 			EndIf
@@ -14896,6 +14937,8 @@ Function GetMagicName$(id)
 			Return "Barrel"
 		Case 10
 			Return "Turret"
+		;Default
+		;	Return id
 	End Select
 End Function
 
@@ -17385,7 +17428,7 @@ Function CalculateCurrentObjectTargetIDs()
 	Next
 	
 	If ObjectAdjusterLogicType\Absolute
-		If CurrentObject\Attributes\LogicType=90
+		If CurrentObject\Attributes\LogicType=90 ; Buttons
 			If ObjectAdjusterLogicSubType\Absolute
 				If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 					;CurrentObjectTargetIDCount=4
@@ -17425,6 +17468,10 @@ Function CalculateCurrentObjectTargetIDs()
 					EndIf
 				EndIf
 			EndIf
+		ElseIf IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
+				CalculateCommandTargetIDs(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+			EndIf
 		ElseIf CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
 			If ObjectAdjusterData0\Absolute
 				Data0=CurrentObject\Attributes\Data0
@@ -17454,11 +17501,11 @@ End Function
 Function CalculateCommandTargetIDs(Command,Data1)
 
 	Select Command
-	Case 1,2,3,4,5,16,51,52,61,62,63
+	Case 1,2,3,4,5,51,52,61,62,63
 		;CurrentObjectTargetIDCount=1
 		CurrentObjectTargetID(0)=Data1
 		CurrentObjectTargetIDEnabled(0)=True
-	Case 64
+	Case 16,64
 		If Data1<>-1 ; Ignore if targeting the player
 			;CurrentObjectTargetIDCount=1
 			CurrentObjectTargetID(0)=Data1
@@ -17517,6 +17564,8 @@ Function ShowWorldAdjusterPositions()
 		EndIf
 	Case 51,52 ; magic shooter, meteor shooter
 		SetWorldAdjusterPosition(0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2)
+	Case 80,81,82,83,84,85,86,87 ; Keyblock
+		ShowWorldAdjusterPositionsCmd(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3,CurrentObject\Attributes\Data4)
 	Case 90 ; button
 		If CurrentObject\Attributes\LogicSubType=10 ; levelexit
 			If CurrentObject\Attributes\Data1=CurrentLevelNumber
@@ -17541,12 +17590,14 @@ End Function
 Function ShowWorldAdjusterPositionsCmd(Cmd,Data1,Data2,Data3,Data4)
 
 	Select Cmd
-	Case 7
+	Case 7,120
 		If Data1=CurrentLevelNumber
 			SetWorldAdjusterPosition(0,Data2,Data3)
 		EndIf
 	Case 11
 		SetWorldAdjusterPosition(0,Data2,Data3)
+	Case 17,18
+		SetWorldAdjusterPosition(0,Data1,Data2)
 	Case 41,42
 		SetWorldAdjusterPosition(0,Data1,Data2)
 		SetWorldAdjusterPosition(1,Data3,Data4)
@@ -17579,6 +17630,8 @@ Function SetCurrentObjectTargetLocation(x,y)
 		CurrentObject\Attributes\Data1=x
 		CurrentObject\Attributes\Data2=y
 		CurrentObjectWasChanged()
+	Case 80,81,82,83,84,85,86,87 ; Keyblock
+		SetCurrentObjectTargetLocationCmd(CurrentObject\Attributes\Data0,1,2,3,4,x,y)
 	Case 90 ; button
 		If CurrentObject\Attributes\LogicSubType=10 ; levelexit
 			CalculateLevelExitTo(1,2,3,4,CurrentLevelNumber,x,y)
@@ -17606,8 +17659,12 @@ End Function
 Function SetCurrentObjectTargetLocationCmd(Cmd,D1,D2,D3,D4,x,y)
 
 	Select Cmd
-	Case 7
+	Case 7,120
 		CalculateLevelExitTo(D1,D2,D3,D4,CurrentLevelNumber,x,y)
+		CurrentObjectWasChanged()
+	Case 17,18
+		SetDataByIndex(CurrentObject\Attributes,D1,x)
+		SetDataByIndex(CurrentObject\Attributes,D2,y)
 		CurrentObjectWasChanged()
 	Case 11,61
 		SetDataByIndex(CurrentObject\Attributes,D2,x)
@@ -17932,6 +17989,8 @@ Function ResizeLevelFixObjectTargets(Obj.GameObject)
 	Case 51,52 ; magic shooter, meteor shooter
 		Obj\Attributes\Data1=Obj\Attributes\Data1+WidthLeftChange
 		Obj\Attributes\Data2=Obj\Attributes\Data2+HeightTopChange
+	Case 80,81,82,83,84,85,86,87 ; Keyblock
+		ResizeLevelFixObjectTargetsCmd(Obj\Attributes,Obj\Attributes\Data0,1,2,3,4)
 	Case 90 ; button
 		If Obj\Attributes\LogicSubType=10 ; levelexit
 			If Obj\Attributes\Data1=CurrentLevelNumber
@@ -18986,6 +19045,17 @@ End Function
 Function IsObjectLogicAutodoor(TargetType,TargetSubType)
 
 	Return TargetType=10 And TargetSubType=9
+
+End Function
+
+Function IsObjectTypeKeyblock(TargetType)
+
+	Select TargetType
+	Case 80,81,82,83,84,85,86,87
+		Return True
+	Default
+		Return False
+	End Select
 
 End Function
 
@@ -26037,8 +26107,14 @@ Function GetCommandName$(id)
 		Return "Change Weather"
 	Case 14
 		Return "(MOD) Set Music"
+	Case 15
+		Return "(MOD) Set Magic"
 	Case 16
 		Return "(MOD) Set Cam"
+	Case 17
+		Return "(MOD) TileLogic"
+	Case 18
+		Return "(MOD) Set OTL"
 	Case 21
 		Return "Start Dialog"
 	Case 22
@@ -26077,6 +26153,8 @@ Function GetCommandName$(id)
 		Return "Exclamation"
 	Case 65
 		Return "(MOD) Plyr Face"
+	Case 101
+		Return "(MOD) Cutscene"
 	Case 102
 		Return "Cutscene 1"
 	Case 103
@@ -26097,6 +26175,12 @@ Function GetCommandName$(id)
 		Return "Change Hat"
 	Case 117
 		Return "Chng Accessory"
+	Case 118
+		Return "(MOD) Hub End"
+	Case 119
+		Return "(MOD) Dischrge"
+	Case 120
+		Return "(MOD) POTZ End"
 	Default
 		Return "N/A"
 	End Select
@@ -26108,7 +26192,7 @@ Function GetCMDData1Name$(id)
 		Return "Target ID"
 	Case 6
 		Return "Red"
-	Case 7
+	Case 7,120
 		Return "Level"
 	Case 8
 		Return "Adv. No"
@@ -26122,6 +26206,10 @@ Function GetCMDData1Name$(id)
 		Return "Weather"
 	Case 14
 		Return "Music ID"
+	Case 15
+		Return "Magic"
+	Case 17,18
+		Return "Tile X"
 	Case 21,22,23,24,25,26,27
 		Return "Dialog No"
 	Case 28,29,30
@@ -26132,6 +26220,8 @@ Function GetCMDData1Name$(id)
 		Return "NPC ID"
 	Case 65
 		Return "Expression"
+	Case 101
+		Return "Cutscene ID"
 	Default
 		Return "N/A (1)"
 	End Select
@@ -26149,15 +26239,19 @@ Function GetCMDData2Name$(id)
 		Return "Source X"
 	Case 12
 		Return "MaxVolumeStep" ;"Volume Step"
-	Case 51
-		Return "Obsolete"
+	Case 15
+		Return "Charges"
+	Case 17,18
+		Return "Tile Y"
 	Case 21,22
 		Return "Interchange"
 	Case 23,24,25,26,27
 		Return "AskAbout"
 	Case 41,42
 		Return "Source Y"
-	Case 61
+	Case 51
+		Return "Obsolete"
+	Case 61,120
 		Return "Dest X"
 	Case 52
 		Return "MvmtType"
@@ -26184,15 +26278,21 @@ Function GetCMDData3Name$(id)
 		Return "Source Y"
 	Case 12
 		Return "TargetPitch"
-	Case 51
-		Return "Obsolete"
+	Case 15
+		Return "Homing"
+	Case 17
+		Return "Logic"
+	Case 18
+		Return "ObjectTileLogic"
 	Case 21
 		Return "Obsolete?"
 	Case 27
 		Return "Interchange"
 	Case 41,42
 		Return "Dest X"
-	Case 61
+	Case 51
+		Return "Obsolete"
+	Case 61,120
 		Return "Dest Y"
 	Case 52
 		Return "MvTpData"
@@ -26243,7 +26343,9 @@ Function GetCmdData1ValueName$(Cmd, Data1)
 		Return GetWeatherName$(Data1)
 	Case 14
 		Return GetMusicName$(Data1)
-	Case 64
+	Case 15
+		Return GetMagicNameAndId$(Data1)
+	Case 16,64
 		If Data1=-1
 			Return "Pla"
 		Else
@@ -26314,6 +26416,10 @@ Function GetCmdData3ValueName$(Cmd, Data2, Data3)
 		Else
 			Return Data3+" kHz"
 		EndIf
+	Case 15
+		Return Data3+"/"+OneToYes$(Data3)
+	Case 17
+		Return LogicIdToLogicName$(Data3)
 	Case 26
 		Return GetAskAboutActiveNameShort$(Data3)
 	Case 62
@@ -27417,12 +27523,12 @@ Function GetCommandColor(id,index)
 		r=GetAnimatedFlashing(LevelTimer)
 		g=60
 		b=60
-	Case 7,8,102,103,104,115 ; change level
+	Case 7,8,101,102,103,104,115,120 ; change level
 		; red
 		r=255
 		g=0
 		b=0
-	Case 21,22,23,24,25,26,27,28,29,30 ; dialogs
+	Case 21,22,23,24,25,26,27,28,29,30,118 ; dialogs
 		; orange
 		r=255
 		g=dark
@@ -27447,7 +27553,7 @@ Function GetCommandColor(id,index)
 		r=0
 		g=255 ;200 ;120 ;dark ;255
 		b=255
-	Case 4,51,52 ; alter object attributes / dark magic
+	Case 4,17,18,51,52 ; alter object attributes / dark magic
 		; indigo
 		r=0
 		g=100
@@ -27457,7 +27563,7 @@ Function GetCommandColor(id,index)
 		;r=224 ;0
 		;g=121 ;0
 		;b=203 ;255
-	Case 41,42 ; object spawning
+	Case 15,41,42,119 ; object spawning
 		; purple
 		r=255
 		g=0
