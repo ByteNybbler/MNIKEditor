@@ -27336,8 +27336,18 @@ Function GetTypeString$(value)
 		Return "PickupItem?"
 	Case 71
 		Return "UsedItem?"
-	Case 80,81,82,83,84,85,86,87
-		Return "Keyblock?"
+	Case 80,81
+		Return "WallblockNever"
+	Case 82,83
+		Return "KeyblockNever"
+	Case 84
+		Return "KeyblockSpam"
+	Case 85
+		Return "WallblockOnce"
+	Case 86
+		Return "WallblockSpam"
+	Case 87
+		Return "KeyblockOnce"
 	Case 90
 		Return "Button"
 	Case 100
