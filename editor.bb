@@ -27197,9 +27197,9 @@ Function GetItemFnName$(value)
 
 	Select value
 	Case 1
-		Return "RucksackClosed"
+		Return "OpenRucksack"
 	Case 2
-		Return "RucksackOpen"
+		Return "CloseRucksack"
 	Case 3
 		Return "Objective"
 	Case 4
