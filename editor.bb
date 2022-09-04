@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="09/03/22"
+Global VersionDate$="09/04/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -13185,41 +13185,7 @@ Function DisplayObjectAdjuster(i)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterActivationSpeed,CurrentObject\Attributes\ActivationSpeed,tex$)
 		
 	Case "ActivationType"
-		If CurrentObject\Attributes\ActivationType=1
-			tex$="GrowZ"
-		Else If CurrentObject\Attributes\ActivationType=2
-			tex$="GrowXYZ"
-		Else If CurrentObject\Attributes\ActivationType=3
-			tex$="GrowXY"
-		Else If CurrentObject\Attributes\ActivationType=11
-			tex$="GoDown"
-		Else If CurrentObject\Attributes\ActivationType=12
-			tex$="Bridge1"
-		Else If CurrentObject\Attributes\ActivationType=13
-			tex$="Bridge2"
-		Else If CurrentObject\Attributes\ActivationType=14
-			tex$="Bridge3"
-		Else If CurrentObject\Attributes\ActivationType=15
-			tex$="Bridge4"
-		Else If CurrentObject\Attributes\ActivationType=16
-			tex$="Bridge5"
-		Else If CurrentObject\Attributes\ActivationType=17
-			tex$="GoNorth"
-		Else If CurrentObject\Attributes\ActivationType=18
-			tex$="GoEast"
-		Else If CurrentObject\Attributes\ActivationType=19
-			tex$="GoSouth"
-		Else If CurrentObject\Attributes\ActivationType=20
-			tex$="GoWest"
-		Else If CurrentObject\Attributes\ActivationType=21
-			tex$="Fade"
-		Else If CurrentObject\Attributes\ActivationType=31
-			tex$="Cage"
-		Else If CurrentObject\Attributes\ActivationType=41
-			tex$="DungeonDoor"
-		Else
-			tex$=Str$(CurrentObject\Attributes\ActivationType)
-		EndIf
+		tex$=GetActivationTypeString$(CurrentObject\Attributes\ActivationType)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterActivationType,CurrentObject\Attributes\ActivationType,tex$)
 		
 	Case "ButtonPush"
@@ -26372,6 +26338,8 @@ Function GetCmdData3ValueName$(Cmd, Data2, Data3)
 			Return Data3+"/"+GetMovementTypeString$(Data3)
 		Case 9 ; Type
 			Return Data3+"/"+GetTypeString$(Data3)
+		Case 12 ; ActivationType
+			Return GetActivationTypeString$(Data3)
 		Default
 			Return Data3
 		End Select
@@ -26611,6 +26579,47 @@ Function GetMovementTypeString$(value)
 		Return "MoobotWR"
 	Default
 		Return "NotVanilla"
+	End Select
+
+End Function
+
+Function GetActivationTypeString$(value)
+
+	Select value
+	Case 1
+		Return "GrowZ"
+	Case 2
+		Return "GrowXYZ"
+	Case 3
+		Return "GrowXY"
+	Case 11
+		Return "GoDown"
+	Case 12
+		Return "Bridge1"
+	Case 13
+		Return "Bridge2"
+	Case 14
+		Return "Bridge3"
+	Case 15
+		Return "Bridge4"
+	Case 16
+		Return "Bridge5"
+	Case 17
+		Return "GoNorth"
+	Case 18
+		Return "GoEast"
+	Case 19
+		Return "GoSouth"
+	Case 20
+		Return "GoWest"
+	Case 21
+		Return "Fade"
+	Case 31
+		Return "Cage"
+	Case 41
+		Return "DungeonDoor"
+	Default
+		Return value
 	End Select
 
 End Function
