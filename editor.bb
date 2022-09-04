@@ -27333,9 +27333,9 @@ Function GetTypeString$(value)
 	Case 60
 		Return "IceCub/FlngBub"
 	Case 70
-		Return "PickupItem?"
+		Return "BetaPickupItem"
 	Case 71
-		Return "UsedItem?"
+		Return "BetaUsedItem"
 	Case 80,81
 		Return "WallblockNever"
 	Case 82,83
@@ -31214,6 +31214,31 @@ Function ControlWraith(i)
 End Function
 
 
+Function ControlPickUpItem(i)
+
+	SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+2) Mod 360
+	
+	SimulatedObjectPitch2(i)=10*Sin(LevelTimer Mod 360)
+
+End Function
+
+
+Function ControlUsedItem(i)
+		
+	SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
+
+	If SimulatedObjectTimer(i)=120
+		For j=0 To 29
+			k=Rand(0,360)
+			AddParticle(23,SimulatedObjectX(i)+1.8*Sin(k),SimulatedObjectZ(i),-SimulatedObjectY(i)-1.8*Cos(k),0,.4,-0.06*Sin(k),0,0.06*Cos(k),5,0,0,0,0,30,3)
+		Next
+	EndIf
+	
+	SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+	
+End Function
+
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -31535,6 +31560,10 @@ Function ControlObjects()
 				ControlMeteorite(i)
 			Case 54
 				ControlMirror(i)
+			Case 70
+				ControlPickUpItem(i)
+			Case 71
+				ControlUsedItem(i)
 			Case 110
 				ControlNPC(i)
 			Case 120
