@@ -12975,29 +12975,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=179 ; Custom Item
 			tex2$="Fn"
 			If CurrentObject\Attributes\LogicSubType>=0 And CurrentObject\Attributes\LogicSubType<30
-				If CurrentObject\Attributes\LogicSubType Mod 10=0
-					tex$="None"
-				Else If CurrentObject\Attributes\LogicSubType Mod 10=1
-					tex$="Win Adventure"
-				Else If CurrentObject\Attributes\LogicSubType Mod 10=2
-					tex$="ID On Local"
-				Else If CurrentObject\Attributes\LogicSubType Mod 10=3
-					tex$="ID Off Local"
-				Else If CurrentObject\Attributes\LogicSubType Mod 10=4
-					tex$="ID Tog Local"
-				Else If CurrentObject\Attributes\LogicSubType Mod 10=5
-					tex$="ID On Global"
-				Else If CurrentObject\Attributes\LogicSubType Mod 10=6
-					tex$="ID Off Global"
-				Else If CurrentObject\Attributes\LogicSubType Mod 10=7
-					tex$="ID Tog Global"
-				EndIf
-				If CurrentObject\Attributes\LogicSubType>=10 And CurrentObject\Attributes\LogicSubType<20
-					tex$=tex$+" *"
-				EndIf
-				If CurrentObject\Attributes\LogicSubType>=20 And CurrentObject\Attributes\LogicSubType<30
-					tex$=tex$+" +"
-				EndIf
+				tex$=GetItemFnName$(4001+CurrentObject\Attributes\LogicSubType*10)
 			Else If CurrentObject\Attributes\LogicSubType=-1
 				tex$="Gloves"
 			Else If CurrentObject\Attributes\LogicSubType=-2
@@ -13010,30 +12988,8 @@ Function DisplayObjectAdjuster(i)
 				tex$="Glyph"
 			Else If CurrentObject\Attributes\LogicSubType=-6
 				tex$="MapPiece"
-			Else If CurrentObject\Attributes\LogicSubType=-100
-				tex$="RawKey"
-			Else If CurrentObject\Attributes\LogicSubType=-99
-				tex$="Whistle"
-			Else If CurrentObject\Attributes\LogicSubType=-98
-				tex$="RawShard"
-			Else If CurrentObject\Attributes\LogicSubType=-300
-				tex$="RawGloves"
-			Else If CurrentObject\Attributes\LogicSubType=-200
-				tex$="RawLamp"
-			Else If CurrentObject\Attributes\LogicSubType=-199
-				tex$="RawGlowGem"
-			Else If CurrentObject\Attributes\LogicSubType=-198
-				tex$="RawSpyEye"
-			Else If CurrentObject\Attributes\LogicSubType=-197
-				tex$="RawToken"
-			Else If CurrentObject\Attributes\LogicSubType=-196
-				tex$="RawGlyph"
-			Else If CurrentObject\Attributes\LogicSubType=-195
-				tex$="RawMapPiece"
-			Else If CurrentObject\Attributes\LogicSubType=-400
-				tex$="Rucksack"
-			Else If CurrentObject\Attributes\LogicSubType=509
-				tex$="Empty"
+			Else
+				tex$="Raw"+GetItemFnName$(4001+CurrentObject\Attributes\LogicSubType*10)
 			EndIf
 		EndIf
 		If CurrentObject\Attributes\LogicType=190 ; Particle Emitter
@@ -13478,6 +13434,11 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=40 ; bridge
 			tex$=Str$(CurrentObject\Attributes\Data0+8)
 		EndIf
+		
+		If CurrentObject\Attributes\LogicType=70 ; Beta Pickup Item
+			tex2$="Fn"
+			tex$=GetItemFnName$(CurrentObject\Attributes\Data0)
+		EndIf
 
 		If CurrentObject\Attributes\LogicType=260 ; spikeyball
 			tex2$="Direction"
@@ -13748,7 +13709,7 @@ Function DisplayObjectAdjuster(i)
 			End Select
 		EndIf
 
-		If CurrentObject\Attributes\LogicType=179 ; custom item
+		If CurrentObject\Attributes\LogicType=70 Or CurrentObject\Attributes\LogicType=179 ; Beta Pickup Item or Custom Item
 			tex2$="Fn ID"
 		EndIf
 
@@ -13991,6 +13952,10 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="SourceX"
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=70 ; Beta Pickup Item
+			tex2$="Texture"
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=190
@@ -27224,6 +27189,103 @@ Function GetStinkerNPCIdleAnimName$(Value)
 		Return "PanicConstant"
 	Default
 		Return Value+"/NotVanilla"
+	End Select
+
+End Function
+
+Function GetItemFnName$(value)
+
+	Select value
+	Case 1
+		Return "RucksackClosed"
+	Case 2
+		Return "RucksackOpen"
+	Case 3
+		Return "Objective"
+	Case 4
+		Return "Menu"
+	Case 1001
+		Return "Gloves"
+	Case 1002,1003,1004,1005,1006,1007,1008,1009,1010
+		Return "GloveIcon"
+	Case 2001
+		Return "Lamp"
+	Case 2002
+		Return "LampActive"
+	Case 2011
+		Return "GlowGem"
+	Case 2012
+		Return "GlowGemActive"
+	Case 2021
+		Return "Spy-Eye"
+	Case 2022
+		Return "Spy-EyeActive"
+	Case 2031
+		Return "Token"
+	Case 2041
+		Return "Glyph"
+	Case 2051
+		Return "MapPiece"
+	Case 3001
+		Return "Key"
+	Case 3011
+		Return "Whistle"
+	Case 3021
+		Return "Shard"
+	Case 3091
+		Return "WonAdventure"
+	Case 4001
+		Return "None"
+	Case 4101
+		Return "None *"
+	Case 4201
+		Return "None +"
+	Case 4011
+		Return "Win Adventure"
+	Case 4111
+		Return "Win Adventure *"
+	Case 4211
+		Return "Win Adventure +"
+	Case 4021
+		Return "ID On Local"
+	Case 4121
+		Return "ID On Local *"
+	Case 4221
+		Return "ID On Local +"
+	Case 4031
+		Return "ID Off Local"
+	Case 4131
+		Return "ID Off Local *"
+	Case 4231
+		Return "ID Off Local +"
+	Case 4041
+		Return "ID Tog Local"
+	Case 4141
+		Return "ID Tog Local *"
+	Case 4241
+		Return "ID Tog Local +"
+	Case 4051
+		Return "ID On Global"
+	Case 4151
+		Return "ID On Global *"
+	Case 4251
+		Return "ID On Global +"
+	Case 4061
+		Return "ID Off Global"
+	Case 4161
+		Return "ID Off Global *"
+	Case 4261
+		Return "ID Off Global +"
+	Case 4071
+		Return "ID Tog Global"
+	Case 4171
+		Return "ID Tog Global *"
+	Case 4271
+		Return "ID Tog Global +"
+	Case 9091
+		Return "Empty"
+	Default
+		Return value
 	End Select
 
 End Function
