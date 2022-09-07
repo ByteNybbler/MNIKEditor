@@ -13270,31 +13270,6 @@ Function DisplayObjectAdjuster(i)
 
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC"
-			tex2$="Texture"
-			
-			Select CurrentObject\Attributes\Data0
-			Case 1
-				tex$="1/Blue"
-			Case 2
-				tex$="2/Purple"
-			Case 3
-				tex$="3/Red"
-			Case 4
-				tex$="4/Dark"
-			Case 5
-				tex$="5/Shadow"
-			Case 6
-				tex$="6/Fire"
-			Case 7
-				tex$="7/Green"
-			Case 8
-				tex$="8/White"
-			End Select
-				
-			
-		EndIf
-		
 		If CurrentObject\Attributes\ModelName$="!Kaboom"
 			tex2$="Texture"
 			
@@ -13325,6 +13300,29 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\ModelName$="!GrowFlower"
 			tex2$="TileLogic"
 			tex$=LogicIdToLogicName$(CurrentObject\Attributes\Data0)
+		EndIf
+		
+		If CurrentObject\Attributes\ModelName$="!NPC" Or CurrentObject\Attributes\LogicType=110
+			tex2$="Texture"
+			
+			Select CurrentObject\Attributes\Data0
+			Case 1
+				tex$="1/Blue"
+			Case 2
+				tex$="2/Purple"
+			Case 3
+				tex$="3/Red"
+			Case 4
+				tex$="4/Dark"
+			Case 5
+				tex$="5/Shadow"
+			Case 6
+				tex$="6/Fire"
+			Case 7
+				tex$="7/Green"
+			Case 8
+				tex$="8/White"
+			End Select
 		EndIf
 		
 		; Model checks are separated from Type checks so that the Type can override the model.
@@ -13561,11 +13559,6 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!NPC" 
-			tex2$="Expression"
-			tex$=GetStinkerExpressionName$(CurrentObject\Attributes\Data1)
-		EndIf
-		
 		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
 			tex2$="Green"
 		EndIf
@@ -13585,6 +13578,11 @@ Function DisplayObjectAdjuster(i)
 			Else If CurrentObject\Attributes\Data1=3
 				tex$="Disabled"
 			EndIf
+		EndIf
+		
+		If CurrentObject\Attributes\ModelName$="!NPC" Or CurrentObject\Attributes\LogicType=110
+			tex2$="Expression"
+			tex$=GetStinkerExpressionName$(CurrentObject\Attributes\Data1)
 		EndIf
 		
 		; spring or bridge or transporter or gate or key or teleporter or cage or fire trap or laser gate or moobot or suctube or conveyor
@@ -14374,11 +14372,6 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\ModelName$="!GlowWorm" Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Green"
 		EndIf
-			
-		If CurrentObject\Attributes\ModelName$="!NPC"
-			tex2$="WalkAnim"
-			tex$=GetStinkerNPCWalkAnimName$(CurrentObject\Attributes\Data6)
-		EndIf
 		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="XSpeed"
@@ -14397,7 +14390,11 @@ Function DisplayObjectAdjuster(i)
 					tex$=GetStinkerNPCWalkAnimName$(CurrentObject\Attributes\Data6)
 				EndIf
 			EndIf
-			
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
+			tex2$="WalkAnim"
+			tex$=GetStinkerNPCWalkAnimName$(CurrentObject\Attributes\Data6)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=120 ; Wee Stinker
