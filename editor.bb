@@ -3051,7 +3051,7 @@ Function InitializeGraphicsCameras()
 	TurnEntity Camera1,65,0,0
 	PositionEntity Camera1,7,Camera1StartY,-14
 	CameraViewport camera1,0,0,LevelViewportWidth,LevelViewportHeight
-	CameraRange camera1,.1,50
+	CameraRange camera1,.1,1000 ;50
 	
 	Camera2 = CreateCamera() ; tile camera
 	CameraClsColor camera2,255,0,0
@@ -8374,9 +8374,11 @@ Function CreateLevelTileSides(i,j)
 
 End Function
 
+Const SideNotInLevelZ=-10000 ;-100
+
 Function UpdateLevelTileSides(i,j)
 	mySurface=LevelSurface(j)
-
+	
 	; here we also calculate how much the bottom edge of the side wall should be pushed "out"
 	; the maxfactor is the maximum (corners are not pushed out)
 	If LevelTiles(i,j)\Terrain\EdgeRandom=1
@@ -8395,7 +8397,7 @@ Function UpdateLevelTileSides(i,j)
 	If j>0
 		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j-1)\Terrain\Extrusion
 			z2=0
-			If LevelTiles(i,j-1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
+			If LevelTiles(i,j-1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=SideNotInLevelZ
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
@@ -8442,7 +8444,7 @@ Function UpdateLevelTileSides(i,j)
 	If i<LevelWidth-1
 		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i+1,j)\Terrain\Extrusion
 			z2=0
-			If LevelTiles(i+1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
+			If LevelTiles(i+1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=SideNotInLevelZ
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
@@ -8492,7 +8494,7 @@ Function UpdateLevelTileSides(i,j)
 	If j<LevelHeight-1
 		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j+1)\Terrain\Extrusion
 			z2=0
-			If LevelTiles(i,j+1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
+			If LevelTiles(i,j+1)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=SideNotInLevelZ
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
@@ -8543,7 +8545,7 @@ Function UpdateLevelTileSides(i,j)
 	If i>0
 		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i-1,j)\Terrain\Extrusion
 			z2=0
-			If LevelTiles(i-1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=-100
+			If LevelTiles(i-1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion z2=SideNotInLevelZ
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,0,j2)
