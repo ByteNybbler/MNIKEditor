@@ -7939,6 +7939,15 @@ Function LevelTileLogicHasVisuals(i,j)
 End Function
 
 
+Function RemoveEntityTexture(Entity)
+
+	NewEntity=CopyMesh(Entity)
+	FreeEntity(Entity)
+	Return NewEntity
+
+End Function
+
+
 Function ObstacleNameToObstacleId(ModelName$)
 
 	FirstDigit=Asc(Mid$(ModelName$,10,1))-48
@@ -7962,14 +7971,8 @@ Function TryUseObstacleTexture(Entity,ObstacleId)
 	If ObstacleId>0 And ObstacleId<>10 And ObstacleId<>14 And (ObstacleId<36 Or ObstacleId>42) And ObstacleId<>49 And ObstacleId<63
 		EntityTexture Entity,ObstacleTexture(ObstacleId)
 	Else
-		;X#=EntityX#(Entity)
-		;Y#=EntityY#(Entity)
-		;Z#=EntityZ#(Entity)
-		NewEntity=CopyMesh(Entity)
-		FreeEntity(Entity)
-		Entity=NewEntity
+		Entity=RemoveEntityTexture(Entity)
 		
-		;RemoveTextureFromEntity(Entity)
 		UseErrorColor(Entity)
 	EndIf
 	
@@ -17045,7 +17048,12 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		EntityTexture Obj\Model\Entity,GoldStarTexture
 	Else If Obj\Attributes\ModelName$="!Wisp"
 		Obj\Model\Entity=CopyEntity(StarMesh)
-		EntityTexture Obj\Model\Entity,WispTexture(Obj\Attributes\Data0)
+		If CurrentObject\Attributes\Data0>=0 And CurrentObject\Attributes\Data0<=9
+			EntityTexture Obj\Model\Entity,WispTexture(Obj\Attributes\Data0)
+		Else
+			Obj\Model\Entity=RemoveEntityTexture(Obj\Model\Entity)
+			UseErrorColor(Obj\Model\Entity)
+		EndIf
 	
 	
 	Else If Obj\Attributes\ModelName$="!Portal Warp"
