@@ -7962,8 +7962,18 @@ Function TryUseObstacleTexture(Entity,ObstacleId)
 	If ObstacleId>0 And ObstacleId<>10 And ObstacleId<>14 And (ObstacleId<36 Or ObstacleId>42) And ObstacleId<>49 And ObstacleId<63
 		EntityTexture Entity,ObstacleTexture(ObstacleId)
 	Else
+		;X#=EntityX#(Entity)
+		;Y#=EntityY#(Entity)
+		;Z#=EntityZ#(Entity)
+		NewEntity=CopyMesh(Entity)
+		FreeEntity(Entity)
+		Entity=NewEntity
+		
+		;RemoveTextureFromEntity(Entity)
 		UseErrorColor(Entity)
 	EndIf
+	
+	Return Entity
 
 End Function
 
@@ -17022,7 +17032,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	Else If  Obj\Attributes\ModelName$="!Obstacle51" Or Obj\Attributes\ModelName$="!Obstacle55" Or Obj\Attributes\ModelName$="!Obstacle59"
 		ObstacleId=ObstacleNameToObstacleId(Obj\Attributes\ModelName$)
 		Obj\Model\Entity=TryGetObstacleMesh(ObstacleId+Obj\Attributes\Data0)
-		TryUseObstacleTexture(Obj\Model\Entity,ObstacleId+Obj\Attributes\Data1)
+		Obj\Model\Entity=TryUseObstacleTexture(Obj\Model\Entity,ObstacleId+Obj\Attributes\Data1)
 
 	Else If Left$(Obj\Attributes\ModelName$,9)="!Obstacle"
 		ObstacleId=ObstacleNameToObstacleId(Obj\Attributes\ModelName$)
