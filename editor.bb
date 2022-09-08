@@ -7939,6 +7939,35 @@ Function LevelTileLogicHasVisuals(i,j)
 End Function
 
 
+Function ObstacleNameToObstacleId(ModelName$)
+
+	FirstDigit=Asc(Mid$(ModelName$,10,1))-48
+	SecondDigit=Asc(Mid$(ModelName$,11,1))-48
+	Return FirstDigit*10+SecondDigit
+
+End Function
+
+Function TryGetObstacleMesh(ObstacleId)
+
+	If ObstacleId>0 And ObstacleId<>14 And ObstacleId<>49 And ObstacleId<63
+		Return CopyEntity(ObstacleMesh(ObstacleId))
+	Else
+		Return CreateErrorMesh()
+	EndIf
+
+End Function
+
+Function TryUseObstacleTexture(Entity,ObstacleId)
+
+	If True
+		EntityTexture Entity,ObstacleTexture(ObstacleId)
+	Else
+		UseErrorColor(Entity)
+	EndIf
+
+End Function
+
+
 Function ReplyFunctionToName$(Fnc)
 
 	Select Fnc
@@ -15452,6 +15481,7 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=6
 	
 		Else If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+			; Shape
 			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
@@ -15544,6 +15574,7 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\Data1=AdjustObjectAdjusterInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,SlowInt,FastInt,DelayTime)
 		
 		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+			; Texture
 			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf
@@ -16281,6 +16312,7 @@ Function UpdateLogicTile(i,j)
 
 End Function
 
+; Used for models that do not exist.
 Function CreateErrorMesh()
 
 	Entity=CreateSphere()
@@ -16290,6 +16322,7 @@ Function CreateErrorMesh()
 
 End Function
 
+; Used for textures that do not exist.
 Function UseErrorColor(Entity)
 
 	EntityColor Entity,ModelErrorR,ModelErrorG,ModelErrorB
@@ -16987,11 +17020,13 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 
 		
 	Else If  Obj\Attributes\ModelName$="!Obstacle51" Or Obj\Attributes\ModelName$="!Obstacle55" Or Obj\Attributes\ModelName$="!Obstacle59"
-		Obj\Model\Entity=CopyEntity(  ObstacleMesh((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)+Obj\Attributes\Data0)  )
-		EntityTexture Obj\Model\Entity, ObstacleTexture((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)+Obj\Attributes\Data1)
+		ObstacleId=ObstacleNameToObstacleId(Obj\Attributes\ModelName$)
+		Obj\Model\Entity=TryGetObstacleMesh(ObstacleId+Obj\Attributes\Data0)
+		TryUseObstacleTexture(Obj\Model\Entity,ObstacleId+Obj\Attributes\Data1)
 
 	Else If Left$(Obj\Attributes\ModelName$,9)="!Obstacle"
-		Obj\Model\Entity=CopyEntity(ObstacleMesh((Asc(Mid$(Obj\Attributes\ModelName$,10,1))-48)*10+(Asc(Mid$(Obj\Attributes\ModelName$,11,1))-48)))
+		ObstacleId=ObstacleNameToObstacleId(Obj\Attributes\ModelName$)
+		Obj\Model\Entity=TryGetObstacleMesh(ObstacleId)
 
 	Else If Obj\Attributes\ModelName$="!WaterFall"
 		Obj\Model\Entity=CreateWaterFallMesh(Obj\Attributes\Data0)
