@@ -25760,7 +25760,7 @@ Function DialogMainLoop()
 				ToggleTxtEffect(i)
 			EndIf
 		Next
-		If MouseX()>StartX And MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
+		If MouseX()>LetterX(StartX) And MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
 			;clear
 			For i=0 To NofTextCommands(WhichInterChange)-1
 				DialogTextCommand$(WhichInterChange,i)=""
