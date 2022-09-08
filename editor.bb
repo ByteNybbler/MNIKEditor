@@ -15268,7 +15268,28 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "ModelName"
-		If LeftMouse=True
+		If MouseScroll<>0
+			If Left$(CurrentObject\Attributes\ModelName$,9)="!Obstacle"
+				If ShiftDown()
+					TheInt=FastInt
+				Else
+					TheInt=SlowInt
+				EndIf
+				ObstacleId=ObstacleNameToObstacleId(CurrentObject\Attributes\ModelName$)
+				ObstacleId=ObstacleId+MouseScroll*TheInt
+				If ObstacleId<0
+					ObstacleId=0
+				ElseIf ObstacleId>99
+					ObstacleId=99
+				EndIf
+				If ObstacleId<10
+					ObstacleIdString$="0"+ObstacleId
+				Else
+					ObstacleIdString$=ObstacleId
+				EndIf
+				CurrentObject\Attributes\ModelName$="!Obstacle"+ObstacleIdString$
+			EndIf
+		ElseIf LeftMouse=True
 			If FindAndReplaceKeyDown()
 				If ConfirmFindAndReplace()
 					Target$=CurrentObject\Attributes\ModelName$
