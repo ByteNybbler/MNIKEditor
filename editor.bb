@@ -7959,7 +7959,7 @@ End Function
 
 Function TryUseObstacleTexture(Entity,ObstacleId)
 
-	If True
+	If ObstacleId>0 And ObstacleId<>10 And ObstacleId<>14 And (ObstacleId<36 Or ObstacleId>42) And ObstacleId<>49 And ObstacleId<63
 		EntityTexture Entity,ObstacleTexture(ObstacleId)
 	Else
 		UseErrorColor(Entity)
@@ -15480,10 +15480,10 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0>6 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=6
 	
-		Else If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+;		Else If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			; Shape
-			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
-			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
+;			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
+;			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
 		
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
@@ -15573,11 +15573,11 @@ Function AdjustObjectAdjuster(i)
 		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data1=AdjustObjectAdjusterInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,SlowInt,FastInt,DelayTime)
 		
-		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
-			; Texture
-			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
-			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
-		EndIf
+;		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
+;			; Texture
+;			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
+;			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
+;		EndIf
 	
 		
 		If CurrentObject\Attributes\LogicType=190
