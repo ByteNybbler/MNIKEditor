@@ -872,6 +872,9 @@ Dim SelectedObjects(MaxNofObjects)
 Global NofDraggedObjects=0
 Dim DraggedObjects(MaxNofObjects)
 
+; Whether the dragged objects or tiles have been moved at all.
+Global DragChange=False
+
 Global CurrentGrabbedObjectModified=False
 Global PreviousSelectedObject=-1
 Global NewSelectedObjectCount=0
@@ -884,8 +887,6 @@ Global SelectionMaxTileY=-1
 
 Dim CurrentGrabbedObjectMarkers(MaxNofObjects)
 
-; Whether objects are currently being dragged.
-Global ObjectDragging=False
 Global DragSpotX=-1
 Global DragSpotY=-1
 Global DragMinTileX=101
@@ -1024,7 +1025,6 @@ End Function
 
 Function StartObjectDrag()
 
-	ObjectDragging=True
 	DragSpotX=BrushCursorX
 	DragSpotY=BrushCursorY
 	RecalculateDragSize()
@@ -4551,7 +4551,9 @@ End Function
 Function BrushCursorPositionWasChanged()
 	
 	; object dragging
-	If NofDraggedObjects<>0 And ObjectDragging=True
+	If NofDraggedObjects<>0
+		DragChange=True
+	
 		OldX=DragSpotX
 		DragSpotDeltaX=BrushCursorX-DragSpotX
 		If DragSpotDeltaX>0
@@ -4604,6 +4606,8 @@ Function BrushCursorPositionWasChanged()
 	
 	; tile dragging
 	If TileDragging=True
+		DragChange=True
+		
 		PasteLevelFromCopy()
 		
 		DeltaX=BrushCursorX-DraggedTilesSpotX
@@ -5505,7 +5509,7 @@ Function EditorLocalControls()
 				Text LevelViewportWidth/2-4.5*8,LevelViewportHeight,"X:"+Str$(BrushCursorX)+", Y:"+Str$(BrushCursorY)
 				
 				If LeftMouse=False
-					If BlockPlacingMode=BlockPlacingModePlace
+					If BlockPlacingMode=BlockPlacingModePlace ; Release left mouse button to place block.
 						If EditorMode=0
 							For i=cornleft To cornright
 								For j=cornup To corndown
@@ -5521,6 +5525,7 @@ Function EditorLocalControls()
 							Next
 						EndIf
 						SetBrushMode(BrushModeBlock)
+						AddUnsavedChange()
 					EndIf
 				
 					OnceTilePlacement=True
@@ -5530,6 +5535,8 @@ Function EditorLocalControls()
 					If StepPer=StepPerClick
 						RunStepSize()
 					EndIf
+					
+					AddUnsavedChange()
 				EndIf
 				
 				If LeftMouse=True And LeftMouseReleased=True And (EditorMode<>0 Or OnceTilePlacement=True)
@@ -5540,7 +5547,7 @@ Function EditorLocalControls()
 							RunStepSize()
 						EndIf
 					EndIf
-				
+					
 					If BrushMode=BrushModeBlock
 						LeftMouseReleased=False
 						StartBlockModeBlock(BlockPlacingModePlace)
@@ -5657,10 +5664,15 @@ Function EditorLocalControls()
 						Next
 						FinishObjectSelection()
 						SetBrushMode(BrushModeBlock)
+					Else
+						If DragChange
+							DragChange=False
+							AddUnsavedChange()
+						EndIf
 					EndIf
 					
-					ObjectDragging=False
 					TileDragging=False
+					NofDraggedObjects=0
 				EndIf
 				
 				If MouseDown(3) ; middle click / ; middle mouse
@@ -5682,6 +5694,8 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							DeleteObjectAt(thisx,thisy)
 						Next
+						
+						AddUnsavedChange()
 					EndIf
 					
 					RecalculateDragSize()
@@ -5694,6 +5708,8 @@ Function EditorLocalControls()
 						Next
 					Next
 					SetBrushMode(BrushModeBlock)
+					
+					AddUnsavedChange()
 				EndIf
 			EndIf
 			
@@ -6774,7 +6790,6 @@ Function EditorLocalControls()
 				ReSizeLevel()
 			EndIf
 		EndIf
-	
 	EndIf
 	
 	; *************************************
@@ -6795,6 +6810,8 @@ Function EditorLocalControls()
 				
 				RecalculateDragSize()
 				SetEditorMode(3)
+				
+				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
@@ -7183,7 +7200,7 @@ Function EditorLocalControls()
 	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY+20)
 		If LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
-			;wipe ;flip
+			; wipe ; flip
 			
 			SetupPrompt()
 			ReturnKeyReleased=False
@@ -7196,12 +7213,16 @@ Function EditorLocalControls()
 						ChangeLevelTile(i,j,True)
 					Next
 				Next
+				AddUnsavedChange()
 			ElseIf DesiredAction$="X"
 				FlipLevelX()
+				AddUnsavedChange()
 			ElseIf DesiredAction="Y"
 				FlipLevelY()
+				AddUnsavedChange()
 			ElseIf DesiredAction="XY"
 				FlipLevelXY()
+				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
@@ -7409,6 +7430,8 @@ Function EditorLocalControls()
 			Adjustment#=Amount
 			If Amount$="x" Or Amount$="X"
 				XtrudeLogics()
+				
+				AddUnsavedChange()
 			ElseIf Adjustment#<>0.0
 				For i=0 To LevelWidth-1
 					For j=0 To LevelHeight-1
@@ -7424,6 +7447,7 @@ Function EditorLocalControls()
 						UpdateTile(i,j)
 					Next
 				Next
+				;SomeTileWasChanged()
 				For i=0 To NofObjects-1
 					LevelObjects(i)\Attributes\ZAdjust=LevelObjects(i)\Attributes\ZAdjust+Adjustment
 					UpdateObjectPosition(i)
@@ -7435,6 +7459,8 @@ Function EditorLocalControls()
 				If GetConfirmation("Do you want to set Xtrude logics?")
 					XtrudeLogics()
 				EndIf
+				
+				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
@@ -10994,14 +11020,14 @@ Function SomeObjectWasChanged()
 
 	ResetSimulatedQuantities()
 	FinalizeCurrentObject()
-	AddUnsavedChange()
+	;AddUnsavedChange()
 
 End Function
 
 
 Function SomeTileWasChanged()
 
-	AddUnsavedChange()
+	;AddUnsavedChange()
 
 End Function
 
@@ -11825,6 +11851,8 @@ Function UpdateSelectedObjects()
 	
 	; Zero all relative object adjusters.
 	RecalculateObjectAdjusterModes()
+	
+	AddUnsavedChange()
 
 End Function
 
@@ -15283,6 +15311,8 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
+					
+					AddUnsavedChange()
 				EndIf
 			Else
 				CurrentObject\Attributes\TextData0=InputString$("TextData0: ")
@@ -15303,6 +15333,8 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
+					
+					AddUnsavedChange()
 				EndIf
 			Else
 				CurrentObject\Attributes\TextData1$=InputString$("TextData1: ")
@@ -15322,6 +15354,8 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
+					
+					AddUnsavedChange()
 				EndIf
 			Else
 				InputTextureName("TextureName: ")
@@ -15365,6 +15399,8 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
+					
+					AddUnsavedChange()
 				EndIf
 			Else
 				InputModelName("ModelName: ")
@@ -16280,7 +16316,7 @@ Function AdjustObjectAdjuster(i)
 		CurrentObjectWasChanged()
 	EndIf
 
-End Function 
+End Function
 
 
 Function UpdateTile(i,j)
@@ -16302,8 +16338,6 @@ Function UpdateLevelTile(i,j)
 	ShiftLevelTileByHeight(i,j)
 	ShiftLevelTileEdges(i,j)
 	UpdateLevelTileSides(i,j)
-	
-	SomeTileWasChanged()
 
 End Function
 
@@ -18034,7 +18068,10 @@ Function ReSizeLevel()
 	HeightTopChange=0
 	HeightBottomChange=0
 	
+	;SomeTileWasChanged()
 	SomeObjectWasChanged()
+	
+	AddUnsavedChange()
 
 End Function
 
@@ -18208,8 +18245,8 @@ Function FlipLevelX()
 		UpdateObjectPosition(i)
 	Next
 	
+	;SomeTileWasChanged()
 	SomeObjectWasChanged()
-	
 	
 End Function
 
@@ -18240,8 +18277,8 @@ Function FlipLevelY()
 		UpdateObjectPosition(i)
 	Next
 	
+	;SomeTileWasChanged()
 	SomeObjectWasChanged()
-	
 	
 End Function
 
@@ -18279,8 +18316,8 @@ Function FlipLevelXY()
 		UpdateObjectPosition(i)
 	Next
 	
+	;SomeTileWasChanged()
 	SomeObjectWasChanged()
-	
 	
 End Function
 
