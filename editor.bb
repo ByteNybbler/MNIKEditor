@@ -41,7 +41,15 @@ Const EditorModeDialog=9
 Global EditorModeBeforeMasterEdit=0
 
 ; Whether or not the level or dialog has unsaved changes.
-Global UnsavedChanges=False
+Global UnsavedChanges=0
+
+Function AddUnsavedChange()
+	
+	If UnsavedChanges<999999
+		UnsavedChanges=UnsavedChanges+1
+	EndIf
+	
+End Function
 
 ; KEYS
 
@@ -3954,7 +3962,7 @@ Function EditorMainLoop()
 	CenteredText(ToolbarExitX,ToolbarExitY,Line1$)
 	
 	UsingCarrots=False
-	If UnsavedChanges
+	If UnsavedChanges<>0
 		Line1$="SAVE LEVEL"
 		Line2$=""
 	Else
@@ -3968,14 +3976,30 @@ Function EditorMainLoop()
 		EndIf
 	EndIf
 	
+	ShakeX=0
+	ShakeY=0
 	If IsMouseOverToolbarItem(ToolbarSaveX,ToolbarSaveY)
 		Color 255,255,0
 		UsingCarrots=True
 	Else
-		Color TextLevelR,TextLevelG,TextLevelB
+		If UnsavedChanges<20
+			Color TextLevelR,TextLevelG,TextLevelB
+		ElseIf UnsavedChanges<40
+			Color 200,200,0
+		ElseIf UnsavedChanges<100
+			Color 200,200,0
+			ShakeX=Rand(-1,1)
+			ShakeY=Rand(-1,1)
+			;TheTimer=LevelTimer/8
+			;Color GetAnimatedFlashing(TheTimer),GetAnimatedFlashing(TheTimer),0
+		Else
+			Color GetAnimatedFlashing(LevelTimer),60,60
+			ShakeX=Rand(-3,3)
+			ShakeY=Rand(-3,3)
+		EndIf
 	EndIf
-	CenteredText(ToolbarSaveX,ToolbarSaveY,Line1$)
-	CenteredText(ToolbarSaveX,ToolbarSaveY+15,Line2$)
+	CenteredText(ToolbarSaveX+ShakeX,ToolbarSaveY+ShakeY,Line1$)
+	CenteredText(ToolbarSaveX+ShakeX,ToolbarSaveY+ShakeY+15,Line2$)
 	If UsingCarrots
 		Line1$=">          <"
 		CenteredText(ToolbarSaveX,ToolbarSaveY,Line1$)
@@ -6127,14 +6151,14 @@ Function EditorLocalControls()
 			LevelWeather=LevelWeather+1
 			If levelweather=18 Then levelweather=0
 			LightingWasChanged() ; Necessary for if alarm weather was being used.
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If my>=100 And my<115 And ((rightmouse=True And rightmousereleased=True) Or MouseScroll<0)
 			rightmousereleased=False
 			LevelWeather=LevelWeather-1
 			If levelweather=-1 Then levelweather=17
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		OldValue=LevelMusic
 		If my>=115 And my<130 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
@@ -6164,7 +6188,7 @@ Function EditorLocalControls()
 			UpdateMusic()
 		EndIf
 		If LevelMusic<>OldValue
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 
 
@@ -6183,7 +6207,7 @@ Function EditorLocalControls()
 				
 				leftmousereleased=False
 				buildcurrenttilemodel()
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			If mx<=SidebarX+255 And leftmouse=True And leftmousereleased=True
 				CurrentLevelTexture=CurrentLevelTexture-1
@@ -6198,7 +6222,7 @@ Function EditorLocalControls()
 				
 				leftmousereleased=False
 				buildcurrenttilemodel()
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			ShowTooltipRightAligned(SidebarX+210,163,CurrentLevelTextureName$())
 		EndIf
@@ -6217,7 +6241,7 @@ Function EditorLocalControls()
 				Next
 				leftmousereleased=False
 				buildcurrenttilemodel()
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			If mx<=SidebarX+255 And leftmouse=True And leftmousereleased=True
 				CurrentWaterTexture=CurrentWaterTexture-1
@@ -6232,7 +6256,7 @@ Function EditorLocalControls()
 				Next
 				leftmousereleased=False
 				buildcurrenttilemodel()
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			ShowTooltipRightAligned(SidebarX+210,180,CurrentWaterTextureName$())
 		EndIf
@@ -6276,7 +6300,7 @@ Function EditorLocalControls()
 			
 			rightmousereleased=False
 			buildcurrenttilemodel()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If my>150 And my<163 And rightmouse=True And rightmousereleased=True
 			FlushKeys
@@ -6316,7 +6340,7 @@ Function EditorLocalControls()
 			
 			rightmousereleased=False
 			buildcurrenttilemodel()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 
 		
@@ -6326,7 +6350,7 @@ Function EditorLocalControls()
 				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, DelayTime)
 				ShowTooltipCenterAligned(FlStartX+16,FlStartY+8,"Water Flow Speed: "+Waterflow)
 				If OldValue<>WaterFlow
-					UnsavedChanges=True
+					AddUnsavedChange()
 				EndIf
 			EndIf
 			If mx>FlStartX+32 And mx<FlStartX+48
@@ -6335,7 +6359,7 @@ Function EditorLocalControls()
 					UpdateAllWaterMeshTransparent()
 					leftmousereleased=False
 					rightmousereleased=False
-					UnsavedChanges=True
+					AddUnsavedChange()
 				EndIf
 				ShowTooltipCenterAligned(FlStartX+40,FlStartY+8,"Water is Transparent: "+TrueToYes$(WaterTransparent))
 			EndIf
@@ -6345,7 +6369,7 @@ Function EditorLocalControls()
 					UpdateAllWaterMeshGlow()
 					leftmousereleased=False
 					rightmousereleased=False
-					UnsavedChanges=True
+					AddUnsavedChange()
 				EndIf
 				ShowTooltipCenterAligned(FlStartX+64,FlStartY+8,"Water Glows: "+TrueToYes$(WaterGlow))
 			EndIf
@@ -6359,17 +6383,10 @@ Function EditorLocalControls()
 				EndIf
 				ShowTooltipCenterAligned(FlStartX+90,FlStartY+8,"Level Edge Style: "+GetLevelEdgeStyleName$(LevelEdgeStyle))
 				If OldValue<>LevelEdgeStyle
-					UnsavedChanges=True
+					AddUnsavedChange()
 				EndIf
 			EndIf
-
-
 		EndIf
-		
-		
-		
-
-		
 	EndIf
 	
 	If Fast
@@ -6392,7 +6409,7 @@ Function EditorLocalControls()
 				AmbientGreen=LightValue
 				AmbientBlue=LightValue
 				LightingWasChanged()
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
@@ -6405,13 +6422,13 @@ Function EditorLocalControls()
 				;If lightred>=256 Then lightred=lightred-256
 			EndIf
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightRed=LightRed-ChangeSpeed
 			;If lightred=-1 Then lightred=255
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 	EndIf
 	If mx>StartX+29 And my>215 And mx<StartX+24+29 And my<228
@@ -6423,13 +6440,13 @@ Function EditorLocalControls()
 				;If LightGreen=256 Then LightGreen=0
 			EndIf
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightGreen=LightGreen-ChangeSpeed
 			;If LightGreen=-1 Then LightGreen=255
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 	EndIf
 	If mx>StartX+29+29 And my>215 And mx<StartX+24+29+29 And my<228
@@ -6441,13 +6458,13 @@ Function EditorLocalControls()
 				;If LightBlue=256 Then LightBlue=0
 			EndIf
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			LightBlue=LightBlue-ChangeSpeed
 			;If LightBlue=-1 Then LightBlue=255
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 	EndIf
 	
@@ -6460,13 +6477,13 @@ Function EditorLocalControls()
 				;If Ambientred=256 Then ambientred=0
 			EndIf
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientRed=AmbientRed-ChangeSpeed
 			;If Ambientred=-1 Then ambientred=255
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 	EndIf
 	If mx>StartX+29 And my>215+13 And mx<StartX+24+29 And my<228+13
@@ -6478,13 +6495,13 @@ Function EditorLocalControls()
 				;If AmbientGreen=256 Then AmbientGreen=0
 			EndIf
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientGreen=AmbientGreen-ChangeSpeed
 			;If AmbientGreen=-1 Then AmbientGreen=255
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 	EndIf
 	If mx>StartX+29+29 And my>215+13 And mx<StartX+24+29+29 And my<228+13
@@ -6496,13 +6513,13 @@ Function EditorLocalControls()
 				;If AmbientBlue=256 Then AmbientBlue=0
 			EndIf
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 		If rightmouse=True Or MouseScroll<0
 			AmbientBlue=AmbientBlue-ChangeSpeed
 			;If AmbientBlue=-1 Then AmbientBlue=255
 			LightingWasChanged()
-			UnsavedChanges=True
+			AddUnsavedChange()
 		EndIf
 	EndIf
 
@@ -10977,14 +10994,14 @@ Function SomeObjectWasChanged()
 
 	ResetSimulatedQuantities()
 	FinalizeCurrentObject()
-	UnsavedChanges=True
+	AddUnsavedChange()
 
 End Function
 
 
 Function SomeTileWasChanged()
 
-	UnsavedChanges=True
+	AddUnsavedChange()
 
 End Function
 
@@ -19596,7 +19613,7 @@ Function SaveLevel()
 	
 	CloseFile file
 
-	UnsavedChanges=False
+	UnsavedChanges=0
 
 End Function
 
@@ -19996,7 +20013,7 @@ Function LoadLevel(levelnumber)
 	
 	If Not Eof(file)
 		WidescreenRangeLevel=ReadInt(file)
-		UnsavedChanges=True
+		AddUnsavedChange()
 	EndIf
 	
 	CloseFile file
@@ -20042,7 +20059,7 @@ End Function
 
 Function OpenedLevel()
 
-	UnsavedChanges=False
+	UnsavedChanges=0
 
 	; Don't restore master here, because AccessLevel is used by StartTestModeAt.
 	RestoreOriginal1Wlv()
@@ -21665,7 +21682,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		ColEffect=-1
 		TxtEffect=-1
 		
-		UnsavedChanges=True
+		AddUnsavedChange()
 	EndIf
 	If KeyDown(14)
 		; backspace
@@ -21677,8 +21694,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		ColEffect=-1
 		TxtEffect=-1
 		
-		UnsavedChanges=True
-
+		AddUnsavedChange()
 	EndIf
 	If KeyDown(211)
 		; delete
@@ -21690,7 +21706,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		ColEffect=-1
 		TxtEffect=-1
 		
-		UnsavedChanges=True
+		AddUnsavedChange()
 	EndIf
 	
 	; cursor movement
@@ -25034,7 +25050,7 @@ Function NewDialog()
 
 	ClearDialogFile()
 	
-	UnsavedChanges=False
+	UnsavedChanges=0
 
 End Function
 
@@ -25206,7 +25222,7 @@ Function AddDialogTextCommand(x,y,command$)
 	DialogTextCommand$(WhichInterChange,NofTextCommands(WhichInterChange))=command$
 	NofTextCommands(WhichInterChange)=NofTextCommands(WhichInterChange)+1
 	
-	UnsavedChanges=True
+	AddUnsavedChange()
 
 End Function
 
@@ -25214,7 +25230,7 @@ Function ReplaceDialogTextCommand(k,NewEffect$)
 
 	DialogTextCommand$(WhichInterChange,k)=NewEffect$
 	
-	UnsavedChanges=True
+	AddUnsavedChange()
 
 End Function
 
@@ -25750,7 +25766,7 @@ Function DialogMainLoop()
 			OldValue=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
 			InterChangeReplyFunction(WhichInterChange,WhichAnswer)=AdjustInt("FNC: ", InterChangeReplyFunction(WhichInterChange,WhichAnswer), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyFunction(WhichInterChange,WhichAnswer)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
@@ -25758,7 +25774,7 @@ Function DialogMainLoop()
 			OldValue=InterChangeReplyData(WhichInterChange,WhichAnswer)
 			InterChangeReplyData(WhichInterChange,WhichAnswer)=AdjustInt("Data: ", InterChangeReplyData(WhichInterChange,WhichAnswer), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyData(WhichInterChange,WhichAnswer)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			Fnc=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
@@ -25771,7 +25787,7 @@ Function DialogMainLoop()
 			OldValue=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 			InterChangeReplyCommand(WhichInterChange,WhichAnswer)=AdjustInt("CMD: ", InterChangeReplyCommand(WhichInterChange,WhichAnswer), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommand(WhichInterChange,WhichAnswer)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCommandName$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
@@ -25779,7 +25795,7 @@ Function DialogMainLoop()
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)=AdjustInt("Data1: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
@@ -25791,7 +25807,7 @@ Function DialogMainLoop()
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)=AdjustInt("Data2: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
@@ -25804,7 +25820,7 @@ Function DialogMainLoop()
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)=AdjustInt("Data3: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
@@ -25818,7 +25834,7 @@ Function DialogMainLoop()
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
 			InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)=AdjustInt("Data4: ", InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3), 1, 10, DelayTime)
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
@@ -25848,7 +25864,7 @@ Function DialogMainLoop()
 			OldValue=AskAboutActive(WhichAskAbout)
 			AskAboutActive(WhichAskAbout)=AdjustInt("Active: ", AskAboutActive(WhichAskAbout), 1, 10, DelayTime)
 			If OldValue<>AskAboutActive(WhichAskAbout)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			ShowTooltipCenterAligned(LetterX(4),TooltipY,GetAskAboutActiveName$(AskAboutActive(WhichAskAbout)))
@@ -25857,7 +25873,7 @@ Function DialogMainLoop()
 			OldValue=AskAboutInterChange(WhichAskAbout)
 			AskAboutInterChange(WhichAskAbout)=AdjustInt("Interchange: ", AskAboutInterChange(WhichAskAbout), 1, 10, DelayTime)
 			If OldValue<>AskAboutInterChange(WhichAskAbout)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			ShowTooltipCenterAligned(LetterX(15.25),TooltipY,"Destination Interchange: "+PreviewCurrentDialog$(AskAboutInterChange(WhichAskAbout)))
@@ -25865,7 +25881,7 @@ Function DialogMainLoop()
 			OldValue=AskAboutRepeat(WhichAskAbout)
 			AskAboutRepeat(WhichAskAbout)=AdjustInt("Repeat: ", AskAboutRepeat(WhichAskAbout), 1, 10, DelayTime)
 			If OldValue<>AskAboutRepeat(WhichAskAbout)
-				UnsavedChanges=True
+				AddUnsavedChange()
 			EndIf
 			
 			ShowTooltipCenterAligned(LetterX(27.5),TooltipY,GetAskAboutRepeatName$(AskAboutRepeat(WhichAskAbout)))
@@ -26074,7 +26090,7 @@ Function LoadDialogFile()
 	Next
 	CloseFile file
 	
-	UnsavedChanges=False
+	UnsavedChanges=0
 
 End Function
 
@@ -26187,7 +26203,7 @@ Function SaveDialogFile()
 	Next
 	CloseFile file
 	
-	UnsavedChanges=False
+	UnsavedChanges=0
 	
 End Function
 
