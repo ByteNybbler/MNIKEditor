@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="09/13/22"
+Global VersionDate$="09/14/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -233,6 +233,25 @@ Dim CompilerFileSize(MaxCompilerFile)
 Dim NofHubCompilerFiles(MaxCompilerFile)
 Dim HubCompilerFileName$(MaxCompilerFile,MaxCompilerFile)
 Dim HubCompilerFileSize(MaxCompilerFile,MaxCompilerFile)
+
+Global NofWlvFiles
+Global NofDiaFiles
+
+Function FileSatisfiesCompiler(ex$)
+
+	If Upper$(ex$)="MASTER.DAT"
+		Return True
+	ElseIf Upper$(Right$(ex$,4))=".WLV"
+		NofWlvFiles=NofWlvFiles+1
+		Return True
+	ElseIf Upper$(Right$(ex$,4))=".DIA"
+		NofDiaFiles=NofDiaFiles+1
+		Return True
+	Else
+		Return False
+	EndIf
+
+End Function
 
 ; EDITOR MASTER DATA
 
@@ -27965,9 +27984,10 @@ Function BuildHub()
 	If HubDescription$<>""
 		fn$=HubTitle$+"#"+HubDescription$
 	EndIf
-	CreateDir(globaldirname$+"\Custom\hubs\"+fn$)
+	HubDir$=globaldirname$+"\Custom\hubs\"+fn$
+	CreateDir(HubDir$)
 	
-	If FileType(globaldirname$+"\Custom\hubs\"+fn$)<>2
+	If FileType(HubDir$)<>2
 		Print "ERROR: Unable to create directory."
 		Print "Aborting..."
 		Delay 3000
@@ -27975,23 +27995,26 @@ Function BuildHub()
 	EndIf
 	
 	; clear directory first
-	dirfileclear=ReadDir(globaldirname$+"\Custom\hubs\"+fn$)
+	dirfileclear=ReadDir(HubDir$)
 	Repeat
 		f$=NextFile$(dirfileclear)
-		If FileType(globaldirname$+"\Custom\hubs\"+fn$+"\"+f$)=1 And f$<>""
-			DeleteFile globaldirname$+"\Custom\hubs\"+fn$+"\"+f$
-		ElseIf FileType(globaldirname$+"\Custom\hubs\"+fn$+"\"+f$)=2 And f$<>"." And f$<>".." And f$<>""
-			dirfileclearsub=ReadDir(globaldirname$+"\Custom\hubs\"+fn$+"\"+f$)
+		If FileType(HubDir$+"\"+f$)=1 And f$<>""
+			DeleteFile HubDir$+"\"+f$
+		ElseIf FileType(HubDir$+"\"+f$)=2 And f$<>"." And f$<>".." And f$<>""
+			dirfileclearsub=ReadDir(HubDir$+"\"+f$)
 			Repeat
 				f1$=NextFile$(dirfileclearsub)
-				If FileType(globaldirname$+"\Custom\hubs\"+fn$+"\"+f$+"\"+f1$)=1
-					DeleteFile globaldirname$+"\Custom\hubs\"+fn$+"\"+f$+"\"+f1$
+				If FileType(HubDir$+"\"+f$+"\"+f1$)=1
+					DeleteFile HubDir$+"\"+f$+"\"+f1$
 				EndIf
 			Until f1$=""
-			DeleteDir globaldirname$+"\Custom\hubs\"+fn$+"\"+f$
+			DeleteDir HubDir$+"\"+f$
 		EndIf
 	Until f$=""
 	;WaitKey()
+	
+	NofWlvFiles=0
+	NofDiaFiles=0
 	
 	; copy files
 	For i=0 To HubTotalAdventures
@@ -28003,15 +28026,15 @@ Function BuildHub()
 		EndIf
 		If HubAdventuresFilenames$(i)<>""
 			
-			CreateDir(globaldirname$+"\Custom\hubs\"+fn$+"\"+AdvFilename$)
+			CreateDir(HubDir$+"\"+AdvFilename$)
 			dirfile=ReadDir(GetHubAdventurePath$(HubAdventuresFilenames$(i)))
 			Print "Building "+AdvFilename$+"..."
 
 			Repeat
 				ex$=NextFile$(dirfile)
-				If Upper$(ex$)="MASTER.DAT" Or Upper$(Right$(ex$,4))=".WLV" Or Upper$(Right$(ex$,4))=".DIA"
+				If FileSatisfiesCompiler(ex$)
 					Print "Copying... "+ex$
-					CopyFile GetHubAdventurePath$(HubAdventuresFilenames$(i))+"\"+ex$, globaldirname$+"\Custom\hubs\"+fn$+"\"+AdvFilename$+"\"+ex$
+					CopyFile GetHubAdventurePath$(HubAdventuresFilenames$(i))+"\"+ex$, HubDir$+"\"+AdvFilename$+"\"+ex$
 				EndIf
 			Until ex$=""
 			
@@ -28020,12 +28043,20 @@ Function BuildHub()
 	
 	If FileType(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\hublogo.jpg")
 		Print "Copying hublogo.jpg..."
-		CopyFile globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\hublogo.jpg", globaldirname$+"\Custom\hubs\"+fn$+"\hublogo.jpg"
+		CopyFile globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\hublogo.jpg", HubDir$+"\hublogo.jpg"
 	EndIf
 	
 	If FileType(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp")
-		Print "Copying wonderlandadventures.bmp..."		CopyFile globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp", globaldirname$+"\Custom\hubs\"+fn$+"\wonderlandadventures.bmp"
+		Print "Copying wonderlandadventures.bmp..."		CopyFile globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp", HubDir$+"\wonderlandadventures.bmp"
 	EndIf
+	
+	Print ""
+	Print ""
+	Color 0,255,0
+	Print NofWlvFiles+" wlv files and "+NofDiaFiles+" dia files in total."
+	Color 255,255,255
+	Print ""
+	Print ""
 	
 	Print "Build Completed..."
 	Print "You can now play/test your hub."
@@ -28058,6 +28089,9 @@ Function CompileHub(PackContent)
 	If HubDescription$<>""
 		fn$=HubTitle$+"#"+HubDescription$
 	EndIf
+	
+	NofWlvFiles=0
+	NofDiaFiles=0
 
 	For i=0 To HubTotalAdventures
 		AdvFilename$=""
@@ -28078,7 +28112,7 @@ Function CompileHub(PackContent)
 			NofHubCompilerFiles(i)=0
 			Repeat
 				ex$=NextFile$(dirfile)
-				If Upper$(ex$)="MASTER.DAT" Or Upper$(Right$(ex$,4))=".WLV" Or Upper$(Right$(ex$,4))=".DIA"
+				If FileSatisfiesCompiler(ex$)
 					Print "Reading... "+ex$
 					HubCompilerFileName$(i,NofHubCompilerFiles(i))=ex$
 					HubCompilerFileSize(i,NofHubCompilerFiles(i))=FileSize(ThePath$+"\"+ex$)
@@ -28177,6 +28211,13 @@ Function CompileHub(PackContent)
 	EndIf
 	
 	CloseFile file1
+	
+	Print ""
+	Print ""
+	Color 0,255,0
+	Print NofWlvFiles+" wlv files and "+NofDiaFiles+" dia files in total."
+	Color 255,255,255
+	
 	Delay 1000
 	Print ""
 	Print ""
@@ -28286,9 +28327,13 @@ Function CompileAdventure(PackCustomContent)
 	dirfile=ReadDir(AdventureFolder$)
 	
 	NofCompilerFiles=0
+	NofWlvFiles=0
+	NofDiaFiles=0
+	
 	Repeat
 		ex$=NextFile$(dirfile)
-		If Upper$(ex$)="MASTER.DAT" Or Upper$(Right$(ex$,4))=".WLV" Or Upper$(Right$(ex$,4))=".DIA"
+		
+		If FileSatisfiesCompiler(ex$)
 			Print "Reading... "+ex$
 			CompilerFileName$(NofCompilerFiles)=ex$
 			CompilerFileSize(NofCompilerFiles)=FileSize(AdventureFolder$+"\"+ex$)
@@ -28351,6 +28396,13 @@ Function CompileAdventure(PackCustomContent)
 		CloseFile file2
 	Next
 	CloseFile file1
+	
+	Print ""
+	Print ""
+	Color 0,255,0
+	Print NofWlvFiles+" wlv files and "+NofDiaFiles+" dia files in total."
+	Color 255,255,255
+	
 	Delay 1000
 	Print ""
 	Print ""
@@ -29653,9 +29705,9 @@ Function ControlMothership(i)
 		
 		AddParticle(Rand(0,3),SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.1,.1),Rnd(-.01,.01),Rnd(-.1,.1),3,.02,0,0,0,125,3)
 
-		If SimulatedObjectStatus(i) Mod 30 = 0
-			PlaySoundFX(96,SimulatedObjectX(i),SimulatedObjectY(i))
-		EndIf
+;		If SimulatedObjectStatus(i) Mod 30 = 0
+;			PlaySoundFX(96,SimulatedObjectX(i),SimulatedObjectY(i))
+;		EndIf
 	
 		SimulatedObjectStatus(i)=SimulatedObjectStatus(i)-1
 		;If ObjectStatus(i)=-200
@@ -29667,7 +29719,7 @@ Function ControlMothership(i)
 		SimulatedObjectSubType(i)=SimulatedObjectSubType(i)+1
 		If SimulatedObjectSubType(i)>100
 			SimulatedObjectSubType(i)=0
-			PlaySoundFX(95,SimulatedObjectX(i),SimulatedObjectY(i))
+;			PlaySoundFX(95,SimulatedObjectX(i),SimulatedObjectY(i))
 		EndIf
 	EndIf
 	
