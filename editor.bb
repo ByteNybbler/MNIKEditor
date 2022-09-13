@@ -6694,9 +6694,11 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				WidthLeftChange=-Adj
-				RightMouseReleased=False
-				ReSizeLevel()
+				If MaybeGetResizeConfirmation(Adj)
+					WidthLeftChange=-Adj
+					RightMouseReleased=False
+					ReSizeLevel()
+				EndIf
 			EndIf
 		EndIf	
 		If mx>=StartX+40 And my<StartY+30 
@@ -6724,9 +6726,11 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				WidthRightChange=-Adj
-				RightMouseReleased=False
-				ReSizeLevel()
+				If MaybeGetResizeConfirmation(Adj)
+					WidthRightChange=-Adj
+					RightMouseReleased=False
+					ReSizeLevel()
+				EndIf
 			EndIf
 		EndIf
 		
@@ -6757,9 +6761,11 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				HeightTopChange=-Adj
-				RightMouseReleased=False
-				ReSizeLevel()
+				If MaybeGetResizeConfirmation(Adj)
+					HeightTopChange=-Adj
+					RightMouseReleased=False
+					ReSizeLevel()
+				EndIf
 			EndIf
 		EndIf
 		If mx>=StartX+40 And my>=StartY+15 And my<StartY+30 
@@ -6787,9 +6793,11 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 			If RightMouse=True And RightMouseReleased=True
-				HeightBottomChange=-Adj
-				RightMouseReleased=False
-				ReSizeLevel()
+				If MaybeGetResizeConfirmation(Adj)
+					HeightBottomChange=-Adj
+					RightMouseReleased=False
+					ReSizeLevel()
+				EndIf
 			EndIf
 		EndIf
 	EndIf
@@ -7981,6 +7989,16 @@ Function GetConfirmation(Message$)
 	Confirm$=Input$("Type Y to confirm: ")
 	ReturnKeyReleased=False
 	Return Confirm="Y" Or Confirm="y"
+
+End Function
+
+Function MaybeGetResizeConfirmation(Adj)
+
+	If NofObjects<>0 And Adj>1
+		Return GetConfirmation("Are you sure you want to reduce the level size by "+Adj+"?")
+	Else
+		Return True
+	EndIf
 
 End Function
 
