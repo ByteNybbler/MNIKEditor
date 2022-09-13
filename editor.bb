@@ -21711,11 +21711,22 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 	If let>=32 And let<=122
 		; place letter (let is the letter to place)
 		tex$=Left$(tex$,x)+Chr$(let)+Right$(tex$,Len(tex$)-x)
-		tex$=Left$(tex$,38)
+		If Len(tex$)=39
+			tex$=Left$(tex$,38)
+		EndIf
 		; and advance cursor
 		If x<37
 			MouseTextEntryMoveMouse(x+1,y,yadjust)
 		EndIf
+		ColEffect=-1
+		TxtEffect=-1
+		
+		AddUnsavedChange()
+	EndIf
+	If CtrlDown() And MouseDown(1)
+		; ctrl+click
+		tex$=Left$(tex$,x)+InputString$("String to insert: ")+Right$(tex$,Len(tex$)-x)
+		
 		ColEffect=-1
 		TxtEffect=-1
 		

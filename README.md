@@ -23,6 +23,7 @@
 * PageDown: Page down on either the LV or DG column, depending on which one the mouse is hovering over.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
+* Ctrl+Click in any mouse-based text field: Insert an arbitrary string at the cursor's position while ignoring the maximum length of each line. This makes it easy to break the length limit of each line.
 * Ctrl+S: Save master.dat.
 * Ctrl+O: Type in the number of the wlv to edit, unless the mouse is hovering over the dialogs column, in which case type in the number of the dia to edit.
 * Ctrl+T: Save+Test.
@@ -113,6 +114,7 @@
 * Right click: Make text white from the cursor's position onwards until a different text color is reached.
 * Home: Move cursor to beginning of line.
 * End: Move cursor to end of line.
+* Ctrl+Click in any mouse-based text field: Insert an arbitrary string at the cursor's position while ignoring the maximum length of each line. This makes it easy to break the length limit of each line.
 * Ctrl+S: Save dialog.
 * Ctrl+O: Type in the number of the dialog you want to open.
 * Ctrl+PageDown: Go to the next numbered dialog.
