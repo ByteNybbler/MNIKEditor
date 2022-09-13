@@ -21,7 +21,7 @@ Function PlaySoundFX(i,x,y);,pitch)
 	; play positional sound - base volume on distance to character
 	; (later - take into account moved camera?)
 	
-	Dist# = (x-EntityX(Camera))^2 + (y-(-EntityZ(Camera)-10))^2
+	Dist# = (x-EntityX(Camera1))^2 + (y-(-EntityZ(Camera1)-10))^2
 	
 	If dist<16.0
 		SoundFXVolume(i)=1.0*GlobalSoundVolume
