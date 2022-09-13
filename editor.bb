@@ -5536,7 +5536,9 @@ Function EditorLocalControls()
 						RunStepSize()
 					EndIf
 					
-					AddUnsavedChange()
+					If BrushMode<>BrushModeTestLevel
+						AddUnsavedChange()
+					EndIf
 				EndIf
 				
 				If LeftMouse=True And LeftMouseReleased=True And (EditorMode<>0 Or OnceTilePlacement=True)
