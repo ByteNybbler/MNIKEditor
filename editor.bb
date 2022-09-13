@@ -9,10 +9,11 @@
 ;
 ;
 
-Global VersionDate$="09/04/22"
+Global VersionDate$="09/13/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
+Include "sound-define.bb"
 
 Global VersionText$="WA Editor       MNIKSource v10.04 ("+VersionDate$+")"
 
@@ -1494,8 +1495,9 @@ Global IDFilterAllow=-1
 Global TexturePrefix$=""
 
 Global SimulationLevel=1
-Const SimulationLevelMax=3
+Const SimulationLevelMax=4
 Const SimulationLevelAnimation=1
+Const SimulationLevelMusic=4
 
 ;Dim BrushObjectXOffset#(1000),BrushObjectYOffset#(1000)
 Dim BrushObjectTileXOffset(1000),BrushObjectTileYOffset(1000)
@@ -2827,6 +2829,9 @@ Global SelectedGlyph
 Global MaxParticleWarningTimer=0 ; number of frames remaining before the "too many particles" warning message disappears
 
 
+
+LoadSounds()
+
 CalculateUIValues()
 InitializeGraphicsCameras() ; needed for loading particles
 InitializeGraphicsEntities()
@@ -3614,6 +3619,12 @@ Function EditorMainLoop()
 	EndIf
 	If SimulationLevel>=3
 		ControlWeather()
+	EndIf
+	
+	ResetSounds()
+	If SimulationLevel>=SimulationLevelMusic
+		ControlSoundscapes()
+		PlayAllSounds()
 	EndIf
 	
 	ControlParticles()
@@ -6126,6 +6137,7 @@ Function EditorLocalControls()
 				levelmusic=levelmusic+Adj
 				If levelmusic=22 Then levelmusic=-1
 			EndIf
+			UpdateMusic()
 		EndIf
 		If my>=115 And my<130 And ((rightmouse=True And rightmousereleased=True) Or MouseScroll<0)
 			rightmousereleased=False
@@ -6136,6 +6148,7 @@ Function EditorLocalControls()
 			EndIf
 			levelmusic=levelmusic-Adj
 			If levelmusic=-2 Then levelmusic=20
+			UpdateMusic()
 		EndIf
 		If LevelMusic<>OldValue
 			UnsavedChanges=True
@@ -7313,6 +7326,8 @@ Function EditorLocalControls()
 					RecalculateNormals(j)
 				Next
 			EndIf
+			
+			UpdateMusic()
 			
 			LightingWasChanged()
 		EndIf
@@ -21432,6 +21447,56 @@ Function MyLoadMD2(ex$)
 	Return a
 End Function
 
+Function MyLoadSound(ex$)
+;	MyWriteString(debugfile,"Sound: "+ex$)
+
+	j=Len(ex$)
+	Repeat
+		j=j-1
+	Until Mid$(ex$,j,1)="/" Or Mid$(ex$,j,1)="\" Or j=1
+	
+	If j=1
+		ex2$=""
+		j=0
+	Else
+		ex2$=Left$(ex$,j)
+	EndIf
+	
+	Repeat
+		j=j+1
+		b=Asc(Mid$(Lower$(ex$),j,1))
+		If b>=97 And b<=122
+			b=b+1
+			If b=123 Then b=97
+		EndIf
+		ex2$=ex2$+Chr$(b)
+	Until Mid$(ex$,j,1)="."
+	ex2$=ex2$+"wdf"
+	
+ 
+	;Print ex2$
+	a=LoadSound(ex2$)
+	If a=0
+		jj=0
+		Repeat
+			jj=jj+1
+		Until FileType("debug."+Str$(jj))=0
+		
+		debugfile=WriteFile ("debug."+Str$(jj))
+	;	Print "Couldn't Load MD2:"+ex$
+	;	Delay 5000
+		WriteString debugfile,ex$
+		WriteString debugfile,ex2$
+		
+		WriteInt debugfile,TotalVidMem()
+		WriteInt debugfile,AvailVidMem()
+	;	End
+	EndIf
+
+
+	Return a
+End Function
+
 Function myFileType(ex$)
 	j=Len(ex$)
 	
@@ -31412,6 +31477,145 @@ Function SetLightNow(red,green,blue,ared,agreen,ablue)
 	SimulatedAmbientBlueGoal=aBlue
 End Function
 
+Function StartMusic()
+
+	LevelMusicCustomVolume=100
+	
+	If levelmusic<>CurrentMusic And GlobalMusicVolume2>0
+		StopMusic()
+		
+		If levelmusic>0
+			If levelmusic=21
+				MusicChannel=PlayMusic ("data\models\ladder\valetfile.ogg")
+			Else
+				MusicChannel=PlayMusic ("data\music\"+levelmusic+".ogg")
+			EndIf
+		EndIf	
+		
+		CurrentMusic=levelmusic
+	EndIf
+	
+	ChannelVolume musicchannel,GlobalMusicVolume*Float(LevelMusicCustomVolume)/100.0
+	
+	
+	LevelMusicCustomPitch=44
+	If LevelMusic=12 Then LevelMusicCustomPitch=22
+	ChannelPitch MusicChannel,LevelMusicCustomPitch*1000
+
+End Function
+
+Function StopMusic()
+
+	If ChannelPlaying (MusicChannel)=1
+		StopChannel (MusicChannel)
+	EndIf
+
+End Function
+
+Function UpdateMusic()
+
+	If SimulationLevel>=SimulationLevelMusic
+		StartMusic()
+	Else
+		StopMusic()
+		CurrentMusic=0
+	EndIf
+
+End Function
+
+Function ControlSoundscapes()
+
+	If currentmusic=-1 ; beach
+		If leveltimer Mod 250 = 0 
+			sfxa=126+Rand(0,1)
+			SoundPitch SoundFX(sfxa),Rand(10000,12000)
+			playSoundfx(sfxa,-1,-1)
+		EndIf
+		If Rand(0,300)=0 
+			sfxa=128+Rand(0,1)
+			If sfxa=128
+				If Rand(0,10)=4 
+					SoundPitch SoundFX(sfxa),Rand(10000,12000)
+				Else
+					SoundPitch SoundFX(sfxa),Rand(19000,22000)
+				EndIf
+			Else
+				SoundPitch SoundFX(sfxa),Rand(10000,12000)
+			EndIf
+			playSoundfx(sfxa,-1,-1)
+		EndIf
+	EndIf
+
+End Function
+
+Function LoadSounds()
+
+	Restore SoundFXNames
+	For i=0 To 159
+;		If i=50
+;			PositionEntity cube2,.8,-1,4
+;			RenderWorld
+;			Flip
+;		EndIf
+;		If i=110
+;			PositionEntity cube2,.9,-1,4
+;			RenderWorld
+;			Flip
+;		EndIf
+		Read a$
+		If a$<>"---"
+			
+			SoundFX(i)=myLoadSound("data\sound\"+a$+".wav")
+			
+			
+		
+			
+			
+			
+		EndIf
+
+	Next
+	
+	For i=160 To 186
+		Read a$
+	Next
+	
+	For i=187 To 199
+		
+		Read a$
+		If a$<>"---"
+			
+			SoundFX(i)=myLoadSound("data\sound\"+a$+".wav")
+			
+			
+		
+			
+			
+			
+		EndIf
+
+	Next
+
+	;PlaySoundFX(21,-1,-1)
+
+	For i=200 To 209
+		
+		Read a$
+		If a$<>"---"
+			
+			SoundFX(i)=myLoadSound("data\sound\"+a$+".wav")
+			;debuglog "sound "+a$+" loaded at "+i
+			
+		
+			
+			
+			
+		EndIf
+
+	Next
+
+End Function
+
 
 Function ControlLight()
 	
@@ -31859,6 +32063,7 @@ End Function
 
 
 Include "particles.bb"
+Include "sound.bb"
 Include "customcontent.bb"
 
 
@@ -31870,13 +32075,46 @@ Data "Done"
 Data "CWHI","CGRY","CRED","CORA","CYEL","CGRE","CCYA","CBLU","CPUR","CRAI","CBLI","CWAR"
 Data "ENON","ESHI","EJIT","EWAV","EBOU","EZOO","EZSH","ECIR","EEIG","EUPD","ELER","EROT"
 
-
-
-
-
-
-
-
-
-
-		
+.SoundFXNames
+;0
+Data "adventurewon1","adventurewon2","---","---","---","---","---","---","---","---"
+;10
+Data "pinball2","pickupjewel","pickupcoin2","shard","wakka","explosion","electricshock","---","---","---"
+;20
+Data "ice","buttonoff","buttonturn","buttontimer","colourchange","---","---","---","ghost","wraith"
+;30
+Data "fireon2","fireduring2","cageclose","bridgeup","bridgedown","gateon1","gateoff1","gatedoor","autodooropen","autodoorclose"
+;40
+Data "transporter","transporterflip","teleport","suctubein","suctubeout","flystop","---","---","---","---"
+;50
+Data "weehello1","weehello2","weehello3","weehello4","weehello5","weeyes1","weeyes2","weeyes3","weeyes4","weezee"
+;60
+Data "weeok1","weeok2","weeok3","weeok4","weeok5","weeouch1","weeouch2","weeouch3","weebored","weetired"
+;70
+Data "weewoo","weethanks","weebye","weeyeay","kaboom1","kaboom2","kaboom3","kaboom4","kaboom5","kaboom6"
+;80
+Data "magiccharge","magicblink2","magiccast","freeze","freezebreak","freezestinker","freezechomper","freezethwart","spellballbounce","---"
+;90
+Data "magicon","magicoff","grow","floingbubble","---","saucerfly","saucerdie","lurker","moobot1","moobot2"
+;100
+Data "scritterhop","chomper","flowergrow","flowerfire","flowerhit","flowerdie","thwart","thwartpickup","splosh","spikeyball"
+;110
+Data "brick","tentacleup","tentacledown","trollwalk","trollice","crabwalk","crabup","crabdown","bounce","chomper2"
+;120
+Data "waterfall","quack","quake","void","bubble","splash","surf1","surf2","seagull1","seagull2"
+;130
+Data "menuclick","invenopen","invenclose","loadgame","savegame","areyousure","menuclick2","loadinggame","mystery1","mystery2"
+;140
+Data "zbot10","zbot1","zbot2","zbot3","zbot4","zbot5","zbot6","zbot7","zbot8","zbot9"
+;150
+Data "voices\death1","voices\death2","voices\death3","voices\hot1","voices\hot2","lightning1","lightning2","lightning3","zbot11","zbot12"
+;160
+Data "lost1","lost2","lost3","lost4","start1","start2","start3","start4","start5","hello"
+;170
+Data "ice1","ice2","ice3","coin","item","item-no","aha","intro","---","---"
+;180
+Data "suc1","suc2","suc3","---","---","---","---","voices\1\extra1","voices\1\extra2","voices\1\extra3"
+;190
+Data "voices\1\hello","voices\1\intro","voices\2\hello","voices\2\intro","voices\3\hello","voices\3\intro","voices\4\hello","voices\4\coin","voices\3\extra1","voices\3\extra2"
+;200
+Data "inflate","prism","---","---","---","---","---","---","---","---"
