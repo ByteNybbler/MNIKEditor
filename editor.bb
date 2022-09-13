@@ -7372,6 +7372,7 @@ Function EditorLocalControls()
 				Next
 			EndIf
 			
+			ResetSounds()
 			UpdateMusic()
 			
 			LightingWasChanged()
@@ -29652,16 +29653,22 @@ Function ControlMothership(i)
 		
 		AddParticle(Rand(0,3),SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.1,.1),Rnd(-.01,.01),Rnd(-.1,.1),3,.02,0,0,0,125,3)
 
-		;If SimulatedObjectStatus(i) Mod 30 = 0
-		;	PlaySoundFX(96,ObjectX(i),ObjectY(i))
-		;EndIf
+		If SimulatedObjectStatus(i) Mod 30 = 0
+			PlaySoundFX(96,SimulatedObjectX(i),SimulatedObjectY(i))
+		EndIf
 	
 		SimulatedObjectStatus(i)=SimulatedObjectStatus(i)-1
 		;If ObjectStatus(i)=-200
 		;	destroyobject(i,0)
 		;	NofZBotsInAdventure=NofZBotsInAdventure-1
 		;EndIf
-		
+	
+	Else
+		SimulatedObjectSubType(i)=SimulatedObjectSubType(i)+1
+		If SimulatedObjectSubType(i)>100
+			SimulatedObjectSubType(i)=0
+			PlaySoundFX(95,SimulatedObjectX(i),SimulatedObjectY(i))
+		EndIf
 	EndIf
 	
 End Function
