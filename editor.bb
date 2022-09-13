@@ -6673,21 +6673,13 @@ Function EditorLocalControls()
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
-					NewWidth=InputInt("Enter Width: ")
-					DeltaWidth=NewWidth-LevelWidth
-					;If NewWidth>LevelWidth
-					;	For i=1 To DeltaWidth
-					;		WidthLeftChange=1
-					;		ResizeLevel()
-					;	Next
-					;ElseIf NewWidth<LevelWidth
-					;	For i=1 To -DeltaWidth
-					;		WidthLeftChange=-1
-					;		ResizeLevel()
-					;	Next
-					;EndIf
-					WidthLeftChange=DeltaWidth
-					ReSizeLevel()
+					TheString$=InputString$("Enter Width: ")
+					If TheString$<>""
+						NewWidth=TheString$
+						DeltaWidth=NewWidth-LevelWidth
+						WidthLeftChange=DeltaWidth
+						ReSizeLevel()
+					EndIf
 				Else
 					WidthLeftChange=Adj
 					ReSizeLevel()
@@ -6705,21 +6697,13 @@ Function EditorLocalControls()
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
-					NewWidth=InputInt("Enter Width: ")
-					DeltaWidth=NewWidth-LevelWidth
-					;If NewWidth>LevelWidth
-					;	For i=1 To DeltaWidth
-					;		WidthRightChange=1
-					;		ResizeLevel()
-					;	Next
-					;ElseIf NewWidth<LevelWidth
-					;	For i=1 To -DeltaWidth
-					;		WidthRightChange=-1
-					;		ResizeLevel()
-					;	Next
-					;EndIf
-					WidthRightChange=DeltaWidth
-					ReSizeLevel()
+					TheString$=InputString$("Enter Width: ")
+					If TheString$<>""
+						NewWidth=TheString$
+						DeltaWidth=NewWidth-LevelWidth
+						WidthRightChange=DeltaWidth
+						ReSizeLevel()
+					EndIf
 				Else
 					WidthRightChange=Adj
 					ReSizeLevel()
@@ -6740,21 +6724,13 @@ Function EditorLocalControls()
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
-					NewHeight=InputInt("Enter Height: ")
-					DeltaHeight=NewHeight-LevelHeight
-					;If NewHeight>LevelHeight
-					;	For i=1 To DeltaHeight
-					;		HeightTopChange=1
-					;		ResizeLevel()
-					;	Next
-					;ElseIf NewHeight<LevelHeight
-					;	For i=1 To -DeltaHeight
-					;		HeightTopChange=-1
-					;		ResizeLevel()
-					;	Next
-					;EndIf
-					HeightTopChange=DeltaHeight
-					ResizeLevel()
+					TheString$=InputString$("Enter Height: ")
+					If TheString$<>""
+						NewHeight=TheString$
+						DeltaHeight=NewHeight-LevelHeight
+						HeightTopChange=DeltaHeight
+						ResizeLevel()
+					EndIf
 				Else
 					HeightTopChange=Adj
 					ReSizeLevel()
@@ -6772,21 +6748,13 @@ Function EditorLocalControls()
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
-					NewHeight=InputInt("Enter Height: ")
-					DeltaHeight=NewHeight-LevelHeight
-					;If NewHeight>LevelHeight
-					;	For i=1 To DeltaHeight
-					;		HeightBottomChange=1
-					;		ResizeLevel()
-					;	Next
-					;ElseIf NewHeight<LevelHeight
-					;	For i=1 To -DeltaHeight
-					;		HeightBottomChange=-1
-					;		ResizeLevel()
-					;	Next
-					;EndIf
-					HeightBottomChange=DeltaHeight
-					ResizeLevel()
+					TheString$=InputString$("Enter Height: ")
+					If TheString$<>""
+						NewHeight=TheString$
+						DeltaHeight=NewHeight-LevelHeight
+						HeightBottomChange=DeltaHeight
+						ResizeLevel()
+					EndIf
 				Else
 					HeightBottomChange=Adj
 					ReSizeLevel()
