@@ -148,3 +148,4 @@
 
 * Right click: Right-clicking an adventure number will copy the adventure. Right-click the same adventure again to cancel the copy, or left-click a nonexistent adventure to copy to that adventure.
 * Middle click: Middle-clicking an adventure number will mark the adventure for swapping. Middle-click the same adventure again to cancel the swap, or left-click a different adventure to swap with that adventure. Swapping with nonexistent adventures is allowed.
+* Left click while pressing X: Have the chosen adventure number not be included in the total wlv and dia counts when building or compiling. Adventures marked in this way will have orange names.

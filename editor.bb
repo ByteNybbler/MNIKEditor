@@ -237,15 +237,19 @@ Dim HubCompilerFileSize(MaxCompilerFile,MaxCompilerFile)
 Global NofWlvFiles
 Global NofDiaFiles
 
-Function FileSatisfiesCompiler(ex$)
+Function FileSatisfiesCompiler(ex$,AddToCounts)
 
 	If Upper$(ex$)="MASTER.DAT"
 		Return True
 	ElseIf Upper$(Right$(ex$,4))=".WLV"
-		NofWlvFiles=NofWlvFiles+1
+		If AddToCounts
+			NofWlvFiles=NofWlvFiles+1
+		EndIf
 		Return True
 	ElseIf Upper$(Right$(ex$,4))=".DIA"
-		NofDiaFiles=NofDiaFiles+1
+		If AddToCounts
+			NofDiaFiles=NofDiaFiles+1
+		EndIf
 		Return True
 	Else
 		Return False
@@ -2839,6 +2843,7 @@ Global HubFileName$, HubTitle$, HubDescription$, HubTotalAdventures, HubAdvStart
 Const HubAdvMax=MaxCompilerFile ;500
 Dim HubAdventuresFilenames$(HubAdvMax)
 Dim HubAdventuresMissing(HubAdvMax)
+Dim HubAdventuresIncludeInTotals(HubAdvMax)
 
 Global NoOfShards=7
 Global CustomShardEnabled
@@ -22962,6 +22967,10 @@ Function StartHub()
 		HubDescription$=""
 		HubTotalAdventures=0
 	EndIf
+	
+	For i=0 To HubAdvMax
+		HubAdventuresIncludeInTotals(i)=True
+	Next
 End Function
 
 Function ResumeMaster()
@@ -24182,6 +24191,10 @@ Function HubMainLoop()
 				ColorR=255
 				ColorG=0
 				ColorB=0
+			ElseIf Not HubAdventuresIncludeInTotals(c)
+				ColorR=255
+				ColorG=155
+				ColorB=0
 			Else
 				ColorR=210
 				ColorG=210
@@ -24372,6 +24385,10 @@ Function HubMainLoop()
 						SetEditorMode(12)
 					Else
 						CopyingLevel=StateNotSpecial
+						
+						If KeyDown(45) ; x key
+							HubAdventuresIncludeInTotals(HubSelectedAdventure)=Not HubAdventuresIncludeInTotals(HubSelectedAdventure)
+						EndIf
 					EndIf
 					
 					Repeat
@@ -28032,7 +28049,7 @@ Function BuildHub()
 
 			Repeat
 				ex$=NextFile$(dirfile)
-				If FileSatisfiesCompiler(ex$)
+				If FileSatisfiesCompiler(ex$,HubAdventuresIncludeInTotals(i))
 					Print "Copying... "+ex$
 					CopyFile GetHubAdventurePath$(HubAdventuresFilenames$(i))+"\"+ex$, HubDir$+"\"+AdvFilename$+"\"+ex$
 				EndIf
@@ -28112,7 +28129,7 @@ Function CompileHub(PackContent)
 			NofHubCompilerFiles(i)=0
 			Repeat
 				ex$=NextFile$(dirfile)
-				If FileSatisfiesCompiler(ex$)
+				If FileSatisfiesCompiler(ex$,HubAdventuresIncludeInTotals(i))
 					Print "Reading... "+ex$
 					HubCompilerFileName$(i,NofHubCompilerFiles(i))=ex$
 					HubCompilerFileSize(i,NofHubCompilerFiles(i))=FileSize(ThePath$+"\"+ex$)
@@ -28333,7 +28350,7 @@ Function CompileAdventure(PackCustomContent)
 	Repeat
 		ex$=NextFile$(dirfile)
 		
-		If FileSatisfiesCompiler(ex$)
+		If FileSatisfiesCompiler(ex$,True)
 			Print "Reading... "+ex$
 			CompilerFileName$(NofCompilerFiles)=ex$
 			CompilerFileSize(NofCompilerFiles)=FileSize(AdventureFolder$+"\"+ex$)
