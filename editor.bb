@@ -5536,7 +5536,7 @@ Function EditorLocalControls()
 						RunStepSize()
 					EndIf
 					
-					If BrushMode<>BrushModeTestLevel
+					If BrushMode<>BrushModeBlock And BrushMode<>BrushModeTestLevel And BrushMode<>BrushModeSetMirror
 						AddUnsavedChange()
 					EndIf
 				EndIf
