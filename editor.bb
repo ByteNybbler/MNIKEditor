@@ -5212,7 +5212,7 @@ Function EndUpAt(level,x,y)
 
 End Function
 
-
+; Returns True if the object is at x,y.
 Function TryLevelGoto(i,x,y,D1,D2,D3)
 
 	If LevelObjects(i)\Position\TileX=x And LevelObjects(i)\Position\TileY=y
@@ -5225,6 +5225,10 @@ Function TryLevelGoto(i,x,y,D1,D2,D3)
 			; Destination level might have changed from possible object update event, so we read from Data1 again.
 			EndUpAt(GetDataByIndex(Attributes,D1),GetDataByIndex(Attributes,D2),GetDataByIndex(Attributes,D3))
 		EndIf
+		
+		Return True
+	Else
+		Return False
 	EndIf
 
 End Function
@@ -6884,9 +6888,13 @@ Function EditorLocalControls()
 			TheType=LevelObjects(i)\Attributes\LogicType
 			TheSubType=LevelObjects(i)\Attributes\LogicSubType
 			If TheType=90 And (TheSubType=10 Or (TheSubType=15 And LevelObjects(i)\Attributes\Data0=7)) ; LevelExit or CMD 7
-				TryLevelGoto(i,BrushCursorX,BrushCursorY,1,2,3)
+				If TryLevelGoto(i,BrushCursorX,BrushCursorY,1,2,3)
+					Exit
+				EndIf
 			ElseIf TheType=242 And LevelObjects(i)\Attributes\Data2=7 ; Cuboid with CMD 7
-				TryLevelGoto(i,BrushCursorX,BrushCursorY,3,4,5)
+				If TryLevelGoto(i,BrushCursorX,BrushCursorY,3,4,5)
+					Exit
+				EndIf
 			EndIf
 		Next
 	EndIf
