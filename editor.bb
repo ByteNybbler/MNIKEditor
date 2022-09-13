@@ -19976,7 +19976,7 @@ Function LoadLevel(levelnumber)
 		Next
 	Next
 	
-	UnsavedChanges=False
+	OpenedLevel()
 
 	If Not Eof(file)
 		ReadString(file)
@@ -20024,7 +20024,7 @@ Function NewLevel(levelnumber)
 	rebuildlevelmodel()
 	BuildCurrentTileModel()
 	
-	UnsavedChanges=False
+	OpenedLevel()
 
 End Function
 
@@ -20032,20 +20032,30 @@ Function CompileLevel()
 
 End Function
 
-Function AccessLevel(levelnumber)
-	
+Function OpenedLevel()
+
+	UnsavedChanges=False
+
 	; Don't restore master here, because AccessLevel is used by StartTestModeAt.
 	RestoreOriginal1Wlv()
 
 	WhereWeEndedUpAlpha#=0.0
+
+	If BrushMode=BrushModeTestLevel
+		BrushMode=BrushModeNormal
+	EndIf
+	
+	BrushCursorProbablyModifiedTiles()
+
+End Function
+
+Function AccessLevel(levelnumber)
 
 	If LevelExists(levelnumber)=True
 		LoadLevel(levelnumber)
 	Else
 		NewLevel(levelnumber)
 	EndIf
-	
-	BrushCursorProbablyModifiedTiles()
 
 End Function
 
