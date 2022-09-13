@@ -25944,12 +25944,14 @@ Function DialogMainLoop()
 			EndIf
 		Next
 		If MouseX()>LetterX(StartX) And MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
-			;clear
+			; clear text colors and effects
 			For i=0 To NofTextCommands(WhichInterChange)-1
 				DialogTextCommand$(WhichInterChange,i)=""
 				DialogTextCommandpos(WhichInterChange,i)=-1
 			Next
 			NofTextCommands(WhichInterChange)=0
+			
+			AddUnsavedChange()
 		EndIf
 	EndIf
 		
