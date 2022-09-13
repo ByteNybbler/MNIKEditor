@@ -315,7 +315,13 @@ Dim WaterMesh(MaxLevelCoordinate),WaterSurface(MaxLevelCoordinate)
 Dim LogicMesh(MaxLevelCoordinate),LogicSurface(MaxLevelCoordinate)
 Dim DirtyNormals(MaxLevelCoordinate)
 Global ShowLogicMesh=False
-Global ShowLevelMesh=True
+
+Const ShowLevelMeshHide=0
+Const ShowLevelMeshTransparent=1
+Const ShowLevelMeshShow=2
+
+Const ShowLevelMeshMax=2
+Global ShowLevelMesh=ShowLevelMeshShow
 
 Const ShowObjectHide=0
 Const ShowObjectNormal=1
@@ -3624,6 +3630,7 @@ Function EditorMainLoop()
 	ResetSounds()
 	If SimulationLevel>=SimulationLevelMusic
 		ControlSoundscapes()
+		LoopMusic()
 		PlayAllSounds()
 	EndIf
 	
@@ -3871,10 +3878,12 @@ Function EditorMainLoop()
 	CenteredText(ToolbarShowLogicX,ToolbarShowLogicY,Line1$)
 	CenteredText(ToolbarShowLogicX,ToolbarShowLogicY+15,"LOGIC")
 	
-	If ShowLevelMesh=True
+	If ShowLevelMesh=ShowLevelMeshShow
 		Line1$="SHOW"
-	Else
+	ElseIf ShowLevelMesh=ShowLevelMeshHide
 		Line1$="HIDE"
+	ElseIf ShowLevelMesh=ShowLevelMeshTransparent
+		Line1$="TRANSPARENT"
 	EndIf
 	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY,Line1$)
 	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY+15,"LEVEL")
@@ -7282,16 +7291,28 @@ Function EditorLocalControls()
 	
 	If IsMouseOverToolbarItem(ToolbarShowLevelX,ToolbarShowLevelY) And MouseDebounceFinished()
  		 ; show/hide level
-		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
-			ShowLevelMesh=Not ShowLevelMesh
-			If ShowLevelMesh=True 
-				For j=0 To Levelheight-1
-					ShowEntity LEvelMesh(j)
+		NewValue=AdjustInt("Enter level mesh visibility level: ", ShowLevelMesh, 1, 10, DelayTime)
+		If NewValue>ShowLevelMeshMax
+			NewValue=0
+		ElseIf NewValue<0
+			NewValue=ShowLevelMeshMax
+		EndIf
+		WasChanged=ShowLevelMesh<>NewValue
+		If WasChanged
+			ShowLevelMesh=NewValue
+			If ShowLevelMesh=ShowLevelMeshShow
+				For j=0 To LevelHeight-1
+					ShowEntity LevelMesh(j)
+					EntityAlpha LevelMesh(j),1.0
 				Next
-			EndIf
-			If ShowLevelMesh=False 
-				For j=0 To Levelheight-1
-					HideEntity LEvelMesh(j)
+			ElseIf ShowLevelMesh=ShowLevelMeshHide
+				For j=0 To LevelHeight-1
+					HideEntity LevelMesh(j)
+				Next
+			ElseIf ShowLevelMesh=ShowLevelMeshTransparent
+				For j=0 To LevelHeight-1
+					ShowEntity LevelMesh(j)
+					EntityAlpha LevelMesh(j),0.5
 				Next
 			EndIf
 						
@@ -9206,7 +9227,7 @@ Function BuildLevelModel()
 	For i=0 To MaxLevelCoordinate
 		LevelMesh(i)=CreateMesh()
 		LevelSurface(i)=CreateSurface(LevelMesh(i))
-		EntityFX LevelMesh(i),2
+		;EntityFX LevelMesh(i),2
 		
 		Watermesh(i)=CreateMesh()
 		Watersurface(i)=CreateSurface(Watermesh(i))
@@ -9315,17 +9336,17 @@ Function BuildLevelModel()
 		Else
 			HideEntity LogicMesh(j)
 		EndIf
-		If ShowLevelMesh=True 
+		
+		If ShowLevelMesh=ShowLevelMeshShow
 			ShowEntity LevelMesh(j)
-		Else
+			EntityAlpha LevelMesh(j),1.0
+		ElseIf ShowLevelMesh=ShowLevelMeshHide
 			HideEntity LevelMesh(j)
+		ElseIf ShowLevelMesh=ShowLevelMeshTransparent
+			ShowEntity LevelMesh(j)
+			EntityAlpha LevelMesh(j),0.5
 		EndIf
-
-		
 	Next
-
-	
-		
 	
 End Function
 
@@ -31519,6 +31540,30 @@ Function UpdateMusic()
 	Else
 		StopMusic()
 		CurrentMusic=0
+	EndIf
+
+End Function
+
+Function LoopMusic()
+
+	If currentmusic>0 ;And (gamemode<10 Or currentmenu<>10)
+		; music looping
+		If ChannelPlaying(musicchannel)=0
+			
+		
+			If currentmusic=21
+				MusicChannel=PlayMusic("data\models\ladder\valetfile.ogg")
+
+			Else
+				MusicChannel=PlayMusic("Data\music\"+currentmusic+".ogg")
+			EndIf
+			;ChannelVolume musicchannel,GlobalMusicVolume
+			ChannelVolume MusicChannel,GlobalMusicVolume * Float(LevelMusicCustomVolume)/100.0
+			ChannelPitch MusicChannel,LevelMusicCustomPitch*1000
+
+			
+				
+		EndIf
 	EndIf
 
 End Function
