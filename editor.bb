@@ -3628,7 +3628,7 @@ Function EditorMainLoop()
 	EndIf
 	
 	ResetSounds()
-	If SimulationLevel>=SimulationLevelMusic
+	If SimulationLevel>=SimulationLevelMusic And EditorMode<>8
 		ControlSoundscapes()
 		LoopMusic()
 		PlayAllSounds()
@@ -20054,6 +20054,8 @@ Function OpenedLevel()
 	EndIf
 	
 	BrushCursorProbablyModifiedTiles()
+	
+	UpdateMusic()
 
 End Function
 
@@ -22781,6 +22783,8 @@ Function StartMaster()
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
 	
+	StopMusic()
+	
 	AdventureUserName$=GetAuthorFromAdventureTitle$(AdventureFileName$)
 	
 	ResetPreviousLevelNumberBuffer()
@@ -22892,6 +22896,8 @@ Function ResumeMaster()
 
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
+	
+	StopMusic()
 
 	SetEditorMode(8)
 	
@@ -26439,6 +26445,8 @@ End Function
 Function GetCmdData1ValueName$(Cmd, Data1)
 	
 	Select Cmd
+	Case 6
+		Return GetLightColorAndAmbientString$(Data1)
 	Case 10,11
 		Return Data1+"/"+GetSoundName$(Data1)
 	Case 12
@@ -26472,6 +26480,8 @@ Function GetCmdData2ValueName$(Cmd, Data2)
 	Select Cmd
 	Case 4
 		Return Data2+"/"+GetCmd4Data2ValueName$(Data2)
+	Case 6
+		Return GetLightColorAndAmbientString$(Data2)
 	Case 12
 		If Data2=0
 			Return "Instant"
@@ -26520,6 +26530,8 @@ Function GetCmdData3ValueName$(Cmd, Data2, Data3)
 		Default
 			Return Data3
 		End Select
+	Case 6
+		Return GetLightColorAndAmbientString$(Data3)
 	Case 12
 		If Data3=0
 			Return "No Change"
@@ -26660,6 +26672,12 @@ Function GetCmd4Data2ValueName$(value)
 	Default
 		Return "None"
 	End Select
+
+End Function
+
+Function GetLightColorAndAmbientString$(ColorValue)
+
+	Return ColorValue+" (Amb: "+ColorValue/2+")"
 
 End Function
 
