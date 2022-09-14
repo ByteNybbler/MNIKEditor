@@ -25365,10 +25365,10 @@ Function DialogMainLoop()
 	
 	If HotkeySave()
 		SaveDialogFile()
-	ElseIf HotKeyOpen()
-		If AskToSaveDialogAndExit()
-			OpenTypedDialog()
-		EndIf
+;	ElseIf HotKeyOpen()
+;		If AskToSaveDialogAndExit()
+;			OpenTypedDialog()
+;		EndIf
 	EndIf
 	
 	If CtrlDown()

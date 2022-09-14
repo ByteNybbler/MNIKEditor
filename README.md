@@ -116,7 +116,6 @@
 * End: Move cursor to end of line.
 * Ctrl+Click in any mouse-based text field: Insert an arbitrary string at the cursor's position while ignoring the maximum length of each line. This makes it easy to break the length limit of each line.
 * Ctrl+S: Save dialog.
-* Ctrl+O: Type in the number of the dialog you want to open.
 * Ctrl+PageDown: Go to the next numbered dialog.
 * Ctrl+PageUp: Go to the previous numbered dialog.
 * Ctrl+W: Toggle White.
@@ -148,4 +147,4 @@
 
 * Right click: Right-clicking an adventure number will copy the adventure. Right-click the same adventure again to cancel the copy, or left-click a nonexistent adventure to copy to that adventure.
 * Middle click: Middle-clicking an adventure number will mark the adventure for swapping. Middle-click the same adventure again to cancel the swap, or left-click a different adventure to swap with that adventure. Swapping with nonexistent adventures is allowed.
-* Left click while pressing X: Have the chosen adventure number not be included in the total wlv and dia counts when building or compiling. Adventures marked in this way will have orange names.
+* Left click while pressing X: Have the chosen adventure number not be included in the total wlv and dia counts when building or compiling. Adventures marked in this way will have orange names in the hub editor.
