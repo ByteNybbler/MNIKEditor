@@ -13844,8 +13844,6 @@ Function DisplayObjectAdjuster(i)
 			Else If CurrentObject\Attributes\Data1=3
 				tex$="Mecha"
 			EndIf
-			
-			
 		EndIf
 		If CurrentObject\Attributes\LogicType=220 ; Turtle
 			tex2$="Turn"
@@ -13859,6 +13857,10 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=300 ; Brr float
 			tex2$="TimeOffset"
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=310 ; RubberDucky
+			tex2$="TiltMagnitude"
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=370 ; Crab
@@ -14097,6 +14099,10 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObject\Attributes\Data2=0
 				tex$="Random"
 			EndIf
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=310 ; RubberDucky
+			tex2$="TimeOffset"
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=320 ; Void
