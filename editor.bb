@@ -32334,4 +32334,5 @@ Data "suc1","suc2","suc3","---","---","---","---","voices\1\extra1","voices\1\ex
 ;190
 Data "voices\1\hello","voices\1\intro","voices\2\hello","voices\2\intro","voices\3\hello","voices\3\intro","voices\4\hello","voices\4\coin","voices\3\extra1","voices\3\extra2"
 ;200
-Data "inflate","prism","---","---","---","---","---","---","---","---"
+Data "---","---","---","---","---","---","---","---","---","---"
+;Data "inflate","prism","---","---","---","---","---","---","---","---"
