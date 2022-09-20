@@ -15246,9 +15246,9 @@ Function InputModelName(Prompt$)
 	CurrentObject\Attributes\ModelName$=InputString$(Prompt$)
 	ObjectAdjusterModelName\Absolute=True
 	If CurrentObject\Attributes\ModelName$="!CustomModel"
-		CurrentObjectTextData0=InputString$("Enter custom model name (e.g. Default): ")
+		CurrentObject\Attributes\TextData0$=InputString$("Enter custom model name (e.g. Default): ")
 	ElseIf Left$(CurrentObject\Attributes\ModelName$,1)="/" Or Left$(CurrentObject\Attributes\ModelName$,1)="?"
-		CurrentObjectTextData0=Right$(CurrentObject\Attributes\ModelName$,Len(CurrentObject\Attributes\ModelName$)-1)
+		CurrentObject\Attributes\TextData0$=Right$(CurrentObject\Attributes\ModelName$,Len(CurrentObject\Attributes\ModelName$)-1)
 		CurrentObject\Attributes\ModelName$="!CustomModel"
 	EndIf
 
