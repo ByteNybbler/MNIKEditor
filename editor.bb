@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="09/14/22"
+Global VersionDate$="09/27/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -542,7 +542,9 @@ Global EditorUserNameEntered$=""
 
 Global AdventureFileName$
 Global NofAdventureFileNames
-Dim AdventureFileNamesListed$(10000)
+Const MaxNofAdventureFileNames=10000
+Dim AdventureFileNamesListed$(MaxNofAdventureFileNames)
+;Dim AdventureTitlesListed$(MaxNofAdventureFileNames)
 Global AdventureNameEntered$=""
 Global AdventureFileNamesListedStart
 Global AdventureNameSelected
@@ -1857,6 +1859,12 @@ Global LowerButtonsCutoff
 Function LetterX(x#)
 
 	Return GfxWidth/2+LetterWidth*(x#-LettersCountX/2)
+
+End Function
+
+Function LetterY(y#)
+
+	Return LetterHeight*y#
 
 End Function
 
@@ -21645,8 +21653,14 @@ Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
 	
 	For i=1 To Len(mytext$)
 		let=Asc(Mid$(mytext$,i,1))-32
-		AddLetter(let,-.97+(x+(i-1)*widthmult)*CharWidth#,.5-(y-4+j)*CharHeight#,1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
+		AddLetter(let,-.97+(x+(i-1)*widthmult)*CharWidth#,DisplayText2Y#(y),1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
 	Next
+	
+End Function
+
+Function DisplayText2Y#(y)
+
+	Return .5-(y-4)*CharHeight#
 	
 End Function
 
@@ -22147,10 +22161,15 @@ Function AdventureSelectScreen()
 
 	For i=0 To 18
 		If AdventureFileNamesListedStart+i<NofAdventureFileNames
-			If i=AdventureNameSelected
-				DisplayText2(AdventureFileNamesListed$(AdventureFileNamesListedStart+i),22-Len(AdventureFileNamesListed$(AdventureFileNamesListedStart+i))/2,8+i,255,255,255)
+			AdventureFileName$=AdventureFileNamesListed$(AdventureFileNamesListedStart+i)
+			If i=AdventureNameSelected				
+				DisplayText2(AdventureFileName$,22-Len(AdventureFileName$)/2,8+i,255,255,255)
+				
+				;ShowTooltipCenterAligned(LetterX(LettersCountX/2),LetterY(8.5+i),AdventureTitlesListed$(AdventureFileNamesListedStart+i))
+				
+				ShowTooltipCenterAligned(LetterX(LettersCountX/2+0.5),LetterY(8.5+i),GetAdventureTitle$(AdventureFileName$))
 			Else
-				DisplayText2(AdventureFileNamesListed$(AdventureFileNamesListedStart+i),22-Len(AdventureFileNamesListed$(AdventureFileNamesListedStart+i))/2,8+i,155,155,155)
+				DisplayText2(AdventureFileName$,22-Len(AdventureFileName$)/2,8+i,155,155,155)
 			EndIf
 		EndIf
 	Next
@@ -22737,6 +22756,17 @@ Function SettingsMainLoop()
 End Function
 
 
+Function GetAdventureTitle$(ex$)
+
+	AdventureFileName$=ex$
+	If MasterFileExists()
+		Return LoadAdventureTitle$()
+	Else
+		Return ""
+	EndIf
+
+End Function
+
 Function GetAdventures()
 
 	NofAdventureFileNames=0
@@ -22759,13 +22789,16 @@ Function GetAdventures()
 			If flag=True
 				; good file name - add to list
 				AdventureFileNamesListed$(NofAdventureFileNames)=ex$
+
+				; VERY slow to do this all at once.
+				;AdventureTitlesListed$(NofAdventureFileNames)=GetAdventureTitle$(ex$)
+				
 				NofAdventureFileNames=NofAdventureFileNames+1
 			EndIf
 		EndIf
 	Until ex$=""
 	
 	CloseDir dirfile
-
 
 End Function
 
@@ -24705,6 +24738,15 @@ End Function
 Function MasterFileExists()
 
 	Return FileExists(GetAdventureDir$()+"master.dat")
+
+End Function
+
+Function LoadAdventureTitle$()
+
+	file=ReadFile (GetAdventureDir$()+"master.dat")
+	ex$=ReadString$(file)
+	CloseFile file
+	Return ex$
 
 End Function
 
