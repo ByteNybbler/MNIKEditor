@@ -22289,6 +22289,20 @@ Function AdventureSelectScreen()
 		;EndIf
 	EndIf
 	
+	If MouseDown(1) Or MouseDown(2) Or MouseScroll<>0
+		If MouseDebounceFinished()
+			If mx<LetterX(12) And my>LetterHeight And my<LetterHeight*2 ;hubmode
+				hubmode=Not hubmode
+				If hubmode
+					GetHubs()
+				Else
+					GetAdventures()
+				EndIf
+				
+				If MouseScroll=0 Then MouseDebounceSet(10)
+			EndIf	
+		EndIf
+	EndIf
 	
 	If MouseDown(1)
 		If EditorMode=5
@@ -22321,17 +22335,6 @@ Function AdventureSelectScreen()
 				Until MouseDown(1)=0
 				;ShowMessage("We're here!",1000)
 				
-			EndIf
-
-			If mx<LetterX(12) And my>LetterHeight And my<LetterHeight*2 ;hubmode
-				hubmode=Not hubmode
-				If hubmode
-					GetHubs()
-				Else
-					GetAdventures()
-				EndIf
-				Repeat
-				Until MouseDown(1)=0
 			EndIf
 			
 			If AdventureNameSelected>=0
