@@ -55,10 +55,9 @@
 * Ctrl+T: Update the currently-grabbed object, save level, and activate the "Test Level At Cursor" brush mode.
 * Ctrl+C: Copy all selected objects to the brush.
 * Ctrl+O: Type in the number of the wlv you want to open.
-* Ctrl+[: Open the previous wlv that was opened. This can be done numerous times in a row to retrace your steps, perhaps after having followed LevelExits by pressing G. The last 100 opened wlvs are tracked.
+* Ctrl+Backspace: Open the previous wlv that was opened. This can be done numerous times in a row to retrace your steps, perhaps after having followed LevelExits by pressing G. The last 100 opened wlvs are tracked.
 * Ctrl+PageDown: Go to the next numbered wlv.
 * Ctrl+PageUp: Go to the previous numbered wlv.
-* Ctrl+Backspace: Go to the previous opened wlv.
 * Ctrl+N: Go to normal brush mode.
 * Ctrl+B: Toggle block mode. The cursor brush will be blue while block mode is active.
 * Ctrl+F: Toggle fill mode. The cursor brush will be yellow while fill mode is active.

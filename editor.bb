@@ -7021,7 +7021,7 @@ Function EditorLocalControls()
 	EndIf
 	
 	If CtrlDown()
-		If KeyPressed(26) ; Ctrl+[
+		If KeyPressed(14) ; Ctrl+Backspace, formerly Ctrl+[ (26)
 			TryPopPreviousLevel()
 		ElseIf KeyPressed(209) ; Ctrl+PageDown
 			If AskToSaveLevelAndExit()
