@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="09/27/22"
+Global VersionDate$="10/24/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -17309,7 +17309,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	Else If Obj\Attributes\ModelName$="!SpellBall"
 		Obj\Model\Entity=CreateSpellBallMesh(7) ; use white magic spellball mesh
 		
-	Else If Obj\Attributes\ModelName$="!FencTrue
+	Else If Obj\Attributes\ModelName$="!Fence1"
 		Obj\Model\Entity=CopyEntity(fence1)
 	Else If Obj\Attributes\ModelName$="!Fence2"
 		Obj\Model\Entity=CopyEntity(fence2)
