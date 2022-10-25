@@ -17191,7 +17191,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		EntityTexture Obj\Model\Entity,GoldStarTexture
 	Else If Obj\Attributes\ModelName$="!Wisp"
 		Obj\Model\Entity=CopyEntity(StarMesh)
-		If CurrentObject\Attributes\Data0>=0 And CurrentObject\Attributes\Data0<=9
+		If Obj\Attributes\Data0>=0 And Obj\Attributes\Data0<=9
 			EntityTexture Obj\Model\Entity,WispTexture(Obj\Attributes\Data0)
 		Else
 			Obj\Model\Entity=RemoveEntityTexture(Obj\Model\Entity)
