@@ -20174,6 +20174,12 @@ Function OpenTypedDialog()
 
 End Function
 
+Function CanChangeAdventureCurrentArchive()
+
+	Return Not (EditorMode=5 And HubMode=True)
+
+End Function
+
 Function GetAdventuresDir$(CurrentArchive)
 
 	Select CurrentArchive ; The corresponding global variable is AdventureCurrentArchive.
@@ -22108,7 +22114,7 @@ Function AdventureSelectScreen()
 	
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 	
-;	If hubmode=False
+	If CanChangeAdventureCurrentArchive()
 ;		If AdventureCurrentArchive=0
 ;			DisplayText2("Current",28,6,255,255,255)
 ;			DisplayText2("Archive",37,6,155,155,155)
@@ -22129,7 +22135,7 @@ Function AdventureSelectScreen()
 			TheString$="Current"
 		End Select
 		DisplayText2(TheString$,28,6,255,255,255)
-;	EndIf
+	EndIf
 	If NofAdventureFileNames>19
 		For i=0 To 18
 			displaytext2(":",2,8+i,TextMenusR,TextMenusG,TextMenusB)
@@ -22264,7 +22270,7 @@ Function AdventureSelectScreen()
 	
 	
 	
-;	If hubmode=False
+	If CanChangeAdventureCurrentArchive()
 		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44) And MouseDebounceFinished()
 			If MouseDown(1) Or MouseScroll>0
 				SetAdventureCurrentArchive(AdventureCurrentArchive+1)
@@ -22281,7 +22287,7 @@ Function AdventureSelectScreen()
 		;	AdventureCurrentArchive=1
 		;	GetAdventures()
 		;EndIf
-;	EndIf
+	EndIf
 	
 	
 	If MouseDown(1)
