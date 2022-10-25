@@ -23516,10 +23516,12 @@ Function MasterMainLoop()
 		If MouseX()>LetterX(16) And MouseX()<LetterX(23)
 			adventurestartdir=AdjustInt("Adventure start direction: ", adventurestartdir, 45, 45, DelayTime)
 			adventurestartdir=adventurestartdir Mod 360
-			; this if block is necessary because Mod can return negative numbers for some terrible reason
+			; This If block is necessary because Blitz3D's Mod can return negative numbers.
 			If adventurestartdir<0
 				adventurestartdir=adventurestartdir+360
 			EndIf
+			
+			ShowTooltipCenterAligned(LetterX(19.5),LetterHeight*14,GetDirectionString$(adventurestartdir))
 		EndIf
 	EndIf
 		
