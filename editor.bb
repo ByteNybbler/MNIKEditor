@@ -24064,7 +24064,7 @@ Function MasterAdvancedLoop()
 			StartTestMode()
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33) And hubmode=False
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33) And hubmode=False ; Compile
 			If CtrlDown()
 				PackContent=True
 			Else
@@ -24525,7 +24525,7 @@ Function HubMainLoop()
 			StartAdventureSelectScreen()
 		EndIf
 		
-		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
+		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22) ; Save+Exit
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -24568,6 +24568,11 @@ Function HubMainLoop()
 			
 		EndIf
 	EndIf
+	
+	If HotkeySave()
+		SaveHubFile()
+	EndIf
+	
 	MouseTextEntryTrackMouseMovement()
 	
 	Entering=0
