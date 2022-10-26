@@ -16960,15 +16960,14 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 	Else If Obj\Attributes\ModelName$="!CustomModel"
 		
+		CustomModelNameToUse$=Obj\Attributes\TextData0
 		If FileType("UserData\Custom\Models\"+Obj\Attributes\TextData0+".3ds")<>1 Or FileType("UserData\Custom\Models\"+Obj\Attributes\TextData0+".jpg")<>1
-			Print "Couldn't Load 3ds/jpg."
-			Print "Reverting to 'Default' Custom Model."
- 			Delay 2000
+			ShowMessageOnce("Couldn't Load 3ds/jpg. Reverting to 'Default' Custom Model.",2000)
 			
-			Obj\Attributes\TextData0="Default"
+			CustomModelNameToUse$="Default"
 		EndIf
-		Obj\Model\Entity=LoadMesh("UserData\Custom\Models\"+Obj\Attributes\TextData0+".3ds")
-		Obj\Model\Texture=LoadTexture("UserData\Custom\Models\"+Obj\Attributes\TextData0+".jpg")
+		Obj\Model\Entity=LoadMesh("UserData\Custom\Models\"+CustomModelNameToUse$+".3ds")
+		Obj\Model\Texture=LoadTexture("UserData\Custom\Models\"+CustomModelNameToUse$+".jpg")
 		EntityTexture Obj\Model\Entity,Obj\Model\Texture
 
 		
