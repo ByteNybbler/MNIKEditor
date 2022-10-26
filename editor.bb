@@ -17109,7 +17109,12 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Obj\Model\Entity=CopyEntity(GhostMesh)
 	Else If Obj\Attributes\ModelName$="!Wraith"
 		Obj\Model\Entity=CopyEntity(WraithMesh)
-		EntityTexture Obj\Model\Entity,WraithTexture(Obj\Attributes\Data2)
+		If Obj\Attributes\Data2>=0 And Obj\Attributes\Data2<=2
+			EntityTexture Obj\Model\Entity,WraithTexture(Obj\Attributes\Data2)
+		Else
+			Obj\Model\Entity=RemoveEntityTexture(Obj\Model\Entity)
+			UseErrorColor(Obj\Model\Entity)
+		EndIf
 
 	Else If Obj\Attributes\ModelName$="!Crab"
 		Obj\Model\Entity=CopyEntity(CrabMesh)
@@ -17121,7 +17126,6 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		If Obj\Attributes\Data0>=1 And Obj\Attributes\Data0<=5
 			EntityTexture Obj\Model\Entity,KaboomTexture(Obj\Attributes\Data0)
 		Else
-			; Remove texture.
 			Obj\Model\Entity=RemoveMD2Texture(Obj\Model\Entity,"data\models\kaboom\kaboom.md2")
 			UseErrorColor(Obj\Model\Entity)
 		EndIf
