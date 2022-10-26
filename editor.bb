@@ -8056,6 +8056,15 @@ Function RemoveEntityTexture(Entity)
 End Function
 
 
+Function RemoveMD2Texture(Entity,Path$)
+
+	NewEntity=myLoadMD2(Path$)
+	FreeEntity(Entity)
+	Return NewEntity
+
+End Function
+
+
 Function ObstacleNameToObstacleId(ModelName$)
 
 	FirstDigit=Asc(Mid$(ModelName$,10,1))-48
@@ -17102,8 +17111,6 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Obj\Model\Entity=CopyEntity(WraithMesh)
 		EntityTexture Obj\Model\Entity,WraithTexture(Obj\Attributes\Data2)
 
-	
-
 	Else If Obj\Attributes\ModelName$="!Crab"
 		Obj\Model\Entity=CopyEntity(CrabMesh)
 		If Obj\Attributes\LogicSubType=0 Then EntityTexture Obj\Model\Entity,CrabTexture2
@@ -17111,7 +17118,13 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Obj\Model\Entity=CopyEntity(TrollMesh)
 	Else If Obj\Attributes\ModelName$="!Kaboom"
 		Obj\Model\Entity=CopyEntity(KaboomMesh)
-		EntityTexture Obj\Model\Entity,KaboomTexture(Obj\Attributes\Data0)
+		If Obj\Attributes\Data0>=1 And Obj\Attributes\Data0<=5
+			EntityTexture Obj\Model\Entity,KaboomTexture(Obj\Attributes\Data0)
+		Else
+			; Remove texture.
+			Obj\Model\Entity=RemoveMD2Texture(Obj\Model\Entity,"data\models\kaboom\kaboom.md2")
+			UseErrorColor(Obj\Model\Entity)
+		EndIf
 	Else If Obj\Attributes\ModelName$="!BabyBoomer"
 		Obj\Model\Entity=CopyEntity(KaboomMesh)
 		EntityTexture Obj\Model\Entity,KaboomTexture(1)
