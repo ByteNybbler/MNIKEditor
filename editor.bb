@@ -15977,11 +15977,11 @@ Function AdjustObjectAdjuster(i)
 ;			
 ;		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
-			; Suctube tex
-			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
-			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=2
-		EndIf
+;		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
+;			; Suctube tex
+;			If CurrentObject\Attributes\Data3<0 CurrentObject\Attributes\Data3=0
+;			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=2
+;		EndIf
 
 
 	Case "Data4"
@@ -17315,21 +17315,21 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Else
 			EntityTexture Obj\Model\Entity,SteppingStoneTexture(Obj\Attributes\Data0)
 		EndIf
-	Else If Obj\Attributes\ModelName$="!Spring" 
+	Else If Obj\Attributes\ModelName$="!Spring"
 		Obj\Model\Entity=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		RotateMesh Obj\Model\Entity,90,0,0
 		Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data2 +3600) Mod 360
 
 
 		EntityTexture Obj\Model\Entity,Springtexture
-	Else If Obj\Attributes\ModelName$="!Suctube" 
+	Else If Obj\Attributes\ModelName$="!Suctube"
 		Obj\Model\Entity=CreateSuctubemesh(Obj\Attributes\Data3,Obj\Attributes\Data0,True)
 		
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data2 +3600) Mod 360
 		
 		Redosuctubemesh(Obj\Model\Entity, Obj\Attributes\Data0, Obj\Attributes\Active, Obj\Attributes\Data2, Obj\Attributes\YawAdjust)
 
-	Else If Obj\Attributes\ModelName$="!SuctubeX" 
+	Else If Obj\Attributes\ModelName$="!SuctubeX"
 		Obj\Model\Entity=CreateSuctubeXmesh(Obj\Attributes\Data3)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data2 +3600) Mod 360
 
