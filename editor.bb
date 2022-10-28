@@ -17068,7 +17068,11 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Obj\Model\Entity=CopyEntity(StarGateMesh)
 	Else If Obj\Attributes\ModelName$="!Scritter"
 		Obj\Model\Entity=CopyEntity(ScritterMesh)
-		EntityTexture Obj\Model\Entity,ScritterTexture(Obj\Attributes\Data0)
+		If Obj\Attributes\Data0>=0 And Obj\Attributes\Data0<=6
+			EntityTexture Obj\Model\Entity,ScritterTexture(Obj\Attributes\Data0)
+		Else
+			UseErrorColor(Obj\Model\Entity)
+		EndIf
 	Else If Obj\Attributes\ModelName$="!RainbowBubble"
 		Obj\Model\Entity=CreateSphere()
 		;ScaleMesh Obj\Model\Entity,.4,.4,.4
