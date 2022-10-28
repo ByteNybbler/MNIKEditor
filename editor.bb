@@ -17340,8 +17340,6 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 	Else If Obj\Attributes\ModelName$="!FlipBridge"		
 		Obj\Model\Entity=CreateFlipBridgeMesh(Obj\Attributes\Data0)
-		;xzx
-		
 		Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data2 +3600) Mod 360
 	
 	Else If Obj\Attributes\ModelName$="!Door"
@@ -32309,6 +32307,8 @@ Function ControlObjects()
 				Case 21
 					If Attributes\ModelName$="!NPC" Or Attributes\ModelName$="!Tentacle"
 						Entity=GetChild(Obj\Model\Entity,3)
+					;ElseIf Attributes\ModelName$="!FlipBridge"
+					;	Entity=GetChild(Obj\Model\Entity,1)
 					Else
 						Entity=Obj\Model\Entity
 					EndIf
