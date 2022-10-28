@@ -23848,7 +23848,7 @@ Function MasterMainLoop()
 
 		EndIf
 		
-		; SAVE+TEST
+		; SAVE+TEST ; SAVE AND TEST
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
@@ -24720,6 +24720,10 @@ Function StartTestMode(TestAtX=0,TestAtY=0)
 	EndIf
 	
 	CloseFile file
+	
+	If hubmode
+		SaveHubFile()
+	EndIf
 	
 	ExecFile ("wg.exe")
 	EndApplication()
