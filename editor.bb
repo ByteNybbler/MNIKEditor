@@ -31751,6 +31751,85 @@ Function ControlUsedItem(i)
 End Function
 
 
+Function ControlConveyorLead(i)
+
+	Obj.GameObject=LevelObjects(i)
+
+	Select (SimulatedObjectData(i,2)+40) Mod 4
+	Case 0
+		dx=0
+		dy=-1
+	Case 1
+		dx=1
+		dy=0
+	Case 2
+		dx=0
+		dy=1
+	Case 3
+		dx=-1
+		dy=0
+	End Select
+	
+	If SimulatedObjectData(i,4)=3 TurnobjectTowardDirection(i,dx,dy,20,180)
+	
+	If SimulatedObjectData(i,4)=4 SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+SimulatedObjectData(i,9)/10.0) Mod 360
+
+	If Obj\Attributes\MovementTimer=0 
+		size#=1.0
+	Else
+		size#=Float(1001-Obj\Attributes\MovementTimer)/Float(1001)
+		If size<0 Then size=0.0
+		size=1.0-size
+	EndIf
+	If SimulatedObjectData(i,4)=4
+		SimulatedObjectXScale(i)=1.5*size*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+		SimulatedObjectYScale(i)=1.5*size*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+		SimulatedObjectZScale(i)=1.5*size
+	Else
+		SimulatedObjectXScale(i)=size*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+		SimulatedObjectYScale(i)=size*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+		SimulatedObjectZScale(i)=size
+	EndIf
+
+End Function
+
+
+Function ControlConveyorTail(i)
+
+	If SimulatedObjectActive(i)=1001 
+
+		Select (SimulatedObjectData(i,2)+40) Mod 4
+		Case 0
+			dx=0
+			dy=-1
+		Case 1
+			dx=1
+			dy=0
+		Case 2
+			dx=0
+			dy=1
+		Case 3
+			dx=-1
+			dy=0
+		End Select
+		
+		If SimulatedObjectData(i,4)=3 TurnobjectTowardDirection(i,dx,dy,6,180)
+		If SimulatedObjectData(i,4)=4 SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+SimulatedObjectData(i,9)/10.0) Mod 360
+	
+		If SimulatedObjectData(i,4)=4
+			SimulatedObjectXScale(i)=1.5*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+			SimulatedObjectYScale(i)=1.5*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+		Else
+			SimulatedObjectXScale(i)=.8*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+			SimulatedObjectYScale(i)=.8*(0.9+0.095*Sin((leveltimer*4) Mod 360))
+		EndIf
+
+		SimulatedObjectZScale(i)=1
+	EndIf
+
+End Function
+
+
 
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
@@ -32229,6 +32308,10 @@ Function ControlObjects()
 				ControlTeleporter(i)
 			Case 40
 				ControlSteppingStone(i)
+			Case 45
+				ControlConveyorLead(i)
+			Case 46
+				ControlConveyorTail(i)
 			Case 50
 				ControlSpellBall(i)
 			Case 53
