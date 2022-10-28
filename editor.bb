@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="10/24/22"
+Global VersionDate$="10/27/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -19356,20 +19356,20 @@ Function CameraControls()
 	If Not CtrlDown()
 
 		If KeyDown(75) Or KeyDown(203) Or KeyDown(KeyMoveWest) ; numpad 4 or left arrow
-				
-			TranslateEntity Target,-Adj,0,0
+			;TranslateEntity Target,-Adj,0,0
+			TranslateEntity Target,-Adj*Cos(EntityYaw#(Target)),0,-Adj*Sin(EntityYaw#(Target))
 		EndIf
 		If KeyDown(77) Or KeyDown(205) Or KeyDown(KeyMoveEast) ; numpad 6 or right arrow
-			
-			TranslateEntity Target,Adj,0,0
+			;TranslateEntity Target,Adj,0,0
+			TranslateEntity Target,Adj*Cos(EntityYaw#(Target)),0,Adj*Sin(EntityYaw#(Target))
 		EndIf
 		If KeyDown(72) Or KeyDown(200) Or KeyDown(KeyMoveNorth) ; numpad 8 or up arrow
-		
-			TranslateEntity Target,0,0,Adj
+			;TranslateEntity Target,0,0,Adj
+			TranslateEntity Target,Adj*Cos(EntityYaw#(Target)+90),0,Adj*Sin(EntityYaw#(Target)+90)
 		EndIf
 		If KeyDown(80) Or KeyDown(208) Or KeyDown(KeyMoveSouth) ; numpad 2 or down arrow
-		
-			TranslateEntity Target,0,0,-Adj
+			;TranslateEntity Target,0,0,-Adj
+			TranslateEntity Target,-Adj*Cos(EntityYaw#(Target)+90),0,-Adj*Sin(EntityYaw#(Target)+90)
 		EndIf
 		If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
 		
