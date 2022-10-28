@@ -17070,7 +17070,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		EndIf
 	Else If Obj\Attributes\ModelName$="!Cage"
 		Obj\Model\Entity=CopyEntity(CageMesh)
-		Else If Obj\Attributes\ModelName$="!StarGate"
+	Else If Obj\Attributes\ModelName$="!StarGate"
 		Obj\Model\Entity=CopyEntity(StarGateMesh)
 	Else If Obj\Attributes\ModelName$="!Scritter"
 		Obj\Model\Entity=CopyEntity(ScritterMesh)
@@ -17126,7 +17126,12 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 	Else If Obj\Attributes\ModelName$="!Thwart"
 		Obj\Model\Entity=CopyEntity(ThwartMesh)
-		EntityTexture Obj\Model\Entity,ThwartTexture(Obj\Attributes\Data2)
+		If Obj\Attributes\Data2>=0 And Obj\Attributes\Data2<=7
+			EntityTexture Obj\Model\Entity,ThwartTexture(Obj\Attributes\Data2)
+		Else
+			Obj\Model\Entity=RemoveMD2Texture(Obj\Model\Entity,"data\models\thwart\thwart05.md2")
+			UseErrorColor(Obj\Model\Entity)
+		EndIf
 	Else If Obj\Attributes\ModelName$="!Tentacle"
 		Obj\Model\Entity=CopyEntity(TentacleMesh)
 		Animate GetChild(Obj\Model\Entity,3),1,.1,1,0
