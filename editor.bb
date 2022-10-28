@@ -19333,7 +19333,15 @@ Function CameraControls()
 		CameraPanning=True
 		If LeftMouse=True
 			SpeedFactor#=0.25*Adj
-			TranslateEntity Camera1,-MouseDeltaX * SpeedFactor,0,MouseDeltaY * SpeedFactor
+			AdjX#=-MouseDeltaX * SpeedFactor
+			AdjY#=MouseDeltaY * SpeedFactor
+			
+			Cs#=Cos(EntityYaw#(Camera1))
+			Sn#=Sin(EntityYaw#(Camera1))
+			VecX#=AdjX*Cs-AdjY*Sn
+			VecY#=AdjX*Sn+AdjY*Cs
+			
+			TranslateEntity Camera1,VecX#,0,VecY#
 		EndIf
 	Else
 		CameraPanning=False
