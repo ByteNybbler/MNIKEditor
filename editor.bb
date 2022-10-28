@@ -2147,7 +2147,7 @@ For i=1 To 3
 	StinkerWeeTextureSleep(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sleep.jpg",1)
 	StinkerWeeTextureSad(i)=MyLoadTexture("data/models/stinkerwee/stinkerwee"+Str$(i)+"sad.jpg",1)
 Next
-EntityTexture StinkerWeeMesh,StinkerWeeTexture(1)
+EntityTexture StinkerWeeMesh,StinkerWeeTextureSleep(1)
 HideEntity StinkerWeeMesh
 
 ; Stinker
@@ -14677,13 +14677,11 @@ Function DisplayObjectAdjuster(i)
 			tex2$="ZSpeed"
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!StinkerWee"
-			
+		If CurrentObject\Attributes\LogicType=120 ; Wee Stinker
 			tex2$="Type"
 			If CurrentObject\Attributes\Data8=0 tex$="Normal"
 			If CurrentObject\Attributes\Data8=1 tex$="Green"
 			If CurrentObject\Attributes\Data8=2 tex$="White"
-
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=90 Or CurrentObject\Attributes\LogicType=210 ; button or transporter
@@ -16258,7 +16256,7 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=1
 		EndIf
 		
-		If CurrentObject\Attributes\ModelName$="!StinkerWee"
+		If CurrentObject\Attributes\LogicType=120 ; Wee Stinker
 			; Texture
 			If CurrentObject\Attributes\Data8>2 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=2
@@ -17061,7 +17059,15 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 	Else If Obj\Attributes\ModelName$="!StinkerWee"
 		Obj\Model\Entity=CopyEntity(StinkerWeeMesh)
-		EntityTexture Obj\Model\Entity,StinkerWeeTexture(Obj\Attributes\Data8+1)
+		
+		If Obj\Attributes\LogicType=120 ; Wee Stinker
+			If Obj\Attributes\Data8>=0 And Obj\Attributes\Data8<=2
+				EntityTexture Obj\Model\Entity,StinkerWeeTexture(Obj\Attributes\Data8+1)
+			Else
+				Obj\Model\Entity=RemoveMD2Texture(Obj\Model\Entity,"data/models/stinkerwee/stinkerwee.md2")
+				UseErrorColor(Obj\Model\Entity)
+			EndIf
+		EndIf
 	Else If Obj\Attributes\ModelName$="!Cage"
 		Obj\Model\Entity=CopyEntity(CageMesh)
 		Else If Obj\Attributes\ModelName$="!StarGate"
@@ -30075,15 +30081,13 @@ Function ControlStinkerWee(i)
 		EndIf
 	Next
 
-	If Obj\Attributes\ModelName$<>"!StinkerWee"
-		Return
-	EndIf
-
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		SimulatedObjectMovementSpeed(i)=35	
 		SimulatedObjectSubType(i)=0  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged
-		MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.002,.008),217,219,1)
+		If Obj\Attributes\ModelName$="!StinkerWee"
+			MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.002,.008),217,219,1)
+		EndIf
 		SimulatedObjectCurrentAnim(i)=1 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
 		SimulatedObjectXScale(i)=0.025
 		SimulatedObjectYScale(i)=0.025
@@ -30112,7 +30116,9 @@ Function ControlStinkerWee(i)
 	
 	If Obj\Attributes\Caged=True And SimulatedObjectSubType(i)<>4 And SimulatedObjectSubType(i)<>5
 		; just Caged
-		EntityTexture Obj\Model\Entity,StinkerWeeTextureSad(SimulatedObjectData(i,8)+1)
+		If SimulatedObjectData(i,8)>=0 And SimulatedObjectData(i,8)<=2
+			EntityTexture Obj\Model\Entity,StinkerWeeTextureSad(SimulatedObjectData(i,8)+1)
+		EndIf
 		;PlaySoundFX(66,Pos\TileX,Pos\TileY)
 		If SimulatedObjectSubType(i)=2
 			SimulatedObjectSubType(i)=5
@@ -30120,14 +30126,20 @@ Function ControlStinkerWee(i)
 			SimulatedObjectSubType(i)=4
 		EndIf
 		
-		MaybeAnimateMD2(Obj\Model\Entity,1,.2,108,114,1)
+		If Obj\Attributes\ModelName$="!StinkerWee"
+			MaybeAnimateMD2(Obj\Model\Entity,1,.2,108,114,1)
+		EndIf
 	EndIf
 	If Obj\Attributes\Caged=False And (SimulatedObjectSubType(i)=4 Or SimulatedObjectSubType(i)=5)
 		; just released
-		EntityTexture Obj\Model\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
+		If SimulatedObjectData(i,8)>=0 And SimulatedObjectData(i,8)<=2
+			EntityTexture Obj\Model\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
+		EndIf
 
 		SimulatedObjectSubType(i)=SimulatedObjectSubType(i)-3
-		MaybeAnimateMD2(Obj\Model\Entity,1,.4,1,20,1)
+		If Obj\Attributes\ModelName$="!StinkerWee"
+			MaybeAnimateMD2(Obj\Model\Entity,1,.4,1,20,1)
+		EndIf
 		SimulatedObjectCurrentAnim(i)=4
 		;SimulatedObjectMovementTypeData(i)=0
 	EndIf
@@ -30138,18 +30150,22 @@ Function ControlStinkerWee(i)
 		Return
 	EndIf
 	
-	If SimulatedObjectSubType(i)=0 
-		EntityTexture Obj\Model\Entity,StinkerWeeTextureSleep(SimulatedObjectData(i,8)+1)
-
+	If SimulatedObjectSubType(i)=0
+		If SimulatedObjectData(i,8)>=0 And SimulatedObjectData(i,8)<=2
+			EntityTexture Obj\Model\Entity,StinkerWeeTextureSleep(SimulatedObjectData(i,8)+1)
+		EndIf
 	Else
-		EntityTexture Obj\Model\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
-
+		If SimulatedObjectData(i,8)>=0 And SimulatedObjectData(i,8)<=2
+			EntityTexture Obj\Model\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
+		EndIf
 	EndIf
 	
 	If SimulatedObjectSubType(i)=3 ; asleep after walking
 		; fall asleep now
 		;EntityTexture ObjectEntity(i),StinkerWeeTextureSleep
-		MaybeAnimateMD2(Obj\Model\Entity,3,.2,201,217,1)
+		If Obj\Attributes\ModelName$="!StinkerWee"
+			MaybeAnimateMD2(Obj\Model\Entity,3,.2,201,217,1)
+		EndIf
 		SimulatedObjectCurrentAnim(i)=7
 		SimulatedObjectData(i,0)=0
 		SimulatedObjectData(i,1)=0
@@ -30176,7 +30192,9 @@ Function ControlStinkerWee(i)
 				
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>1
-				MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.002,.008),217,219,1)
+				If Obj\Attributes\ModelName$="!StinkerWee"
+					MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.002,.008),217,219,1)
+				EndIf
 				SimulatedObjectCurrentAnim(i)=1
 			EndIf
 			If SimulatedObjectYaw(i)<>180 Then TurnObjectTowardDirection(i,0,1,5,0)
@@ -30189,7 +30207,9 @@ Function ControlStinkerWee(i)
 				TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,3,0)
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>3 And SimulatedObjectCurrentAnim(i)<>4 And SimulatedObjectCurrentAnim(i)<>5 And SimulatedObjectCurrentAnim(i)<>7
-				MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.01,.08),141,160,1)
+				If Obj\Attributes\ModelName$="!StinkerWee"
+					MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.01,.08),141,160,1)
+				EndIf
 				SimulatedObjectCurrentAnim(i)=3
 				SimulatedObjectData(i,0)=0
 			Else If SimulatedObjectCurrentAnim(i)=3
@@ -30198,10 +30218,14 @@ Function ControlStinkerWee(i)
 					; do an animation
 					If (Rand(0,100)<50) ; wave
 						;PlaySoundFX(Rand(50,54),Pos\TileX,Pos\TileY)
-						MaybeAnimateMD2(Obj\Model\Entity,3,.2,101,120,1)
+						If Obj\Attributes\ModelName$="!StinkerWee"
+							MaybeAnimateMD2(Obj\Model\Entity,3,.2,101,120,1)
+						EndIf
 						SimulatedObjectCurrentAnim(i)=4
 					Else If SimulatedObjectSubtype(i)=2	; tap
-						MaybeAnimateMD2(Obj\Model\Entity,1,.2,121,140,1)
+						If Obj\Attributes\ModelName$="!StinkerWee"
+							MaybeAnimateMD2(Obj\Model\Entity,1,.2,121,140,1)
+						EndIf
 						SimulatedObjectCurrentAnim(i)=5
 					EndIf			
 				EndIf
@@ -30209,7 +30233,9 @@ Function ControlStinkerWee(i)
 				SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
 				If SimulatedObjectData(i,0)>100
 					SimulatedObjectData(i,0)=0
-					MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.01,.03),141,160,1)
+					If Obj\Attributes\ModelName$="!StinkerWee"
+						MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.01,.03),141,160,1)
+					EndIf
 					SimulatedObjectCurrentAnim(i)=3
 				EndIf
 ;			Else If SimulatedObjectCurrentAnim(i)=5
