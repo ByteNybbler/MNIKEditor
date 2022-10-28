@@ -23061,6 +23061,8 @@ Function ResumeMaster()
 	RestoreOriginal1Wlv()
 	
 	StopMusic()
+	
+	PreviewCurrentDialog=0
 
 	SetEditorMode(8)
 	
