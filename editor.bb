@@ -13314,12 +13314,28 @@ Function DisplayObjectAdjuster(i)
 	Case "TimerMax1"
 		tex$=Str$(CurrentObject\Attributes\TimerMax1)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimerMax1,CurrentObject\Attributes\TimerMax1,tex$)
+		
+		If CurrentObject\Attributes\LogicType=20 ; Fire trap
+			tex2$=" TimerOn" ; Extra space to align it with TimerOff.
+		ElseIf CurrentObject\Attributes\LogicType=230 ; FireFlower
+			tex2$="TimerShoot"
+		EndIf
 	Case "TimerMax2"
 		tex$=Str$(CurrentObject\Attributes\TimerMax2)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimerMax2,CurrentObject\Attributes\TimerMax2,tex$)
+		
+		If CurrentObject\Attributes\LogicType=20 ; Fire trap
+			tex2$="TimerOff"
+		EndIf
 	Case "Timer"
 		tex$=Str$(CurrentObject\Attributes\Timer)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,tex$)
+		
+		If CurrentObject\Attributes\LogicType=20 ; Fire trap
+			tex2$="StartDelay"
+		ElseIf CurrentObject\Attributes\LogicType=230 Or CurrentObject\Attributes\LogicType=290 ; FireFlower or Thwart
+			tex2$="AttackDelay"
+		EndIf
 
 	Case "TextData0"
 		; custom model
