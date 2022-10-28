@@ -20938,8 +20938,12 @@ Function CreateWaterFallMesh(tex)
 	AddTriangle (surface,1,0,3)
 	AddTriangle (surface,0,2,3)
 	
-	EntityTexture Entity,WaterFallTexture(tex)
-	EntityAlpha Entity,.7
+	If tex>=0 And tex<=2
+		EntityTexture Entity,WaterFallTexture(tex)
+		EntityAlpha Entity,.7
+	Else
+		UseErrorColor(Entity)
+	EndIf
 		
 	UpdateNormals Entity
 	
