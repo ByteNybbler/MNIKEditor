@@ -16731,7 +16731,8 @@ Function CreateFlipBridgeMesh(tex)
 	
 	EntityTexture Entity,GateTexture
 	
-	YScale=6.6 ; to reflect active state
+	;YScale=6.6 ; to reflect active state
+	YScale=1.0
 	ScaleEntity Entity,1.0,1.0,YScale
 	
 	;Entity2=CreateCylinder()
@@ -17337,12 +17338,9 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		
 
 		
-	Else If Obj\Attributes\ModelName$="!FlipBridge"
-		;Obj\Model\Entity=CreateCube()
-		;ScaleMesh Obj\Model\Entity,.35,.1,.5
-		
+	Else If Obj\Attributes\ModelName$="!FlipBridge"		
 		Obj\Model\Entity=CreateFlipBridgeMesh(Obj\Attributes\Data0)
-		;EntityTexture Obj\Model\Entity,GateTexture
+		;xzx
 		
 		Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data2 +3600) Mod 360
 	
