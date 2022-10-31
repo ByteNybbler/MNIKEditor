@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="10/27/22"
+Global VersionDate$="10/31/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -6849,6 +6849,7 @@ Function EditorLocalControls()
 					SetObjectIndex(SelectedObjects(0),TargetIndex)
 					RemoveSelectObject(SelectedObjects(0))
 					AddSelectObject(TargetIndex)
+					AddUnsavedChange()
 				EndIf
 			EndIf
 		EndIf
