@@ -10408,7 +10408,7 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	
 	
 	ThisObject=NofObjects
-	NofObjects=NofObjects+1
+	SetNofObjects(NofObjects+1)
 	
 	
 	BuildLevelObjectModel(ThisObject)
@@ -10423,6 +10423,13 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	SomeObjectWasChanged()
 	
 	
+
+End Function
+
+
+Function SetNofObjects(NewValue)
+
+	NofObjects=NewValue
 
 End Function
 
@@ -11656,7 +11663,7 @@ Function DeleteObject(i)
 
 	;ShowMessage("Setting current grabbed object...", 100)
 	
-	NofObjects=NofObjects-1
+	SetNofObjects(NofObjects-1)
 	
 	For j=0 To NofObjects-1
 		Obj.GameObject=LevelObjects(j)
@@ -19919,7 +19926,7 @@ Function LoadLevel(levelnumber)
 
 
 
-	NofObjects=0
+	SetNofObjects(0)
 	ReadObjectCount=ReadInt(file)
 	For i=0 To ReadObjectCount-1
 		LevelObject.GameObject=LevelObjects(i)
@@ -20070,7 +20077,7 @@ Function LoadLevel(levelnumber)
 		BuildLevelObjectModel(i)
 
 
-		NofObjects=NofObjects+1
+		SetNofObjects(NofObjects+1)
 		
 
 		CreateObjectPositionMarker(i)
@@ -20152,7 +20159,7 @@ Function NewLevel(levelnumber)
 	
 	
 	
-	NofObjects=0
+	SetNofObjects(0)
 	; reset textures
 	FreeTexture leveltexture
 	FreeTexture watertexture
