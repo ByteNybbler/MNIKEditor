@@ -13085,6 +13085,8 @@ Function DisplayObjectAdjuster(i)
 			tex$="Stinky 4"
 		Case 33
 			tex$="Stinky 5"
+		Default
+			tex$="Victory"
 
 		End Select
 		
@@ -15468,10 +15470,17 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 		
 	Case "DefensePower"
+		OldValue=CurrentObject\Attributes\DefensePower
+		
 		CurrentObject\Attributes\DefensePower=AdjustObjectAdjusterInt(ObjectAdjusterDefensePower,CurrentObject\Attributes\DefensePower,SlowInt,FastInt,DelayTime)
 		
-		If CurrentObject\Attributes\DefensePower>=34 Then CurrentObject\Attributes\DefensePower=0
-		If CurrentObject\Attributes\DefensePower<0 Then CurrentObject\Attributes\DefensePower=33
+		If CurrentObject\Attributes\DefensePower<>OldValue And SimulationLevel>=4
+			; TODO: Make the sound actually play???
+			PlaySoundFX(DefensePowerToSoundId(CurrentObject\Attributes\DefensePower),-1,-1)
+		EndIf
+		
+		If CurrentObject\Attributes\DefensePower>34 Then CurrentObject\Attributes\DefensePower=0
+		If CurrentObject\Attributes\DefensePower<0 Then CurrentObject\Attributes\DefensePower=34
 		
 	Case "AttackPower"
 		CurrentObject\Attributes\AttackPower=AdjustObjectAdjusterInt(ObjectAdjusterAttackPower,CurrentObject\Attributes\AttackPower,SlowInt,FastInt,DelayTime)
@@ -18632,6 +18641,47 @@ Function ChangeBrushModeByDelta(Delta)
 	ElseIf BrushMode>MaxBrushMode
 		SetBrushMode(0)
 	EndIf
+
+End Function
+
+
+Function DefensePowerToSoundId(Value)
+
+	Select Value
+	Case 0,1,2,3,4,5,6,7,8,9
+		Return 190+Value
+	Case 10,11,12,13,14,15,16,17,18
+		Return 40+Value
+	Case 19,20,21
+		Return 74-19+Value
+	Case 22
+		Return 141 ;zbot
+	Case 23
+		Return 145 ;zbot
+	Case 24
+		Return 149 ;zbot
+	
+	Case 25
+		Return 86 ; chomper
+	Case 26
+		Return 107 ; thwart
+	Case 27
+		Return 87
+	Case 28
+		Return 113 ; troll
+	Case 29
+		Return 114 ; troll2
+	Case 30
+		Return 104 ; monster
+	Case 31
+		Return 187
+	Case 32
+		Return 188
+	Case 33
+		Return 189
+	Default
+		Return 0
+	End Select
 
 End Function
 
