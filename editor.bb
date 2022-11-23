@@ -3669,12 +3669,12 @@ Function EditorMainLoop()
 		ControlWeather()
 	EndIf
 	
-	ResetSounds()
 	If SimulationLevel>=SimulationLevelMusic And EditorMode<>8
 		ControlSoundscapes()
 		LoopMusic()
 		PlayAllSounds()
 	EndIf
+	ResetSounds()
 	
 	ControlParticles()
 	RenderParticles()
@@ -15474,13 +15474,12 @@ Function AdjustObjectAdjuster(i)
 		
 		CurrentObject\Attributes\DefensePower=AdjustObjectAdjusterInt(ObjectAdjusterDefensePower,CurrentObject\Attributes\DefensePower,SlowInt,FastInt,DelayTime)
 		
-		If CurrentObject\Attributes\DefensePower<>OldValue And SimulationLevel>=4
-			; TODO: Make the sound actually play???
-			PlaySoundFX(DefensePowerToSoundId(CurrentObject\Attributes\DefensePower),-1,-1)
-		EndIf
-		
 		If CurrentObject\Attributes\DefensePower>34 Then CurrentObject\Attributes\DefensePower=0
 		If CurrentObject\Attributes\DefensePower<0 Then CurrentObject\Attributes\DefensePower=34
+		
+		If CurrentObject\Attributes\DefensePower<>OldValue And SimulationLevel>=4
+			PlaySoundFX(DefensePowerToSoundId(CurrentObject\Attributes\DefensePower),-1,-1)
+		EndIf
 		
 	Case "AttackPower"
 		CurrentObject\Attributes\AttackPower=AdjustObjectAdjusterInt(ObjectAdjusterAttackPower,CurrentObject\Attributes\AttackPower,SlowInt,FastInt,DelayTime)
