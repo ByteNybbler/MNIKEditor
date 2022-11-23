@@ -9610,17 +9610,6 @@ Function GrabLevelTile(i,j)
 End Function
 
 Function GrabLevelTileFromBrush(i,j)
-
-	If i<0
-		i=0
-	ElseIf i>LevelWidth-1
-		i=LevelWidth-1
-	EndIf
-	If j<0
-		j=0
-	ElseIf j>LevelHeight-1
-		j=LevelHeight-1
-	EndIf
 	
 	CopyTile(BrushTiles(i,j),CurrentTile)
 
@@ -22051,19 +22040,19 @@ Function UserSelectScreen()
 		EditorUserNameEntered$=EditorUserNameEntered$+Chr$(let)
 	EndIf
 	If KeyDown(14)
-		; backspace
+		; backspace key
 		If Len(EditorUserNameEntered$)>0
 			EditorUserNameEntered$=Left$(EditorUserNameEntered$,Len(EditorUserNameEntered$)-1)
 			Delay CharacterDeleteDelay
 		EndIf
 	EndIf
 	If KeyDown(211)
-		; delete
+		; delete key
 		EditorUserNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
 	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
-		; Enter
+		; Enter key
 		
 		If EditorUserNameEntered$=""
 			DisplayText2("INVALID PROFILE NAME - Empty Name!",0,12,TextMenusR,TextMenusG,TextMenusB)
@@ -22301,19 +22290,19 @@ Function AdventureSelectScreen()
 		AdventureNameEntered$=AdventureNameEntered$+Chr$(let)
 	EndIf
 	If KeyDown(14)
-		; backspace
+		; backspace key
 		If Len(AdventureNameEntered$)>0
 			AdventureNameEntered$=Left$(AdventureNameEntered$,Len(AdventureNameEntered$)-1)
 			Delay CharacterDeleteDelay
 		EndIf
 	EndIf
 	If KeyDown(211)
-		; delete
+		; delete key
 		AdventureNameEntered$=""
 		Delay CharacterDeleteDelay
 	EndIf
 	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
-		; Enter
+		; Enter key
 		If hubmode And EditorMode=5
 			If AdventureNameEntered$=""
 				DisplayText2(" INVALID HUB NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
