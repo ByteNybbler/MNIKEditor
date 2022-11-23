@@ -26238,7 +26238,7 @@ Function ClearDialogFile()
 	NofInterchanges=1
 	For i=0 To MaxInterChanges ;-1
 		NofInterChangeTextLines(i)=0	
-		For j=0 To 6
+		For j=0 To 7
 			InterChangeTextLine$(i,j)=""
 		Next
 		NofTextCommands(i)=0
