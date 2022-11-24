@@ -124,12 +124,13 @@ Global DialogCurrentRed,DialogCurrentGreen,DialogCurrentBlue,DialogCurrentEffect
 Const MaxInterChanges=100
 Const MaxAskAbouts=100
 Const MaxReply=8
+Const MaxInterChangeTextLine=7
 
 Global StartingInterChange
 
 Global NofInterchanges
 Dim NofInterChangeTextLines(MaxInterChanges)	
-Dim InterChangeTextLine$(MaxInterChanges,7)
+Dim InterChangeTextLine$(MaxInterChanges,MaxInterChangeTextLine)
 Dim DialogTextCommand$(MaxInterChanges,200),DialogTextCommandPos(MaxInterChanges,200), NofTextCommands(MaxInterChanges)
 Dim NofInterChangeReplies(MaxInterChanges)
 Dim InterChangeReplyText$(MaxInterChanges,MaxReply)
@@ -148,7 +149,7 @@ Dim AskAboutRepeat(MaxAskAbouts)
 
 Global PreviewNofInterchanges
 Dim PreviewNofInterChangeTextLines(MaxInterChanges)	
-Dim PreviewInterChangeTextLine$(MaxInterChanges,7)
+Dim PreviewInterChangeTextLine$(MaxInterChanges,MaxInterChangeTextLine)
 Dim PreviewDialogTextCommand$(MaxInterChanges,200),PreviewDialogTextCommandPos(MaxInterChanges,200), PreviewNofTextCommands(MaxInterChanges)
 Dim PreviewNofInterChangeReplies(MaxInterChanges)
 Dim PreviewInterChangeReplyText$(MaxInterChanges,MaxReply)
@@ -25663,7 +25664,7 @@ Function DialogMainLoop()
 	
 	For i=0 To 37
 	
-		For j=0 To 7
+		For j=0 To MaxInterChangeTextLine
 			AddLetter(Asc("X")-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		Next
 		AddLetter(Asc("X")-32,-.97+i*.045,.5-10*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -25682,7 +25683,7 @@ Function DialogMainLoop()
 	DialogCurrentBlue=255
 	DialogCurrentEffect=0
 	totalletters=0
-	For j=0 To 7
+	For j=0 To MaxInterChangeTextLine
 		For i=0 To Len(InterChangeTextLine$(WhichInterChange,j))
 			; check special commands
 			For k=0 To NofTextCommands(WhichInterChange)-1
@@ -26245,7 +26246,7 @@ Function ClearDialogFile()
 	NofInterchanges=1
 	For i=0 To MaxInterChanges ;-1
 		NofInterChangeTextLines(i)=0	
-		For j=0 To 7
+		For j=0 To MaxInterChangeTextLine
 			InterChangeTextLine$(i,j)=""
 		Next
 		NofTextCommands(i)=0
@@ -26254,7 +26255,7 @@ Function ClearDialogFile()
 			DialogTextCommandPos(i,j)=-1
 		Next
 		NofInterChangeReplies(i)=1
-		For j=0 To 7
+		For j=0 To MaxReply
 			InterChangeReplyText$(i,j)=""
 			
 			; Make the default FNC end the dialog and return to this Interchange.
@@ -26283,7 +26284,7 @@ Function ClearDialogPreview()
 	PreviewNofInterchanges=1
 	For i=0 To MaxInterChanges ;-1
 		PreviewNofInterChangeTextLines(i)=0	
-		For j=0 To 6
+		For j=0 To MaxInterChangeTextLine
 			PreviewInterChangeTextLine$(i,j)=""
 		Next
 		PreviewNofTextCommands(i)=0
@@ -26292,7 +26293,7 @@ Function ClearDialogPreview()
 			PreviewDialogTextCommandPos(i,j)=-1
 		Next
 		PreviewNofInterChangeReplies(i)=1
-		For j=0 To 7
+		For j=0 To MaxReply
 			PreviewInterChangeReplyText$(i,j)=""
 			
 			; Make the default FNC end the dialog and return to this Interchange.
