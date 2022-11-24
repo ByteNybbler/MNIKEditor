@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="11/23/22"
+Global VersionDate$="11/24/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -123,6 +123,8 @@ Global DialogCurrentRed,DialogCurrentGreen,DialogCurrentBlue,DialogCurrentEffect
 
 Const MaxInterChanges=100
 Const MaxAskAbouts=100
+Const MaxReply=8
+
 Global StartingInterChange
 
 Global NofInterchanges
@@ -130,11 +132,11 @@ Dim NofInterChangeTextLines(MaxInterChanges)
 Dim InterChangeTextLine$(MaxInterChanges,7)
 Dim DialogTextCommand$(MaxInterChanges,200),DialogTextCommandPos(MaxInterChanges,200), NofTextCommands(MaxInterChanges)
 Dim NofInterChangeReplies(MaxInterChanges)
-Dim InterChangeReplyText$(MaxInterChanges,8)
-Dim InterChangeReplyFunction(MaxInterChanges,8)		
-Dim InterChangeReplyData(MaxInterChanges,8)			
-Dim InterChangeReplyCommand(MaxInterChanges,8)		
-Dim InterChangeReplyCommandData(MaxInterChanges,8,4)
+Dim InterChangeReplyText$(MaxInterChanges,MaxReply)
+Dim InterChangeReplyFunction(MaxInterChanges,MaxReply)		
+Dim InterChangeReplyData(MaxInterChanges,MaxReply)			
+Dim InterChangeReplyCommand(MaxInterChanges,MaxReply)		
+Dim InterChangeReplyCommandData(MaxInterChanges,MaxReply,4)
 
 Global NofAskAbouts
 Global AskAboutTopText$
@@ -149,11 +151,11 @@ Dim PreviewNofInterChangeTextLines(MaxInterChanges)
 Dim PreviewInterChangeTextLine$(MaxInterChanges,7)
 Dim PreviewDialogTextCommand$(MaxInterChanges,200),PreviewDialogTextCommandPos(MaxInterChanges,200), PreviewNofTextCommands(MaxInterChanges)
 Dim PreviewNofInterChangeReplies(MaxInterChanges)
-Dim PreviewInterChangeReplyText$(MaxInterChanges,8)
-Dim PreviewInterChangeReplyFunction(MaxInterChanges,8)		
-Dim PreviewInterChangeReplyData(MaxInterChanges,8)			
-Dim PreviewInterChangeReplyCommand(MaxInterChanges,8)		
-Dim PreviewInterChangeReplyCommandData(MaxInterChanges,8,4)
+Dim PreviewInterChangeReplyText$(MaxInterChanges,MaxReply)
+Dim PreviewInterChangeReplyFunction(MaxInterChanges,MaxReply)		
+Dim PreviewInterChangeReplyData(MaxInterChanges,MaxReply)			
+Dim PreviewInterChangeReplyCommand(MaxInterChanges,MaxReply)		
+Dim PreviewInterChangeReplyCommandData(MaxInterChanges,MaxReply,4)
 
 Global PreviewNofAskAbouts
 Global PreviewAskAboutTopText$
@@ -191,7 +193,7 @@ Global WhichAskAbout=0
 ; 0 is master.dat editor, 1 is dialog editor, 2 is hub editor
 Dim MouseTextEntryLineMax(2)
 MouseTextEntryLineMax(0)=5
-MouseTextEntryLineMax(1)=9
+MouseTextEntryLineMax(1)=10
 MouseTextEntryLineMax(2)=1
 
 Dim MouseTextEntryLineY(2,9)
@@ -211,11 +213,12 @@ MouseTextEntryLineY(1,3)=3
 MouseTextEntryLineY(1,4)=4
 MouseTextEntryLineY(1,5)=5
 MouseTextEntryLineY(1,6)=6
-MouseTextEntryLineY(1,7)=10
-MouseTextEntryLineY(1,8)=19
-MouseTextEntryLineY(1,9)=24
-MouseTextEntryLineYAdjust(1,8)=-8
+MouseTextEntryLineY(1,7)=7
+MouseTextEntryLineY(1,8)=10
+MouseTextEntryLineY(1,9)=19
+MouseTextEntryLineY(1,10)=24
 MouseTextEntryLineYAdjust(1,9)=-8
+MouseTextEntryLineYAdjust(1,10)=-8
 
 MouseTextEntryLineY(2,0)=0
 MouseTextEntryLineY(2,1)=3
@@ -25244,8 +25247,8 @@ Function SetAnswer(i)
 
 	If i<0
 		i=0
-	ElseIf i>7
-		i=7
+	ElseIf i>MaxReply
+		i=MaxReply
 	EndIf
 	
 	If i<>WhichAnswer
@@ -25632,7 +25635,7 @@ Function DialogMainLoop()
 	;DisplayText2("InterChange #"+Str$(WhichInterChange),20,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("----- INTERCHANGE #"+Str$(WhichInterChange)+" -----",0,3,TextMenusR,TextMenusG,TextMenusB)
 	
-	DisplayText2("--------------------------------------",0,11,TextMenusR,TextMenusG,TextMenusB)
+	DisplayText2("--------------------------------------",0,12,TextMenusR,TextMenusG,TextMenusB) ; Formerly 0,11
 	
 	DisplayText2("----- ANSWER #"+Str$(WhichAnswer)+" -----",0,13,TextMenusR,TextMenusG,TextMenusB)
 	
@@ -25660,7 +25663,7 @@ Function DialogMainLoop()
 	
 	For i=0 To 37
 	
-		For j=0 To 6
+		For j=0 To 7
 			AddLetter(Asc("X")-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		Next
 		AddLetter(Asc("X")-32,-.97+i*.045,.5-10*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
@@ -25679,7 +25682,7 @@ Function DialogMainLoop()
 	DialogCurrentBlue=255
 	DialogCurrentEffect=0
 	totalletters=0
-	For j=0 To 6
+	For j=0 To 7
 		For i=0 To Len(InterChangeTextLine$(WhichInterChange,j))
 			; check special commands
 			For k=0 To NofTextCommands(WhichInterChange)-1
@@ -25863,7 +25866,7 @@ Function DialogMainLoop()
 	debug2=y
 	
 	; cursor
-	If x<CharactersPerLine And MouseY()>=LetterHeight*4 And y<7 And y>-1
+	If x<CharactersPerLine And MouseY()>=LetterHeight*4 And y<8 And y>-1
 		Entering=1
 		If x>Len(InterChangeTextLine$(WhichInterChange,y)) Then x=Len(InterChangeTextLine$(WhichInterChange,y))
 		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
@@ -26434,13 +26437,13 @@ Function SaveDialogFile()
 		Next
 		
 		; calculate nofinterchangereplies
-		For j=0 To 7
+		For j=0 To 8
 			If InterChangeReplyText$(i,j)=""
 				NofInterChangeReplies(i)=j
 				j=17
 			EndIf
 		Next
-		If j=8 Then NofInterChangeReplies(i)=8
+		If j=9 Then NofInterChangeReplies(i)=9
 
 
 		WriteInt File,NofInterChangeReplies(i)
