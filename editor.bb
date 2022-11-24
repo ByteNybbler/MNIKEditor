@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="10/31/22"
+Global VersionDate$="11/23/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -50,6 +50,8 @@ Function AddUnsavedChange()
 	EndIf
 	
 End Function
+
+Const DialogKillLineEight=False
 
 ; KEYS
 
@@ -4060,14 +4062,13 @@ Function EditorMainLoop()
 	
 	If MaxParticleWarningTimer<>0
 		MaxParticleWarningTimer=MaxParticleWarningTimer-1
-		StartX=LevelViewportWidth/2
-		StartY=LevelViewportHeight/2
-		Message$="WARNING! Too many particles! This will most likely MAV in-game!"
-		TextOffset=GetCenteredTextOffset(Message$)
-		Color RectToolbarR,RectToolbarG,RectToolbarB
-		Rect StartX-TextOffset,StartY-10,TextOffset*2,30,True
-		Color TextWarningR,TextWarningG,TextWarningB
-		Text StartX-TextOffset,StartY,Message$
+		; TODO: Add WARNING! as a top line.
+		ShowLevelEditorWarning("Too many particles! This will most likely MAV in-game!")
+	EndIf
+	
+	If False
+		ShowLevelEditorWarning("Instantiated shadows/accessories pass the object limit!")
+		;xzx
 	EndIf
 	
 	FinishDrawing()
@@ -10172,6 +10173,20 @@ Function ShowMessageOnce(message$, milliseconds)
 	EndIf
 
 End Function
+
+
+Function ShowLevelEditorWarning(Message$)
+	
+	StartX=LevelViewportWidth/2
+	StartY=LevelViewportHeight/2
+	TextOffset=GetCenteredTextOffset(Message$)
+	Color RectToolbarR,RectToolbarG,RectToolbarB
+	Rect StartX-TextOffset,StartY-10,TextOffset*2,30,True
+	Color TextWarningR,TextWarningG,TextWarningB
+	Text StartX-TextOffset,StartY,Message$
+
+End Function
+
 
 Function GetObjectOffset#(Attributes.GameObjectAttributes,index)
 
@@ -26402,6 +26417,12 @@ Function SaveDialogFile()
 		Next
 		If j=-1 NofInterChangeTextLines(i)=0
 		
+		If DialogKillLineEight
+			If NofInterChangeTextLines(i)>7
+				NofInterChangeTextLines(i)=7
+			EndIf
+		EndIf
+		
 		WriteInt File,NofInterChangeTextLines(i)
 		For j=0 To NofInterChangeTextLines(i)-1
 			WriteString file,InterChangeTextLine$(i,j)
@@ -28511,6 +28532,16 @@ Function CompileAdventure(PackCustomContent)
 		SearchForCustomContent(AdventureFolder$)
 		Print "Number of Custom Content Files: " + NofCustomContentFiles
 		Print
+	EndIf
+	
+	If DialogKillLineEight
+		For i=1 To 100
+			If DialogExists(i)
+				CurrentDialog=i
+				LoadDialogFile()
+				SaveDialogFile()
+			EndIf
+		Next	
 	EndIf
 	
 	; now go through directory and check names and sizes of files
