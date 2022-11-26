@@ -10183,11 +10183,13 @@ Function ShowLevelEditorWarning(Message$)
 	
 	StartX=LevelViewportWidth/2
 	StartY=LevelViewportHeight/2
+	
 	TextOffset=GetCenteredTextOffset(Message$)
 	Color RectToolbarR,RectToolbarG,RectToolbarB
-	Rect StartX-TextOffset,StartY-10,TextOffset*2,30,True
+	Rect StartX-TextOffset-2,StartY-10,TextOffset*2+4,40,True
 	Color TextWarningR,TextWarningG,TextWarningB
-	Text StartX-TextOffset,StartY,Message$
+	CenteredText(StartX,StartY-6,"!!! WARNING !!!")
+	Text StartX-TextOffset,StartY+10,Message$
 
 End Function
 
