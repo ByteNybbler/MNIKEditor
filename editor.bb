@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="11/24/22"
+Global VersionDate$="12/06/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -14042,9 +14042,14 @@ Function DisplayObjectAdjuster(i)
 			End Select
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
+
+		If CurrentObject\Attributes\LogicType=280 ; Spring
+			tex2$="Direction"
+			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*45)
+		EndIf
 		
-		; spring or transporter or flipbridge or suctube or suctubex or conveyor
-		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
+		; transporter or flipbridge or suctube or suctubex or conveyor
+		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Direction"
 			If CurrentObject\Attributes\LogicType=210 ; transporter
 				tex$=Str$(3-CurrentObject\Attributes\Data2)
