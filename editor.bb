@@ -6841,20 +6841,32 @@ Function EditorLocalControls()
 			TooltipLeftY=StartY+30
 			Percent#=Float#(NofObjects)/Float#(MaxNofObjects)*100.0
 			ShowTooltipRightAligned(StartX,TooltipLeftY,NofObjects+"/"+MaxNofObjects+" ("+Percent#+"%) level object slots used")
-			If NofSelectedObjects=1 And LeftMouse=True And LeftMouseReleased=True And CtrlDown()
-				LeftMouseReleased=False
-				TakenString$=InputString$("Set object index: ")
-				If TakenString$<>""
-					TargetIndex=TakenString$
+			If NofSelectedObjects=1
+				If LeftMouse=True And LeftMouseReleased=True And CtrlDown()
+					LeftMouseReleased=False
+					TakenString$=InputString$("Set object index: ")
+					If TakenString$<>""
+						TargetIndex=TakenString$
+						If TargetIndex>NofObjects-1
+							TargetIndex=NofObjects-1
+						ElseIf TargetIndex<0
+							TargetIndex=0
+						EndIf
+						SetObjectIndex(SelectedObjects(0),TargetIndex)
+						RemoveSelectObject(SelectedObjects(0))
+						AddSelectObject(TargetIndex)
+						AddUnsavedChange()
+					EndIf
+				ElseIf MouseScroll<>0
+					SetEditorMode(3)
+					TargetIndex=SelectedObjects(0)+MouseScroll*Adj
 					If TargetIndex>NofObjects-1
 						TargetIndex=NofObjects-1
 					ElseIf TargetIndex<0
 						TargetIndex=0
 					EndIf
-					SetObjectIndex(SelectedObjects(0),TargetIndex)
 					RemoveSelectObject(SelectedObjects(0))
 					AddSelectObject(TargetIndex)
-					AddUnsavedChange()
 				EndIf
 			EndIf
 		EndIf
@@ -25574,6 +25586,12 @@ Function DialogMainLoop()
 ;		If AskToSaveDialogAndExit()
 ;			OpenTypedDialog()
 ;		EndIf
+	EndIf
+	
+	If KeyPressed(1) ; Esc key
+		If AskToSaveDialogAndExit()
+			ResumeMaster()
+		EndIf
 	EndIf
 	
 	If CtrlDown()
