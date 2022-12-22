@@ -65,6 +65,7 @@
 * Ctrl+U: Toggle inline soft mode. The cursor brush will be orange while inline soft mode is active.
 * Ctrl+K: Toggle outline hard mode. The cursor brush will be indigo while outline hard mode is active.
 * Ctrl+J: Toggle outline soft mode. The cursor brush will be a slightly lighter indigo while outline soft mode is active.
+* Esc: Return to the master.dat editor screen. If changes to the level have been made, the user is asked whether they want to save their changes.
 
 ### CAMERA CONTROLS
 
@@ -141,6 +142,7 @@
 * Ctrl+U: Toggle UpDown.
 * Ctrl+L: Toggle LeftRight.
 * Ctrl+T: Toggle RT. This effect actually does nothing in-game, at least in vanilla.
+* Esc: Return to the master.dat editor screen. If changes to the dialog have been made, the user is asked whether they want to save their changes.
 
 ## HUB EDITOR
 

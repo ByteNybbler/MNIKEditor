@@ -7527,6 +7527,12 @@ Function EditorLocalControls()
 		SetPlacementDensity(Value#)
 	EndIf
 	
+	If KeyPressed(1) ; Esc key
+		If AskToSaveLevelAndExit()
+			ResumeMaster()
+		EndIf
+	EndIf
+	
 	If LeftMouse=True And LeftMouseReleased=True
 		If IsMouseOverToolbarItem(ToolbarExitX,ToolbarExitY)
 			; exit ; cancel and exit
@@ -28653,7 +28659,9 @@ Function CompileAdventure(PackCustomContent)
 	Until MouseDown(1)=True
 	Repeat
 	Until MouseDown(1)=False
+	
 	Return True
+	
 End Function
 
 Function decode$(ex$)
