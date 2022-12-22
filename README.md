@@ -84,7 +84,7 @@
 ### OBJECTS MENU
 
 * Enter: Toggle the randomized state of the object adjuster being hovered over with the mouse. Any objects placed will choose a random value from the range that you define.
-* Scroll the mouse wheel: Scroll through objects and object categories.
+* Scroll the mouse wheel: Scroll through objects and object categories. When exactly one object is selected, scrolling the mouse wheel over the object index will change which object is selected based on the index. Hold shift to scroll through object indices faster.
 * Delete while hovering mouse over OBJECTS menu: Delete the currently-selected object(s). This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one.
 * Ctrl+Click on "Object": Enter an object name or a few characters of an object name to instantly jump to that object. All object categories will be searched.
 * Ctrl+Click on "Category": Enter a category name or a few characters of a category name to instantly jump to that object category.
