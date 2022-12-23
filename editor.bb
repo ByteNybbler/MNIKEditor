@@ -428,15 +428,17 @@ Const BrushModeInlineHard=4
 Const BrushModeInlineSoft=5
 Const BrushModeOutlineHard=6
 Const BrushModeOutlineSoft=7
-Const BrushModeRow=8
-Const BrushModeColumn=9
+Const BrushModeDiagonalNE=8
+Const BrushModeDiagonalSE=9
+Const BrushModeRow=10
+Const BrushModeColumn=11
 
 ; Negative brush mode IDs can't be selected from the normal brush mode menu.
 ; These are placed here to be adjacent to normal brush mode.
 Const BrushModeTestLevel=-2
 Const BrushModeSetMirror=-3
 
-Const MaxBrushMode=9
+Const MaxBrushMode=11
 Global BrushMode=BrushModeNormal
 
 Const BlockPlacingModeNone=-1
@@ -4749,7 +4751,7 @@ Function CalculateBrushTargets()
 		Next
 
 		GenerateBrushSurface()
-	ElseIf BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn
+	ElseIf BrushMode=BrushModeFill Or IsBrushInInlineMode() Or IsBrushInOutlineMode() Or BrushMode=BrushModeRow Or BrushMode=BrushModeColumn Or BrushMode=BrushModeDiagonalNE Or BrushMode=BrushModeDiagonalSE
 		; Don't redo the flood fill if it is unnecessary.
 		If Not FloodedStackHasTile(BrushCursorX,BrushCursorY)
 			If BrushMode=BrushModeFill
@@ -4762,6 +4764,10 @@ Function CalculateBrushTargets()
 				FloodFillRow(BrushCursorX,BrushCursorY)
 			ElseIf BrushMode=BrushModeColumn
 				FloodFillColumn(BrushCursorX,BrushCursorY)
+			ElseIf BrushMode=BrushModeDiagonalNE
+				FloodFillDiagonalNE(BrushCursorX,BrushCursorY)
+			ElseIf BrushMode=BrushModeDiagonalSE
+				FloodFillDiagonalSE(BrushCursorX,BrushCursorY)
 			EndIf
 			GenerateBrushSurface()
 		EndIf
@@ -4944,6 +4950,38 @@ Function FloodFillColumn(StartX,StartY)
 		
 		FloodFillVisitLevelTile(thisx,thisy-1)
 		FloodFillVisitLevelTile(thisx,thisy+1)
+		
+		AddToFloodedStack(thisx,thisy)
+	Wend
+
+End Function
+
+Function FloodFillDiagonalNE(StartX,StartY)
+
+	FloodFillInitializeState(BrushCursorX,BrushCursorY)
+	While FloodElementCount<>0
+		FloodElementCount=FloodElementCount-1
+		thisx=FloodStackX(FloodElementCount)
+		thisy=FloodStackY(FloodElementCount)
+		
+		FloodFillVisitLevelTile(thisx-1,thisy+1)
+		FloodFillVisitLevelTile(thisx+1,thisy-1)
+		
+		AddToFloodedStack(thisx,thisy)
+	Wend
+
+End Function
+
+Function FloodFillDiagonalSE(StartX,StartY)
+
+	FloodFillInitializeState(BrushCursorX,BrushCursorY)
+	While FloodElementCount<>0
+		FloodElementCount=FloodElementCount-1
+		thisx=FloodStackX(FloodElementCount)
+		thisy=FloodStackY(FloodElementCount)
+		
+		FloodFillVisitLevelTile(thisx-1,thisy-1)
+		FloodFillVisitLevelTile(thisx+1,thisy+1)
 		
 		AddToFloodedStack(thisx,thisy)
 	Wend
@@ -18578,6 +18616,10 @@ Function GetBrushModeName$(Value)
 		Return "ROW"
 	Case BrushModeColumn
 		Return "COLUMN"
+	Case BrushModeDiagonalNE
+		Return "DIAGONAL NE"
+	Case BrushModeDiagonalSE
+		Return "DIAGONAL SE"
 	Case BrushModeTestLevel
 		Return "TEST LEVEL"
 	Case BrushModeSetMirror
@@ -18625,7 +18667,7 @@ Function GetBrushModeColor$(Value,index)
 		r=0
 		g=80
 		b=255
-	ElseIf Value=BrushModeRow Or Value=BrushModeColumn
+	ElseIf Value=BrushModeRow Or Value=BrushModeColumn Or Value=BrushModeDiagonalNE Or Value=BrushModeDiagonalSE
 		; green
 		r=0
 		g=255
