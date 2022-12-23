@@ -197,8 +197,8 @@ MouseTextEntryLineMax(0)=5
 MouseTextEntryLineMax(1)=10
 MouseTextEntryLineMax(2)=1
 
-Dim MouseTextEntryLineY(2,9)
-Dim MouseTextEntryLineYAdjust(2,9)
+Dim MouseTextEntryLineY(2,10)
+Dim MouseTextEntryLineYAdjust(2,10)
 
 MouseTextEntryLineY(0,0)=0
 MouseTextEntryLineY(0,1)=3
@@ -17601,14 +17601,18 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	EndIf
 	
 	If Obj\Attributes\LogicType=200 Or Obj\Attributes\LogicType=201 ; glovecharge or glovedischarge
-		EntityFX Obj\Model\Entity,2
-		For ii=0 To 3
-			Col=Obj\Attributes\Data0
-			red=GetMagicColor(Col,0)
-			green=GetMagicColor(Col,1)
-			blue=GetMagicColor(Col,2)
-			VertexColor GetSurface(Obj\Model\Entity,1),ii,red,green,blue
-		Next
+		If EntityClass(Obj\Model\Entity)="Mesh"
+			EntityFX Obj\Model\Entity,2
+			
+			TheSurface=GetSurface(Obj\Model\Entity,1)
+			For ii=0 To 3
+				Col=Obj\Attributes\Data0
+				red=GetMagicColor(Col,0)
+				green=GetMagicColor(Col,1)
+				blue=GetMagicColor(Col,2)
+				VertexColor TheSurface,ii,red,green,blue
+			Next
+		EndIf
 	EndIf
 	
 	PositionEntityWithXYZAdjust(Obj\Model\Entity,x#,y#,z#,Obj\Attributes)
