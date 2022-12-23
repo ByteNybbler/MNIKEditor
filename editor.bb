@@ -166,6 +166,18 @@ Dim PreviewAskAboutInterchange(MaxAskAbouts)
 Dim PreviewAskAboutRepeat(MaxAskAbouts)
 
 
+Global CopiedNofInterChangeTextLines ;xzx
+Dim CopiedInterChangeTextLine$(MaxInterChangeTextLine)
+Dim CopiedDialogTextCommand$(200),CopyDialogTextCommandPos(200)
+Global CopiedNofTextCommands
+Global CopiedNofInterChangeReplies
+Dim CopiedInterChangeReplyText$(MaxReply)
+Dim CopiedInterChangeReplyFunction(MaxReply)
+Dim CopiedInterChangeReplyData(MaxReply)
+Dim CopiedInterChangeReplyCommand(MaxReply)
+Dim CopiedInterChangeReplyCommandData(MaxReply,4)
+
+
 Global ColEffect=-1
 Global TxtEffect=-1
 Dim CCommands$(20),TCommands$(20)
@@ -2862,6 +2874,7 @@ Const HubAdvMax=MaxCompilerFile ;500
 Dim HubAdventuresFilenames$(HubAdvMax)
 Dim HubAdventuresMissing(HubAdvMax)
 Dim HubAdventuresIncludeInTotals(HubAdvMax)
+
 
 Global NoOfShards=7
 Global CustomShardEnabled
@@ -23205,10 +23218,14 @@ Function StartMaster()
 End Function
 
 Function StartHub()
+	
 	SetEditorMode(11)
 	HubAdvStart=0
 	HubSelectedAdventure=-1
 	CopyingLevel=StateNotSpecial
+	
+	ClearHub()
+	
 	If FileType(globaldirname$+"\Custom\editing\Hubs\"+HubFileName$+"\hub.dat")=1
 		LoadHubFile()
 	Else
@@ -23217,9 +23234,16 @@ Function StartHub()
 		HubTotalAdventures=0
 	EndIf
 	
+End Function
+
+Function ClearHub()
+
 	For i=0 To HubAdvMax
+		HubAdventuresFilenames$(i)=""
+		HubAdventuresMissing(i)=False
 		HubAdventuresIncludeInTotals(i)=True
 	Next
+
 End Function
 
 Function ResumeMaster()
