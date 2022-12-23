@@ -767,6 +767,8 @@ Until NofTilePresetTiles>0
 Global NofObjects=0
 Const MaxNofObjects=1000
 
+Global NofObjectsInstantiated=0
+
 Dim ObjectAdjusterString$(MaxNofObjects,30)
 
 Global HighlightWopAdjusters=True
@@ -4070,9 +4072,8 @@ Function EditorMainLoop()
 		ShowLevelEditorWarning("Too many particles! This will most likely MAV in-game!")
 	EndIf
 	
-	If False
+	If NofObjectsInstantiated>MaxNofObjects
 		ShowLevelEditorWarning("Instantiated shadows/accessories pass the object limit!")
-		;xzx
 	EndIf
 	
 	FinishDrawing()
@@ -4639,8 +4640,9 @@ Function BrushCursorPositionWasChanged()
 			DecrementLevelTileObjectCount(TileX,TileY)
 			SetObjectPosition(CurrentDraggedObject,TileX+DragSpotDeltaX,TileY+DragSpotDeltaY)
 			UpdateObjectPosition(CurrentDraggedObject)
-			SomeObjectWasChanged()
 		Next
+		
+		ObjectsWereChanged()
 	EndIf
 	
 	; tile dragging
@@ -5555,6 +5557,7 @@ Function EditorLocalControls()
 									ChangeLevelTile(i,j,True)
 								Next
 							Next
+							TilesWereChanged()
 						ElseIf EditorMode=3
 							PrepareObjectSelection()
 							For i=cornleft To cornright
@@ -5562,9 +5565,9 @@ Function EditorLocalControls()
 									PlaceObject(i,j)
 								Next
 							Next
+							ObjectsWereChanged()
 						EndIf
 						SetBrushMode(BrushModeBlock)
-						AddUnsavedChange()
 					EndIf
 				
 					OnceTilePlacement=True
@@ -5610,6 +5613,12 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Next
+						
+						If EditorMode=EditorModeObject
+							ObjectsWereChanged()
+						ElseIf EditorMode=EditorModeTile
+							TilesWereChanged()
+						EndIf
 					EndIf
 						
 					If EditorMode=EditorModeObject
@@ -5736,7 +5745,7 @@ Function EditorLocalControls()
 							DeleteObjectAt(thisx,thisy)
 						Next
 						
-						AddUnsavedChange()
+						ObjectsWereChanged()
 					EndIf
 					
 					RecalculateDragSize()
@@ -5750,7 +5759,7 @@ Function EditorLocalControls()
 					Next
 					SetBrushMode(BrushModeBlock)
 					
-					AddUnsavedChange()
+					ObjectsWereChanged()
 				EndIf
 			EndIf
 			
@@ -6828,7 +6837,7 @@ Function EditorLocalControls()
 				RecalculateDragSize()
 				SetEditorMode(3)
 				
-				AddUnsavedChange()
+				ObjectsWereChanged()
 			EndIf
 		EndIf
 	EndIf
@@ -7485,13 +7494,12 @@ Function EditorLocalControls()
 				Next
 				CurrentObject\Attributes\ZAdjust=CurrentObject\Attributes\ZAdjust+Adjustment
 				BuildCurrentObjectModel()
-				SomeObjectWasChanged()
 				
 				If GetConfirmation("Do you want to set Xtrude logics?")
 					XtrudeLogics()
 				EndIf
 				
-				AddUnsavedChange()
+				ObjectsWereChanged()
 			EndIf
 		EndIf
 	EndIf
@@ -10446,11 +10454,6 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	
 	
 	AddOrToggleSelectObject(ThisObject)
-	
-	
-	SomeObjectWasChanged()
-	
-	
 
 End Function
 
@@ -11083,19 +11086,31 @@ Function MaybeAnimateMD2(Entity,mode=1,speed#=1,FirstFrame=1,LastFrame=1,transit
 End Function
 
 
-
-Function SomeObjectWasChanged()
+Function ObjectsWereChanged()
 
 	ResetSimulatedQuantities()
 	FinalizeCurrentObject()
-	;AddUnsavedChange()
-
+	
+	AddUnsavedChange()
+	
+	NofObjectsInstantiated=NofObjects
+	For i=0 To NofObjects-1
+		NofObjectsInstantiated=NofObjectsInstantiated+ObjectCountExtraInstantiations(LevelObjects(i)\Attributes)
+	Next
+	
 End Function
 
 
 Function SomeTileWasChanged()
 
 	;AddUnsavedChange()
+
+End Function
+
+
+Function TilesWereChanged()
+
+	AddUnsavedChange()
 
 End Function
 
@@ -11616,7 +11631,7 @@ Function SetObjectIndex(SourceIndex,TargetIndex)
 			EndIf
 		Next
 		
-		SomeObjectWasChanged()
+		ObjectsWereChanged()
 	ElseIf TargetIndex>SourceIndex
 		MoveObjectData(SourceIndex,1000) ; Move to temp.
 		i=SourceIndex+1
@@ -11654,7 +11669,7 @@ Function SetObjectIndex(SourceIndex,TargetIndex)
 			EndIf
 		Next
 		
-		SomeObjectWasChanged()
+		ObjectsWereChanged()
 	EndIf
 
 End Function
@@ -11745,10 +11760,8 @@ Function DeleteObject(i)
 		CurrentObject\Attributes\Child=CurrentObject\Attributes\Child-1
 	EndIf
 	
+	; Uh... Is this supposed to be here???
 	UpdateObjectPositionMarkersAtTile(tilex,tiley)
-	
-	SomeObjectWasChanged()
-	
 
 End Function
 
@@ -11920,7 +11933,7 @@ Function UpdateSelectedObjects()
 	; Zero all relative object adjusters.
 	RecalculateObjectAdjusterModes()
 	
-	AddUnsavedChange()
+	ObjectsWereChanged()
 
 End Function
 
@@ -12354,9 +12367,6 @@ Function PasteObjectData(Dest)
 	BuildLevelObjectModel(Dest)
 	
 	UpdateCurrentGrabbedObjectMarkerPosition(Dest)
-	
-	SomeObjectWasChanged()
-
 	
 End Function
 
@@ -18194,9 +18204,8 @@ Function ReSizeLevel()
 	HeightBottomChange=0
 	
 	;SomeTileWasChanged()
-	SomeObjectWasChanged()
 	
-	AddUnsavedChange()
+	ObjectsWereChanged()
 
 End Function
 
@@ -18371,7 +18380,7 @@ Function FlipLevelX()
 	Next
 	
 	;SomeTileWasChanged()
-	SomeObjectWasChanged()
+	ObjectsWereChanged()
 	
 End Function
 
@@ -18403,7 +18412,7 @@ Function FlipLevelY()
 	Next
 	
 	;SomeTileWasChanged()
-	SomeObjectWasChanged()
+	ObjectsWereChanged()
 	
 End Function
 
@@ -18442,7 +18451,7 @@ Function FlipLevelXY()
 	Next
 	
 	;SomeTileWasChanged()
-	SomeObjectWasChanged()
+	ObjectsWereChanged()
 	
 End Function
 
@@ -20180,8 +20189,8 @@ Function LoadLevel(levelnumber)
 		LevelObject\Attributes\Parent=ObjectIndexGameToEditor(LevelObject\Attributes\Parent, PlayerIndex)
 		LevelObject\Attributes\Child=ObjectIndexGameToEditor(LevelObject\Attributes\Child, PlayerIndex)
 	Next
-	
-	SomeObjectWasChanged()
+
+	ObjectsWereChanged()
 	
 	
 	LevelEdgeStyle=ReadInt(file)
@@ -20239,13 +20248,12 @@ Function NewLevel(levelnumber)
 	; clear current objects 
 	
 	For ig=0 To NofObjects-1
-		FreeObject(ig)				
+		FreeObject(ig)
 	Next
-
-	
-	
-	
+		
 	SetNofObjects(0)
+	ObjectsWereChanged()
+	
 	; reset textures
 	FreeTexture leveltexture
 	FreeTexture watertexture
@@ -24880,6 +24888,7 @@ Function StartTestModeAt(level,x,y)
 	CurrentObject\Attributes\ZAdjust=1000.0 ; Move the LevelExit out of view in-game.
 	PreventPlacingObjectsOutsideLevel=False
 	PlaceThisObject(AdventureStartX,AdventureStartY,CurrentObject)
+	ObjectsWereChanged()
 	SaveLevel()
 	CurrentLevelNumber=level ; Necessary so that the editor knows what level to return to when re-opening after testing.
 	StartTestMode(x,y)
@@ -28725,10 +28734,7 @@ Function ObjectIndexEditorToGameInner(Index)
 	Result=Index
 	
 	For i=0 To Index-1
-		If ObjectHasShadow(LevelObjects(i)\Attributes\ModelName$)
-			Result=Result+1
-		EndIf
-		Result=Result+ObjectCountAccessories(LevelObjects(i)\Attributes)
+		Result=Result+ObjectCountExtraInstantiations(LevelObjects(i)\Attributes)
 	Next
 	
 	Return Result
@@ -28750,10 +28756,7 @@ Function ObjectIndexGameToEditorInner(Index)
 	Result=Index
 	
 	For i=0 To Result-1
-		If ObjectHasShadow(LevelObjects(i)\Attributes\ModelName$)
-			Result=Result-1
-		EndIf
-		Result=Result-ObjectCountAccessories(LevelObjects(i)\Attributes)
+		Result=Result-ObjectCountExtraInstantiations(LevelObjects(i)\Attributes)
 	Next
 	
 	Return Result
@@ -28851,6 +28854,18 @@ Function CodeCountAccessories(code$)
 		Result=Result+1
 	Next
 	
+	Return Result
+
+End Function
+
+
+Function ObjectCountExtraInstantiations(Attributes.GameObjectAttributes)
+
+	Result=0
+	If ObjectHasShadow(Attributes\ModelName$)
+		Result=Result+1
+	EndIf
+	Result=Result+ObjectCountAccessories(Attributes)
 	Return Result
 
 End Function
