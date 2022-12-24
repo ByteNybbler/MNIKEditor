@@ -182,13 +182,43 @@ Global ColEffect=-1
 Global TxtEffect=-1
 Dim CCommands$(20),TCommands$(20)
 
-Restore CommandNames
-For i=0 To 11
-	Read CCommands$(i)
-Next
-For i=0 To 11
-	Read TCommands$(i)
-Next
+;Restore CommandNames
+;For i=0 To 11
+;	Read CCommands$(i)
+;Next
+;For i=0 To 11
+;	Read TCommands$(i)
+;Next
+
+CCommands$(0)="CWHI"
+CCommands$(1)="CGRY"
+CCommands$(2)="CRED"
+CCommands$(3)="CORA"
+CCommands$(4)="CYEL"
+CCommands$(5)="CGRE"
+CCommands$(6)="CCYA"
+CCommands$(7)="CBLU"
+CCommands$(8)="CPUR"
+CCommands$(9)="CRAI"
+CCommands$(10)="CBLI"
+CCommands$(11)="CWAR"
+TCommands$(0)="ENON"
+TCommands$(1)="ESHI"
+TCommands$(2)="EJIT"
+TCommands$(3)="EWAV"
+TCommands$(4)="EBOU"
+TCommands$(5)="EZOO"
+TCommands$(6)="EZSH"
+TCommands$(7)="ECIR"
+TCommands$(8)="EEIG"
+TCommands$(9)="EUPD"
+TCommands$(10)="ELER"
+TCommands$(11)="EROT"
+
+;.CommandNames
+;Data "CWHI","CGRY","CRED","CORA","CYEL","CGRE","CCYA","CBLU","CPUR","CRAI","CBLI","CWAR"
+;Data "ENON","ESHI","EJIT","EWAV","EBOU","EZOO","EZSH","ECIR","EEIG","EUPD","ELER","EROT"
+
 
 Const CharactersPerLine=38
 Const CharacterDeleteDelay=50
@@ -318,13 +348,31 @@ Global WidescreenRange=0
 Global WidescreenRangeLevel=-1
 
 Dim winningcondition$(20)
-Global nofwinningconditions
-Restore winning
-Repeat
-	Read winningcondition$(nofwinningconditions)
-	nofwinningconditions=nofwinningconditions+1
-Until winningcondition$(nofwinningconditions-1)="Done"
-nofwinningconditions=nofwinningconditions-1
+Global nofwinningconditions=10
+
+;Restore winning
+;Repeat
+;	Read winningcondition$(nofwinningconditions)
+;	nofwinningconditions=nofwinningconditions+1
+;Until winningcondition$(nofwinningconditions-1)="Done"
+;nofwinningconditions=nofwinningconditions-1
+
+winningcondition$(0)="None (e.g. collect star)"
+winningcondition$(1)="Rescue All Stinkers"
+winningcondition$(2)="Capture/Destroy Scritters"
+winningcondition$(3)="Collect All Gems"
+winningcondition$(4)="Destroy All Bricks"
+winningcondition$(5)="Destroy FireFlowers"
+winningcondition$(6)="Race"
+winningcondition$(7)="Capture/Destroy Crabs"
+winningcondition$(8)="Rescue All BabyBoomers"
+winningcondition$(9)="Destroy All ZBots"
+
+;.winning
+;Data "None (e.g. collect star)","Rescue All Stinkers","Capture/Destroy Scritters","Collect All Gems","Destroy All Bricks","Destroy FireFlowers","Race","Capture/Destroy Crabs","Rescue All BabyBoomers","Destroy All ZBots"
+;Data "Done"
+
+
 
 Global CurrentLevelNumber=0
 
@@ -32784,13 +32832,6 @@ Include "sound.bb"
 Include "customcontent.bb"
 
 
-.winning
-Data "None (e.g. collect star)","Rescue All Stinkers","Capture/Destroy Scritters","Collect All Gems","Destroy All Bricks","Destroy FireFlowers","Race","Capture/Destroy Crabs","Rescue All BabyBoomers","Destroy All ZBots"
-Data "Done"
-
-.CommandNames
-Data "CWHI","CGRY","CRED","CORA","CYEL","CGRE","CCYA","CBLU","CPUR","CRAI","CBLI","CWAR"
-Data "ENON","ESHI","EJIT","EWAV","EBOU","EZOO","EZSH","ECIR","EEIG","EUPD","ELER","EROT"
 
 .SoundFXNames
 ;0
