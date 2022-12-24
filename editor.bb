@@ -7050,7 +7050,8 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 		EndIf
-	
+		
+		; Adjust object adjusters
 		For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
 			If my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
 				If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
@@ -7239,20 +7240,20 @@ Function EditorLocalControls()
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
 			LeftMouseReleased=False
 			SetEditorMode(3)
-			If ObjectAdjusterStart+9<NofObjectAdjusters
-				ObjectAdjusterStart=ObjectAdjusterStart+9
-			Else 
-				ObjectAdjusterStart=0
-			EndIf
+			NextObjectAdjusterPage()
 		Else If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			RightMouseReleased=False
 			SetEditorMode(3)
-			If ObjectAdjusterStart=0
-				ObjectAdjusterStart=((NofObjectAdjusters-1)/9)*9
-			Else 
-				ObjectAdjusterStart=ObjectAdjusterStart-9
-			EndIf
+			PreviousObjectAdjusterPage()
 		EndIf
+	EndIf
+	
+	If KeyPressed(51) ; , key
+		PreviousObjectAdjusterPage()
+		SetEditorMode(3)
+	ElseIf KeyPressed(52) ; . key
+		NextObjectAdjusterPage()
+		SetEditorMode(3)
 	EndIf
 
 	
@@ -10349,6 +10350,28 @@ Function LoadObjectPreset()
 	BuildCurrentObjectModel()
 	;SetBrushToCurrentObject()
 	CurrentObjectWasChanged()
+
+End Function
+
+
+Function NextObjectAdjusterPage()
+
+	If ObjectAdjusterStart+9<NofObjectAdjusters
+	ObjectAdjusterStart=ObjectAdjusterStart+9
+	Else 
+		ObjectAdjusterStart=0
+	EndIf
+
+End Function
+
+
+Function PreviousObjectAdjusterPage()
+
+	If ObjectAdjusterStart=0
+		ObjectAdjusterStart=((NofObjectAdjusters-1)/9)*9
+	Else 
+		ObjectAdjusterStart=ObjectAdjusterStart-9
+	EndIf
 
 End Function
 

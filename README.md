@@ -1,5 +1,10 @@
 # HOTKEY REFERENCE
 
+## GLOBAL
+
+* 1: Left click.
+* 2: Right click.
+
 ## NUMERIC FIELDS
 
 * Left click: Adjust up. Holding shift usually adjusts by a greater step size.
@@ -83,6 +88,8 @@
 
 ### OBJECTS MENU
 
+* ,: Go to the previous page of object adjusters.
+* .: Go to the next page of object adjusters.
 * Enter: Toggle the randomized state of the object adjuster being hovered over with the mouse. Any objects placed will choose a random value from the range that you define.
 * Scroll the mouse wheel: Scroll through objects and object categories. When exactly one object is selected, scrolling the mouse wheel over the object index will change which object is selected based on the index. Hold shift to scroll through object indices faster.
 * Delete while hovering mouse over OBJECTS menu: Delete the currently-selected object(s). This is useful if you have multiple objects stacked on the same tile and you only want to delete a specific one.
