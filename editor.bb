@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/06/22"
+Global VersionDate$="12/23/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -35,6 +35,8 @@ Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						;9-dialog edit screen
 
 Const EditorModeTile=0
+Const EditorModeTextureTop=1
+Const EditorModeTextureSide=2
 Const EditorModeObject=3
 Const EditorModeDialog=9
 
@@ -5711,6 +5713,7 @@ Function EditorLocalControls()
 								Next
 							Next
 							TilesWereChanged()
+							AddUnsavedChange()
 						ElseIf EditorMode=3
 							PrepareObjectSelection()
 							For i=cornleft To cornright
@@ -5725,7 +5728,7 @@ Function EditorLocalControls()
 				
 					OnceTilePlacement=True
 					DidStepPerClick=False
-				ElseIf DidStepPerClick=False
+				ElseIf DidStepPerClick=False And LeftMouseReleased=True
 					DidStepPerClick=True
 					If StepPer=StepPerClick
 						RunStepSize()
@@ -11278,7 +11281,7 @@ End Function
 
 Function TilesWereChanged()
 
-	AddUnsavedChange()
+	;AddUnsavedChange()
 
 End Function
 
