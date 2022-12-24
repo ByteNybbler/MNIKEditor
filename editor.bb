@@ -166,9 +166,9 @@ Dim PreviewAskAboutInterchange(MaxAskAbouts)
 Dim PreviewAskAboutRepeat(MaxAskAbouts)
 
 
-Global CopiedNofInterChangeTextLines ;xzx
+Global CopiedNofInterChangeTextLines
 Dim CopiedInterChangeTextLine$(MaxInterChangeTextLine)
-Dim CopiedDialogTextCommand$(200),CopyDialogTextCommandPos(200)
+Dim CopiedDialogTextCommand$(200),CopiedDialogTextCommandPos(200)
 Global CopiedNofTextCommands
 Global CopiedNofInterChangeReplies
 Dim CopiedInterChangeReplyText$(MaxReply)
@@ -182,7 +182,7 @@ Global ColEffect=-1
 Global TxtEffect=-1
 Dim CCommands$(20),TCommands$(20)
 
-Restore Commands
+Restore CommandNames
 For i=0 To 11
 	Read CCommands$(i)
 Next
@@ -25710,7 +25710,10 @@ Function DialogMainLoop()
 	DisplayText2("ZS CR",39,10,255,255,255)
 	DisplayText2("EI UD",39,11,255,255,255)
 	DisplayText2("LR RT",39,12,255,255,255)
+	
 	DisplayText2("CLEAR",39,14,255,255,0)
+	DisplayText2("COPY",39.5,16,255,255,0)
+	DisplayText2("PASTE",39,18,255,255,0)
 	
 	
 	If MouseX()>LetterX(38) And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
@@ -25744,6 +25747,7 @@ Function DialogMainLoop()
 	DisplayText2("--------------------------------------------",0,1,TextMenusR,TextMenusG,TextMenusB)
 
 	;DisplayText2("InterChange #"+Str$(WhichInterChange),20,0,TextMenusR,TextMenusG,TextMenusB)
+	;DisplayText2(" COPY                PASTE",0,2,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("----- INTERCHANGE #"+Str$(WhichInterChange)+" -----",0,3,TextMenusR,TextMenusG,TextMenusB)
 	
 	DisplayText2("--------------------------------------",0,12,TextMenusR,TextMenusG,TextMenusB) ; Formerly 0,11
@@ -26282,15 +26286,27 @@ Function DialogMainLoop()
 				ToggleTxtEffect(i)
 			EndIf
 		Next
-		If MouseX()>LetterX(StartX) And MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
-			; clear text colors and effects
-			For i=0 To NofTextCommands(WhichInterChange)-1
-				DialogTextCommand$(WhichInterChange,i)=""
-				DialogTextCommandpos(WhichInterChange,i)=-1
-			Next
-			NofTextCommands(WhichInterChange)=0
-			
-			AddUnsavedChange()
+		If MouseX()>LetterX(StartX)
+			If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
+				If GetConfirmation("Are you sure you want to clear all text colors and effects on this interchange?")
+					; clear text colors and effects
+					For i=0 To NofTextCommands(WhichInterChange)-1
+						DialogTextCommand$(WhichInterChange,i)=""
+						DialogTextCommandpos(WhichInterChange,i)=-1
+					Next
+					NofTextCommands(WhichInterChange)=0
+					
+					AddUnsavedChange()
+				EndIf
+			ElseIf MouseY()>LetterHeight*16 And MouseY()<LetterHeight*17
+				; copy interchange
+				CopyInterChange(WhichInterChange)
+			ElseIf MouseY()>LetterHeight*18 And MouseY()<LetterHeight*19
+				; paste interchange
+				If GetConfirmation("Pasting over this interchange will overwrite all of its text and answers.")
+					PasteInterChange(WhichInterChange)
+				EndIf
+			EndIf
 		EndIf
 	EndIf
 		
@@ -26355,29 +26371,7 @@ Function ClearDialogFile()
 	; first clear all data
 	NofInterchanges=1
 	For i=0 To MaxInterChanges ;-1
-		NofInterChangeTextLines(i)=0	
-		For j=0 To MaxInterChangeTextLine
-			InterChangeTextLine$(i,j)=""
-		Next
-		NofTextCommands(i)=0
-		For j=0 To 199
-			DialogTextCommand$(i,j)=""
-			DialogTextCommandPos(i,j)=-1
-		Next
-		NofInterChangeReplies(i)=1
-		For j=0 To MaxReply
-			InterChangeReplyText$(i,j)=""
-			
-			; Make the default FNC end the dialog and return to this Interchange.
-			InterChangeReplyFunction(i,j)=1
-			InterChangeReplyData(i,j)=i
-			
-			InterChangeReplyCommand(i,j)=0
-			For k=0 To 3
-				InterChangeReplyCommandData(i,j,k)=0
-			Next
-		Next
-		
+		ClearInterChange(i)
 	Next
 	NofAskAbouts=0
 	AskAboutTopText$=""
@@ -26387,6 +26381,87 @@ Function ClearDialogFile()
 		AskAboutInterchange(i)=0
 		AskAboutRepeat(i)=-1
 	Next
+End Function
+
+Function ClearInterChange(i)
+
+	NofInterChangeTextLines(i)=0	
+	For j=0 To MaxInterChangeTextLine
+		InterChangeTextLine$(i,j)=""
+	Next
+	NofTextCommands(i)=0
+	For j=0 To 199
+		DialogTextCommand$(i,j)=""
+		DialogTextCommandPos(i,j)=-1
+	Next
+	NofInterChangeReplies(i)=1
+	For j=0 To MaxReply
+		InterChangeReplyText$(i,j)=""
+		
+		; Make the default FNC end the dialog and return to this Interchange.
+		InterChangeReplyFunction(i,j)=1
+		InterChangeReplyData(i,j)=i
+		
+		InterChangeReplyCommand(i,j)=0
+		For k=0 To 3
+			InterChangeReplyCommandData(i,j,k)=0
+		Next
+	Next
+
+End Function
+
+Function CopyInterChange(i)
+
+	CopiedNofInterChangeTextLines=NofInterChangeTextLines(i)	
+	For j=0 To MaxInterChangeTextLine
+		CopiedInterChangeTextLine$(j)=InterChangeTextLine$(i,j)
+	Next
+	CopiedNofTextCommands=NofTextCommands(i)
+	For j=0 To 199
+		CopiedDialogTextCommand$(j)=DialogTextCommand$(i,j)
+		CopiedDialogTextCommandPos(j)=DialogTextCommandPos(i,j)
+	Next
+	CopiedNofInterChangeReplies=NofInterChangeReplies(i)
+	For j=0 To MaxReply
+		CopiedInterChangeReplyText(j)=InterChangeReplyText$(i,j)
+		
+		CopiedInterChangeReplyFunction(j)=InterChangeReplyFunction(i,j)
+		CopiedInterChangeReplyData(j)=InterChangeReplyData(i,j)
+		
+		CopiedInterChangeReplyCommand(j)=InterChangeReplyCommand(i,j)
+		For k=0 To 3
+			CopiedInterChangeReplyCommandData(j,k)=InterChangeReplyCommandData(i,j,k)
+		Next
+	Next
+
+End Function
+
+Function PasteInterChange(i)
+
+	ClearInterChange(i)
+	
+	NofInterChangeTextLines(i)=CopiedNofInterChangeTextLines	
+	For j=0 To MaxInterChangeTextLine
+		InterChangeTextLine$(i,j)=CopiedInterChangeTextLine$(j)
+	Next
+	NofTextCommands(i)=CopiedNofTextCommands
+	For j=0 To 199
+		DialogTextCommand$(i,j)=CopiedDialogTextCommand$(j)
+		DialogTextCommandPos(i,j)=CopiedDialogTextCommandPos(j)
+	Next
+	NofInterChangeReplies(i)=CopiedNofInterChangeReplies
+	For j=0 To MaxReply
+		InterChangeReplyText$(i,j)=CopiedInterChangeReplyText(j)
+		
+		InterChangeReplyFunction(i,j)=CopiedInterChangeReplyFunction(j)
+		InterChangeReplyData(i,j)=CopiedInterChangeReplyData(j)
+		
+		InterChangeReplyCommand(i,j)=CopiedInterChangeReplyCommand(j)
+		For k=0 To 3
+			InterChangeReplyCommandData(i,j,k)=CopiedInterChangeReplyCommandData(j,k)
+		Next
+	Next
+
 End Function
 
 Function ClearDialogPreview()
@@ -32713,7 +32788,7 @@ Include "customcontent.bb"
 Data "None (e.g. collect star)","Rescue All Stinkers","Capture/Destroy Scritters","Collect All Gems","Destroy All Bricks","Destroy FireFlowers","Race","Capture/Destroy Crabs","Rescue All BabyBoomers","Destroy All ZBots"
 Data "Done"
 
-.Commands
+.CommandNames
 Data "CWHI","CGRY","CRED","CORA","CYEL","CGRE","CCYA","CBLU","CPUR","CRAI","CBLI","CWAR"
 Data "ENON","ESHI","EJIT","EWAV","EBOU","EZOO","EZSH","ECIR","EEIG","EUPD","ELER","EROT"
 
