@@ -26433,6 +26433,7 @@ Function DialogMainLoop()
 				; paste interchange
 				If GetConfirmation("Pasting over this interchange will overwrite all of its text and answers.")
 					PasteInterChange(WhichInterChange)
+					AddUnsavedChange()
 				EndIf
 			EndIf
 		EndIf
