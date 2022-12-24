@@ -104,6 +104,7 @@ Global ModelErrorG=0
 Global ModelErrorB=255
 
 Const ColorsConfig$="colors.cfg"
+Const TexturePrefixesConfig$="texture_prefixes.cfg"
 
 ; Set at runtime
 Global ObjectColorR
@@ -112,6 +113,10 @@ Global ObjectColorB
 Global TileColorR
 Global TileColorG
 Global TileColorB
+
+Const MaxTexturePrefix=99
+Dim TexturePrefix$(MaxTexturePrefix)
+Global CurrentTexturePrefix=-1
 
 		
 ; EDITOR DIALOG DATA
@@ -1601,7 +1606,7 @@ Global IDFilterEnabled=False
 Global IDFilterInverted=False
 Global IDFilterAllow=-1
 
-Global TexturePrefix$=""
+;Global TexturePrefix$=""
 
 Global SimulationLevel=1
 Const SimulationLevelMax=4
@@ -3946,11 +3951,21 @@ Function EditorMainLoop()
 	CenteredText(ToolbarBrushSizeX,ToolbarBrushSizeY,"BRUSH SIZE")
 	CenteredText(ToolbarBrushSizeX,ToolbarBrushSizeY+15,BrushWidth+" x "+BrushHeight)
 	
-	If TexturePrefix<>""
-		Color 255,155,0
+	If CurrentTexturePrefix=-1
+		TexturePrefixTitleName$="0"
+		TexturePrefixName$="[ALWAYS NONE]"
+	Else
+		TexturePrefixTitleName$=CurrentTexturePrefix+1
+		
+		TexturePrefixName$=TexturePrefix$(CurrentTexturePrefix)
+		If TexturePrefixName$=""
+			TexturePrefixName$="[CTRL+CLICK]"
+		Else
+			Color 255,155,0
+		EndIf
 	EndIf
-	CenteredText(ToolbarTexPrefixX,ToolbarTexPrefixY,"TEX PREFIX")
-	CenteredText(ToolbarTexPrefixX,ToolbarTexPrefixY+15,TexturePrefix$)
+	CenteredText(ToolbarTexPrefixX,ToolbarTexPrefixY,"TEX PREFIX "+TexturePrefixTitleName$)
+	CenteredText(ToolbarTexPrefixX,ToolbarTexPrefixY+15,TexturePrefixName$)
 	;Text 90,565,"  TEX PREFIX"
 	;Text 100,580,TexturePrefix$
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -4395,10 +4410,48 @@ Function StartupControls()
 End Function
 
 
+Function ReadTexturePrefixes()
+
+	file=ReadFile(TexturePrefixesConfig$)
+
+	For i=0 To MaxTexturePrefix
+		TexturePrefix$(i)=ReadLine(file)
+	Next
+
+	CloseFile file
+
+End Function
+
+
+Function WriteTexturePrefixes()
+
+	file=WriteFile(TexturePrefixesConfig$)
+	
+	For i=0 To MaxTexturePrefix
+		WriteLine(file,TexturePrefix$(i))
+	Next
+
+	CloseFile file
+
+End Function
+
+
+Function StartupTexturePrefixes()
+
+	If FileExists(TexturePrefixesConfig$)
+		ReadTexturePrefixes()
+	Else
+		WriteTexturePrefixes()
+	EndIf
+
+End Function
+
+
 Function StartupConfigs()
 
 	StartupColors()
 	StartupControls()
+	StartupTexturePrefixes()
 
 End Function
 
@@ -4407,6 +4460,7 @@ Function ReadConfigs()
 
 	ReadColors()
 	ReadControls()
+	ReadTexturePrefixes()
 
 End Function
 
@@ -7404,16 +7458,31 @@ Function EditorLocalControls()
 	EndIf
 		
 	If IsMouseOverToolbarItem(ToolbarTexPrefixX,ToolbarTexPrefixY)
-		If LeftMouse=True And LeftMouseReleased=True
-			;texture prefix
-			FlushKeys
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color 255,255,255
-			Print "Enter texture prefix (leave blank to disable texture prefix): "
-			TexturePrefix$=Input$("")
-			ReturnKeyReleased=False
+		;texture prefix
+		If CtrlDown()
+			If LeftMouse=True And LeftMouseReleased=True
+				If CurrentTexturePrefix=-1
+					ShowMessage("Only nonzero texture prefixes can be set.",1000)
+				Else
+					FlushKeys
+					Locate 0,0
+					Color 0,0,0
+					Rect 0,0,500,40,True
+					Color 255,255,255
+					Print "Enter texture prefix: "
+					TexturePrefix$(CurrentTexturePrefix)=Input$("")
+					ReturnKeyReleased=False
+					
+					WriteTexturePrefixes()
+				EndIf
+			EndIf
+		Else
+			CurrentTexturePrefix=AdjustInt("Enter texture prefix ID: ", CurrentTexturePrefix, 1, 10, DelayTime)
+			If CurrentTexturePrefix<-1
+				CurrentTexturePrefix=-1
+			ElseIf CurrentTexturePrefix>MaxTexturePrefix
+				CurrentTexturePrefix=MaxTexturePrefix
+			EndIf
 		EndIf
 	EndIf
 	
@@ -15413,6 +15482,17 @@ Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#
 End Function
 
 
+Function GetActiveTexturePrefix$()
+
+	If CurrentTexturePrefix=-1
+		Return ""
+	Else
+		Return TexturePrefix$(CurrentTexturePrefix)
+	EndIf
+
+End Function
+
+
 Function InputTextureName(Prompt$)
 
 	CurrentObject\Attributes\TexName$=InputString$(Prompt$)
@@ -15420,7 +15500,7 @@ Function InputTextureName(Prompt$)
 	If Left$(CurrentObject\Attributes\TexName$,1)="/"
 		CurrentObject\Attributes\TexName$="userdata/custom/models/"+Right$(CurrentObject\Attributes\TexName$,Len(CurrentObject\Attributes\TexName$)-1)
 	Else
-		CurrentObject\Attributes\TexName$=TexturePrefix$+CurrentObject\Attributes\TexName$
+		CurrentObject\Attributes\TexName$=GetActiveTexturePrefix$()+CurrentObject\Attributes\TexName$
 	EndIf
 
 End Function
