@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/23/22"
+Global VersionDate$="12/24/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -27,6 +27,9 @@ Global MouseDebounceTimer=0
 Global ReturnKey,ReturnKeyReleased,DeleteKey,DeleteKeyReleased
 Const KeyCount=237 ; How many keys to track for their state.
 Dim KeyReleased(KeyCount)
+
+
+
 
 Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						;4-user Select screen
@@ -1425,7 +1428,7 @@ End Function
 
 Function AdjustObjectAdjusterBits(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,i,DelayTime)
 
-	If ObjectAdjuster\Absolute And (Not ObjectAdjuster\RandomEnabled) And (LeftMouse=True Or RightMouse=True Or MouseScroll<>0) And MouseDebounceFinished()
+	If ObjectAdjuster\Absolute And (Not ObjectAdjuster\RandomEnabled) And (LeftMouse Or RightMouse Or MouseScroll<>0) And MouseDebounceFinished()
 		StartX=SidebarX+10
 		StartY=SidebarY+305
 		StartY=StartY+15+(i-ObjectAdjusterStart)*15
@@ -5236,6 +5239,18 @@ Function MouseDebounceSet(Timer)
 
 End Function
 
+Function LeftMouseDown()
+
+	Return MouseDown(1)=True Or KeyDown(2) ; 1 key
+
+End Function
+
+Function RightMouseDown()
+
+	Return MouseDown(2)=True Or KeyDown(3) ; 2 key
+
+End Function
+
 
 Function EditorGlobalControls()
 
@@ -5245,7 +5260,7 @@ Function EditorGlobalControls()
 		MouseDebounceTimer=MouseDebounceTimer-1
 	EndIf
 
-	If MouseDown(1)=True
+	If LeftMouseDown()
 		LeftMouse=True
 	Else
 		If LeftMouse=True
@@ -5256,7 +5271,7 @@ Function EditorGlobalControls()
 		LeftMouseReleased=True
 	EndIf
 
-	If MouseDown(2)=True
+	If RightMouseDown()
 		RightMouse=True
 	Else
 		If RightMouse=True
@@ -7732,7 +7747,7 @@ Function EditorLocalControls()
 			EndIf
 			
 			Repeat
-			Until MouseDown(1)=False
+			Until LeftMouseDown()=False
 		EndIf
 		
 		If IsMouseOverToolbarItem(ToolbarSaveX,ToolbarSaveY)
@@ -7751,7 +7766,7 @@ Function EditorLocalControls()
 			EndIf
 			
 			Repeat
-			Until MouseDown(1)=False
+			Until LeftMouseDown()=False
 		
 		EndIf
 	EndIf
@@ -22314,7 +22329,7 @@ Function UserSelectScreen()
 		waitflag=True
 	EndIf
 	
-	If MouseDown(1)
+	If LeftMouse
 		If FileType(GlobalDirName$+"\custom\Editing\Profiles\"+EditorUserNamesListed$(EditorUserNameSelected))=2 And EditorUserNamesListed$(EditorUserNameSelected)<>""
 			EditorUserName$=EditorUserNamesListed$(EditorUserNameSelected)
 			file=WriteFile(GlobalDirName$+"\custom\Editing\Profiles\currentuser.dat")
@@ -22562,7 +22577,7 @@ Function AdventureSelectScreen()
 					If HubFileName$=AdventureFileNamesListed$(i)
 						AdventureNameSelected=i	
 						Repeat
-						Until MouseDown(1)=0
+						Until LeftMouseDown()=0
 						StartHub()
 					EndIf
 				Next
@@ -22596,7 +22611,7 @@ Function AdventureSelectScreen()
 					
 						AdventureNameSelected=i	
 						Repeat
-						Until MouseDown(1)=0
+						Until LeftMouseDown()=0
 						StartMaster()
 						
 						If ThisEditorMode=12
@@ -22617,12 +22632,12 @@ Function AdventureSelectScreen()
 	
 	If CanChangeAdventureCurrentArchive()
 		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44) And MouseDebounceFinished()
-			If MouseDown(1) Or MouseScroll>0
+			If LeftMouse Or MouseScroll>0
 				SetAdventureCurrentArchive(AdventureCurrentArchive+1)
 				GetAdventures()
 				If MouseScroll=0 Then MouseDebounceSet(10)
 			EndIf
-			If MouseDown(2) Or MouseScroll<0
+			If RightMouse Or MouseScroll<0
 				SetAdventureCurrentArchive(AdventureCurrentArchive-1)
 				GetAdventures()
 				If MouseScroll=0 Then MouseDebounceSet(10)
@@ -22634,7 +22649,7 @@ Function AdventureSelectScreen()
 		;EndIf
 	EndIf
 	
-	If MouseDown(1) Or MouseDown(2) Or MouseScroll<>0
+	If LeftMouse Or RightMouse Or MouseScroll<>0
 		If MouseDebounceFinished()
 			If mx<LetterX(12) And my>LetterHeight And my<LetterHeight*2 ;hubmode
 				hubmode=Not hubmode
@@ -22649,13 +22664,13 @@ Function AdventureSelectScreen()
 		EndIf
 	EndIf
 	
-	If MouseDown(1)
+	If LeftMouse
 		If EditorMode=5
 			If mx>LetterX(36) And my>LetterHeight*28
 				; change user
 				StartUserSelectScreen()
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 			EndIf
 			
 			If mx>LetterX(34) And my<LetterHeight*2
@@ -22677,14 +22692,14 @@ Function AdventureSelectScreen()
 				;ShowMessage("Here we go!",1000)
 				SetEditorMode(13)
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 				;ShowMessage("We're here!",1000)
 				
 			EndIf
 			
 			If AdventureNameSelected>=0
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 				SetEditorMode(6)
 			EndIf
 		ElseIf EditorMode=12
@@ -22695,12 +22710,12 @@ Function AdventureSelectScreen()
 					HubSelectedAdventure=-1
 				EndIf
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 			EndIf
 			
 			If AdventureNameSelected>=0
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 				SetEditorMode(11)
 				HubAdventuresFilenames$(HubSelectedAdventure)=AdventureCurrentArchiveToHubPrefix$()+AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
 				HubAdventuresMissing(HubSelectedAdventure)=False
@@ -22722,17 +22737,17 @@ Function AdventureSelectScreen()
 			EndIf
 			SetAdventureFileNamesListedStart(AdventureFileNamesListedStart-MouseScroll*Speed)
 		EndIf
-		If (mx<LetterX(2.5) Or mx>LetterX(41.5)) And MouseDown(1)
+		If (mx<LetterX(2.5) Or mx>LetterX(41.5)) And LeftMouse
 			If my>LetterHeight*8 And my<LetterHeight*12
 				; Page Up
 				AdventureFileNamesListPageUp()
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 			ElseIf my>LetterHeight*24 And my<LetterHeight*28
 				; Page Down
 				AdventureFileNamesListPageDown()
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 			EndIf
 		EndIf
 	EndIf
@@ -22831,9 +22846,9 @@ Function AdventureSelectScreen2()
 		DisplayText2("CANCEL",19,15,155,155,155)
 	EndIf
 
-	If MouseDown(1) And Selected<>-1
+	If LeftMouse And Selected<>-1
 		Repeat
-		Until MouseDown(1)=0
+		Until LeftMouseDown()=0
 		
 		; Check again to make sure the mouse is still on the button.
 		OldSelected=Selected
@@ -22859,7 +22874,7 @@ Function AdventureSelectScreen2()
 					StartMaster()
 				EndIf
 				Repeat
-				Until MouseDown(1)=0
+				Until LeftMouseDown()=0
 			EndIf
 	
 			If selected=1
@@ -22956,7 +22971,7 @@ Function AdventureSelectScreen3()
 	EndIf
 	
 
-	If MouseDown(1)
+	If LeftMouse
 		If selected=0
 			ex$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
 			If hubmode
@@ -22986,13 +23001,13 @@ Function AdventureSelectScreen3()
 
 			
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 			SetEditorMode(5)
 		EndIf
 		If selected=1
 			SetEditorMode(5)
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 		EndIf
 	EndIf
 
@@ -23053,19 +23068,19 @@ Function SettingsMainLoop()
 		DisplayText2("Back",20,15,155,155,155)
 	EndIf
 	
-	If MouseDown(1)
+	If LeftMouse
 		If selected=0			
 			ConfigureControls()
 			
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 		EndIf
 		If selected=1
 			GfxMode=GfxMode+1
 			If GfxMode=NofMyGfxModes Then GfxMode=0
 			
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 		EndIf
 		If selected=2
 			GfxWidth=MyGfxModeWidth(gfxmode)
@@ -23078,7 +23093,7 @@ Function SettingsMainLoop()
 			WriteDisplayFile()
 			
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 			
 			ExecFile ("editor3d.exe")
 			EndApplication()
@@ -23088,16 +23103,16 @@ Function SettingsMainLoop()
 			SetEditorMode(5)
 			
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 		EndIf
 	EndIf
-	If MouseDown(2)
+	If RightMouse
 		If selected=1
 			GfxMode=GfxMode-1
 			If GfxMode=-1 Then GfxMode=NofMyGfxModes-1
 			
 			Repeat
-			Until MouseDown(2)=0
+			Until RightMouseDown()=0
 		EndIf
 	EndIf
 	
@@ -23691,7 +23706,7 @@ Function MasterMainLoop()
 		g=255
 		b=255
 		
-		If MouseDown(1)
+		If LeftMouse
 			adventureexitwonlevel=adventureexitlostlevel
 			adventureexitwonx=adventureexitlostx
 			adventureexitwony=adventureexitlosty
@@ -23708,7 +23723,7 @@ Function MasterMainLoop()
 		g=255
 		b=255
 		
-		If MouseDown(1)
+		If LeftMouse
 			adventureexitlostlevel=adventureexitwonlevel
 			adventureexitlostx=adventureexitwonx
 			adventureexitlosty=adventureexitwony
@@ -23795,8 +23810,8 @@ Function MasterMainLoop()
 	EndIf
 	
 	mb=0
-	If MouseDown(1) mb=1
-	If MouseDown(2) mb=2
+	If LeftMouse mb=1
+	If RightMouse mb=2
 	If MouseDown(3) mb=3
 	
 	DelayTime=10
@@ -23854,7 +23869,7 @@ Function MasterMainLoop()
 		If MouseY()<LetterHeight And  MouseX()>LetterX(24) And MouseX()<WlvColumnLeft
 			SetEditorMode(10)
 			Repeat
-			Until MouseDown(1)=0 And MouseDown(2)=0
+			Until LeftMouseDown()=0 And RightMouseDown()=0
 		EndIf
 	
 	EndIf
@@ -24033,7 +24048,7 @@ Function MasterMainLoop()
 						EndIf
 						
 						Repeat
-						Until MouseDown(1)=0
+						Until LeftMouseDown()=0
 						
 						mb=0
 						Exit
@@ -24046,7 +24061,7 @@ Function MasterMainLoop()
 						EndIf
 						
 						Repeat
-						Until MouseDown(2)=0
+						Until RightMouseDown()=0
 						
 						mb=0
 						Exit
@@ -24100,7 +24115,7 @@ Function MasterMainLoop()
 						EndIf
 						
 						Repeat
-						Until MouseDown(1)=0
+						Until LeftMouseDown()=0
 						
 						mb=0
 						Exit
@@ -24113,7 +24128,7 @@ Function MasterMainLoop()
 						EndIf
 						
 						Repeat
-						Until MouseDown(2)=0
+						Until RightMouseDown()=0
 						
 						mb=0
 						Exit
@@ -24195,7 +24210,7 @@ Function MasterMainLoop()
 				SaveHubFile()
 			EndIf
 			Repeat
-			Until MouseDown(1)=False
+			Until LeftMouseDown()=False
 			
 		EndIf
 
@@ -24358,32 +24373,32 @@ Function MasterAdvancedLoop()
 	EndIf
 		
 	mb=0
-	If MouseDown(1) mb=1
-	If MouseDown(2) mb=2
+	If LeftMouse mb=1
+	If RightMouse mb=2
 	If mb>0
 		If MouseY()<LetterHeight And MouseX()>LetterX(30)
 			SetEditorMode(8)
 			Repeat
-			Until MouseDown(1)=0 And MouseDown(2)=0
+			Until LeftMouseDown()=0 And RightMouseDown()=0
 		EndIf
 		
 		If MouseY()>LetterHeight*7 And MouseY()<LetterHeight*8
 			If MouseX()<LetterX(14.6)
 				StarterItems=StarterItems Xor 1
 				Repeat
-				Until MouseDown(1)=0 And MouseDown(2)=0
+				Until LeftMouseDown()=0 And RightMouseDown()=0
 			EndIf
 			
 			If MouseX()>LetterX(14.6) And MouseX()<LetterX(29.2)
 				StarterItems=StarterItems Xor 2
 				Repeat
-				Until MouseDown(1)=0 And MouseDown(2)=0
+				Until LeftMouseDown()=0 And RightMouseDown()=0
 			EndIf
 			
 			If MouseX()>LetterX(29.2)
 				StarterItems=StarterItems Xor 4
 				Repeat
-				Until MouseDown(1)=0 And MouseDown(2)=0
+				Until LeftMouseDown()=0 And RightMouseDown()=0
 			EndIf
 			
 		EndIf 
@@ -24391,7 +24406,7 @@ Function MasterAdvancedLoop()
 		If MouseY()>LetterHeight*9 And MouseY()<LetterHeight*10 And MouseX()<LetterX(24)
 			WidescreenRange=Not WidescreenRange
 			Repeat
-			Until MouseDown(1)=0 And MouseDown(2)=0
+			Until LeftMouseDown()=0 And RightMouseDown()=0
 		EndIf
 		
 		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
@@ -24441,7 +24456,7 @@ Function MasterAdvancedLoop()
 				SaveHubFile()
 			EndIf
 			Repeat
-			Until MouseDown(1)=False
+			Until LeftMouseDown()=0
 			
 		EndIf
 		
@@ -24718,14 +24733,14 @@ Function HubMainLoop()
 	EndIf
 		
 	mb=0
-	If MouseDown(1) mb=1
-	If MouseDown(2) mb=2
+	If LeftMouse mb=1
+	If RightMouse mb=2
 	If MouseDown(3) mb=3
 	
 	;If MouseY()<22 And  MouseX()>540
 	;	SetEditorMode(8)
 	;	Repeat
-	;	Until MouseDown(1)=0 And MouseDown(2)=0
+	;	Until LeftMouseDown()=0 And RightMouseDown()=0
 	;EndIf
 	If MouseX()<LetterX(4)
 		If MouseScroll<>0
@@ -24800,7 +24815,7 @@ Function HubMainLoop()
 					EndIf
 					
 					Repeat
-					Until MouseDown(1)=0
+					Until LeftMouseDown()=0
 					
 					mb=0
 					Exit
@@ -24819,7 +24834,7 @@ Function HubMainLoop()
 					EndIf
 					
 					Repeat
-					Until MouseDown(2)=0
+					Until RightMouseDown()=0
 					
 					mb=0
 					Exit
@@ -24848,7 +24863,7 @@ Function HubMainLoop()
 			MasterLevelListStart=0
 			StartMaster()
 			Repeat
-			Until MouseDown(1)=0 
+			Until LeftMouseDown()=0 
 		EndIf
 		
 		; replace
@@ -24857,7 +24872,7 @@ Function HubMainLoop()
 			GetAdventures()
 			SetEditorMode(12)
 			Repeat
-			Until MouseDown(1)=0 
+			Until LeftMouseDown()=0 
 		EndIf
 		
 		; remove
@@ -24875,7 +24890,7 @@ Function HubMainLoop()
 			EndIf
 			HubSelectedAdventure=-1
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 		EndIf
 		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
@@ -24905,7 +24920,7 @@ Function HubMainLoop()
 				StartAdventureSelectScreen()
 			EndIf
 			Repeat
-			Until MouseDown(1)=False
+			Until LeftMouseDown()=False
 		EndIf
 		
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
@@ -24924,7 +24939,7 @@ Function HubMainLoop()
 				StartAdventureSelectScreen()
 			EndIf
 			Repeat
-			Until MouseDown(1)=False
+			Until LeftMouseDown()=False
 			
 		EndIf
 	EndIf
@@ -26226,8 +26241,8 @@ Function DialogMainLoop()
 
 	
 	mb=0
-	If MouseDown(1) mb=1
-	If MouseDown(2) mb=2
+	If LeftMouse mb=1
+	If RightMouse mb=2
 	Modified=mb<>0 Or MouseScroll<>0
 	If mb>0
 		; Change Adventure
@@ -26239,13 +26254,13 @@ Function DialogMainLoop()
 				ResumeMaster()
 			EndIf
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 		EndIf
 	
 		If MouseX()>LetterX(38) And MouseY()>LetterHeight*27
 			SaveDialogAndExit()
 			Repeat
-			Until MouseDown(1)=0
+			Until LeftMouseDown()=0
 
 		EndIf
 
@@ -28597,9 +28612,9 @@ Function BuildHub()
 	Print ""
 	Print "Click to Continue."
 	Repeat
-	Until MouseDown(1)=True
+	Until LeftMouseDown()=True
 	Repeat
-	Until MouseDown(1)=False
+	Until LeftMouseDown()=False
 	Return True
 	
 End Function
@@ -28765,9 +28780,9 @@ Function CompileHub(PackContent)
 	Print ""
 	Print "Click to Continue."
 	Repeat
-	Until MouseDown(1)=True
+	Until LeftMouseDown()=True
 	Repeat
-	Until MouseDown(1)=False
+	Until LeftMouseDown()=False
 	Return True
 End Function
 
@@ -28960,9 +28975,9 @@ Function CompileAdventure(PackCustomContent)
 	Print ""
 	Print "Click to Continue."
 	Repeat
-	Until MouseDown(1)=True
+	Until LeftMouseDown()=True
 	Repeat
-	Until MouseDown(1)=False
+	Until LeftMouseDown()=False
 	
 	Return True
 	
