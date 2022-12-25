@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/24/22"
+Global VersionDate$="12/25/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -16031,6 +16031,8 @@ Function AdjustObjectAdjuster(i)
 			ObjectAdjusterData1\RandomMinDefault=0
 			ObjectAdjusterData1\RandomMaxDefault=10
 		EndIf
+		
+		OldData=CurrentObject\Attributes\Data1
 	
 		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data1=AdjustObjectAdjusterInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,SlowInt,FastInt,DelayTime)
@@ -16110,6 +16112,14 @@ Function AdjustObjectAdjuster(i)
 			; texture
 			If CurrentObject\Attributes\Data1>5 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=5
+		EndIf
+		
+		If CommandAdjusterStartDataIndex()=0
+			If CurrentObject\Attributes\Data0=10 Or CurrentObject\Attributes\Data0=11
+				If CurrentObject\Attributes\Data1<>OldData And SimulationLevel>=4
+					PlaySoundFX(CurrentObject\Attributes\Data1,-1,-1)
+				EndIf
+			EndIf
 		EndIf
 
 
@@ -16202,6 +16212,8 @@ Function AdjustObjectAdjuster(i)
 		
 
 	Case "Data3"
+		OldData=CurrentObject\Attributes\Data3
+	
 		;CurrentObject\Attributes\Data3=AdjustInt("Data3: ", CurrentObject\Attributes\Data3, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data3=AdjustObjectAdjusterInt(ObjectAdjusterData3,CurrentObject\Attributes\Data3,SlowInt,FastInt,DelayTime)
 		
@@ -16262,6 +16274,13 @@ Function AdjustObjectAdjuster(i)
 ;			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=2
 ;		EndIf
 
+		If CommandAdjusterStartDataIndex()=2
+			If CurrentObject\Attributes\Data2=10 Or CurrentObject\Attributes\Data2=11
+				If CurrentObject\Attributes\Data3<>OldData And SimulationLevel>=4
+					PlaySoundFX(CurrentObject\Attributes\Data3,-1,-1)
+				EndIf
+			EndIf
+		EndIf
 
 	Case "Data4"
 		If CurrentObject\Attributes\ModelName$="!NPC"
@@ -17870,6 +17889,23 @@ End Function
 Function ColorToID(Col,SubCol)
 
 	Return 500+5*Col+SubCol
+
+End Function
+
+
+Function CommandAdjusterStartDataIndex()
+
+	If ObjectAdjusterLogicType\Absolute
+		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=15 And ObjectAdjusterLogicSubType\Absolute ; General CMD
+			Return 0
+		ElseIf IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
+			Return 0
+		ElseIf CurrentObject\Attributes\LogicType=242 ; Cuboid
+			Return 2
+		EndIf
+	EndIf
+
+	Return -1
 
 End Function
 
