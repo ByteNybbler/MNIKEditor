@@ -9,7 +9,7 @@ End Function
 
 Function PlaySoundFX(i,x,y);,pitch)
 
-	If i<0
+	If i<0 Or i>500
 		Return
 	EndIf
 
