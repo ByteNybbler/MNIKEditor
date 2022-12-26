@@ -1967,6 +1967,7 @@ Global Camera2
 Global camera3
 Global camera4 ; object camera
 Global camera ; text screen camera
+Global CameraParticle ; particle camera, duh
 
 ; the current projection mode for each camera
 Global Camera1Proj=0
@@ -1974,6 +1975,7 @@ Global Camera2Proj=0
 Global Camera3Proj=0
 Global Camera4Proj=0
 Global CameraProj=0
+Global CameraParticleProj=0
 
 Global CameraPanning=False
 Global GameCamera=False ; whether "game camera mode" is active (simulates the in-game camera)
@@ -29721,7 +29723,7 @@ Function ControlParticleEmitters(i)
 	Case 4
 		; sparks
 		If Rand(0,1000)<SimulatedObjectData(i,1)*SimulatedObjectData(i,1)
-			If SimulatedObjectData(i,3)>=1
+			If SimulatedObjectData(i,3)>=1 And False ; Disabled
 				SoundPitch SoundFX(16),Rand(24000,29000)
 				PlaySoundFX(16,TheX#,TheY#)
 			EndIf
@@ -29746,7 +29748,7 @@ Function ControlParticleEmitters(i)
 		; blinker
 		If (SimulatedObjectData(i,4)=0 And Rand(0,200)<SimulatedObjectData(i,1)) Or (SimulatedObjectData(i,4)=1 And LevelTimer Mod (500-SimulatedObjectData(i,1)*100)=0)
 
-			If SimulatedObjectData(i,3)>=1
+			If SimulatedObjectData(i,3)>=1 And False ; Disabled
 				If SimulatedObjectData(i,3)=1 ; quiet magic
 					SoundPitch SoundFX(90),Rand(16000,20000)
 					PlaySoundFX(90,TheX#,TheY#)
@@ -29774,9 +29776,6 @@ Function ControlParticleEmitters(i)
 					
 					PlaySoundFX(11,TheX#,TheY#)
 				EndIf
-
-
-
 			EndIf
 
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.4,0,0,0,0,.0005,0,0,0,100,3)
