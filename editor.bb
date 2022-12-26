@@ -25931,7 +25931,8 @@ Function DialogMainLoop()
 	DisplayText2("PASTE",39,18,255,255,0)
 	DisplayText2("ERASE",39,20,255,255,0)
 	
-	DisplayText2("AUTOFILL MISSING ANSWERS",0,19,255,255,0)
+	AutofillLabel$="AUTOFILL EVERY MISSING FIRST ANSWER"
+	DisplayText2(AutofillLabel$,0,19,255,255,0)
 	
 	
 	If MouseX()>LetterX(38) And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
@@ -26532,7 +26533,7 @@ Function DialogMainLoop()
 					AddUnsavedChange()
 				EndIf
 			EndIf
-		ElseIf MouseX()<LetterX(24) And MouseY()>LetterHeight*19 And MouseY()<LetterHeight*20
+		ElseIf MouseX()<LetterX(Len(AutofillLabel$)) And MouseY()>LetterHeight*19 And MouseY()<LetterHeight*20
 			NewAnswer$=InputString$("Enter desired autofill answer text (leave blank to cancel): ")
 			If NewAnswer$<>""
 				For i=0 To MaxInterchanges
