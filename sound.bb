@@ -9,6 +9,10 @@ End Function
 
 Function PlaySoundFX(i,x,y);,pitch)
 
+	If i<0
+		Return
+	EndIf
+
 ;	If pitch>-1
 		
 

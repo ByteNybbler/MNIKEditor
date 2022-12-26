@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/25/22"
+Global VersionDate$="12/26/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
