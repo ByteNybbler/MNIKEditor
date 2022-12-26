@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/27/22"
+Global VersionDate$="12/28/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -25929,6 +25929,7 @@ Function DialogMainLoop()
 	DisplayText2("CLEAR",39,14,255,255,0)
 	DisplayText2("COPY",39.5,16,255,255,0)
 	DisplayText2("PASTE",39,18,255,255,0)
+	DisplayText2("ERASE",39,20,255,255,0)
 	
 	
 	If MouseX()>LetterX(38) And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
@@ -26503,7 +26504,7 @@ Function DialogMainLoop()
 		Next
 		If MouseX()>LetterX(StartX)
 			If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15
-				If GetConfirmation("Are you sure you want to clear all text colors and effects on this interchange?")
+				If GetConfirmation("Clear all text colors and effects on this interchange?")
 					; clear text colors and effects
 					For i=0 To NofTextCommands(WhichInterChange)-1
 						DialogTextCommand$(WhichInterChange,i)=""
@@ -26520,6 +26521,12 @@ Function DialogMainLoop()
 				; paste interchange
 				If GetConfirmation("Pasting over this interchange will overwrite all of its text and answers.")
 					PasteInterChange(WhichInterChange)
+					AddUnsavedChange()
+				EndIf
+			ElseIf MouseY()>LetterHeight*20 And MouseY()<LetterHeight*21
+				; paste interchange
+				If GetConfirmation("Erase all text, answers, and effects on this interchange?")
+					ClearInterChange(WhichInterChange)
 					AddUnsavedChange()
 				EndIf
 			EndIf
