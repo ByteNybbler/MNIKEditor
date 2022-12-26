@@ -4151,7 +4151,6 @@ Function EditorMainLoop()
 	
 	If MaxParticleWarningTimer<>0
 		MaxParticleWarningTimer=MaxParticleWarningTimer-1
-		; TODO: Add WARNING! as a top line.
 		ShowLevelEditorWarning("Too many particles! This will most likely MAV in-game!")
 	EndIf
 	
