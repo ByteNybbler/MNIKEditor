@@ -3482,17 +3482,19 @@ End Function
 
 Function ShowParticlePreview(x#,y#,tex)
 
-	Return ; This crap doesn't work. Thank you Blitz3D for making it incredibly difficult to draw textured rectangle UI.
+	;Return ; This crap doesn't work. Thank you Blitz3D for making it incredibly difficult to draw textured rectangle UI.
 
+	nudge#=.001 ; push this much inward from texture border to avoid grabbing pieces of neighbour
+	
 	u1#=Float(tex Mod 8)*0.125+nudge
 	u2#=u1+0.125-2*nudge
 	v1#=Float(Floor(tex/8))*0.125+nudge
 	v2#=v1+0.125-2*nudge
 
-	VertexTexCoords(ParticlePreviewSurface,0,u1#,v1#)
-	VertexTexCoords(ParticlePreviewSurface,1,u2#,v2#)
-	VertexTexCoords(ParticlePreviewSurface,2,u2#,v1#)
-	VertexTexCoords(ParticlePreviewSurface,3,u1#,v2#)
+	VertexTexCoords(ParticlePreviewSurface,3,u1#,v1#)
+	VertexTexCoords(ParticlePreviewSurface,0,u2#,v2#)
+	VertexTexCoords(ParticlePreviewSurface,1,u2#,v1#)
+	VertexTexCoords(ParticlePreviewSurface,2,u1#,v2#)
 	
 	ShowEntity ParticlePreview
 	
@@ -3503,15 +3505,20 @@ Function ShowParticlePreview(x#,y#,tex)
 	EndIf
 	StartX#=EntityX#(TargetEntity)
 	StartY#=EntityY#(TargetEntity)
+	StartZ#=EntityZ#(TargetEntity)+10
 	
-	CameraZoomLevel#=Camera1Zoom#
-	x#=x#/CameraZoomLevel
-	y#=y#/CameraZoomLevel
+	;CameraZoomLevel#=Camera1Zoom#
+	;x#=x#/CameraZoomLevel
+	;y#=y#/CameraZoomLevel
 	
 	;PositionEntity ParticlePreview,x*GfxZoomScaling#,y*GfxZoomScaling#,1
 	;PositionEntity ParticlePreview,x/GfxZoomScaling#,y/GfxZoomScaling#,1
 	;PositionEntity ParticlePreview,x,y,1
-	PositionEntity ParticlePreview,StartX#+x,StartY#+y,1
+	;PositionEntity ParticlePreview,StartX#+x#,StartY#+y#,1
+	PositionEntity ParticlePreview,StartX#,StartY#,StartZ#
+	;RotateEntity ParticlePreview
+	
+	;xzx
 
 End Function
 
@@ -16277,10 +16284,51 @@ Function AdjustObjectAdjuster(i)
 ;			If CurrentObject\Attributes\Data3>2 CurrentObject\Attributes\Data3=2
 ;		EndIf
 
-		If CommandAdjusterStartDataIndex()=2
-			If CurrentObject\Attributes\Data2=10 Or CurrentObject\Attributes\Data2=11
-				If CurrentObject\Attributes\Data3<>OldData And SimulationLevel>=4
+		If SimulationLevel>=4 And SomethingWasAdjusted
+			If CommandAdjusterStartDataIndex()=2
+				If CurrentObject\Attributes\Data2=10 Or CurrentObject\Attributes\Data2=11
+					;If CurrentObject\Attributes\Data3<>OldData
 					PlaySoundFX(CurrentObject\Attributes\Data3,-1,-1)
+					;EndIf
+				EndIf
+			EndIf
+		
+			If CurrentObject\Attributes\LogicType=190
+				If CurrentObject\Attributes\LogicSubType=4 ; Sparks
+					If CurrentObject\Attributes\Data3>=1
+						SoundPitch SoundFX(16),Rand(24000,29000)
+						PlaySoundFX(16,-1,-1)
+					EndIf
+				ElseIf CurrentObject\Attributes\LogicSubType=5 ; Blinker
+					If CurrentObject\Attributes\Data3>=1
+						If CurrentObject\Attributes\Data3=1 ; quiet magic
+							SoundPitch SoundFX(90),Rand(16000,20000)
+							PlaySoundFX(90,-1,-1)
+						EndIf
+						If CurrentObject\Attributes\Data3=2 ; loud mecha
+							
+							PlaySoundFX(35,-1,-1)
+						EndIf
+		
+						If CurrentObject\Attributes\Data3=3 ; variable gong
+							SoundPitch SoundFX(13),Rand(24000,44000)
+							PlaySoundFX(13,-1,-1)
+						EndIf
+						If CurrentObject\Attributes\Data3=4 ; grow
+							
+							PlaySoundFX(92,-1,-1)
+						EndIf
+						
+						If CurrentObject\Attributes\Data3=5 ; floing
+							
+							PlaySoundFX(93,-1,-1)
+						EndIf
+						
+						If CurrentObject\Attributes\Data3=6 ; gem
+							
+							PlaySoundFX(11,-1,-1)
+						EndIf
+					EndIf
 				EndIf
 			EndIf
 		EndIf
@@ -29673,6 +29721,10 @@ Function ControlParticleEmitters(i)
 	Case 4
 		; sparks
 		If Rand(0,1000)<SimulatedObjectData(i,1)*SimulatedObjectData(i,1)
+			If SimulatedObjectData(i,3)>=1
+				SoundPitch SoundFX(16),Rand(24000,29000)
+				PlaySoundFX(16,TheX#,TheY#)
+			EndIf
 			For j=0 To SimulatedObjectData(i,1)*30
 				Select SimulatedObjectData(i,2)
 				Case 0
@@ -29693,6 +29745,39 @@ Function ControlParticleEmitters(i)
 	Case 5
 		; blinker
 		If (SimulatedObjectData(i,4)=0 And Rand(0,200)<SimulatedObjectData(i,1)) Or (SimulatedObjectData(i,4)=1 And LevelTimer Mod (500-SimulatedObjectData(i,1)*100)=0)
+
+			If SimulatedObjectData(i,3)>=1
+				If SimulatedObjectData(i,3)=1 ; quiet magic
+					SoundPitch SoundFX(90),Rand(16000,20000)
+					PlaySoundFX(90,TheX#,TheY#)
+				EndIf
+				If SimulatedObjectData(i,3)=2 ; loud mecha
+					
+					PlaySoundFX(35,TheX#,TheY#)
+				EndIf
+
+				If SimulatedObjectData(i,3)=3 ; variable gong
+					SoundPitch SoundFX(13),Rand(24000,44000)
+					PlaySoundFX(13,TheX#,TheY#)
+				EndIf
+				If SimulatedObjectData(i,3)=4 ; grow
+					
+					PlaySoundFX(92,TheX#,TheY#)
+				EndIf
+				
+				If SimulatedObjectData(i,3)=5 ; floing
+					
+					PlaySoundFX(93,TheX#,TheY#)
+				EndIf
+				
+				If SimulatedObjectData(i,3)=6 ; gem
+					
+					PlaySoundFX(11,TheX#,TheY#)
+				EndIf
+
+
+
+			EndIf
 
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.4,0,0,0,0,.0005,0,0,0,100,3)
 			
