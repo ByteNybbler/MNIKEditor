@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/28/22"
+Global VersionDate$="12/29/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -25931,6 +25931,8 @@ Function DialogMainLoop()
 	DisplayText2("PASTE",39,18,255,255,0)
 	DisplayText2("ERASE",39,20,255,255,0)
 	
+	DisplayText2("AUTOFILL MISSING ANSWERS",0,19,255,255,0)
+	
 	
 	If MouseX()>LetterX(38) And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
 		DisplayText2("CANCEL",38.2,23,TextMenusR,TextMenusG,TextMenusB)
@@ -26530,6 +26532,28 @@ Function DialogMainLoop()
 					AddUnsavedChange()
 				EndIf
 			EndIf
+		ElseIf MouseX()<LetterX(24) And MouseY()>LetterHeight*19 And MouseY()<LetterHeight*20
+			NewAnswer$=InputString$("Enter desired autofill answer text (leave blank to cancel): ")
+			If NewAnswer$<>""
+				For i=0 To MaxInterchanges
+					If InterChangeIsEmpty(i)
+						; Do nothing.
+					ElseIf InterChangeReplyText$(i,0)=""
+						InterChangeReplyText$(i,0)=NewAnswer$
+						If i=MaxInterchanges
+							InterChangeReplyFunction(i,0)=1
+							InterChangeReplyData(i,0)=i
+						ElseIf InterChangeIsEmpty(i+1) ; Repeated block because Blitz3D hates short circuit evaluation. Get me out of here already.
+							InterChangeReplyFunction(i,0)=1
+							InterChangeReplyData(i,0)=i
+						Else
+							InterChangeReplyFunction(i,0)=2
+							InterChangeReplyData(i,0)=i+1
+						EndIf
+					EndIf
+				Next
+				AddUnsavedChange()
+			EndIf
 		EndIf
 	EndIf
 		
@@ -26684,6 +26708,24 @@ Function PasteInterChange(i)
 			InterChangeReplyCommandData(i,j,k)=CopiedInterChangeReplyCommandData(j,k)
 		Next
 	Next
+
+End Function
+
+Function InterChangeIsEmpty(i)
+
+	For j=0 To MaxInterChangeTextLine
+		If InterChangeTextLine$(i,j)<>""
+			Return False
+		EndIf
+	Next
+	
+	For j=0 To MaxReply
+		If InterChangeReplyText(i,j)<>""
+			Return False
+		EndIf
+	Next
+	
+	Return True
 
 End Function
 
