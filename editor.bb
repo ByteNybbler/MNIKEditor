@@ -25931,6 +25931,11 @@ Function DialogMainLoop()
 	DisplayText2("PASTE",39,18,255,255,0)
 	DisplayText2("ERASE",39,20,255,255,0)
 	
+	If KeyDown(62) ; F4 Key
+		; LOL
+		DisplayText2("ALT+F4",-7,8,255,255,0)
+	EndIf
+	
 	AutofillLabel$="AUTOFILL EVERY MISSING FIRST ANSWER"
 	DisplayText2(AutofillLabel$,0,19,255,255,0)
 	
