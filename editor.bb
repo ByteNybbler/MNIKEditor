@@ -11886,6 +11886,11 @@ End Function
 Function DeleteObject(i)
 
 	;ShowMessage("Deleting object "+i, 100)
+	
+	;DecrementLevelTileObjectCountFor(LevelObjects(i)\Position)
+	
+	tilex=LevelObjects(i)\Position\TileX
+	tiley=LevelObjects(i)\Position\TileY
 
 	FreeObject(i)
 	
@@ -11969,7 +11974,6 @@ Function DeleteObject(i)
 		CurrentObject\Attributes\Child=CurrentObject\Attributes\Child-1
 	EndIf
 	
-	; Uh... Is this supposed to be here???
 	UpdateObjectPositionMarkersAtTile(tilex,tiley)
 
 End Function
@@ -18426,12 +18430,15 @@ Function ReSizeLevel()
 	; and move the object
 	If WidthLeftChange<>0
 		For i=0 To NofObjects-1
-			LevelObjects(i)\Position\X=LevelObjects(i)\Position\X+WidthLeftChange
-			ChangeObjectTileX(i,LevelObjects(i)\Position\TileX+WidthLeftChange) ; Also handles spellballs etc.
-			ResizeLevelFixObjectTargets(LevelObjects(i))
-			If Floor(LevelObjects(i)\Position\X)<0 Or Floor(LevelObjects(i)\Position\X)>100
+			NewPosition#=LevelObjects(i)\Position\X+WidthLeftChange
+
+			If Floor(NewPosition#)<0 Or Floor(NewPosition#)>100
 				DeleteObject(i)
+				i=i-1
 			Else
+				LevelObjects(i)\Position\X=NewPosition#
+				ChangeObjectTileX(i,LevelObjects(i)\Position\TileX+WidthLeftChange) ; Also handles spellballs etc.
+				ResizeLevelFixObjectTargets(LevelObjects(i))
 				UpdateObjectPosition(i)
 			EndIf
 		Next
@@ -18439,12 +18446,15 @@ Function ReSizeLevel()
 	EndIf
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
-			LevelObjects(i)\Position\Y=LevelObjects(i)\Position\Y+HeightTopChange
-			ChangeObjectTileY(i,LevelObjects(i)\Position\TileY+HeightTopChange)
-			ResizeLevelFixObjectTargets(LevelObjects(i))
-			If Floor(LevelObjects(i)\Position\Y)<0 Or Floor(LevelObjects(i)\Position\Y)>100
+			NewPosition#=LevelObjects(i)\Position\Y+HeightTopChange
+			
+			If Floor(NewPosition#)<0 Or Floor(NewPosition#)>100
 				DeleteObject(i)
+				i=i-1
 			Else
+				LevelObjects(i)\Position\Y=NewPosition#
+				ChangeObjectTileY(i,LevelObjects(i)\Position\TileY+HeightTopChange)
+				ResizeLevelFixObjectTargets(LevelObjects(i))
 				UpdateObjectPosition(i)
 			EndIf
 		Next
