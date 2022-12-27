@@ -4621,7 +4621,7 @@ Function ShowTooltipLeftAligned(StartX,StartY,Message$)
 		CurrentTooltipStartY=StartY
 		CurrentTooltip$=Message$
 	Else
-		tex=Mid$(Message$,10,2)
+		tex=Mid$(Message$,11,Len(Message$)-10)
 		ShowParticlePreviewLeftAligned(StartX,StartY,tex)
 	EndIf
 	
@@ -4634,7 +4634,7 @@ Function ShowTooltipRightAligned(StartX,StartY,Message$)
 		CurrentTooltipStartY=StartY
 		CurrentTooltip$=Message$
 	Else
-		tex=Mid$(Message$,10,2)
+		tex=Mid$(Message$,11,Len(Message$)-10)
 		ShowParticlePreviewRightAligned(StartX,StartY,tex)
 	EndIf
 	
@@ -4647,7 +4647,7 @@ Function ShowTooltipCenterAligned(StartX,StartY,Message$)
 		CurrentTooltipStartY=StartY
 		CurrentTooltip$=Message$
 	Else
-		tex=Mid$(Message$,10,2)
+		tex=Mid$(Message$,11,Len(Message$)-10)
 		ShowParticlePreviewCenterAligned(StartX,StartY,tex)
 	EndIf
 	
@@ -13095,6 +13095,10 @@ Function HoverOverObjectAdjuster(i)
 				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute And ObjectAdjusterData2\Absolute
 					ShowTooltipRightAligned(StartX,TooltipLeftY,GetCmdData2ExtraInfo$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
 				EndIf
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 And CurrentObject\Attributes\Data0=2 ; NPC exclamation
+				If ObjectAdjusterData0\Absolute And ObjectAdjusterData2\Absolute
+					ShowParticlePreviewRightAligned(StartX,TooltipLeftY,CurrentObject\Attributes\Data2)
+				EndIf
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)<10 ; ColorX2Y
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
@@ -16197,10 +16201,6 @@ Function AdjustObjectAdjuster(i)
 				Case 1
 					; talkable
 					If CurrentObject\Attributes\Data2<-1 CurrentObject\Attributes\Data2=-1
-				Case 2
-					; particle
-					If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=63
-					If CurrentObject\Attributes\Data2>63 CurrentObject\Attributes\Data2=0
 				End Select
 			EndIf
 		EndIf
