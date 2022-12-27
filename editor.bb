@@ -3215,6 +3215,15 @@ Function InitializeGraphicsCameras()
 	Camera = CreateCamera() ; Text Screen Camera
 	CameraZoom Camera,GfxZoomScaling#
 	
+	ParticleViewportSize=150
+	CameraParticle = CreateCamera() ; particle camera
+	CameraClsColor CameraParticle,0,0,0
+	CameraViewport CameraParticle,SidebarX-ParticleViewportSize,SidebarY+310,ParticleViewportSize,ParticleViewportSize
+	CameraRange CameraParticle,.1,50
+	RotateEntity CameraParticle,90,0,0
+	PositionEntity CameraParticle,0.5,410,-0.5
+	CameraZoom CameraParticle,20.0*TilePickerZoomScaling#
+	
 	UpdateCameraProj()
 	UpdateCameraClsColor()
 
@@ -3432,20 +3441,17 @@ Function InitializeGraphicsEntities()
 	
 	ParticlePreview=CreateMesh()
 	ParticlePreviewSurface=CreateSurface(ParticlePreview)
-	ParticlePreviewSize#=10.0 ;0.04
-	AddVertex ParticlePreviewSurface,-ParticlePreviewSize#,ParticlePreviewSize#,0
-	AddVertex ParticlePreviewSurface,ParticlePreviewSize#,ParticlePreviewSize#,0
-	AddVertex ParticlePreviewSurface,-ParticlePreviewSize#,-ParticlePreviewSize#,0
-	AddVertex ParticlePreviewSurface,ParticlePreviewSize#,-ParticlePreviewSize#,0
+	AddVertex ParticlePreviewSurface,0,400,0
+	AddVertex ParticlePreviewSurface,1,400,0
+	AddVertex ParticlePreviewSurface,0,400,-1
+	AddVertex ParticlePreviewSurface,1,400,-1
 	
 	AddTriangle ParticlePreviewSurface,0,1,2
 	AddTriangle ParticlePreviewSurface,1,3,2
 	UpdateNormals ParticlePreview
 	
-	EntityOrder ParticlePreview,-10
-	EntityFX ParticlePreview,1
-	
-	HideEntity ParticlePreview
+	;EntityOrder ParticlePreview,-10
+	;EntityFX ParticlePreview,1
 
 End Function
 
@@ -3493,34 +3499,16 @@ Function ShowParticlePreview(x#,y#,tex)
 	v1#=Float(Floor(tex/8))*0.125+nudge
 	v2#=v1+0.125-2*nudge
 
-	VertexTexCoords(ParticlePreviewSurface,3,u1#,v1#)
-	VertexTexCoords(ParticlePreviewSurface,0,u2#,v2#)
+	VertexTexCoords(ParticlePreviewSurface,0,u1#,v1#)
 	VertexTexCoords(ParticlePreviewSurface,1,u2#,v1#)
 	VertexTexCoords(ParticlePreviewSurface,2,u1#,v2#)
+	VertexTexCoords(ParticlePreviewSurface,3,u2#,v2#)
 	
-	ShowEntity ParticlePreview
-	
-	If EditorMode=EditorModeDialog
-		TargetEntity=camera
-	Else
-		TargetEntity=Camera1
-	EndIf
-	StartX#=EntityX#(TargetEntity)
-	StartY#=EntityY#(TargetEntity)
-	StartZ#=EntityZ#(TargetEntity)+10
-	
-	;CameraZoomLevel#=Camera1Zoom#
-	;x#=x#/CameraZoomLevel
-	;y#=y#/CameraZoomLevel
-	
-	;PositionEntity ParticlePreview,x*GfxZoomScaling#,y*GfxZoomScaling#,1
-	;PositionEntity ParticlePreview,x/GfxZoomScaling#,y/GfxZoomScaling#,1
-	;PositionEntity ParticlePreview,x,y,1
-	;PositionEntity ParticlePreview,StartX#+x#,StartY#+y#,1
-	PositionEntity ParticlePreview,StartX#,StartY#,StartZ#
-	;RotateEntity ParticlePreview
-	
-	;xzx
+	CameraParticleProj=1
+	CameraParticlePreviewSize=50
+	; Align to the left.
+	CameraViewport CameraParticle,x#-CameraParticlePreviewSize,y#-CameraParticlePreviewSize,CameraParticlePreviewSize,CameraParticlePreviewSize
+	UpdateCameraProj()
 
 End Function
 
@@ -3531,6 +3519,7 @@ Function UpdateCameraProj()
 	CameraProjMode Camera3,Camera3Proj
 	CameraProjMode Camera4,Camera4Proj
 	CameraProjMode Camera,CameraProj
+	CameraProjMode CameraParticle,CameraParticleProj
 	
 	CameraZoom Camera1,Camera1Zoom#
 	CameraZoom Camera4,Camera4Zoom#
@@ -3642,6 +3631,11 @@ Function FinishDrawing()
 	
 	DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
 	CurrentTooltip$=""
+	
+	If CameraParticleProj=1
+		CameraParticleProj=0
+		UpdateCameraProj()
+	EndIf
 
 	If displayfullscreen=True
 		DrawImage mouseimg,MouseX(),MouseY()
