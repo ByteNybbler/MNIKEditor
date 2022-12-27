@@ -3224,6 +3224,7 @@ Function InitializeGraphicsCameras()
 	RotateEntity CameraParticle,90,0,0
 	PositionEntity CameraParticle,0.5,410,-0.5
 	CameraZoom CameraParticle,20.0*TilePickerZoomScaling#
+	EntityOrder CameraParticle,-1
 	
 	UpdateCameraProj()
 	UpdateCameraClsColor()
