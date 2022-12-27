@@ -798,6 +798,7 @@ Global FloodOutsideAdjacent
 
 Global ParticlePreview
 Global ParticlePreviewSurface
+Const CameraParticlePreviewSize=50
 
 ; TILE PRESETS
 ; ========================
@@ -3488,9 +3489,7 @@ Function ResolutionWasChanged()
 
 End Function
 
-Function ShowParticlePreview(x#,y#,tex)
-
-	;Return ; This crap doesn't work. Thank you Blitz3D for making it incredibly difficult to draw textured rectangle UI.
+Function ShowParticlePreviewLeftAligned(x#,y#,tex)
 
 	nudge#=.001 ; push this much inward from texture border to avoid grabbing pieces of neighbour
 	
@@ -3505,10 +3504,20 @@ Function ShowParticlePreview(x#,y#,tex)
 	VertexTexCoords(ParticlePreviewSurface,3,u2#,v2#)
 	
 	CameraParticleProj=1
-	CameraParticlePreviewSize=50
-	; Align to the left.
-	CameraViewport CameraParticle,x#-CameraParticlePreviewSize,y#-CameraParticlePreviewSize,CameraParticlePreviewSize,CameraParticlePreviewSize
+	CameraViewport CameraParticle,x#,y#-CameraParticlePreviewSize,CameraParticlePreviewSize,CameraParticlePreviewSize
 	UpdateCameraProj()
+
+End Function
+
+Function ShowParticlePreviewRightAligned(x#,y#,tex)
+
+	ShowParticlePreviewLeftAligned(x#-CameraParticlePreviewSize,y#,tex)
+
+End Function
+
+Function ShowParticlePreviewCenterAligned(x#,y#,tex)
+
+	ShowParticlePreviewLeftAligned(x#-CameraParticlePreviewSize/2,y#,tex)
 
 End Function
 
@@ -4607,25 +4616,40 @@ Global CurrentTooltip$
 
 Function ShowTooltipLeftAligned(StartX,StartY,Message$)
 
-	CurrentTooltipStartX=StartX
-	CurrentTooltipStartY=StartY
-	CurrentTooltip$=Message$
+	If Instr(Message$,"{PARTICLE}")=0
+		CurrentTooltipStartX=StartX
+		CurrentTooltipStartY=StartY
+		CurrentTooltip$=Message$
+	Else
+		tex=Mid$(Message$,10,2)
+		ShowParticlePreviewLeftAligned(StartX,StartY,tex)
+	EndIf
 	
 End Function
 
 Function ShowTooltipRightAligned(StartX,StartY,Message$)
 
-	CurrentTooltipStartX=StartX-GetTextPixelLength(Message$)
-	CurrentTooltipStartY=StartY
-	CurrentTooltip$=Message$
+	If Instr(Message$,"{PARTICLE}")=0
+		CurrentTooltipStartX=StartX-GetTextPixelLength(Message$)
+		CurrentTooltipStartY=StartY
+		CurrentTooltip$=Message$
+	Else
+		tex=Mid$(Message$,10,2)
+		ShowParticlePreviewRightAligned(StartX,StartY,tex)
+	EndIf
 	
 End Function
 
 Function ShowTooltipCenterAligned(StartX,StartY,Message$)
 
-	CurrentTooltipStartX=StartX-GetCenteredTextOffset(Message$)
-	CurrentTooltipStartY=StartY
-	CurrentTooltip$=Message$
+	If Instr(Message$,"{PARTICLE}")=0
+		CurrentTooltipStartX=StartX-GetCenteredTextOffset(Message$)
+		CurrentTooltipStartY=StartY
+		CurrentTooltip$=Message$
+	Else
+		tex=Mid$(Message$,10,2)
+		ShowParticlePreviewCenterAligned(StartX,StartY,tex)
+	EndIf
 	
 End Function
 
@@ -13036,6 +13060,8 @@ Function HoverOverObjectAdjuster(i)
 			If CurrentObjectTargetIDEnabled(0)
 				ShowTooltipRightAligned(StartX,TooltipLeftY,tex$)
 			EndIf
+		ElseIf CurrentObject\Attributes\LogicType=190 Or CurrentObject\Attributes\LogicType=164 ; Particle Spawner or Fountain
+			ShowParticlePreviewRightAligned(StartX,TooltipLeftY,CurrentObject\Attributes\Data0)
 		EndIf
 		
 	Case "Data1"
@@ -13225,7 +13251,9 @@ Function HoverOverObjectAdjuster(i)
 		EndIf
 	
 	Case "Exclamation"
-		ShowParticlePreview(StartX,TooltipLeftY,CurrentObject\Attributes\Exclamation)
+		If CurrentObject\Attributes\Exclamation<>-1
+			ShowParticlePreviewRightAligned(StartX,TooltipLeftY,CurrentObject\Attributes\Exclamation)
+		EndIf
 	
 	End Select
 
@@ -14359,9 +14387,6 @@ Function DisplayObjectAdjuster(i)
 				If CurrentObject\Attributes\Data2=-1 Then	tex$="No Change"
 			Else If CurrentObject\Attributes\LogicSubType = 11 And CurrentObject\Attributes\Data0=2 ; NPC Exclamation
 				tex2$="Particle ID"
-
-
-
 			EndIf
 		EndIf
 		
@@ -15957,13 +15982,7 @@ Function AdjustObjectAdjuster(i)
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			SetThreeOtherDataIfNotEqual(1,2,3,0,OldData)
 		EndIf
-
 		
-		If CurrentObject\Attributes\LogicType=190 Or CurrentObject\Attributes\LogicType=164
-			; particle spray
-			If CurrentObject\Attributes\Data0>63 CurrentObject\Attributes\Data0=0
-			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=63
-		EndIf
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			; Shape
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
@@ -28326,6 +28345,8 @@ Function GetCmdData2ExtraInfo$(Cmd,Data1,Data2)
 		EndIf
 	Case 23,24,25,26,27
 		Return PreviewAskAbout$(Data1,Data2)
+	Case 64
+		Return "{PARTICLE}"+Data2
 	End Select
 	
 	Return ""
