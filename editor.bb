@@ -4616,12 +4616,13 @@ Global CurrentTooltip$
 
 Function ShowTooltipLeftAligned(StartX,StartY,Message$)
 
-	If Instr(Message$,"{PARTICLE}")=0
+	TheInstr=Instr(Message$,"{PARTICLE}")
+	If TheInstr=0
 		CurrentTooltipStartX=StartX
 		CurrentTooltipStartY=StartY
 		CurrentTooltip$=Message$
 	Else
-		tex=Mid$(Message$,11,Len(Message$)-10)
+		tex=Mid$(Message$,TheInstr+10,Len(Message$)-TheInstr-9)
 		ShowParticlePreviewLeftAligned(StartX,StartY,tex)
 	EndIf
 	
@@ -4629,12 +4630,13 @@ End Function
 
 Function ShowTooltipRightAligned(StartX,StartY,Message$)
 
-	If Instr(Message$,"{PARTICLE}")=0
+	TheInstr=Instr(Message$,"{PARTICLE}")
+	If TheInstr=0
 		CurrentTooltipStartX=StartX-GetTextPixelLength(Message$)
 		CurrentTooltipStartY=StartY
 		CurrentTooltip$=Message$
 	Else
-		tex=Mid$(Message$,11,Len(Message$)-10)
+		tex=Mid$(Message$,TheInstr+10,Len(Message$)-TheInstr-9)
 		ShowParticlePreviewRightAligned(StartX,StartY,tex)
 	EndIf
 	
@@ -4642,12 +4644,13 @@ End Function
 
 Function ShowTooltipCenterAligned(StartX,StartY,Message$)
 
-	If Instr(Message$,"{PARTICLE}")=0
+	TheInstr=Instr(Message$,"{PARTICLE}")
+	If TheInstr=0
 		CurrentTooltipStartX=StartX-GetCenteredTextOffset(Message$)
 		CurrentTooltipStartY=StartY
 		CurrentTooltip$=Message$
 	Else
-		tex=Mid$(Message$,11,Len(Message$)-10)
+		tex=Mid$(Message$,TheInstr+10,Len(Message$)-TheInstr-9)
 		ShowParticlePreviewCenterAligned(StartX,StartY,tex)
 	EndIf
 	
