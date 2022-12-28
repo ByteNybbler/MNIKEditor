@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/29/22"
+Global VersionDate$="12/30/22"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -29530,6 +29530,8 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObject\Attributes\MovementSpeed=35
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6+2^8
+		CurrentObject\Attributes\LogicSubType=1  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged when directed 5 caged when follow
+		CurrentObject\Attributes\CurrentAnim=3 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
 		
 	Case 420 ; Coily
 		CurrentObject\Attributes\MovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
