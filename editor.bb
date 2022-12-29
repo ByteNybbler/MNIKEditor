@@ -13593,7 +13593,7 @@ Function DisplayObjectAdjuster(i)
 			End Select
 		EndIf
 		
-		If CurrentObject\Attributes\LogicType=120 ; Wee Stinker
+		If CurrentObject\Attributes\LogicType=120 Or CurrentObject\Attributes\LogicType=400 ; Wee Stinker or Baby Boomer
 			Select CurrentObject\Attributes\LogicSubType
 			Case -2
 				tex$="Dying?"
@@ -13604,11 +13604,13 @@ Function DisplayObjectAdjuster(i)
 			Case 1
 				tex$="Following"
 			Case 2
-				tex$="Stationary"
+				tex$="Directed"
 			Case 3
 				tex$="FallingAsleep"
 			Case 4
-				tex$="Caged"
+				tex$="CagedDirected"
+			Case 5
+				tex$="CagedFollow"
 			End Select
 		EndIf
 		
