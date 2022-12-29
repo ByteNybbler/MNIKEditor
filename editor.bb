@@ -4742,7 +4742,7 @@ End Function
 
 Function BrushCursorPositionWasChanged()
 	
-	; object dragging
+	; object dragging ; dragging
 	If NofDraggedObjects<>0
 		DragChange=True
 	
@@ -11330,7 +11330,7 @@ Function ObjectsWereChanged()
 	ResetSimulatedQuantities()
 	FinalizeCurrentObject()
 	
-	AddUnsavedChange()
+	;AddUnsavedChange()
 	
 	NofObjectsInstantiated=NofObjects
 	For i=0 To NofObjects-1
@@ -11871,6 +11871,7 @@ Function SetObjectIndex(SourceIndex,TargetIndex)
 		Next
 		
 		ObjectsWereChanged()
+		AddUnsavedChange()
 	ElseIf TargetIndex>SourceIndex
 		MoveObjectData(SourceIndex,1000) ; Move to temp.
 		i=SourceIndex+1
@@ -11909,6 +11910,7 @@ Function SetObjectIndex(SourceIndex,TargetIndex)
 		Next
 		
 		ObjectsWereChanged()
+		AddUnsavedChange()
 	EndIf
 
 End Function
@@ -12177,6 +12179,7 @@ Function UpdateSelectedObjects()
 	RecalculateObjectAdjusterModes()
 	
 	ObjectsWereChanged()
+	AddUnsavedChange()
 
 End Function
 
@@ -18538,6 +18541,7 @@ Function ReSizeLevel()
 	;SomeTileWasChanged()
 	
 	ObjectsWereChanged()
+	AddUnsavedChange()
 
 End Function
 
@@ -18713,6 +18717,7 @@ Function FlipLevelX()
 	
 	;SomeTileWasChanged()
 	ObjectsWereChanged()
+	AddUnsavedChange()
 	
 End Function
 
@@ -18745,6 +18750,7 @@ Function FlipLevelY()
 	
 	;SomeTileWasChanged()
 	ObjectsWereChanged()
+	AddUnsavedChange()
 	
 End Function
 
@@ -18784,6 +18790,7 @@ Function FlipLevelXY()
 	
 	;SomeTileWasChanged()
 	ObjectsWereChanged()
+	AddUnsavedChange()
 	
 End Function
 
