@@ -5767,6 +5767,7 @@ Function EditorLocalControls()
 								Next
 							Next
 							ObjectsWereChanged()
+							AddUnsavedChange()
 						EndIf
 						SetBrushMode(BrushModeBlock)
 					EndIf
@@ -5947,6 +5948,7 @@ Function EditorLocalControls()
 						Next
 						
 						ObjectsWereChanged()
+						AddUnsavedChange()
 					EndIf
 					
 					RecalculateDragSize()
@@ -5961,6 +5963,7 @@ Function EditorLocalControls()
 					SetBrushMode(BrushModeBlock)
 					
 					ObjectsWereChanged()
+					AddUnsavedChange()
 				EndIf
 			EndIf
 			
@@ -7039,6 +7042,7 @@ Function EditorLocalControls()
 				SetEditorMode(3)
 				
 				ObjectsWereChanged()
+				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
@@ -7717,6 +7721,7 @@ Function EditorLocalControls()
 				EndIf
 				
 				ObjectsWereChanged()
+				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
@@ -29618,6 +29623,15 @@ Function RetrieveDefaultTrueMovement()
 	BuildCurrentObjectModel()
 	Return True
 
+End Function
+
+
+; Checks if the level is dark enough to use a GlowGem/Lamp.
+Function TooDark()
+	If SimulatedLightRedgoal+SimulatedLightBluegoal+SimulatedLightGreengoal+SimulatedAmbientRedgoal+SimulatedAmbientBluegoal+SimulatedAmbientGreengoal<500
+		Return True
+	EndIf
+	Return False
 End Function
 
 
