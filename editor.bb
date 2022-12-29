@@ -16001,6 +16001,12 @@ Function AdjustObjectAdjuster(i)
 			SetThreeOtherDataIfNotEqual(1,2,3,0,OldData)
 		EndIf
 		
+		If CurrentObject\Attributes\ModelName$="!Retrolasergate"
+			; Color
+			If CurrentObject\Attributes\Data0>63 CurrentObject\Attributes\Data0=0
+			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=63
+		EndIf
+		
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			; Shape
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
