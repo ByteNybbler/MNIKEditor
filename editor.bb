@@ -26960,13 +26960,19 @@ Function SaveDialogFile()
 		Next
 		
 		; calculate nofinterchangereplies
-		For j=0 To 8
-			If InterChangeReplyText$(i,j)=""
-				NofInterChangeReplies(i)=j
-				j=17
+		;For j=0 To 8
+		;	If InterChangeReplyText$(i,j)=""
+		;		NofInterChangeReplies(i)=j
+		;		j=17
+		;	EndIf
+		;Next
+		;If j=9 Then NofInterChangeReplies(i)=9
+		
+		For j=0 To MaxReply
+			If InterChangeReplyText$(i,j)<>""
+				NofInterChangeReplies(i)=j+1
 			EndIf
 		Next
-		If j=9 Then NofInterChangeReplies(i)=9
 
 
 		WriteInt File,NofInterChangeReplies(i)
