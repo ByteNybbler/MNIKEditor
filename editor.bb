@@ -1961,6 +1961,7 @@ End Function
 
 
 Global Light
+Global SpotLight
 AmbientLight 155,155,155
 
 Global Camera1 ; level camera
@@ -3347,6 +3348,10 @@ Function InitializeGraphicsEntities()
 
 	Light=CreateLight()
 	RotateEntity Light,80,15,0
+	
+	SpotLight=CreateLight(3)
+	RotateEntity SpotLight,60,0,0
+	LightConeAngles SpotLight,0,60
 	
 	InitializeLevelModel()
 	
@@ -32756,6 +32761,14 @@ Function ControlLight()
 		AmbientLight 155,155,155
 		RotateEntity Light,80,15,0
 		
+	EndIf
+	
+	If SimulationLevel>=4 And TooDark()
+		LightColor SpotLight,10,4,0
+		PositionEntity SpotLight,BrushCursorX+0.5,5,-BrushCursorY-3.5
+	Else
+		LightColor SpotLight,0,0,0
+		;PositionEntity SpotLight,-10000,-10000,-10000
 	EndIf
 
 End Function
