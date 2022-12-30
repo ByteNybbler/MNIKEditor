@@ -3347,6 +3347,14 @@ Function InitializeGraphicsEntities()
 
 	Light=CreateLight()
 	RotateEntity Light,80,15,0
+	
+	InitializeLevelModel()
+	
+;	For i=0 To MaxLevelCoordinate
+;		LevelMesh(i)=CreateMesh()
+;		WaterMesh(i)=CreateMesh()
+;		LogicMesh(i)=CreateMesh()
+;	Next
 
 	TexturePlane=CreateMesh()
 	TexturePlaneSurface=CreateSurface(TexturePlane)
@@ -8570,11 +8578,20 @@ End Function
 
 Function ReBuildLevelModel()
 
-	For i=0 To MaxLevelCoordinate
-		FreeEntity LevelMesh(i)
-		FreeEntity WaterMesh(i)
-		FreeEntity LogicMesh(i)
-	Next
+;	For i=0 To MaxLevelCoordinate
+;		If LevelMesh(i)>0
+;			FreeEntity LevelMesh(i)
+;			LevelMesh(i)=0
+;		EndIf
+;		If WaterMesh(i)>0
+;			FreeEntity WaterMesh(i)
+;			WaterMesh(i)=0
+;		EndIf
+;		If LogicMesh(i)>0
+;			FreeEntity LogicMesh(i)
+;			LogicMesh(i)=0
+;		EndIf
+;	Next
 
 	BuildLevelModel()
 	
@@ -9558,14 +9575,15 @@ Function RecalculateNormals(j)
 End Function
 
 
-Function BuildLevelModel()
+Function InitializeLevelModel()
 
-	
 	For i=0 To MaxLevelCoordinate
+		;FreeEntity LevelMesh(i)
 		LevelMesh(i)=CreateMesh()
 		LevelSurface(i)=CreateSurface(LevelMesh(i))
 		;EntityFX LevelMesh(i),2
 		
+		;FreeEntity WaterMesh(i)
 		Watermesh(i)=CreateMesh()
 		Watersurface(i)=CreateSurface(Watermesh(i))
 		;EntityAlpha WaterMesh(i),.5
@@ -9573,19 +9591,27 @@ Function BuildLevelModel()
 		;UpdateWaterMeshGlow(i)
 		;UpdateWaterMeshTransparent(i)
 		
+		;FreeEntity LogicMesh(i)
 		Logicmesh(i)=CreateMesh()
 		Logicsurface(i)=CreateSurface(Logicmesh(i))
 		EntityFX LogicMesh(i),2
-
-
 	Next
+
+End Function
+
+
+Function BuildLevelModel()
+	
 	UpdateAllWaterMeshGlow()
 	UpdateAllWaterMeshTransparent()
 
+	For j=0 To MaxLevelCoordinate
+		ClearSurface LevelSurface(j)
+		ClearSurface WaterSurface(j)
+		ClearSurface LogicSurface(j)
+	Next
 	
 	For j=0 To LevelHeight-1
-		ClearSurface LevelSurface(j)
-		
 		For i=0 To LevelWidth-1
 			CreateLevelTileTop(i,j)
 		Next
@@ -9611,7 +9637,6 @@ Function BuildLevelModel()
 	
 	; water
 	For j=0 To LevelHeight-1
-		ClearSurface WaterSurface(j)
 		For i=0 To LevelWidth-1
 			; top face
 			CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4,1)
@@ -9634,7 +9659,7 @@ Function BuildLevelModel()
 		UpdateNormals WaterMesh(j)
 		EntityTexture WaterMesh(j),WaterTexture
 		
-		TranslateEntity WaterMesh(j),0,-0.04,0
+		PositionEntity WaterMesh(j),0,-0.04,0
 	Next
 		
 	; logic
