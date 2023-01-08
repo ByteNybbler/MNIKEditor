@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="12/30/22"
+Global VersionDate$="01/07/23"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -28784,6 +28784,7 @@ Function BuildHub()
 	
 	If FileType(HubDir$)<>2
 		Print "ERROR: Unable to create directory."
+		Print "Check that any characters in the hub title or description can be part of a folder name."
 		Print "Aborting..."
 		Delay 3000
 		Return False
