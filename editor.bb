@@ -28886,6 +28886,16 @@ Function CompileHub(PackContent)
 		fn$=HubTitle$+"#"+HubDescription$
 	EndIf
 	
+	file1=WriteFile(globaldirname$+"\Custom\downloads inbox\"+fn$+".wah")
+	
+	If file1=0
+		Print "ERROR: Unable to create WAH file."
+		Print "Check that any characters in the hub title or description can be part of a filename."
+		Print "Aborting..."
+		Delay 3000
+		Return False
+	EndIf
+	
 	NofWlvFiles=0
 	NofDiaFiles=0
 
@@ -28923,7 +28933,6 @@ Function CompileHub(PackContent)
 	Print ""
 	Print "Writing WAH File to Downloads Inbox..."
 	Print ""
-	file1=WriteFile(globaldirname$+"\Custom\downloads inbox\"+fn$+".wah")
 	
 	HubTotal=0
 	For k=0 To HubTotalAdventures
