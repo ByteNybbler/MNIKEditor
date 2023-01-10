@@ -17967,16 +17967,18 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	
 	If Obj\Attributes\LogicType=200 Or Obj\Attributes\LogicType=201 ; glovecharge or glovedischarge
 		If EntityClass(Obj\Model\Entity)="Mesh"
-			EntityFX Obj\Model\Entity,2
-			
-			TheSurface=GetSurface(Obj\Model\Entity,1)
-			For ii=0 To 3
-				Col=Obj\Attributes\Data0
-				red=GetMagicColor(Col,0)
-				green=GetMagicColor(Col,1)
-				blue=GetMagicColor(Col,2)
-				VertexColor TheSurface,ii,red,green,blue
-			Next
+			If CountSurfaces(Obj\Model\Entity)<>0
+				EntityFX Obj\Model\Entity,2
+				
+				TheSurface=GetSurface(Obj\Model\Entity,1)
+				For ii=0 To 3
+					Col=Obj\Attributes\Data0
+					red=GetMagicColor(Col,0)
+					green=GetMagicColor(Col,1)
+					blue=GetMagicColor(Col,2)
+					VertexColor TheSurface,ii,red,green,blue
+				Next
+			EndIf
 		EndIf
 	EndIf
 	
