@@ -57,7 +57,7 @@
 * F: Flip the brush horizontally.
 * V: Rotate the brush 90 degrees.
 * Ctrl+S: Save level.
-* Ctrl+T: Update the currently-grabbed object, save level, and activate the "Test Level At Cursor" brush mode.
+* Ctrl+T: Update the currently-grabbed object, save level, and activate the "Test Level At Cursor" brush mode. If the brush mode is currently "Test Level At Cursor", then the brush mode will simply revert to the Normal mode.
 * Ctrl+C: Copy all selected objects to the brush.
 * Ctrl+O: Type in the number of the wlv you want to open.
 * Ctrl+Backspace: Open the previous wlv that was opened. This can be done numerous times in a row to retrace your steps, perhaps after having followed LevelExits by pressing G. The last 100 opened wlvs are tracked.

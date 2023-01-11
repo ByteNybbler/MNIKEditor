@@ -7161,9 +7161,13 @@ Function EditorLocalControls()
 	
 	If KeyPressed(20) ; T key
 		If CtrlDown() ; Ctrl+T
-			UpdateSelectedObjectsIfExists()
-			SaveLevel()
-			SetBrushMode(BrushModeTestLevel)
+			If BrushMode=BrushModeTestLevel
+				SetBrushMode(BrushModeNormal)
+			Else
+				UpdateSelectedObjectsIfExists()
+				SaveLevel()
+				SetBrushMode(BrushModeTestLevel)
+			EndIf
 		Else
 			If GetConfirmation("Give the current object its default TrueMovement values?")
 				If RetrieveDefaultTrueMovement()
