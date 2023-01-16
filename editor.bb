@@ -20296,6 +20296,151 @@ Function TryPopPreviousLevel()
 End Function
 
 
+Function LoadObjectAttributes(file,i)
+
+	LevelObject.GameObject=LevelObjects(i)
+	Attributes.GameObjectAttributes=LevelObject\Attributes
+	Position.GameObjectPosition=LevelObject\Position
+	
+	Attributes\ModelName$=ReadString$(file)
+	Attributes\TexName$=ReadString$(file)
+	Attributes\XScale=ReadFloat(file)
+	Attributes\YScale=ReadFloat(file)
+	Attributes\ZScale=ReadFloat(file)
+	Attributes\XAdjust=ReadFloat(file)
+	Attributes\YAdjust=ReadFloat(file)
+	Attributes\ZAdjust=ReadFloat(file)
+	Attributes\PitchAdjust=ReadFloat(file)
+	Attributes\YawAdjust=ReadFloat(file)
+	Attributes\RollAdjust=ReadFloat(file)
+
+	Position\X=ReadFloat(file)
+	Position\Y=ReadFloat(file)
+	Position\Z=ReadFloat(file)
+	Position\OldX=ReadFloat(file)
+	Position\OldY=ReadFloat(file)
+	Position\OldZ=ReadFloat(file)
+
+	Attributes\DX=ReadFloat(file)
+	Attributes\DY=ReadFloat(file)
+	Attributes\DZ=ReadFloat(file)
+
+	Attributes\Pitch=ReadFloat(file)
+	Attributes\Yaw=ReadFloat(file)
+	Attributes\Roll=ReadFloat(file)
+	Attributes\Pitch2=ReadFloat(file)
+	Attributes\Yaw2=ReadFloat(file)
+	Attributes\Roll2=ReadFloat(file)
+
+	Attributes\XGoal=ReadFloat(file)
+	Attributes\YGoal=ReadFloat(file)
+	Attributes\ZGoal=ReadFloat(file)
+
+	Attributes\MovementType=ReadInt(file)
+	Attributes\MovementTypeData=ReadInt(file)
+	Attributes\Speed=ReadFloat(file)
+	Attributes\Radius=ReadFloat(file)
+	Attributes\RadiusType=ReadInt(file)
+
+	Attributes\Data10=ReadInt(file)
+
+	Attributes\PushDX=ReadFloat(file)
+	Attributes\PushDY=ReadFloat(file)
+
+	Attributes\AttackPower=ReadInt(file)
+	Attributes\DefensePower=ReadInt(file)
+	Attributes\DestructionType=ReadInt(file)
+
+	Attributes\ID=ReadInt(file)
+	
+	Attributes\LogicType=ReadInt(file)
+	Attributes\LogicSubType=ReadInt(file)
+
+	Attributes\Active=ReadInt(file)
+	Attributes\LastActive=ReadInt(file)
+	Attributes\ActivationType=ReadInt(file)
+	Attributes\ActivationSpeed=ReadInt(file)
+
+	Attributes\Status=ReadInt(file)
+	Attributes\Timer=ReadInt(file)
+	Attributes\TimerMax1=ReadInt(file)
+	Attributes\TimerMax2=ReadInt(file)
+
+	Attributes\Teleportable=ReadInt(file)
+	Attributes\ButtonPush=ReadInt(file)
+	Attributes\WaterReact=ReadInt(file)
+
+	Attributes\Telekinesisable=ReadInt(file)
+	Attributes\Freezable=ReadInt(file)
+
+	Attributes\Reactive=ReadInt(file)
+
+	Attributes\Child=ReadInt(file)
+	Attributes\Parent=ReadInt(file)
+
+	Attributes\Data0=ReadInt(file)
+	Attributes\Data1=ReadInt(file)
+	Attributes\Data2=ReadInt(file)
+	Attributes\Data3=ReadInt(file)
+	Attributes\Data4=ReadInt(file)
+	Attributes\Data5=ReadInt(file)
+	Attributes\Data6=ReadInt(file)
+	Attributes\Data7=ReadInt(file)
+	Attributes\Data8=ReadInt(file)
+	Attributes\Data9=ReadInt(file)
+
+	Attributes\TextData0=ReadString$(file)
+	Attributes\TextData1=ReadString$(file)
+	Attributes\TextData2=ReadString$(file)
+	Attributes\TextData3=ReadString$(file)
+	
+	Attributes\Talkable=ReadInt(file)
+	Attributes\CurrentAnim=ReadInt(file)
+	Attributes\StandardAnim=ReadInt(file)
+	;ObjectTileX=ReadInt(file)
+	;ObjectTileY=ReadInt(file)
+	tilex=ReadInt(file)
+	tiley=ReadInt(file)
+	SetObjectTileXY(i,tilex,tiley)
+	ReadInt(file) ;ObjectTileX2=ReadInt(file)
+	ReadInt(file) ;ObjectTileY2=ReadInt(file)
+	Attributes\MovementTimer=ReadInt(file)
+	Attributes\MovementSpeed=ReadInt(file)
+	Attributes\MoveXGoal=ReadInt(file)
+	Attributes\MoveYGoal=ReadInt(file)
+	Attributes\TileTypeCollision=ReadInt(file)
+	Attributes\ObjectTypeCollision=ReadInt(file)
+	Attributes\Caged=ReadInt(file)
+	Attributes\Dead=ReadInt(file)
+	Attributes\DeadTimer=ReadInt(file)
+	Attributes\Exclamation=ReadInt(file)
+	Attributes\Shadow=ReadInt(file)
+	Attributes\Linked=ReadInt(file)
+	Attributes\LinkBack=ReadInt(file)
+	Attributes\Flying=ReadInt(file)
+	Attributes\Frozen=ReadInt(file)
+	Attributes\Indigo=ReadInt(file)
+	Attributes\FutureInt24=ReadInt(file)
+	Attributes\FutureInt25=ReadInt(file)
+	Attributes\ScaleAdjust=ReadFloat(file)
+	Attributes\ScaleXAdjust=ReadFloat(file)	
+	Attributes\ScaleYAdjust=ReadFloat(file)
+	Attributes\ScaleZAdjust=ReadFloat(file)
+	Attributes\ScaleXAdjust=1.0
+	Attributes\ScaleYAdjust=1.0
+	Attributes\ScaleZAdjust=1.0
+	Attributes\FutureFloat5=ReadFloat(file)
+	Attributes\FutureFloat6=ReadFloat(file)
+	Attributes\FutureFloat7=ReadFloat(file)	
+	Attributes\FutureFloat8=ReadFloat(file)
+	Attributes\FutureFloat9=ReadFloat(file)
+	Attributes\FutureFloat10=ReadFloat(file)
+	Attributes\FutureString1$=ReadString(file)
+	Attributes\FutureString2$=ReadString(file)
+
+End Function
+
+
 Function LoadLevel(levelnumber)
 
 	SetCurrentLevelNumber(levelnumber)
@@ -20415,151 +20560,16 @@ Function LoadLevel(levelnumber)
 
 	SetNofObjects(0)
 	ReadObjectCount=ReadInt(file)
+	
 	For i=0 To ReadObjectCount-1
-		LevelObject.GameObject=LevelObjects(i)
-		Attributes.GameObjectAttributes=LevelObject\Attributes
-		Position.GameObjectPosition=LevelObject\Position
-		
-		Attributes\ModelName$=ReadString$(file)
-		Attributes\TexName$=ReadString$(file)
-		Attributes\XScale=ReadFloat(file)
-		Attributes\YScale=ReadFloat(file)
-		Attributes\ZScale=ReadFloat(file)
-		Attributes\XAdjust=ReadFloat(file)
-		Attributes\YAdjust=ReadFloat(file)
-		Attributes\ZAdjust=ReadFloat(file)
-		Attributes\PitchAdjust=ReadFloat(file)
-		Attributes\YawAdjust=ReadFloat(file)
-		Attributes\RollAdjust=ReadFloat(file)
-	
-		Position\X=ReadFloat(file)
-		Position\Y=ReadFloat(file)
-		Position\Z=ReadFloat(file)
-		Position\OldX=ReadFloat(file)
-		Position\OldY=ReadFloat(file)
-		Position\OldZ=ReadFloat(file)
-
-		Attributes\DX=ReadFloat(file)
-		Attributes\DY=ReadFloat(file)
-		Attributes\DZ=ReadFloat(file)
-	
-		Attributes\Pitch=ReadFloat(file)
-		Attributes\Yaw=ReadFloat(file)
-		Attributes\Roll=ReadFloat(file)
-		Attributes\Pitch2=ReadFloat(file)
-		Attributes\Yaw2=ReadFloat(file)
-		Attributes\Roll2=ReadFloat(file)
-
-		Attributes\XGoal=ReadFloat(file)
-		Attributes\YGoal=ReadFloat(file)
-		Attributes\ZGoal=ReadFloat(file)
-	
-		Attributes\MovementType=ReadInt(file)
-		Attributes\MovementTypeData=ReadInt(file)
-		Attributes\Speed=ReadFloat(file)
-		Attributes\Radius=ReadFloat(file)
-		Attributes\RadiusType=ReadInt(file)
-	
-		Attributes\Data10=ReadInt(file)
-	
-		Attributes\PushDX=ReadFloat(file)
-		Attributes\PushDY=ReadFloat(file)
-	
-		Attributes\AttackPower=ReadInt(file)
-		Attributes\DefensePower=ReadInt(file)
-		Attributes\DestructionType=ReadInt(file)
-	
-		Attributes\ID=ReadInt(file)
-		
-		Attributes\LogicType=ReadInt(file)
-		Attributes\LogicSubType=ReadInt(file)
-	
-		Attributes\Active=ReadInt(file)
-		Attributes\LastActive=ReadInt(file)
-		Attributes\ActivationType=ReadInt(file)
-		Attributes\ActivationSpeed=ReadInt(file)
-	
-		Attributes\Status=ReadInt(file)
-		Attributes\Timer=ReadInt(file)
-		Attributes\TimerMax1=ReadInt(file)
-		Attributes\TimerMax2=ReadInt(file)
-	
-		Attributes\Teleportable=ReadInt(file)
-		Attributes\ButtonPush=ReadInt(file)
-		Attributes\WaterReact=ReadInt(file)
-	
-		Attributes\Telekinesisable=ReadInt(file)
-		Attributes\Freezable=ReadInt(file)
-	
-		Attributes\Reactive=ReadInt(file)
-
-		Attributes\Child=ReadInt(file)
-		Attributes\Parent=ReadInt(file)
-
-		Attributes\Data0=ReadInt(file)
-		Attributes\Data1=ReadInt(file)
-		Attributes\Data2=ReadInt(file)
-		Attributes\Data3=ReadInt(file)
-		Attributes\Data4=ReadInt(file)
-		Attributes\Data5=ReadInt(file)
-		Attributes\Data6=ReadInt(file)
-		Attributes\Data7=ReadInt(file)
-		Attributes\Data8=ReadInt(file)
-		Attributes\Data9=ReadInt(file)
-	
-		Attributes\TextData0=ReadString$(file)
-		Attributes\TextData1=ReadString$(file)
-		Attributes\TextData2=ReadString$(file)
-		Attributes\TextData3=ReadString$(file)
-		
-		Attributes\Talkable=ReadInt(file)
-		Attributes\CurrentAnim=ReadInt(file)
-		Attributes\StandardAnim=ReadInt(file)
-		;ObjectTileX=ReadInt(file)
-		;ObjectTileY=ReadInt(file)
-		tilex=ReadInt(file)
-		tiley=ReadInt(file)
-		SetObjectTileXY(i,tilex,tiley)
-		ReadInt(file) ;ObjectTileX2=ReadInt(file)
-		ReadInt(file) ;ObjectTileY2=ReadInt(file)
-		Attributes\MovementTimer=ReadInt(file)
-		Attributes\MovementSpeed=ReadInt(file)
-		Attributes\MoveXGoal=ReadInt(file)
-		Attributes\MoveYGoal=ReadInt(file)
-		Attributes\TileTypeCollision=ReadInt(file)
-		Attributes\ObjectTypeCollision=ReadInt(file)
-		Attributes\Caged=ReadInt(file)
-		Attributes\Dead=ReadInt(file)
-		Attributes\DeadTimer=ReadInt(file)
-		Attributes\Exclamation=ReadInt(file)
-		Attributes\Shadow=ReadInt(file)
-		Attributes\Linked=ReadInt(file)
-		Attributes\LinkBack=ReadInt(file)
-		Attributes\Flying=ReadInt(file)
-		Attributes\Frozen=ReadInt(file)
-		Attributes\Indigo=ReadInt(file)
-		Attributes\FutureInt24=ReadInt(file)
-		Attributes\FutureInt25=ReadInt(file)
-		Attributes\ScaleAdjust=ReadFloat(file)
-		Attributes\ScaleXAdjust=ReadFloat(file)	
-		Attributes\ScaleYAdjust=ReadFloat(file)
-		Attributes\ScaleZAdjust=ReadFloat(file)
-		Attributes\ScaleXAdjust=1.0
-		Attributes\ScaleYAdjust=1.0
-		Attributes\ScaleZAdjust=1.0
-		Attributes\FutureFloat5=ReadFloat(file)
-		Attributes\FutureFloat6=ReadFloat(file)
-		Attributes\FutureFloat7=ReadFloat(file)	
-		Attributes\FutureFloat8=ReadFloat(file)
-		Attributes\FutureFloat9=ReadFloat(file)
-		Attributes\FutureFloat10=ReadFloat(file)
-		Attributes\FutureString1$=ReadString(file)
-		Attributes\FutureString2$=ReadString(file)
-		
-		For k=0 To 30
-			;ObjectAdjusterString$(Dest,k)=ReadString(file)
-			ReadString(file)
-		Next
+		LoadObjectAttributes(file,i)
+				
+		If WA1Format=False
+			For k=0 To 30
+				;ObjectAdjusterString$(Dest,k)=ReadString(file)
+				ReadString(file)
+			Next
+		EndIf
 		
 		BuildLevelObjectModel(i)
 
