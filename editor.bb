@@ -13688,6 +13688,8 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=20 ; Fire trap
 			tex2$=" TimerOn" ; Extra space to align it with TimerOff.
+		ElseIf CurrentObject\Attributes\LogicType=40 ; Bridge
+			tex2$="TimerToggle"
 		ElseIf CurrentObject\Attributes\LogicType=230 ; FireFlower
 			tex2$="TimerShoot"
 		EndIf
@@ -13703,6 +13705,8 @@ Function DisplayObjectAdjuster(i)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,tex$)
 		
 		If CurrentObject\Attributes\LogicType=20 ; Fire trap
+			tex2$="StartDelay"
+		ElseIf CurrentObject\Attributes\LogicType=40 ; Bridge
 			tex2$="StartDelay"
 		ElseIf CurrentObject\Attributes\LogicType=230 Or CurrentObject\Attributes\LogicType=290 ; FireFlower or Thwart
 			tex2$="AttackDelay"
