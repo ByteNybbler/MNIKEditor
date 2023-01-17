@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="01/07/23"
+Global VersionDate$="01/16/23"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -420,6 +420,7 @@ Const DefaultCameraFocusY=10
 Dim LevelMesh(MaxLevelCoordinate),LevelSurface(MaxLevelCoordinate) ; one for each row
 Dim WaterMesh(MaxLevelCoordinate),WaterSurface(MaxLevelCoordinate)
 Dim LogicMesh(MaxLevelCoordinate),LogicSurface(MaxLevelCoordinate)
+Const LogicVerticesPerTile=8
 Dim DirtyNormals(MaxLevelCoordinate)
 Global ShowLogicMesh=False
 
@@ -8573,13 +8574,10 @@ Function ColorLevelTileLogic(i,j)
 		green=0
 		blue=0
 	End Select
-
 	
-	VertexColor LogicSurface(j),i*4+0,red,green,blue;,.5
-	VertexColor LogicSurface(j),i*4+1,red,green,blue;,.5
-	VertexColor LogicSurface(j),i*4+2,red,green,blue;,.5
-	VertexColor LogicSurface(j),i*4+3,red,green,blue;,.5
-		
+	For k=0 To LogicVerticesPerTile-1
+		VertexColor LogicSurface(j),i*LogicVerticesPerTile+k,red,green,blue;,.5
+	Next
 
 End Function
 
@@ -9689,13 +9687,26 @@ Function BuildLevelModel()
 			Else
 				height#=LevelTiles(i,j)\Terrain\Extrusion+0.05
 			EndIf
+			
 			AddVertex (LogicSurface(j),i+nologicshow,height,-j)
 			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j)
 			AddVertex (LogicSurface(j),i+nologicshow,height,-j-1)
 			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j-1)
 						
-			AddTriangle (LogicSurface(j),i*4+0,i*4+1,i*4+2)
-			AddTriangle (LogicSurface(j),i*4+1,i*4+3,i*4+2)
+			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+0,i*LogicVerticesPerTile+1,i*LogicVerticesPerTile+2)
+			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+1,i*LogicVerticesPerTile+3,i*LogicVerticesPerTile+2)
+			
+			
+			height#=0.05
+			
+			AddVertex (LogicSurface(j),i+nologicshow,height,-j)
+			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j)
+			AddVertex (LogicSurface(j),i+nologicshow,height,-j-1)
+			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j-1)
+						
+			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+4,i*LogicVerticesPerTile+5,i*LogicVerticesPerTile+6)
+			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+5,i*LogicVerticesPerTile+7,i*LogicVerticesPerTile+6)
+			
 			
 			ColorLevelTileLogic(i,j)
 
@@ -16901,11 +16912,17 @@ Function UpdateLogicTile(i,j)
 	Else
 		height#=LevelTiles(i,j)\Terrain\Extrusion+0.05
 	EndIf
-	VertexCoords LogicSurface(j),i*4,i+nologicshow,height,-j
-	VertexCoords LogicSurface(j),i*4+1,i+1+nologicshow,height,-j
-	VertexCoords LogicSurface(j),i*4+2,i+nologicshow,height,-j-1
-	VertexCoords LogicSurface(j),i*4+3,i+1+nologicshow,height,-j-1
-				
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile,i+nologicshow,height,-j
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+1,i+1+nologicshow,height,-j
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+2,i+nologicshow,height,-j-1
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+3,i+1+nologicshow,height,-j-1
+	
+	height#=0.05
+	
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+4,i+nologicshow,height,-j
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+5,i+1+nologicshow,height,-j
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+6,i+nologicshow,height,-j-1
+	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+7,i+1+nologicshow,height,-j-1
 	
 	ColorLevelTileLogic(i,j)
 
