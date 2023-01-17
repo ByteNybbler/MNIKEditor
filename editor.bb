@@ -30656,10 +30656,14 @@ Function ControlRubberducky(i)
 		SimulatedObjectTileTypeCollision(i)=-1
 		SimulatedObjectData(i,1)=Rand(1,3)
 		SimulatedObjectData(i,2)=Rand(0,360)
-	EndIf	
+	EndIf
 		
 	SimulatedObjectroll(i)=1*SimulatedObjectData(i,1)*Sin((LevelTimer+SimulatedObjectData(i,2)) Mod 360)
 	SimulatedObjectpitch(i)=2*SimulatedObjectData(i,1)*Cos((LevelTimer*3+SimulatedObjectData(i,2))  Mod 360)
+	
+	If SimulatedObjectData(i,0)<>1
+		TurnObjectTowardDirection(i,PlayerX()-SimulatedObjectX(i),PlayerY()-SimulatedObjectY(i),2,0)
+	EndIf
 
 End Function
 
