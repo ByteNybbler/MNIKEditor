@@ -13005,6 +13005,23 @@ Function MakeAllObjectAdjustersAbsolute()
 
 End Function
 
+Function MakeAllObjectAdjustersNotRandomized()
+
+	For ObjAdjusterInt.ObjectAdjusterInt=Each ObjectAdjusterInt
+		ObjAdjusterInt\Absolute=True
+		ObjAdjusterInt\RandomEnabled=False
+	Next
+	For ObjAdjusterFloat.ObjectAdjusterFloat=Each ObjectAdjusterFloat
+		ObjAdjusterFloat\Absolute=True
+		ObjAdjusterFloat\RandomEnabled=False
+	Next
+	For ObjAdjusterString.ObjectAdjusterString=Each ObjectAdjusterString
+		ObjAdjusterString\Absolute=True
+		ObjAdjusterString\RandomEnabled=False
+	Next
+
+End Function
+
 Function UpdateCurrentGrabbedObjectMarkerPosition(i)
 
 	SetEntityPositionToObjectPositionWithoutZ(CurrentGrabbedObjectMarkers(i),LevelObjects(i),0.0)
@@ -25290,8 +25307,10 @@ End Function
 Const OriginalMasterDat$="__master_ORIGINAL__.bak"
 Const Original1Wlv$="__1_ORIGINAL__.bak"
 
-; This is hacky, but it should work regardless of the modded executable's version.
+; This is hacky, but it should work regardless of the modded executable's version. Most likely does not work in vanilla.
 Function StartTestModeAt(level,x,y)
+
+	MakeAllObjectAdjustersNotRandomized() ; Prevents field randomization on the test arrow.
 
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
