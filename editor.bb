@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="01/16/23"
+Global VersionDate$="01/28/23"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -29592,6 +29592,10 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObject\Attributes\Data2=Rand(0,360)
 		
 	Case 330 ; Wysp
+		CurrentObject\Attributes\Data10=-1
+		;CurrentObject\Attributes\MoveXGoal=Floor(CurrentObject\Position\X)
+		;CurrentObject\Attributes\MoveYGoal=Floor(CurrentObject\Position\Y)
+		
 		CurrentObject\Attributes\MovementType=10
 		CurrentObject\Attributes\MovementSpeed=45
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
