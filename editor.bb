@@ -22642,7 +22642,7 @@ Function AdventureSelectScreen()
 
 	mx=MouseX()
 	my=MouseY()
-	If mY>=LetterHeight*8 And my<LetterHeight*28 And mx>LetterX(2.5) And mx<LetterX(41.5)
+	If my>=LetterHeight*8 And my<LetterHeight*27 And mx>LetterX(2.5) And mx<LetterX(41.5)
 		AdventureNameSelected=(my-LetterHeight*8.5)/LetterHeight
 	Else
 		AdventureNameSelected=-1
