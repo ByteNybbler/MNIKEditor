@@ -15896,7 +15896,11 @@ Function AdjustObjectAdjuster(i)
 	Case "YAdjust"
 		CurrentObject\Attributes\YAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterYAdjust,CurrentObject\Attributes\YAdjust,SlowFloat#,FastFloat#,DelayTime)
 	Case "ZAdjust"
-		CurrentObject\Attributes\ZAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,SlowFloat#,FastFloat#,DelayTime)
+		If KeyDown(44) ; Z key
+			CurrentObject\Position\Z=InputFloat#("Set value for object Z: ") ;AdjustObjectAdjusterFloat(ObjectAdjusterZ,CurrentObject\Attributes\Z,SlowFloat#,FastFloat#,DelayTime)
+		Else
+			CurrentObject\Attributes\ZAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,SlowFloat#,FastFloat#,DelayTime)
+		EndIf
 		
 		
 	Case "XScale"
