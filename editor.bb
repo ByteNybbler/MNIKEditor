@@ -28562,7 +28562,7 @@ Function GetTypeString$(value)
 	Case 151
 		Return "RainbowBubble"
 	Case 160
-		Return "SolidScenery"
+		Return "Scenery"
 	Case 161
 		Return "Waterfall"
 	Case 162
