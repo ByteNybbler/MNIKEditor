@@ -97,6 +97,7 @@
 * Ctrl+Click on "Category": Enter a category name or a few characters of a category name to instantly jump to that object category.
 * Ctrl+Click on the selected object's index: Set the selected object's index directly.
 * Tilde+Click: Find and replace a specific value of the chosen adjuster for all objects in the wlv. Only works on text-based adjusters.
+* Z while clicking on ZAdjust: Set the current object's Z value. This is such an edge case you'll hardly need it.
 
 ### TILES MENU
 
