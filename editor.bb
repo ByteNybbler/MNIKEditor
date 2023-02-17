@@ -30440,7 +30440,7 @@ End Function
 
 Function ControlRetroRainbowCoin(i)
 	
-	If SimulatedObjectActive(i)<1001
+	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i)>0
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
 		
