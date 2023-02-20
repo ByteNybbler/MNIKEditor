@@ -294,10 +294,14 @@ Dim HubCompilerFileSize(MaxCompilerFile,MaxCompilerFile)
 
 Global NofWlvFiles
 Global NofDiaFiles
+Global NofAdventures
 
-Function FileSatisfiesCompiler(ex$,AddToCounts)
+Function FileSatisfiesCompiler(ex$,AddToCounts,IsHub)
 
 	If Upper$(ex$)="MASTER.DAT"
+		If AddToCounts And IsHub=False
+			NofAdventures=NofAdventures+1
+		EndIf
 		Return True
 	ElseIf Upper$(Right$(ex$,4))=".WLV"
 		If AddToCounts
@@ -28871,6 +28875,7 @@ Function BuildHub()
 	
 	NofWlvFiles=0
 	NofDiaFiles=0
+	NofAdventures=0
 	
 	; copy files
 	For i=0 To HubTotalAdventures
@@ -28881,19 +28886,17 @@ Function BuildHub()
 			AdvFilename$="Adventure"+Str(i)
 		EndIf
 		If HubAdventuresFilenames$(i)<>""
-			
 			CreateDir(HubDir$+"\"+AdvFilename$)
 			dirfile=ReadDir(GetHubAdventurePath$(HubAdventuresFilenames$(i)))
 			Print "Building "+AdvFilename$+"..."
 
 			Repeat
 				ex$=NextFile$(dirfile)
-				If FileSatisfiesCompiler(ex$,HubAdventuresIncludeInTotals(i))
+				If FileSatisfiesCompiler(ex$,HubAdventuresIncludeInTotals(i),i=0)
 					Print "Copying... "+ex$
 					CopyFile GetHubAdventurePath$(HubAdventuresFilenames$(i))+"\"+ex$, HubDir$+"\"+AdvFilename$+"\"+ex$
 				EndIf
 			Until ex$=""
-			
 		EndIf
 	Next
 	
@@ -28910,6 +28913,7 @@ Function BuildHub()
 	Print ""
 	Color 0,255,0
 	Print NofWlvFiles+" wlv files and "+NofDiaFiles+" dia files in total."
+	Print NofAdventures+" adventures in total."
 	Color 255,255,255
 	Print ""
 	Print ""
@@ -28958,6 +28962,7 @@ Function CompileHub(PackContent)
 	
 	NofWlvFiles=0
 	NofDiaFiles=0
+	NofAdventures=0
 
 	For i=0 To HubTotalAdventures
 		AdvFilename$=""
@@ -28978,7 +28983,7 @@ Function CompileHub(PackContent)
 			NofHubCompilerFiles(i)=0
 			Repeat
 				ex$=NextFile$(dirfile)
-				If FileSatisfiesCompiler(ex$,HubAdventuresIncludeInTotals(i))
+				If FileSatisfiesCompiler(ex$,HubAdventuresIncludeInTotals(i),i=0)
 					Print "Reading... "+ex$
 					HubCompilerFileName$(i,NofHubCompilerFiles(i))=ex$
 					HubCompilerFileSize(i,NofHubCompilerFiles(i))=FileSize(ThePath$+"\"+ex$)
@@ -29081,6 +29086,7 @@ Function CompileHub(PackContent)
 	Print ""
 	Color 0,255,0
 	Print NofWlvFiles+" wlv files and "+NofDiaFiles+" dia files in total."
+	Print NofAdventures+" adventures in total."
 	Color 255,255,255
 	
 	Delay 1000
@@ -29208,7 +29214,7 @@ Function CompileAdventure(PackCustomContent)
 	Repeat
 		ex$=NextFile$(dirfile)
 		
-		If FileSatisfiesCompiler(ex$,True)
+		If FileSatisfiesCompiler(ex$,True,False)
 			Print "Reading... "+ex$
 			CompilerFileName$(NofCompilerFiles)=ex$
 			CompilerFileSize(NofCompilerFiles)=FileSize(AdventureFolder$+"\"+ex$)
