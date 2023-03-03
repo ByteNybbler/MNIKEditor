@@ -10978,7 +10978,7 @@ End Function
 Function CalculateEffectiveIDWith(TargetType,TargetID,Data0,Data1,TargetTileTypeCollision,ModelName$)
 
 	Select TargetType
-	Case 10,20,45,210,281,410,424 ; gate, fire trap, conveyor lead, transporter, suction tube straight, flip bridge, laser gate
+	Case 10,20,45,210,410,424 ; gate, fire trap, conveyor lead, transporter, flip bridge, laser gate
 		If TargetID=-1
 			Return 500+5*Data0+Data1
 		EndIf
@@ -10986,7 +10986,7 @@ Function CalculateEffectiveIDWith(TargetType,TargetID,Data0,Data1,TargetTileType
 		If TargetID=-1
 			Return 500+(8+Data0)*5+Data1
 		EndIf
-	Case 280 ; spring
+	Case 280,281 ; spring, suctube straight
 		Return 500+5*Data0+Data1
 	Case 301 ; rainbow float
 		If TargetID=-1
