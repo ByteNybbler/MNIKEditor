@@ -29405,8 +29405,6 @@ Function ObjectHasShadow(ModelName$)
 		Return True
 	Case "!Crab"
 		Return True
-	Case "!FlipBridge"
-		Return True
 	Case "!NPC" ; Normally this shadow is created by the CreateStinkerModel function rather than CreateObjectShadow.
 		Return True
 	Default
