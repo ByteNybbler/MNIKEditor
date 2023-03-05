@@ -14350,6 +14350,10 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Frame"
 		EndIf
 		
+		If CurrentObject\Attributes\ModelName$="!FlipBridge"
+			tex2$="Direction"
+		EndIf
+		
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			tex2$="XOffset"
 		EndIf
@@ -14411,12 +14415,16 @@ Function DisplayObjectAdjuster(i)
 			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*45)
 		EndIf
 		
-		; transporter or flipbridge or suctube or suctubex or conveyor
-		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
+		; transporter or suctube or suctubex or conveyor
+		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Direction"
 			If CurrentObject\Attributes\LogicType=210 ; transporter
 				tex$=Str$(3-CurrentObject\Attributes\Data2)
 			EndIf
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=410 ; Flipbridge
+			tex2$="Direction"
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=432 ; Moobot
