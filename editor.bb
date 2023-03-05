@@ -14100,6 +14100,10 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Colour"
 		EndIf
 		
+		If CurrentObject\Attributes\ModelName$="!FlipBridge"
+			tex2$="SubColour"
+		EndIf
+		
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="PitchAnim"
 		EndIf
