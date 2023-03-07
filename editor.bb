@@ -14352,6 +14352,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\ModelName$="!FlipBridge"
 			tex2$="Direction"
+			tex$=GetFlipbridgeDirectionName$(CurrentObject\Attributes\Data2)
 		EndIf
 		
 		If CurrentObject\Attributes\ModelName$="!Gem"
@@ -14425,6 +14426,7 @@ Function DisplayObjectAdjuster(i)
 		
 		If CurrentObject\Attributes\LogicType=410 ; Flipbridge
 			tex2$="Direction"
+			tex$=GetFlipbridgeDirectionName$(CurrentObject\Attributes\Data2)
 		EndIf
 		
 		If CurrentObject\Attributes\LogicType=432 ; Moobot
@@ -28433,6 +28435,24 @@ Function GetItemFnName$(value)
 		Return "Empty"
 	Default
 		Return value
+	End Select
+
+End Function
+
+Function GetFlipBridgeDirectionName$(Data2)
+
+	Data2=EuclideanRemainderInt(Data2,4)
+	Select Data2
+	Case 0
+		Return "N/S"
+	Case 1
+		Return "NE/SW"
+	Case 2
+		Return "E/W"
+	Case 3
+		Return "SE/NW"
+	Default
+		Return Data2
 	End Select
 
 End Function
