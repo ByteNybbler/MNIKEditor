@@ -6622,7 +6622,7 @@ Function EditorLocalControls()
 				ElseIf (rightmouse=True And rightmousereleased=True) Or MouseScroll<0
 					CurrentWaterTexture=CurrentWaterTexture-1
 					
-					If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
+					If CurrentWaterTexture<0 Then currentWatertexture=NofWaterTextures-1
 					
 					FreeTexture WaterTexture
 					UpdateWaterTextureDefault()
