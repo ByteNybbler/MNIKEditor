@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="01/28/23"
+Global VersionDate$="03/08/23"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -10399,8 +10399,10 @@ Function LoadObjectPreset()
 	AddAdjuster("TimerMax2")
 	AddAdjuster("DefensePower")
 	
-	AddAdjuster("DX")
-	AddAdjuster("DY")
+	AddAdjuster("Z")
+	AddAdjuster("Flying")
+	;AddAdjuster("DX")
+	;AddAdjuster("DY")
 	AddAdjuster("Frozen")
 	AddAdjuster("Teleportable")
 	AddAdjuster("ButtonPush")
@@ -15914,18 +15916,19 @@ Function AdjustObjectAdjuster(i)
 		If CurrentObject\Attributes\RollAdjust>=360 Then CurrentObject\Attributes\RollAdjust=CurrentObject\Attributes\RollAdjust-360
 		If CurrentObject\Attributes\RollAdjust<0 Then CurrentObject\Attributes\RollAdjust=CurrentObject\Attributes\RollAdjust+360
 
-
+	Case "X"
+		CurrentObject\Position\X=AdjustObjectAdjusterFloat(ObjectAdjusterX,CurrentObject\Position\X,SlowFloat#,FastFloat#,DelayTime)
+	Case "Y"
+		CurrentObject\Position\Y=AdjustObjectAdjusterFloat(ObjectAdjusterY,CurrentObject\Position\Y,SlowFloat#,FastFloat#,DelayTime)
+	Case "Z"
+		CurrentObject\Position\Z=AdjustObjectAdjusterFloat(ObjectAdjusterZ,CurrentObject\Position\Z,SlowFloat#,FastFloat#,DelayTime)
 		
 	Case "XAdjust"
 		CurrentObject\Attributes\XAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterXAdjust,CurrentObject\Attributes\XAdjust,SlowFloat#,FastFloat#,DelayTime)
 	Case "YAdjust"
 		CurrentObject\Attributes\YAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterYAdjust,CurrentObject\Attributes\YAdjust,SlowFloat#,FastFloat#,DelayTime)
 	Case "ZAdjust"
-		If KeyDown(44) ; Z key
-			CurrentObject\Position\Z=InputFloat#("Set value for object Z: ") ;AdjustObjectAdjusterFloat(ObjectAdjusterZ,CurrentObject\Attributes\Z,SlowFloat#,FastFloat#,DelayTime)
-		Else
-			CurrentObject\Attributes\ZAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,SlowFloat#,FastFloat#,DelayTime)
-		EndIf
+		CurrentObject\Attributes\ZAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,SlowFloat#,FastFloat#,DelayTime)
 		
 		
 	Case "XScale"
@@ -16824,7 +16827,7 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\MovementTimer=AdjustObjectAdjusterInt(ObjectAdjusterMovementTimer,CurrentObject\Attributes\MovementTimer,SlowInt,25,DelayTime)
 		
 	Case "Flying"
-		CurrentObject\Attributes\Flying=AdjustObjectAdjusterInt(ObjectAdjusterDead,CurrentObject\Attributes\Flying,SlowInt,FastInt,DelayTime)
+		CurrentObject\Attributes\Flying=AdjustObjectAdjusterInt(ObjectAdjusterFlying,CurrentObject\Attributes\Flying,SlowInt,FastInt,DelayTime)
 		
 	Case "Indigo"
 		CurrentObject\Attributes\Indigo=AdjustObjectAdjusterInt(ObjectAdjusterIndigo,CurrentObject\Attributes\Indigo,SlowInt,FastInt,DelayTime)
@@ -28448,19 +28451,20 @@ End Function
 
 Function GetFlipBridgeDirectionName$(Data2)
 
-	Data2=EuclideanRemainderInt(Data2,4)
-	Select Data2
+	Modded=EuclideanRemainderInt(Data2,4)
+	Select Modded
 	Case 0
-		Return "N/S"
+		TheString$=Data2+". N/S"
 	Case 1
-		Return "NE/SW"
+		TheString$=Data2+". NE/SW"
 	Case 2
-		Return "E/W"
+		TheString$=Data2+". E/W"
 	Case 3
-		Return "SE/NW"
+		TheString$=Data2+". SE/NW"
 	Default
-		Return Data2
+		TheString$=Modded
 	End Select
+	Return TheString$
 
 End Function
 
