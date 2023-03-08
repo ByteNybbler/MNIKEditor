@@ -6484,47 +6484,45 @@ Function EditorLocalControls()
 		
 		; LevelTexture
 		If my>133 And my<148
-			If CtrlDown()
-				If leftmouse=True And leftmousereleased=True
-					FlushKeys
+			If CtrlDown() And leftmouse=True And leftmousereleased=True
+				FlushKeys
+				Locate 0,0
+				Color 0,0,0
+				Rect 0,0,500,40,True
+				Color TextLevelR,TextLevelG,TextLevelB
+				LevelTextureCustomName$=Input$( "Custom Texture Name (e.g. 'customtemplate'):")
+				
+				If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
 					Locate 0,0
 					Color 0,0,0
 					Rect 0,0,500,40,True
-					Color TextLevelR,TextLevelG,TextLevelB
-					LevelTextureCustomName$=Input$( "Custom Texture Name (e.g. 'customtemplate'):")
+					Color 255,255,0
+					Print "FILE(S) NOT FOUND!"
+					Delay 2000
 					
-					If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
+				Else
+					FreeTexture LevelTexture
+					LevelTexture=0
+					LevelTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp",1)
+					If LevelTexture=0
 						Locate 0,0
 						Color 0,0,0
 						Rect 0,0,500,40,True
 						Color 255,255,0
-						Print "FILE(S) NOT FOUND!"
-						Delay 2000
+						Print "TEXTURE COULDN'T LOAD!"
+						UpdateLevelTextureDefault()
 						
+	
+						Delay 2000
 					Else
-						FreeTexture LevelTexture
-						LevelTexture=0
-						LevelTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp",1)
-						If LevelTexture=0
-							Locate 0,0
-							Color 0,0,0
-							Rect 0,0,500,40,True
-							Color 255,255,0
-							Print "TEXTURE COULDN'T LOAD!"
-							UpdateLevelTextureDefault()
-							
-		
-							Delay 2000
-						Else
-							currentleveltexture=-1
-							UpdateLevelTexture()
-						EndIf
+						currentleveltexture=-1
+						UpdateLevelTexture()
 					EndIf
-					
-					leftmousereleased=False
-					buildcurrenttilemodel()
-					AddUnsavedChange()
 				EndIf
+				
+				leftmousereleased=False
+				buildcurrenttilemodel()
+				AddUnsavedChange()
 			Else
 				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
 					CurrentLevelTexture=CurrentLevelTexture+1
@@ -6562,47 +6560,45 @@ Function EditorLocalControls()
 
 		; WaterTexture
 		If my>150 And my<163
-			If CtrlDown()
-				If leftmouse=True And leftmousereleased=True
-					FlushKeys
+			If CtrlDown() And leftmouse=True And leftmousereleased=True
+				FlushKeys
+				Locate 0,0
+				Color 0,0,0
+				Rect 0,0,500,40,True
+				Color TextLevelR,TextLevelG,TextLevelB
+				WaterTextureCustomName$=Input$( "Custom WaterTexture Name (e.g. 'customtemplate'):")
+				
+				If FileType (globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg")<>1 
 					Locate 0,0
 					Color 0,0,0
 					Rect 0,0,500,40,True
-					Color TextLevelR,TextLevelG,TextLevelB
-					WaterTextureCustomName$=Input$( "Custom WaterTexture Name (e.g. 'customtemplate'):")
+					Color 255,255,0
+					Print "FILE NOT FOUND!"
+					Delay 2000
 					
-					If FileType (globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg")<>1 
+				Else
+					FreeTexture WaterTexture
+					WaterTexture=0
+					WaterTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg",1)
+					If WaterTexture=0
 						Locate 0,0
 						Color 0,0,0
 						Rect 0,0,500,40,True
 						Color 255,255,0
-						Print "FILE NOT FOUND!"
-						Delay 2000
+						Print "TEXTURE COULDN'T LOAD!"
+						UpdateWaterTextureDefault()
 						
+	
+						Delay 2000
 					Else
-						FreeTexture WaterTexture
-						WaterTexture=0
-						WaterTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg",1)
-						If WaterTexture=0
-							Locate 0,0
-							Color 0,0,0
-							Rect 0,0,500,40,True
-							Color 255,255,0
-							Print "TEXTURE COULDN'T LOAD!"
-							UpdateWaterTextureDefault()
-							
-		
-							Delay 2000
-						Else
-							currentwatertexture=-1
-							UpdateWaterTexture()
-						EndIf
+						currentwatertexture=-1
+						UpdateWaterTexture()
 					EndIf
-					
-					leftmousereleased=False
-					buildcurrenttilemodel()
-					AddUnsavedChange()
 				EndIf
+				
+				leftmousereleased=False
+				buildcurrenttilemodel()
+				AddUnsavedChange()
 			Else
 				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
 					CurrentWaterTexture=CurrentWaterTexture+1
