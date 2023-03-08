@@ -112,7 +112,7 @@
 
 * Ctrl+Click the arrows next to Width and Height: Type in the level width or level height.
 * Ctrl+Click the Light text: Set every lighting value to the same given value.
-* Right click: Set a custom leveltex or custom watertex.
+* Ctrl+Click LevelTex or WaterTex: Set a custom leveltex or custom watertex.
 
 ## DIALOG EDITOR
 

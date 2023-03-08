@@ -5578,8 +5578,8 @@ Function EditorLocalRendering()
 	LevelEdgeStyleString$=GetLevelEdgeStyleChar$(LevelEdgeStyle)
 
 
-	Text SidebarX+215,SidebarY+133,"<LevelTex>"
-	Text SidebarX+215,SidebarY+150,"<WaterTex>"
+	Text SidebarX+215,SidebarY+133," LevelTex "
+	Text SidebarX+215,SidebarY+150," WaterTex "
 	Text FlStartX,FlStartY," Fl Tr Gl B"
 	Text FlStartX+12,SidebarY+180,Str$(WaterFlow)
 	Text FlStartX+36,SidebarY+180,Str$(WaterTransparent)
@@ -6481,156 +6481,166 @@ Function EditorLocalControls()
 
 
 		; level/water textures
+		
+		; LevelTexture
 		If my>133 And my<148
-			If mx>SidebarX+255 And leftmouse=True And leftmousereleased=True
-				CurrentLevelTexture=CurrentLevelTexture+1
-				If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
-				
-				FreeTexture LevelTexture
-				UpdateLevelTextureDefault()
-				
-				For j=0 To LevelHeight-1
-					EntityTexture LevelMesh(j),LevelTexture
-				Next
-				
-				leftmousereleased=False
-				buildcurrenttilemodel()
-				AddUnsavedChange()
+			If CtrlDown()
+				If leftmouse=True And leftmousereleased=True
+					FlushKeys
+					Locate 0,0
+					Color 0,0,0
+					Rect 0,0,500,40,True
+					Color TextLevelR,TextLevelG,TextLevelB
+					LevelTextureCustomName$=Input$( "Custom Texture Name (e.g. 'customtemplate'):")
+					
+					If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
+						Locate 0,0
+						Color 0,0,0
+						Rect 0,0,500,40,True
+						Color 255,255,0
+						Print "FILE(S) NOT FOUND!"
+						Delay 2000
+						
+					Else
+						FreeTexture LevelTexture
+						LevelTexture=0
+						LevelTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp",1)
+						If LevelTexture=0
+							Locate 0,0
+							Color 0,0,0
+							Rect 0,0,500,40,True
+							Color 255,255,0
+							Print "TEXTURE COULDN'T LOAD!"
+							UpdateLevelTextureDefault()
+							
+		
+							Delay 2000
+						Else
+							currentleveltexture=-1
+							UpdateLevelTexture()
+						EndIf
+					EndIf
+					
+					leftmousereleased=False
+					buildcurrenttilemodel()
+					AddUnsavedChange()
+				EndIf
+			Else
+				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
+					CurrentLevelTexture=CurrentLevelTexture+1
+					If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
+					
+					FreeTexture LevelTexture
+					UpdateLevelTextureDefault()
+					
+					For j=0 To LevelHeight-1
+						EntityTexture LevelMesh(j),LevelTexture
+					Next
+					
+					leftmousereleased=False
+					buildcurrenttilemodel()
+					AddUnsavedChange()
+				ElseIf (rightmouse=True And rightmousereleased=True) Or MouseScroll<0
+					CurrentLevelTexture=CurrentLevelTexture-1
+					If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
+					
+					FreeTexture LevelTexture
+					UpdateLevelTextureDefault()
+					
+					For j=0 To LevelHeight-1
+						EntityTexture LevelMesh(j),LevelTexture
+					Next
+					
+					rightmousereleased=False
+					buildcurrenttilemodel()
+					AddUnsavedChange()					
+				EndIf
 			EndIf
-			If mx<=SidebarX+255 And leftmouse=True And leftmousereleased=True
-				CurrentLevelTexture=CurrentLevelTexture-1
-				If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
-				
-				FreeTexture LevelTexture
-				UpdateLevelTextureDefault()
-				
-				For j=0 To LevelHeight-1
-					EntityTexture LevelMesh(j),LevelTexture
-				Next
-				
-				leftmousereleased=False
-				buildcurrenttilemodel()
-				AddUnsavedChange()
-			EndIf
+			
 			ShowTooltipRightAligned(SidebarX+210,163,CurrentLevelTextureName$())
 		EndIf
 
-		If my>150 And my<163 
-			If mx>SidebarX+255 And leftmouse=True And leftmousereleased=True
-				CurrentWaterTexture=CurrentWaterTexture+1
-				
-				If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
-				
-				FreeTexture WaterTexture
-				UpdateWaterTextureDefault()
-				
-				For j=0 To LevelHeight-1
-					EntityTexture WaterMesh(j),WaterTexture
-				Next
-				leftmousereleased=False
-				buildcurrenttilemodel()
-				AddUnsavedChange()
-			EndIf
-			If mx<=SidebarX+255 And leftmouse=True And leftmousereleased=True
-				CurrentWaterTexture=CurrentWaterTexture-1
-				
-				If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
-				
-				FreeTexture WaterTexture
-				UpdateWaterTextureDefault()
-				
-				For j=0 To LevelHeight-1
-					EntityTexture WaterMesh(j),WaterTexture
-				Next
-				leftmousereleased=False
-				buildcurrenttilemodel()
-				AddUnsavedChange()
-			EndIf
-			ShowTooltipRightAligned(SidebarX+210,180,CurrentWaterTextureName$())
-		EndIf
-
-		; custom level/water
-		If my>133 And my<148 And rightmouse=True And rightmousereleased=True
-			FlushKeys
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color TextLevelR,TextLevelG,TextLevelB
-			LevelTextureCustomName$=Input$( "Custom Texture Name (e.g. 'customtemplate'):")
-			
-			If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
-				Locate 0,0
-				Color 0,0,0
-				Rect 0,0,500,40,True
-				Color 255,255,0
-				Print "FILE(S) NOT FOUND!"
-				Delay 2000
-				
-			Else
-				FreeTexture LevelTexture
-				LevelTexture=0
-				LevelTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp",1)
-				If LevelTexture=0
+		; WaterTexture
+		If my>150 And my<163
+			If CtrlDown()
+				If leftmouse=True And leftmousereleased=True
+					FlushKeys
 					Locate 0,0
 					Color 0,0,0
 					Rect 0,0,500,40,True
-					Color 255,255,0
-					Print "TEXTURE COULDN'T LOAD!"
-					UpdateLevelTextureDefault()
+					Color TextLevelR,TextLevelG,TextLevelB
+					WaterTextureCustomName$=Input$( "Custom WaterTexture Name (e.g. 'customtemplate'):")
 					
-
-					Delay 2000
-				Else
-					currentleveltexture=-1
-					UpdateLevelTexture()
+					If FileType (globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg")<>1 
+						Locate 0,0
+						Color 0,0,0
+						Rect 0,0,500,40,True
+						Color 255,255,0
+						Print "FILE NOT FOUND!"
+						Delay 2000
+						
+					Else
+						FreeTexture WaterTexture
+						WaterTexture=0
+						WaterTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg",1)
+						If WaterTexture=0
+							Locate 0,0
+							Color 0,0,0
+							Rect 0,0,500,40,True
+							Color 255,255,0
+							Print "TEXTURE COULDN'T LOAD!"
+							UpdateWaterTextureDefault()
+							
+		
+							Delay 2000
+						Else
+							currentwatertexture=-1
+							UpdateWaterTexture()
+						EndIf
+					EndIf
+					
+					leftmousereleased=False
+					buildcurrenttilemodel()
+					AddUnsavedChange()
 				EndIf
-			EndIf
-			
-			rightmousereleased=False
-			buildcurrenttilemodel()
-			AddUnsavedChange()
-		EndIf
-		If my>150 And my<163 And rightmouse=True And rightmousereleased=True
-			FlushKeys
-			Locate 0,0
-			Color 0,0,0
-			Rect 0,0,500,40,True
-			Color TextLevelR,TextLevelG,TextLevelB
-			WaterTextureCustomName$=Input$( "Custom WaterTexture Name (e.g. 'customtemplate'):")
-			
-			If FileType (globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg")<>1 
-				Locate 0,0
-				Color 0,0,0
-				Rect 0,0,500,40,True
-				Color 255,255,0
-				Print "FILE NOT FOUND!"
-				Delay 2000
-				
 			Else
-				FreeTexture WaterTexture
-				WaterTexture=0
-				WaterTexture=myLoadTexture(globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg",1)
-				If WaterTexture=0
-					Locate 0,0
-					Color 0,0,0
-					Rect 0,0,500,40,True
-					Color 255,255,0
-					Print "TEXTURE COULDN'T LOAD!"
+				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
+					CurrentWaterTexture=CurrentWaterTexture+1
+					
+					If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
+					
+					FreeTexture WaterTexture
 					UpdateWaterTextureDefault()
 					
-
-					Delay 2000
-				Else
-					currentwatertexture=-1
-					UpdateWaterTexture()
+					For j=0 To LevelHeight-1
+						EntityTexture WaterMesh(j),WaterTexture
+					Next
+					
+					leftmousereleased=False
+					buildcurrenttilemodel()
+					AddUnsavedChange()
+				ElseIf (rightmouse=True And rightmousereleased=True) Or MouseScroll<0
+					CurrentWaterTexture=CurrentWaterTexture-1
+					
+					If CurrentWaterTexture=-1 Then currentWatertexture=NofWaterTextures-1
+					
+					FreeTexture WaterTexture
+					UpdateWaterTextureDefault()
+					
+					For j=0 To LevelHeight-1
+						EntityTexture WaterMesh(j),WaterTexture
+					Next
+					
+					rightmousereleased=False
+					buildcurrenttilemodel()
+					AddUnsavedChange()					
 				EndIf
 			EndIf
 			
-			rightmousereleased=False
-			buildcurrenttilemodel()
-			AddUnsavedChange()
+			ShowTooltipRightAligned(SidebarX+210,180,CurrentWaterTextureName$())
 		EndIf
-
+		
+		
 		
 		If my>165 And my<195 ;my<185 
 			If mx>FlStartX+8 And mx<FlStartX+24
