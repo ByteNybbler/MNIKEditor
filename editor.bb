@@ -10906,6 +10906,10 @@ Function RandomizeObjectData(SourceObj.GameObject)
 		SourceAttributes\ButtonPush=RandomObjectAdjusterInt(ObjectAdjusterButtonPush)
 	EndIf
 	
+	If ObjectAdjusterFlying\RandomEnabled
+		SourceAttributes\Flying=RandomObjectAdjusterInt(ObjectAdjusterFlying)
+	EndIf
+	
 	If ObjectAdjusterTalkable\RandomEnabled
 		SourceAttributes\Talkable=RandomObjectAdjusterInt(ObjectAdjusterTalkable)
 	EndIf
