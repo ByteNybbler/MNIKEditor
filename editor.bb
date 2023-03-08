@@ -14040,8 +14040,15 @@ Function DisplayObjectAdjuster(i)
 			Case 3
 				tex$="West"
 			End Select
-				
-			
+		EndIf
+		
+		If CurrentObject\Attributes\LogicType=300 Or CurrentObject\Attributes\LogicType=301 ; Brr float or rainbow float
+			tex2$="Deactivating"
+			If CurrentObject\Attributes\Data0=0
+				tex$="NotYet"
+			ElseIf CurrentObject\Attributes\Data0>0
+				tex$=tex$+"/Soon"
+			EndIf
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=310 ; duck
