@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="03/08/23"
+Global VersionDate$="03/09/23"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -25363,11 +25363,10 @@ Function StartTestModeAt(level,x,y)
 	
 	SaveMasterFile()
 	DuplicateMaster("master",OriginalMasterDat$)
-	; Change adventure start coordinates to be far out-of-bounds.
-	; Using coordinates that are farther out than about -100 seems to cause MAVs in-game.
-	; Objects at negative coordinates like this DO NOT work in vanilla without MAVing!
-	AdventureStartX=-100
-	AdventureStartY=-50
+	; Change adventure start coordinates to likely be out-of-bounds.
+	; Negative coordinates were formerly used, but this caused a variety of memory issues, including some tile logics apparently changing.
+	AdventureStartX=100
+	AdventureStartY=100
 	; master.dat gets saved in StartTestMode, so we don't have to save it here.
 	
 	If CurrentLevelNumber<>1
