@@ -12417,12 +12417,12 @@ Function PasteObjectData(Dest)
 	If ObjectAdjusterActivationType\Absolute
 		DestAttributes\ActivationType=SourceAttributes\ActivationType
 	Else
-		DestAttributes\ActivationType=DestAttributes\Active+SourceAttributes\ActivationType
+		DestAttributes\ActivationType=DestAttributes\ActivationType+SourceAttributes\ActivationType
 	EndIf
 	If ObjectAdjusterActivationSpeed\Absolute
 		DestAttributes\ActivationSpeed=SourceAttributes\ActivationSpeed
 	Else
-		DestAttributes\ActivationSpeed=DestAttributes\Active+SourceAttributes\ActivationSpeed
+		DestAttributes\ActivationSpeed=DestAttributes\ActivationSpeed+SourceAttributes\ActivationSpeed
 	EndIf
 	If ObjectAdjusterStatus\Absolute
 		DestAttributes\Status=SourceAttributes\Status
