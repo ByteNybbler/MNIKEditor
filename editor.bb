@@ -10129,7 +10129,7 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 	CurrentObject\Attributes\Speed#=0
 	CurrentObject\Attributes\Radius#=0
 	CurrentObject\Attributes\RadiusType=0
-	CurrentObject\Attributes\Data10=0
+	CurrentObject\Attributes\Data10=-1
 	CurrentObject\Attributes\PushDX#=0
 	CurrentObject\Attributes\PushDY#=0
 	CurrentObject\Attributes\AttackPower=0
@@ -10249,7 +10249,9 @@ Function LoadObjectPreset()
 	CurrentObject\Attributes\Speed#=ReadFloat(file)
 	CurrentObject\Attributes\Radius#=ReadFloat(file)
 	CurrentObject\Attributes\RadiusType=ReadInt(file)
-	CurrentObject\Attributes\Data10=ReadInt(file)
+	;CurrentObject\Attributes\Data10=ReadInt(file)
+	ReadInt(file)
+	CurrentObject\Attributes\Data10=-1
 	CurrentObject\Attributes\PushDX#=ReadFloat(file)
 	CurrentObject\Attributes\PushDY#=ReadFloat(file)
 	CurrentObject\Attributes\AttackPower=ReadInt(file)
@@ -29627,7 +29629,6 @@ Function RetrieveDefaultTrueMovement()
 		EndIf
 		
 	Case 270 ; Busterfly/Glowworm
-	
 		CurrentObject\Attributes\TileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
 		
 		If CurrentObject\Attributes\ModelName$="!Busterfly"
@@ -29640,7 +29641,6 @@ Function RetrieveDefaultTrueMovement()
 		EndIf
 		
 	Case 271 ; Zipper
-	
 		CurrentObject\Attributes\TileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
 		CurrentObject\Attributes\Data1=Rand(0,360)
 		CurrentObject\Attributes\Data2=Rand(1,4)
