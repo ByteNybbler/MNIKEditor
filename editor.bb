@@ -14439,7 +14439,18 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Direction"
 			If CurrentObject\Attributes\LogicType=210 ; transporter
-				tex$=Str$(3-CurrentObject\Attributes\Data2)
+				DirectionVal=3-CurrentObject\Attributes\Data2
+				;tex$=Str$(DirectionVal)
+				Select DirectionVal
+				Case 0
+					tex$="East"
+				Case 1
+					tex$="South"
+				Case 2
+					tex$="West"
+				Case 3
+					tex$="North"
+				End Select
 			EndIf
 		EndIf
 		
