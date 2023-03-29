@@ -13865,6 +13865,21 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Texture"
 		EndIf
 		
+		If CurrentObject\Attributes\ModelName$="!Retrozbot"
+			tex2$="Direction"
+			
+			Select CurrentObject\Attributes\Data0
+			Case 0
+				tex$="North"
+			Case 1
+				tex$="East"
+			Case 2
+				tex$="South"
+			Case 3
+				tex$="West"
+			End Select
+		EndIf
+		
 		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
 			tex2$="Red"
 		EndIf
