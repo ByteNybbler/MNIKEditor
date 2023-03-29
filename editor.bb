@@ -13132,8 +13132,10 @@ Function HoverOverObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
-			Else If (CurrentObject\Attributes\LogicSubType Mod 32)<10 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; ColorX2Y or Rotator or ???
+			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)<10 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; ColorX2Y or Rotator or ???
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
+			ElseIf CurrentObject\Attributes\LogicSubType=13 And ObjectAdjusterData0\Absolute ; Adventure star
+				ShowTooltipRightAligned(StartX,TooltipLeftY,GetAdventureName$(CurrentObject\Attributes\Data0))
 			EndIf
 		ElseIf CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
 			tex$=""
@@ -13163,8 +13165,9 @@ Function HoverOverObjectAdjuster(i)
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=15 ; General Command
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 				If ObjectAdjusterData0\Absolute And ObjectAdjusterData1\Absolute
-					If CurrentObject\Attributes\Data0>=21 And CurrentObject\Attributes\Data0<=27
-						ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(CurrentObject\Attributes\Data1,0))
+					ExtraInfo$=GetCmdData1ExtraInfo$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
+					If ExtraInfo$<>""
+						ShowTooltipRightAligned(StartX,TooltipLeftY,ExtraInfo$)
 					EndIf
 				EndIf
 			ElseIf (CurrentObject\Attributes\LogicSubType Mod 32)=11 Or (CurrentObject\Attributes\LogicSubType Mod 32)=16 Or (CurrentObject\Attributes\LogicSubType Mod 32)=17 ; NPC Modifier or Rotator
@@ -19249,6 +19252,25 @@ Function GetDupeModeName$(Value)
 End Function
 
 
+Function GetAdventureName$(AdventureId)
+
+	If HubMode=True
+		If AdventureId<0 Or AdventureId>HubAdvMax
+			Return "< INVALID ADVENTURE ID >"
+		Else
+			If HubAdventuresFilenames$(AdventureId)=""
+				Return "< ADVENTURE DOES NOT EXIST >"
+			Else
+				Return HubAdventuresFilenames$(AdventureId)
+			EndIf
+		EndIf
+	Else
+		Return "( USE HUB MODE TO SEE ADVENTURE NAMES )"
+	EndIf
+
+End Function
+
+
 Function GetAccessoryName$(AccessoryId)
 
 	Select AccessoryId
@@ -22918,7 +22940,7 @@ Function AdventureSelectScreen()
 					If AdventureFileName$=AdventureFileNamesListed$(i)
 						ThisEditorMode=EditorMode
 					
-						AdventureNameSelected=i	
+						AdventureNameSelected=i
 						Repeat
 						Until LeftMouseDown()=0
 						StartMaster()
@@ -28532,6 +28554,8 @@ End Function
 Function GetCmdData1ExtraInfo$(Cmd,Data1)
 
 	Select Cmd
+	Case 8
+		Return GetAdventureName$(Data1)
 	Case 21,22,23,24,25,26,27
 		Return PreviewDialog$(Data1,0)
 	End Select
