@@ -11486,7 +11486,7 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectScaleZAdjust(i)=Obj\Attributes\ScaleZAdjust
 		
 		; make sure flipbridges are scaled properly
-		If Obj\Attributes\LogicType=410
+		If Obj\Attributes\LogicType=410 Or Obj\Attributes\ModelName$="!FlipBridge"
 			ControlFlipbridge(i)
 		EndIf
 	Next
@@ -25368,6 +25368,7 @@ Function ReadTestFile()
 
 End Function
 
+; AKA Save and Test / SaveAndTest / Save+Test
 Function StartTestMode(TestAtX=0,TestAtY=0)
 	
 	WaitFlag=True
