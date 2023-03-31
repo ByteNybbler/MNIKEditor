@@ -14449,14 +14449,24 @@ Function DisplayObjectAdjuster(i)
 			End Select
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
+		
+		If CurrentObject\Attributes\ModelName="!Suctube"
+			tex2$="Direction"
+			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*90)
+		EndIf
 
 		If CurrentObject\Attributes\LogicType=280 ; Spring
 			tex2$="Direction"
 			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*45)
 		EndIf
 		
-		; transporter or suctube or suctubex or conveyor
-		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
+		If CurrentObject\Attributes\LogicType=281 ; Suctube -
+			tex2$="Direction"
+			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*90)
+		EndIf
+		
+		; transporter or suctubex or conveyor head/tail
+		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Direction"
 			If CurrentObject\Attributes\LogicType=210 ; transporter
 				DirectionVal=3-CurrentObject\Attributes\Data2
