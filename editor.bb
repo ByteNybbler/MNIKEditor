@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="03/09/23"
+Global VersionDate$="04/02/23"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -275,6 +275,8 @@ MouseTextEntryLineYAdjust(1,10)=-8
 
 MouseTextEntryLineY(2,0)=0
 MouseTextEntryLineY(2,1)=3
+
+Global MouseTextEntryDelete=False
 
 
 ; COMPILER DATA
@@ -22448,6 +22450,8 @@ End Function
 
 Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 
+	MouseTextEntryDelete=False
+
 	If let>=32 And let<=122
 		; place letter (let is the letter to place)
 		tex$=Left$(tex$,x)+Chr$(let)+Right$(tex$,Len(tex$)-x)
@@ -22483,6 +22487,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		TxtEffect=-1
 		
 		AddUnsavedChange()
+		MouseTextEntryDelete=True
 	EndIf
 	If KeyDown(211)
 		; delete
@@ -22495,6 +22500,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		TxtEffect=-1
 		
 		AddUnsavedChange()
+		MouseTextEntryDelete=True
 	EndIf
 	
 	; cursor movement
@@ -25833,7 +25839,9 @@ Function SetInterChange(i)
 		NofInterChanges=WhichInterChange+1
 	EndIf
 	
-	DeduplicateDialogTextCommands() ; for old dialogs
+	; for old dialogs
+	RemoveDanglingDialogTextCommands()
+	DeduplicateDialogTextCommands()
 
 End Function
 
@@ -26135,6 +26143,20 @@ Function DeduplicateDialogTextCommands()
 			Else
 				LatestEffect$=CurrentEffect$
 			EndIf
+		EndIf
+	Next
+
+End Function
+
+Function RemoveDanglingDialogTextCommands()
+	
+	For k=0 To NofTextCommands(WhichInterChange)-1
+		thePos=DialogTextCommandPos(WhichInterChange,k)
+		x=thePos Mod CharactersPerLine
+		y=thePos/CharactersPerLine
+		If Len(InterChangeTextLine$(WhichInterChange,y))<=x
+			DeleteDialogTextCommand(k)
+			k=k-1
 		EndIf
 	Next
 
@@ -26572,6 +26594,11 @@ Function DialogMainLoop()
 	If Entering=1
 		
 		InterChangeTextLine$(WhichInterChange,y)=MouseTextEntry$(InterChangeTextLine$(WhichInterChange,y),let,x,y,0,1)
+		
+		If MouseTextEntryDelete=True
+			RemoveDanglingDialogTextCommands()
+			DeduplicateDialogTextCommands()
+		EndIf
 
 	EndIf
 	If Entering=2
