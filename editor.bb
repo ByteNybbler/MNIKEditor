@@ -1754,7 +1754,7 @@ End Function
 
 ReadDisplayFile()
 
-; something is wrong withe graphics mode: try different versions
+; something is wrong with the graphics mode: try different versions
 If GfxMode3DExists (GfxWidth,GfxHeight,GfxDepth)=False
 	GfxWidth=800
 	GfxHeight=600
@@ -10741,7 +10741,8 @@ Function ShouldBeInvisibleInGame(Attributes.GameObjectAttributes)
 		Return True
 	ElseIf Attributes\ModelName$="!IceBlock" And Attributes\Data3<>0 And Attributes\Data3<>1
 		Return True
-	ElseIf Attributes\Active=0 And (Attributes\ModelName$="!NPC" Or Attributes\LogicType=424) ; NPCs, OpenWA retro laser gates
+	; Q - player NPC functionality
+	ElseIf Attributes\Active=0 And (IsModelNPC(Attributes\ModelName$) Or Attributes\LogicType=424) ; NPCs, OpenWA retro laser gates, player NPC
 		Return True
 	Else
 		Return False
@@ -10781,6 +10782,14 @@ Function ShowObjectModel(Obj.GameObject)
 
 End Function
 
+; Q - NPC player functionality
+Function IsModelNPC(mdlname$)
+
+	if mdlname$="!NPC" Or mdlname$="!PlayerNPC" Return True
+	Return False
+
+End Function
+
 Function IDFilterShouldHide(Attributes.GameObjectAttributes)
 
 If IDFilterEnabled
@@ -10811,7 +10820,8 @@ End Function
 
 Function SetEntityAlphaWithModelName(Entity,Alpha#,ModelName$)
 
-	If ModelName$="!NPC" Or ModelName$="!Tentacle"
+	; Q - player NPC functionality
+	If IsModelNPC(ModelName$) Or ModelName$="!Tentacle"
 		Entity=GetChild(Entity,3)
 	EndIf
 
@@ -11026,7 +11036,8 @@ Function UpdateObjectAnimation(Obj.GameObject)
 		If SimulationLevel<SimulationLevelAnimation
 			AnimateMD2 Entity,0
 		EndIf
-	ElseIf ModelName$="!NPC"
+	; Q - player NPC functionality
+	ElseIf IsModelNPC(ModelName$)
 		If SimulationLevel<SimulationLevelAnimation
 			Animate GetChild(Entity,3),0
 		Else
@@ -12863,7 +12874,8 @@ Function HoverOverObjectAdjuster(i)
 			EndIf
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$) And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data2)))
 			EndIf
@@ -12888,7 +12900,8 @@ Function HoverOverObjectAdjuster(i)
 			EndIf
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute And ObjectAdjusterData3\Absolute
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$) And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute And ObjectAdjusterData3\Absolute
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)))
 			EndIf
@@ -12901,7 +12914,8 @@ Function HoverOverObjectAdjuster(i)
 			TooltipHasActivateID(StartX,TooltipLeftY,0)
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$) And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data4)))
 			EndIf
@@ -12914,7 +12928,8 @@ Function HoverOverObjectAdjuster(i)
 			TooltipHasActivateID(StartX,TooltipLeftY,1)
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute And ObjectAdjusterData5\Absolute
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$) And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute And ObjectAdjusterData5\Absolute
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)))
 			EndIf
@@ -13548,7 +13563,8 @@ Function DisplayObjectAdjuster(i)
 			tex$=LogicIdToLogicName$(CurrentObject\Attributes\Data0)
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC" Or CurrentObject\Attributes\LogicType=110
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$) Or CurrentObject\Attributes\LogicType=110
 			tex2$="Texture"
 
 			Select CurrentObject\Attributes\Data0
@@ -13834,7 +13850,8 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC" Or CurrentObject\Attributes\LogicType=110
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$) Or CurrentObject\Attributes\LogicType=110
 			tex2$="Expression"
 			tex$=GetStinkerExpressionName$(CurrentObject\Attributes\Data1)
 		EndIf
@@ -14046,7 +14063,8 @@ Function DisplayObjectAdjuster(i)
 			tex2$="XOffset"
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$)
 			tex2$="Acc1"
 
 			tex$=GetAccessoryName$(CurrentObject\Attributes\Data2)
@@ -14310,7 +14328,8 @@ Function DisplayObjectAdjuster(i)
 			End Select
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$)
 			tex2$="Colour1"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		EndIf
@@ -14472,7 +14491,8 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Visual Type"
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$)
 			tex2$="Acc2" ;"Glasses"
 
 			tex$=GetAccessoryName$(CurrentObject\Attributes\Data4)
@@ -14564,7 +14584,8 @@ Function DisplayObjectAdjuster(i)
 	Case "Data5"
 		tex$=Str$(CurrentObject\Attributes\Data5)
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$)
 			tex2$="Colour2"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)
 		EndIf
@@ -15835,6 +15856,10 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data1<2 CurrentObject\Attributes\Data1=2
 		EndIf
 
+		; Q - player NPC functionality (lock adjuster since it's set in-engine)
+		If CurrentObject\Attributes\ModelName$="!PlayerNPC"
+			If CurrentObject\Attributes\Data0<>1 CurrentObject\Attributes\Data0=1
+		EndIf
 	Case "Data1"
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			ObjectAdjusterData1\RandomMinDefault=0
@@ -15898,7 +15923,8 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf
 
-		If CurrentObject\Attributes\ModelName$="!NPC"
+		; Q - player NPC functionality
+		If IsModelNPC(CurrentObject\Attributes\ModelName$)
 			; Expression
 			If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
@@ -16005,6 +16031,10 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=2
 		EndIf
 
+		; Q - player NPC functionality (lock adjuster since it's set in-engine)
+		If CurrentObject\Attributes\ModelName$="!PlayerNPC"
+			If CurrentObject\Attributes\Data2<>0 CurrentObject\Attributes\Data2=0
+		EndIf
 ;		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
 ;			If CurrentObject\Attributes\Data2>1 CurrentObject\Attributes\Data2=0
 ;			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=1
@@ -16122,6 +16152,10 @@ Function AdjustObjectAdjuster(i)
 			EndIf
 		EndIf
 
+		; Q - player NPC functionality (lock adjuster since it's set in-engine)
+		If CurrentObject\Attributes\ModelName$="!PlayerNPC"
+			If CurrentObject\Attributes\Data3<>0 CurrentObject\Attributes\Data3=0
+		EndIf
 	Case "Data4"
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			; Glasses
@@ -16197,6 +16231,10 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data4>1 CurrentObject\Attributes\Data4=0
 		EndIf
 
+		; Q - player NPC functionality (lock adjuster since it's set in-engine)
+		If CurrentObject\Attributes\ModelName$="!PlayerNPC"
+			If CurrentObject\Attributes\Data4<>0 CurrentObject\Attributes\Data4=0
+		EndIf
 	Case "Data5"
 		;CurrentObject\Attributes\Data5=AdjustInt("Data5: ", CurrentObject\Attributes\Data5, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data5=AdjustObjectAdjusterInt(ObjectAdjusterData5,CurrentObject\Attributes\Data5,SlowInt,FastInt,DelayTime)
@@ -16240,6 +16278,10 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 		EndIf
 
+		; Q - player NPC functionality (lock adjuster since it's set in-engine)
+		If CurrentObject\Attributes\ModelName$="!PlayerNPC"
+			If CurrentObject\Attributes\Data5<>0 CurrentObject\Attributes\Data5=0
+		EndIf
 	Case "Data6"
 		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
 			ObjectAdjusterData6\RandomMinDefault=0
@@ -17090,7 +17132,8 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Obj\Model\Entity=CreateTeleporterMesh(Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!Item"
 		Obj\Model\Entity=CreatePickupItemMesh(Obj\Attributes\Data2)
-	Else If Obj\Attributes\ModelName$="!Stinker" Or Obj\Attributes\ModelName$="!NPC"
+	; Q - player NPC functionality
+	Else If Obj\Attributes\ModelName$="!Stinker" Or IsModelNPC(Obj\Attributes\ModelName$)
 		Obj\Model\Entity=CopyEntity(StinkerMesh)
 
 		If Obj\Attributes\Data0=5
@@ -28743,7 +28786,8 @@ Function ObjectHasShadow(ModelName$)
 		Return True
 	Case "!Crab"
 		Return True
-	Case "!NPC" ; Normally this shadow is created by the CreateStinkerModel function rather than CreateObjectShadow.
+	; Q - player NPC functionality
+	Case "!NPC","!PlayerNPC" ; Normally this shadow is created by the CreateStinkerModel function rather than CreateObjectShadow.
 		Return True
 	Default
 		Return False
@@ -28753,7 +28797,8 @@ End Function
 
 Function ObjectCountAccessories(Attributes.GameObjectAttributes)
 
-	If Attributes\ModelName$="!NPC"
+	; Q - player NPC functionality
+	If IsModelNPC(Attributes\ModelName$)
 		Code$="!T"
 		If Attributes\Data0<10
 			Code$=Code$+"00"+Str$(Attributes\Data0)
@@ -31102,7 +31147,8 @@ Function ControlNPC(i)
 	Attributes.GameObjectAttributes=Obj\Attributes
 	Pos.GameObjectPosition=Obj\Position
 
-	If Attributes\ModelName$<>"!NPC" Return ; don't want to risk a MAV
+	; Q - player NPC functionality
+	If not IsModelNPC(Attributes\ModelName$) Return ; don't want to risk a MAV
 
 	If SimulatedObjectFrozen(i)=1 Or SimulatedObjectFrozen(i)=10001 Or SimulatedObjectFrozen(i)=-1
 		; freeze
@@ -32210,7 +32256,8 @@ Function ControlObjects()
 					SimulatedObjectX#(i)=Pos\TileX+0.5-SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 
 				Case 21
-					If Attributes\ModelName$="!NPC" Or Attributes\ModelName$="!Tentacle"
+					; Q - player NPC functionality
+					If IsModelNPC(Attributes\ModelName$) Or Attributes\ModelName$="!Tentacle"
 						Entity=GetChild(Obj\Model\Entity,3)
 					;ElseIf Attributes\ModelName$="!FlipBridge"
 					;	Entity=GetChild(Obj\Model\Entity,1)
