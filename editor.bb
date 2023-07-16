@@ -9,7 +9,7 @@
 ;
 ;
 
-Global VersionDate$="04/02/23"
+Global VersionDate$="07/16/23"
 AppTitle "Wonderland Adventures MNIKEditor (Version "+VersionDate$+")"
 
 Include "particles-define.bb"
@@ -27,9 +27,6 @@ Global MouseDebounceTimer=0
 Global ReturnKey,ReturnKeyReleased,DeleteKey,DeleteKeyReleased
 Const KeyCount=237 ; How many keys to track for their state.
 Dim KeyReleased(KeyCount)
-
-
-
 
 Global EditorMode=0		;0-level, 1-textures, 2-sidetextures, 3-objects
 						;4-user Select screen
@@ -49,11 +46,11 @@ Global EditorModeBeforeMasterEdit=0
 Global UnsavedChanges=0
 
 Function AddUnsavedChange()
-	
+
 	If UnsavedChanges<999999
 		UnsavedChanges=UnsavedChanges+1
 	EndIf
-	
+
 End Function
 
 Const DialogKillLineEight=False
@@ -123,7 +120,6 @@ Const MaxTexturePrefix=99
 Dim TexturePrefix$(MaxTexturePrefix)
 Global CurrentTexturePrefix=-1
 
-		
 ; EDITOR DIALOG DATA
 
 Global CurrentDialog
@@ -139,14 +135,14 @@ Const MaxInterChangeTextLine=7
 Global StartingInterChange
 
 Global NofInterchanges
-Dim NofInterChangeTextLines(MaxInterChanges)	
+Dim NofInterChangeTextLines(MaxInterChanges)
 Dim InterChangeTextLine$(MaxInterChanges,MaxInterChangeTextLine)
 Dim DialogTextCommand$(MaxInterChanges,200),DialogTextCommandPos(MaxInterChanges,200), NofTextCommands(MaxInterChanges)
 Dim NofInterChangeReplies(MaxInterChanges)
 Dim InterChangeReplyText$(MaxInterChanges,MaxReply)
-Dim InterChangeReplyFunction(MaxInterChanges,MaxReply)		
-Dim InterChangeReplyData(MaxInterChanges,MaxReply)			
-Dim InterChangeReplyCommand(MaxInterChanges,MaxReply)		
+Dim InterChangeReplyFunction(MaxInterChanges,MaxReply)
+Dim InterChangeReplyData(MaxInterChanges,MaxReply)
+Dim InterChangeReplyCommand(MaxInterChanges,MaxReply)
 Dim InterChangeReplyCommandData(MaxInterChanges,MaxReply,4)
 
 Global NofAskAbouts
@@ -156,16 +152,15 @@ Dim AskAboutActive(MaxAskAbouts)
 Dim AskAboutInterchange(MaxAskAbouts)
 Dim AskAboutRepeat(MaxAskAbouts)
 
-
 Global PreviewNofInterchanges
-Dim PreviewNofInterChangeTextLines(MaxInterChanges)	
+Dim PreviewNofInterChangeTextLines(MaxInterChanges)
 Dim PreviewInterChangeTextLine$(MaxInterChanges,MaxInterChangeTextLine)
 Dim PreviewDialogTextCommand$(MaxInterChanges,200),PreviewDialogTextCommandPos(MaxInterChanges,200), PreviewNofTextCommands(MaxInterChanges)
 Dim PreviewNofInterChangeReplies(MaxInterChanges)
 Dim PreviewInterChangeReplyText$(MaxInterChanges,MaxReply)
-Dim PreviewInterChangeReplyFunction(MaxInterChanges,MaxReply)		
-Dim PreviewInterChangeReplyData(MaxInterChanges,MaxReply)			
-Dim PreviewInterChangeReplyCommand(MaxInterChanges,MaxReply)		
+Dim PreviewInterChangeReplyFunction(MaxInterChanges,MaxReply)
+Dim PreviewInterChangeReplyData(MaxInterChanges,MaxReply)
+Dim PreviewInterChangeReplyCommand(MaxInterChanges,MaxReply)
 Dim PreviewInterChangeReplyCommandData(MaxInterChanges,MaxReply,4)
 
 Global PreviewNofAskAbouts
@@ -174,7 +169,6 @@ Dim PreviewAskAboutText$(MaxAskAbouts)
 Dim PreviewAskAboutActive(MaxAskAbouts)
 Dim PreviewAskAboutInterchange(MaxAskAbouts)
 Dim PreviewAskAboutRepeat(MaxAskAbouts)
-
 
 Global CopiedNofInterChangeTextLines
 Dim CopiedInterChangeTextLine$(MaxInterChangeTextLine)
@@ -186,7 +180,6 @@ Dim CopiedInterChangeReplyFunction(MaxReply)
 Dim CopiedInterChangeReplyData(MaxReply)
 Dim CopiedInterChangeReplyCommand(MaxReply)
 Dim CopiedInterChangeReplyCommandData(MaxReply,4)
-
 
 Global ColEffect=-1
 Global TxtEffect=-1
@@ -229,19 +222,12 @@ TCommands$(11)="EROT"
 ;Data "CWHI","CGRY","CRED","CORA","CYEL","CGRE","CCYA","CBLU","CPUR","CRAI","CBLI","CWAR"
 ;Data "ENON","ESHI","EJIT","EWAV","EBOU","EZOO","EZSH","ECIR","EEIG","EUPD","ELER","EROT"
 
-
 Const CharactersPerLine=38
 Const CharacterDeleteDelay=50
-
-
-
-
 
 Global WhichInterChange=0
 Global WhichAnswer=0
 Global WhichAskAbout=0
-
-
 
 ; 0 is master.dat editor, 1 is dialog editor, 2 is hub editor
 Dim MouseTextEntryLineMax(2)
@@ -278,7 +264,6 @@ MouseTextEntryLineY(2,1)=3
 
 Global MouseTextEntryDelete=False
 
-
 ; COMPILER DATA
 
 Const MaxCompilerFile=700 ; 500
@@ -289,7 +274,7 @@ Dim CustomContentFile$(MaxCompilerFile)
 
 Dim CompilerFileName$(MaxCompilerFile)
 Dim CompilerFileSize(MaxCompilerFile)
-						
+
 Dim NofHubCompilerFiles(MaxCompilerFile)
 Dim HubCompilerFileName$(MaxCompilerFile,MaxCompilerFile)
 Dim HubCompilerFileSize(MaxCompilerFile,MaxCompilerFile)
@@ -349,16 +334,14 @@ Global CopiedLevel=-1
 Global CopyingDialog=StateNotSpecial
 Global CopiedDialog=-1
 
-
 Global AdventureExitWonLevel, AdventureExitWonX, AdventureExitWonY ; at what hub level and x/y do you reappear if won.
 Global AdventureExitLostLevel, AdventureExitLostX, AdventureExitLostY ; at what hub level and x/y do you reappear if won.
-
 
 Global AdventureGoal	; when is adventure done
 						; 1-NofWeeStinkersInAdventure=0
 
 Dim AdventureWonCommand(3,6)	; 3 commands, each with level/command/fourdata
-						
+
 Global StarterItems
 Global WidescreenRange=0
 Global WidescreenRangeLevel=-1
@@ -387,8 +370,6 @@ winningcondition$(9)="Destroy All ZBots"
 ;.winning
 ;Data "None (e.g. collect star)","Rescue All Stinkers","Capture/Destroy Scritters","Collect All Gems","Destroy All Bricks","Destroy FireFlowers","Race","Capture/Destroy Crabs","Rescue All BabyBoomers","Destroy All ZBots"
 ;Data "Done"
-
-
 
 Global CurrentLevelNumber=0
 
@@ -471,17 +452,17 @@ Global BorderExpandOption=0 ;0-current, 1-duplicate
 Global PreventPlacingObjectsOutsideLevel=True
 
 Function ToolbarPositionX(StepsFromToolbarLeft)
-	
+
 	PartitionCount=8
 	Partition=GfxWidth/PartitionCount
 	Return Partition*(StepsFromToolbarLeft-1)+Partition/2
-	
+
 End Function
 
 Function ToolbarPositionY(StepsFromToolbarTop)
-	
+
 	Return GfxHeight-125+45*StepsFromToolbarTop
-	
+
 End Function
 
 Function IsMouseOverToolbarItem(x,y)
@@ -598,9 +579,6 @@ LogicName$(12)="Ice Corner"
 LogicName$(13)="Ice Wall"
 LogicName$(14)="Ice Float"
 
-
-
-
 ; Directory Names
 Global GlobalDirName$ = "UserData"; SpecialFolderLocation($1c)+"\Midnight Synergy\WA Editor"
 CreateDir GlobalDirName$
@@ -634,7 +612,6 @@ Global AdventureNameEntered$=""
 Global AdventureFileNamesListedStart
 Global AdventureNameSelected
 
-
 Const AdventureCurrentArchiveCurrent=0
 Const AdventureCurrentArchiveArchive=1
 Const AdventureCurrentArchivePlayer=2
@@ -645,7 +622,6 @@ Global AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 
 Global DisplayFullScreen=False
 
-
 ;filed=ReadFile (globaldirname$+"\display-ed.wdf")
 ;If filed>0
 ;
@@ -655,13 +631,7 @@ Global DisplayFullScreen=False
 
 Global EditorControls$=GlobalDirName$+"\editorcontrols.wdf"
 
-
-
 GetTextureNames()
-
-
-
-
 
 ; LEVEL SIZE
 ; ============
@@ -840,7 +810,6 @@ Repeat
 	i=i+1
 Until NofTilePresetTiles>0
 
-
 ; OBJECTS
 ; ------------------------
 
@@ -890,7 +859,6 @@ Dim SimulatedObjectFrozen(MaxNofObjects)
 ;Dim SimulatedObjectScaleAdjust#(MaxNofObjects) ; not useful since ScaleAdjust is set to 1.0 in-game after it is applied to XScale, YScale, and ZScale
 Dim SimulatedObjectScaleXAdjust#(MaxNofObjects),SimulatedObjectScaleYAdjust#(MaxNofObjects),SimulatedObjectScaleZAdjust#(MaxNofObjects)
 
-
 Type GameObject
 
 Field Model.GameObjectModel
@@ -898,7 +866,6 @@ Field Attributes.GameObjectAttributes
 Field Position.GameObjectPosition
 
 End Type
-
 
 Type GameObjectModel
 
@@ -912,7 +879,6 @@ Field AccEntity
 Field AccTexture
 
 End Type
-
 
 Type GameObjectAttributes
 
@@ -942,7 +908,6 @@ Field FutureFloat5#,FutureFloat6#,FutureFloat7#,FutureFloat8#,FutureFloat9#,Futu
 
 End Type
 
-
 Type GameObjectPosition
 
 Field X#,Y#,Z#
@@ -960,7 +925,6 @@ Function NewGameObject.GameObject()
 	Return Result
 
 End Function
-
 
 Global CurrentObject.GameObject=NewGameObject()
 Global TempObject.GameObject=NewGameObject()
@@ -1089,7 +1053,7 @@ Function RecalculateObjectAdjusterModes()
 	For i=0 To NofSelectedObjects-1
 		ReadObjectIntoCurrentObject(LevelObjects(SelectedObjects(i)))
 	Next
-	
+
 	BuildCurrentObjectModel()
 
 End Function
@@ -1101,7 +1065,7 @@ Function GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
 			Return i
 		EndIf
 	Next
-	
+
 	Return -1
 
 End Function
@@ -1113,7 +1077,7 @@ Function GetDraggedObjectIndexInDraggedObjects(LevelObjectIndex)
 			Return i
 		EndIf
 	Next
-	
+
 	Return -1
 
 End Function
@@ -1178,7 +1142,7 @@ Function AddSelectObjectInner(LevelObjectIndex)
 	PreviousSelectedObject=LevelObjectIndex
 	NofSelectedObjects=NofSelectedObjects+1
 	NewSelectedObjectCount=NewSelectedObjectCount+1
-	
+
 	; Doing this discards any non-Updated changes to previously-selected objects.
 	RecalculateObjectAdjusterModes()
 
@@ -1195,14 +1159,14 @@ Function RemoveSelectObject(LevelObjectIndex)
 End Function
 
 Function RemoveSelectObjectInner(Index)
-	
+
 	For i=Index To NofSelectedObjects-2
 		SelectedObjects(i)=SelectedObjects(i+1)
 	Next
 	NofSelectedObjects=NofSelectedObjects-1
-	
+
 	RecalculateObjectAdjusterModes()
-	
+
 End Function
 
 Function AddDragObject(LevelObjectIndex)
@@ -1239,7 +1203,7 @@ Function RemoveDraggedObjectInner(Index)
 End Function
 
 Function ToggleSelectObject(LevelObjectIndex)
-	
+
 	Index=GetSelectedObjectIndexInSelectedObjects(LevelObjectIndex)
 	If Index=-1
 		AddSelectObjectInner(LevelObjectIndex)
@@ -1255,7 +1219,7 @@ Function PrepareObjectSelection()
 	If (Not CtrlDown())
 		ClearObjectSelection()
 	EndIf
-	
+
 	NewSelectedObjectCount=0
 
 End Function
@@ -1268,7 +1232,7 @@ Function FinishObjectSelection()
 			SetBrushToCurrentObject()
 		EndIf
 	EndIf
-	
+
 	NofDraggedObjects=NofSelectedObjects
 	For i=0 To NofDraggedObjects-1
 		DraggedObjects(i)=SelectedObjects(i)
@@ -1283,7 +1247,6 @@ Global CurrentAdjusterZero=False
 Global LeftAdj$=""
 Global RightAdj$=""
 
-
 Type ObjectAdjusterInt
 
 Field Name$
@@ -1291,7 +1254,6 @@ Field RandomEnabled,RandomMin,RandomMax,RandomMinDefault,RandomMaxDefault
 Field Absolute
 
 End Type
-
 
 Type ObjectAdjusterFloat
 
@@ -1308,7 +1270,6 @@ Field RandomEnabled
 Field Absolute
 
 End Type
-
 
 Function NewObjectAdjusterInt.ObjectAdjusterInt(Name$,RandomMin,RandomMax)
 
@@ -1348,7 +1309,6 @@ Function NewObjectAdjusterString.ObjectAdjusterString(Name$)
 
 End Function
 
-
 Function AdjustObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,SlowInt,FastInt,DelayTime)
 
 	If ObjectAdjuster\RandomEnabled
@@ -1371,7 +1331,6 @@ Function AdjustObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,S
 	Return CurrentValue
 
 End Function
-
 
 Function AdjustObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat,CurrentValue#,SlowFloat#,FastFloat#,DelayTime)
 
@@ -1396,9 +1355,8 @@ Function AdjustObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat,CurrentVa
 
 End Function
 
-
 Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,SlowInt,FastInt,RawInput,ValueLow,ValueHigh,DelayTime)
-	
+
 	If ObjectAdjuster\RandomEnabled
 		If OnLeftHalfAdjuster()
 			ObjectAdjuster\RandomMin=AdjustInt(ObjectAdjuster\Name$+" Min: ", ObjectAdjuster\RandomMin, SlowInt, FastInt, DelayTime)
@@ -1430,9 +1388,8 @@ Function AdjustObjectAdjusterToggle(ObjectAdjuster.ObjectAdjusterInt,CurrentValu
 		ObjectAdjuster\RandomMax=ObjectAdjuster\RandomMaxDefault
 	EndIf
 	Return CurrentValue
-	
-End Function
 
+End Function
 
 Function AdjustObjectAdjusterBits(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,i,DelayTime)
 
@@ -1442,16 +1399,16 @@ Function AdjustObjectAdjusterBits(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,
 		StartY=StartY+15+(i-ObjectAdjusterStart)*15
 		tex2$="TTC"
 		tex$="00000 00000 00000"
-		
+
 		HalfNameWidth=4*Len(tex2$+": "+tex$)
 		BitStartX=StartX+92-HalfNameWidth+8*Len(tex2$+": ")
-		
+
 		BitPositionIndex=GetBitPositionIndex(BitStartX)
 		BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
 		If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
 			CurrentValue=CurrentValue Xor 2^BitIndex
 		EndIf
-		
+
 		If LeftMouse=True Or RightMouse=True
 			MouseDebounceSet(DelayTime)
 		EndIf
@@ -1467,7 +1424,6 @@ Function AdjustObjectAdjusterBits(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,
 
 End Function
 
-
 Function RandomObjectAdjusterInt(ObjectAdjuster.ObjectAdjusterInt)
 
 	Return Rand(ObjectAdjuster\RandomMin,ObjectAdjuster\RandomMax)
@@ -1479,7 +1435,6 @@ Function RandomObjectAdjusterFloat#(ObjectAdjuster.ObjectAdjusterFloat)
 	Return Rnd#(ObjectAdjuster\RandomMin,ObjectAdjuster\RandomMax)
 
 End Function
-
 
 Function SetAdjusterDisplayInt$(ObjectAdjuster.ObjectAdjusterInt,CurrentValue,tex$)
 
@@ -1525,7 +1480,6 @@ Function SetAdjusterDisplayString$(ObjectAdjuster.ObjectAdjusterString,CurrentVa
 	EndIf
 
 End Function
-
 
 Global ObjectAdjusterDefensePower.ObjectAdjusterInt=NewObjectAdjusterInt("DefensePower",0,33)
 Global ObjectAdjusterAttackPower.ObjectAdjusterInt=NewObjectAdjusterInt("AttackPower",0,33)
@@ -1636,7 +1590,6 @@ Global BrushSpaceOriginY
 Global BrushSpaceWidth=1
 Global BrushSpaceHeight=1
 
-
 ; Object PRESETS
 ; ========================
 Global CurrentObjectPresetCategory, NofObjectPresetCategories
@@ -1677,7 +1630,7 @@ Global NofObjectAdjusters,ObjectAdjusterStart
 
 ; GLOBAL LEVELSETTINGS
 ; ========================
-Global WaterFlow=1 
+Global WaterFlow=1
 Global WaterTransparent=True
 Global WaterGlow=False
 
@@ -1691,15 +1644,7 @@ Global AmbientBlue=100
 Global SimulatedLightRed,SimulatedLightGreen,SimulatedLightBlue,SimulatedLightRedGoal,SimulatedLightGreenGoal,SimulatedLightBlueGoal,SimulatedLightChangeSpeed
 Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedAmbientRedGoal,SimulatedAmbientGreenGoal,SimulatedAmbientBlueGoal,SimulatedAmbientChangeSpeed
 
-
-
-
-
-
-
-
 ; ******************************************************
-
 
 ; Setup Graphics, Lights, Camera
 ; ================================
@@ -1711,9 +1656,6 @@ Global SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue,SimulatedA
 ;	SetBuffer BackBuffer()
 ;	Graphics3D 800,600,16,3
 ;EndIf
-
-
-
 
 Global NofMyGfxModes, GfxMode
 Dim MyGfxModeWidth(1000),MyGfxModeHeight(1000),MyGfxModeDepth(1000)
@@ -1727,7 +1669,7 @@ Function ReadDisplayFile()
 
 	file=ReadFile (globaldirname$+"\"+EditorDisplayFile$)
 	If file>0
-	
+
 		NofMyGfxModes=ReadInt(file)
 		For i=0 To NofMyGfxModes-1
 			MyGfxModeWidth(i)=ReadInt(file)
@@ -1754,24 +1696,23 @@ Function WriteDisplayFile()
 	file=WriteFile(globaldirname$+"\"+EditorDisplayFile$)
 
 	WriteInt file,NofMyGfxModes
-	
+
 	For i=0 To NofMyGfxModes-1
 		WriteInt file,MyGfxModeWidth(i)
 		WriteInt file,MyGfxModeHeight(i)
 		WriteInt file,MyGfxModeDepth(i)
-		
-		
+
 	Next
-	
+
 	WriteInt file,GfxMode
 	WriteInt file,GfxWindowed
-	
+
 	CloseFile file
 
 End Function
 
 Function PopulateGfxModes()
-	
+
 	j=0
 	For i=1 To CountGfxModes3D()
 		ratio#=Float(GfxModeWidth(i))/Float(GfxModeHeight(i))
@@ -1791,10 +1732,10 @@ Function PopulateGfxModes()
 		EndIf
 	Next
 	NofMyGfxModes=j
-	
-	GfxMode=-1	
-	
-	If GfxMode=-1	
+
+	GfxMode=-1
+
+	If GfxMode=-1
 		For j=0 To NofMyGfxModes-1
 			If MyGfxModeWidth(j)=800 And MyGfxModeheight(j)=600 And MyGfxModeDepth(j)=32
 				GfxMode=j
@@ -1959,13 +1900,8 @@ End Function
 Function LevelViewportX(x#)
 
 	Return -(LevelViewportWidth-LevelViewportHeight)/2+x#
-	
+
 End Function
-
-
-
-
-
 
 Global Light
 Global SpotLight
@@ -2029,11 +1965,11 @@ Const BrushMeshObjectAlpha#=0.5
 Const BrushMeshOffsetY#=0.01
 
 Function ClearBrushSurface()
-	
+
 	ClearSurface BrushSurface
-	
+
 	ClearBrushPreviewSurface()
-	
+
 End Function
 
 Function ClearBrushPreviewSurface()
@@ -2042,7 +1978,7 @@ Function ClearBrushPreviewSurface()
 		FreeEntity PreviewObjects(i)
 	Next
 	NofPreviewObjects=0
-	
+
 	ClearSurface BrushTextureSurface
 	BrushSurfaceVertexCount=0
 
@@ -2059,14 +1995,14 @@ Function HideBrushSurface()
 
 	HideEntity BrushMesh
 	HideEntity BrushTextureMesh
-	
+
 End Function
 
 Function FinishBrushSurface()
-	
+
 	UpdateNormals BrushMesh
 	UpdateNormals BrushTextureMesh
-	
+
 End Function
 
 Function AddSquareToBrushSurface(TheSurface,i,j,y#,SetTexCoords)
@@ -2076,17 +2012,17 @@ Function AddSquareToBrushSurface(TheSurface,i,j,y#,SetTexCoords)
 	If BrushSurfaceVertexCount=32000
 		Return
 	EndIf
-	
+
 	StartingVertex=BrushSurfaceVertexCount
-	
+
 	AddVertex TheSurface,i,y#+BrushMeshOffsetY#,-j
 	AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#,-j
 	AddVertex TheSurface,i,y#+BrushMeshOffsetY#,-j-1
 	AddVertex TheSurface,i+1,y#+BrushMeshOffsetY#,-j-1
-	
+
 	AddTriangle TheSurface,StartingVertex+0,StartingVertex+1,StartingVertex+2
 	AddTriangle TheSurface,StartingVertex+1,StartingVertex+3,StartingVertex+2
-		
+
 	If SetTexCoords
 		TheTile.Tile=BrushTiles(LevelSpaceToBrushSpaceX(i,BrushWrap),LevelSpaceToBrushSpaceY(j,BrushWrap))
 		CalculateUV(TheTile\Terrain\Texture,0,0,TheTile\Terrain\Rotation,8,1)
@@ -2106,7 +2042,7 @@ End Function
 Function AddTileToBrushSurfaceActual(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
 
 	AddSquareToBrushSurface(TheSurface,x,y,0.0,SetTexCoords)
-	
+
 	If IsPositionInLevel(x,y)
 		SquareHeight#=GetTileTotalHeight(LevelTiles(x,y))
 		If SquareHeight#<>0.0
@@ -2121,12 +2057,12 @@ Function AddTileToBrushSurface(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoor
 	If BrushMode=BrushModeSetMirror
 		Return
 	EndIf
-	
+
 	BrushSpaceX=LevelSpaceToBrushSpaceX(x,BrushWrap)
 	BrushSpaceY=LevelSpaceToBrushSpaceY(y,BrushWrap)
 
 	AddTileToBrushSurfaceActual(TheSurface,x,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
-	
+
 	If DupeMode=DupeModeX
 		TargetX=MirrorAcrossInt(x,MirrorPositionX)
 		AddTileToBrushSurfaceActual(TheSurface,TargetX,y,BrushSpaceX,BrushSpaceY,SetTexCoords)
@@ -2205,8 +2141,6 @@ ScaleMesh ObjectPositionMarkerMesh,0.08,90,0.08
 ;EntityColor ObjectPositionMarkerMesh,100,255,100
 HideEntity ObjectPositionMarkerMesh
 
-
-
 ; Load Textures
 ; =================
 Global ButtonTexture, GateTexture
@@ -2223,7 +2157,6 @@ Dim TeleporterTexture(16)
 For i=0 To 8
 	TeleporterTexture(i)=MyLoadTexture("data/models/teleport/teleport"+Str$(i)+".jpg",1)
 Next
-
 
 ; PreLoad Models
 ; ==================
@@ -2267,14 +2200,12 @@ Global StinkerTexture=MyLoadTexture("data\models\stinker\body001a.jpg",1)
 ;EntityTexture GetChild(StinkerMesh,3),StinkerTexture
 HideEntity StinkerMesh
 
-
 ; Cage
 Global CageMesh=MyLoadMesh("data/models/cage/cage.3ds",0)
 RotateMesh CageMesh,-90,0,0
 Global CageTexture=MyLoadTexture("data/models/cage/cage.jpg",1)
 EntityTexture CageMesh,CageTexture
 HideEntity CageMesh
-
 
 ; AutoDoor
 Global AutodoorMesh=CreateCube()
@@ -2297,7 +2228,6 @@ For i=0 To 6
 	ScritterTexture(i)=MyLoadTexture("data/models/scritter/scritter"+Str$(i)+".jpg",1)
 Next
 HideEntity ScritterMesh
-
 
 ; Stepping Stone
 Global SteppingStoneMesh=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
@@ -2324,7 +2254,6 @@ Next
 EntityTexture StarMesh,GoldStarTexture
 HideEntity StarMesh
 
-
 ; Coin
 Global CoinMesh=MyLoadMesh("data\models\coin\coin.3ds",0)
 Global	GoldCoinTexture=MyLoadTexture("data\models\coin\coin.jpg",1)
@@ -2336,11 +2265,8 @@ HideEntity CoinMesh
 Global	KeyMesh=myLoadMesh("data\models\keys\key.3ds",0)
 HideEntity KeyMesh
 
-
-
 ; CustomItem
 Global IconTextureCustom=0
-
 
 ; Signs
 Dim SignMesh(5),SignTexture(5)
@@ -2349,8 +2275,6 @@ For i=0 To 5
 	SignTexture(i)=MyLoadTexture("data\models\sign\sign"+Str$(i)+".jpg",1)
 	HideEntity SignMesh(i)
 Next
-
-
 
 ; Houses
 Dim DoorTexture(10),CottageTexture(10),HouseTexture(10),WindmillTexture(10),FenceTexture(10)
@@ -2370,9 +2294,6 @@ For i=0 To 0
 	FenceTexture(i)=MyLoadTexture("data\models\houses\fence"+Str$(i)+".png",1)
 Next
 Global Fountaintexture=MyLoadTexture("data\models\houses\fountain01.png",1)
-
-
-
 
 ; Gems
 Dim GemMesh(10)
@@ -2405,7 +2326,6 @@ Global BurstFlowerMesh=MyLoadMesh("data\models\burstflower\burstflower.b3d",0)
 Global BurstFlowerTexture=MyLoadTexture("data\models\burstflower\burstflower.png",1)
 EntityTexture BurstFlowerMesh,BurstFlowerTexture
 HideEntity BurstFlowerMesh
-
 
 ; Boxes etc
 Global BarrelMesh,BarrelTexture1,BarrelTexture2,BarrelTexture3
@@ -2494,10 +2414,9 @@ HideEntity TrollMesh
 Global KaboomMesh=myLoadMD2("data\models\kaboom\kaboom.md2")
 Dim KaboomTexture(5)
 For i=1 To 5
-		
-		
-		KaboomTexture(i)=myLoadTexture("data\models\kaboom\kaboom0"+Str$(i)+".jpg",1)
-		
+
+	KaboomTexture(i)=myLoadTexture("data\models\kaboom\kaboom0"+Str$(i)+".jpg",1)
+
 Next
 EntityTexture KaboomMesh,KaboomTexture(1)
 ;TurnEntity KaboomMesh,0,90,0
@@ -2568,12 +2487,11 @@ Global	Mothershiptexture=myLoadTexture("data\models\other\mothership.jpg",1)
 EntityTexture Mothershipmesh,Mothershiptexture
 HideEntity Mothershipmesh
 
-
 ; Portal
 Global PortalWarpMesh=CreateCylinder()
-	RotateMesh PortalWarpMesh,-90,0,0
-	ScaleMesh PortalWarpMesh,2,2,4.5*1.15
-	HideEntity PortalWarpMesh
+RotateMesh PortalWarpMesh,-90,0,0
+ScaleMesh PortalWarpMesh,2,2,4.5*1.15
+HideEntity PortalWarpMesh
 
 Global StarTexture=myloadTexture("data\graphics\stars.jpg",1)
 Global RainbowTexture=myloadTexture("data\graphics\rainbow.jpg",1)
@@ -2605,7 +2523,6 @@ WraithTexture(2)=MyLoadTexture ("data\models\ghost\wraith2.jpg",1)
 EntityTexture WraithMesh,WraithTexture(0)
 HideEntity WraithMesh
 
-
 ; Obstacles
 Dim ObstacleMesh(100),ObstacleTexture(100)
 Dim MushroomTex(3)
@@ -2629,7 +2546,6 @@ ObstacleMesh(4)=myLoadMesh("data\models\Other\volcano01.b3d",0)
 ObstacleTexture(4)=myLoadTexture("data\models\other\volcano02.jpg",1)
 EntityTexture ObstacleMesh(4),ObstacleTexture(4)
 HideEntity ObstacleMesh(4)
-
 
 ObstacleMesh(5)=myLoadMesh("data\models\Trees\flower.3ds",0)
 ObstacleTexture(5)=myLoadTexture("data\models\Trees\flower1.jpg",1)
@@ -2658,7 +2574,6 @@ ObstacleTexture(9)=myLoadTexture("data\models\Trees\fern.bmp",4)
 EntityTexture ObstacleMesh(9),ObstacleTexture(9)
 HideEntity ObstacleMesh(9)
 
-
 ObstacleMesh(10)=myLoadMesh("data\models\Trees\mushroom.3ds",0)
 MushroomTex(0)=myLoadTexture("data\models\Trees\mushroom.jpg",1)
 MushroomTex(1)=myLoadTexture("data\models\Trees\mushroom2.jpg",1)
@@ -2670,18 +2585,15 @@ ObstacleTexture(11)=myLoadTexture("data\models\Trees\fern3.png",4)
 EntityTexture ObstacleMesh(11),ObstacleTexture(11)
 HideEntity ObstacleMesh(11)
 
-
 ObstacleMesh(12)=myLoadMesh("data\models\Trees\plant1.3ds",0)
 ObstacleTexture(12)=myLoadTexture("data\models\Trees\plant1.png",4)
 EntityTexture ObstacleMesh(12),ObstacleTexture(12)
 HideEntity ObstacleMesh(12)
 
-
 ObstacleMesh(13)=myLoadMesh("data\models\Trees\plant2.b3d",0)
 ObstacleTexture(13)=myLoadTexture("data\models\Trees\plant2.png",4)
 EntityTexture ObstacleMesh(13),ObstacleTexture(13)
 HideEntity ObstacleMesh(13)
-
 
 ObstacleMesh(15)=myLoadMesh("data\models\Trees\leaftree01.b3d",0)
 ObstacleTexture(15)=myLoadTexture("data\models\Trees\leaftree01_03.png",4)
@@ -2733,13 +2645,10 @@ ObstacleTexture(24)=myLoadTexture("data\models\Trees\palmtree01.bmp",4)
 EntityTexture ObstacleMesh(24),ObstacleTexture(24)
 HideEntity ObstacleMesh(24)
 
-
-
 ObstacleMesh(25)=myLoadMesh("data\models\Bridges\bridgeend.3ds",0)
 ObstacleTexture(25)=myLoadTexture("data\models\Bridges\bridgebrick.png",1)
 EntityTexture ObstacleMesh(25),ObstacleTexture(25)
 HideEntity ObstacleMesh(25)
-
 
 ObstacleMesh(26)=myLoadMesh("data\models\houses\canopy.3ds",0)
 ObstacleTexture(26)=myLoadTexture("data\models\houses\canopy.jpg",1)
@@ -2810,9 +2719,9 @@ ObstacleMesh(41)=myLoadMesh("data\models\houses\windmill_main.b3d",0)
 HideEntity ObstacleMesh(41)
 
 ObstacleMesh(42)=myLoadMesh("data\models\houses\windmill_rotor.b3d",0)
-	PositionMesh ObstacleMesh(42),0,-5.65/.037,1.25/.037
-	HideEntity ObstacleMesh(42)
-	
+PositionMesh ObstacleMesh(42),0,-5.65/.037,1.25/.037
+HideEntity ObstacleMesh(42)
+
 ObstacleMesh(43)=myLoadMesh("data\models\houses\hut01.b3d",0)
 ObstacleTexture(43)=myLoadTexture("data\models\houses\hut01.jpg",1)
 EntityTexture ObstacleMesh(43),ObstacleTexture(43)
@@ -2848,7 +2757,6 @@ RotateMesh ObstacleMesh(50),-90,0,0
 ObstacleTexture(50)=myLoadTexture("data\models\portal\portal2.jpg",1)
 EntityTexture ObstacleMesh(50),ObstacleTexture(50)
 HideEntity ObstacleMesh(50)
-
 
 ObstacleMesh(51)=myLoadMesh("data\models\newobstacles\cactus1.b3d",0)
 ObstacleTexture(51)=myLoadTexture("data\models\newobstacles\cactus1.png",4)
@@ -2901,7 +2809,6 @@ ObstacleTexture(60)=myLoadTexture("data\models\newobstacles\rock2.png",1)
 EntityTexture ObstacleMesh(60),ObstacleTexture(59)
 HideEntity ObstacleMesh(60)
 
-
 ObstacleMesh(61)=myLoadMesh("data\models\newobstacles\rock3.b3d",0)
 ObstacleTexture(61)=myLoadTexture("data\models\newobstacles\rock3.png",1)
 EntityTexture ObstacleMesh(61),ObstacleTexture(59)
@@ -2912,10 +2819,8 @@ ObstacleTexture(62)=myLoadTexture("data\models\newobstacles\rock4.png",1)
 EntityTexture ObstacleMesh(62),ObstacleTexture(59)
 HideEntity ObstacleMesh(62)
 
-
 Global Cylinder=MyLoadmesh("data\models\bridges\cylinder1.b3d",0)
 HideEntity Cylinder
-
 
 Global Fence1=MyLoadmesh("data\models\houses\fence.3ds",0)
 HideEntity Fence1
@@ -2935,15 +2840,12 @@ For i=1 To 5
 	MirrorTexture(i)=myLoadTexture("data\models\mirror\mirror"+Str$(i)+".jpg",1)
 Next
 
-
-
 Global hubmode
 Global HubFileName$, HubTitle$, HubDescription$, HubTotalAdventures, HubAdvStart, HubSelectedAdventure
 Const HubAdvMax=MaxCompilerFile ;500
 Dim HubAdventuresFilenames$(HubAdvMax)
 Dim HubAdventuresMissing(HubAdvMax)
 Dim HubAdventuresIncludeInTotals(HubAdvMax)
-
 
 Global NoOfShards=7
 Global CustomShardEnabled
@@ -2966,16 +2868,12 @@ Global SelectedGlyph
 
 Global MaxParticleWarningTimer=0 ; number of frames remaining before the "too many particles" warning message disappears
 
-
-
 LoadSounds()
 
 CalculateUIValues()
 InitializeGraphicsCameras() ; needed for loading particles
 InitializeGraphicsEntities()
 InitializeGraphicsTextures()
-
-
 
 ; check if valid username is already selected
 flag=True
@@ -2991,26 +2889,19 @@ Else
 	EndIf
 EndIf
 
-
-
 If flag=False
 	StartUserSelectScreen()
 Else
 	StartAdventureSelectScreen()
 EndIf
-	
-
 
 ResetLevel()
 BuildLevelModel()
-
-
 
 LoadTilePreset()
 LoadObjectPreset()
 
 Global Mouseimg=LoadImage ("data\Mouseimg.bmp")
-
 
 StartupConfigs()
 
@@ -3020,69 +2911,65 @@ TweenTime=MilliSecs()-TweenPeriod
 ReadTestFile()
 
 Repeat
-		
-		If HasFocus()
-			
-			Repeat
-				TweenElapsed=MilliSecs()-TweenTime
-			Until TweenElapsed>TweenPeriod
-			
-			If TweenElapsed>20*TweenPeriod 
-				TweenElapsed=20*TweenPeriod
-				TweenTime=MilliSecs()-TweenElapsed
-			EndIf
-		
-			;how many 'frames' have elapsed	
-			TweenTicks=TweenElapsed/TweenPeriod
-			;fractional remainder
-			Tween#=Float(TweenElapsed Mod TweenPeriod)/Float(TweenPeriod)
-		
-			For k=1 To TweenTicks
-			
-				Tweentime=Tweentime+Tweenperiod
-				If k=Tweenticks 
-					CaptureWorld
-				EndIf
-			
-				UpdateEditor()
-				
-			Next
-		
 
-		
-		Else
-		
-			Repeat
-				Delay 200
-			Until HasFocus()
-			
-			OnRegainFocus()
-			
+	If HasFocus()
+
+		Repeat
+			TweenElapsed=MilliSecs()-TweenTime
+		Until TweenElapsed>TweenPeriod
+
+		If TweenElapsed>20*TweenPeriod
+			TweenElapsed=20*TweenPeriod
+			TweenTime=MilliSecs()-TweenElapsed
 		EndIf
-	
+
+		;how many 'frames' have elapsed
+		TweenTicks=TweenElapsed/TweenPeriod
+		;fractional remainder
+		Tween#=Float(TweenElapsed Mod TweenPeriod)/Float(TweenPeriod)
+
+		For k=1 To TweenTicks
+
+			Tweentime=Tweentime+Tweenperiod
+			If k=Tweenticks
+				CaptureWorld
+			EndIf
+
+			UpdateEditor()
+
+		Next
+
+	Else
+
+		Repeat
+			Delay 200
+		Until HasFocus()
+
+		OnRegainFocus()
+
+	EndIf
+
 Until False ;KeyDown(1) ; escape
-
-
 
 EndApplication()
 
 Function OnRegainFocus()
 
 	;FlushKeys ; WHY DOES THIS NOT WORK??? Apparently it doesn't get rid of currently-pressed keys.
-	
+
 	;ForceKeyRelease(56,"left alt")
 	;ForceKeyRelease(184,"right alt")
-	
+
 	ForceKeyRelease(42,"left shift")
 	ForceKeyRelease(54,"right shift")
-	
+
 	ForceKeyRelease(29,"left ctrl")
 	ForceKeyRelease(157,"right ctrl")
-	
+
 	ForceKeyRelease(57,"space")
-	
+
 	; Apparently Blitz doesn't pick up on the Tab key when alt-tabbing. That's pretty nice.
-	
+
 	ReadConfigs()
 
 End Function
@@ -3091,67 +2978,67 @@ Function CalculateUIValues()
 
 	GfxAspectRatio#=Float#(GfxWidth)/Float#(GfxHeight)
 	GfxZoomScaling#=OriginalRatio#/GfxAspectRatio#
-	
+
 	ToolbarBrushModeX=ToolbarPositionX(1)
 	ToolbarBrushModeY=ToolbarPositionY(1)
-	
+
 	ToolbarBrushSizeX=ToolbarPositionX(2)
 	ToolbarBrushSizeY=ToolbarPositionY(1)
-	
+
 	ToolbarTexPrefixX=ToolbarPositionX(2)
 	ToolbarTexPrefixY=ToolbarPositionY(2)
-	
+
 	ToolbarDensityX=ToolbarPositionX(3)
 	ToolbarDensityY=ToolbarPositionY(1)
-	
+
 	ToolbarElevateX=ToolbarPositionX(3)
 	ToolbarElevateY=ToolbarPositionY(2)
-	
+
 	ToolbarBrushWrapX=ToolbarPositionX(4)
 	ToolbarBrushWrapY=ToolbarPositionY(1)
-	
+
 	ToolbarStepPerX=ToolbarPositionX(4)
 	ToolbarStepPerY=ToolbarPositionY(2)
-	
+
 	ToolbarShowMarkersX=ToolbarPositionX(5)
 	ToolbarShowMarkersY=ToolbarPositionY(1)
-	
+
 	ToolbarShowObjectsX=ToolbarPositionX(5)
 	ToolbarShowObjectsY=ToolbarPositionY(2)
-	
+
 	ToolbarShowLogicX=ToolbarPositionX(6)
 	ToolbarShowLogicY=ToolbarPositionY(1)
-	
+
 	ToolbarShowLevelX=ToolbarPositionX(6)
 	ToolbarShowLevelY=ToolbarPositionY(2)
-	
+
 	ToolbarIDFilterX=ToolbarPositionX(7)
 	ToolbarIDFilterY=ToolbarPositionY(1)
-	
+
 	ToolbarSimulationLevelX=ToolbarPositionX(7)
 	ToolbarSimulationLevelY=ToolbarPositionY(2)
-	
+
 	ToolbarExitX=ToolbarPositionX(8)
 	ToolbarExitY=ToolbarPositionY(1)
-	
+
 	ToolbarSaveX=ToolbarPositionX(8)
 	ToolbarSaveY=ToolbarPositionY(2)
-	
+
 	LetterWidth#=Float#(GfxWidth)/Float#(LettersCountX)*GfxZoomScaling#
 	LetterHeight#=Float#(GfxHeight)/Float#(LettersCountY)
-	
+
 	LevelViewportWidth=GfxWidth-SidebarWidth
 	LevelViewportHeight=GfxHeight-ToolbarHeight
 	TilePickerZoomScaling#=Float#(LevelViewportHeight)/Float#(LevelViewportWidth) ; The numerator is 1 because the original 500x500 viewport is a 1:1 ratio.
-	
+
 	SidebarX=LevelViewportWidth
 	SidebarY=0
-	
+
 	FlStartX=SidebarX+206 ; 706
 	FlStartY=SidebarY+165
-	
+
 	LowerButtonsCutoff=LetterHeight*26
-	
+
 End Function
 
 Function InitializeGraphicsTextures()
@@ -3159,10 +3046,10 @@ Function InitializeGraphicsTextures()
 	ParticleTexture=myLoadTexture("data\graphics\particles.bmp",1)
 	ResetParticles("data/graphics/particles.bmp")
 	EntityTexture ParticlePreview,ParticleTexture
-	
+
 	TextTexture=myLoadTexture("Data/Graphics/font.bmp",4)
 	ResetText("data/graphics/font.bmp")
-	
+
 	UpdateButtonGateTexture()
 	LoadLevelTextureDefault()
 	LoadWaterTextureDefault()
@@ -3177,7 +3064,7 @@ Function ResetGraphicsTextures()
 	TextMesh=0
 	ParticleMesh=0
 	ParticleMesh2=0
-	
+
 	InitializeGraphicsTextures()
 
 End Function
@@ -3186,18 +3073,18 @@ Function InitializeGraphicsCameras()
 
 	CameraPanning=False
 	GameCamera=False
-	
+
 	Camera1 = CreateCamera() ; level camera
 	Camera1PerspectiveZoom#=1.0*GfxZoomScaling#
 	Camera1OrthographicZoom#=0.015*GfxZoomScaling#
 	Camera1Zoom#=Camera1PerspectiveZoom#
 	Camera4Zoom#=8.0
-	
+
 	TurnEntity Camera1,65,0,0
 	PositionEntity Camera1,7,Camera1StartY,-14
 	CameraViewport camera1,0,0,LevelViewportWidth,LevelViewportHeight
 	CameraRange camera1,.1,1000 ;50
-	
+
 	Camera2 = CreateCamera() ; tile camera
 	CameraClsColor camera2,255,0,0
 	CameraViewport Camera2,SidebarX+10,SidebarY+20,200,220
@@ -3205,7 +3092,7 @@ Function InitializeGraphicsCameras()
 	RotateEntity Camera2,45,25,0
 	PositionEntity Camera2,4.9,109,-8
 	CameraZoom Camera2,5
-	
+
 	Camera3 = CreateCamera() ; texture picker camera
 	CameraClsColor camera3,0,0,0 ;255,0,0
 	CameraViewport Camera3,0,0,LevelViewportWidth,LevelViewportHeight
@@ -3213,17 +3100,17 @@ Function InitializeGraphicsCameras()
 	RotateEntity Camera3,90,0,0
 	PositionEntity Camera3,0.5,210,-0.5
 	CameraZoom Camera3,20.0*TilePickerZoomScaling#
-	
+
 	Camera4 = CreateCamera() ; objects menu camera
 	CameraClsColor camera4,155,0,0
 	CameraViewport Camera4,SidebarX+195,SidebarY+305,100,125
 	CameraRange camera4,.1,1000
 	RotateEntity Camera4,25,0,0
 	PositionEntity Camera4,0,303.8,-8
-	
+
 	Camera = CreateCamera() ; Text Screen Camera
 	CameraZoom Camera,GfxZoomScaling#
-	
+
 	ParticleViewportSize=150
 	CameraParticle = CreateCamera() ; particle camera
 	CameraClsColor CameraParticle,0,0,0
@@ -3233,7 +3120,7 @@ Function InitializeGraphicsCameras()
 	PositionEntity CameraParticle,0.5,410,-0.5
 	CameraZoom CameraParticle,20.0*TilePickerZoomScaling#
 	EntityOrder CameraParticle,-1
-	
+
 	UpdateCameraProj()
 	UpdateCameraClsColor()
 
@@ -3244,11 +3131,11 @@ Function CreateBrushMesh()
 	BrushMesh=CreateMesh()
 	BrushSurface=CreateSurface(BrushMesh)
 	EntityAlpha BrushMesh,BrushMeshAlpha
-	
+
 	BrushTextureMesh=CreateMesh()
 	BrushTextureSurface=CreateSurface(BrushTextureMesh)
 	EntityAlpha BrushTextureMesh,0.6 ;BrushMeshAlpha
-	
+
 	; This translation is needed to prevent z-fighting and to give Blitz3D a hint about the sorting order between the two transparent entities.
 	TranslateEntity BrushTextureMesh,0,-0.005,0
 
@@ -3257,94 +3144,94 @@ End Function
 Function GenerateCurrentGrabbedObjectMarkerEntity()
 
 	CurrentGrabbedObjectMarkers(0)=CreateMesh()
-	
+
 	; Lots and lots of duplicated code here. Haha, whoops!
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,-0.5,0,-0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,0.5,0,-0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,-0.5,0,0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,0.5,0,0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	RotateMesh CurrentGrabbedObjectMarkers(0),90,0,0
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,-0.5,0,-0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,0.5,0,-0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,-0.5,0,0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,0.5,0,0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	RotateMesh CurrentGrabbedObjectMarkers(0),0,0,90
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,-0.5,0,-0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,0.5,0,-0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,-0.5,0,0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	Pole=CreateCube()
 	ScaleMesh Pole,0.025,0.5,0.025
 	PositionMesh Pole,0.5,0,0.5
 	AddMesh Pole,CurrentGrabbedObjectMarkers(0)
 	FreeEntity Pole
-	
+
 	PositionMesh CurrentGrabbedObjectMarkers(0),0,0.5,0
 	ScaleMesh CurrentGrabbedObjectMarkers(0),0.95,0.95,0.95
-	
+
 	EntityColor CurrentGrabbedObjectMarkers(0),100,255,100
 	EntityFX CurrentGrabbedObjectMarkers(0),1 ; fullbright
 	EntityOrder CurrentGrabbedObjectMarkers(0),-1 ; disable depth sorting
 	HideEntity(CurrentGrabbedObjectMarkers(0))
-	
+
 	EntityAlpha CurrentGrabbedObjectMarkers(0),0.5
-	
+
 	For i=1 To MaxNofObjects-1
 		CurrentGrabbedObjectMarkers(i)=CopyEntity(CurrentGrabbedObjectMarkers(0))
 	Next
@@ -3355,13 +3242,13 @@ Function InitializeGraphicsEntities()
 
 	Light=CreateLight()
 	RotateEntity Light,80,15,0
-	
+
 	SpotLight=CreateLight(3)
 	RotateEntity SpotLight,60,0,0
 	LightConeAngles SpotLight,0,60
-	
+
 	InitializeLevelModel()
-	
+
 ;	For i=0 To MaxLevelCoordinate
 ;		LevelMesh(i)=CreateMesh()
 ;		WaterMesh(i)=CreateMesh()
@@ -3378,65 +3265,65 @@ Function InitializeGraphicsEntities()
 	AddTriangle TexturePlaneSurface,1,3,2
 	UpdateNormals TexturePlane
 	EntityPickMode TexturePlane,2
-	
+
 	For i=0 To 3
 		; Pillar
 		CursorMeshPillar(i)=CreateCube()
 		ScaleMesh CursorMeshPillar(i),0.1,10,0.1
 		EntityAlpha CursorMeshPillar(i),BrushMeshAlpha
 		EntityColor CursorMeshPillar(i),255,255,200
-		
+
 		; Little square at the center of the brush
 		CursorMeshOpaque(i)=CreateCube()
 		ScaleMesh CursorMeshOpaque(i),.2,0.01,.2
 	Next
-	
+
 	; The square region that the brush covers, used only by the texture picker
 	CursorMeshTexturePicker=CreateCube()
 	ScaleMesh CursorMeshTexturePicker,.5,0.1,.5
 	EntityAlpha CursorMeshTexturePicker,BrushMeshAlpha
 	EntityColor CursorMeshTexturePicker,255,255,200
 	HideEntity CursorMeshTexturePicker
-	
+
 	CreateBrushMesh()
-	
+
 	CurrentObjectMarkerMesh=CreateCylinder()
 	ScaleEntity CurrentObjectMarkerMesh,.01,3,.01
 	PositionEntity CurrentObjectMarkerMesh,0,300,0
-	
+
 	LightPillar=CreateCube()
 	ScaleMesh LightPillar,0.5,90,0.5
 	EntityColor LightPillar,100,255,100
 	EntityFX LightPillar,16 ; disable back-face culling
 	HideEntity LightPillar
-	
-	GenerateCurrentGrabbedObjectMarkerEntity()	
+
+	GenerateCurrentGrabbedObjectMarkerEntity()
 
 	WorldAdjusterPositionMarker(0)=CopyEntity(LightPillar)
 	EntityColor WorldAdjusterPositionMarker(0),100,200,255
 	For i=1 To 3
 		WorldAdjusterPositionMarker(i)=CopyEntity(WorldAdjusterPositionMarker(0))
 	Next
-	
+
 	CurrentObjectMoveXYGoalMarker=CopyEntity(LightPillar)
 	EntityColor CurrentObjectMoveXYGoalMarker,255,100,100
-	
+
 	WhereWeEndedUpMarker=CopyEntity(LightPillar)
 	EntityColor WhereWeEndedUpMarker,255,255,0
 	ShowEntity WhereWeEndedUpMarker
-	
+
 	MirrorEntityX=CreateCube()
 	ScaleMesh MirrorEntityX,0.1,0.3,200.0
 	EntityColor MirrorEntityX,GetBrushModeColor(BrushModeSetMirror,0),GetBrushModeColor(BrushModeSetMirror,1),GetBrushModeColor(BrushModeSetMirror,2)
 	EntityAlpha MirrorEntityX,0.3
 	HideEntity MirrorEntityX
-	
+
 	MirrorEntityY=CreateCube()
 	ScaleMesh MirrorEntityY,200.0,0.3,0.1
 	EntityColor MirrorEntityY,GetBrushModeColor(BrushModeSetMirror,0),GetBrushModeColor(BrushModeSetMirror,1),GetBrushModeColor(BrushModeSetMirror,2)
 	EntityAlpha MirrorEntityY,0.3
 	HideEntity MirrorEntityY
-	
+
 	BlockModeMesh=CreateMesh()
 	BlockModeSurface=CreateSurface(BlockModeMesh)
 	AddVertex (BlockModeSurface,0,0,0)
@@ -3447,10 +3334,10 @@ Function InitializeGraphicsEntities()
 	AddTriangle (BlockModeSurface,1,3,2)
 	EntityAlpha BlockModeMesh,0.5
 	EntityOrder BlockModeMesh,-1
-	
+
 	CurrentWaterTile=CreateMesh()
 	CurrentWaterTileSurface=CreateSurface(CurrentWaterTile)
-	
+
 	AddVertex (CurrentWaterTileSurface,1,99.5,3,CurrentTile\Water\Texture/4.0,0)
 	AddVertex (CurrentWaterTileSurface,3,99.5,3,CurrentTile\Water\Texture/4.0+.25,0)
 	AddVertex (CurrentWaterTileSurface,1,99.5,1,CurrentTile\Water\Texture/4.0,.25)
@@ -3458,31 +3345,31 @@ Function InitializeGraphicsEntities()
 	AddTriangle (CurrentWaterTileSurface,0,1,2)
 	AddTriangle (CurrentWaterTileSurface,2,1,3)
 	UpdateNormals CurrentWaterTile
-	
+
 	FreeEntity LightPillar
-	
+
 	ParticlePreview=CreateMesh()
 	ParticlePreviewSurface=CreateSurface(ParticlePreview)
 	AddVertex ParticlePreviewSurface,0,400,0
 	AddVertex ParticlePreviewSurface,1,400,0
 	AddVertex ParticlePreviewSurface,0,400,-1
 	AddVertex ParticlePreviewSurface,1,400,-1
-	
+
 	AddTriangle ParticlePreviewSurface,0,1,2
 	AddTriangle ParticlePreviewSurface,1,3,2
 	UpdateNormals ParticlePreview
-	
+
 	;EntityOrder ParticlePreview,-10
 	;EntityFX ParticlePreview,1
 
 End Function
 
 Function ResetGraphicsEntities()
-	
+
 	InitializeGraphicsCameras()
 	InitializeGraphicsEntities()
 	ResetGraphicsTextures()
-	
+
 	; reload object entities
 	For i=0 To NofObjects-1
 		BuildLevelObjectModel(i)
@@ -3496,7 +3383,7 @@ Function ResetWindowSize()
 	Graphics3D 800,600,16,2
 	SetBuffer BackBuffer()
 	Graphics3D 800,600,16,3
-	
+
 	ResetGraphicsEntities()
 
 End Function
@@ -3504,7 +3391,7 @@ End Function
 Function ResolutionWasChanged()
 
 	Return ; Exit for now until InitializeGraphicsEntities is complete, assuming that ever happens.
-	
+
 	CalculateUIValues()
 	ResetGraphicsEntities()
 
@@ -3513,7 +3400,7 @@ End Function
 Function ShowParticlePreviewLeftAligned(x#,y#,tex)
 
 	nudge#=.001 ; push this much inward from texture border to avoid grabbing pieces of neighbour
-	
+
 	u1#=Float(tex Mod 8)*0.125+nudge
 	u2#=u1+0.125-2*nudge
 	v1#=Float(Floor(tex/8))*0.125+nudge
@@ -3523,7 +3410,7 @@ Function ShowParticlePreviewLeftAligned(x#,y#,tex)
 	VertexTexCoords(ParticlePreviewSurface,1,u2#,v1#)
 	VertexTexCoords(ParticlePreviewSurface,2,u1#,v2#)
 	VertexTexCoords(ParticlePreviewSurface,3,u2#,v2#)
-	
+
 	CameraParticleProj=1
 	CameraViewport CameraParticle,x#,y#-CameraParticlePreviewSize,CameraParticlePreviewSize,CameraParticlePreviewSize
 	UpdateCameraProj()
@@ -3550,7 +3437,7 @@ Function UpdateCameraProj()
 	CameraProjMode Camera4,Camera4Proj
 	CameraProjMode Camera,CameraProj
 	CameraProjMode CameraParticle,CameraParticleProj
-	
+
 	CameraZoom Camera1,Camera1Zoom#
 	CameraZoom Camera4,Camera4Zoom#
 
@@ -3568,7 +3455,7 @@ Function Camera1To3Proj()
 	;Camera1Proj=0
 	Camera3Proj=1
 	UpdateCameraProj()
-	
+
 End Function
 
 ; Before this function was invented, the level editor camera was originally positioned to approximately be focused on the coordinates 7,10.
@@ -3579,10 +3466,10 @@ Function PositionCameraInLevel(FocusOnTileX,FocusOnTileY)
 End Function
 
 Function UpdateButtonGateTexture()
-	
+
 	ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
 	GateTexture=MyLoadTexture("data\graphics\gates"+Str$(GateKeyVersion)+".bmp",1)
-	
+
 End Function
 
 Function CurrentLevelTextureName$()
@@ -3602,7 +3489,7 @@ Function CurrentWaterTextureName$()
 	Else
 		Return WaterTextureName$(CurrentWaterTexture)
 	EndIf
-	
+
 End Function
 
 Function LoadLevelTextureDefault()
@@ -3625,7 +3512,7 @@ Function UpdateLevelTexture()
 	Next
 
 	EntityTexture BrushTextureMesh,LevelTexture
-	
+
 	;ShowMessage("LevelTexture update!",1000)
 
 End Function
@@ -3638,30 +3525,29 @@ Function UpdateLevelTextureDefault()
 End Function
 
 Function UpdateWaterTexture()
-	
+
 	EntityTexture Currentwatertile,WaterTexture
 	For j=0 To LevelHeight-1
 		EntityTexture WaterMesh(j),WaterTexture
 	Next
-	
+
 End Function
 
 Function UpdateWaterTextureDefault()
-	
+
 	LoadWaterTextureDefault()
 	UpdateWaterTexture()
-	
-End Function
 
+End Function
 
 Function FinishDrawing()
 
 	;Color 255,255,255
 	;Text 0,0,"Mouse: "+MouseX()+", "+MouseY()
-	
+
 	DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
 	CurrentTooltip$=""
-	
+
 	If CameraParticleProj=1
 		CameraParticleProj=0
 		UpdateCameraProj()
@@ -3670,32 +3556,28 @@ Function FinishDrawing()
 	If displayfullscreen=True
 		DrawImage mouseimg,MouseX(),MouseY()
 	EndIf
-	
+
 	Flip
 
 End Function
-
-
 
 Function EndApplication()
 
 	Color 0,0,0
 	Rect 0,0,GfxWidth,GfxHeight
-	
+
 	Flip
 
 	End
 
 End Function
 
-
-
 Function UpdateEditor()
 
 	EditorGlobalControls()
 
 	Select EditorMode
-	
+
 	Case 0,1,2,3
 		EditorMainLoop()
 	Case 4
@@ -3720,28 +3602,24 @@ Function UpdateEditor()
 
 End Function
 
-
 Function StartEditorMainLoop()
 	Cls
 	SetEditorMode(EditorModeBeforeMasterEdit)
 	WireFrame UsingWireFrame
-	
+
 	Camera1Proj=Camera1SavedProjMode
 	Camera2Proj=1
 	Camera3Proj=0
 	Camera4Proj=1
 	CameraProj=0
 	UpdateCameraProj()
-	
+
 	ClearSurface Textsurface
 	For p.letter = Each letter
 		Delete p
 	Next
-	
-
 
 End Function
-
 
 Function EditorMainLoop()
 
@@ -3750,19 +3628,19 @@ Function EditorMainLoop()
 	If EditorMode=0 Or EditorMode=3
 		CameraControls()
 	EndIf
-	
+
 	RenderToolbar()
 	If CameraPanning=False
 		EditorLocalControls()
 	EndIf
 	EditorLocalRendering()
-	
+
 	leveltimer=leveltimer+1
-	
+
 	If KeyPressed(35) ; h key
 		HighlightWopAdjusters=Not HighlightWopAdjusters
 	EndIf
-	
+
 	MarkerAlpha#=0.3+0.03*Sin((Float(LevelTimer)*6.0) Mod 360)
 	;For i=0 To MaxNofObjects-1
 	;	EntityAlpha CurrentGrabbedObjectMarkers(i),MarkerAlpha#
@@ -3771,10 +3649,10 @@ Function EditorMainLoop()
 		EntityAlpha WorldAdjusterPositionMarker(i),MarkerAlpha#
 	Next
 	EntityAlpha CurrentObjectMoveXYGoalMarker,MarkerAlpha#
-	
+
 	WhereWeEndedUpAlpha#=WhereWeEndedUpAlpha#-0.002
 	EntityAlpha WhereWeEndedUpMarker,WhereWeEndedUpAlpha#
-	
+
 	ControlLight()
 	If SimulationLevel>=1
 		ControlObjects()
@@ -3782,27 +3660,25 @@ Function EditorMainLoop()
 	If SimulationLevel>=3
 		ControlWeather()
 	EndIf
-	
+
 	If SimulationLevel>=SimulationLevelMusic And EditorMode<>8
 		ControlSoundscapes()
 		LoopMusic()
 		PlayAllSounds()
 	EndIf
 	ResetSounds()
-	
+
 	ControlParticles()
 	RenderParticles()
-	
+
 	;ControlLetters()
 	;RenderLetters()
-	
+
 	UpdateWorld
 	RenderWorld
-	
-	
-	
+
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	Text 0,5,"ADVENTURE: "+AdventureFileName$
 	If CurrentLevelNumber<10 And CurrentLevelNumber>=0
 		Line1$="LEVEL: 0"+CurrentLevelNumber
@@ -3810,68 +3686,68 @@ Function EditorMainLoop()
 		Line1$="LEVEL: "+CurrentLevelNumber
 	EndIf
 	RightAlignedText(LevelViewportWidth,5,Line1$)
-	
+
 	If EditorMode=0 Or EditorMode=3
-		
+
 		; it's a bit less than the viewport size because the text would otherwise overlap with the x/y coordinate listing on the bottom bar as well as the right margin
 		ProjectedTextLimitX=LevelViewportWidth-10
 		ProjectedTextLimitY=LevelViewportHeight-10
-		
+
 		For i=0 To NofObjects-1
 ;			If LevelObjects(i)\Attributes\LogicType=90 And LevelObjects(i)\Attributes\LogicSubType=15 ; General Command
 ;				Command$=LevelObjects(i)\Attributes\Data0
 ;				Pos.GameObjectPosition=LevelObjects(i)\Position
 ;				DisplayTextFacingUp(Command$,Pos\X,Pos\Y,Pos\Z+0.05,255,255,0)
 ;			EndIf
-		
+
 			MyEffectiveId=CalculateEffectiveId(LevelObjects(i)\Attributes)
-			
+
 			HitTargetID=False
 			For j=0 To CurrentObjectTargetIDCount-1
 				If CurrentObjectTargetIDEnabled(j) And MyEffectiveId=CurrentObjectTargetID(j)
 					HitTargetID=True
-				
+
 					CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 					x#=ProjectedX#()
 					y#=ProjectedY#()
 					If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
 						StringOnObject$=MyEffectiveId
 						x#=x#-4*Len(StringOnObject$)
-	
+
 						OutlinedText(x#,y#,StringOnObject$,255,255,0)
 					EndIf
 				EndIf
 			Next
-			
+
 			If Not HitTargetID
 				For j=0 To CurrentObjectActivateIDCount-1
 					If CurrentObjectActivateIDEnabled(j) And MyEffectiveId=CurrentObjectActivateID(j) And CurrentObjectActivateID(j)>0
 						HitTargetID=True
-					
+
 						CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 						x#=ProjectedX#()
 						y#=ProjectedY#()
 						If x#<ProjectedTextLimitX And y#<ProjectedTextLimitY
 							StringOnObject$=MyEffectiveId
 							x#=x#-4*Len(StringOnObject$)
-			
+
 							OutlinedText(x#,y#,StringOnObject$,100,255,255)
 						EndIf
 					EndIf
 				Next
 			EndIf
-			
+
 			If (Not HitTargetID)
 				If (i=CurrentObject\Attributes\Linked And ObjectAdjusterLinked\Absolute) Or (i=CurrentObject\Attributes\LinkBack And ObjectAdjusterLinkBack\Absolute)
 					HitTargetID=True
-					
+
 					CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 					x#=ProjectedX#()
 					y#=ProjectedY#()
-					
+
 					StringOnObject$="#"+i
 					HalfLength=4*Len(StringOnObject$)
-					
+
 					If x#<HalfLength
 						x#=HalfLength
 					EndIf
@@ -3884,13 +3760,13 @@ Function EditorMainLoop()
 					If y#>ProjectedTextLimitY
 						y#=ProjectedTextLimitY
 					EndIf
-					
+
 					x#=x#-HalfLength
-	
+
 					OutlinedText(x#,y#,StringOnObject$,255,0,0)
 				EndIf
 			EndIf
-			
+
 			If (Not HitTargetID) And ShowObjectMesh>=2
 				CameraProject(Camera1,LevelObjects(i)\Position\X,0.5,-LevelObjects(i)\Position\Y)
 				x#=ProjectedX#()
@@ -3910,43 +3786,43 @@ Function EditorMainLoop()
 				EndIf
 			EndIf
 		Next
-		
+
 	EndIf
-	
+
 	Color TextLevelR,TextLevelG,TextLevelB
-		
+
 	StartX=SidebarX+10
 	StartY=20
 	If CurrentTileTextureUse=False Text StartX+10,StartY+70,"Not Used"
 	If CurrentTileSideTextureUse=False Text StartX+10,StartY+130,"Not Used"
 	If CurrentWaterTileTextureUse=False Text StartX+120,StartY+100,"Not Used"
-	
+
 	Text StartX,StartY,"Xtrude: "+CurrentTile\Terrain\Extrusion
 	If CurrentTileExtrusionUse=False Text StartX,StartY,"------------"
 	If StepSizeTileExtrusion#<>0.0 DrawStepSize(StartX,StartY+60,StepSizeTileExtrusion#)
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	Text StartX+48,StartY,"       Height: "+CurrentTile\Terrain\Height
 	If CurrentTileHeightUse=False Text StartX+48,StartY,"       ------------"
 	If StepSizeTileHeight#<>0.0 DrawStepSize(StartX+160,StartY+60,StepSizeTileHeight#)
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	CurrentLogicName$=LogicIdToLogicName$(CurrentTile\Terrain\Logic)
 	Text StartX+50,StartY+15,"Logic: "+CurrentLogicName$
 	If CurrentTileLogicUse=False Text StartX+50,StartY+15,"  ---------"
-	
+
 	Text StartX+50,StartY+170," Random: "+CurrentTile\Terrain\Random
 	If CurrentTileRandomUse=False Text StartX+50,StartY+170,"--------------"
 	If StepSizeTileRandom#<>0.0 DrawStepSize(StartX+80,StartY+180,StepSizeTileRandom#)
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	If CurrentTile\Terrain\Rounding=0
 		Text StartX,StartY+185,"Corner:Squar"
 	Else
 		Text StartX,StartY+185,"Corner:Round"
 	EndIf
 	If CurrentTileRoundingUse=False Text StartX,StartY+185,"------------"
-	
+
 	If CurrentTile\Terrain\EdgeRandom=0
 		Text StartX+100,StartY+185," Edge:Smooth"
 	Else
@@ -3958,7 +3834,7 @@ Function EditorMainLoop()
 	If CurrentWaterTileHeightUse=False Text StartX,StartY+200,"------------"
 	If StepSizeWaterTileHeight#<>0.0 DrawStepSize(StartX,StartY+190,StepSizeWaterTileHeight#)
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	Text StartX+100,StartY+200," WTurb:"+CurrentTile\Water\Turbulence
 	If CurrentWaterTileTurbulenceUse=False Text StartX+100,StartY+200,"------------"
 	If StepSizeWaterTileTurbulence#<>0.0 DrawStepSize(StartX+170,StartY+180,StepSizeWaterTileTurbulence#)
@@ -3966,35 +3842,32 @@ Function EditorMainLoop()
 	;Color RectToolbarR,RectToolbarG,RectToolbarB
 	;Rect 0,520,800,80,True
 	;Rect 0,500,800,100,True
-	
+
 	Color GetBrushModeColor(BrushMode,0),GetBrushModeColor(BrushMode,1),GetBrushModeColor(BrushMode,2)
-	
+
 	CenteredText(ToolbarBrushModeX,ToolbarBrushModeY,GetBrushModeName$(BrushMode))
-	
+
 	Color TextLevelR,TextLevelG,TextLevelB
-	
-	
+
 	CenteredText(ToolbarBrushModeX,GfxHeight-50,"WIPE/FLIP")
-	
-	
 
 	If DupeMode<>DupeModeNone
 		Color 255,155,0
 	EndIf
-	
+
 	CenteredText(ToolbarBrushModeX,GfxHeight-20,GetDupeModeName$(DupeMode))
 
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	CenteredText(ToolbarBrushSizeX,ToolbarBrushSizeY,"BRUSH SIZE")
 	CenteredText(ToolbarBrushSizeX,ToolbarBrushSizeY+15,BrushWidth+" x "+BrushHeight)
-	
+
 	If CurrentTexturePrefix=-1
 		TexturePrefixTitleName$="0"
 		TexturePrefixName$="[ALWAYS NONE]"
 	Else
 		TexturePrefixTitleName$=CurrentTexturePrefix+1
-		
+
 		TexturePrefixName$=TexturePrefix$(CurrentTexturePrefix)
 		If TexturePrefixName$=""
 			TexturePrefixName$="[CTRL+CLICK]"
@@ -4007,7 +3880,7 @@ Function EditorMainLoop()
 	;Text 90,565,"  TEX PREFIX"
 	;Text 100,580,TexturePrefix$
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	If ShowObjectPositions=True
 		Line1$="SHOW"
 	Else
@@ -4015,7 +3888,7 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarShowMarkersX,ToolbarShowMarkersY,Line1$)
 	CenteredText(ToolbarShowMarkersX,ToolbarShowMarkersY+15,"MARKERS")
-	
+
 	If ShowObjectMesh=0
 		Color 255,155,0
 		Line1$="HIDE"
@@ -4033,7 +3906,7 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarShowObjectsX,ToolbarShowObjectsY,Line1$)
 	CenteredText(ToolbarShowObjectsX,ToolbarShowObjectsY+15,Line2$)
-	
+
 	Color TextLevelR,TextLevelG,TextLevelB
 
 	If ShowLogicMesh=True
@@ -4043,7 +3916,7 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarShowLogicX,ToolbarShowLogicY,Line1$)
 	CenteredText(ToolbarShowLogicX,ToolbarShowLogicY+15,"LOGIC")
-	
+
 	If ShowLevelMesh=ShowLevelMeshShow
 		Line1$="SHOW"
 	ElseIf ShowLevelMesh=ShowLevelMeshHide
@@ -4053,12 +3926,12 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY,Line1$)
 	CenteredText(ToolbarShowLevelX,ToolbarShowLevelY+15,"LEVEL")
-	
+
 	CenteredText(ToolbarSimulationLevelX,ToolbarSimulationLevelY,"SIMULATION")
 	CenteredText(ToolbarSimulationLevelX,ToolbarSimulationLevelY+15,"LEVEL "+SimulationLevel)
-	
+
 	CenteredText(ToolbarElevateX,ToolbarElevateY,"ELEVATE")
-	
+
 	Select BrushWrap
 	Case BrushWrapRelative
 		Line1$="RELATIVE"
@@ -4075,7 +3948,7 @@ Function EditorMainLoop()
 	End Select
 	CenteredText(ToolbarBrushWrapX,ToolbarBrushWrapY,"BRUSH WRAP")
 	CenteredText(ToolbarBrushWrapX,ToolbarBrushWrapY+15,Line1$)
-	
+
 	If StepPer=StepPerPlacement
 		Line1$="PLACEMENT"
 	ElseIf StepPer=StepPerTile
@@ -4085,7 +3958,7 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarStepPerX,ToolbarStepPerY,"STEP PER")
 	CenteredText(ToolbarStepPerX,ToolbarStepPerY+15,Line1$)
-	
+
 	If IDFilterEnabled
 		Color 255,155,0
 	EndIf
@@ -4100,16 +3973,16 @@ Function EditorMainLoop()
 	EndIf
 	CenteredText(ToolbarIDFilterX,ToolbarIDFilterY+15,Line1$)
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	;Text 600,565,"  XTRUDE"
 	;Text 600,580,"  LOGICS"
-	
+
 	If PlacementDensity#<1.0
 		Color 255,155,0
 	EndIf
 	CenteredText(ToolbarDensityX,ToolbarDensityY,"DENSITY")
 	CenteredText(ToolbarDensityX,ToolbarDensityY+15,PlacementDensity#)
-	
+
 	Line1$="   EXIT   "
 	If IsMouseOverToolbarItem(ToolbarExitX,ToolbarExitY) ;MouseX()>700 And MouseY()>515 And MouseY()<555
 		Color 255,255,0
@@ -4118,7 +3991,7 @@ Function EditorMainLoop()
 		Color TextLevelR,TextLevelG,TextLevelB
 	EndIf
 	CenteredText(ToolbarExitX,ToolbarExitY,Line1$)
-	
+
 	UsingCarrots=False
 	If UnsavedChanges<>0
 		Line1$="SAVE LEVEL"
@@ -4133,7 +4006,7 @@ Function EditorMainLoop()
 			Line2$="AT CURSOR"
 		EndIf
 	EndIf
-	
+
 	ShakeX=0
 	ShakeY=0
 	If IsMouseOverToolbarItem(ToolbarSaveX,ToolbarSaveY)
@@ -4167,34 +4040,33 @@ Function EditorMainLoop()
 	EndIf
 
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	UpdateWater()
-	
+
 	AnimateColors(CurrentObject)
 	For i=0 To NofObjects-1
 		AnimateColors(LevelObjects(i))
 	Next
-	
+
 	;DrawTooltip(CurrentTooltipStartX,CurrentTooltipStartY,CurrentTooltip$)
 	;CurrentTooltip$=""
-	
+
 	If NofParticles=MaxNofParticles
 		MaxParticleWarningTimer=60
 	EndIf
-	
+
 	If MaxParticleWarningTimer<>0
 		MaxParticleWarningTimer=MaxParticleWarningTimer-1
 		ShowLevelEditorWarning("Too many particles! This will most likely MAV in-game!")
 	EndIf
-	
+
 	If NofObjectsInstantiated>MaxNofObjects
 		ShowLevelEditorWarning("Instantiated shadows/accessories pass the object limit!")
 	EndIf
-	
+
 	FinishDrawing()
 
 End Function
-
 
 Function AnimateColors(Obj.GameObject)
 
@@ -4206,60 +4078,58 @@ Function AnimateColors(Obj.GameObject)
 		    red=GetAnimatedRainbowRed()
 		    green=GetAnimatedRainbowGreen()
 		    blue=GetAnimatedRainbowBlue()
-			
+
 		    VertexColor GetSurface(Obj\Model\Entity,1),i,red,green,blue
 		Next
 	EndIf
 
 End Function
 
-
 Function SetEditorMode(NewMode)
 
 	If NewMode=8
 		; prevent garbage input from level editor movement from appearing in adventure description text
 		FlushKeys
-		
+
 		WireFrame False
-		
+
 		If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
 			EditorModeBeforeMasterEdit=EditorMode
 		EndIf
 	EndIf
-	
+
 	If NewMode=0 Or NewMode=3 ; If EditorMode=1 Or EditorMode=2
 		Camera1Proj=Camera1SavedProjMode
 		Camera3Proj=0
 		UpdateCameraProj()
 	EndIf
-	
+
 	OldEditorMode=EditorMode
 	EditorMode=NewMode
-	
+
 	If OldEditorMode=3 And NewMode=0
 		SetBrushToCurrentTile()
 	ElseIf OldEditorMode=0 And NewMode=3
 		SetBrushToCurrentObject()
 	EndIf
-	
+
 	UpdateAllSelectedObjectMarkersVisibility()
-	
+
 	; Edge case: the mouse will be hidden when typing in the editor's real-time textboxes. This line accounts for that.
 	ShowPointer()
 
 End Function
 
-
 Function SetBrushWidth(NewBrushWidth)
 
 	BrushWidth=NewBrushWidth
-	
+
 	If BrushWidth<1
 		BrushWidth=1
 	ElseIf BrushWidth>100
 		BrushWidth=100
 	EndIf
-	
+
 	BrushCursorStateWasChanged()
 
 End Function
@@ -4267,17 +4137,16 @@ End Function
 Function SetBrushHeight(NewBrushHeight)
 
 	BrushHeight=NewBrushHeight
-	
+
 	If BrushHeight<1
 		BrushHeight=1
 	ElseIf BrushHeight>100
 		BrushHeight=100
 	EndIf
-	
+
 	BrushCursorStateWasChanged()
 
 End Function
-
 
 Function PassesPlacementDensityTest()
 
@@ -4289,7 +4158,6 @@ Function PassesPlacementDensityTest()
 
 End Function
 
-
 Function ReadColors()
 
 	If FileType(ColorsConfig$)=1
@@ -4299,7 +4167,6 @@ Function ReadColors()
 	EndIf
 
 End Function
-
 
 Function ReadColorsWithHandle(colorsfile)
 
@@ -4350,11 +4217,10 @@ Function ReadColorsWithHandle(colorsfile)
 
 End Function
 
-
 Function WriteColors()
-	
+
 	colorsfile=WriteFile(ColorsConfig$)
-	
+
 	WriteLine(colorsfile,"// RGB for currently-selected mode")
 	WriteLine(colorsfile,RectOnR)
 	WriteLine(colorsfile,RectOnG)
@@ -4399,11 +4265,10 @@ Function WriteColors()
 	WriteLine(colorsfile,TextMenuXR)
 	WriteLine(colorsfile,TextMenuXG)
 	WriteLine(colorsfile,TextMenuXB)
-	
+
 	CloseFile(colorsfile)
 
 End Function
-
 
 Function StartupColors()
 
@@ -4411,7 +4276,6 @@ Function StartupColors()
 	WriteColors()
 
 End Function
-
 
 Function ReadControls()
 
@@ -4435,7 +4299,6 @@ Function WriteControls()
 
 End Function
 
-
 Function StartupControls()
 
 	If FileExists(EditorControls$)
@@ -4445,7 +4308,6 @@ Function StartupControls()
 	EndIf
 
 End Function
-
 
 Function ReadTexturePrefixes()
 
@@ -4459,11 +4321,10 @@ Function ReadTexturePrefixes()
 
 End Function
 
-
 Function WriteTexturePrefixes()
 
 	file=WriteFile(TexturePrefixesConfig$)
-	
+
 	For i=0 To MaxTexturePrefix
 		WriteLine(file,TexturePrefix$(i))
 	Next
@@ -4471,7 +4332,6 @@ Function WriteTexturePrefixes()
 	CloseFile file
 
 End Function
-
 
 Function StartupTexturePrefixes()
 
@@ -4483,7 +4343,6 @@ Function StartupTexturePrefixes()
 
 End Function
 
-
 Function StartupConfigs()
 
 	StartupColors()
@@ -4491,7 +4350,6 @@ Function StartupConfigs()
 	StartupTexturePrefixes()
 
 End Function
-
 
 Function ReadConfigs()
 
@@ -4501,9 +4359,8 @@ Function ReadConfigs()
 
 End Function
 
-
 Function GetKeyFromUser()
-	
+
 	While True
 		For i=0 To 237
 			If KeyDown(i)
@@ -4511,9 +4368,8 @@ Function GetKeyFromUser()
 			EndIf
 		Next
 	Wend
-	
-End Function
 
+End Function
 
 Function AnyKeyDown()
 
@@ -4526,42 +4382,39 @@ Function AnyKeyDown()
 
 End Function
 
-
 Function ConfigureKeyboardKey(KeyName$)
 
 	PrintMessageForInstant("Press the key you want to use to "+KeyName$+".")
 	Result=GetKeyFromUser()
-	
+
 	Repeat
 	Until Not KeyDown(Result)
-	
+
 	Return Result
 
 End Function
-
 
 Function ConfigureControls()
 
 	If Not GetConfirmation("Do you want to configure your keyboard mappings?")
 		Return
 	EndIf
-	
+
 	Repeat
 	Until Not AnyKeyDown()
-	
+
 	FlushKeys
 
 	KeyMoveNorth=ConfigureKeyboardKey("MOVE NORTH")
 	KeyMoveWest=ConfigureKeyboardKey("MOVE WEST")
 	KeyMoveSouth=ConfigureKeyboardKey("MOVE SOUTH")
 	KeyMoveEast=ConfigureKeyboardKey("MOVE EAST")
-	
+
 	WriteControls()
-	
+
 	ShowMessage("Controls configured!",1000)
 
 End Function
-
 
 Function GetCenteredTextOffset(Message$)
 
@@ -4574,7 +4427,6 @@ Function GetTextPixelLength(Message$)
 	Return 8*Len(Message$)
 
 End Function
-
 
 Function CenteredText(StartX,StartY,Message$)
 
@@ -4603,13 +4455,13 @@ End Function
 Function DrawTextRectangle(StartX,StartY,Message$,RectR,RectG,RectB,TextR,TextG,TextB)
 
 	If Message$="" Then Return
-	
+
 	TextPixelLength=GetTextPixelLength(Message$)
 	HorizontalPadding=10
 	TotalHorizontalPadding=HorizontalPadding*2
 	RectangleWidth=TextPixelLength+TotalHorizontalPadding
 	StartX=StartX-TotalHorizontalPadding
-	
+
 	; clamp the rectangle position so that the rectangle doesn't spill outside the window
 	If StartX+RectangleWidth>GfxWidth
 		StartX=GfxWidth-RectangleWidth
@@ -4621,7 +4473,6 @@ Function DrawTextRectangle(StartX,StartY,Message$,RectR,RectG,RectB,TextR,TextG,
 	Rect StartX,StartY-40,RectangleWidth,30,True
 	Color TextR,TextG,TextB
 	Text StartX+HorizontalPadding,StartY-30,Message$
-
 
 End Function
 
@@ -4646,7 +4497,7 @@ Function ShowTooltipLeftAligned(StartX,StartY,Message$)
 		tex=Mid$(Message$,TheInstr+10,Len(Message$)-TheInstr-9)
 		ShowParticlePreviewLeftAligned(StartX,StartY,tex)
 	EndIf
-	
+
 End Function
 
 Function ShowTooltipRightAligned(StartX,StartY,Message$)
@@ -4660,7 +4511,7 @@ Function ShowTooltipRightAligned(StartX,StartY,Message$)
 		tex=Mid$(Message$,TheInstr+10,Len(Message$)-TheInstr-9)
 		ShowParticlePreviewRightAligned(StartX,StartY,tex)
 	EndIf
-	
+
 End Function
 
 Function ShowTooltipCenterAligned(StartX,StartY,Message$)
@@ -4674,20 +4525,19 @@ Function ShowTooltipCenterAligned(StartX,StartY,Message$)
 		tex=Mid$(Message$,TheInstr+10,Len(Message$)-TheInstr-9)
 		ShowParticlePreviewCenterAligned(StartX,StartY,tex)
 	EndIf
-	
-End Function
 
+End Function
 
 Function SetDupeMode(NewDupeMode)
 
 	DupeMode=NewDupeMode
-	
+
 	If DupeMode<0
 		DupeMode=DupeModeMax
 	ElseIf DupeMode>DupeModeMax
 		DupeMode=0
 	EndIf
-	
+
 	Select DupeMode
 	Case DupeModeX
 		SetBrushMode(BrushModeSetMirror)
@@ -4711,24 +4561,22 @@ Function SetDupeMode(NewDupeMode)
 
 End Function
 
-
 Function SetBrushMode(NewBrushMode)
 
 	FloodedElementsClear()
 	BrushMode=NewBrushMode
 	BlockPlacingMode=BlockPlacingModeNone
 	BrushCursorStateWasChanged()
-	
-End Function
 
+End Function
 
 Function SetBrushCursorPosition(x,y)
 
 	PositionChanged=Not PositionIsEqual(x,y,BrushCursorX,BrushCursorY)
-	
+
 	BrushCursorX=x
 	BrushCursorY=y
-	
+
 	;HideEntity BlockModeMesh
 	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid And BrushMode=BrushModeBlockPlacing
 		; show the block
@@ -4753,7 +4601,7 @@ Function SetBrushCursorPosition(x,y)
 		;VertexCoords BlockModeSurface,2,cornleft-0,0.1,-(corndown+1)
 		;VertexCoords BlockModeSurface,3,cornright+1,0.1,-(corndown+1)
 	EndIf
-	
+
 	If PositionChanged
 		BrushCursorPositionWasChanged()
 	EndIf
@@ -4761,11 +4609,11 @@ Function SetBrushCursorPosition(x,y)
 End Function
 
 Function BrushCursorPositionWasChanged()
-	
+
 	; object dragging ; dragging
 	If NofDraggedObjects<>0
 		DragChange=True
-	
+
 		OldX=DragSpotX
 		DragSpotDeltaX=BrushCursorX-DragSpotX
 		If DragSpotDeltaX>0
@@ -4784,7 +4632,7 @@ Function BrushCursorPositionWasChanged()
 		DragSpotDeltaX=DragSpotX-OldX
 		DragMinTileX=DragMinTileX+DragSpotDeltaX
 		DragMaxTileX=DragMaxTileX+DragSpotDeltaX
-		
+
 		OldY=DragSpotY
 		DragSpotDeltaY=BrushCursorY-DragSpotY
 		If DragSpotDeltaY>0
@@ -4803,7 +4651,7 @@ Function BrushCursorPositionWasChanged()
 		DragSpotDeltaY=DragSpotY-OldY
 		DragMinTileY=DragMinTileY+DragSpotDeltaY
 		DragMaxTileY=DragMaxTileY+DragSpotDeltaY
-	
+
 		For i=0 To NofDraggedObjects-1
 			CurrentDraggedObject=DraggedObjects(i)
 			DraggedPosition.GameObjectPosition=LevelObjects(CurrentDraggedObject)\Position
@@ -4813,19 +4661,19 @@ Function BrushCursorPositionWasChanged()
 			SetObjectPosition(CurrentDraggedObject,TileX+DragSpotDeltaX,TileY+DragSpotDeltaY)
 			UpdateObjectPosition(CurrentDraggedObject)
 		Next
-		
+
 		ObjectsWereChanged()
 	EndIf
-	
+
 	; tile dragging
 	If TileDragging=True
 		DragChange=True
-		
+
 		PasteLevelFromCopy()
-		
+
 		DeltaX=BrushCursorX-DraggedTilesSpotX
 		DeltaY=BrushCursorY-DraggedTilesSpotY
-		
+
 		For i=0 To LevelWidth-1
 			For j=0 To LevelHeight-1
 				TargetX=i+DeltaX
@@ -4833,54 +4681,54 @@ Function BrushCursorPositionWasChanged()
 				If IsPositionInLevel(TargetX,TargetY)
 					If DraggedTilesEnabled(i,j)
 						CopyTile(DraggedTiles(i,j),LevelTiles(TargetX,TargetY))
-						
+
 						;ShowMessage(i+","+j+" to "+TargetX+","+TargetY+" with texture "+DraggedTiles(i,j)\Terrain\Texture,1000)
 					EndIf
 				EndIf
 			Next
 		Next
-		
+
 		For i=0 To LevelWidth-1
 			For j=0 To LevelHeight-1
 				UpdateTile(i,j)
 			Next
 		Next
-		
+
 		SomeTileWasChanged()
 	EndIf
-	
+
 	If BrushMode=BrushModeSetMirror
 		MirrorPositionX=BrushCursorX
 		MirrorPositionY=BrushCursorY
-		
+
 		PositionEntityInLevel(MirrorEntityX,BrushCursorX+0.5,0.5)
 		PositionEntityInLevel(MirrorEntityY,0.5,BrushCursorY+0.5)
 	ElseIf MirrorPositionX=BrushCursorInvalid And MirrorPositionY=BrushCursorInvalid
 		HideEntity MirrorEntityX
 		HideEntity MirrorEntityY
 	EndIf
-	
+
 	OnceTilePlacement=True
 	BrushCursorStateWasChanged()
 
 End Function
 
 Function BrushCursorOffMap()
-	
+
 	HideCursors()
 	HideBrushSurface()
 	SetBrushCursorPosition(BrushCursorInvalid,BrushCursorInvalid)
-	
+
 End Function
 
 Function BrushCursorProbablyModifiedTiles()
 
 	ClearBrushSurface()
-	
+
 	FloodedElementsClear()
-	
+
 	BrushCursorStateWasChanged()
-	
+
 	For j=0 To MaxLevelCoordinate
 		If DirtyNormals(j)
 			DirtyNormals(j)=False
@@ -4893,7 +4741,7 @@ End Function
 Function BrushCursorStateWasChanged()
 
 	;ShowMessage("Brush cursor state changed",1000)
-	
+
 	CalculateBrushTargets()
 
 End Function
@@ -4945,7 +4793,7 @@ Function CalculateBrushTargets()
 		FloodedElementsClear()
 		GenerateBrushSurface()
 	EndIf
-	
+
 	GenerateBrushPreview()
 
 End Function
@@ -4953,22 +4801,22 @@ End Function
 Function GenerateBrushSurface()
 
 	ClearBrushSurface()
-	
-	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid		
+
+	If BrushCursorX<>BrushCursorInvalid And BrushCursorY<>BrushCursorInvalid
 		If FloodedElementCount=0
 			AddToFloodedStack(BrushCursorX,BrushCursorY)
 		EndIf
 	EndIf
-	
+
 	BrushSpaceX=LevelSpaceToBrushSpaceX(x,BrushWrap)
 	BrushSpaceY=LevelSpaceToBrushSpaceY(y,BrushWrap)
-	
+
 	For i=0 To FloodedElementCount-1
 		thisx=FloodedStackX(i)
 		thisy=FloodedStackY(i)
 		AddTileToBrushSurface(BrushSurface,thisx,thisy,BrushSpaceX,BrushSpaceY,False)
 	Next
-	
+
 	FinishBrushSurface()
 
 End Function
@@ -4985,7 +4833,6 @@ Function GenerateBrushPreview()
 
 End Function
 
-
 ; Wow! What a great Object-Oriented Programming Constructor I have just written!
 Function FloodFillInitializeState(StartX,StartY)
 
@@ -4994,9 +4841,9 @@ Function FloodFillInitializeState(StartX,StartY)
 			LevelTileVisited(i,j)=False
 		Next
 	Next
-	
+
 	FloodedElementsClear()
-	
+
 	If IsPositionInLevel(StartX,StartY)
 		SetLevelTileAsTarget(StartX,StartY)
 		FloodStackX(0)=StartX
@@ -5009,13 +4856,11 @@ Function FloodFillInitializeState(StartX,StartY)
 
 End Function
 
-
 Function FloodedElementsClear()
 
 	FloodedElementCount=0
 
 End Function
-
 
 Function AddToFloodedStack(NewX,NewY)
 
@@ -5024,7 +4869,6 @@ Function AddToFloodedStack(NewX,NewY)
 	FloodedElementCount=FloodedElementCount+1
 
 End Function
-
 
 Function FloodFillVisitLevelTile(nextx,nexty)
 
@@ -5039,7 +4883,6 @@ Function FloodFillVisitLevelTile(nextx,nexty)
 
 End Function
 
-
 Function FloodFillVisitLevelTileOutline(nextx,nexty)
 
 	If LevelTileVisited(nextx,nexty)=False
@@ -5053,7 +4896,6 @@ Function FloodFillVisitLevelTileOutline(nextx,nexty)
 
 End Function
 
-
 Function FloodFillPlanToVisitLevelTile(nextx,nexty)
 
 	FloodStackX(FloodElementCount)=nextx
@@ -5061,7 +4903,6 @@ Function FloodFillPlanToVisitLevelTile(nextx,nexty)
 	FloodElementCount=FloodElementCount+1
 
 End Function
-
 
 Function FloodedStackHasTile(x,y)
 
@@ -5083,12 +4924,12 @@ Function FloodFill(StartX,StartY)
 		FloodElementCount=FloodElementCount-1
 		thisx=FloodStackX(FloodElementCount)
 		thisy=FloodStackY(FloodElementCount)
-		
+
 		FloodFillVisitLevelTile(thisx-1,thisy)
 		FloodFillVisitLevelTile(thisx+1,thisy)
 		FloodFillVisitLevelTile(thisx,thisy-1)
 		FloodFillVisitLevelTile(thisx,thisy+1)
-		
+
 		AddToFloodedStack(thisx,thisy)
 	Wend
 
@@ -5101,10 +4942,10 @@ Function FloodFillRow(StartX,StartY)
 		FloodElementCount=FloodElementCount-1
 		thisx=FloodStackX(FloodElementCount)
 		thisy=FloodStackY(FloodElementCount)
-		
+
 		FloodFillVisitLevelTile(thisx-1,thisy)
 		FloodFillVisitLevelTile(thisx+1,thisy)
-		
+
 		AddToFloodedStack(thisx,thisy)
 	Wend
 
@@ -5117,10 +4958,10 @@ Function FloodFillColumn(StartX,StartY)
 		FloodElementCount=FloodElementCount-1
 		thisx=FloodStackX(FloodElementCount)
 		thisy=FloodStackY(FloodElementCount)
-		
+
 		FloodFillVisitLevelTile(thisx,thisy-1)
 		FloodFillVisitLevelTile(thisx,thisy+1)
-		
+
 		AddToFloodedStack(thisx,thisy)
 	Wend
 
@@ -5133,10 +4974,10 @@ Function FloodFillDiagonalNE(StartX,StartY)
 		FloodElementCount=FloodElementCount-1
 		thisx=FloodStackX(FloodElementCount)
 		thisy=FloodStackY(FloodElementCount)
-		
+
 		FloodFillVisitLevelTile(thisx-1,thisy+1)
 		FloodFillVisitLevelTile(thisx+1,thisy-1)
-		
+
 		AddToFloodedStack(thisx,thisy)
 	Wend
 
@@ -5149,10 +4990,10 @@ Function FloodFillDiagonalSE(StartX,StartY)
 		FloodElementCount=FloodElementCount-1
 		thisx=FloodStackX(FloodElementCount)
 		thisy=FloodStackY(FloodElementCount)
-		
+
 		FloodFillVisitLevelTile(thisx-1,thisy-1)
 		FloodFillVisitLevelTile(thisx+1,thisy+1)
-		
+
 		AddToFloodedStack(thisx,thisy)
 	Wend
 
@@ -5163,7 +5004,7 @@ Function FloodFillInline(StartX,StartY,IsHard)
 	FloodFillInitializeState(StartX,StartY)
 	While FloodElementCount<>0
 		FloodOutsideAdjacent=False
-		
+
 		FloodElementCount=FloodElementCount-1
 		thisx=FloodStackX(FloodElementCount)
 		thisy=FloodStackY(FloodElementCount)
@@ -5172,13 +5013,13 @@ Function FloodFillInline(StartX,StartY,IsHard)
 		FloodFillVisitLevelTile(thisx+1,thisy)
 		FloodFillVisitLevelTile(thisx,thisy-1)
 		FloodFillVisitLevelTile(thisx,thisy+1)
-		
+
 		If IsHard
 			If (Not LevelTileMatchesTarget(thisx-1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy-1)) Or (Not LevelTileMatchesTarget(thisx-1,thisy+1)) Or (Not LevelTileMatchesTarget(thisx+1,thisy+1))
 				FloodOutsideAdjacent=True
 			EndIf
 		EndIf
-		
+
 		If FloodOutsideAdjacent
 			AddToFloodedStack(thisx,thisy)
 		EndIf
@@ -5193,12 +5034,12 @@ Function FloodFillOutline(StartX,StartY,IsHard)
 		FloodElementCount=FloodElementCount-1
 		thisx=FloodStackX(FloodElementCount)
 		thisy=FloodStackY(FloodElementCount)
-		
+
 		FloodFillVisitLevelTileOutline(thisx-1,thisy)
 		FloodFillVisitLevelTileOutline(thisx+1,thisy)
 		FloodFillVisitLevelTileOutline(thisx,thisy-1)
 		FloodFillVisitLevelTileOutline(thisx,thisy+1)
-		
+
 		If IsHard
 			FloodFillVisitLevelTileOutline(thisx-1,thisy-1)
 			FloodFillVisitLevelTileOutline(thisx+1,thisy-1)
@@ -5208,7 +5049,6 @@ Function FloodFillOutline(StartX,StartY,IsHard)
 	Wend
 
 End Function
-
 
 Function KeyPressed(i)
 
@@ -5220,7 +5060,6 @@ Function KeyPressed(i)
 	EndIf
 
 End Function
-
 
 Function TrueToYes$(Bool)
 
@@ -5266,7 +5105,6 @@ Function MaybePluralize$(TargetString$,Count)
 
 End Function
 
-
 Function ReturnPressed()
 
 	If ReturnKey=True And ReturnKeyReleased=True
@@ -5301,11 +5139,10 @@ Function RightMouseDown()
 
 End Function
 
-
 Function EditorGlobalControls()
 
 	ShowingError=False
-	
+
 	If MouseDebounceTimer>0
 		MouseDebounceTimer=MouseDebounceTimer-1
 	EndIf
@@ -5317,7 +5154,7 @@ Function EditorGlobalControls()
 			LeftMouse=False
 			MouseDebounceTimer=0
 		EndIf
-		
+
 		LeftMouseReleased=True
 	EndIf
 
@@ -5328,32 +5165,32 @@ Function EditorGlobalControls()
 			RightMouse=False
 			MouseDebounceTimer=0
 		EndIf
-			
+
 		RightMouseReleased=True
 	EndIf
-	
+
 	MouseScroll=MouseZSpeed()
-	
+
 	If KeyDown(28) Or KeyDown(156)
 		ReturnKey=True
 	Else
 		ReturnKey=False
 		ReturnKeyReleased=True
 	EndIf
-	
+
 	If KeyDown(211)
 		DeleteKey=True
 	Else
 		DeleteKey=False
 		DeleteKeyReleased=True
 	EndIf
-	
+
 	For i=1 To KeyCount
 		If Not KeyDown(i)
 			KeyReleased(i)=True
 		EndIf
 	Next
-	
+
 	; Disabled indefinitely due to potential instability.
 	; Getting this to work would take a huge amount of effort.
 	;If KeyPressed(66) And displayfullscreen=False ; F8 key
@@ -5361,7 +5198,6 @@ Function EditorGlobalControls()
 	;EndIf
 
 End Function
-
 
 Function RenderToolbar()
 
@@ -5371,22 +5207,20 @@ Function RenderToolbar()
 
 End Function
 
-
 Function DrawStepSize(x,y,StepSize#)
 
 	DrawTextRectangle(x,y,StepSize#, 255,100,0, 0,0,0)
 
 End Function
 
-
 Function RunStepSize()
-	
+
 	For i=0 To BrushSpaceWidth-1
 		For j=0 To BrushSpaceHeight-1
 			RunStepSizeForTile(BrushTiles(i,j))
 		Next
 	Next
-	
+
 End Function
 
 Function RunStepSizeForTile(TheTile.Tile)
@@ -5398,7 +5232,6 @@ Function RunStepSizeForTile(TheTile.Tile)
 	TheTile\Water\Turbulence#=TheTile\Water\Turbulence#+StepSizeWaterTileTurbulence#
 
 End Function
-
 
 Function SetUseStateOfAllTileAttributes(NewState)
 
@@ -5416,7 +5249,6 @@ Function SetUseStateOfAllTileAttributes(NewState)
 
 End Function
 
-
 Function MaybeUnuseAllTileAttributes(MyState)
 
 	If ShiftDown()
@@ -5432,7 +5264,6 @@ Function MaybeUnuseAllTileAttributes(MyState)
 
 End Function
 
-
 Function GetNumberOfCursorsInDupeMode(Value)
 
 	Select Value
@@ -5443,9 +5274,8 @@ Function GetNumberOfCursorsInDupeMode(Value)
 	Case DupeModeXPlusY
 		Return 4
 	End Select
-	
-End Function
 
+End Function
 
 Function PositionCursorEntity(i,x,y)
 
@@ -5472,7 +5302,6 @@ Function GetLevelTileTotalHeight#(x,y)
 
 End Function
 
-
 Function HideCursors()
 
 	ClearBrushSurface()
@@ -5484,7 +5313,6 @@ Function HideCursors()
 
 End Function
 
-
 Function SetWhereWeEndedUpMarker(x,y)
 
 	;ShowMessage("Marker ended up at "+x+","+y,1000)
@@ -5492,7 +5320,6 @@ Function SetWhereWeEndedUpMarker(x,y)
 	WhereWeEndedUpAlpha#=0.5
 
 End Function
-
 
 Function EndUpAt(level,x,y)
 
@@ -5514,14 +5341,13 @@ Function TryLevelGoto(i,x,y,D1,D2,D3)
 			; Destination level might have changed from possible object update event, so we read from Data1 again.
 			EndUpAt(GetDataByIndex(Attributes,D1),GetDataByIndex(Attributes,D2),GetDataByIndex(Attributes,D3))
 		EndIf
-		
+
 		Return True
 	Else
 		Return False
 	EndIf
 
 End Function
-
 
 Function EditorLocalRendering()
 
@@ -5555,14 +5381,13 @@ Function EditorLocalRendering()
 		ObjectColorB=RectOnB
 		UpdateCameraClsColor()
 	EndIf
-	
+
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text SidebarX+90,SidebarY+5,"TILES"
-	
+
 	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
 	Rect SidebarX+214,SidebarY+100,81,145,True
 	Color TextLevelR,TextLevelG,TextLevelB
-
 
 	LevelWeatherString$=GetWeatherName$(LevelWeather)
 	;If Len(LevelWeatherString$) Mod 2=0
@@ -5571,14 +5396,12 @@ Function EditorLocalRendering()
 	;	Text 719,100,LevelWeatherString$
 	;EndIf
 	CenteredText(SidebarX+254,SidebarY+100,LevelWeatherString$)
-	
+
 	Line1$=GetMusicName$(LevelMusic)
 	;Text SidebarX+219,SidebarY+115,Line1$
 	CenteredText(SidebarX+254,SidebarY+115,Line1$)
-	
-	
-	LevelEdgeStyleString$=GetLevelEdgeStyleChar$(LevelEdgeStyle)
 
+	LevelEdgeStyleString$=GetLevelEdgeStyleChar$(LevelEdgeStyle)
 
 	Text SidebarX+215,SidebarY+133," LevelTex "
 	Text SidebarX+215,SidebarY+150," WaterTex "
@@ -5594,8 +5417,7 @@ Function EditorLocalRendering()
 	Text SidebarX+212,SidebarY+228,Str$(AmbientRed)
 	Text SidebarX+241,SidebarY+228,Str$(AmbientGreen)
 	Text SidebarX+270,SidebarY+228,Str$(AmbientBlue)
-	
-	
+
 	StartX=SidebarX+10
 	StartY=SidebarY+245
 	Color TileColorR,TileColorG,TileColorB
@@ -5605,28 +5427,27 @@ Function EditorLocalRendering()
 	Text StartX+2+285/2-4*(Len(TilePresetCategoryName$(CurrentTilePresetCategory))+10),StartY,"Category: "+TilePresetCategoryName$(CurrentTilePresetCategory)
 	Text StartX+2,StartY+22,"                                   "
 	Text StartX+2+285/2-4*(Len(TilePresetTileName$(CurrentTilePresetTile))+2),StartY+22,"Tile: "+Left$(TilePresetTileName$(CurrentTilePresetTile),Len(TilePresetTileName$(CurrentTilePresetTile))-4)
-	
-	
+
 	StartX=SidebarX+195 ;695
 	StartY=SidebarY+435
-	
+
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,100,20,True
 	Color TextLevelR,TextLevelG,TextLevelB
-	
+
 	If NofSelectedObjects<>0 And CurrentGrabbedObjectModified
 		Text StartX+50,StartY+2,"Update"
 	EndIf
-	
+
 	If NofObjectAdjusters>9
 		; formerly the "More" button, located at StartX+6
 		; ceiling division would be nice at NofObjectAdjusters...
 		Text StartX,StartY+2,"Pg"+(ObjectAdjusterStart/9+1)+"/"+((NofObjectAdjusters-1)/9+1)
 	EndIf
-	
+
 	StartX=SidebarX+10 ;510
 	StartY=SidebarY+460
-	
+
 	Color ObjectColorR,ObjectColorG,ObjectColorB
 	Rect StartX,StartY,285,40,True
 	Color TextLevelR,TextLevelG,TextLevelB
@@ -5634,7 +5455,7 @@ Function EditorLocalRendering()
 	Text StartX+2+285/2-4*(Len(ObjectPresetCategoryName$(CurrentObjectPresetCategory))+10),StartY,"Category: "+ObjectPresetCategoryName$(CurrentObjectPresetCategory)
 	Text StartX+2,StartY+22,"                                   "
 	Text StartX+2+285/2-4*(Len(ObjectPresetObjectName$(CurrentObjectPresetObject))+4),StartY+22,"Object: "+Left$(ObjectPresetObjectName$(CurrentObjectPresetObject),Len(ObjectPresetObjectName$(CurrentObjectPresetObject))-4)
-	
+
 	StartX=SidebarX+215 ;715
 	StartY=SidebarY+20
 	Text StartX+4,StartY-15," GLOBALS" ;719,5," GLOBALS"
@@ -5645,7 +5466,7 @@ Function EditorLocalRendering()
 	Text StartX,StartY+15,"<<"
 	Text StartX+80-16,StartY+15,">>"
 	CenteredText(StartX+40,StartY+15,Str$(LevelWidth))
-	
+
 	StartY=50
 	Color RectGlobalsR,RectGlobalsG,RectGlobalsB
 	Rect StartX,StartY,80,35,True
@@ -5654,7 +5475,7 @@ Function EditorLocalRendering()
 	Text StartX,StartY+19,"^^" ; Formerly +15
 	Text StartX+80-16,StartY+15,"vv"
 	CenteredText(StartX+40,StartY+15,Str$(LevelHeight))
-	
+
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text SidebarX+150-7*4,SidebarY+290,"OBJECTS"
 	StartX=SidebarX+10
@@ -5663,24 +5484,22 @@ Function EditorLocalRendering()
 	Rect StartX,StartY,185,150
 	Color TextLevelR,TextLevelG,TextLevelB
 	Text StartX+92-11*4,StartY,"ADJUSTMENTS"
-	
+
 	If NofSelectedObjects=1
 		Text StartX+2,StartY,"#"+SelectedObjects(0)
 	ElseIf NofSelectedObjects>1
 		Text StartX+2,StartY,"x"+NofSelectedObjects
 	EndIf
-	
+
 	For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
-		
+
 		DisplayObjectAdjuster(i)
-		
+
 	Next
-	
+
 	; local rendering end
 
-
 End Function
-
 
 Function EditorLocalControls()
 
@@ -5708,31 +5527,30 @@ Function EditorLocalControls()
 		UsingWireFrame=Not UsingWireFrame
 		WireFrame UsingWireFrame
 	EndIf
-	
+
 	MX=MouseX()
 	MY=MouseY()
-	
+
 	Fast=False
 	If ShiftDown() Then Fast=True
-	
-	
+
 	; *************************************
 	; Placing Tiles and Objects on the Editor Field
 	; *************************************
-	
+
 	If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
 		If mx>=0 And mx<LevelViewportWidth And my>=0 And my<LevelViewportHeight
 			Entity=CameraPick(camera1,MouseX(),MouseY())
 			If Entity>0
-				
+
 				SetBrushCursorPosition(Floor(PickedX()),Floor(-PickedZ()))
-				
+
 				; Hide all cursors except for cursor 0.
 				For i=1 To 3
 					HideEntity CursorMeshPillar(i)
 					HideEntity CursorMeshOpaque(i)
 				Next
-				
+
 				PositionCursorEntity(0,BrushCursorX,BrushCursorY)
 				If BrushMode<>BrushModeSetMirror
 					If DupeMode=DupeModeX
@@ -5751,13 +5569,13 @@ Function EditorLocalControls()
 						PositionCursorEntity(3,TargetX,TargetY)
 					EndIf
 				EndIf
-				
+
 				ShowBrushSurface()
-				
+
 				BrushR=GetBrushModeColor(BrushMode,0)
 				BrushG=GetBrushModeColor(BrushMode,1)
 				BrushB=GetBrushModeColor(BrushMode,2)
-				
+
 				For i=0 To 3
 					EntityColor CursorMeshPillar(i),BrushR,BrushG,BrushB
 					EntityColor CursorMeshOpaque(i),BrushR,BrushG,BrushB
@@ -5765,10 +5583,10 @@ Function EditorLocalControls()
 					EntityColor BrushMesh,BrushR,BrushG,BrushB
 					EntityColor BrushTextureMesh,BrushR,BrushG,BrushB
 				Next
-				
+
 				Color TextLevelR,TextLevelG,TextLevelB
 				Text LevelViewportWidth/2-4.5*8,LevelViewportHeight,"X:"+Str$(BrushCursorX)+", Y:"+Str$(BrushCursorY)
-				
+
 				If LeftMouse=False
 					If BlockPlacingMode=BlockPlacingModePlace ; Release left mouse button to place block.
 						If EditorMode=0
@@ -5791,7 +5609,7 @@ Function EditorLocalControls()
 						EndIf
 						SetBrushMode(BrushModeBlock)
 					EndIf
-				
+
 					OnceTilePlacement=True
 					DidStepPerClick=False
 				ElseIf DidStepPerClick=False And LeftMouseReleased=True
@@ -5799,21 +5617,21 @@ Function EditorLocalControls()
 					If StepPer=StepPerClick
 						RunStepSize()
 					EndIf
-					
+
 					If BrushMode<>BrushModeBlock And BrushMode<>BrushModeTestLevel And BrushMode<>BrushModeSetMirror
 						AddUnsavedChange()
 					EndIf
 				EndIf
-				
+
 				If LeftMouse=True And LeftMouseReleased=True And (EditorMode<>0 Or OnceTilePlacement=True)
 					OnceTilePlacement=False
-					
+
 					If EditorMode=EditorModeTile And BrushMode<>BrushModeBlock ; Don't want to run a step size when just trying to select a block region.
 						If StepPer=StepPerPlacement
 							RunStepSize()
 						EndIf
 					EndIf
-					
+
 					If BrushMode=BrushModeBlock
 						LeftMouseReleased=False
 						StartBlockModeBlock(BlockPlacingModePlace)
@@ -5823,7 +5641,7 @@ Function EditorLocalControls()
 							If Not LevelExists(CurrentLevelNumber)
 								SaveLevel()
 							EndIf
-							
+
 							StartTestModeAt(CurrentLevelNumber,BrushCursorX,BrushCursorY)
 						EndIf
 					ElseIf BrushMode=BrushModeSetMirror
@@ -5835,18 +5653,18 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							PlaceObjectOrChangeLevelTile(thisx,thisy)
 						Next
-						
+
 						If EditorMode=EditorModeObject
 							ObjectsWereChanged()
 						ElseIf EditorMode=EditorModeTile
 							TilesWereChanged()
 						EndIf
 					EndIf
-						
+
 					If EditorMode=EditorModeObject
 						LeftMouseReleased=False
 					EndIf
-					
+
 					If EditorMode=EditorModeTile
 						BrushCursorProbablyModifiedTiles()
 					EndIf
@@ -5854,33 +5672,33 @@ Function EditorLocalControls()
 				If RightMouse=True
 					If RightMouseReleased=True
 						RightMouseReleased=False
-						
+
 						; grab object or tile
-						
+
 						If EditorMode=0
 							GrabLevelTile(BrushCursorX,BrushCursorY)
-							
+
 							CopyLevel()
-							
+
 							DraggedTilesSpotX=BrushCursorX
 							DraggedTilesSpotY=BrushCursorY
-							
+
 							For i=0 To MaxLevelCoordinate
 								For j=0 To MaxLevelCoordinate
 									DraggedTilesEnabled(i,j)=False
 								Next
 							Next
-							
+
 							ClearObjectDrag()
 							For i=0 To FloodedElementCount-1
 								thisx=FloodedStackX(i)
 								thisy=FloodedStackY(i)
-								
+
 								If IsPositionInLevelArrayBounds(thisx,thisy)
 									DraggedTilesEnabled(thisx,thisy)=True
 									CopyTile(LevelTiles(thisx,thisy),DraggedTiles(thisx,thisy))
 									CopyTile(CurrentTile,CopyLevelTiles(thisx,thisy))
-									
+
 									If LevelTileObjectCount(thisx,thisy)<>0
 										For j=0 To NofObjects-1
 											If ObjectIsAtFloat(LevelObjects(j),thisx,thisy)
@@ -5891,7 +5709,7 @@ Function EditorLocalControls()
 								EndIf
 							Next
 							StartObjectDrag()
-							
+
 							TileDragging=True
 						ElseIf EditorMode=3
 							If BrushMode=BrushModeBlock
@@ -5942,11 +5760,11 @@ Function EditorLocalControls()
 							AddUnsavedChange()
 						EndIf
 					EndIf
-					
+
 					TileDragging=False
 					NofDraggedObjects=0
 				EndIf
-				
+
 				If MouseDown(3) ; middle click / ; middle mouse
 					SetCurrentObjectTargetLocation(BrushCursorX,BrushCursorY)
 					SetEditorMode(3)
@@ -5954,7 +5772,7 @@ Function EditorLocalControls()
 			Else
 				BrushCursorOffMap()
 			EndIf
-	
+
 			If DeleteKey=True
 				If DeleteKeyReleased=True
 					DeleteKeyReleased=False
@@ -5966,11 +5784,11 @@ Function EditorLocalControls()
 							thisy=FloodedStackY(i)
 							DeleteObjectAt(thisx,thisy)
 						Next
-						
+
 						ObjectsWereChanged()
 						AddUnsavedChange()
 					EndIf
-					
+
 					RecalculateDragSize()
 				EndIf
 			Else
@@ -5981,12 +5799,12 @@ Function EditorLocalControls()
 						Next
 					Next
 					SetBrushMode(BrushModeBlock)
-					
+
 					ObjectsWereChanged()
 					AddUnsavedChange()
 				EndIf
 			EndIf
-			
+
 			If ReturnKey=True And ReturnKeyReleased=True
 				ReturnKeyReleased=False
 
@@ -6010,7 +5828,7 @@ Function EditorLocalControls()
 					GenerateBrushPreview()
 				ElseIf EditorMode=3
 					NofBrushObjects=0
-					
+
 					For k=0 To NofObjects-1
 						ObjTileX=LevelObjects(k)\Position\TileX
 						ObjTileY=LevelObjects(k)\Position\TileY
@@ -6021,7 +5839,7 @@ Function EditorLocalControls()
 							NofBrushObjects=NofBrushObjects+1
 						EndIf
 					Next
-					
+
 					If NofBrushObjects=0
 						SetBrushToCurrentObject()
 					Else
@@ -6030,16 +5848,12 @@ Function EditorLocalControls()
 					EndIf
 				EndIf
 			EndIf
-		
+
 		Else
 			BrushCursorOffMap()
 		EndIf
 	EndIf
-	
-	
-	
-	
-	
+
 	; *************************************
 	; Selecting A Texture / Picking a Texture / Texture Picker / Tile Picker
 	; *************************************
@@ -6083,16 +5897,15 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 
-	
 	; *************************************
 	; Change the CurrentTile
 	; *************************************
-		
+
 	StartX=SidebarX+10
 	StartY=SidebarY+20
-	
+
 	DelayTime=10
-	
+
 	If MX>=StartX And MX<StartX+200 And MY<StartY+220
 		If LeftMouse=True Or RightMouse=True Or MouseScroll<>0 Or ReturnKey=True
 			SetEditorMode(0)
@@ -6105,9 +5918,9 @@ Function EditorLocalControls()
 			TurnEntity CurrentMesh,0,-RotationSpeed,0
 		EndIf
 	EndIf
-	
+
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+35 And MY<StartY+100
-		If RightMouse=True And RightMouseReleased=True 
+		If RightMouse=True And RightMouseReleased=True
 			; CurrentTile\Terrain\Rotation
 			RightMouseReleased=False
 			CurrentTile\Terrain\Rotation=(CurrentTile\Terrain\Rotation+1) Mod 8
@@ -6139,8 +5952,7 @@ Function EditorLocalControls()
 		EndIf
 		ShowTooltipRightAligned(StartX,StartY+95,"Texture ID: "+CurrentTile\Terrain\Texture)
 	EndIf
-		
-	
+
 	; CurrentTile\Terrain\SideRotation/Texture
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+100 And MY<StartY+155
 		If RightMouse=True And RightMouseReleased=True
@@ -6175,7 +5987,7 @@ Function EditorLocalControls()
 		EndIf
 		ShowTooltipRightAligned(StartX,StartY+140,"SideTexture ID: "+CurrentTile\Terrain\SideTexture)
 	EndIf
-	
+
 	; WaterTexture/Rotation
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+40 And MY<StartY+115
 		If RightMouse=True And RightMouseReleased=True
@@ -6205,11 +6017,11 @@ Function EditorLocalControls()
 	; CurrentTile\Terrain\Extrusion
 	If MX>=StartX And MX<StartX+100 And MY>=StartY And MY<StartY+15
 		CurrentTile\Terrain\Extrusion#=AdjustFloat#("Enter Xtrude: ", CurrentTile\Terrain\Extrusion#, 0.1, 1.0, DelayTime)
-		
+
 		If WasAdjusted()
 			SetBrushToCurrentTile()
 		EndIf
-		
+
 		If ReturnKey=True And ReturnKeyReleased=True
 			ReturnKeyReleased=False
 			If CtrlDown()
@@ -6229,7 +6041,7 @@ Function EditorLocalControls()
 	; CurrentTile\Terrain\Height
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY And MY<StartY+15
 		CurrentTile\Terrain\Height#=AdjustFloat#("Enter Height: ", CurrentTile\Terrain\Height#, 0.1, 1.0, DelayTime)
-		
+
 		If WasAdjusted()
 			SetBrushToCurrentTile()
 		EndIf
@@ -6277,7 +6089,7 @@ Function EditorLocalControls()
 				End Select
 			EndIf
 			SetBrushToCurrentTile()
-			
+
 			LeftMouseReleased=False
 			RightMouseReleased=False
 			SetEditorMode(0)
@@ -6300,7 +6112,7 @@ Function EditorLocalControls()
 					CurrentTile\Terrain\Logic=0
 			End Select
 			SetBrushToCurrentTile()
-			
+
 			LeftMouseReleased=False
 			RightMouseReleased=False
 			SetEditorMode(0)
@@ -6318,7 +6130,7 @@ Function EditorLocalControls()
 	; CurrentTile\Terrain\Random
 	If MX>=StartX And MX<StartX+200 And MY>=StartY+170 And MY<StartY+185
 		CurrentTile\Terrain\Random#=AdjustFloat#("Enter Random: ", CurrentTile\Terrain\Random#, 0.01, 0.1, DelayTime)
-		
+
 		If WasAdjusted()
 			SetBrushToCurrentTile()
 		EndIf
@@ -6375,11 +6187,11 @@ Function EditorLocalControls()
 			SetEditorMode(0)
 		EndIf
 	EndIf
-	
+
 	; CurrentTile\Water\Height
 	If MX>=StartX And MX<StartX+100 And MY>=StartY+200 And MY<StartY+215
 		CurrentTile\Water\Height#=AdjustFloat#("Enter WHeight: ", CurrentTile\Water\Height#, 0.1, 1.0, DelayTime)
-		
+
 		If WasAdjusted()
 			SetBrushToCurrentTile()
 		EndIf
@@ -6405,7 +6217,7 @@ Function EditorLocalControls()
 	; CurrentTile\Water\Turbulence
 	If MX>=StartX+100 And MX<StartX+200 And MY>=StartY+200 And MY<StartY+215
 		CurrentTile\Water\Turbulence#=AdjustFloat#("Enter WTurb: ", CurrentTile\Water\Turbulence#, 0.1, 1.0, DelayTime)
-		
+
 		If WasAdjusted()
 			SetBrushToCurrentTile()
 		EndIf
@@ -6428,14 +6240,12 @@ Function EditorLocalControls()
 
  	EndIf
 
-
 	; *************************************
 	; Textures and global settings
 	; *************************************
-	
 
-	If mx>=SidebarX+215 
-				
+	If mx>=SidebarX+215
+
 		If my>=100 And my<115 And ((leftmouse=True And leftmousereleased=True) Or MouseScroll>0)
 			leftmousereleased=False
 			LevelWeather=LevelWeather+1
@@ -6481,9 +6291,8 @@ Function EditorLocalControls()
 			AddUnsavedChange()
 		EndIf
 
-
 		; level/water textures
-		
+
 		; LevelTexture
 		If my>133 And my<148
 			If CtrlDown() And leftmouse=True And leftmousereleased=True
@@ -6493,7 +6302,7 @@ Function EditorLocalControls()
 				Rect 0,0,500,40,True
 				Color TextLevelR,TextLevelG,TextLevelB
 				LevelTextureCustomName$=Input$( "Custom Texture Name (e.g. 'customtemplate'):")
-				
+
 				If FileType (globaldirname$+"\custom\leveltextures\leveltex "+leveltexturecustomname$+".bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"1.bmp")<>1 And FileType (globaldirname$+"\custom content\Model\Textures\backgroundtex "+leveltexturecustomname$+"2.bmp")<>1
 					Locate 0,0
 					Color 0,0,0
@@ -6501,7 +6310,7 @@ Function EditorLocalControls()
 					Color 255,255,0
 					Print "FILE(S) NOT FOUND!"
 					Delay 2000
-					
+
 				Else
 					FreeTexture LevelTexture
 					LevelTexture=0
@@ -6513,15 +6322,14 @@ Function EditorLocalControls()
 						Color 255,255,0
 						Print "TEXTURE COULDN'T LOAD!"
 						UpdateLevelTextureDefault()
-						
-	
+
 						Delay 2000
 					Else
 						currentleveltexture=-1
 						UpdateLevelTexture()
 					EndIf
 				EndIf
-				
+
 				leftmousereleased=False
 				buildcurrenttilemodel()
 				AddUnsavedChange()
@@ -6529,34 +6337,34 @@ Function EditorLocalControls()
 				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
 					CurrentLevelTexture=CurrentLevelTexture+1
 					If CurrentLevelTexture=NofLevelTextures Then currentleveltexture=0
-					
+
 					FreeTexture LevelTexture
 					UpdateLevelTextureDefault()
-					
+
 					For j=0 To LevelHeight-1
 						EntityTexture LevelMesh(j),LevelTexture
 					Next
-					
+
 					leftmousereleased=False
 					buildcurrenttilemodel()
 					AddUnsavedChange()
 				ElseIf (rightmouse=True And rightmousereleased=True) Or MouseScroll<0
 					CurrentLevelTexture=CurrentLevelTexture-1
 					If CurrentLevelTexture<0 Then currentleveltexture=NofLevelTextures-1
-					
+
 					FreeTexture LevelTexture
 					UpdateLevelTextureDefault()
-					
+
 					For j=0 To LevelHeight-1
 						EntityTexture LevelMesh(j),LevelTexture
 					Next
-					
+
 					rightmousereleased=False
 					buildcurrenttilemodel()
-					AddUnsavedChange()					
+					AddUnsavedChange()
 				EndIf
 			EndIf
-			
+
 			ShowTooltipRightAligned(SidebarX+210,163,CurrentLevelTextureName$())
 		EndIf
 
@@ -6569,15 +6377,15 @@ Function EditorLocalControls()
 				Rect 0,0,500,40,True
 				Color TextLevelR,TextLevelG,TextLevelB
 				WaterTextureCustomName$=Input$( "Custom WaterTexture Name (e.g. 'customtemplate'):")
-				
-				If FileType (globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg")<>1 
+
+				If FileType (globaldirname$+"\custom\leveltextures\watertex "+watertexturecustomname$+".jpg")<>1
 					Locate 0,0
 					Color 0,0,0
 					Rect 0,0,500,40,True
 					Color 255,255,0
 					Print "FILE NOT FOUND!"
 					Delay 2000
-					
+
 				Else
 					FreeTexture WaterTexture
 					WaterTexture=0
@@ -6589,58 +6397,55 @@ Function EditorLocalControls()
 						Color 255,255,0
 						Print "TEXTURE COULDN'T LOAD!"
 						UpdateWaterTextureDefault()
-						
-	
+
 						Delay 2000
 					Else
 						currentwatertexture=-1
 						UpdateWaterTexture()
 					EndIf
 				EndIf
-				
+
 				leftmousereleased=False
 				buildcurrenttilemodel()
 				AddUnsavedChange()
 			Else
 				If (leftmouse=True And leftmousereleased=True) Or MouseScroll>0
 					CurrentWaterTexture=CurrentWaterTexture+1
-					
+
 					If CurrentWaterTexture=NofWaterTextures Then currentWatertexture=0
-					
+
 					FreeTexture WaterTexture
 					UpdateWaterTextureDefault()
-					
+
 					For j=0 To LevelHeight-1
 						EntityTexture WaterMesh(j),WaterTexture
 					Next
-					
+
 					leftmousereleased=False
 					buildcurrenttilemodel()
 					AddUnsavedChange()
 				ElseIf (rightmouse=True And rightmousereleased=True) Or MouseScroll<0
 					CurrentWaterTexture=CurrentWaterTexture-1
-					
+
 					If CurrentWaterTexture<0 Then currentWatertexture=NofWaterTextures-1
-					
+
 					FreeTexture WaterTexture
 					UpdateWaterTextureDefault()
-					
+
 					For j=0 To LevelHeight-1
 						EntityTexture WaterMesh(j),WaterTexture
 					Next
-					
+
 					rightmousereleased=False
 					buildcurrenttilemodel()
-					AddUnsavedChange()					
+					AddUnsavedChange()
 				EndIf
 			EndIf
-			
+
 			ShowTooltipRightAligned(SidebarX+210,180,CurrentWaterTextureName$())
 		EndIf
-		
-		
-		
-		If my>165 And my<195 ;my<185 
+
+		If my>165 And my<195 ;my<185
 			If mx>FlStartX+8 And mx<FlStartX+24
 				OldValue=WaterFlow
 				Waterflow=AdjustInt("Enter Waterflow: ", Waterflow, 1, 10, DelayTime)
@@ -6684,15 +6489,15 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	If Fast
 		ChangeSpeed=10
 	Else
 		ChangeSpeed=1
 	EndIf
-	
+
 	StartX=SidebarX+212
-	
+
 	If mx>StartX And my>215-13 And my<228-13
 		If leftmouse=True And CtrlDown()
 			TheString$=InputString$("Enter color for all light values (or leave blank to cancel): ")
@@ -6763,7 +6568,7 @@ Function EditorLocalControls()
 			AddUnsavedChange()
 		EndIf
 	EndIf
-	
+
 	If mx>StartX And my>215+13 And mx<StartX+24 And my<228+13
 		If leftmouse=True Or MouseScroll>0
 			If CtrlDown()
@@ -6819,21 +6624,13 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 
-
-
-
-
-	
-		
-			
-
 	; *************************************
 	; Preset Tiles
 	; *************************************
-	
+
 	StartX=SidebarX+10
 	StartY=SidebarY+245
-	
+
 	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			CurrentTilePresetCategory=CurrentTilePresetCategory-1
@@ -6869,7 +6666,6 @@ Function EditorLocalControls()
 			If CurrentTilePresetCategory=NofTilePresetCategories Then CurrentTilePresetCategory=0
 			LeftMouseReleased=False
 			CurrentTilePresetTile=0
-			CurrentTilePresetTile=0
 			i=CurrentTilePresetCategory
 			Repeat
 				NofTilePresetTiles=0
@@ -6894,7 +6690,6 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 
-	
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			CurrentTilePresetTile=CurrentTilePresetTile-1
@@ -6916,38 +6711,35 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 
-
-	
-	
 	; *************************************
 	; LevelSize
 	; *************************************
-	
+
 	StartX=SidebarX+215 ;715
 	StartY=SidebarY+20
-	
+
 	If ShiftDown()
 		Adj=10
 	Else
 		Adj=1
 	EndIf
-	
+
 	If mx>=StartX And mx<StartX+80 And my>=StartY+15 And my<80
-	
+
 		If MouseScroll<>0
 			BorderExpandOption=Not BorderExpandOption
 		EndIf
-		
+
 		If BorderExpandOption=0
 			ResizeName$="Current"
 		Else
 			ResizeName$="Duplicate"
 		EndIf
-	
+
 		; Formerly StartX,StartY+60
 		ShowTooltipRightAligned(GfxWidth,StartY+105,"Scroll the mouse wheel to change the resize setting: Resize "+ResizeName$)
-	
-		If mx<StartX+40 And my<StartY+30 
+
+		If mx<StartX+40 And my<StartY+30
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
@@ -6970,8 +6762,8 @@ Function EditorLocalControls()
 					ReSizeLevel()
 				EndIf
 			EndIf
-		EndIf	
-		If mx>=StartX+40 And my<StartY+30 
+		EndIf
+		If mx>=StartX+40 And my<StartY+30
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
@@ -6995,10 +6787,10 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 		EndIf
-		
+
 		StartY=50
-		
-		If mx<StartX+40 And my>=StartY+15 And my<StartY+30 
+
+		If mx<StartX+40 And my>=StartY+15 And my<StartY+30
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
@@ -7022,7 +6814,7 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 		EndIf
-		If mx>=StartX+40 And my>=StartY+15 And my<StartY+30 
+		If mx>=StartX+40 And my>=StartY+15 And my<StartY+30
 			If LeftMouse=True And LeftMouseReleased=True
 				LeftMouseReleased=False
 				If CtrlDown()
@@ -7047,11 +6839,11 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	; *************************************
 	; OBJECTS
 	; *************************************
-	
+
 	If mx>LevelViewportWidth And my>SidebarY+285
 		If (LeftMouse=True Or RightMouse=True) And my<LevelViewportHeight
 			SetEditorMode(3)
@@ -7059,23 +6851,23 @@ Function EditorLocalControls()
 		If my<SidebarY+455
 			If DeleteKey=True And DeleteKeyReleased=True And NofSelectedObjects<>0
 				DeleteKeyReleased=False
-				
+
 				While NofSelectedObjects<>0
 					DeleteObject(SelectedObjects(0))
 				Wend
-				
+
 				RecalculateDragSize()
 				SetEditorMode(3)
-				
+
 				ObjectsWereChanged()
 				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	StartX=SidebarX+10 ;510
 	StartY=SidebarY+305
-	
+
 	If mx>=StartX And mx<=StartX+185
 		If my>=StartY And my<StartY+15
 			TooltipLeftY=StartY+30
@@ -7110,7 +6902,7 @@ Function EditorLocalControls()
 				EndIf
 			EndIf
 		EndIf
-		
+
 		; Adjust object adjusters
 		For i=ObjectAdjusterStart+0 To ObjectAdjusterStart+8
 			If my>=StartY+15+(i-ObjectAdjusterStart)*15 And my<StartY+15+(i-ObjectAdjusterStart)*15+15
@@ -7122,14 +6914,14 @@ Function EditorLocalControls()
 			EndIf
 		Next
 	EndIf
-	
+
 	; *************************************
 	; Preset Objects
 	; *************************************
-	
+
 	StartX=SidebarX+195 ;695
 	StartY=SidebarY+435
-	
+
 	If CtrlDown()
 		If KeyPressed(49) ; Ctrl+N
 			SetBrushMode(BrushModeNormal)
@@ -7152,12 +6944,12 @@ Function EditorLocalControls()
 		If KeyPressed(36) ; Ctrl+J
 			ToggleOutlineSoftMode()
 		EndIf
-		
+
 		If KeyPressed(46) ; Ctrl+C
 			CopySelectedObjectsToBrush()
 		EndIf
 	EndIf
-	
+
 	; Placed in code before the adjuster page switch button to eat the click before that.
 	If NofSelectedObjects<>0 And CurrentGrabbedObjectModified
 		; Update button
@@ -7171,7 +6963,7 @@ Function EditorLocalControls()
 			UpdateSelectedObjects()
 		EndIf
 	EndIf
-	
+
 	If KeyPressed(20) ; T key
 		If CtrlDown() ; Ctrl+T
 			If BrushMode=BrushModeTestLevel
@@ -7191,7 +6983,7 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	If KeyPressed(34) ; G key
 		For i=0 To NofObjects-1
 			TheType=LevelObjects(i)\Attributes\LogicType
@@ -7207,7 +6999,7 @@ Function EditorLocalControls()
 			EndIf
 		Next
 	EndIf
-	
+
 	If KeyPressed(33) ; F key
 		; Flip brush horizontally
 		BrushSpaceStartX=GetBrushSpaceXStart()
@@ -7219,7 +7011,7 @@ Function EditorLocalControls()
 					X1=BrushSpaceWrapX(BrushSpaceStartX+i)
 					Y=BrushSpaceWrapY(BrushSpaceStartY+j)
 					X2=BrushSpaceWrapX(BrushSpaceEndX-i)
-					
+
 					SwapTiles(BrushTiles(X1,Y),BrushTiles(X2,Y))
 				Next
 			Next
@@ -7230,10 +7022,10 @@ Function EditorLocalControls()
 				BrushObjectTileXOffset(k)=X2
 			Next
 		EndIf
-		
+
 		GenerateBrushPreview()
 	EndIf
-	
+
 	If KeyPressed(47) ; V key
 		; Rotate brush 90 degrees
 		; TODO: Write this code.
@@ -7246,7 +7038,7 @@ Function EditorLocalControls()
 					X1=BrushSpaceWrapX(BrushSpaceStartX+i)
 					Y=BrushSpaceWrapY(BrushSpaceStartY+j)
 					X2=BrushSpaceWrapX(BrushSpaceEndX-i)
-					
+
 					SwapTiles(BrushTiles(X1,Y),BrushTiles(X2,Y))
 				Next
 			Next
@@ -7257,18 +7049,18 @@ Function EditorLocalControls()
 				BrushObjectTileXOffset(k)=X2
 			Next
 		EndIf
-		
+
 		Temp=BrushSpaceWidth
 		BrushSpaceWidth=BrushSpaceHeight
 		BrushSpaceHeight=Temp
-		
+
 		Temp=BrushWidth
 		SetBrushWidth(BrushHeight)
 		SetBrushHeight(Temp)
-		
+
 		GenerateBrushPreview()
 	EndIf
-	
+
 	If KeyPressed(15) ; tab key
 		If EditorMode=EditorModeTile
 			SetEditorMode(EditorModeObject)
@@ -7276,7 +7068,7 @@ Function EditorLocalControls()
 			SetEditorMode(EditorModeTile)
 		EndIf
 	EndIf
-	
+
 	If HotkeySave()
 		SaveLevel()
 	ElseIf HotkeyOpen()
@@ -7284,7 +7076,7 @@ Function EditorLocalControls()
 			OpenTypedLevel()
 		EndIf
 	EndIf
-	
+
 	If CtrlDown()
 		If KeyPressed(14) ; Ctrl+Backspace, formerly Ctrl+[ (26)
 			TryPopPreviousLevel()
@@ -7298,7 +7090,7 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	; More button / Page switch button
 	If mx>=StartX And Mx<StartX+80 And my>=StartY And my<StartY+20
 		If (LeftMouse=True And LeftMouseReleased=True) Or MouseScroll>0
@@ -7311,7 +7103,7 @@ Function EditorLocalControls()
 			PreviousObjectAdjusterPage()
 		EndIf
 	EndIf
-	
+
 	If KeyPressed(51) ; , key
 		PreviousObjectAdjusterPage()
 		SetEditorMode(3)
@@ -7320,32 +7112,30 @@ Function EditorLocalControls()
 		SetEditorMode(3)
 	EndIf
 
-	
 	StartX=SidebarX+10
 	StartY=SidebarY+460
 
-	
-	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20	
+	If mx>=startx And mx<startx+285 And my>=StartY+0 And my<StartY+20
 		If CtrlDown() And LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
 			Query$=InputString$("Enter category name (or part of the name): ")
 			For i=0 To NofObjectPresetCategories-1
 				If SubstringMatchesAnywhere(Query$,ObjectPresetCategoryName$(i))
 					CurrentObjectPresetCategory=i
-					
+
 					CurrentObjectPresetObject=0
 					i=CurrentObjectPresetCategory
-					
+
 					ReadObjectPresetDirectory(i)
-					
+
 					SetEditorMode(3)
 					LoadObjectPreset()
-					
+
 					Exit
 				EndIf
 			Next
 		EndIf
-	
+
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			CurrentObjectPresetCategory=CurrentObjectPresetCategory-1
 			If CurrentObjectPresetCategory=-1 Then CurrentObjectPresetCategory=NofObjectPresetCategories-1
@@ -7383,7 +7173,6 @@ Function EditorLocalControls()
 		EndIf
 	EndIf
 
-	
 	If mx>=startx And mx<startx+285 And my>=StartY+20 And my<StartY+40
 		If CtrlDown() And LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
@@ -7391,34 +7180,34 @@ Function EditorLocalControls()
 
 			FormerCategory=CurrentObjectPresetCategory
 			FormerObject=CurrentObjectPresetObject
-			
+
 			; do two passes: first checking from the start, and then checking from anywhere
-			
+
 			For i=0 To NofObjectPresetCategories-1
 				ReadObjectPresetDirectory(i)
 				CurrentObjectPresetCategory=i
 				For j=0 To NofObjectPresetObjects-1
 					If SubstringMatchesStart(Query$,ObjectPresetObjectName$(j))
 						CurrentObjectPresetObject=j
-						
+
 						SetEditorMode(3)
 						LoadObjectPreset()
-						
+
 						Return
 					EndIf
 				Next
 			Next
-			
+
 			For i=0 To NofObjectPresetCategories-1
 				ReadObjectPresetDirectory(i)
 				CurrentObjectPresetCategory=i
 				For j=0 To NofObjectPresetObjects-1
 					If SubstringMatchesAnywhere(Query$,ObjectPresetObjectName$(j))
 						CurrentObjectPresetObject=j
-						
+
 						SetEditorMode(3)
 						LoadObjectPreset()
-						
+
 						Return
 					EndIf
 				Next
@@ -7427,13 +7216,13 @@ Function EditorLocalControls()
 			CurrentObjectPresetCategory=FormerCategory
 			ReadObjectPresetDirectory(CurrentObjectPresetCategory)
 			CurrentObjectPresetObject=FormerObject
-		EndIf	
+		EndIf
 
 		If (RightMouse=True And RightMouseReleased=True) Or MouseScroll<0
 			CurrentObjectPresetObject=CurrentObjectPresetObject-1
 			If CurrentObjectPresetObject=-1 Then CurrentObjectPresetObject=NofObjectPresetObjects-1
 			RightMouseReleased=False
-			
+
 			SetEditorMode(3)
 			LoadObjectPreset()
 		EndIf
@@ -7442,21 +7231,16 @@ Function EditorLocalControls()
 			CurrentObjectPresetObject=CurrentObjectPresetObject+1
 			If CurrentObjectPresetObject=NofObjectPresetObjects Then CurrentObjectPresetObject=0
 			LeftMouseReleased=False
-			
+
 			SetEditorMode(3)
 			LoadObjectPreset()
 		EndIf
 	EndIf
 
-
-
-
-	
-			
 	; *************************************
-	; load/SAVE/ETC	
+	; load/SAVE/ETC
 	; *************************************
-	
+
 	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY-10)
 		; brush mode
 		BrushChange=0
@@ -7471,17 +7255,17 @@ Function EditorLocalControls()
 			ChangeBrushModeByDelta(-1)
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY+20)
 		If LeftMouse=True And LeftMouseReleased=True
 			LeftMouseReleased=False
 			; wipe ; flip
-			
+
 			SetupPrompt()
 			ReturnKeyReleased=False
 			Print("Type W to wipe, or type X, Y, or XY to flip across the chosen")
 			DesiredAction$=Upper$(Input$("axes: "))
-			
+
 			If DesiredAction$="W"
 				For i=0 To LevelWidth-1
 					For j=0 To LevelHeight-1
@@ -7501,10 +7285,10 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	EndIf
-		
+
 	If IsMouseOverToolbarItem(ToolbarBrushModeX,ToolbarBrushModeY+50)
 		; dupe mode
-		
+
 		NewValue=AdjustInt("Enter dupe mode: ",DupeMode,1,1,10)
 		If NewValue<>DupeMode
 			SetDupeMode(NewValue)
@@ -7539,7 +7323,7 @@ Function EditorLocalControls()
 			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
-		
+
 	If IsMouseOverToolbarItem(ToolbarTexPrefixX,ToolbarTexPrefixY)
 		;texture prefix
 		If CtrlDown()
@@ -7555,7 +7339,7 @@ Function EditorLocalControls()
 					Print "Enter texture prefix: "
 					TexturePrefix$(CurrentTexturePrefix)=Input$("")
 					ReturnKeyReleased=False
-					
+
 					WriteTexturePrefixes()
 				EndIf
 			EndIf
@@ -7568,12 +7352,12 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarShowMarkersX,ToolbarShowMarkersY) And MouseDebounceFinished()
 		; show/hide markers
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			ShowObjectPositions=Not ShowObjectPositions
-			If ShowObjectPositions=True 
+			If ShowObjectPositions=True
 				For j=0 To NofObjects-1
 					ShowEntity ObjectPositionMarker(j)
 				Next
@@ -7583,11 +7367,11 @@ Function EditorLocalControls()
 					HideEntity ObjectPositionMarker(j)
 				Next
 			EndIf
-			
+
 			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarShowObjectsX,ToolbarShowObjectsY)
 		; show/hide objects
 		NewValue=AdjustInt("Enter object mesh visibility level: ", ShowObjectMesh, 1, 10, DelayTime)
@@ -7604,27 +7388,26 @@ Function EditorLocalControls()
 			Next
 		EndIf
 	EndIf
-	
-	
+
 	If IsMouseOverToolbarItem(ToolbarShowLogicX,ToolbarShowLogicY) And MouseDebounceFinished()
 		; show/hide logic
 		If (LeftMouse=True And LeftMouseReleased=True) Or (RightMouse=True And RightMouseReleased=True) Or MouseScroll<>0
 			ShowLogicMesh=Not ShowLogicMesh
-			If ShowLogicMesh=True 
+			If ShowLogicMesh=True
 				For j=0 To Levelheight-1
 					ShowEntity LogicMesh(j)
 				Next
 			EndIf
-			If ShowLogicMesh=False 
+			If ShowLogicMesh=False
 				For j=0 To Levelheight-1
 					HideEntity LogicMesh(j)
 				Next
 			EndIf
-			
+
 			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarShowLevelX,ToolbarShowLevelY) And MouseDebounceFinished()
  		 ; show/hide level
 		NewValue=AdjustInt("Enter level mesh visibility level: ", ShowLevelMesh, 1, 10, DelayTime)
@@ -7651,11 +7434,11 @@ Function EditorLocalControls()
 					EntityAlpha LevelMesh(j),0.5
 				Next
 			EndIf
-						
+
 			If MouseScroll=0 Then MouseDebounceSet(10)
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarSimulationLevelX,ToolbarSimulationLevelY)
 		; simulation level
 		NewValue=AdjustInt("Enter Simulation Level: ", SimulationLevel, 1, 10, DelayTime)
@@ -7673,24 +7456,24 @@ Function EditorLocalControls()
 				SimulateObjectPosition(i)
 				SimulateObjectRotation(i)
 				SimulateObjectScale(i)
-				
+
 				UpdateObjectVisibility(LevelObjects(i))
 				UpdateObjectAnimation(LevelObjects(i))
 			Next
-			
+
 			If SimulationLevel>=3
 				For j=0 To LevelHeight-1
 					RecalculateNormals(j)
 				Next
 			EndIf
-			
+
 			ResetSounds()
 			UpdateMusic()
-			
+
 			LightingWasChanged()
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarBrushWrapX,ToolbarBrushWrapY)
 		; brush wrap
 		BrushWrap=AdjustInt("Enter Brush Wrap: ", BrushWrap, 1, 10, DelayTime)
@@ -7700,7 +7483,7 @@ Function EditorLocalControls()
 			BrushWrap=BrushWrapMax
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarStepPerX,ToolbarStepPerY)
 		; step per
 		StepPer=AdjustInt("Enter Step Per: ", StepPer, 1, 10, DelayTime)
@@ -7710,7 +7493,7 @@ Function EditorLocalControls()
 			StepPer=StepPerMax
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarElevateX,ToolbarElevateY)
 		; elevate
 		If LeftMouse=True And LeftMouseReleased=True
@@ -7721,7 +7504,7 @@ Function EditorLocalControls()
 			Adjustment#=Amount
 			If Amount$="x" Or Amount$="X"
 				XtrudeLogics()
-				
+
 				AddUnsavedChange()
 			ElseIf Adjustment#<>0.0
 				For i=0 To LevelWidth-1
@@ -7745,17 +7528,17 @@ Function EditorLocalControls()
 				Next
 				CurrentObject\Attributes\ZAdjust=CurrentObject\Attributes\ZAdjust+Adjustment
 				BuildCurrentObjectModel()
-				
+
 				If GetConfirmation("Do you want to set Xtrude logics?")
 					XtrudeLogics()
 				EndIf
-				
+
 				ObjectsWereChanged()
 				AddUnsavedChange()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarIDFilterX,ToolbarIDFilterY) And MouseDebounceFinished()
 		; id filter
 		If LeftMouse=True And LeftMouseReleased=True
@@ -7792,30 +7575,30 @@ Function EditorLocalControls()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	If IsMouseOverToolbarItem(ToolbarDensityX,ToolbarDensityY)
 		; placement density
 		Value#=AdjustFloat#("Enter placement density (0.0 to 1.0): ",PlacementDensity#,0.05,0.2,DelayTime)
 		SetPlacementDensity(Value#)
 	EndIf
-	
+
 	If KeyPressed(1) ; Esc key
 		If AskToSaveLevelAndExit()
 			ResumeMaster()
 		EndIf
 	EndIf
-	
+
 	If LeftMouse=True And LeftMouseReleased=True
 		If IsMouseOverToolbarItem(ToolbarExitX,ToolbarExitY)
 			; exit ; cancel and exit
 			If AskToSaveLevelAndExit()
 				ResumeMaster()
 			EndIf
-			
+
 			Repeat
 			Until LeftMouseDown()=False
 		EndIf
-		
+
 		If IsMouseOverToolbarItem(ToolbarSaveX,ToolbarSaveY)
 			; save ; save and exit
 			;If SaveLevelAndExit()
@@ -7830,15 +7613,14 @@ Function EditorLocalControls()
 					SetBrushMode(BrushModeTestLevel)
 				EndIf
 			EndIf
-			
+
 			Repeat
 			Until LeftMouseDown()=False
-		
+
 		EndIf
 	EndIf
-	
-End Function
 
+End Function
 
 ; Returns True if the user chose to save.
 Function SaveLevelAndExit()
@@ -7867,10 +7649,9 @@ Function SaveLevelAndExit()
 
 End Function
 
-
 ; Returns True if the user chooses to proceed, with or without saving.
 Function AskToSaveLevelAndExit()
-	
+
 	If UnsavedChanges
 		FlushKeys
 		SetupWarning()
@@ -7910,7 +7691,6 @@ Function AskToSaveLevelAndExit()
 
 End Function
 
-
 Function SaveDialogAndExit()
 
 	SaveDialogFile()
@@ -7919,10 +7699,9 @@ Function SaveDialogAndExit()
 
 End Function
 
-
 ; Returns True if the user chooses to proceed, with or without saving.
 Function AskToSaveDialogAndExit()
-	
+
 	If UnsavedChanges
 		FlushKeys
 		SetupWarning()
@@ -7940,9 +7719,8 @@ Function AskToSaveDialogAndExit()
 	Else
 		Return True
 	EndIf
-	
-End Function
 
+End Function
 
 Function CurrentObjectCanBeUpdated()
 
@@ -7950,13 +7728,11 @@ Function CurrentObjectCanBeUpdated()
 
 End Function
 
-
 Function PositionIsEqual(x1,y1,x2,y2)
 
 	Return x1=x2 And y1=y2
 
 End Function
-
 
 Function GetBrushSpaceXStart()
 
@@ -8045,7 +7821,6 @@ Function LevelSpaceToBrushSpaceY(Y,WrapMode)
 
 End Function
 
-
 Function XtrudeLogics()
 
 	Prompt$=InputString$("Enter logic for Xtrude < 0 (leave blank for water): ")
@@ -8073,7 +7848,6 @@ Function XtrudeLogics()
 
 End Function
 
-
 Function ToggleBlockMode()
 
 	If IsBrushInBlockMode()
@@ -8081,9 +7855,8 @@ Function ToggleBlockMode()
 	Else
 		SetBrushMode(BrushModeBlock)
 	EndIf
-	
-End Function
 
+End Function
 
 Function ToggleFillMode()
 
@@ -8094,25 +7867,25 @@ End Function
 Function ToggleInlineSoftMode()
 
 	ToggleFromNormalBrush(BrushModeInlineSoft)
-	
+
 End Function
 
 Function ToggleInlineHardMode()
 
 	ToggleFromNormalBrush(BrushModeInlineHard)
-	
+
 End Function
 
 Function ToggleOutlineSoftMode()
 
 	ToggleFromNormalBrush(BrushModeOutlineSoft)
-	
+
 End Function
 
 Function ToggleOutlineHardMode()
 
 	ToggleFromNormalBrush(BrushModeOutlineHard)
-	
+
 End Function
 
 Function ToggleFromNormalBrush(TargetBrushMode)
@@ -8137,7 +7910,6 @@ Function SetPlacementDensity(Value#)
 
 End Function
 
-
 Function ReadObjectPresetDirectory(index)
 
 	NofObjectPresetObjects=0
@@ -8154,9 +7926,8 @@ Function ReadObjectPresetDirectory(index)
 
 End Function
 
-
 Function AddOrToggleSelectObject(i)
-	
+
 	If CtrlDown() And (Not ShiftDown())
 		ToggleSelectObject(i)
 	Else
@@ -8179,13 +7950,13 @@ Function HideSelectedObjectMarker(i)
 End Function
 
 Function UpdateSelectedObjectMarkerVisibility(i)
-	
+
 	If IsObjectSelected(i) And EditorMode=3
 		ShowSelectedObjectMarker(i)
 	Else
 		HideSelectedObjectMarker(i)
 	EndIf
-	
+
 End Function
 
 Function UpdateAllSelectedObjectMarkersVisibility()
@@ -8196,17 +7967,16 @@ Function UpdateAllSelectedObjectMarkersVisibility()
 
 End Function
 
-
 ; these could potentially be made smarter
 Function SubstringMatchesStart(Query$,Subject$)
 
 	; make case insensitive
 	Query$=Upper$(Query$)
 	Subject$=Upper$(Subject$)
-	
+
 	; truncate subject to be length of query
 	Subject$=Left$(Subject$,Len(Query$))
-	
+
 	Return Query$=Subject$
 
 End Function
@@ -8216,16 +7986,15 @@ Function SubstringMatchesAnywhere(Query$,Subject$)
 	; make case insensitive
 	Query$=Upper$(Query$)
 	Subject$=Upper$(Subject$)
-	
+
 	Return Instr(Subject$,Query$)<>0
 
 End Function
 
-
 Function CtrlDown()
 
 	Return KeyDown(29) Or KeyDown(157) ; left ctrl or right ctrl
-	
+
 End Function
 
 Function ShiftDown()
@@ -8289,7 +8058,6 @@ Function MaybeGetResizeConfirmation(Adj)
 
 End Function
 
-
 Function ForceKeyRelease(keycode, keyname$)
 
 	If KeyDown(keycode)
@@ -8300,7 +8068,6 @@ Function ForceKeyRelease(keycode, keyname$)
 	EndIf
 
 End Function
-
 
 Function LogicIdToLogicName$(TileLogic)
 
@@ -8320,18 +8087,16 @@ Function LogicNameToLogicId(Name$)
 			Return i
 		EndIf
 	Next
-	
+
 	Return -1
 
 End Function
-
 
 Function LevelTileLogicHasVisuals(i,j)
 
 	Return LevelTiles(i,j)\Terrain\Logic>0 And LevelTiles(i,j)\Terrain\Logic<15
 
 End Function
-
 
 Function RemoveEntityTexture(Entity)
 
@@ -8341,7 +8106,6 @@ Function RemoveEntityTexture(Entity)
 
 End Function
 
-
 Function RemoveMD2Texture(Entity,Path$)
 
 	NewEntity=myLoadMD2(Path$)
@@ -8349,7 +8113,6 @@ Function RemoveMD2Texture(Entity,Path$)
 	Return NewEntity
 
 End Function
-
 
 Function ObstacleNameToObstacleId(ModelName$)
 
@@ -8375,14 +8138,13 @@ Function TryUseObstacleTexture(Entity,ObstacleId)
 		EntityTexture Entity,ObstacleTexture(ObstacleId)
 	Else
 		Entity=RemoveEntityTexture(Entity)
-		
+
 		UseErrorColor(Entity)
 	EndIf
-	
+
 	Return Entity
 
 End Function
-
 
 Function ReplyFunctionToName$(Fnc)
 
@@ -8528,8 +8290,6 @@ Function GetBitPositionIndex(BitStartX)
 
 End Function
 
-
-
 Function ColorLevelTileLogic(i,j)
 
 	Select LevelTiles(i,j)\Terrain\Logic
@@ -8586,14 +8346,12 @@ Function ColorLevelTileLogic(i,j)
 		green=0
 		blue=0
 	End Select
-	
+
 	For k=0 To LogicVerticesPerTile-1
 		VertexColor LogicSurface(j),i*LogicVerticesPerTile+k,red,green,blue;,.5
 	Next
 
 End Function
-
-
 
 Function ReBuildLevelModel()
 
@@ -8613,10 +8371,8 @@ Function ReBuildLevelModel()
 ;	Next
 
 	BuildLevelModel()
-	
+
 End Function
-
-
 
 Function CreateLevelTileTop(i,j)
 	mySurface=LevelSurface(j)
@@ -8625,12 +8381,12 @@ Function CreateLevelTileTop(i,j)
 	; First, create the vertices
 	For j2=0 To LevelDetail
 		For i2=0 To LevelDetail
-		
+
 			xoverlap#=0
 			yoverlap#=0
 			zoverlap#=0
 			If j2=0 Or j2=LevelDetail Or i2=0 Or i2=LevelDetail
-				If i2=0 
+				If i2=0
 					xoverlap#=-0.005
 				;	zoverlap#=+0.005
 				EndIf
@@ -8642,8 +8398,7 @@ Function CreateLevelTileTop(i,j)
 			EndIf
 
 			CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8,LevelDetail)
-								
-			
+
 			AddVertex(mySurface,i+Float(i2)/Float(LevelDetail)+xoverlap,height+zoverlap,-(j+Float(j2)/Float(LevelDetail))+yoverlap,ChunkTileu,ChunkTilev)
 		Next
 	Next
@@ -8654,7 +8409,7 @@ Function CreateLevelTileTop(i,j)
 			AddTriangle (mySurface,GetLevelVertex(i,j,i2+1,j2),GetLevelVertex(i,j,i2+1,j2+1),GetLevelVertex(i,j,i2,j2+1))
 		Next
 	Next
-	
+
 	ShiftLevelTileByRandom(i,j)
 	ShiftLevelTileByHeight(i,j)
 	ShiftLevelTileByExtrude(i,j)
@@ -8672,41 +8427,41 @@ Function CreateLevelTileSides(i,j)
 	Else
 		randommax#=0.0
 	EndIf
-	
+
 	overhang#=0.0
-	
+
 	; north side
 	random#=0 ; this is the random for the lower edge - set to zero and only caclulate for the second pixel,
 				; that way, the first pixel of the next square will have the same random factor
 	If j>0
-		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j-1)\Terrain\Extrusion 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j-1)\Terrain\Extrusion
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
-				
+
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-overhang,ChunkTileU,ChunkTileV)
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion,-j+random,ChunkTileU,ChunkTileV)
-				
+
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				If i2<LevelDetail-1
 					random#=Rnd(0,randommax)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion,-j+random,ChunkTileU,ChunkTileV)
-				
+
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
-				
+
 				currentvertex=currentvertex+4
 			Next
 		;EndIf
@@ -8715,46 +8470,43 @@ Function CreateLevelTileSides(i,j)
 	; east side
 	random#=0
 	If i<LevelWidth-1
-		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i+1,j)\Terrain\Extrusion 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i+1,j)\Terrain\Extrusion
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion,-(j+Float(LevelDetail-j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				If j2<LevelDetail-1
 					random#=Rnd(0,randommax)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
-				
+
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
-				
+
 				currentvertex=currentvertex+4
 			Next
 		;EndIf
 	EndIf
 
-	
-
-			
 	; south side
 	random#=0
 	If j<LevelHeight-1
-		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j+1)\Terrain\Extrusion 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,j+1)\Terrain\Extrusion
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For i2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
@@ -8763,65 +8515,64 @@ Function CreateLevelTileSides(i,j)
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+overhang,ChunkTileU,ChunkTileV)
-	
+
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion,-(j+1+random),ChunkTileU,ChunkTileV)
-				
+
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				If i2<LevelDetail-1
 					random#=Rnd(0,randommax)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion,-(j+1+random),ChunkTileU,ChunkTileV)
-				
+
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
-				
+
 				currentvertex=currentvertex+4
 			Next
 		;EndIf
 	EndIf
-	
+
 	; west side
 	random#=0
 	If i>0
-		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i-1,j)\Terrain\Extrusion 
+		;If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i-1,j)\Terrain\Extrusion
 			; yep, add two triangles per LevelDetail connecting the two bordering coordinates
 			For j2=0 To LevelDetail-1
 				vertex=GetLevelVertex(i,j,0,j2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
-	
+
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex),VertexZ(mySurface,vertex),ChunkTileU,ChunkTileV)
-	
+
 				vertex=GetLevelVertex(i,j,0,j2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion,-(j+Float(j2)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
-				
+
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				If j2<LevelDetail-1
 					random#=Rnd(0,randommax)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				AddVertex (mySurface,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion,-(j+Float(j2+1)/Float(LevelDetail)),ChunkTileU,ChunkTileV)
-				
+
 				AddTriangle (mySurface,currentvertex,currentvertex+1,currentvertex+2)
 				AddTriangle (mySurface,currentvertex+1,currentvertex+3,currentvertex+2)
-				
+
 				currentvertex=currentvertex+4
 			Next
 		;EndIf
 	EndIf
-
 
 End Function
 
@@ -8829,7 +8580,7 @@ Const SideNotInLevelZ=-10000 ;-100
 
 Function UpdateLevelTileSides(i,j)
 	mySurface=LevelSurface(j)
-	
+
 	; here we also calculate how much the bottom edge of the side wall should be pushed "out"
 	; the maxfactor is the maximum (corners are not pushed out)
 	If LevelTiles(i,j)\Terrain\EdgeRandom=1
@@ -8837,9 +8588,9 @@ Function UpdateLevelTileSides(i,j)
 	Else
 		randommax#=0.0
 	EndIf
-	
+
 	overhang#=0.0
-	
+
 	CurrentIndex=0
 
 	; north side
@@ -8857,21 +8608,21 @@ Function UpdateLevelTileSides(i,j)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2-1,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)-overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail-i2,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				vertex=GetLevelVertex(i,j,LevelDetail-i2-1,0)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail-i2-1,0)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+3)
@@ -8880,11 +8631,11 @@ Function UpdateLevelTileSides(i,j)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(LevelDetail-i2-1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j-1)\Terrain\Extrusion+z2,-j+random
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				CurrentIndex=CurrentIndex+4
 			Next
 		;EndIf
@@ -8904,21 +8655,21 @@ Function UpdateLevelTileSides(i,j)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)-overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion+z2,-(j+Float(LevelDetail-j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-	
+
 				vertex=GetLevelVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				;vertexside=GetLevelSideVertex(i,j,LevelDetail,LevelDetail-j2-1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+3)
@@ -8927,19 +8678,16 @@ Function UpdateLevelTileSides(i,j)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+1+random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i+1,j)\Terrain\Extrusion+z2,-(j+Float(LevelDetail-j2-1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				CurrentIndex=CurrentIndex+4
 			Next
 		;EndIf
 	EndIf
 
-	
-
-			
 	; south side
 	random#=0
 	If j<LevelHeight-1
@@ -8953,19 +8701,19 @@ Function UpdateLevelTileSides(i,j)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)+overhang
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-	
+
 				vertex=GetLevelVertex(i,j,i2,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(i2)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				vertex=GetLevelVertex(i,j,i2+1,LevelDetail)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+3)
 				If i2<LevelDetail-1
@@ -8973,11 +8721,11 @@ Function UpdateLevelTileSides(i,j)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,i2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i+Float(i2+1)/Float(LevelDetail),VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i,j+1)\Terrain\Extrusion+z2,-(j+1+random)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				CurrentIndex=CurrentIndex+4
 			Next
 		;Else
@@ -8990,7 +8738,7 @@ Function UpdateLevelTileSides(i,j)
 		;	Next
 		;EndIf
 	EndIf
-	
+
 	; west side
 	random#=0
 	If i>0
@@ -9004,19 +8752,19 @@ Function UpdateLevelTileSides(i,j)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+1)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,0,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,VertexX(mySurface,vertex)+overhang,VertexY(mySurface,vertex)+z2,VertexZ(mySurface,vertex)
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-	
+
 				vertex=GetLevelVertex(i,j,0,j2)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+2)
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion+z2,-(j+Float(j2)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				vertex=GetLevelVertex(i,j,0,j2+1)
 				vertexside=GetLevelSideVertex(i,j,CurrentIndex+3)
 				If j2<LevelDetail-1
@@ -9024,11 +8772,11 @@ Function UpdateLevelTileSides(i,j)
 				Else
 					random#=0
 				EndIf
-	
+
 				CalculateUV(LevelTiles(i,j)\Terrain\SideTexture,j2+1,LevelDetail,LevelTiles(i,j)\Terrain\SideRotation,8,LevelDetail)
 				VertexCoords mySurface,vertexside,i-random,VertexY(mySurface,vertex)-LevelTiles(i,j)\Terrain\Extrusion+LevelTiles(i-1,j)\Terrain\Extrusion+z2,-(j+Float(j2+1)/Float(LevelDetail))
 				VertexTexCoords mySurface,vertexside,ChunkTileU,ChunkTileV
-				
+
 				CurrentIndex=CurrentIndex+4
 			Next
 		;EndIf
@@ -9044,7 +8792,7 @@ Function ClampInt(min,max,value)
 		Return max
 	Else
 		Return value
-	EndIf	
+	EndIf
 
 End Function
 
@@ -9062,12 +8810,11 @@ End Function
 
 Function ShiftLevelTileByRandom(i,j)
 	mySurface=LevelSurface(j)
-	
+
 	iMinusOne=Maximum2(i-1,0)
 	iPlusOne=Minimum2(i+1,LevelWidth-1)
 	jMinusOne=Maximum2(j-1,0)
 	jPlusOne=Minimum2(j+1,LevelHeight-1)
-	
 
 	For i2=0 To LevelDetail
 		For j2=0 To LevelDetail
@@ -9090,12 +8837,12 @@ Function ShiftLevelTileByRandom(i,j)
 			Else
 				random#=LevelTiles(i,j)\Terrain\Random
 			EndIf
-			
+
 			vertex=GetLevelVertex(i,j,i2,j2)
 			random2#=random*LevelVertexRandom(Float(i2),Float(j2))
 
-			VertexCoords mySurface,vertex,VertexX(mysurface,vertex),VertexY(mysurface,vertex)+random2,VertexZ(mysurface,vertex)					
-		
+			VertexCoords mySurface,vertex,VertexX(mysurface,vertex),VertexY(mysurface,vertex)+random2,VertexZ(mysurface,vertex)
+
 		Next
 	Next
 
@@ -9105,7 +8852,7 @@ Function HeightAtRowVertex#(i,j,i2)
 
 	If i2<LevelDetail/2
 		; first half of tile, compare with left neighbour
-		If i=0 
+		If i=0
 			OtherHeight#=LevelTiles(i,j)\Terrain\Height ;0.0
 		Else
 			OtherHeight#=LevelTiles(i-1,j)\Terrain\Height
@@ -9113,13 +8860,13 @@ Function HeightAtRowVertex#(i,j,i2)
 		Return OtherHeight+(LevelTiles(i,j)\Terrain\Height-OtherHeight)*Float(i2+Float(LevelDetail)/2.0)/Float(LevelDetail)
 	Else
 		; second half of tile, compare with right neighbour
-		If i=LevelWidth-1 
+		If i=LevelWidth-1
 			OtherHeight#=LevelTiles(i,j)\Terrain\Height ;0.0
 		Else
 			OtherHeight#=LevelTiles(i+1,j)\Terrain\Height
 		EndIf
 		Return LevelTiles(i,j)\Terrain\Height+(OtherHeight-LevelTiles(i,j)\Terrain\Height)*Float(i2-LevelDetail/2)/Float(LevelDetail)
-		
+
 	EndIf
 
 End Function
@@ -9144,7 +8891,7 @@ Function ShiftLevelTileByHeight(i,j)
 		Else
 			OtherHeight#=HeightAtRowVertex#(i,j+1,i2)
 		EndIf
-			
+
 		; as of second row, build vertical bridge to first row
 		For j2=LevelDetail/2+1 To LevelDetail
 			; first half is actually 2nd half of previous row
@@ -9156,13 +8903,13 @@ Function ShiftLevelTileByHeight(i,j)
 				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex)+ThisVertexesHeight,VertexZ(mySurface,vertex)
 			EndIf
 		Next
-		
+
 		If j=0
 			OtherHeight#=LevelTiles(i,j)\Terrain\Height
 		Else
 			OtherHeight#=HeightAtRowVertex#(i,j-1,i2)
 		EndIf
-		
+
 		For j2=0 To LevelDetail/2-1
 			; 2nd half (we're now in the top half of this row)
 			ThisVertexesHeight#=OtherHeight#+(NewHeight-OtherHeight)*Float(j2+LevelDetail/2)/Float(LevelDetail)
@@ -9171,7 +8918,7 @@ Function ShiftLevelTileByHeight(i,j)
 		Next
 
 	Next
-	
+
 End Function
 
 Function ShiftLevelTileByExtrude(i,j)
@@ -9196,7 +8943,7 @@ Function ResetLevelTile(i,j)
 			yoverlap#=0
 			zoverlap#=0
 			If j2=0 Or j2=LevelDetail Or i2=0 Or i2=LevelDetail
-				If i2=0 
+				If i2=0
 					xoverlap#=-0.005
 				;	zoverlap#=+0.005
 				EndIf
@@ -9208,7 +8955,7 @@ Function ResetLevelTile(i,j)
 			EndIf
 
 			;CalculateUV(LevelTiles(i,j)\Terrain\Texture,i2,j2,LevelTiles(i,j)\Terrain\Rotation,8)
-								
+
 			vertex=GetLevelVertex(i,j,i2,j2)
 			VertexCoords mySurface,vertex,i+Float(i2)/Float(LevelDetail)+xoverlap,height+zoverlap,-(j+Float(j2)/Float(LevelDetail))+yoverlap
 		Next
@@ -9224,9 +8971,8 @@ Function ShiftLevelTileEdges(i,j)
 	jMinusOne=Maximum2(j-1,0)
 	jPlusOne=Minimum2(j+1,LevelHeight-1)
 
-	If LevelTiles(i,j)\Terrain\Rounding=1		
-	
-			
+	If LevelTiles(i,j)\Terrain\Rounding=1
+
 		; is there a drop-off NE corner:
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iPlusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jMinusOne)\Terrain\Extrusion And LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 			; yep: round-off
@@ -9239,14 +8985,13 @@ Function ShiftLevelTileEdges(i,j)
 					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
 					x#=r/Sqr(1+b^2/a^2)
 					y#=Sqr(r^2-x^2)
-										
+
 					VertexCoords mySurface,vertex,i+0.5+x#/2.0,VertexY(mySurface,vertex),-(j+0.5-y#/2.0)
 				Next
 			Next
-			
+
 		EndIf
 
-			
 		; is there a drop-off SE corner:
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iPlusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jPlusOne)\Terrain\Extrusion And LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 			; yep: round-off
@@ -9259,11 +9004,11 @@ Function ShiftLevelTileEdges(i,j)
 					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
 					x#=r/Sqr(1+b^2/a^2)
 					y#=Sqr(r^2-x^2)
-										
+
 					VertexCoords mySurface,vertex,i+0.5+x#/2.0,VertexY(mySurface,vertex),-(j+0.5+y#/2.0)
 				Next
 			Next
-			
+
 		EndIf
 		; SW corner
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iMinusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jPlusOne)\Terrain\Extrusion And LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
@@ -9277,13 +9022,13 @@ Function ShiftLevelTileEdges(i,j)
 					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
 					x#=r/Sqr(1+b^2/a^2)
 					y#=Sqr(r^2-x^2)
-										
+
 					VertexCoords mySurface,vertex,i+0.5-x#/2.0,VertexY(mySurface,vertex),-(j+0.5+y#/2.0)
 				Next
 			Next
-			
+
 		EndIf
-		
+
 		; is there a drop-off NW corner:
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iMinusOne,j)\Terrain\Extrusion And LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jMinusOne)\Terrain\Extrusion And LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 			; yep: round-off
@@ -9296,28 +9041,28 @@ Function ShiftLevelTileEdges(i,j)
 					r#=Float(maximum2(i2,j2)-(LevelDetail/2))/Float(LevelDetail/2)
 					x#=r/Sqr(1+b^2/a^2)
 					y#=Sqr(r^2-x^2)
-										
+
 					VertexCoords mySurface,vertex,i+0.5-x#/2.0,VertexY(mySurface,vertex),-(j+0.5-y#/2.0)
 				Next
 			Next
-			
+
 		EndIf
-	
+
 	EndIf
-	
+
 	randommax#=0.1
 
 	If LevelTiles(i,j)\Terrain\EdgeRandom=1
 		; north side
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jMinusOne)\Terrain\Extrusion
-			
+
 			j2=0
 			For i2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
-				If i2=0 
+				If i2=0
 					If LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 						random#=1.0
-					Else 
+					Else
 						random#=0
 					EndIf
 				Else If i2=LevelDetail
@@ -9330,21 +9075,20 @@ Function ShiftLevelTileEdges(i,j)
 					random#=Rnd(0,1)
 				EndIf
 
-				
 				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)-random*randommax
 			Next
-			
+
 		EndIf
 		; east side
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iPlusOne,j)\Terrain\Extrusion
-			
+
 			i2=LevelDetail
 			For j2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
-				If j2=0 
+				If j2=0
 					If LevelTiles(iPlusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 						random#=1.0
-					Else 
+					Else
 						random#=0
 					EndIf
 				Else If j2=LevelDetail
@@ -9358,19 +9102,18 @@ Function ShiftLevelTileEdges(i,j)
 				EndIf
 				VertexCoords mySurface,vertex,VertexX(mySurface,vertex)-random*randommax,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
 			Next
-			
-			
+
 		EndIf
 		; south side
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(i,jPlusOne)\Terrain\Extrusion
-			
+
 			j2=LevelDetail
 			For i2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
-				If i2=0 
+				If i2=0
 					If LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jPlusOne)\Terrain\Extrusion
 						random#=1.0
-					Else 
+					Else
 						random#=0
 					EndIf
 				Else If i2=LevelDetail
@@ -9384,18 +9127,18 @@ Function ShiftLevelTileEdges(i,j)
 				EndIf
 				VertexCoords mySurface,vertex,VertexX(mySurface,vertex),VertexY(mySurface,vertex),VertexZ(mySurface,vertex)+random*randommax
 			Next
-			
+
 		EndIf
 		; west side
 		If LevelTiles(i,j)\Terrain\Extrusion>LevelTiles(iMinusOne,j)\Terrain\Extrusion
-			
+
 			i2=0
 			For j2=0 To LevelDetail
 				vertex=GetLevelVertex(i,j,i2,j2)
-				If j2=0 
+				If j2=0
 					If LevelTiles(iMinusOne,j)\Terrain\Extrusion=LevelTiles(i,jMinusOne)\Terrain\Extrusion
 						random#=1.0
-					Else 
+					Else
 						random#=0
 					EndIf
 				Else If j2=LevelDetail
@@ -9409,8 +9152,7 @@ Function ShiftLevelTileEdges(i,j)
 				EndIf
 				VertexCoords mySurface,vertex,VertexX(mySurface,vertex)+random*randommax,VertexY(mySurface,vertex),VertexZ(mySurface,vertex)
 			Next
-			
-			
+
 		EndIf
 	EndIf
 
@@ -9431,7 +9173,7 @@ End Function
 Function GetLevelVertex(i,j,i2,j2)
 	; Gets the index number of the vertex at chunk tile (i,j) with detail subdivision (i2,j2)
 	; in the currentchunk
-	
+
 	; since the chunk has a border around it, we decrease i and j by 1, and reduce width by 2
 	;i=i-1
 	;j=j-1
@@ -9463,16 +9205,16 @@ Function LevelVertexRandom#(x#,y#)
 	; creates a random number between 0 and 1 based on two input numbers from 0 to LevelDetail (i.e.i2/j2)
 	; used to create random pertubations in vertices in order to ensure that neighbouring vertices
 	; (i.e. same x/y coordinates, but in neightbouring chunks) get the same perturbation
-	
+
 	If Floor(x)>0 And Floor(y)>0 And Floor(x)<LevelDetail And Floor(y)<LevelDetail
 		; in interior of tile - do true random
 		Return Rnd(0,1)
 	EndIf
-	
+
 	x#=Abs(x-LevelDetail/2) ; take the i2/j2 and rework as "distance from center"
-	y#=Abs(y-LevelDetail/2) ; so that opposing sides are treated equally 
+	y#=Abs(y-LevelDetail/2) ; so that opposing sides are treated equally
 							; (they must, since a right side of tile i is the left side of i+1)
-	
+
 	random#=(x+.59)*(y+.73)*241783
 	intrandom=Int(random)
 	intrandom=(intrandom Mod 700) + (intrandom Mod 300)
@@ -9494,7 +9236,7 @@ Function Minimum4#(x#,y#,z#,w#)
 		Return y
 	Else If z<=x And z<=y And z<=w
 		Return z
-	Else 
+	Else
 		Return w
 	EndIf
 End Function
@@ -9541,9 +9283,9 @@ End Function
 
 Function UpdateWaterMeshGlow(Entity)
 
-	If WaterGlow=True 
+	If WaterGlow=True
 		EntityBlend Entity,3
-	Else 
+	Else
 		EntityBlend Entity,1
 	EndIf
 
@@ -9551,7 +9293,7 @@ End Function
 
 Function UpdateWaterMeshTransparent(Entity)
 
-	If WaterTransparent=True 
+	If WaterTransparent=True
 		EntityAlpha Entity,.5
 	Else
 		EntityAlpha Entity,1
@@ -9590,9 +9332,8 @@ Function RecalculateNormals(j)
 			Next
 		Next
 	Next
-	
-End Function
 
+End Function
 
 Function InitializeLevelModel()
 
@@ -9601,7 +9342,7 @@ Function InitializeLevelModel()
 		LevelMesh(i)=CreateMesh()
 		LevelSurface(i)=CreateSurface(LevelMesh(i))
 		;EntityFX LevelMesh(i),2
-		
+
 		;FreeEntity WaterMesh(i)
 		Watermesh(i)=CreateMesh()
 		Watersurface(i)=CreateSurface(Watermesh(i))
@@ -9609,7 +9350,7 @@ Function InitializeLevelModel()
 		;EntityFX WaterMesh(i),2
 		;UpdateWaterMeshGlow(i)
 		;UpdateWaterMeshTransparent(i)
-		
+
 		;FreeEntity LogicMesh(i)
 		Logicmesh(i)=CreateMesh()
 		Logicsurface(i)=CreateSurface(Logicmesh(i))
@@ -9618,9 +9359,8 @@ Function InitializeLevelModel()
 
 End Function
 
-
 Function BuildLevelModel()
-	
+
 	UpdateAllWaterMeshGlow()
 	UpdateAllWaterMeshTransparent()
 
@@ -9629,7 +9369,7 @@ Function BuildLevelModel()
 		ClearSurface WaterSurface(j)
 		ClearSurface LogicSurface(j)
 	Next
-	
+
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
 			CreateLevelTileTop(i,j)
@@ -9637,23 +9377,22 @@ Function BuildLevelModel()
 		;UpdateNormals LevelMesh(j)
 		EntityTexture LevelMesh(j),LevelTexture
 	Next
-	
+
 	For j=0 To LevelHeight-1
 		; get the newest one, and increment from there
 		currentvertex=GetLevelVertex(LevelWidth-1,0,LevelDetail,LevelDetail)+1
-		
+
 		For i=0 To LevelWidth-1
 			CreateLevelTileSides(i,j)
 		Next
 	Next
-	
+
 	; and point all edge vertex normals "up" (to smooth lighting)
-	
+
 	For j=0 To LevelHeight-1
 		RecalculateNormals(j)
 	Next
-	
-	
+
 	; water
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
@@ -9666,10 +9405,10 @@ Function BuildLevelModel()
 			AddVertex (WaterSurface(j),i,LevelTiles(i,j)\Water\Height,-j-1,ChunkTileU,ChunkTileV)
 			CalculateUV(LevelTiles(i,j)\Water\Texture,1,1,LevelTiles(i,j)\Water\Rotation,4,1)
 			AddVertex (WaterSurface(j),i+1,LevelTiles(i,j)\Water\Height,-j-1,ChunkTileU,ChunkTileV)
-			
+
 			AddTriangle (WaterSurface(j),i*4+0,i*4+1,i*4+2)
 			AddTriangle (WaterSurface(j),i*4+1,i*4+3,i*4+2)
-			
+
 			;VertexColor WaterSurface(j),i*4+0,0,0,0
 			;VertexColor WaterSurface(j),i*4+1,0,0,0
 			;VertexColor WaterSurface(j),i*4+2,0,0,0
@@ -9677,15 +9416,15 @@ Function BuildLevelModel()
 		Next
 		UpdateNormals WaterMesh(j)
 		EntityTexture WaterMesh(j),WaterTexture
-		
+
 		PositionEntity WaterMesh(j),0,-0.04,0
 	Next
-		
+
 	; logic
 	For j=0 To LevelHeight-1
 		ClearSurface LogicSurface(j)
 		For i=0 To LevelWidth-1
-		
+
 			;If LevelTiles(i,j)\Terrain\Logic=1 Or LevelTiles(i,j)\Terrain\Logic=2 Or LevelTiles(i,j)\Terrain\Logic=11 Or LevelTiles(i,j)\Terrain\Logic=12 Or LevelTiles(i,j)\Terrain\Logic=13
 			If LevelTileLogicHasVisuals(i,j)
 				nologicshow=0
@@ -9699,38 +9438,36 @@ Function BuildLevelModel()
 			Else
 				height#=LevelTiles(i,j)\Terrain\Extrusion+0.05
 			EndIf
-			
+
 			AddVertex (LogicSurface(j),i+nologicshow,height,-j)
 			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j)
 			AddVertex (LogicSurface(j),i+nologicshow,height,-j-1)
 			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j-1)
-						
+
 			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+0,i*LogicVerticesPerTile+1,i*LogicVerticesPerTile+2)
 			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+1,i*LogicVerticesPerTile+3,i*LogicVerticesPerTile+2)
-			
-			
+
 			height#=0.05
-			
+
 			AddVertex (LogicSurface(j),i+nologicshow,height,-j)
 			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j)
 			AddVertex (LogicSurface(j),i+nologicshow,height,-j-1)
 			AddVertex (LogicSurface(j),i+1+nologicshow,height,-j-1)
-						
+
 			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+4,i*LogicVerticesPerTile+5,i*LogicVerticesPerTile+6)
 			AddTriangle (LogicSurface(j),i*LogicVerticesPerTile+5,i*LogicVerticesPerTile+7,i*LogicVerticesPerTile+6)
-			
-			
+
 			ColorLevelTileLogic(i,j)
 
 		Next
 		UpdateNormals LogicMesh(j)
-		
-		If ShowLogicMesh=True 
+
+		If ShowLogicMesh=True
 			ShowEntity LogicMesh(j)
 		Else
 			HideEntity LogicMesh(j)
 		EndIf
-		
+
 		If ShowLevelMesh=ShowLevelMeshShow
 			ShowEntity LevelMesh(j)
 			EntityAlpha LevelMesh(j),1.0
@@ -9741,7 +9478,7 @@ Function BuildLevelModel()
 			EntityAlpha LevelMesh(j),0.5
 		EndIf
 	Next
-	
+
 End Function
 
 Function ChangeLevelTile(i,j,update)
@@ -9757,11 +9494,11 @@ Function ChangeLevelTile(i,j,update)
 		RunStepSize()
 		;RunStepSize(BrushSpaceX,BrushSpaceY)
 	EndIf
-	
+
 	GrabLevelTileFromBrush(BrushSpaceX,BrushSpaceY)
 
 	ChangeLevelTileActual(i,j,update)
-	
+
 	If DupeMode=DupeModeX
 		TargetX=MirrorAcrossInt(i,MirrorPositionX)
 		ChangeLevelTileActual(TargetX,j,update)
@@ -9790,9 +9527,9 @@ Function ChangeLevelTileActual(i,j,update)
 	ElseIf j>LevelHeight-1
 		Return
 	EndIf
-	
+
 	HeightWasChanged=False
-	
+
 	; The Tile
 	If CurrentTileTextureUse=True
 		LevelTiles(i,j)\Terrain\Texture=CurrentTile\Terrain\Texture ; corresponding to squares in LevelTexture
@@ -9812,7 +9549,7 @@ Function ChangeLevelTileActual(i,j,update)
 		LevelTiles(i,j)\Terrain\Height=CurrentTile\Terrain\Height ; height of "center" - e.g. to make ditches and hills
 	EndIf
 	If CurrentTileExtrusionUse=True
-		LevelTiles(i,j)\Terrain\Extrusion=CurrentTile\Terrain\Extrusion; extrusion with walls around it 
+		LevelTiles(i,j)\Terrain\Extrusion=CurrentTile\Terrain\Extrusion; extrusion with walls around it
 	EndIf
 	If CurrentTileRoundingUse=True
 		LevelTiles(i,j)\Terrain\Rounding=CurrentTile\Terrain\Rounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
@@ -9823,14 +9560,14 @@ Function ChangeLevelTileActual(i,j,update)
 	If CurrentTileLogicUse=True
 		LevelTiles(i,j)\Terrain\Logic=CurrentTile\Terrain\Logic
 	EndIf
-	If update=True 
+	If update=True
 		UpdateLevelTile(i,j)
-		
+
 		HasWest=i>0
 		HasEast=i<LevelWidth-1
 		HasNorth=j>0
 		HasSouth=j<LevelHeight-1
-	
+
 		; Possibly update surrounding tiles (Height also needs to update diagonals)
 		If HasWest
 			If LevelTiles(i-1,j)\Terrain\Extrusion>=LevelTiles(i,j)\Terrain\Extrusion ;Or HeightWasChanged
@@ -9868,7 +9605,7 @@ Function ChangeLevelTileActual(i,j,update)
 				UpdateLevelTile(i,j+1)
 			EndIf
 		EndIf
-		
+
 		If SimulationLevel>=3
 			;RecalculateNormals(j)
 			DirtyNormals(j)=True
@@ -9882,10 +9619,9 @@ Function ChangeLevelTileActual(i,j,update)
 			EndIf
 		EndIf
 	EndIf
-			
-			
+
 	; the water
-	If CurrentWaterTileTextureUse=True 
+	If CurrentWaterTileTextureUse=True
 		LevelTiles(i,j)\Water\Texture=CurrentTile\Water\Texture
 		LevelTiles(i,j)\Water\Rotation=CurrentTile\Water\Rotation
 	EndIf
@@ -9895,7 +9631,6 @@ Function ChangeLevelTileActual(i,j,update)
 		UpdateWaterTile(i,j)
 		UpdateLogicTile(i,j)
 	EndIf
-
 
 End Function
 
@@ -9911,16 +9646,16 @@ Function GrabLevelTile(i,j)
 	ElseIf j>LevelHeight-1
 		j=LevelHeight-1
 	EndIf
-	
+
 	CopyTile(LevelTiles(i,j),CurrentTile)
-	
+
 	BuildCurrentTileModel()
 	SetBrushToCurrentTile()
 
 End Function
 
 Function GrabLevelTileFromBrush(i,j)
-	
+
 	CopyTile(BrushTiles(i,j),CurrentTile)
 
 	BuildCurrentTileModel()
@@ -9939,7 +9674,7 @@ Function CopyLevelTileToBrush(i,j,iDest,jDest)
 	ElseIf j>LevelHeight-1
 		j=LevelHeight-1
 	EndIf
-	
+
 	CopyTile(LevelTiles(i,j),BrushTiles(iDest,jDest))
 
 End Function
@@ -9964,13 +9699,13 @@ Function LevelTileMatchesTarget(i,j)
 	ElseIf i>=LevelWidth
 		Return False
 	EndIf
-	
+
 	If j<0
 		Return False
 	ElseIf j>=LevelHeight
 		Return False
 	EndIf
-	
+
 	;If LevelTileIsInBrush(i,j)
 	;	Return True
 	;EndIf
@@ -10005,7 +9740,7 @@ Function LevelTileMatchesTarget(i,j)
 	If TargetTileLogicUse And TargetTile\Terrain\Logic<>LevelTiles(i,j)\Terrain\Logic
 		Return False
 	EndIf
-	
+
 	If TargetWaterTileUse And TargetTile\Water\Texture<>LevelTiles(i,j)\Water\Texture
 		Return False
 	EndIf
@@ -10018,7 +9753,7 @@ Function LevelTileMatchesTarget(i,j)
 	If TargetWaterTileTurbulenceUse And TargetTile\Water\Turbulence<>LevelTiles(i,j)\Water\Turbulence
 		Return False
 	EndIf
-	
+
 	Return True
 
 End Function
@@ -10041,11 +9776,11 @@ Function SetXtrudeLogics(LessThanZero,EqualToZero,GreaterThanZero)
 End Function
 
 Function LoadTilePreset()
-	
+
 	Filename$="Data\Editor\TilePresets\"+TilePresetCategoryName$(CurrentTilePresetCategory)+"\"+TilePresetTileName$(CurrentTilePresetTile)
 	file=ReadFile(filename$)
 	CurrentTile\Terrain\Texture=ReadInt(file)
-	CurrentTile\Terrain\Rotation=ReadInt(file) 
+	CurrentTile\Terrain\Rotation=ReadInt(file)
 	CurrentTile\Terrain\SideTexture=ReadInt(file)
 	CurrentTile\Terrain\SideRotation=ReadInt(file)
 	CurrentTile\Terrain\Random=ReadFloat(file)
@@ -10054,7 +9789,7 @@ Function LoadTilePreset()
 	CurrentTile\Terrain\Rounding=ReadInt(file)
 	CurrentTile\Terrain\EdgeRandom=ReadInt(file)
 	CurrentTile\Terrain\Logic=ReadInt(file)
-	
+
 	CurrentTile\Water\Texture=ReadInt(file)
 	CurrentTile\Water\Rotation=ReadInt(file)
 	CurrentTile\Water\Height=ReadFloat(file)
@@ -10065,7 +9800,6 @@ Function LoadTilePreset()
 
 End Function
 
-
 Function SaveTilePreset()
 	FlushKeys
 	Locate 0,0
@@ -10074,7 +9808,7 @@ Function SaveTilePreset()
 	Color 255,255,255
 	Filename$=Input ("FileName: ")
 	file=WriteFile ("data\editor\tilepresets\"+filename$+".tp1")
-	
+
 	WriteInt file,CurrentTile\Terrain\Texture
 	WriteInt file,CurrentTile\Terrain\Rotation
 	WriteInt file,CurrentTile\Terrain\SideTexture
@@ -10085,8 +9819,7 @@ Function SaveTilePreset()
 	WriteInt file,CurrentTile\Terrain\Rounding
 	WriteInt file,CurrentTile\Terrain\EdgeRandom
 	WriteInt file,CurrentTile\Terrain\Logic
-	
-	
+
 	WriteInt file,CurrentTile\Water\Texture
 	WriteInt file,CurrentTile\Water\Rotation
 	WriteFloat file,CurrentTile\Water\Height
@@ -10212,11 +9945,11 @@ Function BlankObjectPreset(ModelName$,ObjType,ObjSubType)
 End Function
 
 Function LoadObjectPreset()
-	
+
 	Filename$="Data\Editor\ObjectPresets\"+ObjectPresetCategoryName$(CurrentObjectPresetCategory)+"\"+ObjectPresetObjectName$(CurrentObjectPresetObject)
 
 	file=ReadFile(filename$)
-	
+
 	CurrentObject\Attributes\ModelName$=ReadString$(file)
 	CurrentObject\Attributes\TexName$=ReadString$(file)
 	CurrentObject\Attributes\XScale#=ReadFloat(file)
@@ -10326,7 +10059,7 @@ Function LoadObjectPreset()
 	If CurrentObject\Attributes\ScaleAdjust=0.0
 		CurrentObject\Attributes\ScaleAdjust=1.0
 	EndIf
-	
+
 	CurrentObject\Attributes\ScaleXAdjust=ReadFloat(file)
 	CurrentObject\Attributes\ScaleYAdjust=ReadFloat(file)
 	CurrentObject\Attributes\ScaleZAdjust=ReadFloat(file)
@@ -10341,16 +10074,14 @@ Function LoadObjectPreset()
 	CurrentObject\Attributes\FutureFloat10=ReadFloat(file)
 	CurrentObject\Attributes\FutureString1$=ReadString(file)
 	CurrentObject\Attributes\FutureString2$=ReadString(file)
-	
-	
-	
+
 	NofObjectAdjusters=0
-	
+
 	; this line can be commented out now that all object adjusters are the same
 	;ObjectAdjusterStart=0
-	
+
 	NofWopAdjusters=0
-	
+
 	For i=0 To 30
 		If Eof(file)=False
 		;	ObjectAdjuster$(i)=ReadString$(file)
@@ -10361,10 +10092,9 @@ Function LoadObjectPreset()
 		;	ObjectAdjuster$(i)=""
 		EndIf
 	Next
-	
-	
+
 	; Add these adjusters to every object.
-	
+
 	AddAdjuster("ID")
 	AddAdjuster("Active")
 	AddAdjuster("ActivationType")
@@ -10374,11 +10104,11 @@ Function LoadObjectPreset()
 	AddAdjuster("ModelName")
 	AddAdjuster("TextureName")
 	AddAdjuster("ScaleAdjust")
-	
+
 	;AddAdjuster("X")
 	;AddAdjuster("Y")
 	;AddAdjuster("Z")
-	
+
 	AddAdjuster("XAdjust")
 	AddAdjuster("YAdjust")
 	AddAdjuster("ZAdjust")
@@ -10388,7 +10118,7 @@ Function LoadObjectPreset()
 	AddAdjuster("XScale")
 	AddAdjuster("YScale")
 	AddAdjuster("ZScale")
-	
+
 	AddAdjuster("Data0")
 	AddAdjuster("Data1")
 	AddAdjuster("Data2")
@@ -10398,7 +10128,7 @@ Function LoadObjectPreset()
 	AddAdjuster("Data6")
 	AddAdjuster("Data7")
 	AddAdjuster("Data8")
-	
+
 	AddAdjuster("Data9")
 	AddAdjuster("TextData0")
 	AddAdjuster("TextData1")
@@ -10408,7 +10138,7 @@ Function LoadObjectPreset()
 	AddAdjuster("TimerMax1")
 	AddAdjuster("TimerMax2")
 	AddAdjuster("DefensePower")
-	
+
 	AddAdjuster("Z")
 	AddAdjuster("Flying")
 	;AddAdjuster("DX")
@@ -10422,7 +10152,7 @@ Function LoadObjectPreset()
 	;AddAdjuster("MovementTimer")
 	AddAdjuster("TileTypeCollision")
 	AddAdjuster("ObjectTypeCollision")
-	
+
 	AddAdjuster("Linked")
 	AddAdjuster("LinkBack")
 	;AddAdjuster("Parent")
@@ -10437,40 +10167,35 @@ Function LoadObjectPreset()
 	;AddAdjuster("MovementTimer")
 	AddAdjuster("Status")
 
-	
 	CloseFile file
-	
-	
+
 	MakeAllObjectAdjustersAbsolute()
-	
+
 	BuildCurrentObjectModel()
 	;SetBrushToCurrentObject()
 	CurrentObjectWasChanged()
 
 End Function
 
-
 Function NextObjectAdjusterPage()
 
 	If ObjectAdjusterStart+9<NofObjectAdjusters
 	ObjectAdjusterStart=ObjectAdjusterStart+9
-	Else 
+	Else
 		ObjectAdjusterStart=0
 	EndIf
 
 End Function
 
-
 Function PreviousObjectAdjusterPage()
 
 	If ObjectAdjusterStart=0
 		ObjectAdjusterStart=((NofObjectAdjusters-1)/9)*9
-	Else 
+	Else
 		ObjectAdjusterStart=ObjectAdjusterStart-9
 	EndIf
 
 End Function
-
 
 Function AddAdjuster(Name$)
 
@@ -10478,7 +10203,6 @@ Function AddAdjuster(Name$)
 	NofObjectAdjusters=NofObjectAdjusters+1
 
 End Function
-
 
 Function PrintMessageForInstant(Message$)
 
@@ -10490,14 +10214,12 @@ Function PrintMessageForInstant(Message$)
 
 End Function
 
-
 Function ShowMessage(message$, milliseconds)
 
 	PrintMessageForInstant(message$)
 	Delay milliseconds
 
 End Function
-
 
 ; for preventing several of the same message from pausing the same frame for a long time
 Function ShowMessageOnce(message$, milliseconds)
@@ -10509,12 +10231,11 @@ Function ShowMessageOnce(message$, milliseconds)
 
 End Function
 
-
 Function ShowLevelEditorWarning(Message$)
-	
+
 	StartX=LevelViewportWidth/2
 	StartY=LevelViewportHeight/2
-	
+
 	TextOffset=GetCenteredTextOffset(Message$)
 	Color RectToolbarR,RectToolbarG,RectToolbarB
 	Rect StartX-TextOffset-2,StartY-10,TextOffset*2+4,40,True
@@ -10523,7 +10244,6 @@ Function ShowLevelEditorWarning(Message$)
 	Text StartX-TextOffset,StartY+10,Message$
 
 End Function
-
 
 Function GetObjectOffset#(Attributes.GameObjectAttributes,index)
 
@@ -10542,7 +10262,6 @@ Function GetObjectOffset#(Attributes.GameObjectAttributes,index)
 			xoffset#=0.40
 			yoffset#=-0.1
 
-			
 		Else
 			xoffset#=-0.00
 			yoffset#=0.5
@@ -10577,7 +10296,6 @@ Function GetObjectOffset#(Attributes.GameObjectAttributes,index)
 			xoffset#=0.637
 			yoffset#=-0.361
 
-			
 		Else
 			xoffset#=-0.00
 			yoffset#=0.6
@@ -10598,19 +10316,17 @@ Function GetObjectOffset#(Attributes.GameObjectAttributes,index)
 			xoffset#=0.637+.35
 			yoffset#=-0.361-.35
 
-			
 		Else
 			xoffset#=0.00
 			yoffset#=0.1
 
 		EndIf
 
-
 	Else
 		xoffset#=0.5
 		yoffset#=0.5
 	EndIf
-	
+
 	If index=0
 		Return xoffset#
 	Else
@@ -10618,7 +10334,6 @@ Function GetObjectOffset#(Attributes.GameObjectAttributes,index)
 	EndIf
 
 End Function
-
 
 Function IsPositionInLevel(x,y)
 
@@ -10636,19 +10351,18 @@ Function SetObjectPosition(i,x#,y#)
 
 	floorx=Floor(x)
 	floory=Floor(y)
-	
+
 	SetObjectTileXY(i,floorx,floory)
-	
+
 	xoffset#=GetObjectOffset#(LevelObjects(i)\Attributes,0)
 	yoffset#=GetObjectOffset#(LevelObjects(i)\Attributes,1)
-	
+
 	LevelObjects(i)\Position\X#=x#+xoffset#
 	LevelObjects(i)\Position\Y#=y#+yoffset#
-	
+
 	Return True
 
 End Function
-
 
 Function PlaceObjectOrChangeLevelTile(x,y)
 
@@ -10660,7 +10374,6 @@ Function PlaceObjectOrChangeLevelTile(x,y)
 
 End Function
 
-
 Function PlaceObject(x#,y#)
 
 	If Not PassesPlacementDensityTest()
@@ -10671,7 +10384,7 @@ Function PlaceObject(x#,y#)
 	BrushSpaceY=LevelSpaceToBrushSpaceY(y,BrushWrap)
 
 	PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
-	
+
 	If DupeMode=DupeModeX
 		TargetX#=MirrorAcrossFloat#(x#,MirrorPositionX)
 		If TargetX#<>x#
@@ -10698,7 +10411,6 @@ Function PlaceObject(x#,y#)
 
 End Function
 
-
 Function PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
 
 	For k=0 To NofBrushObjects-1
@@ -10710,7 +10422,6 @@ Function PlaceObjectActual(x#,y#,BrushSpaceX,BrushSpaceY)
 
 End Function
 
-
 Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 
 	If NofObjects>=MaxNofObjects
@@ -10721,19 +10432,19 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	If PreventPlacingObjectsOutsideLevel And (Not IsPositionInLevelArrayBounds(Floor(x#),Floor(y#)))
 		Return
 	EndIf
-	
+
 	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
 	SourcePosition.GameObjectPosition=SourceObject\Position
 
 	RandomizeObjectData(SourceObject)
-	
+
 	NewObject.GameObject=LevelObjects(NofObjects)
-	
+
 	CopyObjectAttributes(SourceAttributes,NewObject\Attributes)
 	CopyObjectPosition(SourcePosition,NewObject\Position)
-	
+
 	SetObjectPosition(NofObjects,x#,y#)
-	
+
 	NewObject\Model\HatEntity=0
 	NewObject\Model\HatTexture=0
 	NewObject\Model\AccEntity=0
@@ -10742,33 +10453,27 @@ Function PlaceThisObject(x#,y#,SourceObject.GameObject)
 	NewObject\Position\OldX#=-999
 	NewObject\Position\OldY#=-999
 	NewObject\Position\OldZ#=-999
-	
+
 	;For i=0 To 30
 	;	ObjectAdjusterString$(NofObjects,i)=ObjectAdjuster$(i)
 	;Next
-	
-	
+
 	ThisObject=NofObjects
 	SetNofObjects(NofObjects+1)
-	
-	
+
 	BuildLevelObjectModel(ThisObject)
-	
-	
+
 	CreateObjectPositionMarker(ThisObject)
-	
-	
+
 	AddOrToggleSelectObject(ThisObject)
 
 End Function
-
 
 Function SetNofObjects(NewValue)
 
 	NofObjects=NewValue
 
 End Function
-
 
 Function RandomizeObjectData(SourceObj.GameObject)
 
@@ -10781,7 +10486,7 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterLogicSubType\RandomEnabled
 		SourceAttributes\LogicSubType=RandomObjectAdjusterInt(ObjectAdjusterLogicSubType)
 	EndIf
-	
+
 	If ObjectAdjusterPitchAdjust\RandomEnabled
 		SourceAttributes\PitchAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterPitchAdjust)
 	EndIf
@@ -10791,7 +10496,7 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterRollAdjust\RandomEnabled
 		SourceAttributes\RollAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterRollAdjust)
 	EndIf
-	
+
 	If ObjectAdjusterData0\RandomEnabled
 		SourceAttributes\Data0=RandomObjectAdjusterInt(ObjectAdjusterData0)
 	EndIf
@@ -10822,7 +10527,7 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterData9\RandomEnabled
 		SourceAttributes\Data9=RandomObjectAdjusterInt(ObjectAdjusterData9)
 	EndIf
-	
+
 	If ObjectAdjusterXScale\RandomEnabled
 		SourceAttributes\XScale#=RandomObjectAdjusterFloat#(ObjectAdjusterXScale)
 	EndIf
@@ -10832,7 +10537,7 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterZScale\RandomEnabled
 		SourceAttributes\ZScale#=RandomObjectAdjusterFloat#(ObjectAdjusterZScale)
 	EndIf
-	
+
 	If ObjectAdjusterXAdjust\RandomEnabled
 		SourceAttributes\XAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterXAdjust)
 	EndIf
@@ -10842,7 +10547,7 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterZAdjust\RandomEnabled
 		SourceAttributes\ZAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterZAdjust)
 	EndIf
-	
+
 	If ObjectAdjusterX\RandomEnabled
 		SourcePosition\X#=RandomObjectAdjusterFloat#(ObjectAdjusterX)
 	EndIf
@@ -10852,7 +10557,7 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterZ\RandomEnabled
 		SourcePosition\Z#=RandomObjectAdjusterFloat#(ObjectAdjusterZ)
 	EndIf
-	
+
 	If ObjectAdjusterDX\RandomEnabled
 		SourceAttributes\DX#=RandomObjectAdjusterFloat#(ObjectAdjusterDX)
 	EndIf
@@ -10862,19 +10567,19 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterDZ\RandomEnabled
 		SourceAttributes\DZ#=RandomObjectAdjusterFloat#(ObjectAdjusterDZ)
 	EndIf
-	
+
 	If ObjectAdjusterMovementType\RandomEnabled
 		SourceAttributes\MovementType=RandomObjectAdjusterInt(ObjectAdjusterMovementType)
 	EndIf
-	
+
 	If ObjectAdjusterDefensePower\RandomEnabled
 		SourceAttributes\DefensePower=RandomObjectAdjusterInt(ObjectAdjusterDefensePower)
 	EndIf
-	
+
 	If ObjectAdjusterID\RandomEnabled
 		SourceAttributes\ID=RandomObjectAdjusterInt(ObjectAdjusterID)
 	EndIf
-	
+
 	If ObjectAdjusterActive\RandomEnabled
 		SourceAttributes\Active=RandomObjectAdjusterInt(ObjectAdjusterActive)
 	EndIf
@@ -10888,11 +10593,11 @@ Function RandomizeObjectData(SourceObj.GameObject)
 			SourceAttributes\ActivationSpeed=SourceAttributes\ActivationSpeed+1
 		EndIf
 	EndIf
-	
+
 	If ObjectAdjusterStatus\RandomEnabled
 		SourceAttributes\Status=RandomObjectAdjusterInt(ObjectAdjusterStatus)
 	EndIf
-	
+
 	If ObjectAdjusterTimer\RandomEnabled
 		SourceAttributes\Timer=RandomObjectAdjusterInt(ObjectAdjusterTimer)
 	EndIf
@@ -10902,33 +10607,33 @@ Function RandomizeObjectData(SourceObj.GameObject)
 	If ObjectAdjusterTimerMax2\RandomEnabled
 		SourceAttributes\TimerMax2=RandomObjectAdjusterInt(ObjectAdjusterTimerMax2)
 	EndIf
-	
+
 	If ObjectAdjusterTeleportable\RandomEnabled
 		SourceAttributes\Teleportable=RandomObjectAdjusterInt(ObjectAdjusterTeleportable)
 	EndIf
 	If ObjectAdjusterButtonPush\RandomEnabled
 		SourceAttributes\ButtonPush=RandomObjectAdjusterInt(ObjectAdjusterButtonPush)
 	EndIf
-	
+
 	If ObjectAdjusterFlying\RandomEnabled
 		SourceAttributes\Flying=RandomObjectAdjusterInt(ObjectAdjusterFlying)
 	EndIf
-	
+
 	If ObjectAdjusterTalkable\RandomEnabled
 		SourceAttributes\Talkable=RandomObjectAdjusterInt(ObjectAdjusterTalkable)
 	EndIf
-	
+
 	If ObjectAdjusterMovementSpeed\RandomEnabled
 		SourceAttributes\MovementSpeed=RandomObjectAdjusterInt(ObjectAdjusterMovementSpeed)
 	EndIf
-	
+
 	If ObjectAdjusterMoveXGoal\RandomEnabled
 		SourceAttributes\MoveXGoal=RandomObjectAdjusterInt(ObjectAdjusterMoveXGoal)
 	EndIf
 	If ObjectAdjusterMoveYGoal\RandomEnabled
 		SourceAttributes\MoveYGoal=RandomObjectAdjusterInt(ObjectAdjusterMoveYGoal)
 	EndIf
-	
+
 	If ObjectAdjusterTileTypeCollision\RandomEnabled
 		SourceAttributes\TileTypeCollision=0
 		For i=0 To 14
@@ -10945,45 +10650,44 @@ Function RandomizeObjectData(SourceObj.GameObject)
 			EndIf
 		Next
 	EndIf
-	
+
 	If ObjectAdjusterDead\RandomEnabled
 		SourceAttributes\Dead=RandomObjectAdjusterInt(ObjectAdjusterDead)
 	EndIf
-	
+
 	If ObjectAdjusterCaged\RandomEnabled
 		SourceAttributes\Caged=RandomObjectAdjusterInt(ObjectAdjusterCaged)
 	EndIf
-	
+
 	If ObjectAdjusterIndigo\RandomEnabled
 		SourceAttributes\Indigo=RandomObjectAdjusterInt(ObjectAdjusterIndigo)
 	EndIf
-	
+
 	If ObjectAdjusterFrozen\RandomEnabled
 		SourceAttributes\Frozen=RandomObjectAdjusterInt(ObjectAdjusterFrozen)
 	EndIf
-	
+
 	If ObjectAdjusterExclamation\RandomEnabled
 		SourceAttributes\Exclamation=RandomObjectAdjusterInt(ObjectAdjusterExclamation)
 	EndIf
-	
+
 	If ObjectAdjusterDestructionType\RandomEnabled
 		SourceAttributes\DestructionType=RandomObjectAdjusterInt(ObjectAdjusterDestructionType)
 	EndIf
-	
+
 	If ObjectAdjusterLinked\RandomEnabled
 		SourceAttributes\Linked=RandomObjectAdjusterInt(ObjectAdjusterLinked)
 	EndIf
-	
+
 	If ObjectAdjusterLinkBack\RandomEnabled
 		SourceAttributes\LinkBack=RandomObjectAdjusterInt(ObjectAdjusterLinkBack)
 	EndIf
-	
+
 	If ObjectAdjusterScaleAdjust\RandomEnabled
 		SourceAttributes\ScaleAdjust#=RandomObjectAdjusterFloat#(ObjectAdjusterScaleAdjust)
 	EndIf
 
 End Function
-
 
 Function CalculateEffectiveID(Attributes.GameObjectAttributes)
 
@@ -11013,7 +10717,7 @@ Function CalculateEffectiveIDWith(TargetType,TargetID,Data0,Data1,TargetTileType
 			Return 500+Data0*5+Data1
 		EndIf
 	End Select
-	
+
 	If ModelName$="!Cage" Or ModelName$="!FlipBridge" Or ModelName$="!Spring" Or ModelName$="!ColourGate" Or ModelName$="!Transporter" Or ModelName$="!Teleport" Or ModelName$="!Suctube"
 		If TargetID=-1
 			Return 500+Data0*5+Data1
@@ -11024,7 +10728,7 @@ Function CalculateEffectiveIDWith(TargetType,TargetID,Data0,Data1,TargetTileType
 			Return 500+(8+Data0)*5+Data1
 		EndIf
 	EndIf
-	
+
 	Return TargetID
 
 End Function
@@ -11042,9 +10746,8 @@ Function ShouldBeInvisibleInGame(Attributes.GameObjectAttributes)
 	Else
 		Return False
 	EndIf
-	
-End Function
 
+End Function
 
 Function HideObjectModel(Model.GameObjectModel)
 
@@ -11060,11 +10763,10 @@ Function HideObjectModel(Model.GameObjectModel)
 
 End Function
 
-
 Function ShowObjectModel(Obj.GameObject)
 
 	Model.GameObjectModel=Obj\Model
-	
+
 	If Model\Entity>0
 		ShowEntity Model\Entity
 	EndIf
@@ -11074,11 +10776,10 @@ Function ShowObjectModel(Obj.GameObject)
 	If Model\AccEntity>0
 		ShowEntity Model\AccEntity
 	EndIf
-	
+
 	UpdateObjectAlpha(Obj)
 
 End Function
-
 
 Function IDFilterShouldHide(Attributes.GameObjectAttributes)
 
@@ -11094,7 +10795,6 @@ EndIf
 
 End Function
 
-
 Function UpdateObjectVisibility(Obj.GameObject)
 
 	If ShowObjectMesh=0 Or IDFilterShouldHide(Obj\Attributes)
@@ -11109,7 +10809,6 @@ Function UpdateObjectVisibility(Obj.GameObject)
 
 End Function
 
-
 Function SetEntityAlphaWithModelName(Entity,Alpha#,ModelName$)
 
 	If ModelName$="!NPC" Or ModelName$="!Tentacle"
@@ -11120,13 +10819,11 @@ Function SetEntityAlphaWithModelName(Entity,Alpha#,ModelName$)
 
 End Function
 
-
 Function UpdateObjectAlpha(Obj.GameObject)
 
 	SetEntityAlphaWithModelName(Obj\Model\Entity,BaseObjectAlpha#(Obj\Attributes),Obj\Attributes\ModelName$)
 
 End Function
-
 
 Function BaseObjectAlpha#(Attributes.GameObjectAttributes)
 
@@ -11151,11 +10848,10 @@ Function BaseObjectAlpha#(Attributes.GameObjectAttributes)
 	Else
 		Return 1.0
 	EndIf
-	
+
 	; rainbow bubble alpha is set to 0.8 during gameplay/simulation
 
 End Function
-
 
 Function ObjectSumX#(Obj.GameObject)
 	Return Obj\Position\X#+Obj\Attributes\XAdjust#
@@ -11173,14 +10869,13 @@ Function ObjectSumYaw#(Obj.GameObject)
 	Return Obj\Attributes\Yaw#+Obj\Attributes\YawAdjust#
 End Function
 
-
 Function SetEntityPositionToWorldPosition(entity,XP#,YP#,ZP#,TargetType,Yaw#,XScale#,YScale#)
 
 	If TargetType=230
 		; adjustment for fireflower position (MS why did you put yourself through this??)
 		xadjust#=-26.0
 		yadjust#=0.0
-		
+
 		ScaleThingXCos#=XScale*xadjust*Cos(Yaw#)
 		ScaleThingXSin#=XScale*xadjust*Sin(Yaw#)
 		ScaleThingYCos#=YScale*yadjust*Cos(Yaw#)
@@ -11188,11 +10883,10 @@ Function SetEntityPositionToWorldPosition(entity,XP#,YP#,ZP#,TargetType,Yaw#,XSc
 		XP#=XP#+ScaleThingXCos#+ScaleThingYSin#
 		YP#=YP#-ScaleThingXSin#+ScaleThingYCos#
 	EndIf
-	
+
 	SetEntityPositionInWorld(entity,XP#,YP#,ZP#)
 
 End Function
-
 
 Function SetEntityPositionToObjectPosition(entity, Obj.GameObject)
 
@@ -11200,10 +10894,9 @@ Function SetEntityPositionToObjectPosition(entity, Obj.GameObject)
 	TheY#=ObjectSumY#(Obj)
 	TheZ#=ObjectSumZ#(Obj)
 	TheYaw#=ObjectSumYaw#(Obj)
-	SetEntityPositionToWorldPosition(entity,TheX,TheY,TheZ,Obj\Attributes\LogicType,TheYaw#,Obj\Attributes\XScale,Obj\Attributes\YScale)	
+	SetEntityPositionToWorldPosition(entity,TheX,TheY,TheZ,Obj\Attributes\LogicType,TheYaw#,Obj\Attributes\XScale,Obj\Attributes\YScale)
 
 End Function
-
 
 Function SetEntityPositionToObjectPositionWithoutZ(entity, Obj.GameObject, z#)
 
@@ -11211,95 +10904,90 @@ Function SetEntityPositionToObjectPositionWithoutZ(entity, Obj.GameObject, z#)
 
 End Function
 
-
 Function SetEntityPositionInWorld(entity,x#,y#,z#)
 
 	PositionEntity entity,x#,z#,-y#
 
 End Function
 
-
 Function UpdateObjectPosition(Dest)
 
 	Obj.GameObject=LevelObjects(Dest)
 
 	SetEntityPositionToObjectPosition(Obj\Model\Entity, Obj)
-	
+
 	;PositionEntity ObjectEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest),-ObjectY(Dest)-ObjectYAdjust(Dest)
-	
+
 ;	If ObjectHatEntity(Dest)>0
 ;		PositionEntity ObjectHatEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 ;	EndIf
-	
+
 ;	If ObjectAccEntity(Dest)>0
 ;		PositionEntity ObjectAccEntity(Dest),ObjectX(Dest)+ObjectXAdjust(Dest),ObjectZ(Dest)+ObjectZAdjust(Dest)+.1+.84*ObjectZScale(Dest)/.035,-ObjectY(Dest)-ObjectYAdjust(Dest)
 ;	EndIf
-	
+
 	If Obj\Model\HatEntity>0
 		TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 	EndIf
 	If Obj\Model\AccEntity>0
 		TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 	EndIf
-	
+
 	PositionObjectPositionMarker(Dest)
-	
+
 	If IsObjectSelected(Dest)
 		UpdateCurrentGrabbedObjectMarkerPosition(Dest)
 	EndIf
 
 End Function
 
-
 Function UpdateObjectEntityToCurrent(Dest)
-	
+
 	Obj.GameObject=LevelObjects(Dest)
 	Obj\Model\Entity=CopyEntity(CurrentObject\Model\Entity)
-	
+
 	UpdateObjectVisibility(Obj)
-	
+
 	If CurrentObject\Model\HatEntity>0
-	
+
 		Obj\Model\HatEntity=CreateAccEntity(CurrentObject\Attributes\Data2)
 		Obj\Model\HatTexture=CreateHatTexture(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
-		
+
 		ScaleEntity Obj\Model\HatEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
-		
+
 		;RotateEntity ObjectHatEntity(Dest),0,0,0
 		;TurnEntity ObjectHatEntity(Dest),CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
 		;TurnEntity ObjectHatEntity(Dest),0,CurrentObject\Attributes\YawAdjust-90,0
-	
+
 		If Obj\Model\HatTexture=0
 			EntityColor Obj\Model\HatEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
 			EntityTexture Obj\Model\HatEntity,Obj\Model\HatTexture
 		EndIf
 	EndIf
-	
+
 	If CurrentObject\Model\AccEntity>0
 		Obj\Model\AccEntity=CreateAccEntity(CurrentObject\Attributes\Data4)
 		Obj\Model\AccTexture=CreateGlassesTexture(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
-	
-	
+
 		ScaleEntity Obj\Model\AccEntity,CurrentObject\Attributes\YScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\ZScale*CurrentObject\Attributes\ScaleAdjust,CurrentObject\Attributes\XScale*CurrentObject\Attributes\ScaleAdjust
-		
+
 		;RotateEntity ObjectAccEntity(Dest),0,0,0
 		;TurnEntity ObjectAccEntity(Dest),CurrentObject\Attributes\PitchAdjust,0,CurrentObject\Attributes\RollAdjust
 		;TurnEntity ObjectAccEntity(Dest),0,CurrentObject\Attributes\YawAdjust-90,0
-	
+
 		If Obj\Model\AccTexture=0
 			EntityColor Obj\Model\AccEntity,ModelErrorR,ModelErrorG,ModelErrorB
 		Else
 			EntityTexture Obj\Model\AccEntity,Obj\Model\AccTexture
 		EndIf
 	EndIf
-	
+
 	UpdateObjectAnimation(Obj)
-	
+
 	UpdateObjectPosition(Dest)
 
 End Function
-
 
 Function UpdateObjectAnimation(Obj.GameObject)
 
@@ -11370,45 +11058,42 @@ Function UpdateObjectAnimation(Obj.GameObject)
 
 End Function
 
-
 ; Returns True if the entity gets animated.
 Function MaybeAnimate(Entity,mode=1,speed#=1,sequence=0,transition#=0)
-	
+
 	If SimulationLevel<SimulationLevelAnimation
 		Return False
 	Else
 		Animate Entity,mode,speed#,sequence,transition#
 		Return True
 	EndIf
-	
+
 End Function
 
 Function MaybeAnimateMD2(Entity,mode=1,speed#=1,FirstFrame=1,LastFrame=1,transition#=0)
-	
+
 	If SimulationLevel<SimulationLevelAnimation
 		Return False
 	Else
 		AnimateMD2 Entity,mode,speed#,FirstFrame,LastFrame,transition#
 		Return True
 	EndIf
-	
-End Function
 
+End Function
 
 Function ObjectsWereChanged()
 
 	ResetSimulatedQuantities()
 	FinalizeCurrentObject()
-	
+
 	;AddUnsavedChange()
-	
+
 	NofObjectsInstantiated=NofObjects
 	For i=0 To NofObjects-1
 		NofObjectsInstantiated=NofObjectsInstantiated+ObjectCountExtraInstantiations(LevelObjects(i)\Attributes)
 	Next
-	
-End Function
 
+End Function
 
 Function SomeTileWasChanged()
 
@@ -11416,20 +11101,17 @@ Function SomeTileWasChanged()
 
 End Function
 
-
 Function TilesWereChanged()
 
 	;AddUnsavedChange()
 
 End Function
 
-
 Function LightingWasChanged()
 
 	SetLightNow(LightRed,LightGreen,LightBlue,AmbientRed,AmbientGreen,AmbientBlue)
 
 End Function
-
 
 Function ResetSimulatedQuantities()
 
@@ -11457,7 +11139,7 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectZScale(i)=Obj\Attributes\ZScale
 		SimulatedObjectStatus(i)=Obj\Attributes\Status
 		SimulatedObjectTimer(i)=Obj\Attributes\Timer
-		
+
 		SimulatedObjectData(i,0)=Obj\Attributes\Data0
 		SimulatedObjectData(i,1)=Obj\Attributes\Data1
 		SimulatedObjectData(i,2)=Obj\Attributes\Data2
@@ -11468,7 +11150,7 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectData(i,7)=Obj\Attributes\Data7
 		SimulatedObjectData(i,8)=Obj\Attributes\Data8
 		SimulatedObjectData(i,9)=Obj\Attributes\Data9
-		
+
 		SimulatedObjectCurrentAnim(i)=Obj\Attributes\CurrentAnim
 		SimulatedObjectMovementSpeed(i)=Obj\Attributes\MovementSpeed
 		SimulatedObjectMoveXGoal(i)=Obj\Attributes\MoveXGoal
@@ -11486,13 +11168,13 @@ Function ResetSimulatedQuantities()
 		SimulatedObjectScaleXAdjust(i)=Obj\Attributes\ScaleXAdjust
 		SimulatedObjectScaleYAdjust(i)=Obj\Attributes\ScaleYAdjust
 		SimulatedObjectScaleZAdjust(i)=Obj\Attributes\ScaleZAdjust
-		
+
 		; make sure flipbridges are scaled properly
 		If Obj\Attributes\LogicType=410 Or Obj\Attributes\ModelName$="!FlipBridge"
 			ControlFlipbridge(i)
 		EndIf
 	Next
-	
+
 	; This solves the flickering issue with objects that change scale in their control code.
 	If SimulationLevel>=1
 		ControlObjects()
@@ -11500,16 +11182,15 @@ Function ResetSimulatedQuantities()
 
 End Function
 
-
 Function SimulateObjectPosition(Dest)
 
 	XP#=SimulatedObjectX(Dest)+SimulatedObjectXAdjust(Dest)
 	YP#=SimulatedObjectY(Dest)+SimulatedObjectYAdjust(Dest)
 	ZP#=SimulatedObjectZ(Dest)+SimulatedObjectZAdjust(Dest)
-	
+
 	Entity=LevelObjects(Dest)\Model\Entity
 	TheType=LevelObjects(Dest)\Attributes\LogicType
-	
+
 	SetEntityPositionToWorldPosition(Entity,XP#,YP#,ZP#,TheType,SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest),SimulatedObjectXScale(Dest),SimulatedObjectYScale(Dest))
 
 End Function
@@ -11519,11 +11200,11 @@ Function SimulateObjectRotation(Dest)
 	Pitch#=SimulatedObjectPitch(Dest)+SimulatedObjectPitchAdjust(Dest)
 	Roll#=SimulatedObjectRoll(Dest)+SimulatedObjectRollAdjust(Dest)
 	Yaw#=SimulatedObjectYaw(Dest)+SimulatedObjectYawAdjust(Dest)
-	
+
 	Entity=LevelObjects(Dest)\Model\Entity
 	GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
 	TurnEntity Entity,SimulatedObjectPitch2(Dest),SimulatedObjectYaw2(Dest),SimulatedObjectRoll2(Dest)
-	
+
 	ModelName$=LevelObjects(Dest)\Attributes\ModelName$
 	If ModelName$="!Troll" Or ModelName$="!Crab" Then TurnEntity Entity,0,-90,0
 	If ModelName$="!Kaboom" Or ModelName$="!BabyBoomer" Then TurnEntity Entity,0,90,0
@@ -11535,10 +11216,10 @@ Function SimulateObjectScale(Dest)
 	XS#=SimulatedObjectXScale(Dest)
 	YS#=SimulatedObjectYScale(Dest)
 	ZS#=SimulatedObjectZScale(Dest)
-	
+
 	Entity=LevelObjects(Dest)\Model\Entity
 	ScaleEntity Entity,XS#,ZS#,YS#
-	
+
 End Function
 
 Function GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
@@ -11548,7 +11229,6 @@ Function GameLikeRotation(Entity,Yaw#,Pitch#,Roll#)
 	TurnEntity Entity,0,Yaw#,0
 
 End Function
-
 
 Function CopyObjectPosition(SourceAttributes.GameObjectPosition,DestAttributes.GameObjectPosition)
 
@@ -11562,7 +11242,6 @@ Function CopyObjectPosition(SourceAttributes.GameObjectPosition,DestAttributes.G
 	DestAttributes\TileY2=SourceAttributes\TileY2
 
 End Function
-
 
 Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttributes.GameObjectAttributes)
 
@@ -11619,7 +11298,7 @@ Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttribut
 	DestAttributes\Reactive=SourceAttributes\Reactive
 	DestAttributes\Child=SourceAttributes\Child
 	DestAttributes\Parent=SourceAttributes\Parent
-	
+
 	DestAttributes\Data0=SourceAttributes\Data0
 	DestAttributes\Data1=SourceAttributes\Data1
 	DestAttributes\Data2=SourceAttributes\Data2
@@ -11630,12 +11309,12 @@ Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttribut
 	DestAttributes\Data7=SourceAttributes\Data7
 	DestAttributes\Data8=SourceAttributes\Data8
 	DestAttributes\Data9=SourceAttributes\Data9
-	
+
 	DestAttributes\TextData0$=SourceAttributes\TextData0$
 	DestAttributes\TextData1$=SourceAttributes\TextData1$
 	DestAttributes\TextData2$=SourceAttributes\TextData2$
 	DestAttributes\TextData3$=SourceAttributes\TextData3$
-	
+
 	DestAttributes\Talkable=SourceAttributes\Talkable
 	DestAttributes\CurrentAnim=SourceAttributes\CurrentAnim
 	DestAttributes\StandardAnim=SourceAttributes\StandardAnim
@@ -11672,7 +11351,6 @@ Function CopyObjectAttributes(SourceAttributes.GameObjectAttributes,DestAttribut
 	DestAttributes\FutureString2$=SourceAttributes\FutureString2$
 
 End Function
-
 
 Function ObjectIsAtInt(Obj.GameObject,x,y)
 
@@ -11714,7 +11392,7 @@ Function GrabObject(x#,y#,SelectAllOnTile)
 	If LevelTileObjectCount(Floor(x#),Floor(y#))=0
 		Return
 	EndIf
-	
+
 	If SelectAllOnTile
 		For i=0 To NofObjects-1
 			If ObjectIsAtFloat(LevelObjects(i),x#,y#)
@@ -11734,20 +11412,20 @@ Function GrabObject(x#,y#,SelectAllOnTile)
 	EndIf
 
 End Function
-	
+
 Function ReadObjectIntoCurrentObject(Obj.GameObject)
 
 	If ReadyToCopyFirstSelected=True
 		ReadyToCopyFirstSelected=False
-		
+
 		NofWopAdjusters=0
-	
+
 		CopyObjectAttributes(Obj\Attributes,CurrentObject\Attributes)
 		CopyObjectPosition(Obj\Position,CurrentObject\Position)
-	
+
 		CurrentObject\Position\X#=CurrentObject\Position\X#-x-0.5
 		CurrentObject\Position\Y#=CurrentObject\Position\Y#-y-0.5
-		
+
 		;NofObjectAdjusters=0
 		;ObjectAdjusterStart=0
 		;For i=0 To 30
@@ -11756,17 +11434,15 @@ Function ReadObjectIntoCurrentObject(Obj.GameObject)
 		;		NofObjectAdjusters=NofObjectAdjusters+1
 		;	EndIf
 		;Next
-		
+
 		MakeAllObjectAdjustersAbsolute()
-		
+
 		;BuildCurrentObjectModel()
 	Else
 		CompareObjectToCurrent(Obj)
 	EndIf
 
 End Function
-
-
 
 Function CopyObjectFromBrush(i,DestObject.GameObject)
 
@@ -11775,8 +11451,6 @@ Function CopyObjectFromBrush(i,DestObject.GameObject)
 
 End Function
 
-
-
 Function CreateObjectPositionMarker(i)
 
 	ObjectPositionMarker(i)=CopyEntity(ObjectPositionMarkerMesh)
@@ -11784,11 +11458,11 @@ Function CreateObjectPositionMarker(i)
 	PositionObjectPositionMarker(i)
 
 	UpdateObjectPositionMarkersAtTile(LevelObjects(i)\Position\TileX,LevelObjects(i)\Position\TileY)
-	
+
 	If ShowObjectPositions=False
 		HideEntity ObjectPositionMarker(i)
 	EndIf
-	
+
 End Function
 
 Function IncrementLevelTileObjectCount(x,y)
@@ -11848,22 +11522,22 @@ Function UpdateObjectPositionMarkersAtTile(tilex,tiley)
 			EndIf
 		EndIf
 	Next
-	
+
 	;ShowMessage("Update successful.", 100)
 
 End Function
 
 Function FreeObjectModel(Model.GameObjectModel)
 
-	If Model\Entity>0 
+	If Model\Entity>0
 		FreeEntity Model\Entity
 		Model\Entity=0
 	EndIf
-	If Model\Texture>0 
+	If Model\Texture>0
 		FreeTexture Model\Texture
 		Model\Texture=0
 	EndIf
-	
+
 	If Model\HatEntity>0
 		FreeEntity Model\HatEntity
 		Model\HatEntity=0
@@ -11888,7 +11562,7 @@ Function FreeObject(i)
 	Obj.GameObject=LevelObjects(i)
 
 	FreeObjectModel(Obj\Model)
-	
+
 	tilex=Obj\Position\TileX
 	tiley=Obj\Position\TileY
 	LevelTileObjectCount(tilex,tiley)=LevelTileObjectCount(tilex,tiley)-1
@@ -11911,35 +11585,35 @@ Function SetObjectIndex(SourceIndex,TargetIndex)
 			i=i-1
 		Wend
 		MoveObjectData(1000,TargetIndex)
-		
+
 		For j=0 To NofObjects-1
 			Obj.GameObject=LevelObjects(j)
-			
+
 			If Obj\Attributes\Linked=SourceIndex
 				Obj\Attributes\Linked=TargetIndex
 			Else If Obj\Attributes\Linked>=TargetIndex And Obj\Attributes\Linked<SourceIndex
 				Obj\Attributes\Linked=Obj\Attributes\Linked+1
 			EndIf
-			
+
 			If Obj\Attributes\LinkBack=SourceIndex
 				Obj\Attributes\LinkBack=TargetIndex
 			Else If Obj\Attributes\LinkBack>=TargetIndex And Obj\Attributes\LinkBack<SourceIndex
 				Obj\Attributes\LinkBack=Obj\Attributes\LinkBack+1
 			EndIf
-			
+
 			If Obj\Attributes\Parent=SourceIndex
 				Obj\Attributes\Parent=TargetIndex
 			Else If Obj\Attributes\Parent>=TargetIndex And Obj\Attributes\Parent<SourceIndex
 				Obj\Attributes\Parent=Obj\Attributes\Parent+1
 			EndIf
-			
+
 			If Obj\Attributes\Child=SourceIndex
 				Obj\Attributes\Child=TargetIndex
 			Else If Obj\Attributes\Child>=TargetIndex And Obj\Attributes\Child<SourceIndex
 				Obj\Attributes\Child=Obj\Attributes\Child+1
 			EndIf
 		Next
-		
+
 		ObjectsWereChanged()
 		AddUnsavedChange()
 	ElseIf TargetIndex>SourceIndex
@@ -11950,35 +11624,35 @@ Function SetObjectIndex(SourceIndex,TargetIndex)
 			i=i+1
 		Wend
 		MoveObjectData(1000,TargetIndex)
-		
+
 		For j=0 To NofObjects-1
 			Obj.GameObject=LevelObjects(j)
-			
+
 			If Obj\Attributes\Linked=SourceIndex
 				Obj\Attributes\Linked=TargetIndex
 			Else If Obj\Attributes\Linked>SourceIndex And Obj\Attributes\Linked<=TargetIndex
 				Obj\Attributes\Linked=Obj\Attributes\Linked-1
 			EndIf
-			
+
 			If Obj\Attributes\LinkBack=SourceIndex
 				Obj\Attributes\LinkBack=TargetIndex
 			Else If Obj\Attributes\LinkBack>SourceIndex And Obj\Attributes\LinkBack<=TargetIndex
 				Obj\Attributes\LinkBack=Obj\Attributes\LinkBack-1
 			EndIf
-			
+
 			If Obj\Attributes\Parent=SourceIndex
 				Obj\Attributes\Parent=TargetIndex
 			Else If Obj\Attributes\Parent>SourceIndex And Obj\Attributes\Parent<=TargetIndex
 				Obj\Attributes\Parent=Obj\Attributes\Parent-1
 			EndIf
-			
+
 			If Obj\Attributes\Child=SourceIndex
 				Obj\Attributes\Child=TargetIndex
 			Else If Obj\Attributes\Child>SourceIndex And Obj\Attributes\Child<=TargetIndex
 				Obj\Attributes\Child=Obj\Attributes\Child-1
 			EndIf
 		Next
-		
+
 		ObjectsWereChanged()
 		AddUnsavedChange()
 	EndIf
@@ -11988,14 +11662,14 @@ End Function
 Function DeleteObject(i)
 
 	;ShowMessage("Deleting object "+i, 100)
-	
+
 	;DecrementLevelTileObjectCountFor(LevelObjects(i)\Position)
-	
+
 	tilex=LevelObjects(i)\Position\TileX
 	tiley=LevelObjects(i)\Position\TileY
 
 	FreeObject(i)
-	
+
 	If IsObjectSelected(i)
 		RemoveSelectObject(i)
 	EndIf
@@ -12004,7 +11678,7 @@ Function DeleteObject(i)
 			SelectedObjects(j)=SelectedObjects(j)-1
 		EndIf
 	Next
-	
+
 	If IsObjectDragged(i)
 		RemoveDraggedObject(i)
 	EndIf
@@ -12013,7 +11687,7 @@ Function DeleteObject(i)
 			DraggedObjects(j)=DraggedObjects(j)-1
 		EndIf
 	Next
-	
+
 	;ShowMessage("Moving object data...", 100)
 
 	For j=i+1 To NofObjects-1
@@ -12021,73 +11695,73 @@ Function DeleteObject(i)
 	Next
 
 	;ShowMessage("Setting current grabbed object...", 100)
-	
+
 	SetNofObjects(NofObjects-1)
-	
+
 	For j=0 To NofObjects-1
 		Obj.GameObject=LevelObjects(j)
-		
+
 		If Obj\Attributes\Linked=i
 			Obj\Attributes\Linked=-1
 		Else If Obj\Attributes\Linked>i
 			Obj\Attributes\Linked=Obj\Attributes\Linked-1
 		EndIf
-		
+
 		If Obj\Attributes\LinkBack=i
 			Obj\Attributes\LinkBack=-1
 		Else If Obj\Attributes\LinkBack>i
 			Obj\Attributes\LinkBack=Obj\Attributes\LinkBack-1
 		EndIf
-		
+
 		If Obj\Attributes\Parent=i
 			Obj\Attributes\Parent=-1
 		Else If Obj\Attributes\Parent>i
 			Obj\Attributes\Parent=Obj\Attributes\Parent-1
 		EndIf
-		
+
 		If Obj\Attributes\Child=i
 			Obj\Attributes\Child=-1
 		Else If Obj\Attributes\Child>i
 			Obj\Attributes\Child=Obj\Attributes\Child-1
 		EndIf
 	Next
-	
+
 	If CurrentObject\Attributes\Linked=i
 		CurrentObject\Attributes\Linked=-1
 	Else If CurrentObject\Attributes\Linked>i
 		CurrentObject\Attributes\Linked=CurrentObject\Attributes\Linked-1
 	EndIf
-	
+
 	If CurrentObject\Attributes\LinkBack=i
 		CurrentObject\Attributes\LinkBack=-1
 	Else If CurrentObject\Attributes\LinkBack>i
 		CurrentObject\Attributes\LinkBack=CurrentObject\Attributes\LinkBack-1
 	EndIf
-	
+
 	If CurrentObject\Attributes\Parent=i
 		CurrentObject\Attributes\Parent=-1
 	Else If CurrentObject\Attributes\Parent>i
 		CurrentObject\Attributes\Parent=CurrentObject\Attributes\Parent-1
 	EndIf
-	
+
 	If CurrentObject\Attributes\Child=i
 		CurrentObject\Attributes\Child=-1
 	Else If CurrentObject\Attributes\Child>i
 		CurrentObject\Attributes\Child=CurrentObject\Attributes\Child-1
 	EndIf
-	
+
 	UpdateObjectPositionMarkersAtTile(tilex,tiley)
 
 End Function
 
 Function DeleteObjectAt(x,y)
-	
+
 	If Not PassesPlacementDensityTest()
 		Return
 	EndIf
-	
+
 	DeleteObjectAtActual(x,y)
-	
+
 	If DupeMode=DupeModeX
 		TargetX=MirrorAcrossInt(x,MirrorPositionX)
 		DeleteObjectAtActual(TargetX,y)
@@ -12101,11 +11775,11 @@ Function DeleteObjectAt(x,y)
 		DeleteObjectAtActual(x,TargetY)
 		DeleteObjectAtActual(TargetX,TargetY)
 	EndIf
-	
+
 End Function
 
 Function DeleteObjectAtActual(x,y)
-	
+
 	DeleteCount=0
 	For i=0 To NofObjects-1
 		Pos.GameObjectPosition=LevelObjects(i)\Position
@@ -12118,7 +11792,7 @@ Function DeleteObjectAtActual(x,y)
 	Next
 	;ShowMessage(DeleteCount, 1000)
 	Return DeleteCount
-	
+
 End Function
 
 Function MoveObjectData(Source,Dest)
@@ -12127,19 +11801,17 @@ Function MoveObjectData(Source,Dest)
 	ObjDest.GameObject=LevelObjects(Dest)
 
 	MoveObjectModel(ObjSource\Model,ObjDest\Model)
-	
-	
+
 	CopyObjectAttributes(ObjSource\Attributes,ObjDest\Attributes)
 	CopyObjectPosition(ObjSource\Position,ObjDest\Position)
-		
+
 	;For i=0 To 30
 	;	ObjectAdjusterString$(Dest,i)=ObjectAdjusterString$(Source,i)
 	;Next
-	
-	ObjectPositionMarker(Dest)=ObjectPositionMarker(Source)
-	
-End Function
 
+	ObjectPositionMarker(Dest)=ObjectPositionMarker(Source)
+
+End Function
 
 Function MoveObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
 
@@ -12159,14 +11831,13 @@ Function MoveObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
 
 End Function
 
-
 Function CopyObjectToBrush(Source.GameObject,Dest,XOffset,YOffset)
 
 	;BrushObjectXOffset#(Dest)=XOffset#-0.5
 	;BrushObjectYOffset#(Dest)=YOffset#-0.5
 	BrushObjectTileXOffset(Dest)=XOffset
 	BrushObjectTileYOffset(Dest)=YOffset
-	
+
 	;BrushObjects(Dest)\X=0.5 ;ObjectX(Source)
 	;BrushObjects(Dest)\Y=0.5 ;ObjectY(Source)
 	;BrushObjects(Dest)\Z=LevelObjects(Source)\Attributes\Z
@@ -12174,7 +11845,7 @@ Function CopyObjectToBrush(Source.GameObject,Dest,XOffset,YOffset)
 	;BrushObjectTileY(Dest)=ObjectTileY(Source)
 	;BrushObjectTileX2(Dest)=ObjectTileX2(Source)
 	;BrushObjectTileY2(Dest)=ObjectTileY2(Source)
-	
+
 	CopyObjectAttributes(Source\Attributes,BrushObjects(Dest)\Attributes)
 	CopyObjectPosition(Source\Position,BrushObjects(Dest)\Position)
 	CopyObjectModel(Source\Model,BrushObjects(Dest)\Model)
@@ -12182,13 +11853,12 @@ Function CopyObjectToBrush(Source.GameObject,Dest,XOffset,YOffset)
 
 End Function
 
-
 Function CopySelectedObjectsToBrush()
 
 	; set custom brush
 	If EditorMode=3 And NofSelectedObjects<>0
 		RecalculateSelectionSize()
-	
+
 		NofBrushObjects=NofSelectedObjects
 		BrushSpaceWidth=SelectionMaxTileX-SelectionMinTileX+1
 		BrushSpaceHeight=SelectionMaxTileY-SelectionMinTileY+1
@@ -12207,11 +11877,10 @@ Function CopySelectedObjectsToBrush()
 
 End Function
 
-
 Function CopyObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
 
 	FreeObjectModel(Dest)
-	
+
 	If Source\Entity>0
 		Dest\Entity=CopyEntity(Source\Entity)
 	EndIf
@@ -12233,7 +11902,6 @@ Function CopyObjectModel(Source.GameObjectModel,Dest.GameObjectModel)
 
 End Function
 
-
 Function UpdateSelectedObjects()
 
 	SetEditorMode(3)
@@ -12244,15 +11912,14 @@ Function UpdateSelectedObjects()
 	;If AreAllObjectAdjustersAbsolute() ; Allows reapplication of the same relative change.
 	;	CurrentGrabbedObjectModified=False
 	;EndIf
-	
+
 	; Zero all relative object adjusters.
 	RecalculateObjectAdjusterModes()
-	
+
 	ObjectsWereChanged()
 	AddUnsavedChange()
 
 End Function
-
 
 Function UpdateSelectedObjectsIfExists()
 
@@ -12262,30 +11929,29 @@ Function UpdateSelectedObjectsIfExists()
 
 End Function
 
-
 Function PasteObjectData(Dest)
 
 	;xy position is not changed
-	
+
 	;CopyObjectAttributes(CurrentObject\Attributes,LevelObjects(Dest)\Attributes)
-	
+
 	SourceObject.GameObject=CurrentObject
 	DestObject.GameObject=LevelObjects(Dest)
-	
+
 	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
 	DestAttributes.GameObjectAttributes=DestObject\Attributes
-	
+
 	If ObjectAdjusterZ\Absolute
 		DestObject\Position\Z=SourceObject\Position\Z
 	EndIf
-	
+
 	If ObjectAdjusterModelName\Absolute
 		DestAttributes\ModelName$=SourceAttributes\ModelName$
 	EndIf
 	If ObjectAdjusterTextureName\Absolute
 		DestAttributes\TexName$=SourceAttributes\TexName$
 	EndIf
-	
+
 	If ObjectAdjusterXScale\Absolute
 		DestAttributes\XScale#=SourceAttributes\XScale#
 	Else
@@ -12301,7 +11967,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\ZScale#=DestAttributes\ZScale#+SourceAttributes\ZScale#
 	EndIf
-	
+
 	If ObjectAdjusterXAdjust\Absolute
 		DestAttributes\XAdjust#=SourceAttributes\XAdjust#
 	Else
@@ -12317,7 +11983,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\ZAdjust#=DestAttributes\ZAdjust#+SourceAttributes\ZAdjust#
 	EndIf
-	
+
 	If ObjectAdjusterPitchAdjust\Absolute
 		DestAttributes\PitchAdjust#=SourceAttributes\PitchAdjust#
 	Else
@@ -12333,7 +11999,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\RollAdjust#=DestAttributes\RollAdjust#+SourceAttributes\RollAdjust#
 	EndIf
-	
+
 	If ObjectAdjusterDX\Absolute
 		DestAttributes\DX#=SourceAttributes\DX#
 	Else
@@ -12349,7 +12015,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\DZ#=DestAttributes\DZ#+SourceAttributes\DZ#
 	EndIf
-	
+
 	DestAttributes\Pitch#=SourceAttributes\Pitch#
 	DestAttributes\Yaw#=SourceAttributes\Yaw#
 	DestAttributes\Roll#=SourceAttributes\Roll#
@@ -12359,7 +12025,7 @@ Function PasteObjectData(Dest)
 	DestAttributes\XGoal#=SourceAttributes\XGoal#
 	DestAttributes\YGoal#=SourceAttributes\YGoal#
 	DestAttributes\ZGoal#=SourceAttributes\ZGoal#
-	
+
 	If ObjectAdjusterMovementType\Absolute
 		DestAttributes\MovementType=SourceAttributes\MovementType
 	Else
@@ -12370,21 +12036,21 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\MovementTypeData=DestAttributes\MovementTypeData+SourceAttributes\MovementTypeData
 	EndIf
-	
+
 	DestAttributes\Speed#=SourceAttributes\Speed#
 	DestAttributes\Radius#=SourceAttributes\Radius#
 	DestAttributes\RadiusType=SourceAttributes\RadiusType
-	
+
 	If ObjectAdjusterData10\Absolute
 		DestAttributes\Data10=SourceAttributes\Data10
 	Else
 		DestAttributes\Data10=DestAttributes\Data10+SourceAttributes\Data10
 	EndIf
-	
+
 	DestAttributes\PushDX#=SourceAttributes\PushDX#
 	DestAttributes\PushDY#=SourceAttributes\PushDY#
 	DestAttributes\AttackPower=SourceAttributes\AttackPower
-	
+
 	If ObjectAdjusterDefensePower\Absolute
 		DestAttributes\DefensePower=SourceAttributes\DefensePower
 	Else
@@ -12415,9 +12081,9 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\Active=DestAttributes\Active+SourceAttributes\Active
 	EndIf
-	
+
 	DestAttributes\LastActive=SourceAttributes\LastActive
-	
+
 	If ObjectAdjusterActivationType\Absolute
 		DestAttributes\ActivationType=SourceAttributes\ActivationType
 	Else
@@ -12463,12 +12129,11 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\WaterReact=DestAttributes\WaterReact+SourceAttributes\WaterReact
 	EndIf
-	
+
 	DestAttributes\Telekinesisable=SourceAttributes\Telekinesisable
 	DestAttributes\Freezable=SourceAttributes\Freezable
 	DestAttributes\Reactive=SourceAttributes\Reactive
-	
-	
+
 	If ObjectAdjusterChild\Absolute
 		DestAttributes\Child=SourceAttributes\Child
 	Else
@@ -12479,7 +12144,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\Parent=DestAttributes\Parent+SourceAttributes\Parent
 	EndIf
-	
+
 	If ObjectAdjusterData0\Absolute
 		DestAttributes\Data0=SourceAttributes\Data0
 	Else
@@ -12530,17 +12195,17 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\Data9=DestAttributes\Data9+SourceAttributes\Data9
 	EndIf
-	
+
 	If ObjectAdjusterTextData0\Absolute
 		DestAttributes\TextData0$=SourceAttributes\TextData0$
 	EndIf
 	If ObjectAdjusterTextData1\Absolute
 		DestAttributes\TextData1$=SourceAttributes\TextData1$
 	EndIf
-	
+
 	DestAttributes\TextData2$=SourceAttributes\TextData2$
 	DestAttributes\TextData3$=SourceAttributes\TextData3$
-	
+
 	If ObjectAdjusterTalkable\Absolute
 		DestAttributes\Talkable=SourceAttributes\Talkable
 	Else
@@ -12566,7 +12231,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\MovementSpeed=DestAttributes\MovementSpeed+SourceAttributes\MovementSpeed
 	EndIf
-	
+
 	If ObjectAdjusterMoveXGoal\Absolute
 		DestAttributes\MoveXGoal=SourceAttributes\MoveXGoal
 	Else
@@ -12577,7 +12242,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\MoveYGoal=DestAttributes\MoveYGoal+SourceAttributes\MoveYGoal
 	EndIf
-	
+
 	If ObjectAdjusterTileTypeCollision\Absolute
 		DestAttributes\TileTypeCollision=SourceAttributes\TileTypeCollision
 	Else
@@ -12588,7 +12253,7 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\ObjectTypeCollision=DestAttributes\ObjectTypeCollision+SourceAttributes\ObjectTypeCollision
 	EndIf
-	
+
 	If ObjectAdjusterCaged\Absolute
 		DestAttributes\Caged=SourceAttributes\Caged
 	Else
@@ -12639,10 +12304,10 @@ Function PasteObjectData(Dest)
 	Else
 		DestAttributes\Indigo=DestAttributes\Indigo+SourceAttributes\Indigo
 	EndIf
-	
+
 	DestAttributes\FutureInt24=SourceAttributes\FutureInt24
 	DestAttributes\FutureInt25=SourceAttributes\FutureInt25
-	
+
 	If ObjectAdjusterScaleAdjust\Absolute
 		DestAttributes\ScaleAdjust=SourceAttributes\ScaleAdjust
 	Else
@@ -12671,29 +12336,29 @@ Function PasteObjectData(Dest)
 	DestAttributes\FutureFloat10=SourceAttributes\FutureFloat10
 	DestAttributes\FutureString1$=SourceAttributes\FutureString1$
 	DestAttributes\FutureString2$=SourceAttributes\FutureString2$
-		
+
 	;For i=0 To 30
 	;	ObjectAdjusterString$(Dest,i)="" ;ObjectAdjuster$(i)
 	;Next
-	
+
 	RandomizeObjectData(DestObject)
-	
+
 	FreeObjectModel(LevelObjects(Dest)\Model)
-	
+
 	BuildLevelObjectModel(Dest)
-	
+
 	UpdateCurrentGrabbedObjectMarkerPosition(Dest)
-	
+
 End Function
 
 Function CompareObjectToCurrent(Obj.GameObject)
 
 	SourceObject.GameObject=CurrentObject
 	DestObject.GameObject=Obj
-	
+
 	SourceAttributes.GameObjectAttributes=SourceObject\Attributes
 	DestAttributes.GameObjectAttributes=DestObject\Attributes
-	
+
 	If DestObject\Position\Z<>SourceObject\Position\Z
 		ObjectAdjusterZ\Absolute=False
 	EndIf
@@ -12704,7 +12369,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 	If DestAttributes\TexName$<>SourceAttributes\TexName$
 		ObjectAdjusterTextureName\Absolute=False
 	EndIf
-	
+
 	If DestAttributes\XScale#<>SourceAttributes\XScale#
 		ObjectAdjusterXScale\Absolute=False
 		SourceAttributes\XScale=0
@@ -12717,7 +12382,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterZScale\Absolute=False
 		SourceAttributes\ZScale=0
 	EndIf
-	
+
 	If DestAttributes\XAdjust#<>SourceAttributes\XAdjust#
 		ObjectAdjusterXAdjust\Absolute=False
 		SourceAttributes\XAdjust=0
@@ -12730,7 +12395,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterZAdjust\Absolute=False
 		SourceAttributes\ZAdjust=0
 	EndIf
-	
+
 	If DestAttributes\PitchAdjust#<>SourceAttributes\PitchAdjust#
 		ObjectAdjusterPitchAdjust\Absolute=False
 		SourceAttributes\PitchAdjust=0
@@ -12743,7 +12408,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterRollAdjust\Absolute=False
 		SourceAttributes\RollAdjust=0
 	EndIf
-	
+
 	If DestAttributes\DX#<>SourceAttributes\DX#
 		ObjectAdjusterDX\Absolute=False
 		SourceAttributes\DX=0
@@ -12756,7 +12421,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterDZ\Absolute=False
 		SourceAttributes\DZ=0
 	EndIf
-	
+
 	If DestAttributes\MovementType<>SourceAttributes\MovementType
 		ObjectAdjusterMovementType\Absolute=False
 		SourceAttributes\MovementType=0
@@ -12765,12 +12430,12 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterMovementTypeData\Absolute=False
 		SourceAttributes\MovementTypeData=0
 	EndIf
-	
+
 	If DestAttributes\Data10<>SourceAttributes\Data10
 		ObjectAdjusterData10\Absolute=False
 		SourceAttributes\Data10=0
 	EndIf
-	
+
 	If DestAttributes\DefensePower<>SourceAttributes\DefensePower
 		ObjectAdjusterDefensePower\Absolute=False
 		SourceAttributes\DefensePower=0
@@ -12795,7 +12460,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterActive\Absolute=False
 		SourceAttributes\Active=0
 	EndIf
-	
+
 	If DestAttributes\ActivationType<>SourceAttributes\ActivationType
 		ObjectAdjusterActivationType\Absolute=False
 		SourceAttributes\ActivationType=0
@@ -12832,7 +12497,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterWaterReact\Absolute=False
 		SourceAttributes\WaterReact=0
 	EndIf
-	
+
 	If DestAttributes\Child<>SourceAttributes\Child
 		ObjectAdjusterChild\Absolute=False
 		SourceAttributes\Child=0
@@ -12841,7 +12506,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterParent\Absolute=False
 		SourceAttributes\Parent=0
 	EndIf
-	
+
 	If DestAttributes\Data0<>SourceAttributes\Data0
 		ObjectAdjusterData0\Absolute=False
 		SourceAttributes\Data0=0
@@ -12882,14 +12547,14 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterData9\Absolute=False
 		SourceAttributes\Data9=0
 	EndIf
-	
+
 	If DestAttributes\TextData0$<>SourceAttributes\TextData0$
 		ObjectAdjusterTextData0\Absolute=False
 	EndIf
 	If DestAttributes\TextData1$<>SourceAttributes\TextData1$
 		ObjectAdjusterTextData1\Absolute=False
 	EndIf
-	
+
 	If DestAttributes\Talkable<>SourceAttributes\Talkable
 		ObjectAdjusterTalkable\Absolute=False
 		SourceAttributes\Talkable=0
@@ -12910,7 +12575,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterMovementSpeed\Absolute=False
 		SourceAttributes\MovementSpeed=0
 	EndIf
-	
+
 	If DestAttributes\MoveXGoal<>SourceAttributes\MoveXGoal
 		ObjectAdjusterMoveXGoal\Absolute=False
 		SourceAttributes\MoveXGoal=0
@@ -12919,7 +12584,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterMoveYGoal\Absolute=False
 		SourceAttributes\MoveYGoal=0
 	EndIf
-	
+
 	If DestAttributes\TileTypeCollision<>SourceAttributes\TileTypeCollision
 		ObjectAdjusterTileTypeCollision\Absolute=False
 		SourceAttributes\TileTypeCollision=0
@@ -12928,7 +12593,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterObjectTypeCollision\Absolute=False
 		SourceAttributes\ObjectTypeCollision=0
 	EndIf
-	
+
 	If DestAttributes\Caged<>SourceAttributes\Caged
 		ObjectAdjusterCaged\Absolute=False
 		SourceAttributes\Caged=0
@@ -12969,7 +12634,7 @@ Function CompareObjectToCurrent(Obj.GameObject)
 		ObjectAdjusterIndigo\Absolute=False
 		SourceAttributes\Indigo=0
 	EndIf
-	
+
 	If DestAttributes\ScaleAdjust<>SourceAttributes\ScaleAdjust
 		ObjectAdjusterScaleAdjust\Absolute=False
 		SourceAttributes\ScaleAdjust=0
@@ -13048,9 +12713,6 @@ Function UpdateCurrentGrabbedObjectMarkerPosition(i)
 
 End Function
 
-
-
-
 Function DisplayAsBinaryString$(value)
 
 Result$=""
@@ -13070,8 +12732,6 @@ Return Result$
 
 End Function
 
-
-
 Function AdjusterAppearsInWop(adjuster$)
 
 	For i=0 To NofWopAdjusters-1
@@ -13079,11 +12739,10 @@ Function AdjusterAppearsInWop(adjuster$)
 			Return True
 		EndIf
 	Next
-	
+
 	Return False
 
 End Function
-
 
 Function TooltipTargetsEffectiveID(StartX,StartY,Index)
 
@@ -13117,19 +12776,18 @@ Function TooltipHasActivateIDInner(StartX,StartY,ActivateID)
 
 End Function
 
-
 Function HoverOverObjectAdjuster(i)
 
 	StartX=SidebarX+10
 	StartY=SidebarY+305
 	StartY=StartY+15+(i-ObjectAdjusterStart)*15
-	
+
 	CenterX=StartX+92
 	TooltipLeftY=StartY+30
 	TooltipAboveY=StartY+8
-	
+
 	Select ObjectAdjuster$(i)
-	
+
 	Case "Data0"
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -13159,7 +12817,7 @@ Function HoverOverObjectAdjuster(i)
 		ElseIf CurrentObject\Attributes\LogicType=190 Or CurrentObject\Attributes\LogicType=164 ; Particle Spawner or Fountain
 			ShowParticlePreviewRightAligned(StartX,TooltipLeftY,CurrentObject\Attributes\Data0)
 		EndIf
-		
+
 	Case "Data1"
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -13183,7 +12841,7 @@ Function HoverOverObjectAdjuster(i)
 				EndIf
 			EndIf
 		EndIf
-	
+
 	Case "Data2"
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -13204,13 +12862,13 @@ Function HoverOverObjectAdjuster(i)
 				ShowTooltipRightAligned(StartX,TooltipLeftY,GetCmdData2ExtraInfo$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1,CurrentObject\Attributes\Data2))
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data2)))
 			EndIf
 		EndIf
-		
+
 	Case "Data3"
 		If CurrentObject\Attributes\LogicType=90
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -13229,117 +12887,117 @@ Function HoverOverObjectAdjuster(i)
 				TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData2\Absolute And ObjectAdjusterData3\Absolute
 			If CurrentObject\Attributes\Data2>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)))
 			EndIf
 		EndIf
-		
+
 	Case "Data4"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,0)
 		ElseIf IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipHasActivateID(StartX,TooltipLeftY,0)
 		EndIf
-	
+
 		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameModel$(GetAccFilenameModel$(CurrentObject\Attributes\Data4)))
 			EndIf
 		EndIf
-		
+
 	Case "Data5"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,1)
 		ElseIf IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipHasActivateID(StartX,TooltipLeftY,1)
 		EndIf
-	
+
 		If CurrentObject\Attributes\ModelName$="!NPC" And ObjectAdjusterModelName\Absolute And ObjectAdjusterData4\Absolute And ObjectAdjusterData5\Absolute
 			If CurrentObject\Attributes\Data4>0
 				ShowTooltipRightAligned(StartX,TooltipLeftY,MyProcessFileNameTexture$(GetAccFilenameTexture$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)))
 			EndIf
 		EndIf
-		
+
 	Case "Data6"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,2)
 		ElseIf IsObjectLogicAutodoor(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipHasActivateID(StartX,TooltipLeftY,2)
 		EndIf
-		
+
 	Case "Data7"
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			TooltipTargetsEffectiveID(StartX,TooltipLeftY,3)
 		EndIf
-		
+
 	Case "Data8"
 		If CurrentObject\Attributes\LogicType=90 And ObjectAdjusterLogicType\Absolute
 			TooltipHasActivateID(StartX,TooltipLeftY,0)
 		EndIf
-	
+
 	Case "TileTypeCollision"
 		If ObjectAdjusterTileTypeCollision\Absolute
 			tex2$="TTC"
 			tex$="00000 00000 00000"
-				
+
 			HalfNameWidth=4*Len(tex2$+": "+tex$)
 			BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
-			
+
 			BitPositionIndex=GetBitPositionIndex(BitStartX)
 			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
 			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
 				ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,LogicIdToLogicName$(BitIndex))
 			EndIf
 		EndIf
-		
+
 	Case "ObjectTypeCollision"
 		If ObjectAdjusterObjectTypeCollision\Absolute
 			tex2$="OTC"
 			tex$="00000 00000 00000"
-				
+
 			HalfNameWidth=4*Len(tex2$+": "+tex$)
 			BitStartX=CenterX-HalfNameWidth+8*Len(tex2$+": ")
-			
+
 			BitPositionIndex=GetBitPositionIndex(BitStartX)
 			BitIndex=BitPositionIndexToBitIndex(BitPositionIndex)
 			If BitIndexIsValid(BitIndex) And BitPositionIndexIsValid(BitPositionIndex)
 				ShowTooltipCenterAligned(BitStartX+BitPositionIndex*8+12,TooltipAboveY,ObjectTypeCollisionBitToName$(BitIndex))
 			EndIf
 		EndIf
-		
+
 	Case "Type"
 		If ObjectAdjusterLogicType\Absolute
 			Count=CountObjectTypes(CurrentObject\Attributes\LogicType)
 			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this Type.")
 		EndIf
-	
+
 	Case "SubType"
 		If ObjectAdjusterLogicType\Absolute And ObjectAdjusterLogicSubType\Absolute
 			Count=CountObjectLogics(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this object logic.")
 		EndIf
-		
+
 	Case "ModelName"
 		If ObjectAdjusterModelName\Absolute
 			Count=CountObjectModelNames(CurrentObject\Attributes\ModelName$)
 			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this ModelName.")
 		EndIf
-	
+
 	Case "TextureName"
 		If ObjectAdjusterTextureName\Absolute
 			Count=CountObjectTextureNames(CurrentObject\Attributes\TexName$)
 			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this TextureName.")
 		EndIf
-		
+
 	Case "ID"
 		If ObjectAdjusterID\Absolute
 			EffectiveID=CalculateEffectiveID(CurrentObject\Attributes)
 			Count=CountObjectEffectiveIDs(EffectiveID)
 			ShowTooltipRightAligned(StartX,TooltipLeftY,Count+" "+MaybePluralize$("object",Count)+" in this level "+MaybePluralize$("has",Count)+" this effective ID, which is "+EffectiveID+".")
 		EndIf
-		
+
 	Case "Talkable"
 		If ObjectAdjusterTalkable\Absolute
 			TheDialog=CurrentObject\Attributes\Talkable
@@ -13350,42 +13008,41 @@ Function HoverOverObjectAdjuster(i)
 				ShowTooltipRightAligned(StartX,TooltipLeftY,PreviewDialog$(TheDialog,0))
 			EndIf
 		EndIf
-	
+
 	Case "Exclamation"
 		If CurrentObject\Attributes\Exclamation<>-1
 			ShowParticlePreviewRightAligned(StartX,TooltipLeftY,CurrentObject\Attributes\Exclamation)
 		EndIf
-	
+
 	End Select
 
 End Function
 
-
 Function DisplayObjectAdjuster(i)
 
 	tex2$=ObjectAdjuster$(i)
-	
+
 	CurrentAdjusterRandomized=False
 	CurrentAdjusterAbsolute=True
 	CurrentAdjusterZero=False
 	LeftAdj$=""
 	RightAdj$=""
-	
+
 	StartX=SidebarX+10
 	StartY=SidebarY+305
 	StartY=StartY+15+(i-ObjectAdjusterStart)*15
-	
+
 	Select ObjectAdjuster$(i)
 	Case "TextureName"
 		tex2$="Texture"
 		tex$=CurrentObject\Attributes\TexName$
 		tex$=SetAdjusterDisplayString(ObjectAdjusterTextureName,CurrentObject\Attributes\TexName$,tex$)
-	
+
 	Case "ModelName"
 		tex2$="Model"
 		tex$=CurrentObject\Attributes\ModelName$
 		tex$=SetAdjusterDisplayString(ObjectAdjusterModelName,CurrentObject\Attributes\ModelName$,tex$)
-		
+
 	Case "X"
 		tex$=Str$(CurrentObject\Position\X)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterX,CurrentObject\Position\X,tex$)
@@ -13395,7 +13052,7 @@ Function DisplayObjectAdjuster(i)
 	Case "Z"
 		tex$=Str$(CurrentObject\Position\Z)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterZ,CurrentObject\Position\Z,tex$)
-	
+
 	Case "XAdjust"
 		tex$=Str$(CurrentObject\Attributes\XAdjust)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterXAdjust,CurrentObject\Attributes\XAdjust,tex$)
@@ -13405,7 +13062,7 @@ Function DisplayObjectAdjuster(i)
 	Case "ZAdjust"
 		tex$=Str$(CurrentObject\Attributes\ZAdjust)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,tex$)
-	
+
 	Case "XScale"
 		tex$=Str$(CurrentObject\Attributes\XScale)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterXScale,CurrentObject\Attributes\XScale,tex$)
@@ -13415,7 +13072,7 @@ Function DisplayObjectAdjuster(i)
 	Case "ZScale"
 		tex$=Str$(CurrentObject\Attributes\ZScale)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterZScale,CurrentObject\Attributes\ZScale,tex$)
-		
+
 	Case "DefensePower"
 		tex$=Str$(CurrentObject\Attributes\DefensePower)
 		tex2$="Greeting"
@@ -13471,16 +13128,16 @@ Function DisplayObjectAdjuster(i)
 			tex$="Victory"
 
 		End Select
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterDefensePower,CurrentObject\Attributes\DefensePower,tex$)
-		
+
 	Case "AttackPower"
 		tex$=Str$(CurrentObject\Attributes\AttackPower)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterAttackPower,CurrentObject\Attributes\AttackPower,tex$)
-		
+
 	Case "DestructionType"
 		tex$=Str$(CurrentObject\Attributes\DestructionType)
-		
+
 		Select CurrentObject\Attributes\DestructionType
 			Case 0
 				tex$="None"
@@ -13489,9 +13146,9 @@ Function DisplayObjectAdjuster(i)
 			Case 2
 				tex$="MODDED" ; Purple
 		End Select
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterDestructionType,CurrentObject\Attributes\DestructionType,tex$)
-		
+
 	Case "YawAdjust"
 		tex$=Str$(CurrentObject\Attributes\YawAdjust)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterYawAdjust,CurrentObject\Attributes\YawAdjust,tex$)
@@ -13501,7 +13158,7 @@ Function DisplayObjectAdjuster(i)
 	Case "RollAdjust"
 		tex$=Str$(CurrentObject\Attributes\RollAdjust)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterRollAdjust,CurrentObject\Attributes\RollAdjust,tex$)
-	
+
 	Case "ID"
 		tex$=Str$(CurrentObject\Attributes\ID)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterID,CurrentObject\Attributes\ID,tex$)
@@ -13510,7 +13167,7 @@ Function DisplayObjectAdjuster(i)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterLogicType,CurrentObject\Attributes\LogicType,tex$)
 	Case "SubType"
 		tex$=Str$(CurrentObject\Attributes\LogicSubType)
-		
+
 		If CurrentObject\Attributes\ModelName$="!Crab"
 			tex2$="Color"
 			If CurrentObject\Attributes\LogicSubType=0
@@ -13519,7 +13176,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="Red"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
 			If CurrentObject\Attributes\LogicSubType=1
 				tex$="Sold Out"
@@ -13528,7 +13185,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 			tex$=CurrentObject\Attributes\LogicSubType+"/"+tex$
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=179 ; Custom Item
 			tex2$="Fn"
 			If CurrentObject\Attributes\LogicSubType>=0 And CurrentObject\Attributes\LogicSubType<30
@@ -13677,7 +13334,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="InvRotator"
 			End Select
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=120 Or CurrentObject\Attributes\LogicType=400 ; Wee Stinker or Baby Boomer
 			Select CurrentObject\Attributes\LogicSubType
 			Case -2
@@ -13698,17 +13355,17 @@ Function DisplayObjectAdjuster(i)
 				tex$="CagedFollow"
 			End Select
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="AudioTimeOffset"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterLogicSubType,CurrentObject\Attributes\LogicSubType,tex$)
-		
+
 	Case "TimerMax1"
 		tex$=Str$(CurrentObject\Attributes\TimerMax1)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimerMax1,CurrentObject\Attributes\TimerMax1,tex$)
-		
+
 		If CurrentObject\Attributes\LogicType=20 ; Fire trap
 			tex2$=" TimerOn" ; Extra space to align it with TimerOff.
 		ElseIf CurrentObject\Attributes\LogicType=40 ; Bridge
@@ -13719,14 +13376,14 @@ Function DisplayObjectAdjuster(i)
 	Case "TimerMax2"
 		tex$=Str$(CurrentObject\Attributes\TimerMax2)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimerMax2,CurrentObject\Attributes\TimerMax2,tex$)
-		
+
 		If CurrentObject\Attributes\LogicType=20 ; Fire trap
 			tex2$="TimerOff"
 		EndIf
 	Case "Timer"
 		tex$=Str$(CurrentObject\Attributes\Timer)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,tex$)
-		
+
 		If CurrentObject\Attributes\LogicType=20 ; Fire trap
 			tex2$="StartDelay"
 		ElseIf CurrentObject\Attributes\LogicType=40 ; Bridge
@@ -13740,13 +13397,12 @@ Function DisplayObjectAdjuster(i)
 		tex2$=""
 		tex$=CurrentObject\Attributes\TextData0$
 		tex$=SetAdjusterDisplayString(ObjectAdjusterTextData0,CurrentObject\Attributes\TextData0$,tex$)
-		
+
 	Case "TextData1"
 		tex2$=""
 		tex$=CurrentObject\Attributes\TextData1$
 		tex$=SetAdjusterDisplayString(ObjectAdjusterTextData1,CurrentObject\Attributes\TextData1$,tex$)
 
-		
 	Case "Active"
 		If CurrentObject\Attributes\Active=0
 			tex$="No (0)"
@@ -13758,42 +13414,42 @@ Function DisplayObjectAdjuster(i)
 			tex$="Soon Yes ("+CurrentObject\Attributes\Active+")"
 		EndIf
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterActive,CurrentObject\Attributes\Active,tex$)
-		
+
 	Case "ActivationSpeed"
 		tex$=Str$(CurrentObject\Attributes\ActivationSpeed)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterActivationSpeed,CurrentObject\Attributes\ActivationSpeed,tex$)
-		
+
 	Case "ActivationType"
 		tex$=GetActivationTypeString$(CurrentObject\Attributes\ActivationType)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterActivationType,CurrentObject\Attributes\ActivationType,tex$)
-		
+
 	Case "ButtonPush"
 		tex$=CurrentObject\Attributes\ButtonPush+"/"+OneToYes$(CurrentObject\Attributes\ButtonPush)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterButtonPush,CurrentObject\Attributes\ButtonPush,tex$)
-		
+
 	Case "WaterReact"
 		tex$=Str$(CurrentObject\Attributes\WaterReact)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterWaterReact,CurrentObject\Attributes\WaterReact,tex$)
-		
+
 	Case "Freezable"
 		tex$=Str$(CurrentObject\Attributes\Freezable)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterFreezable,CurrentObject\Attributes\Freezable,tex$)
-		
+
 	Case "Frozen"
 		tex$=Str$(CurrentObject\Attributes\Frozen)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,tex$)
-		
+
 	Case "Teleportable"
 		tex$=CurrentObject\Attributes\Teleportable+"/"+OneToYes$(CurrentObject\Attributes\Teleportable)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,tex$)
-	
+
 	Case "Data0"
 		tex$=Str$(CurrentObject\Attributes\Data0)
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="YawAnim"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!Obstacle48" ; (wysp ship)
 			tex2$="Turning"
 			Select CurrentObject\Attributes\Data0
@@ -13804,19 +13460,19 @@ Function DisplayObjectAdjuster(i)
 			End Select
 			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
-		
-		If CurrentObject\Attributes\ModelName$="!Scritter" Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"		
+
+		If CurrentObject\Attributes\ModelName$="!Scritter" Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObject\Attributes\ModelName$="!Spring" Or CurrentObject\Attributes\ModelName$="!SteppingStone" Or CurrentObject\Attributes\ModelName$="!Transporter" Or CurrentObject\Attributes\ModelName$="!ColourGate" Or CurrentObject\Attributes\ModelName$="!Key" Or CurrentObject\Attributes\ModelName$="!KeyCard" Or CurrentObject\Attributes\ModelName$="!Teleport" Or CurrentObject\Attributes\ModelName$="!FlipBridge" Or CurrentObject\Attributes\ModelName$="!Pushbot" Or CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!Conveyor"
 			tex2$="Colour"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			tex2$="Shape"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!CustomItem"
 			tex2$="Texture"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!WaterFall"
 			tex2$="Type"
 			Select CurrentObject\Attributes\Data0
@@ -13828,8 +13484,7 @@ Function DisplayObjectAdjuster(i)
 					tex$="Green"
 			End Select
 		EndIf
-		
-		
+
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			tex2$="Shape"
 		EndIf
@@ -13846,10 +13501,10 @@ Function DisplayObjectAdjuster(i)
 			End Select
 
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Kaboom"
 			tex2$="Texture"
-			
+
 			Select CurrentObject\Attributes\Data0
 			Case 1
 				tex$="Blue"
@@ -13862,17 +13517,16 @@ Function DisplayObjectAdjuster(i)
 			Case 5
 				tex$="Dark"
 			End Select
-				
-			
+
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Wisp"
 			tex2$="Texture"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Retrozbot"
 			tex2$="Direction"
-			
+
 			Select CurrentObject\Attributes\Data0
 			Case 0
 				tex$="North"
@@ -13884,19 +13538,19 @@ Function DisplayObjectAdjuster(i)
 				tex$="West"
 			End Select
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
 			tex2$="Red"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!GrowFlower"
 			tex2$="TileLogic"
 			tex$=LogicIdToLogicName$(CurrentObject\Attributes\Data0)
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC" Or CurrentObject\Attributes\LogicType=110
 			tex2$="Texture"
-			
+
 			Select CurrentObject\Attributes\Data0
 			Case 1
 				tex$="1/Blue"
@@ -13916,25 +13570,25 @@ Function DisplayObjectAdjuster(i)
 				tex$="8/White"
 			End Select
 		EndIf
-		
+
 		; Model checks are separated from Type checks so that the Type can override the model.
-		
+
 		If CurrentObject\Attributes\LogicType=51 Or CurrentObject\Attributes\LogicType=200 Or CurrentObject\Attributes\LogicType=201 ; spellball generator or glovecharge or glove discharge
 			tex2$="Spell"
 			tex$=GetMagicNameAndId(CurrentObject\Attributes\Data0)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=179 ; Custom Item
 			tex2$="Texture"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=320 ; Void
 			tex2$="TimeOffset"
 			If CurrentObject\Attributes\Data0=0
 				tex$="Random"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=350 ; GrowFlower
 			tex2$="TileLogic"
 			tex$=LogicIdToLogicName$(CurrentObject\Attributes\Data0)
@@ -13943,12 +13597,12 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=40 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=10 Or CurrentObject\Attributes\LogicType=172 Or CurrentObject\Attributes\LogicType=30 Or CurrentObject\Attributes\LogicType=140 Or CurrentObject\Attributes\LogicType=20 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=424 Or CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Colour"
 		EndIf
-		
+
 		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
 			tex2$="CMD"
 			tex$=Str(CurrentObject\Attributes\Data0)+"/"+GetCommandName$(CurrentObject\Attributes\Data0)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				tex2$="Colour1"
@@ -13973,7 +13627,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=11 ; TollGate
 			tex2$="Cost"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=165 ; Arcade Cabinet
 			tex2$="Activates"
 			Data0=CurrentObject\Attributes\Data0
@@ -13988,11 +13642,10 @@ Function DisplayObjectAdjuster(i)
 			Wend
 		EndIf
 
-		
 		If CurrentObject\Attributes\LogicType=40 ; bridge
 			tex$=Str$(CurrentObject\Attributes\Data0+8)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=70 ; Beta Pickup Item
 			tex2$="Fn"
 			tex$=GetItemFnName$(CurrentObject\Attributes\Data0)
@@ -14019,7 +13672,7 @@ Function DisplayObjectAdjuster(i)
 				Case 7
 					tex$="NorthWest"
 				End Select
-				
+
 			Else
 				Select CurrentObject\Attributes\Data0
 				Case 0
@@ -14031,7 +13684,7 @@ Function DisplayObjectAdjuster(i)
 				Case 3
 					tex$="West"
 				End Select
-				
+
 			EndIf
 		EndIf
 		If CurrentObject\Attributes\LogicType=250 ; chomper
@@ -14040,7 +13693,7 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObject\Attributes\LogicType=230 ; fireflower
 			tex2$="Direction"
-			
+
 			Select CurrentObject\Attributes\Data0
 			Case 0
 				tex$="North"
@@ -14063,7 +13716,7 @@ Function DisplayObjectAdjuster(i)
 		; turtle or scouge or ufo or retro z-bot or zipbot or zapbot
 		If CurrentObject\Attributes\LogicType=220 Or CurrentObject\Attributes\LogicType=421 Or CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=423 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431
 			tex2$="Direction"
-			
+
 			Select CurrentObject\Attributes\Data0
 			Case 0
 				tex$="North"
@@ -14075,7 +13728,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="West"
 			End Select
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=300 Or CurrentObject\Attributes\LogicType=301 ; Brr float or rainbow float
 			tex2$="Deactivating"
 			If CurrentObject\Attributes\Data0=0
@@ -14087,14 +13740,14 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObject\Attributes\LogicType=310 ; duck
 			tex2$="Move"
-			If CurrentObject\Attributes\Data0=1 
+			If CurrentObject\Attributes\Data0=1
 				tex$="Yes"
 			Else
 				tex$="No"
 			EndIf
 			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
 			tex2$="Exploding"
 			If CurrentObject\Attributes\Data0<=0
@@ -14106,29 +13759,27 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 			tex$=CurrentObject\Attributes\Data0+"/"+tex$
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=434 ; mothership
 			tex2$="SpawnTimer" ; Formerly TimerMax
 			If CurrentObject\Attributes\Data0=0
 				tex$="No Spawns"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=460 ; BurstFlower
 			tex2$="TimeOffset"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=470 Or CurrentObject\Attributes\LogicType=471 ; ghost or wraith
 			tex2$="Radius"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=52 ; meteor shooter
 			tex2$="StartZ"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData0,CurrentObject\Attributes\Data0,tex$)
-
-
 
 	Case "Data1"
 		tex$=Str$(CurrentObject\Attributes\Data1)
@@ -14136,19 +13787,19 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			tex2$="Texture"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			tex2$="Colour"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!FlipBridge"
 			tex2$="SubColour"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="PitchAnim"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Chomper"
 			tex2$="Special"
 			If CurrentObject\Attributes\Data1=0
@@ -14161,15 +13812,15 @@ Function DisplayObjectAdjuster(i)
 				tex$="Mecha"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
 			tex2$="Green"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Sign"
 			tex2$="Texture"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Crab"
 			tex2$="Status"
 			If CurrentObject\Attributes\Data1=0
@@ -14182,31 +13833,31 @@ Function DisplayObjectAdjuster(i)
 				tex$="Disabled"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC" Or CurrentObject\Attributes\LogicType=110
 			tex2$="Expression"
 			tex$=GetStinkerExpressionName$(CurrentObject\Attributes\Data1)
 		EndIf
-		
+
 		; spring or bridge or transporter or gate or key or teleporter or cage or fire trap or laser gate or moobot or suctube or conveyor
 		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=40 Or CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=10 Or CurrentObject\Attributes\LogicType=172 Or CurrentObject\Attributes\LogicType=30 Or CurrentObject\Attributes\LogicType=140 Or CurrentObject\Attributes\LogicType=20 Or CurrentObject\Attributes\LogicType=410 Or CurrentObject\Attributes\LogicType=424 Or CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\LogicType=281 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="SubColour"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=242 ; cuboid
 			tex2$="Turning"
-			If CurrentObject\Attributes\Data1=0 
+			If CurrentObject\Attributes\Data1=0
 				tex$="No"
 			Else
 				tex$="Yes"
 			EndIf
 		EndIf
-		
+
 		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
 			tex2$=GetCMDData1Name$(CurrentObject\Attributes\Data0)
 			tex$=GetCmdData1ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data1)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
 				tex2$="Colour2"
@@ -14229,9 +13880,9 @@ Function DisplayObjectAdjuster(i)
 					tex2$="NPC ID"
 				EndIf
 			EndIf
-			
+
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="GoalY"
 		EndIf
@@ -14240,7 +13891,7 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObject\Attributes\Data1=1 tex$="Low"
 			If CurrentObject\Attributes\Data1=2 tex$="Reg"
 			If CurrentObject\Attributes\Data1=3 tex$="High"
-			
+
 		EndIf
 		If CurrentObject\Attributes\LogicType=200 ; Glovecharge
 			tex2$="Usability"
@@ -14255,17 +13906,17 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 		If CurrentObject\Attributes\LogicType=11 ; TollGate
 			tex2$="Type"
-			If CurrentObject\Attributes\Data1=0 
+			If CurrentObject\Attributes\Data1=0
 				tex$="Star"
 			Else
 				tex$="Coin"
 			EndIf
 			tex$=CurrentObject\Attributes\Data1+"/"+tex$
-			
+
 		EndIf
 		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			tex2$="Type"
-			
+
 			Select CurrentObject\Attributes\Data1
 			Case 0
 				tex$="Fire"
@@ -14310,18 +13961,18 @@ Function DisplayObjectAdjuster(i)
 				tex$="Left"
 			Else If CurrentObject\Attributes\Data1=1
 				tex$="Right"
-			
+
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=300 ; Brr float
 			tex2$="TimeOffset"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=310 ; RubberDucky
 			tex2$="TiltMagnitude"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=370 ; Crab
 			tex2$="Status"
 			If CurrentObject\Attributes\Data1=0
@@ -14334,8 +13985,6 @@ Function DisplayObjectAdjuster(i)
 				tex$="Disabled"
 			EndIf
 		EndIf
-		
-	
 
 		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 ; Thwart or Ice Troll
 			tex2$="WalkAnim"
@@ -14346,12 +13995,11 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 			tex$=CurrentObject\Attributes\Data1+"/"+tex$
 		EndIf
-		
-		
+
 		If CurrentObject\Attributes\LogicType=51 ; spellball generator
 			tex2$="Goal X"
 		EndIf
-		
+
 		; ufo or retro z-bot or zipbot or zapbot
 		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=423 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431
 			tex2$="Turning"
@@ -14361,56 +14009,53 @@ Function DisplayObjectAdjuster(i)
 				tex$="Right"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=460 ; BurstFlower
 			tex2$="BurstProgress"
 			If CurrentObject\Attributes\Data1=150
 				tex$="Fire"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=470 ; Ghost
 			tex2$="Speed"
 		EndIf
 		If CurrentObject\Attributes\LogicType=471 ; Wraith
 			tex2$="ShotTime"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=52 ; meteor shooter
 			tex2$="TargetX"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,tex$)
 
-
-		
 	Case "Data2"
 		tex$=Str$(CurrentObject\Attributes\Data2)
-		
+
 		If CurrentObject\Attributes\ModelName$="!ColourGate"
 			tex2$="Frame"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!FlipBridge"
 			tex2$="Direction"
 			tex$=GetFlipbridgeDirectionName$(CurrentObject\Attributes\Data2)
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			tex2$="XOffset"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			tex2$="Acc1"
-			
+
 			tex$=GetAccessoryName$(CurrentObject\Attributes\Data2)
-			
+
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
-				
-			
+
 		EndIf
-		
-		If CurrentObject\Attributes\ModelName$="!Thwart" 
+
+		If CurrentObject\Attributes\ModelName$="!Thwart"
 			tex2$="Colour"
 			If CurrentObject\Attributes\Data2=0
 				tex$="Standard"
@@ -14429,14 +14074,13 @@ Function DisplayObjectAdjuster(i)
 			Else If CurrentObject\Attributes\Data2=7
 				tex$="Purple"
 
-			
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Sun Sphere1"
 			tex2$="Blue"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Wraith"
 			tex2$="Magic"
 			Select CurrentObject\Attributes\Data2
@@ -14451,7 +14095,7 @@ Function DisplayObjectAdjuster(i)
 			End Select
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName="!Suctube"
 			tex2$="Direction"
 			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*90)
@@ -14461,12 +14105,12 @@ Function DisplayObjectAdjuster(i)
 			tex2$="Direction"
 			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*45)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=281 ; Suctube -
 			tex2$="Direction"
 			tex$=GetDirectionString$(CurrentObject\Attributes\Data2*90)
 		EndIf
-		
+
 		; transporter or suctubex or conveyor head/tail
 		If CurrentObject\Attributes\LogicType=210 Or CurrentObject\Attributes\LogicType=282 Or CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46
 			tex2$="Direction"
@@ -14485,12 +14129,12 @@ Function DisplayObjectAdjuster(i)
 				End Select
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=410 ; Flipbridge
 			tex2$="Direction"
 			tex$=GetFlipbridgeDirectionName$(CurrentObject\Attributes\Data2)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=432 ; Moobot
 			tex2$="Direction"
 			Select CurrentObject\Attributes\Data2
@@ -14506,11 +14150,11 @@ Function DisplayObjectAdjuster(i)
 				tex$=CurrentObject\Attributes\Data2+"/NoMove"
 			End Select
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="RollAnim"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=471 ; Wraith
 			tex2$="Magic"
 			Select CurrentObject\Attributes\Data2
@@ -14525,7 +14169,7 @@ Function DisplayObjectAdjuster(i)
 			End Select
 			tex$=CurrentObject\Attributes\Data2+"/"+tex$
 		EndIf
-		
+
 		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
 			tex2$=GetCMDData2Name$(CurrentObject\Attributes\Data0)
 			tex$=GetCmdData2ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2)
@@ -14553,15 +14197,15 @@ Function DisplayObjectAdjuster(i)
 				tex2$="Particle ID"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="SourceX"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=70 ; Beta Pickup Item
 			tex2$="Texture"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=190
 			tex2$="Direction"
 			If CurrentObject\Attributes\Data2=0 tex$="Up"
@@ -14570,37 +14214,37 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObject\Attributes\Data2=3 tex$="West"
 			If CurrentObject\Attributes\Data2=4 tex$="North"
 			If CurrentObject\Attributes\Data2=5 tex$="South"
-			
+
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			tex2$="State"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=260 ; Spikeyball
 			tex2$="Speed"
 			tex$="+"+Str$(CurrentObject\Attributes\Data2)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=300 ; Brr float
 			tex2$="PitchAnim"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=301 ; Rainbow float
 			tex2$="ColorOffset"
 			If CurrentObject\Attributes\Data2=0
 				tex$="Random"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=310 ; RubberDucky
 			tex2$="TimeOffset"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=320 ; Void
 			tex2$="SizeAdjust"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
 			tex2$="Turning"
 			If CurrentObject\Attributes\Data2=0
@@ -14613,8 +14257,7 @@ Function DisplayObjectAdjuster(i)
 
 		If CurrentObject\Attributes\LogicType=180 ; Sign
 			tex2$="Move"
-			
-				
+
 			Select CurrentObject\Attributes\Data2
 			Case 0
 				tex$="No"
@@ -14625,40 +14268,38 @@ Function DisplayObjectAdjuster(i)
 			Case 3
 				tex$="Turn"
 			End Select
-				
-			
+
 		EndIf
 		If CurrentObject\Attributes\LogicType=51 ; spellball generator
 			tex2$="Goal Y"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=431 ; zapbot
 			tex2$="Speed"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=242 ; cuboid
 			tex2$="CMD" ;"Explo CMD"
 			tex$=CurrentObject\Attributes\Data2+"/"+GetCommandName$(CurrentObject\Attributes\Data2)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=434 ; mothership
 			tex2$="SourceX"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=52 ; meteor shooter
 			tex2$="TargetY"
 		EndIf
 
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData2,CurrentObject\Attributes\Data2,tex$)
 
-		
 	Case "Data3"
 		tex$=Str$(CurrentObject\Attributes\Data3)
-		
+
 		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
 			tex2$="Style"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!IceBlock"
 			tex2$="Style"
 			Select CurrentObject\Attributes\Data3
@@ -14668,12 +14309,12 @@ Function DisplayObjectAdjuster(i)
 				tex$="Floing"
 			End Select
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			tex2$="Colour1"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=432 Or CurrentObject\Attributes\ModelName$="!Pushbot" ; Moobots
 			tex2$="Turn"
 			If CurrentObject\Attributes\Data3=2
@@ -14691,11 +14332,11 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 			tex$=CurrentObject\Attributes\Data3+"/"+tex$
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="XAnim"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=45 ; Conveyor heads
 			tex2$="Turn"
 			If CurrentObject\Attributes\Data3=0
@@ -14704,7 +14345,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="Right"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=210 ; Transporters
 			tex2$="Turn"
 			If CurrentObject\Attributes\Data3=0
@@ -14715,7 +14356,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="(MOD) Right"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=46 ; conveyor tail
 			tex2$="Cycles"
 		EndIf
@@ -14731,7 +14372,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="Silent/Glitched"
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="SourceY"
 		EndIf
@@ -14740,7 +14381,7 @@ Function DisplayObjectAdjuster(i)
 				tex2$="Sound"
 				If CurrentObject\Attributes\Data3=0 tex$="None"
 			EndIf
-			
+
 			If CurrentObject\Attributes\Data3=1
 				If CurrentObject\Attributes\LogicSubType=4 tex$="Spark"
 				If CurrentObject\Attributes\LogicSubType=5 tex$="QuietMagic"
@@ -14761,7 +14402,7 @@ Function DisplayObjectAdjuster(i)
 				If CurrentObject\Attributes\LogicSubType=5 tex$="Gem"
 			EndIf
 		EndIf
-		
+
 		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
 			tex2$=GetCMDData3Name$(CurrentObject\Attributes\Data0)
 			tex$=GetCmdData3ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
@@ -14791,29 +14432,29 @@ Function DisplayObjectAdjuster(i)
 				tex$=GetCmdData3ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			tex2$="HitPoints"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=300 ; Brr float
 			tex2$="RollAnim"
 		EndIf
-		
+
 		If  CurrentObject\Attributes\LogicType=431 ; Zapbot
 			tex2$="Range"
 		EndIf
-		
+
 		If  CurrentObject\Attributes\LogicType=242 ; Cuboid
 			;tex2$="Cmd Data1"
 			tex2$=GetCMDData1Name$(CurrentObject\Attributes\Data2)
 			tex$=GetCmdData1ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data3)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="SourceY"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=52 ; meteor shooter
 			tex2$="TargetZ"
 		EndIf
@@ -14822,23 +14463,23 @@ Function DisplayObjectAdjuster(i)
 
 	Case "Data4"
 		tex$=Str$(CurrentObject\Attributes\Data4)
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="YAnim"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Conveyor"
 			tex2$="Visual Type"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			tex2$="Acc2" ;"Glasses"
-			
+
 			tex$=GetAccessoryName$(CurrentObject\Attributes\Data4)
-			
+
 			tex$=CurrentObject\Attributes\Data4+"/"+tex$
 		EndIf
-		
+
 		If IsObjectTypeKeyblock(CurrentObject\Attributes\LogicType)
 			tex2$=GetCMDData4Name$(CurrentObject\Attributes\Data0)
 			tex$=GetCmdData4ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
@@ -14852,7 +14493,7 @@ Function DisplayObjectAdjuster(i)
 				tex2$="PlayerYaw"
 				DisplayedRotation=(CurrentObject\Attributes\Data4+180) Mod 360
 				tex$=GetDirectionString$(DisplayedRotation)
-				
+
 			Else If CurrentObject\Attributes\LogicSubType=11 And (CurrentObject\Attributes\Data0=0 Or CurrentObject\Attributes\Data0=2) ; NPC Modifier: NPC Move or NPC Exclamation
 				tex2$="Repeatable"
 				If CurrentObject\Attributes\Data4=0
@@ -14873,33 +14514,31 @@ Function DisplayObjectAdjuster(i)
 				tex$=GetCmdData4ValueName$(CurrentObject\Attributes\Data0,CurrentObject\Attributes\Data4)
 			EndIf
 		EndIf
-		
-		If CurrentObject\Attributes\LogicType=281 ; suctube 
+
+		If CurrentObject\Attributes\LogicType=281 ; suctube
 			tex2$="Sound"
 			If CurrentObject\Attributes\Data4=0
 				tex$="Normal"
-			Else 
+			Else
 				tex$="Portal"
 			EndIf
 		EndIf
-		
 
-		
 		If CurrentObject\Attributes\LogicType=190 ; Particle Emitter
 			tex2$="Timing"
 			If CurrentObject\Attributes\Data4=0 tex$="Random"
 			If CurrentObject\Attributes\Data4=1 tex$="Synchro"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			tex2$="PreviousHP"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=10 And CurrentObject\Attributes\LogicSubType=9 ; Autodoor
 			tex2$=GetAutodoorActivateName$(CurrentObject\Attributes\Data4)
 			tex$=GetAutodoorActivateValueName$(CurrentObject\Attributes\Data4)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=200 ; Glovecharge
 			tex2$="(MOD) Homing"
 			tex$=CurrentObject\Attributes\Data4+"/"+OneToYes$(CurrentObject\Attributes\Data4)
@@ -14910,40 +14549,39 @@ Function DisplayObjectAdjuster(i)
 			tex2$=GetCMDData2Name$(CurrentObject\Attributes\Data2)
 			tex$=GetCmdData2ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data4)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=431 Or CurrentObject\Attributes\LogicType=422 ; Zapbot or UFO
 			tex2$="Track"
 			tex$=CurrentObject\Attributes\Data4+"/"+OneToYes$(CurrentObject\Attributes\Data4)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalX1"
 		EndIf
-		
-		tex$=SetAdjusterDisplayInt(ObjectAdjusterData4,CurrentObject\Attributes\Data4,tex$)
 
+		tex$=SetAdjusterDisplayInt(ObjectAdjusterData4,CurrentObject\Attributes\Data4,tex$)
 
 	Case "Data5"
 		tex$=Str$(CurrentObject\Attributes\Data5)
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			tex2$="Colour2"
 			tex$=GetAccessoryColorNameWithColorInt$(CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5+1)
 		EndIf
-		
+
 		CurrentObjectModelName$=CurrentObject\Attributes\ModelName$
 		If CurrentObjectModelName$="!Door" Or CurrentObjectModelName$="!Obstacle36" Or CurrentObjectModelName$="!Obstacle37" Or CurrentObjectModelName$="!Obstacle38" Or CurrentObjectModelName$="!Obstacle39" Or CurrentObjectModelName$="!Obstacle40"
 			tex2$="Style"
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!GlowWorm" Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Red"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="ZAnim"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=281 ; Suctube
 			tex2$="Particles"
 			If CurrentObject\Attributes\Data5=0
@@ -14952,7 +14590,6 @@ Function DisplayObjectAdjuster(i)
 				tex$="No"
 			EndIf
 		EndIf
-		
 
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If IsObjectSubTypeFourColorButton(CurrentObject\Attributes\LogicSubType)
@@ -14965,7 +14602,6 @@ Function DisplayObjectAdjuster(i)
 					tex$="Yes"
 				EndIf
 
-
 			Else If (CurrentObject\Attributes\LogicSubType Mod 32)=15 Or (CurrentObject\Attributes\LogicSubType = 11 And CurrentObject\Attributes\Data0=1)
 				tex2$="Repeatable"
 				If CurrentObject\Attributes\Data5=0
@@ -14975,7 +14611,6 @@ Function DisplayObjectAdjuster(i)
 				EndIf
 			Else If CurrentObject\Attributes\LogicSubType = 11 And CurrentObject\Attributes\Data0=0
 				tex2$="DelayTimer"
-
 
 			EndIf
 		EndIf
@@ -14988,33 +14623,31 @@ Function DisplayObjectAdjuster(i)
 				tex$="Step"
 			EndIf
 		EndIf
-		
-		
-		
+
 		If CurrentObject\Attributes\LogicType=10 And CurrentObject\Attributes\LogicSubType=9 ; Autodoor
 			tex2$=GetAutodoorActivateName$(CurrentObject\Attributes\Data5)
 			tex$=GetAutodoorActivateValueName$(CurrentObject\Attributes\Data5)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=242 ; Cuboid
 			;tex2$="Cmd Data3"
 			tex2$=GetCMDData3Name$(CurrentObject\Attributes\Data2)
 			tex$=GetCmdData3ValueName$(CurrentObject\Attributes\Data2,CurrentObject\Attributes\Data4,CurrentObject\Attributes\Data5)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalY1"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData5,CurrentObject\Attributes\Data5,tex$)
-		
+
 	Case "Data6"
 		tex$=Str$(CurrentObject\Attributes\Data6)
-		
+
 		If CurrentObject\Attributes\ModelName$="!GlowWorm" Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Green"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="XSpeed"
 		EndIf
@@ -15033,17 +14666,17 @@ Function DisplayObjectAdjuster(i)
 				EndIf
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
 			tex2$="WalkAnim"
 			tex$=GetStinkerNPCWalkAnimName$(CurrentObject\Attributes\Data6)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=120 ; Wee Stinker
 			tex2$="Burning"
 			If CurrentObject\Attributes\Data6=600 tex$="Death"
 		EndIf
-		
+
 		; Thwart, Ice Troll, Z-Bot NPC
 		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 Or CurrentObject\Attributes\LogicType=433
 			tex2$="Shooter"
@@ -15062,7 +14695,7 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46 ; Conveyor (is tail relevant here?)
 			tex2$="ActivationWait"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=242 ; Cuboid
 			;tex2$="Cmd Data4"
 			tex2$=GetCMDData4Name$(CurrentObject\Attributes\Data2)
@@ -15072,16 +14705,16 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalX2"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData6,CurrentObject\Attributes\Data6,tex$)
 
 	Case "Data7"
 		tex$=Str$(CurrentObject\Attributes\Data7)
-		
+
 		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
 			tex2$="Blue"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="YSpeed"
 		EndIf
@@ -15096,44 +14729,42 @@ Function DisplayObjectAdjuster(i)
 				Else
 					tex$=GetNPCTurningName$(CurrentObject\Attributes\Data7)
 				EndIf
-				
-				
+
 			EndIf
 		EndIf
 		If CurrentObject\Attributes\LogicType=110 Or CurrentObject\Attributes\LogicType=390 ; Stinker NPC or Kaboom NPC
-		
+
 			tex2$="Turn"
 			tex$=GetNPCTurningName$(CurrentObject\Attributes\Data7)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=290 Or CurrentObject\Attributes\LogicType=380 Or CurrentObject\Attributes\LogicType=433 ; Thwart, Ice Troll, and Z-Bot NPC
 
 			tex2$="AttackTimer" ; "TimerMax1"
 		EndIf
-		
-		
+
 		If CurrentObject\Attributes\LogicType=10 And CurrentObject\Attributes\LogicSubType=9 ; Autodoor
 			tex2$="StayOnTimer"
-			
+
 		EndIf
 
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalY2"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=441 ; Sun Sphere 1
 			tex2$="TimeOffset"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData7,CurrentObject\Attributes\Data7,tex$)
 
 	Case "Data8"
 		tex$=Str$(CurrentObject\Attributes\Data8)
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="ZSpeed"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=120 ; Wee Stinker
 			tex2$="Type"
 			If CurrentObject\Attributes\Data8=0 tex$="Normal"
@@ -15150,14 +14781,14 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
-			
+
 			tex2$="IdleAnim"
-			tex$=GetStinkerNPCIdleAnimName$(CurrentObject\Attributes\Data8)			
-			
+			tex$=GetStinkerNPCIdleAnimName$(CurrentObject\Attributes\Data8)
+
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=390 ; Kaboom NPC
-			
+
 			tex2$="Anim"
 			If CurrentObject\Attributes\Data8=0 tex$="Stand"
 			If CurrentObject\Attributes\Data8=1 tex$="Sit"
@@ -15165,25 +14796,23 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObject\Attributes\Data8=3 tex$="Shiver Some"
 			If CurrentObject\Attributes\Data8=4 tex$="Shiver Constant"
 			If CurrentObject\Attributes\Data8=5 tex$="Exercise"
-	
-			
-			
+
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=400 ; Baby Boomer
-			
+
 			tex2$="Boom"
 			If CurrentObject\Attributes\Data8=0 tex$="No"
 			If CurrentObject\Attributes\Data8=1 tex$="Yes"
-			
+
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="FromZapbot"
 			If CurrentObject\Attributes\Data8=0 tex$="No"
 			If CurrentObject\Attributes\Data8=-99 tex$="Yes"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=431 ; UFO or Zapbot
 			tex2$="LastShotTimer"
 		EndIf
@@ -15191,21 +14820,20 @@ Function DisplayObjectAdjuster(i)
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalX3"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=471 ; Wraith
 			tex2$="TimeOffset"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData8,CurrentObject\Attributes\Data8,tex$)
 
 	Case "Data9"
 		tex$=Str$(CurrentObject\Attributes\Data9)
-		
+
 		If CurrentObject\Attributes\LogicType=160 And CurrentObject\Attributes\ModelName$="!CustomModel"
 			tex2$="Deadly"
 			If CurrentObject\Attributes\Data9=0 tex$="No"
 			If CurrentObject\Attributes\Data9=1 tex$="Yes"
-			
 
 		EndIf
 
@@ -15219,40 +14847,39 @@ Function DisplayObjectAdjuster(i)
 				EndIf
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46 ; Conveyor head (or conveyor tail, assuming this is needed?)
 			tex2$="Tail Length"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=200
 			tex2$="ReadyForSound"
 			tex$=CurrentObject\Attributes\Data9+"/"+ZeroToYes$(CurrentObject\Attributes\Data9)
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431 ; UFO or Zipbot or Zapbot
 			tex2$="TrackTextureID"
 			If CurrentObject\Attributes\Data9=-1
 				tex$="Current"
 			EndIf
 		EndIf
-				
+
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			tex2$="FlyGoalY3"
 		EndIf
-		
-		
+
 		If CurrentObject\Attributes\LogicType=441 ; Sun Sphere 1
 			tex2$="Empty"
 			If CurrentObject\Attributes\Data9=0 tex$="No"
 			If CurrentObject\Attributes\Data9=1 tex$="Yes"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=470 Or CurrentObject\Attributes\LogicType=471 ; Ghost or Wraith
 			tex2$="Visibility"
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData9,CurrentObject\Attributes\Data9,tex$)
-		
+
 	Case "Talkable"
 		tex2$="Dialog"
 		If CurrentObject\Attributes\Talkable=0
@@ -15260,9 +14887,9 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObject\Attributes\Talkable)
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTalkable,CurrentObject\Attributes\Talkable,tex$)
-		
+
 	Case "MovementType"
 		tex$=CurrentObject\Attributes\MovementType+"/"+GetMovementTypeString$(CurrentObject\Attributes\MovementType)
 		tex2$="MvmtType"
@@ -15270,21 +14897,21 @@ Function DisplayObjectAdjuster(i)
 	Case "MovementTypeData"
 		tex$=Str$(CurrentObject\Attributes\MovementTypeData)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterMovementTypeData,CurrentObject\Attributes\MovementTypeData,tex$)
-		
+
 	Case "MovementSpeed"
 		tex$=Str$(CurrentObject\Attributes\MovementSpeed)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterMovementSpeed,CurrentObject\Attributes\MovementSpeed,tex$)
-		
+
 	Case "TileTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\TileTypeCollision)
 		tex2$="TTC"
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterTileTypeCollision,CurrentObject\Attributes\TileTypeCollision,tex$)
-		
+
 	Case "ObjectTypeCollision"
 		tex$=DisplayAsBinaryString$(CurrentObject\Attributes\ObjectTypeCollision)
 		tex2$="OTC"
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterObjectTypeCollision,CurrentObject\Attributes\ObjectTypeCollision,tex$)
-		
+
 	Case "ScaleAdjust"
 		tex$=Str$(CurrentObject\Attributes\ScaleAdjust)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterScaleAdjust,CurrentObject\Attributes\ScaleAdjust,tex$)
@@ -15294,9 +14921,9 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObject\Attributes\Exclamation)
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterExclamation,CurrentObject\Attributes\Exclamation,tex$)
-		
+
 	Case "Linked"
 		If CurrentObject\Attributes\Linked=-1
 			tex$="None"
@@ -15305,9 +14932,9 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObject\Attributes\Linked)
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterLinked,CurrentObject\Attributes\Linked,tex$)
-		
+
 	Case "LinkBack"
 		If CurrentObject\Attributes\LinkBack=-1
 			tex$="None"
@@ -15316,45 +14943,45 @@ Function DisplayObjectAdjuster(i)
 		Else
 			tex$=Str$(CurrentObject\Attributes\LinkBack)
 		EndIf
-		
+
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterLinkBack,CurrentObject\Attributes\LinkBack,tex$)
-	
+
 	Case "Parent"
 		tex$=Str$(CurrentObject\Attributes\Parent)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterParent,CurrentObject\Attributes\Parent,tex$)
-		
+
 	Case "Child"
 		tex$=Str$(CurrentObject\Attributes\Child)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterChild,CurrentObject\Attributes\Child,tex$)
-		
+
 	Case "DX"
 		tex$=Str$(CurrentObject\Attributes\DX)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterDX,CurrentObject\Attributes\DX,tex$)
-		
+
 	Case "DY"
 		tex$=Str$(CurrentObject\Attributes\DY)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterDY,CurrentObject\Attributes\DY,tex$)
-		
+
 	Case "DZ"
 		tex$=Str$(CurrentObject\Attributes\DZ)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterDZ,CurrentObject\Attributes\DZ,tex$)
-		
+
 	Case "MoveXGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveXGoal)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterMoveXGoal,CurrentObject\Attributes\MoveXGoal,tex$)
-		
+
 	Case "MoveYGoal"
 		tex$=Str$(CurrentObject\Attributes\MoveYGoal)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterMoveYGoal,CurrentObject\Attributes\MoveYGoal,tex$)
-		
+
 	Case "Data10"
 		tex$=Str$(CurrentObject\Attributes\Data10)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterData10,CurrentObject\Attributes\Data10,tex$)
-		
+
 	Case "Caged"
 		tex$=Str$(CurrentObject\Attributes\Caged)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterCaged,CurrentObject\Attributes\Caged,tex$)
-		
+
 	Case "Dead"
 		tex$=Str$(CurrentObject\Attributes\Dead)
 		Select CurrentObject\Attributes\Dead
@@ -15364,15 +14991,15 @@ Function DisplayObjectAdjuster(i)
 				tex$="Sinking"
 		End Select
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterDead,CurrentObject\Attributes\Dead,tex$)
-		
+
 	Case "DeadTimer"
 		tex$=Str$(CurrentObject\Attributes\DeadTimer)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterDeadTimer,CurrentObject\Attributes\DeadTimer,tex$)
-		
+
 	Case "MovementTimer"
 		tex$=Str$(CurrentObject\Attributes\MovementTimer)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterMovementTimer,CurrentObject\Attributes\MovementTimer,tex$)
-		
+
 	Case "Flying"
 		State$="Grounded"
 		If CurrentObject\Attributes\Flying/10 = 1	; bounced by spring
@@ -15381,7 +15008,7 @@ Function DisplayObjectAdjuster(i)
 			If CurrentObject\Attributes\Flying Mod 10 >=3 And CurrentObject\Attributes\Flying Mod 10<=5 Then State$="Spr South"
 			If CurrentObject\Attributes\Flying Mod 10 >=7 Or CurrentObject\Attributes\Flying Mod 10<=1 Then State$="Spr North"
 		EndIf
-	
+
 		If CurrentObject\Attributes\Flying/10 = 2	; on ice
 			If CurrentObject\Attributes\Flying Mod 10 >=1 And CurrentObject\Attributes\Flying Mod 10<=3 Then State$="Ice East"
 			If CurrentObject\Attributes\Flying Mod 10 >=5 And CurrentObject\Attributes\Flying Mod 10<=7 Then State$="Ice West"
@@ -15391,28 +15018,28 @@ Function DisplayObjectAdjuster(i)
 
 		tex$=CurrentObject\Attributes\Flying+" ("+State+")"
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterFlying,CurrentObject\Attributes\Flying,tex$)
-		
+
 	Case "Indigo"
 		tex$=Str$(CurrentObject\Attributes\Indigo)
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterIndigo,CurrentObject\Attributes\Indigo,tex$)
-		
+
 	Case "Speed"
 		tex$=Str$(CurrentObject\Attributes\Speed)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterSpeed,CurrentObject\Attributes\Speed,tex$)
-		
+
 	Case "Radius"
 		tex$=Str$(CurrentObject\Attributes\Radius)
 		tex$=SetAdjusterDisplayFloat(ObjectAdjusterRadius,CurrentObject\Attributes\Radius,tex$)
-		
+
 	Case "Status"
 		tex$=Str$(CurrentObject\Attributes\Status)
-		
+
 		If CurrentObject\Attributes\LogicType=50 ; spellball
 			tex2$="FromPlayer"
 			If CurrentObject\Attributes\Status=0 tex$="No"
 			If CurrentObject\Attributes\Status=1 tex$="Yes"
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=434 ; Mothership
 			If CurrentObject\Attributes\Status=0
 				tex$="Goal 1"
@@ -15426,7 +15053,7 @@ Function DisplayObjectAdjuster(i)
 				tex$="Exploding "+Str$(-CurrentObject\Attributes\Status)
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=470 Or CurrentObject\Attributes\LogicType=471 ; Wraith or Ghost
 			Select CurrentObject\Attributes\Status
 			Case 0
@@ -15439,32 +15066,31 @@ Function DisplayObjectAdjuster(i)
 		EndIf
 
 		tex$=SetAdjusterDisplayInt(ObjectAdjusterStatus,CurrentObject\Attributes\Status,tex$)
-	
-	End Select	
-	
-	
+
+	End Select
+
 	If HighlightWopAdjusters And AdjusterAppearsInWop(ObjectAdjuster$(i))
 		Color TextAdjusterHighlightedR,TextAdjusterHighlightedG,TextAdjusterHighlightedB
 	Else
 		Color TextAdjusterR,TextAdjusterG,TextAdjusterB
 	EndIf
-	
+
 	CrossedOut=CurrentAdjusterRandomized
-	
+
 	If CrossedOut
 		tex$=tex2$
 		Dashes$=""
 		For t=1 To Len(tex2$)
 			Dashes$=Dashes$+"-"
 		Next
-		
+
 		HalfNameWidth=4*Len(tex$)
-		
+
 		Text StartX+92-HalfNameWidth,StartY,Dashes$
-		
+
 		Text StartX+2,StartY,LeftAdj$
 		Text StartX+182-8*Len(RightAdj$),StartY,RightAdj$
-		
+
 	ElseIf tex2$<>"" And ObjectAdjuster$(i)<>"TextData0" And ObjectAdjuster$(i)<>"TextData1"
 		If CurrentAdjusterAbsolute
 			tex$=tex2$+": "+tex$
@@ -15476,7 +15102,7 @@ Function DisplayObjectAdjuster(i)
 			EndIf
 		EndIf
 	EndIf
-	
+
 	Text StartX+92-4*Len(tex$),StartY,tex$
 
 End Function
@@ -15561,15 +15187,14 @@ Function GetMagicColor(id,index)
 		green=0
 		blue=153
 	End Select
-	
+
 	If index=0 Return red
 	If index=1 Return green
 	If index=2 Return blue
-	
+
 	Return 255
 
 End Function
-
 
 Function GapSubType(SmallerExclusive,LargerExclusive)
 
@@ -15636,10 +15261,10 @@ Function AdjustInt(ValueName$, CurrentValue, NormalSpeed, FastSpeed, DelayTime)
 	If ShiftDown() Then Fast=True
 	RawInput=False
 	If CtrlDown() Then RawInput=True
-	
+
 	Adj=NormalSpeed
 	If Fast Adj=FastSpeed
-	
+
 	If LeftMouse=True
 		If RawInput=True
 			SomethingWasAdjusted=True
@@ -15690,10 +15315,10 @@ Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#
 	If ShiftDown() Then Fast=True
 	RawInput=False
 	If CtrlDown() Then RawInput=True
-	
+
 	Adj#=NormalSpeed
 	If Fast Adj#=FastSpeed
-	
+
 	If LeftMouse=True
 		If RawInput=True
 			SomethingWasAdjusted=True
@@ -15717,7 +15342,6 @@ Function AdjustFloatWithoutZeroRounding#(ValueName$, CurrentValue#, NormalSpeed#
 
 End Function
 
-
 Function GetActiveTexturePrefix$()
 
 	If CurrentTexturePrefix=-1
@@ -15727,7 +15351,6 @@ Function GetActiveTexturePrefix$()
 	EndIf
 
 End Function
-
 
 Function InputTextureName(Prompt$)
 
@@ -15740,7 +15363,6 @@ Function InputTextureName(Prompt$)
 	EndIf
 
 End Function
-
 
 Function InputModelName(Prompt$)
 
@@ -15755,18 +15377,16 @@ Function InputModelName(Prompt$)
 
 End Function
 
-
 Function ConfirmFindAndReplace()
 
 	Return GetConfirmation("Find and replace on matching values for ALL objects?")
 
 End Function
 
-
 Function CurrentObjectWasChanged()
 
 	CurrentGrabbedObjectModified=True
-	
+
 	If AreAllObjectAdjustersAbsolute()
 		SetBrushToCurrentObject()
 	EndIf
@@ -15798,14 +15418,13 @@ Function SetBrushToCurrentTile()
 
 End Function
 
-
 Function AdjustObjectAdjuster(i)
 
 	Fast=False
 	If ShiftDown() Then Fast=True
 	RawInput=False
 	If CtrlDown() Then RawInput=True
-	
+
 	DelayTime=10 ;150
 	SlowInt=1
 	FastInt=10
@@ -15831,7 +15450,7 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
-					
+
 					AddUnsavedChange()
 				EndIf
 			Else
@@ -15853,7 +15472,7 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
-					
+
 					AddUnsavedChange()
 				EndIf
 			Else
@@ -15874,14 +15493,14 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
-					
+
 					AddUnsavedChange()
 				EndIf
 			Else
 				InputTextureName("TextureName: ")
 			EndIf
 		EndIf
-		
+
 	Case "ModelName"
 		If MouseScroll<>0
 			If Left$(CurrentObject\Attributes\ModelName$,9)="!Obstacle"
@@ -15919,53 +15538,53 @@ Function AdjustObjectAdjuster(i)
 							UpdateLevelObjectModel(j)
 						EndIf
 					Next
-					
+
 					AddUnsavedChange()
 				EndIf
 			Else
 				InputModelName("ModelName: ")
 			EndIf
 		EndIf
-		
+
 	Case "DefensePower"
 		OldValue=CurrentObject\Attributes\DefensePower
-		
+
 		CurrentObject\Attributes\DefensePower=AdjustObjectAdjusterInt(ObjectAdjusterDefensePower,CurrentObject\Attributes\DefensePower,SlowInt,FastInt,DelayTime)
-		
+
 		If CurrentObject\Attributes\DefensePower>34 Then CurrentObject\Attributes\DefensePower=0
 		If CurrentObject\Attributes\DefensePower<0 Then CurrentObject\Attributes\DefensePower=34
-		
+
 		If CurrentObject\Attributes\DefensePower<>OldValue And SimulationLevel>=4
 			PlaySoundFX(DefensePowerToSoundId(CurrentObject\Attributes\DefensePower),-1,-1)
 		EndIf
-		
+
 	Case "AttackPower"
 		CurrentObject\Attributes\AttackPower=AdjustObjectAdjusterInt(ObjectAdjusterAttackPower,CurrentObject\Attributes\AttackPower,SlowInt,FastInt,DelayTime)
-		
+
 	Case "DestructionType"
 		CurrentObject\Attributes\DestructionType=AdjustObjectAdjusterInt(ObjectAdjusterDestructionType,CurrentObject\Attributes\DestructionType,SlowInt,FastInt,DelayTime)
-	
+
 	Case "YawAdjust"
 		SlowFloat#=SlowInt
 		FastFloat#=FastRotate
 		CurrentObject\Attributes\YawAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterYawAdjust,CurrentObject\Attributes\YawAdjust,SlowFloat#,FastFloat#,DelayTime)
-		
+
 		If CurrentObject\Attributes\YawAdjust>=360 Then CurrentObject\Attributes\YawAdjust=CurrentObject\Attributes\YawAdjust-360
 		If CurrentObject\Attributes\YawAdjust<0 Then CurrentObject\Attributes\YawAdjust=CurrentObject\Attributes\YawAdjust+360
-		
+
 	Case "PitchAdjust"
 		SlowFloat#=SlowInt
 		FastFloat#=FastRotate
 		CurrentObject\Attributes\PitchAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterPitchAdjust,CurrentObject\Attributes\PitchAdjust,SlowFloat#,FastFloat#,DelayTime)
-		
+
 		If CurrentObject\Attributes\PitchAdjust>=360 Then CurrentObject\Attributes\PitchAdjust=CurrentObject\Attributes\PitchAdjust-360
 		If CurrentObject\Attributes\PitchAdjust<0 Then CurrentObject\Attributes\PitchAdjust=CurrentObject\Attributes\PitchAdjust+360
-		
+
 	Case "RollAdjust"
 		SlowFloat#=SlowInt
 		FastFloat#=FastRotate
 		CurrentObject\Attributes\RollAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterRollAdjust,CurrentObject\Attributes\RollAdjust,SlowFloat#,FastFloat#,DelayTime)
-		
+
 		If CurrentObject\Attributes\RollAdjust>=360 Then CurrentObject\Attributes\RollAdjust=CurrentObject\Attributes\RollAdjust-360
 		If CurrentObject\Attributes\RollAdjust<0 Then CurrentObject\Attributes\RollAdjust=CurrentObject\Attributes\RollAdjust+360
 
@@ -15975,15 +15594,14 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Position\Y=AdjustObjectAdjusterFloat(ObjectAdjusterY,CurrentObject\Position\Y,SlowFloat#,FastFloat#,DelayTime)
 	Case "Z"
 		CurrentObject\Position\Z=AdjustObjectAdjusterFloat(ObjectAdjusterZ,CurrentObject\Position\Z,SlowFloat#,FastFloat#,DelayTime)
-		
+
 	Case "XAdjust"
 		CurrentObject\Attributes\XAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterXAdjust,CurrentObject\Attributes\XAdjust,SlowFloat#,FastFloat#,DelayTime)
 	Case "YAdjust"
 		CurrentObject\Attributes\YAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterYAdjust,CurrentObject\Attributes\YAdjust,SlowFloat#,FastFloat#,DelayTime)
 	Case "ZAdjust"
 		CurrentObject\Attributes\ZAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterZAdjust,CurrentObject\Attributes\ZAdjust,SlowFloat#,FastFloat#,DelayTime)
-		
-		
+
 	Case "XScale"
 		SlowFloat#=SlowScale#
 		CurrentObject\Attributes\XScale=AdjustObjectAdjusterFloat(ObjectAdjusterXScale,CurrentObject\Attributes\XScale,SlowFloat#,FastFloat#,DelayTime)
@@ -15994,7 +15612,6 @@ Function AdjustObjectAdjuster(i)
 		SlowFloat#=SlowScale#
 		CurrentObject\Attributes\ZScale=AdjustObjectAdjusterFloat(ObjectAdjusterZScale,CurrentObject\Attributes\ZScale,SlowFloat#,FastFloat#,DelayTime)
 
-
 	Case "ID"
 		FastInt=FastID
 		CurrentObject\Attributes\ID=AdjustObjectAdjusterInt(ObjectAdjusterID,CurrentObject\Attributes\ID,SlowInt,FastInt,DelayTime)
@@ -16003,26 +15620,26 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\LogicType=AdjustObjectAdjusterInt(ObjectAdjusterLogicType,CurrentObject\Attributes\LogicType,SlowInt,FastInt,DelayTime)
 	Case "SubType"
 		CurrentObject\Attributes\LogicSubType=AdjustObjectAdjusterInt(ObjectAdjusterLogicSubType,CurrentObject\Attributes\LogicSubType,SlowInt,FastInt,DelayTime)
-				
+
 		If CurrentObject\Attributes\LogicType=179 ; Custom Item
-		
+
 			Min=-400
 			Max=509
-		
+
 			If CurrentObject\Attributes\LogicSubType<Min
 				CurrentObject\Attributes\LogicSubType=Max
 			EndIf
-				
+
 			GapSubType(-400,-300)
 			GapSubType(-300,-200)
 			GapSubType(-195,-100)
 			GapSubType(-98,-6)
-				
+
 			If CurrentObject\Attributes\LogicSubType>27 And CurrentObject\Attributes\LogicSubType<490
 				CurrentObject\Attributes\LogicSubType=509
 			Else If CurrentObject\Attributes\LogicSubType>489 And CurrentObject\Attributes\LogicSubType<509
 				CurrentObject\Attributes\LogicSubType=27
-				
+
 			Else If CurrentObject\Attributes\LogicSubType>Max
 				CurrentObject\Attributes\LogicSubType=Min
 
@@ -16030,14 +15647,14 @@ Function AdjustObjectAdjuster(i)
 				CurrentObject\Attributes\LogicSubType=10
 			Else If CurrentObject\Attributes\LogicSubType=9
 				CurrentObject\Attributes\LogicSubType=7
-				
+
 			Else If CurrentObject\Attributes\LogicSubType=18
 				CurrentObject\Attributes\LogicSubType=20
 			Else If CurrentObject\Attributes\LogicSubType=19
 				CurrentObject\Attributes\LogicSubType=17
-				
+
 			EndIf
-		
+
 		EndIf
 		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			If CurrentObject\Attributes\LogicSubType<0 Then CurrentObject\Attributes\LogicSubType=3
@@ -16047,21 +15664,20 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\LogicSubType<0 Then CurrentObject\Attributes\LogicSubType=1
 			If CurrentObject\Attributes\LogicSubType>1 Then CurrentObject\Attributes\LogicSubType=0
 		EndIf
-		
 
 	Case "Active"
 		CurrentObject\Attributes\Active=AdjustObjectAdjusterToggle(ObjectAdjusterActive,CurrentObject\Attributes\Active,SlowInt,FastInt,RawInput,0,1001,DelayTime)
-		
+
 	Case "ActivationSpeed"
 		SlowInt=SlowInt*2
 		FastInt=FastInt*2
 		CurrentObject\Attributes\ActivationSpeed=AdjustObjectAdjusterInt(ObjectAdjusterActivationSpeed,CurrentObject\Attributes\ActivationSpeed,SlowInt,FastInt,DelayTime)
 	Case "ActivationType"
 		CurrentObject\Attributes\ActivationType=AdjustObjectAdjusterInt(ObjectAdjusterActivationType,CurrentObject\Attributes\ActivationType,SlowInt,FastInt,DelayTime)
-			
+
 		;If CurrentObject\Attributes\ModelName$="!SteppingStone"
 		;	If LeftMouse=True Or RightMouse=True
-		;		If CurrentObject\Attributes\ActivationType=3 
+		;		If CurrentObject\Attributes\ActivationType=3
 		;			CurrentObject\Attributes\ActivationType=16
 		;		Else If CurrentObject\Attributes\ActivationType=16
 		;			CurrentObject\Attributes\ActivationType=21
@@ -16071,7 +15687,7 @@ Function AdjustObjectAdjuster(i)
 		;	EndIf
 		;Else If CurrentObject\Attributes\ModelName$="!ColourGate"
 		;	If LeftMouse=True Or RightMouse=True
-		;		If CurrentObject\Attributes\ActivationType=1 
+		;		If CurrentObject\Attributes\ActivationType=1
 		;			CurrentObject\Attributes\ActivationType=2
 		;		Else If CurrentObject\Attributes\ActivationType=2
 		;			CurrentObject\Attributes\ActivationType=3
@@ -16085,7 +15701,7 @@ Function AdjustObjectAdjuster(i)
 		;	EndIf
 		;Else If CurrentObject\Attributes\ModelName$="!Autodoor"
 		;	If LeftMouse=True Or RightMouse=True
-		;		If CurrentObject\Attributes\ActivationType=11 
+		;		If CurrentObject\Attributes\ActivationType=11
 		;			CurrentObject\Attributes\ActivationType=17
 		;		Else If CurrentObject\Attributes\ActivationType=17
 		;			CurrentObject\Attributes\ActivationType=18
@@ -16097,7 +15713,7 @@ Function AdjustObjectAdjuster(i)
 		;			CurrentObject\Attributes\ActivationType=11
 		;		EndIf
 		;	EndIf
-		
+
 	Case "TimerMax1"
 		FastInt=FastTimer
 		CurrentObject\Attributes\TimerMax1=AdjustObjectAdjusterInt(ObjectAdjusterTimerMax1,CurrentObject\Attributes\TimerMax1,SlowInt,FastInt,DelayTime)
@@ -16107,19 +15723,19 @@ Function AdjustObjectAdjuster(i)
 	Case "Timer"
 		FastInt=FastTimer
 		CurrentObject\Attributes\Timer=AdjustObjectAdjusterInt(ObjectAdjusterTimer,CurrentObject\Attributes\Timer,SlowInt,FastInt,DelayTime)
-		
+
 	Case "ButtonPush"
 		CurrentObject\Attributes\ButtonPush=AdjustObjectAdjusterToggle(ObjectAdjusterButtonPush,CurrentObject\Attributes\ButtonPush,SlowInt,FastInt,RawInput,0,1,DelayTime)
-		
+
 	Case "WaterReact"
 		CurrentObject\Attributes\WaterReact=AdjustObjectAdjusterInt(ObjectAdjusterWaterReact,CurrentObject\Attributes\WaterReact,SlowInt,FastInt,DelayTime)
 	Case "Freezable"
 		CurrentObject\Attributes\Freezable=AdjustObjectAdjusterInt(ObjectAdjusterFreezable,CurrentObject\Attributes\Freezable,SlowInt,FastInt,DelayTime)
 	Case "Frozen"
-		CurrentObject\Attributes\Frozen=AdjustObjectAdjusterInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,SlowInt,FastInt,DelayTime)		
+		CurrentObject\Attributes\Frozen=AdjustObjectAdjusterInt(ObjectAdjusterFrozen,CurrentObject\Attributes\Frozen,SlowInt,FastInt,DelayTime)
 	Case "Teleportable"
 		CurrentObject\Attributes\Teleportable=AdjustObjectAdjusterToggle(ObjectAdjusterTeleportable,CurrentObject\Attributes\Teleportable,SlowInt,FastInt,RawInput,0,1,DelayTime)
-		
+
 	Case "Data0"
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			ObjectAdjusterData0\RandomMinDefault=0
@@ -16128,36 +15744,36 @@ Function AdjustObjectAdjuster(i)
 			ObjectAdjusterData0\RandomMinDefault=0
 			ObjectAdjusterData0\RandomMaxDefault=10
 		EndIf
-		
+
 		OldData=CurrentObject\Attributes\Data0
-		
+
 		;CurrentObject\Attributes\Data0=AdjustInt("Data0: ", CurrentObject\Attributes\Data0, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data0=AdjustObjectAdjusterInt(ObjectAdjusterData0,CurrentObject\Attributes\Data0,SlowInt,FastInt,DelayTime)
-		
+
 		CurrentObject\Attributes\ModelName$=CurrentObject\Attributes\ModelName$
 		CurrentObject\Attributes\LogicType=CurrentObject\Attributes\LogicType
-		
+
 		If CurrentObject\Attributes\ModelName$="!Scritter" ;Or CurrentObject\Attributes\ModelName$="!Cuboid" Or CurrentObject\Attributes\LogicType=424
 			; colours 0-6
 			If CurrentObject\Attributes\Data0>6 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=6
-	
+
 ;		Else If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 			; Shape
 ;			If CurrentObject\Attributes\Data0>3 CurrentObject\Attributes\Data0=0
 ;			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=3
 		EndIf
-		
+
 		If IsObjectLogicFourColorButton(CurrentObject\Attributes\LogicType,CurrentObject\Attributes\LogicSubType)
 			SetThreeOtherDataIfNotEqual(1,2,3,0,OldData)
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Retrolasergate"
 			; Color
 			If CurrentObject\Attributes\Data0>63 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=63
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Gem"
 			; Shape
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
@@ -16190,38 +15806,34 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data0>5 CurrentObject\Attributes\Data0=1
 			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=5
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Wisp"
 			; texture
 			If CurrentObject\Attributes\Data0>9 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=9
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Sign"
 			; shape
 			If CurrentObject\Attributes\Data0>5 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=5
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!WaterFall"
 			; liquid type
 			If CurrentObject\Attributes\Data0>2 CurrentObject\Attributes\Data0=0
 			If CurrentObject\Attributes\Data0<0 CurrentObject\Attributes\Data0=2
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			; Texture
 			If CurrentObject\Attributes\Data0>8 CurrentObject\Attributes\Data0=1
 			If CurrentObject\Attributes\Data0<1 CurrentObject\Attributes\Data0=8
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=470 Or CurrentObject\Attributes\LogicType=471 ; ghost or wraith
 			If CurrentObject\Attributes\Data1<2 CurrentObject\Attributes\Data1=2
 		EndIf
-
-
-
-			
 
 	Case "Data1"
 		If CurrentObject\Attributes\ModelName$="!Gem"
@@ -16231,37 +15843,36 @@ Function AdjustObjectAdjuster(i)
 			ObjectAdjusterData1\RandomMinDefault=0
 			ObjectAdjusterData1\RandomMaxDefault=10
 		EndIf
-		
+
 		OldData=CurrentObject\Attributes\Data1
-	
+
 		;CurrentObject\Attributes\Data1=AdjustInt("Data1: ", CurrentObject\Attributes\Data1, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data1=AdjustObjectAdjusterInt(ObjectAdjusterData1,CurrentObject\Attributes\Data1,SlowInt,FastInt,DelayTime)
-		
+
 ;		If CurrentObject\Attributes\ModelName$="!Obstacle51" Or CurrentObject\Attributes\ModelName$="!Obstacle55" Or CurrentObject\Attributes\ModelName$="!Obstacle59"
 ;			; Texture
 ;			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
 ;			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 ;		EndIf
-	
-		
+
 		If CurrentObject\Attributes\LogicType=190
 			; particle spray intensity
 			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=1
 			If CurrentObject\Attributes\Data1<1 CurrentObject\Attributes\Data1=3
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=230 ; FireFlower
 			If CurrentObject\Attributes\Data1>3 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
-		EndIf 
-		
+		EndIf
+
 		If CurrentObject\Attributes\LogicType=242 ; Cuboid
 
 			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=260 ; SpikeyBall
 			If CurrentObject\Attributes\Data1>2 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=2
@@ -16287,33 +15898,31 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=3
 		EndIf
 
-		
-
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			; Expression
 			If CurrentObject\Attributes\Data1>4 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=4
 		EndIf
-		
+
 		; ufo or retro z-bot or zipbot or zapbot
 ;		If CurrentObject\Attributes\LogicType=422 Or CurrentObject\Attributes\LogicType=423 Or CurrentObject\Attributes\LogicType=430 Or CurrentObject\Attributes\LogicType=431
 ;			; turning
 ;			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
 ;			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 ;		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Portal Warp"
 			; ???
 			If CurrentObject\Attributes\Data1>1 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=1
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Sign"
 			; texture
 			If CurrentObject\Attributes\Data1>5 CurrentObject\Attributes\Data1=0
 			If CurrentObject\Attributes\Data1<0 CurrentObject\Attributes\Data1=5
 		EndIf
-		
+
 		If CommandAdjusterStartDataIndex()=0
 			If CurrentObject\Attributes\Data0=10 Or CurrentObject\Attributes\Data0=11
 				If CurrentObject\Attributes\Data1<>OldData And SimulationLevel>=4
@@ -16321,10 +15930,6 @@ Function AdjustObjectAdjuster(i)
 				EndIf
 			EndIf
 		EndIf
-
-
-		
-
 
 	Case "Data2"
 		If CurrentObject\Attributes\ModelName$="!NPC"
@@ -16336,10 +15941,10 @@ Function AdjustObjectAdjuster(i)
 			ObjectAdjusterData2\RandomMinDefault=0
 			ObjectAdjusterData2\RandomMaxDefault=10
 		EndIf
-	
+
 		;CurrentObject\Attributes\Data2=AdjustInt("Data2: ", CurrentObject\Attributes\Data2, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data2=AdjustObjectAdjusterInt(ObjectAdjusterData2,CurrentObject\Attributes\Data2,SlowInt,FastInt,DelayTime)
-		
+
 		If CurrentObject\Attributes\LogicType=280 Or CurrentObject\Attributes\LogicType=410 ; Spring or FlipBridge
 			; direction 0-7
 			If CurrentObject\Attributes\Data2>7 CurrentObject\Attributes\Data2=0
@@ -16380,39 +15985,37 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data2>5 CurrentObject\Attributes\Data2=0
 			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=5
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!NPC"
 			;If CurrentObject\Attributes\Data2>56 CurrentObject\Attributes\Data2=0
 			;If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=56
 			CurrentObject\Attributes\Data3=1
 
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Thwart"
 			; colour
 			If CurrentObject\Attributes\Data2>7 CurrentObject\Attributes\Data2=0
 			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=7
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!Wraith"
 			; Doubles as both magic type and texture
 			If CurrentObject\Attributes\Data2>2 CurrentObject\Attributes\Data2=0
 			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=2
 		EndIf
 
-		
 ;		If CurrentObject\Attributes\LogicType=433 ; Z-Bot NPC
 ;			If CurrentObject\Attributes\Data2>1 CurrentObject\Attributes\Data2=0
 ;			If CurrentObject\Attributes\Data2<0 CurrentObject\Attributes\Data2=1
 ;		EndIf
-		
 
 	Case "Data3"
 		OldData=CurrentObject\Attributes\Data3
-	
+
 		;CurrentObject\Attributes\Data3=AdjustInt("Data3: ", CurrentObject\Attributes\Data3, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data3=AdjustObjectAdjusterInt(ObjectAdjusterData3,CurrentObject\Attributes\Data3,SlowInt,FastInt,DelayTime)
-		
+
 		If CurrentObject\Attributes\LogicType=190
 			If CurrentObject\Attributes\Data3<0 Then CurrentObject\Attributes\Data3=0
 			Select CurrentObject\Attributes\LogicSubType
@@ -16461,7 +16064,7 @@ Function AdjustObjectAdjuster(i)
 
 ;		If  CurrentObject\Attributes\LogicType=46 ; conveyor tail
 ;			If CurrentObject\Attributes\Data3<1 CurrentObject\Attributes\Data3=1
-;			
+;
 ;		EndIf
 
 ;		If CurrentObject\Attributes\ModelName$="!Suctube" Or CurrentObject\Attributes\ModelName$="!SuctubeX"
@@ -16478,7 +16081,7 @@ Function AdjustObjectAdjuster(i)
 					;EndIf
 				EndIf
 			EndIf
-		
+
 			If CurrentObject\Attributes\LogicType=190
 				If CurrentObject\Attributes\LogicSubType=4 ; Sparks
 					If CurrentObject\Attributes\Data3>=1
@@ -16492,26 +16095,26 @@ Function AdjustObjectAdjuster(i)
 							PlaySoundFX(90,-1,-1)
 						EndIf
 						If CurrentObject\Attributes\Data3=2 ; loud mecha
-							
+
 							PlaySoundFX(35,-1,-1)
 						EndIf
-		
+
 						If CurrentObject\Attributes\Data3=3 ; variable gong
 							SoundPitch SoundFX(13),Rand(24000,44000)
 							PlaySoundFX(13,-1,-1)
 						EndIf
 						If CurrentObject\Attributes\Data3=4 ; grow
-							
+
 							PlaySoundFX(92,-1,-1)
 						EndIf
-						
+
 						If CurrentObject\Attributes\Data3=5 ; floing
-							
+
 							PlaySoundFX(93,-1,-1)
 						EndIf
-						
+
 						If CurrentObject\Attributes\Data3=6 ; gem
-							
+
 							PlaySoundFX(11,-1,-1)
 						EndIf
 					EndIf
@@ -16528,16 +16131,16 @@ Function AdjustObjectAdjuster(i)
 			ObjectAdjusterData4\RandomMinDefault=0
 			ObjectAdjusterData4\RandomMaxDefault=10
 		EndIf
-	
+
 		Adj=1
 		AdjFast=10
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=10 ; LevelExit
 			Adj=45
 			AdjFast=45
 		EndIf
-		
+
 		OldData=CurrentObject\Attributes\Data4
-		
+
 		;CurrentObject\Attributes\Data4=AdjustInt("Data4: ", CurrentObject\Attributes\Data4, Adj, AdjFast, DelayTime)
 		CurrentObject\Attributes\Data4=AdjustObjectAdjusterInt(ObjectAdjusterData4,CurrentObject\Attributes\Data4,Adj,AdjFast,DelayTime)
 
@@ -16570,26 +16173,23 @@ Function AdjustObjectAdjuster(i)
 			; Set the glasses color back to 1.
 			CurrentObject\Attributes\Data5=0
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=190
 			If CurrentObject\Attributes\Data4<0 Then CurrentObject\Attributes\Data4=0
 			If CurrentObject\Attributes\Data4>1 Then CurrentObject\Attributes\Data4=0
 		EndIf
-		
-		
+
 ;		If CurrentObject\Attributes\LogicType=431 Or CurrentObject\Attributes\LogicType=422 ; Zapbot or UFO
 ;			; zapbot track?
 ;			If CurrentObject\Attributes\Data4<0 CurrentObject\Attributes\Data4=1
 ;			If CurrentObject\Attributes\Data4>1 CurrentObject\Attributes\Data4=0
 ;		EndIf
-		
-		
+
 		If  CurrentObject\Attributes\ModelName$="!Conveyor"
 			; visual type
 			If CurrentObject\Attributes\Data4<0 CurrentObject\Attributes\Data4=4
 			If CurrentObject\Attributes\Data4>4 CurrentObject\Attributes\Data4=0
 		EndIf
-
 
 		If CurrentObject\Attributes\LogicType=281 ; Suctube
 			; sound
@@ -16597,12 +16197,10 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data4>1 CurrentObject\Attributes\Data4=0
 		EndIf
 
-
-
 	Case "Data5"
 		;CurrentObject\Attributes\Data5=AdjustInt("Data5: ", CurrentObject\Attributes\Data5, SlowInt, FastInt, DelayTime)
 		CurrentObject\Attributes\Data5=AdjustObjectAdjusterInt(ObjectAdjusterData5,CurrentObject\Attributes\Data5,SlowInt,FastInt,DelayTime)
-		
+
 		If CurrentObject\Attributes\LogicType=90 ; button
 			If (CurrentObject\Attributes\LogicSubType Mod 32)=15
 				; repeatable
@@ -16624,26 +16222,23 @@ Function AdjustObjectAdjuster(i)
 				If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46 ; Conveyor
 			; Logic
 			If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
 			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
 			If CurrentObject\Attributes\Data5>255 CurrentObject\Attributes\Data5=0
 			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=255
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=281 ;CurrentObject\Attributes\ModelName$="!Suctube"
 			; particles
 			If CurrentObject\Attributes\Data5>1 CurrentObject\Attributes\Data5=0
 			If CurrentObject\Attributes\Data5<0 CurrentObject\Attributes\Data5=1
 		EndIf
-
-			
-
 
 	Case "Data6"
 		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
@@ -16653,10 +16248,10 @@ Function AdjustObjectAdjuster(i)
 			ObjectAdjusterData6\RandomMinDefault=0
 			ObjectAdjusterData6\RandomMaxDefault=10
 		EndIf
-	
+
 		;CurrentObject\Attributes\Data6=AdjustInt("Data6: ", CurrentObject\Attributes\Data6, 1, 10, 150)
 		CurrentObject\Attributes\Data6=AdjustObjectAdjusterInt(ObjectAdjusterData6,CurrentObject\Attributes\Data6,SlowInt,FastInt,DelayTime)
-		
+
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 ; NPC Modifier
 			If CurrentObject\Attributes\Data0=0 ; NPC Move
 				; timer reset
@@ -16685,8 +16280,6 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data6<0 CurrentObject\Attributes\Data6=255
 		EndIf
 
-
-
 	Case "Data7"
 		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
 			ObjectAdjusterData7\RandomMinDefault=0
@@ -16697,7 +16290,7 @@ Function AdjustObjectAdjuster(i)
 		EndIf
 
 		CurrentObject\Attributes\Data7=AdjustObjectAdjusterInt(ObjectAdjusterData7,CurrentObject\Attributes\Data7,SlowInt,FastInt,DelayTime)
-		
+
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Modifier
 			; turn
 
@@ -16707,10 +16300,10 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
 			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
 			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
-			
+
 ;			If CurrentObject\Attributes\Data7=-2 CurrentObject\Attributes\Data7=35
 ;			If CurrentObject\Attributes\Data7=36 CurrentObject\Attributes\Data7=-1
-;			
+;
 ;			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
 ;			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
 ;			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
@@ -16719,20 +16312,19 @@ Function AdjustObjectAdjuster(i)
 ;			If CurrentObject\Attributes\Data7=29 CurrentObject\Attributes\Data7=25
 
 		EndIf
-		
+
 		If CurrentObject\Attributes\ModelName$="!GlowWorm"  Or CurrentObject\Attributes\ModelName$="!Zipper"
 			If CurrentObject\Attributes\Data7>255 CurrentObject\Attributes\Data7=0
 			If CurrentObject\Attributes\Data7<0 CurrentObject\Attributes\Data7=255
-			
 
 		EndIf
-		
+
 ;		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
 ;
 ;			; Turn ; Stinker NPC Turn
 ;			If CurrentObject\Attributes\Data7=-1 CurrentObject\Attributes\Data7=35
 ;			If CurrentObject\Attributes\Data7=36 CurrentObject\Attributes\Data7=0
-;			
+;
 ;			If CurrentObject\Attributes\Data7=6 CurrentObject\Attributes\Data7=10
 ;			If CurrentObject\Attributes\Data7=9 CurrentObject\Attributes\Data7=5
 ;			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
@@ -16741,7 +16333,7 @@ Function AdjustObjectAdjuster(i)
 ;			If CurrentObject\Attributes\Data7=29 CurrentObject\Attributes\Data7=25
 ;
 ;		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=110 Or CurrentObject\Attributes\LogicType=390 ; Stinker NPC or Kaboom NPC
 			; Turn
 			If CurrentObject\Attributes\Data7=-1 CurrentObject\Attributes\Data7=25
@@ -16751,7 +16343,6 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data7=16 CurrentObject\Attributes\Data7=20
 			If CurrentObject\Attributes\Data7=19 CurrentObject\Attributes\Data7=15
 		EndIf
-
 
 	Case "Data8"
 		;CurrentObject\Attributes\Data8=AdjustInt("Data8: ", CurrentObject\Attributes\Data8, 1, 10, 150)
@@ -16772,13 +16363,13 @@ Function AdjustObjectAdjuster(i)
 ;				If CurrentObject\Attributes\Data8<0 Then CurrentObject\Attributes\Data8=-2
 ;			EndIf
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=110 ; Stinker NPC
 			; IdleAnim
 			If CurrentObject\Attributes\Data8>10 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=10
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=390 ; Kaboom NPC
 			; IdleAnim
 			If CurrentObject\Attributes\Data8>5 CurrentObject\Attributes\Data8=0
@@ -16790,31 +16381,29 @@ Function AdjustObjectAdjuster(i)
 			If CurrentObject\Attributes\Data8>1 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=1
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=120 ; Wee Stinker
 			; Texture
 			If CurrentObject\Attributes\Data8>2 CurrentObject\Attributes\Data8=0
 			If CurrentObject\Attributes\Data8<0 CurrentObject\Attributes\Data8=2
 		EndIf
 
-
-
 	Case "Data9"
 		;CurrentObject\Attributes\Data9=AdjustInt("Data9: ", CurrentObject\Attributes\Data9, 1, 10, 150)
 		CurrentObject\Attributes\Data9=AdjustObjectAdjusterInt(ObjectAdjusterData9,CurrentObject\Attributes\Data9,SlowInt,FastInt,DelayTime)
-		
+
 		If CurrentObject\Attributes\ModelName$="!CustomModel" And CurrentObject\Attributes\LogicType=160
 			; Deadly
 			If CurrentObject\Attributes\Data9>1 CurrentObject\Attributes\Data9=0
 			If CurrentObject\Attributes\Data9<0 CurrentObject\Attributes\Data9=1
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=11 And CurrentObject\Attributes\Data0=1 ; NPC Change
 			; anim
 			If CurrentObject\Attributes\Data9<-1 CurrentObject\Attributes\Data9=10
 			If CurrentObject\Attributes\Data9>10 CurrentObject\Attributes\Data9=-1
 		EndIf
-		
+
 		If CurrentObject\Attributes\LogicType=45 Or CurrentObject\Attributes\LogicType=46 ; Conveyor
 			If CurrentObject\Attributes\Data9<1 CurrentObject\Attributes\Data9=1
 		EndIf
@@ -16824,52 +16413,52 @@ Function AdjustObjectAdjuster(i)
 
 	Case "MovementSpeed"
 		CurrentObject\Attributes\MovementSpeed=AdjustObjectAdjusterInt(ObjectAdjusterMovementSpeed,CurrentObject\Attributes\MovementSpeed,SlowInt,FastInt,DelayTime)
-		
+
 	Case "MovementType"
 		CurrentObject\Attributes\MovementType=AdjustObjectAdjusterInt(ObjectAdjusterMovementType,CurrentObject\Attributes\MovementType,SlowInt,FastInt,DelayTime)
-		
+
 	Case "MovementTypeData"
 		CurrentObject\Attributes\MovementTypeData=AdjustObjectAdjusterInt(ObjectAdjusterMovementTypeData,CurrentObject\Attributes\MovementTypeData,SlowInt,FastInt,DelayTime)
-		
+
 	Case "TileTypeCollision"
 		CurrentObject\Attributes\TileTypeCollision=AdjustObjectAdjusterBits(ObjectAdjusterTileTypeCollision,CurrentObject\Attributes\TileTypeCollision,i,DelayTime)
-		
+
 	Case "ObjectTypeCollision"
 		CurrentObject\Attributes\ObjectTypeCollision=AdjustObjectAdjusterBits(ObjectAdjusterObjectTypeCollision,CurrentObject\Attributes\ObjectTypeCollision,i,DelayTime)
-		
+
 	Case "ScaleAdjust"
 		CurrentObject\Attributes\ScaleAdjust=AdjustObjectAdjusterFloat(ObjectAdjusterScaleAdjust,CurrentObject\Attributes\ScaleAdjust,SlowFloat#,FastFloat#,DelayTime)
-		
+
 	Case "Exclamation"
 		CurrentObject\Attributes\Exclamation=AdjustObjectAdjusterInt(ObjectAdjusterExclamation,CurrentObject\Attributes\Exclamation,SlowInt,FastInt,DelayTime)
-		
+
 	Case "Linked"
 		CurrentObject\Attributes\Linked=AdjustObjectAdjusterInt(ObjectAdjusterLinked,CurrentObject\Attributes\Linked,SlowInt,FastInt,DelayTime)
 	Case "LinkBack"
 		CurrentObject\Attributes\LinkBack=AdjustObjectAdjusterInt(ObjectAdjusterLinkBack,CurrentObject\Attributes\LinkBack,SlowInt,FastInt,DelayTime)
-		
+
 	Case "Parent"
 		CurrentObject\Attributes\Parent=AdjustObjectAdjusterInt(ObjectAdjusterParent,CurrentObject\Attributes\Parent,SlowInt,FastInt,DelayTime)
 	Case "Child"
 		CurrentObject\Attributes\Child=AdjustObjectAdjusterInt(ObjectAdjusterChild,CurrentObject\Attributes\Child,SlowInt,FastInt,DelayTime)
-		
+
 	Case "DX"
 		CurrentObject\Attributes\DX=AdjustObjectAdjusterFloat(ObjectAdjusterDX,CurrentObject\Attributes\DX,SlowFloat#,FastFloat#,DelayTime)
 	Case "DY"
 		CurrentObject\Attributes\DY=AdjustObjectAdjusterFloat(ObjectAdjusterDY,CurrentObject\Attributes\DY,SlowFloat#,FastFloat#,DelayTime)
 	Case "DZ"
 		CurrentObject\Attributes\DZ=AdjustObjectAdjusterFloat(ObjectAdjusterDZ,CurrentObject\Attributes\DZ,SlowFloat#,FastFloat#,DelayTime)
-		
+
 	Case "MoveXGoal"
 		ObjectAdjusterMoveXGoal\RandomMaxDefault=LevelWidth-1
 		CurrentObject\Attributes\MoveXGoal=AdjustObjectAdjusterInt(ObjectAdjusterMoveXGoal,CurrentObject\Attributes\MoveXGoal,SlowInt,FastInt,DelayTime)
 	Case "MoveYGoal"
 		ObjectAdjusterMoveYGoal\RandomMaxDefault=LevelHeight-1
 		CurrentObject\Attributes\MoveYGoal=AdjustObjectAdjusterInt(ObjectAdjusterMoveYGoal,CurrentObject\Attributes\MoveYGoal,SlowInt,FastInt,DelayTime)
-		
+
 	Case "Data10"
 		CurrentObject\Attributes\Data10=AdjustObjectAdjusterInt(ObjectAdjusterData10,CurrentObject\Attributes\Data10,SlowInt,FastInt,DelayTime)
-		
+
 	Case "Caged"
 		CurrentObject\Attributes\Caged=AdjustObjectAdjusterInt(ObjectAdjusterCaged,CurrentObject\Attributes\Caged,SlowInt,FastInt,DelayTime)
 	Case "Dead"
@@ -16878,25 +16467,23 @@ Function AdjustObjectAdjuster(i)
 		CurrentObject\Attributes\DeadTimer=AdjustObjectAdjusterInt(ObjectAdjusterDeadTimer,CurrentObject\Attributes\DeadTimer,SlowInt,25,DelayTime)
 	Case "MovementTimer"
 		CurrentObject\Attributes\MovementTimer=AdjustObjectAdjusterInt(ObjectAdjusterMovementTimer,CurrentObject\Attributes\MovementTimer,SlowInt,25,DelayTime)
-		
+
 	Case "Flying"
 		CurrentObject\Attributes\Flying=AdjustObjectAdjusterInt(ObjectAdjusterFlying,CurrentObject\Attributes\Flying,SlowInt,FastInt,DelayTime)
-		
+
 	Case "Indigo"
 		CurrentObject\Attributes\Indigo=AdjustObjectAdjusterInt(ObjectAdjusterIndigo,CurrentObject\Attributes\Indigo,SlowInt,FastInt,DelayTime)
-		
+
 	Case "Speed"
 		CurrentObject\Attributes\Speed=AdjustObjectAdjusterFloat(ObjectAdjusterSpeed,CurrentObject\Attributes\Speed,SlowFloat#,FastFloat#,DelayTime)
 	Case "Radius"
 		CurrentObject\Attributes\Radius=AdjustObjectAdjusterFloat(ObjectAdjusterRadius,CurrentObject\Attributes\Radius,SlowFloat#,FastFloat#,DelayTime)
-		
+
 	Case "Status"
 		CurrentObject\Attributes\Status=AdjustObjectAdjusterInt(ObjectAdjusterStatus,CurrentObject\Attributes\Status,SlowInt,FastInt,DelayTime)
-		
-		
-		
+
 	End Select
-	
+
 	; avoid false positives from pressing enter
 	If LeftMouse=True Or RightMouse=True Or MouseScroll<>0
 		BuildCurrentObjectModel()
@@ -16904,7 +16491,6 @@ Function AdjustObjectAdjuster(i)
 	EndIf
 
 End Function
-
 
 Function UpdateTile(i,j)
 
@@ -16937,7 +16523,7 @@ Function UpdateWater()
 		; rock
 		PositionTexture WaterTexture,0,0.5+0.125*WaterFlow/4*Sin(-(4*LevelTimer*WaterFlow)/10.0)
 	EndIf
-	
+
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
 			UpdateWaterVertices(i,j)
@@ -16952,7 +16538,7 @@ Function UpdateWaterVertices(i,j)
 	If Turbulence#<0.0
 		Turbulence=0.0
 	EndIf
-	
+
 	VertexCoords mySurface,i*4+0,VertexX(mySurface,i*4+0),LevelTiles(i,j)\Water\Height+Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180),VertexZ(mySurface,i*4+0)
 	VertexCoords mySurface,i*4+1,VertexX(mySurface,i*4+1),LevelTiles(i,j)\Water\Height+Turbulence*Cos(LevelTimer+(i Mod 4)*90+(j Mod 2)*180+90),VertexZ(mySurface,i*4+1)
 
@@ -16961,9 +16547,9 @@ Function UpdateWaterVertices(i,j)
 End Function
 
 Function UpdateWaterTile(i,j)
-	
+
 	If i<0 Or j<0 Or i>=levelwidth Or j>=levelheight Then Return
-	
+
 	; top face
 	CalculateUV(LevelTiles(i,j)\Water\Texture,0,0,LevelTiles(i,j)\Water\Rotation,4,1)
 	VertexCoords WaterSurface(j),i*4+0,i,LevelTiles(i,j)\Water\Height,-j
@@ -16973,7 +16559,7 @@ Function UpdateWaterTile(i,j)
 	Else
 		VertexColor WaterSurface(j),i*4+0,0,0,0
 	EndIf
-	
+
 	CalculateUV(LevelTiles(i,j)\Water\Texture,1,0,LevelTiles(i,j)\Water\Rotation,4,1)
 	VertexCoords WaterSurface(j),i*4+1,i+1,LevelTiles(i,j)\Water\Height,-j
 	VertexTexCoords WaterSurface(j),i*4+1,ChunkTileU,ChunkTileV
@@ -17006,13 +16592,13 @@ End Function
 Function UpdateLogicTile(i,j)
 
 	; top face
-	
+
 	If LevelTileLogicHasVisuals(i,j)
 		nologicshow=0
 	Else
 		nologicshow=-300
 	EndIf
-	
+
 	If LevelTiles(i,j)\Water\Height>LevelTiles(i,j)\Terrain\Extrusion
 		height#=LevelTiles(i,j)\Water\Height+0.05
 	Else
@@ -17022,14 +16608,14 @@ Function UpdateLogicTile(i,j)
 	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+1,i+1+nologicshow,height,-j
 	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+2,i+nologicshow,height,-j-1
 	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+3,i+1+nologicshow,height,-j-1
-	
+
 	height#=0.05
-	
+
 	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+4,i+nologicshow,height,-j
 	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+5,i+1+nologicshow,height,-j
 	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+6,i+nologicshow,height,-j-1
 	VertexCoords LogicSurface(j),i*LogicVerticesPerTile+7,i+1+nologicshow,height,-j-1
-	
+
 	ColorLevelTileLogic(i,j)
 
 End Function
@@ -17069,7 +16655,7 @@ Function CreateSignMesh(Data0,Data1)
 	Else
 		Entity=CreateErrorMesh()
 	EndIf
-	
+
 	Return Entity
 
 End Function
@@ -17088,7 +16674,7 @@ Function CreateSpellBallMesh(subtype)
 	UseMagicColor(Entity,subtype)
 	ScaleMesh Entity,.15,.15,.15
 	EntityBlend Entity,3
-	
+
 	Return Entity
 
 End Function
@@ -17144,10 +16730,7 @@ Function CreateIceBlockMesh(btype)
 		;EntityColor Entity,255,0,0
 		;ShowMessageOnce("!IceBlock with a Data3 that isn’t 0 or 1 will be invisible in-game.", 2000)
 	EndIf
-	
 
-	
-	
 	Return Entity
 End Function
 
@@ -17188,15 +16771,14 @@ Function CreateMagicMirrorMesh()
 End Function
 
 Function CreateFlipBridgeMesh(tex)
-	
 
 	subtype=3
-	
+
 	Pivot=CreateMesh()
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
-	
-	; Top 
+
+	; Top
 	AddVertex (surface,-.25,.1,.49,.76,.01)
 	AddVertex (surface,.25,.1,.49,.76+.24,.01)
 	AddVertex (surface,-.25,.1,-.49,.76,.24)
@@ -17216,9 +16798,6 @@ Function CreateFlipBridgeMesh(tex)
 	AddTriangle (surface,8,9,10)
 	AddTriangle (surface,9,11,10)
 
-	
-	
-	
 	; Sides
 	For i=0 To 3
 		Select i
@@ -17244,8 +16823,6 @@ Function CreateFlipBridgeMesh(tex)
 			y2#=-.49
 		End Select
 
-	
-			
 		AddVertex (surface,x1,.104,y1,subtype*0.25+.01,.01)
 		AddVertex (surface,x2,.104,y2,subtype*0.25+.24,.01)
 		AddVertex (surface,x1,-.4,y1,subtype*0.25+.01,.24)
@@ -17256,26 +16833,20 @@ Function CreateFlipBridgeMesh(tex)
 ;		AddVertex (surface,x2*1.01,.8,y2*1.01,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51)
 ;		AddVertex (surface,x1*1.01,.6,y1*1.01,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51+.115)
 ;		AddVertex (surface,x2*1.01,.6,y2*1.01,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
-	
+
 ;		AddTriangle (surface,16+i*8,17+i*8,18+i*8)
 ;		AddTriangle (surface,17+i*8,19+i*8,18+i*8)
-		
-		
-	Next
-	
-	
-	
 
-	
-	
+	Next
+
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,GateTexture
-	
+
 	;YScale=6.6 ; to reflect active state
 	YScale=1.0
 	ScaleEntity Entity,1.0,1.0,YScale
-	
+
 	;Entity2=CreateCylinder()
 	;ScaleEntity Entity2,.25,.11,.25
 	;AddMesh Entity2,Entity
@@ -17285,12 +16856,12 @@ Function CreateFlipBridgeMesh(tex)
 	ScaleMesh Entity2,.35,.35,.35
 	PositionMesh Entity2,0.0,-.241,0.0
 	EntityTexture Entity2,CageTexture
-	
+
 	EntityParent Entity,Pivot
 	EntityParent Entity2,Pivot
 	;AddMesh Entity2,Entity
 	;FreeEntity Entity2
-	
+
 	Return Pivot
 
 End Function
@@ -17330,29 +16901,25 @@ Function CreateVoidMesh()
 	AddTriangle surface,71,36,70
 	AddTriangle surface,71,37,36
 
-
 	UpdateNormals LevelExitEntity
 	EntityBlend LevelExitEntity,3
 ;	EntityAlpha LevelExitEntity,.5
-	
+
 	EntityTexture LevelExitEntity,VoidTexture
-	
+
 ;	PositionEntity LevelExitEntity,x+.5,0,-y-.5
-
-
 
 	Return LevelExitEntity
 End Function
 
-
 Function BuildCurrentTileModel()
-	
+
 	j=0
 	i=0
 	ClearSurface CurrentSurface
-	
+
 	; add block
-	
+
 	; top face
 	CalculateUV(CurrentTile\Terrain\Texture,0,0,CurrentTile\Terrain\Rotation,8,1)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
@@ -17362,10 +16929,10 @@ Function BuildCurrentTileModel()
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
 	CalculateUV(CurrentTile\Terrain\Texture,1,1,CurrentTile\Terrain\Rotation,8,1)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
-	
+
 	AddTriangle (CurrentSurface,i*20+0,i*20+1,i*20+2)
 	AddTriangle (CurrentSurface,i*20+1,i*20+3,i*20+2)
-	
+
 	; north face
 	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,101,1,ChunkTileU,ChunkTileV)
@@ -17376,11 +16943,9 @@ Function BuildCurrentTileModel()
 	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,99,1,ChunkTileU,ChunkTileV)
 
-	
 	AddTriangle (CurrentSurface,i*20+4,i*20+5,i*20+6)
 	AddTriangle (CurrentSurface,i*20+5,i*20+7,i*20+6)
-	
-	
+
 	; east face
 	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,101,-1,ChunkTileU,ChunkTileV)
@@ -17391,10 +16956,9 @@ Function BuildCurrentTileModel()
 	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,99,1,ChunkTileU,ChunkTileV)
 
-	
 	AddTriangle (CurrentSurface,i*20+8,i*20+9,i*20+10)
 	AddTriangle (CurrentSurface,i*20+9,i*20+11,i*20+10)
-	
+
 	; south face
 	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,101,-1,ChunkTileU,ChunkTileV)
@@ -17405,10 +16969,9 @@ Function BuildCurrentTileModel()
 	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,1,99,-1,ChunkTileU,ChunkTileV)
 
-	
 	AddTriangle (CurrentSurface,i*20+12,i*20+13,i*20+14)
 	AddTriangle (CurrentSurface,i*20+13,i*20+15,i*20+14)
-	
+
 	; west face
 	CalculateUV(CurrentTile\Terrain\SideTexture,0,0,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,101,1,ChunkTileU,ChunkTileV)
@@ -17419,17 +16982,15 @@ Function BuildCurrentTileModel()
 	CalculateUV(CurrentTile\Terrain\SideTexture,1,1,CurrentTile\Terrain\SideRotation,8,1)
 	AddVertex (CurrentSurface,-1,99,-1,ChunkTileU,ChunkTileV)
 
-	
 	AddTriangle (CurrentSurface,i*20+16,i*20+17,i*20+18)
 	AddTriangle (CurrentSurface,i*20+17,i*20+19,i*20+18)
 
-	
 	UpdateNormals CurrentMesh
 	EntityTexture CurrentMesh,LevelTexture
-	
+
 	; and the water tile
 	; top face
-	
+
 	mySurface=CurrentWaterTileSurface
 
 	CalculateUV(CurrentTile\Water\Texture,0,0,CurrentTile\Water\Rotation,4,LevelDetail)
@@ -17440,15 +17001,15 @@ Function BuildCurrentTileModel()
 	VertexTexCoords mySurface,2,ChunkTileU,ChunkTileV
 	CalculateUV(CurrentTile\Water\Texture,LevelDetail,LevelDetail,CurrentTile\Water\Rotation,4,LevelDetail)
 	VertexTexCoords mySurface,3,ChunkTileU,ChunkTileV
-	
+
 	EntityTexture CurrentWaterTile,WaterTexture
-	
+
 End Function
 
 Function BuildCurrentObjectModel()
 
 	BuildObjectModel(CurrentObject,0,0,300+CurrentObject\Position\Z)
-	
+
 	FinalizeCurrentObject()
 
 End Function
@@ -17456,43 +17017,43 @@ End Function
 Function BuildObjectAccessories(Obj.GameObject)
 
 	If Obj\Model\HatEntity>0
-		
+
 		If Obj\Model\HatTexture=0
 			UseErrorColor(Obj\Model\HatEntity)
 		Else
 			EntityTexture Obj\Model\HatEntity,Obj\Model\HatTexture
 		EndIf
 		ScaleEntity Obj\Model\HatEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
-		
+
 		;RotateEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
 ;		RotateEntity Obj\Model\HatEntity,0,0,0
 ;		TurnEntity Obj\Model\HatEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
 ;		TuObj\Attributes\YawAdjustel,0,Obj\Attributes\YawAdjust-90,0
-		
+
 		;bone=FindChild(Obj\Model\Entity,"hat_bone")
-	
+
 ;		PositionEntity Obj\Model\HatEntity,0+Obj\Attributes\XAdjust,300+Obj\AttribuObj\Attributes\YawAdjustectZ+.1+.84*Obj\Attributes\ZScale/.035,0-Obj\Attributes\YAdjust
 
 		TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 
 	EndIf
-	
+
 	If Obj\Model\AccEntity>0
-		
+
 		If Obj\Model\AccTexture=0
 			UseErrorColor(Obj\Model\AccEntity)
 		Else
 			EntityTexture Obj\Model\AccEntity,Obj\Model\AccTexture
 		EndIf
 		ScaleEntity Obj\Model\AccEntity,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust
-		
+
 		;RotateEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
 ;		RotateEntity Obj\Model\AccEntity,0,0,0
 ;		TurnEntity Obj\Model\AccEntity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
 ;		TurnEntity Obj\Model\AccEntity,0,Obj\Attributes\YawAdjust-90,0
-		
+
 		;bone=FindChild(Obj\Model\Entity,"hat_bone")
-	
+
 		;PositionEntity Obj\Attributes\YawAdjustentAccModel,0+Obj\Attributes\XAdjust,300+Obj\Attributes\ZAdjust+Obj\Position\Z+.1+.84*Obj\Attributes\ZScale/.035,0-Obj\Attributes\YAdjust
 
 		TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
@@ -17504,8 +17065,6 @@ End Function
 Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 
 	FreeObjectModel(Obj\Model)
-	
-	
 
 	If Obj\Attributes\ModelName$="!Button"
 		If Obj\Attributes\LogicSubType=16 And Obj\Attributes\Data2=1 Then Obj\Attributes\LogicSubType=17
@@ -17514,30 +17073,26 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		If Obj\Attributes\LogicSubType=17+32 And Obj\Attributes\Data2=0 Then Obj\Attributes\LogicSubType=16+32
 
 		Obj\Model\Entity=CreateButtonMesh(Obj\Attributes\LogicSubType,Obj\Attributes\Data0,Obj\Attributes\Data1,Obj\Attributes\Data2,Obj\Attributes\Data3)
-		
-		
+
 	Else If Obj\Attributes\ModelName$="!CustomModel"
-		
+
 		CustomModelNameToUse$=Obj\Attributes\TextData0
 		If FileType("UserData\Custom\Models\"+Obj\Attributes\TextData0+".3ds")<>1 Or FileType("UserData\Custom\Models\"+Obj\Attributes\TextData0+".jpg")<>1
 			ShowMessageOnce("Couldn't Load 3ds/jpg. Reverting to 'Default' Custom Model.",2000)
-			
+
 			CustomModelNameToUse$="Default"
 		EndIf
 		Obj\Model\Entity=LoadMesh("UserData\Custom\Models\"+CustomModelNameToUse$+".3ds")
 		Obj\Model\Texture=LoadTexture("UserData\Custom\Models\"+CustomModelNameToUse$+".jpg")
 		EntityTexture Obj\Model\Entity,Obj\Model\Texture
 
-		
-	
-	
 	Else If Obj\Attributes\ModelName$="!Teleport"
 		Obj\Model\Entity=CreateTeleporterMesh(Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!Item"
 		Obj\Model\Entity=CreatePickupItemMesh(Obj\Attributes\Data2)
 	Else If Obj\Attributes\ModelName$="!Stinker" Or Obj\Attributes\ModelName$="!NPC"
 		Obj\Model\Entity=CopyEntity(StinkerMesh)
-		
+
 		If Obj\Attributes\Data0=5
 			Obj\Model\Texture=Waterfalltexture(0) ;MyLoadTexture("Data\leveltextures\waterfall.jpg",1)
 		Else If Obj\Attributes\Data0=6
@@ -17548,37 +17103,31 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Else
 			Obj\Model\Texture=MyLoadTexture("data/models/stinker/body00"+Str$(Obj\Attributes\Data0)+Chr$(65+Obj\Attributes\Data1)+".jpg",1)
 		EndIf
-		
+
 		If Obj\Model\Texture>0
 			EntityTexture GetChild(Obj\Model\Entity,3),Obj\Model\Texture
 		EndIf
-		
-		
+
 		If Obj\Attributes\Data2>0	; hat
 			Obj\Model\HatEntity=CreateAccEntity(Obj\Attributes\Data2)
 			Obj\Model\HatTexture=CreateHatTexture(Obj\Attributes\Data2,Obj\Attributes\Data3)
-			
+
 			;TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 		EndIf
-		
+
 		If Obj\Attributes\Data4>0 ;100 ; acc
 			Obj\Model\AccEntity=CreateAccEntity(Obj\Attributes\Data4)
 			Obj\Model\AccTexture=CreateGlassesTexture(Obj\Attributes\Data4,Obj\Attributes\Data5)
-			
+
 			;TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 		EndIf
 
-		
-
-
-	
-	
 	Else If Obj\Attributes\ModelName$="!ColourGate"
 		Obj\Model\Entity=CreateColourGateMesh(Obj\Attributes\Data2,Obj\Attributes\Data0)
 	Else If Obj\Attributes\ModelName$="!Transporter"
 		Obj\Model\Entity=CreateTransporterMesh(Obj\Attributes\Data0,3)
 		RotateMesh Obj\Model\Entity,0,90*Obj\Attributes\Data2,0
-		
+
 	Else If Obj\Attributes\ModelName$="!Conveyor"
 		If Obj\Attributes\Data4=4
 			Obj\Model\Entity=CreateCloudMesh(Obj\Attributes\Data0)
@@ -17590,18 +17139,15 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 
 	Else If Obj\Attributes\ModelName$="!Autodoor"
 		Obj\Model\Entity=CopyEntity(AutodoorMesh)
-		
-		
-		
+
 	Else If Obj\Attributes\ModelName$="!Key"
 		Obj\Model\Entity=CreateKeyMesh(Obj\Attributes\Data0)
-	Else If Obj\Attributes\ModelName$="!KeyCard" 
+	Else If Obj\Attributes\ModelName$="!KeyCard"
 		Obj\Model\Entity=CreateKeyCardMesh(Obj\Attributes\Data0)
 
-		
 	Else If Obj\Attributes\ModelName$="!StinkerWee"
 		Obj\Model\Entity=CopyEntity(StinkerWeeMesh)
-		
+
 		If Obj\Attributes\LogicType=120 ; Wee Stinker
 			If Obj\Attributes\Data8>=0 And Obj\Attributes\Data8<=2
 				EntityTexture Obj\Model\Entity,StinkerWeeTexture(Obj\Attributes\Data8+1)
@@ -17627,31 +17173,28 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		;PositionMesh Obj\Model\Entity,0,1,0
 		ScaleMesh Obj\Model\Entity,.5,.5,.5
 		EntityTexture Obj\Model\Entity,Rainbowtexture2
-		
+
 	Else If Obj\Attributes\ModelName$="!IceBlock"
 		Obj\Model\Entity=CreateIceBlockMesh(Obj\Attributes\Data3)
-		
+
 	Else If Obj\Attributes\ModelName$="!PlantFloat"
 		Obj\Model\Entity=CreatePlantFloatMesh()
 		;Obj\Model\Entity=CreateSphere()
 		;ScaleMesh Obj\Model\Entity,.4,.1,.4
 ;		PositionMesh Obj\Model\Entity,0,1,0
 		;EntityTexture Obj\Model\Entity,Rainbowtexture
-		
+
 	Else If Obj\Attributes\ModelName$="!IceFloat"
 		Obj\Model\Entity=CreateIceFloatMesh()
 		;Obj\Model\Entity=CreateSphere()
 		;ScaleMesh Obj\Model\Entity,.4,.1,.4
 ;		PositionMesh Obj\Model\Entity,0,1,0
 
-
-
-
 	Else If Obj\Attributes\ModelName$="!Chomper"
 		Obj\Model\Entity=CopyEntity(ChomperMesh)
-		If Obj\Attributes\LogicSubType=1 
+		If Obj\Attributes\LogicSubType=1
 			EntityTexture Obj\Model\Entity,WaterChomperTexture
-		Else If Obj\Attributes\Data1=3 
+		Else If Obj\Attributes\Data1=3
 			EntityTexture Obj\Model\Entity,MechaChomperTexture
 		Else
 			EntityTexture Obj\Model\Entity,ChomperTexture
@@ -17707,8 +17250,6 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Obj\Model\Entity=CopyEntity(KaboomMesh)
 		EntityTexture Obj\Model\Entity,KaboomTexture(1)
 
-
-
 	Else If Obj\Attributes\ModelName$="!FireFlower"
 		Obj\Model\Entity=CopyEntity(FireFlowerMesh)
 		If Obj\Attributes\LogicSubType<>1
@@ -17719,15 +17260,14 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		If Obj\Attributes\Data1=1
 			EntityTexture Obj\Model\Entity,FireFlowerTexture2
 		EndIf
-		
+
 	Else If Obj\Attributes\ModelName$="!BurstFlower"
 		Obj\Model\Entity=CopyEntity(BurstFlowerMesh)
 
 	Else If Obj\Attributes\ModelName$="!Busterfly"
 		Obj\Model\Entity=CopyEntity(BusterflyMesh)
 		;AnimateMD2 Obj\Model\Entity,2,.4,2,9
-		
-		
+
 	Else If Obj\Attributes\ModelName$="!GlowWorm"  Or Obj\Attributes\ModelName$="!Zipper"
 		Obj\Model\Entity=CreateSphere(12)
 		ScaleMesh Obj\Model\Entity,.1,.1,.1
@@ -17754,18 +17294,15 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		PositionMesh Obj\Model\Entity,0,0.5,0
 		If Obj\Attributes\Data0<0 Or Obj\Attributes\Data0>8 Then Obj\Attributes\Data0=0
 		EntityTexture Obj\Model\Entity,TeleporterTexture(Obj\Attributes\Data0)
-		
+
 	Else If Obj\Attributes\ModelName$="!Prism"
 		Obj\Model\Entity=CopyEntity(PrismMesh)
 		EntityTexture Obj\Model\Entity,PrismTexture
-			
-	Else If  Obj\Attributes\ModelName$="!Obstacle10" 
+
+	Else If  Obj\Attributes\ModelName$="!Obstacle10"
 		Obj\Model\Entity=CopyEntity(  ObstacleMesh(10 ))
 		EntityTexture Obj\Model\Entity, MushroomTex(  (Abs(Obj\Attributes\Data0)) Mod 3)
 
-	
-
-		
 	Else If  Obj\Attributes\ModelName$="!Obstacle51" Or Obj\Attributes\ModelName$="!Obstacle55" Or Obj\Attributes\ModelName$="!Obstacle59"
 		ObstacleId=ObstacleNameToObstacleId(Obj\Attributes\ModelName$)
 		Obj\Model\Entity=TryGetObstacleMesh(ObstacleId+Obj\Attributes\Data0)
@@ -17788,8 +17325,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 			Obj\Model\Entity=RemoveEntityTexture(Obj\Model\Entity)
 			UseErrorColor(Obj\Model\Entity)
 		EndIf
-	
-	
+
 	Else If Obj\Attributes\ModelName$="!Portal Warp"
 		Obj\Model\Entity=CopyEntity(PortalWarpMesh)
 		If Obj\Attributes\Data1=0
@@ -17797,17 +17333,15 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Else
 			EntityTexture Obj\Model\Entity,RainbowTexture
 		EndIf
-		
+
 	Else If Obj\Attributes\ModelName$="!Sun Sphere1"
 		Obj\Model\Entity=CreateSphere()
 		EntityColor Obj\Model\Entity,Obj\Attributes\Data0,Obj\Attributes\Data1,Obj\Attributes\Data2
 		EntityBlend Obj\Model\Entity,3
-		
+
 	Else If Obj\Attributes\ModelName$="!Sun Sphere2"
 		Obj\Model\Entity=CreateSphere()
 		ScaleMesh Obj\Model\Entity,.5,.5,.5
-
-
 
 	Else If Obj\Attributes\ModelName$="!Coin"
 		Obj\Model\Entity=CopyEntity(CoinMesh)
@@ -17819,13 +17353,13 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	Else If Obj\Attributes\ModelName$="!Gem"
 		;If Obj\Attributes\Data0<0 Or Obj\Attributes\Data0>2 Then Obj\Attributes\Data0=0
 		;If Obj\Attributes\Data1<0 Or Obj\Attributes\Data1>7 Then Obj\Attributes\Data1=0
-		
+
 		; Note that the vanilla WA3E player will kill you without hesitation if you have a Data0 (gem mesh) outside this range.
 		Data0=Obj\Attributes\Data0
 		If Data0<0 Or Data0>2 Then Data0=0
-		
+
 		Obj\Model\Entity=CopyEntity(GemMesh(Data0))
-		
+
 		Data1=Obj\Attributes\Data1
 		If Data1<0 Or Data1>8
 			UseErrorColor(Obj\Model\Entity)
@@ -17839,17 +17373,13 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Else
 			EntityTexture Obj\Model\Entity,ghosttexture
 		EndIf
-			
-
 
 	Else If Obj\Attributes\ModelName$="!Sign"
 		Obj\Model\Entity=CreateSignMesh(Obj\Attributes\Data0,Obj\Attributes\Data1)
 
-
 	Else If Obj\Attributes\ModelName$="!CustomItem"
 		Obj\Model\Entity=CreateCustomItemMesh(Obj\Attributes\Data0)
 
-		
 	Else If Obj\Attributes\ModelName$="!SteppingStone"
 		Obj\Model\Entity=MyLoadMesh("data\models\bridges\cylinder1.b3d",0)
 		If Obj\Attributes\Data0<0 Or Obj\Attributes\Data0>3
@@ -17862,39 +17392,34 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		RotateMesh Obj\Model\Entity,90,0,0
 		Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data2 +3600) Mod 360
 
-
 		EntityTexture Obj\Model\Entity,Springtexture
 	Else If Obj\Attributes\ModelName$="!Suctube"
 		Obj\Model\Entity=CreateSuctubemesh(Obj\Attributes\Data3,Obj\Attributes\Data0,True)
-		
+
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data2 +3600) Mod 360
-		
+
 		Redosuctubemesh(Obj\Model\Entity, Obj\Attributes\Data0, Obj\Attributes\Active, Obj\Attributes\Data2, Obj\Attributes\YawAdjust)
 
 	Else If Obj\Attributes\ModelName$="!SuctubeX"
 		Obj\Model\Entity=CreateSuctubeXmesh(Obj\Attributes\Data3)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data2 +3600) Mod 360
 
-
-		
-
-		
-	Else If Obj\Attributes\ModelName$="!FlipBridge"		
+	Else If Obj\Attributes\ModelName$="!FlipBridge"
 		Obj\Model\Entity=CreateFlipBridgeMesh(Obj\Attributes\Data0)
 		Obj\Attributes\YawAdjust=(-45*Obj\Attributes\Data2 +3600) Mod 360
-	
+
 	Else If Obj\Attributes\ModelName$="!Door"
 		Obj\Model\Entity=MyLoadmesh("data\models\houses\door01.3ds",0)
-		
+
 	Else If Obj\Attributes\ModelName$="!Cylinder"
 		Obj\Model\Entity=CopyEntity(cylinder)
-		
+
 	Else If Obj\Attributes\ModelName$="!Square"
 		Obj\Model\Entity=MyLoadmesh("Data\models\squares\square1.b3d",0)
-		
+
 	Else If Obj\Attributes\ModelName$="!SpellBall"
 		Obj\Model\Entity=CreateSpellBallMesh(7) ; use white magic spellball mesh
-		
+
 	Else If Obj\Attributes\ModelName$="!Fence1"
 		Obj\Model\Entity=CopyEntity(fence1)
 	Else If Obj\Attributes\ModelName$="!Fence2"
@@ -17904,45 +17429,45 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	Else If Obj\Attributes\ModelName$="!Fountain"
 		Obj\Model\Entity=MyLoadmesh("data\models\houses\fountain01.b3d",0)
 		EntityTexture Obj\Model\Entity,FountainTexture
-		
+
 	Else If Obj\Attributes\ModelName$="!Retrobox"
 		Obj\Model\Entity=CopyEntity(RetroBoxMesh)
-		
+
 	Else If Obj\Attributes\ModelName$="!Retrocoily"
 		Obj\Model\Entity=CopyEntity(RetroCoilyMesh)
-		
+
 	Else If Obj\Attributes\ModelName$="!Retroscouge"
 		Obj\Model\Entity=CopyEntity(RetroScougeMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
-	
+
 	Else If Obj\Attributes\ModelName$="!Retrozbot"
 		Obj\Model\Entity=CopyEntity(RetroZbotMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
-		
+
 	Else If Obj\Attributes\ModelName$="!Retroufo"
 		Obj\Model\Entity=CopyEntity(RetroUFOMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
-	
+
 	Else If Obj\Attributes\ModelName$="!Retrolasergate"
 		Obj\Model\Entity=CreateretrolasergateMesh(Obj\Attributes\Data0)
-		
+
 	Else If Obj\Attributes\ModelName$="!Weebot"
 		Obj\Model\Entity=CopyEntity(WeebotMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
-		
+
 	Else If Obj\Attributes\ModelName$="!Zapbot"
 		Obj\Model\Entity=CopyEntity(ZapbotMesh)
 		Obj\Attributes\YawAdjust=(-90*Obj\Attributes\Data0 +3600) Mod 360
 
 	Else If Obj\Attributes\ModelName$="!Pushbot"
 		Obj\Model\Entity=CreatePushbotMesh(Obj\Attributes\Data0,Obj\Attributes\Data3)
-		
+
 		If Obj\Attributes\LogicType=432 ; Moobot
 			Obj\Attributes\YawAdjust=-Obj\Attributes\Data2*90
 		Else
 			Obj\Attributes\YawAdjust=0 ; Unfortunately hardcoded in adventures.bb.
 		EndIf
-		
+
 	Else If Obj\Attributes\ModelName$="!ZbotNPC"
 		Obj\Model\Entity=CopyEntity(ZbotNPCMesh)
 		If Obj\Attributes\Data2<0 Or Obj\Attributes\Data2>7
@@ -17950,47 +17475,40 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Else
 			EntityTexture Obj\Model\Entity,ZBotNPCTexture(Obj\Attributes\Data2)
 		EndIf
-	
+
 	Else If Obj\Attributes\ModelName$="!Mothership"
 		Obj\Model\Entity=CopyEntity(MothershipMesh)
 
-
-		
 	Else If Obj\Attributes\ModelName="!FloingOrb" ; not toObj\Attributes\YawAdjustingBubble
 		Obj\Model\Entity=CreateSphere()
 		ScaleMesh Obj\Model\Entity,.3,.3,.3
 		EntityColor Obj\Model\Entity,255,0,0
-	
+
 	Else If Obj\Attributes\ModelName="!MagicMirror"
 		Obj\Model\Entity=CreateMagicMirrorMesh()
 
-	
-	
 	Else If Obj\Attributes\ModelName$="!SkyMachineMap"
 		Obj\Model\Entity=CreateCube()
 		ScaleMesh Obj\Model\Entity,2.5,.01,2.5
 		PositionMesh Obj\Model\Entity,0,0,-1
 		EntityTexture Obj\Model\Entity,SkyMachineMapTexture
 		EntityBlend Obj\Model\Entity,3
-		
-	
+
 	Else If Obj\Attributes\ModelName$="!GrowFlower"
 		Obj\Model\Entity=CreateGrowFlowerMesh(Obj\Attributes\Data0)
 
 	Else If Obj\Attributes\ModelName$="!FloingBubble"
 		Obj\Model\Entity=CreateFloingBubbleMesh()
 
-		
 	Else If Obj\Attributes\ModelName$="!None"
 		Obj\Model\Entity=CreateNoneMesh()
-		
+
 		If Obj\Attributes\LogicType=50 ; spellball
 			UseMagicColor(Obj\Model\Entity,Obj\Attributes\LogicSubType)
 		EndIf
-		
+
 	Else ;unknown model
 		Obj\Model\Entity=CreateErrorMesh()
-	
 
 	EndIf
 
@@ -18000,7 +17518,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		TextureTarget=Obj\Model\Entity
 	EndIf
 
-	If Obj\Attributes\TexName$="!None" 
+	If Obj\Attributes\TexName$="!None"
 		Obj\Model\Texture=0
 	Else If Obj\Attributes\TexName$="!Door"
 		If Obj\Attributes\Data5<0 Then Obj\Attributes\Data5=0
@@ -18010,25 +17528,24 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 	Else If Obj\Attributes\TexName$="!Cottage"
 		If Obj\Attributes\Data5<0 Then Obj\Attributes\Data5=0
 		If CottageTexture(Obj\Attributes\Data5)=0 Then Obj\Attributes\Data5=0
-		EntityTexture TextureTarget,CottageTexture(Obj\Attributes\Data5)	
+		EntityTexture TextureTarget,CottageTexture(Obj\Attributes\Data5)
 	Else If Obj\Attributes\TexName$="!Townhouse"
 		If Obj\Attributes\Data5<0 Then Obj\Attributes\Data5=0
 		If HouseTexture(Obj\Attributes\Data5)=0 Then Obj\Attributes\Data5=0
-		EntityTexture TextureTarget,HouseTexture(Obj\Attributes\Data5)	
+		EntityTexture TextureTarget,HouseTexture(Obj\Attributes\Data5)
 	Else If Obj\Attributes\TexName$="!Windmill"
 		If Obj\Attributes\Data5<0 Then Obj\Attributes\Data5=0
 		If WindmillTexture(Obj\Attributes\Data5)=0 Then Obj\Attributes\Data5=0
-		EntityTexture TextureTarget,WindmillTexture(Obj\Attributes\Data5)	
+		EntityTexture TextureTarget,WindmillTexture(Obj\Attributes\Data5)
 	Else If Obj\Attributes\TexName$="!Fence"
 		If Obj\Attributes\Data5<0 Then Obj\Attributes\Data5=0
 		If FenceTexture(Obj\Attributes\Data5)=0 Then Obj\Attributes\Data5=0
-		EntityTexture TextureTarget,FenceTexture(Obj\Attributes\Data5)	
+		EntityTexture TextureTarget,FenceTexture(Obj\Attributes\Data5)
 	Else If Obj\Attributes\TexName$="!FireTrap"
 		EntityTexture TextureTarget,FireTrapTexture
 
 	Else If Left$(Obj\Attributes\TexName$,2)="!T"
-		
-		
+
 		EntityTexture TextureTarget,StinkerTexture
 
 		For i=1 To CountChildren(TextureTarget)
@@ -18045,11 +17562,11 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 		Else
 			tname$="UserData\Custom\Objecttextures\"+Right(Obj\Attributes\TexName$,Len(Obj\Attributes\TexName$)-1)+".jpg"
 		EndIf
-		If FileType(tname$)<>1 
+		If FileType(tname$)<>1
 			tname$="UserData\Custom\Objecttextures\default.jpg"
 			Obj\Attributes\TexName$="?Default"
 		EndIf
-		
+
 		If Lower(Right(tname$,4))=".png"
 			; if png load texture with alpha map
 			Obj\Model\Texture=LoadTexture(tname$,3)
@@ -18057,7 +17574,7 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 			Obj\Model\Texture=LoadTexture(tname$,4)
 		EndIf
 		EntityTexture TextureTarget,Obj\Model\Texture
-		
+
 	Else If Obj\Attributes\TexName$<>"" And Obj\Attributes\TexName$<>"!None" And Left$(Obj\Attributes\TexName$,1)<>"!"  And Obj\Attributes\ModelName$<>"!Button"
 		If myFileType(Obj\Attributes\TexName$)=1 Or FileType(Obj\Attributes\TexName$)=1
 			Obj\Model\Texture=myLoadTexture(Obj\Attributes\TexName$,4)
@@ -18070,33 +17587,31 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 			Print "The adventure may be unplayable in game"
 			Delay 2000
 		EndIf
-		
-				
+
 	EndIf
-	
+
 	;If ObjectAdjusterScaleAdjust\Absolute
 	;	If Obj\Attributes\ScaleAdjust=0.0 Then Obj\Attributes\ScaleAdjust=1.0
 	;EndIf
-	
+
 	If Obj\Attributes\ModelName$<>"!None"
 		ScaleEntity Obj\Model\Entity,Obj\Attributes\XScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\ZScale*Obj\Attributes\ScaleAdjust,Obj\Attributes\YScale*Obj\Attributes\ScaleAdjust
 		;RotateEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,Obj\Attributes\YawAdjust,Obj\Attributes\RollAdjust
 		RotateEntity Obj\Model\Entity,0,0,0
 		TurnEntity Obj\Model\Entity,Obj\Attributes\PitchAdjust,0,Obj\Attributes\RollAdjust
 		TurnEntity Obj\Model\Entity,0,Obj\Attributes\YawAdjust,0
-		
+
 		If Obj\Attributes\ModelName$="!Kaboom" Or Obj\Attributes\ModelName$="!BabyBoomer" Then TurnEntity Obj\Model\Entity,0,90,0
 
-
 	;	PositionEntity Obj\Model\Entity,Obj\Attributes\XAdjust,Obj\Attributes\ZAdjust+Obj\Position\Z,-Obj\Attributes\YAdjust
-		
+
 	EndIf
-	
+
 	If Obj\Attributes\LogicType=200 Or Obj\Attributes\LogicType=201 ; glovecharge or glovedischarge
 		If EntityClass(Obj\Model\Entity)="Mesh"
 			If CountSurfaces(Obj\Model\Entity)<>0
 				EntityFX Obj\Model\Entity,2
-				
+
 				TheSurface=GetSurface(Obj\Model\Entity,1)
 				For ii=0 To 3
 					Col=Obj\Attributes\Data0
@@ -18108,9 +17623,9 @@ Function BuildObjectModel(Obj.GameObject,x#,y#,z#)
 			EndIf
 		EndIf
 	EndIf
-	
+
 	PositionEntityWithXYZAdjust(Obj\Model\Entity,x#,y#,z#,Obj\Attributes)
-	
+
 	BuildObjectAccessories(Obj)
 
 End Function
@@ -18118,7 +17633,7 @@ End Function
 Function PositionEntityWithXYZAdjust(Entity,x#,y#,z#,Attributes.GameObjectAttributes)
 
 	PositionEntity Entity,x#+Attributes\XAdjust,z#+Attributes\ZAdjust,-y#-Attributes\YAdjust
-	
+
 End Function
 
 Function FinalizeCurrentObject()
@@ -18130,13 +17645,11 @@ Function FinalizeCurrentObject()
 
 End Function
 
-
 Function ColorToID(Col,SubCol)
 
 	Return 500+5*Col+SubCol
 
 End Function
-
 
 Function CommandAdjusterStartDataIndex()
 
@@ -18154,14 +17667,13 @@ Function CommandAdjusterStartDataIndex()
 
 End Function
 
-
 Function CalculateCurrentObjectTargetIDs()
 
 	;CurrentObjectTargetIDCount=0
 	For i=0 To CurrentObjectTargetIDCount-1
 		CurrentObjectTargetIDEnabled(i)=False
 	Next
-	
+
 	If ObjectAdjusterLogicType\Absolute
 		If CurrentObject\Attributes\LogicType=90 ; Buttons
 			If ObjectAdjusterLogicSubType\Absolute
@@ -18230,7 +17742,7 @@ Function CalculateCurrentObjectTargetIDs()
 			EndIf
 		EndIf
 	EndIf
-	
+
 End Function
 
 Function CalculateCommandTargetIDs(Command,Data1)
@@ -18256,7 +17768,7 @@ Function CalculateCurrentObjectActivateIDs()
 	For i=0 To CurrentObjectActivateIDCount-1
 		CurrentObjectActivateIDEnabled(i)=False
 	Next
-	
+
 	If ObjectAdjusterLogicType\Absolute
 		If CurrentObject\Attributes\LogicType=90 Or CurrentObject\Attributes\LogicType=210 ; button or transporter
 			;CurrentObjectActivateIdCount=1
@@ -18274,9 +17786,8 @@ Function CalculateCurrentObjectActivateIDs()
 			EndIf
 		EndIf
 	EndIf
-	
-End Function
 
+End Function
 
 Function SetWorldAdjusterPosition(index,x,y)
 
@@ -18284,7 +17795,6 @@ Function SetWorldAdjusterPosition(index,x,y)
 	SetEntityPositionInWorld(WorldAdjusterPositionMarker(index),x+0.5,y+0.5,0.0)
 
 End Function
-
 
 Function ShowWorldAdjusterPositions()
 
@@ -18360,7 +17870,7 @@ Function SetCurrentObjectTargetLocation(x,y)
 	Case 50 ; spellball
 		CurrentObject\Attributes\Data0=x
 		CurrentObject\Attributes\Data1=y
-		CurrentObjectWasChanged()	
+		CurrentObjectWasChanged()
 	Case 51,52 ; magic shooter, meteor shooter
 		CurrentObject\Attributes\Data1=x
 		CurrentObject\Attributes\Data2=y
@@ -18385,7 +17895,7 @@ Function SetCurrentObjectTargetLocation(x,y)
 	Default
 		GenerateLevelExitTo(CurrentLevelNumber,x,y)
 	End Select
-	
+
 	; Necessary for if the changing Data values modify an object's appearance.
 	BuildCurrentObjectModel()
 
@@ -18416,7 +17926,7 @@ Function CalculateLevelExitTo(D1,D2,D3,D4,level,x,y)
 	SetDataByIndex(CurrentObject\Attributes,D1,level)
 	SetDataByIndex(CurrentObject\Attributes,D2,x)
 	SetDataByIndex(CurrentObject\Attributes,D3,y)
-	
+
 	StartingYaw=0 ; south
 	; examine surroundings to infer player facing direction
 	For i=0 To NofObjects-1
@@ -18453,9 +17963,9 @@ Function CalculateLevelExitTo(D1,D2,D3,D4,level,x,y)
 			EndIf
 		EndIf
 	Next
-	
+
 	SetDataByIndex(CurrentObject\Attributes,D4,StartingYaw)
-	
+
 	If CurrentObject\Attributes\LogicType=90 And CurrentObject\Attributes\LogicSubType=10 ; LevelExit
 		CurrentObject\Attributes\YawAdjust=180-StartingYaw
 		If CurrentObject\Attributes\YawAdjust<0
@@ -18473,7 +17983,6 @@ Function GenerateLevelExitTo(level,x,y)
 
 End Function
 
-
 Function ResetLevel()
 
 	ClearObjectSelection()
@@ -18486,13 +17995,13 @@ Function ResetLevel()
 			LevelTiles(i,j)\Terrain\SideRotation=0 ; 0-3 , and 4-7 for "flipped"
 			LevelTiles(i,j)\Terrain\Random=0 ; random height pertubation of tile
 			LevelTiles(i,j)\Terrain\Height=0 ; height of "center" - e.g. to make ditches and hills
-			LevelTiles(i,j)\Terrain\Extrusion=0; extrusion with walls around it 
+			LevelTiles(i,j)\Terrain\Extrusion=0; extrusion with walls around it
 			LevelTiles(i,j)\Terrain\Rounding=0; 0-no, 1-yes: are floors rounded if on a drop-off corner
 			LevelTiles(i,j)\Terrain\EdgeRandom=0; 0-no, 1-yes: are edges rippled
 			LevelTiles(i,j)\Terrain\Logic=0
 		Next
 	Next
-	
+
 	For i=0 To MaxLevelCoordinate
 		For j=0 To MaxLevelCoordinate
 			LevelTiles(i,j)\Water\Height=-0.2
@@ -18501,7 +18010,7 @@ Function ResetLevel()
 			LevelTiles(i,j)\Water\Turbulence=0.1
 		Next
 	Next
-	
+
 	ResetParticles("data/graphics/particles.bmp")
 
 End Function
@@ -18537,11 +18046,11 @@ Function CopyTile(Source.Tile,Dest.Tile)
 End Function
 
 Function SwapTiles(Tile1.Tile,Tile2.Tile)
-	
+
 	CopyTile(Tile1,TempTile)
 	CopyTile(Tile2,Tile1)
 	CopyTile(TempTile,Tile2)
-	
+
 End Function
 
 Function CopyLevelTile(SourceX,SourceY,DestX,DestY)
@@ -18560,7 +18069,6 @@ Function PasteLevelFromCopy()
 	Next
 
 End Function
-
 
 Function ReSizeLevel()
 
@@ -18586,12 +18094,12 @@ Function ReSizeLevel()
 			EndIf
 		Next
 	Next
-	
+
 	LevelWidthOld=LevelWidth
 	LevelHeightOld=LevelHeight
 	LevelWidth=LevelWidth+WidthLeftChange+WidthRightChange
 	LevelHeight=LevelHeight+HeightTopChange+HeightBottomChange
-	
+
 	; and edge
 	If BorderExpandOption=0
 		; use current
@@ -18657,7 +18165,6 @@ Function ReSizeLevel()
 		EndIf
 	EndIf
 
-	
 	;LevelWidth=LevelWidth+WidthLeftChange+WidthRightChange
 	;LevelHeight=LevelHeight+HeightTopChange+HeightBottomChange
 	ReBuildLevelModel()
@@ -18666,8 +18173,7 @@ Function ReSizeLevel()
 			UpdateTile(i,j)
 		Next
 	Next
-	
-	
+
 	; and move the object
 	If WidthLeftChange<>0
 		For i=0 To NofObjects-1
@@ -18688,7 +18194,7 @@ Function ReSizeLevel()
 	If HeightTopChange<>0
 		For i=0 To NofObjects-1
 			NewPosition#=LevelObjects(i)\Position\Y+HeightTopChange
-			
+
 			If Floor(NewPosition#)<0 Or Floor(NewPosition#)>100
 				DeleteObject(i)
 				i=i-1
@@ -18701,17 +18207,16 @@ Function ReSizeLevel()
 		Next
 		RecalculateDragSize()
 	EndIf
-	
+
 	ResizeLevelFixObjectTargets(CurrentObject)
 
-	
 	WidthLeftChange=0
 	WidthRightChange=0
 	HeightTopChange=0
 	HeightBottomChange=0
-	
+
 	;SomeTileWasChanged()
-	
+
 	ObjectsWereChanged()
 	AddUnsavedChange()
 
@@ -18782,13 +18287,12 @@ Function ResizeLevelFixObjectTargetsCmd(Attributes.GameObjectAttributes,Cmd,D1,D
 
 End Function
 
-
 Function RawSetObjectTileX(i,tilex)
 
 	Obj.GameObject=LevelObjects(i)
 	Obj\Position\TileX=tilex
 	Obj\Position\TileX2=tilex
-	
+
 	If Obj\Attributes\LogicType=50 ; spellball
 		Obj\Attributes\Data2=Obj\Position\TileX
 		Obj\Attributes\Data4=Obj\Position\TileX
@@ -18805,7 +18309,7 @@ Function RawSetObjectTileY(i,tiley)
 	Obj.GameObject=LevelObjects(i)
 	Obj\Position\TileY=tiley
 	Obj\Position\TileY2=tiley
-	
+
 	If Obj\Attributes\LogicType=50 ; spellball
 		Obj\Attributes\Data3=Obj\Position\TileY
 		Obj\Attributes\Data5=Obj\Position\TileY
@@ -18870,27 +18374,27 @@ Function FlipLevelX()
 		Next
 	Next
 	ReBuildLevelModel()
-	
+
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
 			UpdateTile(i,j)
 		Next
 	Next
-	
+
 	; and move the object
-	
+
 	For i=0 To NofObjects-1
 		LevelObjects(i)\Position\X=Float(LevelWidth)-LevelObjects(i)\Position\X
-		
+
 		ChangeObjectTileX(i,LevelWidth-1-LevelObjects(i)\Position\TileX)
-		
+
 		UpdateObjectPosition(i)
 	Next
-	
+
 	;SomeTileWasChanged()
 	ObjectsWereChanged()
 	AddUnsavedChange()
-	
+
 End Function
 
 Function FlipLevelY()
@@ -18903,29 +18407,28 @@ Function FlipLevelY()
 		Next
 	Next
 	ReBuildLevelModel()
-	
+
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
 			UpdateTile(i,j)
 		Next
 	Next
-	
+
 	; and move the object
-	
+
 	For i=0 To NofObjects-1
 		LevelObjects(i)\Position\Y=Float(LevelHeight)-LevelObjects(i)\Position\Y
-		
+
 		ChangeObjectTileY(i,LevelHeight-1-LevelObjects(i)\Position\TileY)
-		
+
 		UpdateObjectPosition(i)
 	Next
-	
+
 	;SomeTileWasChanged()
 	ObjectsWereChanged()
 	AddUnsavedChange()
-	
-End Function
 
+End Function
 
 Function FlipLevelXY()
 
@@ -18939,56 +18442,50 @@ Function FlipLevelXY()
 	x=LevelWidth
 	LevelWidth=LevelHeight
 	LevelHeight=x
-	
+
 	ReBuildLevelModel()
-	
+
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
 			UpdateTile(i,j)
 		Next
 	Next
-	
+
 	; and move the object
-	
+
 	For i=0 To NofObjects-1
 		x2#=LevelObjects(i)\Position\X
 		LevelObjects(i)\Position\X=LevelObjects(i)\Position\Y
 		LevelObjects(i)\Position\Y=x2#
 		ChangeObjectTileXY(i,LevelObjects(i)\Position\TileY,LevelObjects(i)\Position\TileX)
-		
-		
+
 		UpdateObjectPosition(i)
 	Next
-	
+
 	;SomeTileWasChanged()
 	ObjectsWereChanged()
 	AddUnsavedChange()
-	
+
 End Function
-
-
-			
 
 Function CalculateUV(Texture,i2,j2,Rotation,size,Detail)
 
 	; calculuates UV coordinates of a point on "texture" (0-7... ie the field on the 256x256 big texture)
 	; at position i2/j2 (with resolution Detail) and given Rotation (0-7)
-	
+
 	; returns results as Globals ChunkTileU/ChunkTileV
 	uoverlap#=0
 	voverlap#=0
-	
-	
-	
+
 	If j2=0 Or j2=1 Or i2=0 Or i2=1
-		If i2=0 
+		If i2=0
 			uoverlap#=.001
 		Else If i2=1
 			uoverlap#=-.001
 		Else
 			uoverlap#=0
 		EndIf
-		If j2=0 
+		If j2=0
 			voverlap#=.001
 		Else If j2=1
 			voverlap#=-.001
@@ -18996,7 +18493,7 @@ Function CalculateUV(Texture,i2,j2,Rotation,size,Detail)
 			voverlap#=0
 		EndIf
 	EndIf
-	
+
 	Select Rotation
 	Case 0
 		ChunkTileu#=Float((Texture Mod size))/size+(Float(i2)/Float(Detail))/size+uoverlap
@@ -19029,7 +18526,6 @@ Function CalculateUV(Texture,i2,j2,Rotation,size,Detail)
 	End Select
 
 End Function
-
 
 Function GetLevelEdgeStyleChar$(Value)
 
@@ -19064,7 +18560,6 @@ Function GetLevelEdgeStyleName$(Value)
 	End Select
 
 End Function
-
 
 Function GetBrushModeName$(Value)
 
@@ -19106,7 +18601,6 @@ Function GetBrushModeName$(Value)
 	End Select
 
 End Function
-
 
 Function GetBrushModeColor$(Value,index)
 
@@ -19161,7 +18655,7 @@ Function GetBrushModeColor$(Value,index)
 		g=255
 		b=255
 	EndIf
-	
+
 	If index=0
 		Return r
 	ElseIf index=1
@@ -19171,7 +18665,6 @@ Function GetBrushModeColor$(Value,index)
 	EndIf
 
 End Function
-
 
 Function GetAnimatedRainbowRed()
 	Return 128+120*Sin(Leveltimer Mod 360)
@@ -19183,11 +18676,9 @@ Function GetAnimatedRainbowBlue()
 	Return 128-120*Sin(Leveltimer Mod 360)
 End Function
 
-
 Function GetAnimatedFlashing(Timer)
 	Return 150+105*Sin(Timer*8)
 End Function
-
 
 Function ChangeBrushModeByDelta(Delta)
 
@@ -19195,7 +18686,7 @@ Function ChangeBrushModeByDelta(Delta)
 	While BrushMode=BrushModeBlockPlacing
 		SetBrushMode(BrushMode+Delta)
 	Wend
-	
+
 	If BrushMode<0
 		SetBrushMode(MaxBrushMode)
 	ElseIf BrushMode>MaxBrushMode
@@ -19203,7 +18694,6 @@ Function ChangeBrushModeByDelta(Delta)
 	EndIf
 
 End Function
-
 
 Function DefensePowerToSoundId(Value)
 
@@ -19220,7 +18710,7 @@ Function DefensePowerToSoundId(Value)
 		Return 145 ;zbot
 	Case 24
 		Return 149 ;zbot
-	
+
 	Case 25
 		Return 86 ; chomper
 	Case 26
@@ -19245,7 +18735,6 @@ Function DefensePowerToSoundId(Value)
 
 End Function
 
-
 Function GetDupeModeName$(Value)
 
 	Select Value
@@ -19262,7 +18751,6 @@ Function GetDupeModeName$(Value)
 	End Select
 
 End Function
-
 
 Function GetAdventureName$(AdventureId)
 
@@ -19281,7 +18769,6 @@ Function GetAdventureName$(AdventureId)
 	EndIf
 
 End Function
-
 
 Function GetAccessoryName$(AccessoryId)
 
@@ -19438,7 +18925,6 @@ Function GetAccessoryName$(AccessoryId)
 
 End Function
 
-
 Function GetAccessoryColorName$(AccessoryId,ColorId)
 
 	Select AccessoryId
@@ -19486,7 +18972,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Blue"
 		Default
 			Return "NotVanilla"
-		
+
 		End Select
 	Case 5
 		Select ColorId
@@ -19506,7 +18992,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Purple"
 		Default
 			Return "NotVanilla"
-			
+
 		End Select
 	Case 6
 		Select ColorId
@@ -19518,7 +19004,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Red"
 		Default
 			Return "NotVanilla"
-		
+
 		End Select
 	Case 7
 		Select ColorId
@@ -19530,7 +19016,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Blue S"
 		Default
 			Return "NotVanilla"
-		
+
 		End Select
 	Case 10
 		Select ColorId
@@ -19540,7 +19026,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Purple"
 		Default
 			Return "NotVanilla"
-			
+
 		End Select
 	Case 27
 		Select ColorId
@@ -19554,7 +19040,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Green"
 		Default
 			Return "NotVanilla"
-		
+
 		End Select
 	Case 28
 		Select ColorId
@@ -19568,7 +19054,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "PurpRed"
 		Default
 			Return "NotVanilla"
-		
+
 		End Select
 
 	Case 46
@@ -19587,7 +19073,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "FullPink"
 		Default
 			Return "NotVanilla"
-		
+
 		End Select
 
 	Case 101
@@ -19598,7 +19084,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Sunglass"
 		Default
 			Return "NotVanilla"
-		
+
 		End Select
 	Case 102
 		Select ColorId
@@ -19608,7 +19094,7 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 			Return "Red"
 		Default
 			Return "NotVanilla"
-			
+
 		End Select
 
 	Default
@@ -19625,13 +19111,11 @@ Function GetAccessoryColorName$(AccessoryId,ColorId)
 
 End Function
 
-
 Function IsAccessoryIdVanilla(AccessoryId)
 
 	Return (AccessoryId>-1 And AccessoryId<57) Or (AccessoryId>100 And AccessoryId<117)
 
 End Function
-
 
 Function GetAccessoryColorNameWithColorInt$(AccessoryId,ColorId)
 
@@ -19646,7 +19130,7 @@ Function GetAccFilenameStart$(AccessoryId)
 
 	; This is done because only the last three digits of the accessory ID are read in-game due to funky string handling.
 	AccessoryId=AccessoryId Mod 1000
-	
+
 	If AccessoryId>99
 		Prefix$="accessory"
 	ElseIf AccessoryId>9 ; two digit
@@ -19656,12 +19140,12 @@ Function GetAccFilenameStart$(AccessoryId)
 	EndIf
 
 	Return Prefix$+Str$(AccessoryId)
-	
+
 End Function
 
 Function GetAccFilenameModel$(AccessoryId)
 
-	Return GetAccFilenameStart$(AccessoryId)+".3ds"	
+	Return GetAccFilenameStart$(AccessoryId)+".3ds"
 
 End Function
 
@@ -19670,7 +19154,6 @@ Function GetAccFilenameTexture$(AccessoryId,ColorId)
 	Return GetAccFilenameStart$(AccessoryId)+Chr$(64+ColorId)+".jpg"
 
 End Function
-
 
 Function CreateAccEntity(AccessoryId)
 
@@ -19720,7 +19203,7 @@ End Function
 Function TransformAccessoryEntityGeneric(Entity,XScale#,YScale#,ZScale#,Yaw#,Pitch#,Roll#,X#,Y#,Z#)
 
 	ScaleEntity Entity,XScale#,ZScale#,YScale#
-	
+
 	GameLikeRotation(Entity,Yaw#-90.0,Pitch#,Roll#)
 
 	PositionEntity Entity,X#,Z#+.1+.84*ZScale#/.035,-Y#
@@ -19739,19 +19222,18 @@ Function TransformAccessoryEntityOntoBone(Entity,BoneHaver)
 
 End Function
 
-
 Function BuildLevelObjectModel(Dest)
 
 	Obj.GameObject=LevelObjects(Dest)
 
 	BuildObjectModel(Obj,Obj\Position\X,Obj\Position\Y,Obj\Position\Z)
-	
+
 	UpdateObjectAnimation(Obj)
-	
+
 	UpdateObjectVisibility(Obj)
-	
+
 	;PositionEntity Obj\Model\Entity,ObjectSumX#(Obj),ObjectSumZ#(Obj),-ObjectSumY#(Obj)
-	
+
 	;If Obj\Model\HatEntity>0
 	;	TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 	;EndIf
@@ -19761,19 +19243,17 @@ Function BuildLevelObjectModel(Dest)
 
 End Function
 
-
 Function UpdateLevelObjectModel(Dest)
 
 	;ShowMessage("Freeing object model "+Dest+": "+ObjectModelName$(Dest),10)
 
 	FreeObjectModel(LevelObjects(Dest)\Model)
-	
+
 	;ShowMessage("Creating object model "+Dest+": "+ObjectModelName$(Dest),10)
-	
+
 	BuildLevelObjectModel(Dest)
 
 End Function
-
 
 Function CountObjectTypes(TargetType)
 
@@ -19787,7 +19267,6 @@ Function CountObjectTypes(TargetType)
 
 End Function
 
-
 Function CountObjectEffectiveIDs(EffectiveID)
 
 	Count=0
@@ -19799,7 +19278,6 @@ Function CountObjectEffectiveIDs(EffectiveID)
 	Return Count
 
 End Function
-
 
 Function CountObjectLogics(TargetType,TargetSubType)
 
@@ -19958,45 +19436,44 @@ Function SetThreeOtherDataIfNotEqual(DTo1,DTo2,DTo3,DFrom,OldData)
 
 End Function
 
-
 Function CameraControls()
 	MouseDeltaX = MouseXSpeed()
 	MouseDeltaY = MouseYSpeed()
 	mx = MouseX()
 	my = MouseY()
-	
+
 	Adj#=0.1
 	IntAdj=1
 	If ShiftDown()
 		Adj#=0.4
 		IntAdj=4
 	EndIf
-	
+
 	; Still doesn't really work, and also doesn't behave well with orthographic mode yet.
 	;If KeyPressed(idk) ; Formerly 20, which is T
 	;	ToggleGameCamera()
 	;EndIf
-	
+
 	If KeyDown(57) ; space bar
 		CameraPanning=True
 		If LeftMouse=True
 			SpeedFactor#=0.25*Adj
 			AdjX#=-MouseDeltaX * SpeedFactor
 			AdjY#=MouseDeltaY * SpeedFactor
-			
+
 			Cs#=Cos(EntityYaw#(Camera1))
 			Sn#=Sin(EntityYaw#(Camera1))
 			VecX#=AdjX*Cs-AdjY*Sn
 			VecY#=AdjX*Sn+AdjY*Cs
-			
+
 			TranslateEntity Camera1,VecX#,0,VecY#
 		EndIf
 	Else
 		CameraPanning=False
 	EndIf
-	
+
 	Target=-1
-	
+
 	If EditorMode=3 And mx>=SidebarX+195 And my>=SidebarY+305 And mx<=SidebarX+295 And my<=SidebarY+430 ; camera4 viewport space
 		Target=Camera4 ; object camera
 	;ElseIf EditorMode=0 And mx>=510 And mx<710 And my>=20 And my<240
@@ -20004,11 +19481,11 @@ Function CameraControls()
 	Else
 		Target=Camera1 ; level camera
 	EndIf
-	
+
 	If Target=-1
 		Return
 	EndIf
-	
+
 	If Not CtrlDown()
 
 		If KeyDown(75) Or KeyDown(203) Or KeyDown(KeyMoveWest) ; numpad 4 or left arrow
@@ -20028,19 +19505,19 @@ Function CameraControls()
 			TranslateEntity Target,-Adj*Cos(EntityYaw#(Target)+90),0,-Adj*Sin(EntityYaw#(Target)+90)
 		EndIf
 		If KeyDown(73) Or KeyDown(18) ; numpad 9 or E
-		
+
 			TranslateEntity Target,0,Adj,0
 		EndIf
 		If KeyDown(81) Or KeyDown(46) ; numpad 3 or C
-		
+
 			TranslateEntity Target,0,-Adj,0
 		EndIf
 		If KeyDown(71) Or KeyDown(16) ; numpad 7 or Q
-			
+
 			TurnEntity Target,IntAdj,0,0
 		EndIf
 		If KeyDown(79) Or KeyDown(44) ; numpad 1 or Z
-		
+
 			TurnEntity Target,-IntAdj,0,0
 		EndIf
 		If KeyDown(181) Or KeyDown(23) ;Or KeyDown(3) ; numpad / or I
@@ -20049,7 +19526,7 @@ Function CameraControls()
 		If KeyDown(55) Or KeyDown(24) ;Or KeyDown(4) ; numpad * or O
 			RotateEntity Target,EntityPitch#(Target),EntityYaw#(Target)-IntAdj,EntityRoll#(Target)
 		EndIf
-		
+
 		If KeyDown(76) Or KeyDown(45) ; numpad 5 or X
 			; reset camera position and rotation
 			If Target=Camera1
@@ -20070,9 +19547,9 @@ Function CameraControls()
 				CameraZoom Camera4,Camera4Zoom#
 			EndIf
 		EndIf
-		
+
 	EndIf
-	
+
 	If MouseScroll<>0
 		; mouse position check here because we don't want to move the camera when using scroll wheel on object adjusters
 		If Target=Camera1 And mx<LevelViewportWidth+10 And my>=0 And my<LevelViewportHeight
@@ -20115,10 +19592,7 @@ Function CameraControls()
 		EndIf
 	EndIf
 
-		
-	
 End Function
-
 
 Function ToggleGameCamera()
 
@@ -20141,11 +19615,10 @@ Function ToggleGameCamera()
 
 End Function
 
-
 Function SaveLevel()
-	
+
 	file=WriteFile (GetAdventureDir$()+currentlevelnumber+".wlv")
-	
+
 	If (currentlevelnumber>94 And currentlevelnumber<99) Or Left$(Upper$(adventurefilename$),5)="ZACHY"
 		; WA3 VAULTS
 		WriteInt file,LevelWidth+121
@@ -20161,18 +19634,15 @@ Function SaveLevel()
 			WriteInt file,LevelTiles(i,j)\Terrain\SideRotation ; 0-3 , and 4-7 for "flipped"
 			WriteFloat file,LevelTiles(i,j)\Terrain\Random ; random height pertubation of tile
 			WriteFloat file,LevelTiles(i,j)\Terrain\Height ; height of "center" - e.g. to make ditches and hills
-			WriteFloat file,LevelTiles(i,j)\Terrain\Extrusion; extrusion with walls around it 
+			WriteFloat file,LevelTiles(i,j)\Terrain\Extrusion; extrusion with walls around it
 			WriteInt file,LevelTiles(i,j)\Terrain\Rounding; 0-no, 1-yes: are floors rounded if on a drop-off corner
 			WriteInt file,LevelTiles(i,j)\Terrain\EdgeRandom; 0-no, 1-yes: are edges rippled
-			
-			
-			WriteInt file,LevelTiles(i,j)\Terrain\Logic
-			
 
-			
+			WriteInt file,LevelTiles(i,j)\Terrain\Logic
+
 		Next
 	Next
-	
+
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
 			WriteInt file,LevelTiles(i,j)\Water\Texture
@@ -20181,26 +19651,23 @@ Function SaveLevel()
 			WriteFloat file,LevelTiles(i,j)\Water\Turbulence
 		Next
 	Next
-	
+
 	; Globals
 	WriteInt file,WaterFlow
 	WriteInt file,WaterTransparent
 	WriteInt file,WaterGlow
-	
+
 	WriteString file,CurrentLevelTextureName$()
 	WriteString file,CurrentWaterTextureName$()
 
-	
-	
-	
 	; Objects
-	
+
 	PlayerIndex=ObjectIndexEditorToGameInner(NofObjects)
-	
+
 	WriteInt file,NofObjects
 	For i=0 To NofObjects-1
 		Obj.GameObject=LevelObjects(i)
-		
+
 		WriteString file,Obj\Attributes\ModelName$
 		WriteString file,Obj\Attributes\TexName$
 		WriteFloat file,Obj\Attributes\XScale
@@ -20212,7 +19679,7 @@ Function SaveLevel()
 		WriteFloat file,Obj\Attributes\PitchAdjust
 		WriteFloat file,Obj\Attributes\YawAdjust
 		WriteFloat file,Obj\Attributes\RollAdjust
-	
+
 		WriteFloat file,Obj\Position\X
 		WriteFloat file,Obj\Position\Y
 		WriteFloat file,Obj\Position\Z
@@ -20223,7 +19690,7 @@ Function SaveLevel()
 		WriteFloat file,Obj\Attributes\DX
 		WriteFloat file,Obj\Attributes\DY
 		WriteFloat file,Obj\Attributes\DZ
-	
+
 		WriteFloat file,Obj\Attributes\Pitch
 		WriteFloat file,Obj\Attributes\Yaw
 		WriteFloat file,Obj\Attributes\Roll
@@ -20234,50 +19701,50 @@ Function SaveLevel()
 		WriteFloat file,Obj\Attributes\XGoal
 		WriteFloat file,Obj\Attributes\YGoal
 		WriteFloat file,Obj\Attributes\ZGoal
-	
+
 		WriteInt file,Obj\Attributes\MovementType
 		WriteInt file,Obj\Attributes\MovementTypeData
 		WriteFloat file,Obj\Attributes\Speed
 		WriteFloat file,Obj\Attributes\Radius
 		WriteInt file,Obj\Attributes\RadiusType
-	
+
 		WriteInt file,Obj\Attributes\Data10
-	
+
 		WriteFloat file,Obj\Attributes\PushDX
 		WriteFloat file,Obj\Attributes\PushDY
-	
+
 		WriteInt file,Obj\Attributes\AttackPower
 		WriteInt file,Obj\Attributes\DefensePower
 		WriteInt file,Obj\Attributes\DestructionType
-	
+
 		WriteInt file,Obj\Attributes\ID
 		WriteInt file,Obj\Attributes\LogicType
 		WriteInt file,Obj\Attributes\LogicSubType
-	
+
 		WriteInt file,Obj\Attributes\Active
 		WriteInt file,Obj\Attributes\LastActive
 		WriteInt file,Obj\Attributes\ActivationType
 		WriteInt file,Obj\Attributes\ActivationSpeed
-	
+
 		WriteInt file,Obj\Attributes\Status
 		WriteInt file,Obj\Attributes\Timer
 		WriteInt file,Obj\Attributes\TimerMax1
 		WriteInt file,Obj\Attributes\TimerMax2
-	
+
 		WriteInt file,Obj\Attributes\Teleportable
 		WriteInt file,Obj\Attributes\ButtonPush
 		WriteInt file,Obj\Attributes\WaterReact
-	
+
 		WriteInt file,Obj\Attributes\Telekinesisable
 		WriteInt file,Obj\Attributes\Freezable
-	
+
 		WriteInt file,Obj\Attributes\Reactive
 
 		;WriteInt file,ObjectChild
 		WriteInt file,ObjectIndexEditorToGame(Obj\Attributes\Child, PlayerIndex)
 		;WriteInt file,ObjectParent
 		WriteInt file,ObjectIndexEditorToGame(Obj\Attributes\Parent, PlayerIndex)
-	
+
 		WriteInt file,Obj\Attributes\Data0
 		WriteInt file,Obj\Attributes\Data1
 		WriteInt file,Obj\Attributes\Data2
@@ -20292,7 +19759,7 @@ Function SaveLevel()
 		WriteString file,Obj\Attributes\TextData1
 		WriteString file,Obj\Attributes\TextData2
 		WriteString file,Obj\Attributes\TextData3
-		
+
 		WriteInt file,Obj\Attributes\Talkable
 		WriteInt file,Obj\Attributes\CurrentAnim
 		WriteInt file,Obj\Attributes\StandardAnim
@@ -20332,52 +19799,46 @@ Function SaveLevel()
 		WriteFloat file,Obj\Attributes\FutureFloat10
 		WriteString file,Obj\Attributes\FutureString1$
 		WriteString file,Obj\Attributes\FutureString2$
-		
+
 		For k=0 To 30
 			;WriteString file,ObjectAdjusterString$(Dest,k)
 			WriteString file,""
 		Next
-		
-
 
 	Next
 
 	WriteInt file,LevelEdgeStyle
-	
+
 	WriteInt file,LightRed
 	WriteInt file,LightGreen
 	WriteInt file,LightBlue
-	
+
 	WriteInt file,AmbientRed
 	WriteInt file,AmbientGreen
 	WriteInt file,AmbientBlue
 
-
-	
 	WriteInt file,LevelMusic
 	WriteInt file,LevelWeather
-	
+
 	WriteString file,adventuretitle$
-	
+
 	; NEVER save extra data at the end of the wlv file.
 	; Saving extra bytes at the end of the file confuses the vanilla player into changing the state of every tile in the level.
-	
+
 	;WriteInt file,-2
 	;WriteInt file,WidescreenRangeLevel
-	
+
 	CloseFile file
 
 	UnsavedChanges=0
 
 End Function
 
-
 Function CenterCameraInLevel()
 
 	PositionCameraInLevel(LevelWidth/2,LevelHeight/2)
 
 End Function
-
 
 Function AccessLevelAt(levelnumber,FocusOnTileX,FocusOnTileY)
 
@@ -20386,14 +19847,12 @@ Function AccessLevelAt(levelnumber,FocusOnTileX,FocusOnTileY)
 
 End Function
 
-
 Function AccessLevelAtCenter(levelnumber)
 
 	AccessLevel(levelnumber)
 	CenterCameraInLevel()
 
 End Function
-
 
 Function SetCurrentLevelNumber(levelnumber)
 
@@ -20415,11 +19874,10 @@ Function SetCurrentLevelNumber(levelnumber)
 	Else
 		OpenedFirstLevelYet=True
 	EndIf
-	
+
 	CurrentLevelNumber=levelnumber
 
 End Function
-
 
 Function TryPopPreviousLevel()
 
@@ -20437,13 +19895,12 @@ Function TryPopPreviousLevel()
 
 End Function
 
-
 Function LoadObjectAttributes(file,i)
 
 	LevelObject.GameObject=LevelObjects(i)
 	Attributes.GameObjectAttributes=LevelObject\Attributes
 	Position.GameObjectPosition=LevelObject\Position
-	
+
 	Attributes\ModelName$=ReadString$(file)
 	Attributes\TexName$=ReadString$(file)
 	Attributes\XScale=ReadFloat(file)
@@ -20494,7 +19951,7 @@ Function LoadObjectAttributes(file,i)
 	Attributes\DestructionType=ReadInt(file)
 
 	Attributes\ID=ReadInt(file)
-	
+
 	Attributes\LogicType=ReadInt(file)
 	Attributes\LogicSubType=ReadInt(file)
 
@@ -20535,7 +19992,7 @@ Function LoadObjectAttributes(file,i)
 	Attributes\TextData1=ReadString$(file)
 	Attributes\TextData2=ReadString$(file)
 	Attributes\TextData3=ReadString$(file)
-	
+
 	Attributes\Talkable=ReadInt(file)
 	Attributes\CurrentAnim=ReadInt(file)
 	Attributes\StandardAnim=ReadInt(file)
@@ -20565,7 +20022,7 @@ Function LoadObjectAttributes(file,i)
 	Attributes\FutureInt24=ReadInt(file)
 	Attributes\FutureInt25=ReadInt(file)
 	Attributes\ScaleAdjust=ReadFloat(file)
-	Attributes\ScaleXAdjust=ReadFloat(file)	
+	Attributes\ScaleXAdjust=ReadFloat(file)
 	Attributes\ScaleYAdjust=ReadFloat(file)
 	Attributes\ScaleZAdjust=ReadFloat(file)
 	Attributes\ScaleXAdjust=1.0
@@ -20573,7 +20030,7 @@ Function LoadObjectAttributes(file,i)
 	Attributes\ScaleZAdjust=1.0
 	Attributes\FutureFloat5=ReadFloat(file)
 	Attributes\FutureFloat6=ReadFloat(file)
-	Attributes\FutureFloat7=ReadFloat(file)	
+	Attributes\FutureFloat7=ReadFloat(file)
 	Attributes\FutureFloat8=ReadFloat(file)
 	Attributes\FutureFloat9=ReadFloat(file)
 	Attributes\FutureFloat10=ReadFloat(file)
@@ -20582,29 +20039,28 @@ Function LoadObjectAttributes(file,i)
 
 End Function
 
-
 Function LoadLevel(levelnumber)
 
 	SetCurrentLevelNumber(levelnumber)
 
 	resetlevel()
-	
+
 	; clear current objects first
 	;ShowMessage("Freeing " + NofObjects + " objects...", 1000)
 	For i=0 To NofObjects-1
 		;DeleteObject(i)
 		FreeObject(i)
 	Next
-	
+
 	file=ReadFile (GetAdventureDir$()+levelnumber+".wlv")
-	
+
 	LevelWidth=-999
 	; This loop will bypass the protection on MOFI and WA3 Beta1 level files.
 	; MOFI levels have only one extra -999 integer.
 	While LevelWidth=-999
 		LevelWidth=ReadInt(File)
 	Wend
-	
+
 	If LevelWidth>121
 		; WA3 VAULTS
 		LevelWidth=LevelWidth-121
@@ -20619,13 +20075,13 @@ Function LoadLevel(levelnumber)
 			LevelTiles(i,j)\Terrain\SideRotation=ReadInt(file) ; 0-3 , and 4-7 for "flipped"
 			LevelTiles(i,j)\Terrain\Random=ReadFloat(file) ; random height pertubation of tile
 			LevelTiles(i,j)\Terrain\Height=ReadFloat(file) ; height of "center" - e.g. to make ditches and hills
-			LevelTiles(i,j)\Terrain\Extrusion=ReadFloat(file); extrusion with walls around it 
+			LevelTiles(i,j)\Terrain\Extrusion=ReadFloat(file); extrusion with walls around it
 			LevelTiles(i,j)\Terrain\Rounding=ReadInt(file); 0-no, 1-yes: are floors rounded if on a drop-off corner
 			LevelTiles(i,j)\Terrain\EdgeRandom=ReadInt(file); 0-no, 1-yes: are edges rippled
 			LevelTiles(i,j)\Terrain\Logic=ReadInt(file)
-			
+
 			LevelTileObjectCount(i,j)=0
-			
+
 		Next
 	Next
 	For j=0 To LevelHeight-1
@@ -20639,7 +20095,7 @@ Function LoadLevel(levelnumber)
 	WaterFlow=ReadInt(file)
 	WaterTransparent=ReadInt(File)
 	WaterGlow=ReadInt(File)
-	
+
 	currentleveltexture=-1
 	currentwatertexture=-1
 	a$=ReadString$(file)
@@ -20649,7 +20105,7 @@ Function LoadLevel(levelnumber)
 	If currentleveltexture=-1
 		LevelTextureCustomName$=a$
 	EndIf
-	
+
 	a$=ReadString$(file)
 	For i=0 To nofwatertextures-1
 		If a$=waterTextureName$(i) Then CurrentwaterTexture=i
@@ -20657,7 +20113,6 @@ Function LoadLevel(levelnumber)
 	If currentwatertexture=-1
 		WaterTextureCustomName$=a$
 	EndIf
-
 
 	FreeTexture leveltexture
 	FreeTexture watertexture
@@ -20677,7 +20132,7 @@ Function LoadLevel(levelnumber)
 	Else
 		LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
 	EndIf
-	
+
 	watertexture=0
 	If currentwatertexture=-1
 		WaterTexture=LoadTexture(globaldirname$+"\custom\leveltextures\watertex "+WaterTextureCustomName$+".jpg",2)
@@ -20694,36 +20149,29 @@ Function LoadLevel(levelnumber)
 	Else
 		waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
 	EndIf
-	
+
 	leftmousereleased=False
-		
-
-
 
 	SetNofObjects(0)
 	ReadObjectCount=ReadInt(file)
-	
+
 	For i=0 To ReadObjectCount-1
 		LoadObjectAttributes(file,i)
-				
+
 		If WA1Format=False
 			For k=0 To 30
 				;ObjectAdjusterString$(Dest,k)=ReadString(file)
 				ReadString(file)
 			Next
 		EndIf
-		
+
 		BuildLevelObjectModel(i)
 
-
 		SetNofObjects(NofObjects+1)
-		
 
 		CreateObjectPositionMarker(i)
 	Next
-	
-	
-	
+
 	; finalize object data
 	PlayerIndex=NofObjects
 	For j=0 To NofObjects-1
@@ -20735,53 +20183,52 @@ Function LoadLevel(levelnumber)
 	Next
 
 	ObjectsWereChanged()
-	
-	
+
 	LevelEdgeStyle=ReadInt(file)
-	
+
 	LightRed=ReadInt(file)
 	LightGreen=ReadInt(file)
 	LightBlue=ReadInt(file)
-	
+
 	AmbientRed=ReadInt(file)
 	AmbientGreen=ReadInt(file)
 	AmbientBlue=ReadInt(file)
 
 	LevelMusic=ReadInt(file)
 	LevelWeather=ReadInt(file)
-	
+
 	LightingWasChanged()
-	
+
 	ReBuildLevelModel()
-	
+
 	UpdateLevelTexture()
 	UpdateWaterTexture()
-	
+
 	BuildCurrentTileModel()
-	
+
 	For j=0 To LevelHeight-1
 		For i=0 To LevelWidth-1
 			UpdateTile(i,j)
 		Next
 	Next
-	
+
 	OpenedLevel()
 
 	If Not Eof(file)
 		ReadString(file)
 	EndIf
-	
+
 	If Not Eof(file)
 		ReadInt(file)
 	EndIf
-	
+
 	If Not Eof(file)
 		WidescreenRangeLevel=ReadInt(file)
 		AddUnsavedChange()
 	EndIf
-	
+
 	CloseFile file
-	
+
 End Function
 
 Function NewLevel(levelnumber)
@@ -20789,21 +20236,21 @@ Function NewLevel(levelnumber)
 	; new level
 	SetCurrentLevelNumber(levelnumber)
 	resetlevel()
-	; clear current objects 
-	
+	; clear current objects
+
 	For ig=0 To NofObjects-1
 		FreeObject(ig)
 	Next
-		
+
 	SetNofObjects(0)
 	ObjectsWereChanged()
-	
+
 	; reset textures
 	FreeTexture leveltexture
 	FreeTexture watertexture
 	CurrentLevelTexture=0
 	LevelTexture=myLoadTexture("data\Leveltextures\"+LevelTexturename$(CurrentLevelTexture),1)
-	CurrentWaterTexture=0	
+	CurrentWaterTexture=0
 	waterTexture=myLoadTexture("data\Leveltextures\"+waterTexturename$(CurrentWaterTexture),1)
 
 	UpdateLevelTexture()
@@ -20811,7 +20258,7 @@ Function NewLevel(levelnumber)
 
 	rebuildlevelmodel()
 	BuildCurrentTileModel()
-	
+
 	OpenedLevel()
 
 End Function
@@ -20832,9 +20279,9 @@ Function OpenedLevel()
 	If BrushMode=BrushModeTestLevel
 		BrushMode=BrushModeNormal
 	EndIf
-	
+
 	BrushCursorProbablyModifiedTiles()
-	
+
 	UpdateMusic()
 
 End Function
@@ -20895,20 +20342,20 @@ Function GetAdventuresDir$(CurrentArchive)
 End Function
 
 Function GetAdventureFolder$()
-	
+
 	ex2$=GetAdventuresDir$(AdventureCurrentArchive)
 	Return ex2$+AdventureFileName$
-	
+
 End Function
 
 Function GetAdventureDir$()
-	
+
 	Return GetAdventureFolder$()+"\"
-	
+
 End Function
 
 Function MoveFile(numbersource,numberdest,ext$)
-	
+
 	dirbase$=GetAdventureDir$()
 	CopyFile(dirbase$+numbersource+ext$,dirbase$+numberdest+ext$)
 	DeleteFile(dirbase$+numbersource+ext$)
@@ -21000,7 +20447,7 @@ Function SwapFile(levelnumber1,levelnumber2,ext$,Exists1,Exists2)
 End Function
 
 Function SwapLevel(levelnumber1,levelnumber2)
-	
+
 	Exists1=LevelExists(levelnumber1)
 	Exists2=LevelExists(levelnumber2)
 	SwapFile(levelnumber1,levelnumber2,".wlv",Exists1,Exists2)
@@ -21023,19 +20470,19 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 	; texture is the available "colour" from 0-15
 	btype=btype Mod 32
 	;IsGeneralCommand=False
-	
+
 	If btype=15
 		;IsGeneralCommand=True
 		Return CreateGeneralCommandTextMesh(col1)
-		
+
 		btype=11
 	EndIf
-	
+
 	If btype>=5 And btype<10
 		col3=col1
 		col4=col2
 	EndIf
-	
+
 	If btype=16 Or btype=17; rotator
 		;If col3=1 Then btype=17
 		col2=col1
@@ -21043,10 +20490,9 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 		col4=col1
 	EndIf
 
-	
 	Entity=CreateMesh()
 	surface=CreateSurface(Entity)
-	
+
 	; first, the outline shape
 	AddVertex (surface,-.45,0.01,.45,(btype Mod 8)*0.125,(btype/8)*0.125)
 	AddVertex (surface,.45,0.01,.45,(btype Mod 8)*0.125+0.125,(btype/8)*0.125)
@@ -21054,7 +20500,7 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 	AddVertex (surface,.45,0.01,-.45,(btype Mod 8)*0.125+0.125,(btype/8)*0.125+0.125)
 	AddTriangle (surface,0,1,2)
 	AddTriangle (surface,1,3,2)
-	
+
 	If btype<10 Or btype>13
 		; now the four colours - the placement of these depend on the btype shape
 		Select (btype Mod 32)
@@ -21078,21 +20524,21 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 			nudge#=.01
 			radius#=.28
 			alt=True
-					
+
 		End Select
-		
+
 		AddVertex (Surface,-radius,0.005,radius,(col1 Mod 8)*0.125+.01,(col1/8)*0.125+0.5+.01)
 		AddVertex (Surface,0.01,0.005,radius,(col1 Mod 8)*0.125+0.125-.01,(col1/8)*0.125+.5+.01)
 		AddVertex (Surface,-radius,0.005,-0.01,(col1 Mod 8)*0.125+.01,(col1/8)*0.125+0.5+.125-.01)
 		AddVertex (Surface,0.01,0.005,-0.01,(col1 Mod 8)*0.125+0.125-.01,(col1/8)*0.125+.5+.125-.01)
 		If alt=True
-			
+
 			AddTriangle (surface,4,5,6)
 			AddTriangle (surface,5,7,6)
 		Else
 			AddTriangle (surface,5,7,6)
 		EndIf
-		
+
 		AddVertex (Surface,-0.01,0.005,radius,(col2 Mod 8)*0.125+.01,(col2/8)*0.125+0.5+.01)
 		AddVertex (Surface,radius,0.005,radius,(col2 Mod 8)*0.125+0.125-.01,(col2/8)*0.125+.5+.01)
 		AddVertex (Surface,-0.01,0.005,-0.01,(col2 Mod 8)*0.125+.01,(col2/8)*0.125+0.5+.125-.01)
@@ -21103,7 +20549,7 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 		Else
 			AddTriangle (surface,8,11,10)
 		EndIf
-		
+
 		AddVertex (Surface,-radius,0.005,.01,(col3 Mod 8)*0.125+.01,(col3/8)*0.125+0.5+.01)
 		AddVertex (Surface,.01,0.005,.01,(col3 Mod 8)*0.125+0.125-.01,(col3/8)*0.125+.5+.01)
 		AddVertex (Surface,-radius,0.005,-radius,(col3 Mod 8)*0.125+.01,(col3/8)*0.125+0.5+.125-.01)
@@ -21114,7 +20560,7 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 		Else
 			AddTriangle (surface,12,13,15)
 		EndIf
-		
+
 		AddVertex (Surface,-.01,0.005,.01,(col4 Mod 8)*0.125+.01,(col4/8)*0.125+0.5+.01)
 		AddVertex (Surface,radius,0.005,.01,(col4 Mod 8)*0.125+0.125-.01,(col4/8)*0.125+.5+.01)
 		AddVertex (Surface,-.01,0.005,-radius,(col4 Mod 8)*0.125+.01,(col4/8)*0.125+0.5+.125-.01)
@@ -21125,22 +20571,21 @@ Function CreateButtonMesh(btype,col1,col2,col3,col4)
 		Else
 			AddTriangle (surface,16,17,18)
 		EndIf
-	
+
 	EndIf
-		
-	
+
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,ButtonTexture
-	
+
 ;	If IsGeneralCommand
-;	
+;
 ;		ExtraEntity=CreateGeneralCommandTextMesh(col1)
 ;
 ;		EntityParent ExtraEntity,Entity
-;	
+;
 ;	EndIf
-	
+
 	Return Entity
 
 End Function
@@ -21149,62 +20594,61 @@ Function CreateGeneralCommandTextMesh(col1)
 
 	ExtraEntity=CreateMesh()
 	Surface=CreateSurface(ExtraEntity)
-	
+
 	Command$=col1
-	
+
 	r=GetCommandColor(col1,0)
 	g=GetCommandColor(col1,1)
 	b=GetCommandColor(col1,2)
-	
+
 	scaling#=0.3
 	yoffset#=-0.10
-	
+
 	;outlinesize#=0.01
-	
+
 	BuildTextSurface(Surface,Command$,-0.015,scaling#,0,0.0,yoffset#)
-	
+
 	EntityColor ExtraEntity,r,g,b
-	
+
 	RotateMesh ExtraEntity,90,0,0
-	
+
 	UpdateNormals ExtraEntity
-	
-	
+
 	BackdropEntity=CreateMesh(ExtraEntity)
 	Surface=CreateSurface(BackdropEntity)
-	
+
 	;scaling#=scaling#*2
-	
+
 	offset#=0.02
-	
+
 	BuildTextSurface(Surface,Command$,-0.014,scaling#,0,offset#,yoffset#)
 	BuildTextSurface(Surface,Command$,-0.014,scaling#,1,-offset#,yoffset#)
 	BuildTextSurface(Surface,Command$,-0.014,scaling#,2,0.0,yoffset#+offset#)
 	BuildTextSurface(Surface,Command$,-0.014,scaling#,3,0.0,yoffset#-offset#)
-	
+
 	;radius#=0.45
-	
+
 	;AddVertex (surface,-radius,0.01,radius)
 	;AddVertex (surface,radius,0.01,radius)
 	;AddVertex (surface,-radius,0.01,-radius)
 	;AddVertex (surface,radius,0.01,-radius)
 	;AddTriangle (surface,0,1,2)
 	;AddTriangle (surface,1,3,2)
-	
+
 	;EntityAlpha BackdropEntity,0.3
-	
+
 	EntityColor BackdropEntity,0,0,0
 	;EntityColor BackdropEntity,255,255,255
 	;EntityColor BackdropEntity,255-r,255-g,255-b
-	
+
 	RotateMesh BackdropEntity,90,0,0
-	
+
 	UpdateNormals BackdropEntity
-	
+
 	; Comment these out to debug the glyph placement.
 	EntityTexture ExtraEntity,TextTexture
 	EntityTexture BackdropEntity,TextTexture
-	
+
 	Return ExtraEntity
 
 End Function
@@ -21217,7 +20661,7 @@ Function BuildTextSurface(mySurface,myString$,z#,scaling#,letteroffset=0,xoffset
 	For i=1 To Len(myString$)
 		let=Asc(Mid$(myString$,i,1))-32
 		letternumber=i-1
-		
+
 		x#=-xsize#*(Len(myString$)-1)*0.5+(i-1)*xsize#
 		y#=0
 		AddTextToSurface(mySurface,letternumber+letteroffset*Len(myString$),let,x#+xoffset#,y#+yoffset#,z#,0.5*scaling#)
@@ -21226,11 +20670,11 @@ Function BuildTextSurface(mySurface,myString$,z#,scaling#,letteroffset=0,xoffset
 End Function
 
 Function CreateColourGateMesh(subtype,tex)
-	
+
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
-	
-	; Top 
+
+	; Top
 	AddVertex (surface,-.495,1.01,.495,subtype*0.25+.01,.26)
 	AddVertex (surface,.495,1.01,.495,subtype*0.25+.24,.26)
 	AddVertex (surface,-.495,1.01,-.495,subtype*0.25+.01,.49)
@@ -21243,7 +20687,7 @@ Function CreateColourGateMesh(subtype,tex)
 	AddVertex (surface,.25,1.02,-.25,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
 	AddTriangle (surface,4,5,6)
 	AddTriangle (surface,5,7,6)
-	
+
 	; Sides
 	For i=0 To 3
 		Select i
@@ -21269,8 +20713,6 @@ Function CreateColourGateMesh(subtype,tex)
 			y2#=-.49
 		End Select
 
-	
-			
 		AddVertex (surface,x1,1,y1,subtype*0.25+.01,.01)
 		AddVertex (surface,x2,1,y2,subtype*0.25+.24,.01)
 		AddVertex (surface,x1,0,y1,subtype*0.25+.01,.24)
@@ -21281,28 +20723,23 @@ Function CreateColourGateMesh(subtype,tex)
 		AddVertex (surface,x2*1.01,.8,y2*1.01,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51)
 		AddVertex (surface,x1*1.01,.6,y1*1.01,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51+.115)
 		AddVertex (surface,x2*1.01,.6,y2*1.01,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
-	
+
 		AddTriangle (surface,12+i*8,13+i*8,14+i*8)
 		AddTriangle (surface,13+i*8,15+i*8,14+i*8)
-		
-		
+
 	Next
 
-
-	
-	
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,GateTexture
 	Return Entity
 
 End Function
 
 Function CreateRetroLaserGateMesh(col)
-		
-	
+
 	; create the mesh if laser gate
-	Entity=CreateMesh() 
+	Entity=CreateMesh()
 	cyl=CreateCylinder (6,False) ; an individual cylinder
 	ScaleMesh cyl,0.05,0.5,0.05
 	RotateMesh cyl,0,0,90
@@ -21313,9 +20750,9 @@ Function CreateRetroLaserGateMesh(col)
 	PositionMesh cyl,0,0,-.433
 	AddMesh cyl,Entity
 	FreeEntity cyl
-	
+
 	EntityAlpha Entity,0.5
-	
+
 	If col=0
 		EntityColor Entity,255,0,0
 	Else If col=1
@@ -21328,23 +20765,20 @@ Function CreateRetroLaserGateMesh(col)
 		EntityColor Entity,0,255,255
 	Else If col=5
 		EntityColor Entity,0,0,255
-	Else 
+	Else
 		EntityColor Entity,255,0,255
 	EndIf
-	
+
 	Return Entity
-	
+
 End Function
 
-
 Function CreateTransporterMesh(tex,subtype)
-	
+
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
-	
-	
-	
-	; Top 
+
+	; Top
 	AddVertex (surface,-.495,0.01,.495,subtype*0.25+.01,.26)
 	AddVertex (surface,.495,0.01,.495,subtype*0.25+.24,.26)
 	AddVertex (surface,-.495,0.01,-.495,subtype*0.25+.01,.49)
@@ -21357,7 +20791,7 @@ Function CreateTransporterMesh(tex,subtype)
 	AddVertex (surface,.25,0.02,-.25,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
 	AddTriangle (surface,4,5,6)
 	AddTriangle (surface,5,7,6)
-	
+
 	; Sides
 	For i=0 To 3
 		Select i
@@ -21383,23 +20817,17 @@ Function CreateTransporterMesh(tex,subtype)
 			y2#=-.49
 		End Select
 
-	
-			
 		AddVertex (surface,x1,0,y1,subtype*0.25+.01,.01)
 		AddVertex (surface,x2,0,y2,subtype*0.25+.24,.01)
 		AddVertex (surface,x1,-.3,y1,subtype*0.25+.01,.24)
 		AddVertex (surface,x2,-.3,y2,subtype*0.25+.24,.24)
 		AddTriangle (surface,8+i*4,9+i*4,10+i*4)
 		AddTriangle (surface,9+i*4,11+i*4,10+i*4)
-		
-		
+
 	Next
 
-
-	
-	
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,GateTexture
 	Return Entity
 
@@ -21444,24 +20872,20 @@ Function CreateCloudMesh(col)
 
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
-	
-	
-	
-	
+
 	AddVertex (surface,-.495,0.01,.495,0,0)
 	AddVertex (surface,.495,0.01,.495,0,1)
 	AddVertex (surface,-.495,0.01,-.495,1,0)
 	AddVertex (surface,.495,0.01,-.495,1,1)
 	AddTriangle (surface,0,1,2)
 	AddTriangle (surface,1,3,2)
-	
+
 	AddVertex (surface,-.495,-0.1,.495,0,0)
 	AddVertex (surface,.495,-0.1,.495,0,1)
 	AddVertex (surface,-.495,-0.1,-.495,1,0)
 	AddVertex (surface,.495,-0.1,-.495,1,1)
 	AddTriangle (surface,4,5,6)
 	AddTriangle (surface,5,6,6)
-
 
 	AddVertex (surface,-.495,-0.2,.495,0,0)
 	AddVertex (surface,.495,-0.2,.495,0,1)
@@ -21470,27 +20894,20 @@ Function CreateCloudMesh(col)
 	AddTriangle (surface,8,9,10)
 	AddTriangle (surface,9,11,10)
 
-
-
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,CloudTexture
 	EntityAlpha Entity,.8
 	EntityColor entity,red,green,blue
 	Return Entity
 
-
 End Function
-
-
 
 Function CreateTeleporterMesh(tex)
 
-
-	
 	entity=CreateCylinder(16,False)
-	;ObjectTexture(i)=TeleporterTexture(texture)	
-	
+	;ObjectTexture(i)=TeleporterTexture(texture)
+
 	PositionMesh entity,0,1,0
 	ScaleMesh entity,.4,2,.4
 	EntityAlpha entity,.6
@@ -21503,17 +20920,16 @@ Function CreateTeleporterMesh(tex)
 	For j=0 To 16
 		VertexColor GetSurface(entity,1),j*2,0,0,0
 	Next
-	
+
 	Return entity
 End Function
-	
 
 Function CreatePickUpItemMesh(tex)
 	entity=CreateMesh()
 	surface=CreateSurface(entity)
-	
+
 	AddVertex (surface,0,.1,0,.9375,.9375)
-	
+
 	R#=.3
 	AddVertex (surface,R,.1,.5+R,.875,.875)
 	AddVertex (surface,.5+R,.1,R,.875,1)
@@ -21531,14 +20947,14 @@ Function CreatePickUpItemMesh(tex)
 	AddVertex (surface,-R,.1,.5+R,.875,1)
 	AddTriangle (surface,0,7,8)
 	AddTriangle (surface,0,8,1)
-	
+
 	AddVertex (surface,-.5,.2,.5,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,.5,.2,.5,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,-.5,.2,-.5,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.0945)
 	AddVertex (surface,.5,.2,-.5,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.0945)
 	AddTriangle (surface,9,10,11)
 	AddTriangle (surface,10,12,11)
-	
+
 	AddVertex(surface,0,1.5,0,.9375,.9375)
 	AddTriangle (surface,13,1,2)
 	AddTriangle (surface,13,2,3)
@@ -21548,8 +20964,7 @@ Function CreatePickUpItemMesh(tex)
 	AddTriangle (surface,13,6,7)
 	AddTriangle (surface,13,7,8)
 	AddTriangle (surface,13,8,1)
-	
-	 
+
 	For j=0 To 8
 		VertexColor  surface,j,255,255,255,.5
 	Next
@@ -21558,48 +20973,48 @@ Function CreatePickUpItemMesh(tex)
 	EntityFX Entity,32+2
 
 	ScaleMesh Entity,.5,.5,.5
-	
+
 	UpdateNormals Entity
 ;	EntityTexture Entity,IconTextureStandard
-	
+
 	Return Entity
 End Function
 
 Function CreateWaterFallMesh(tex)
-	
+
 	Entity=CreateMesh()
 	surface=CreateSurface(Entity)
-	
+
 	AddVertex surface,-.5,0.81,-.51,0,0
 	AddVertex surface,.5,0.81,-.51,1,0
 	AddVertex surface,-.5,-0.21,-.51,0,1
 	AddVertex surface,.5,-0.21,-.51,1,1
-	
+
 	AddVertex surface,-.5,0.31,-.51,0,1
 	AddVertex surface,.5,0.31,-.51,1,1
 	AddVertex surface,-.5,0.31,-.51,0,0
 	AddVertex surface,.5,0.31,-.51,1,0
-	
+
 	AddTriangle (surface,0,1,2)
 	AddTriangle (surface,1,3,2)
-	
+
 	AddTriangle (surface,0,1,4)
 	AddTriangle (surface,1,5,4)
 	AddTriangle (surface,6,7,2)
 	AddTriangle (surface,7,3,2)
-	
+
 	AddTriangle (surface,1,0,3)
 	AddTriangle (surface,0,2,3)
-	
+
 	If tex>=0 And tex<=2
 		EntityTexture Entity,WaterFallTexture(tex)
 		EntityAlpha Entity,.7
 	Else
 		UseErrorColor(Entity)
 	EndIf
-		
+
 	UpdateNormals Entity
-	
+
 	Return Entity
 
 End Function
@@ -21607,12 +21022,11 @@ End Function
 Function CreateKeyMesh(col)
 
 	Entity=CopyMesh(KeyMesh)
-	
+
 	;adjust the colour
-	
 
 	For i=0 To CountVertices (GetSurface(Entity,1))-1
-		
+
 		VertexTexCoords GetSurface(Entity,1),i,VertexU(GetSurface(Entity,1),i)+(col Mod 8)*0.125,VertexV(GetSurface(Entity,1),i)+0.5+Floor(col/8)*0.125
 	Next
 	UpdateNormals Entity
@@ -21626,122 +21040,99 @@ Function CreateKeyCardMesh(col)
 
 	entity=CreateMesh()
 
-
 	surface=CreateSurface(entity)
-	
+
 	AddVertex (surface,-.4,.4,-.1,(tex Mod 8)*0.125+0.000,Floor((tex Mod 64)/8)*0.125+0.000)
 	AddVertex (surface,.4,.4,-.10,(tex Mod 8)*0.125+0.125,Floor((tex Mod 64)/8)*0.125+0.000)
 	AddVertex (surface,-.4,-.4,-.10,(tex Mod 8)*0.125+0.000,Floor((tex Mod 64)/8)*0.125+0.125)
 	AddVertex (surface,.4,-.4,0-.1,(tex Mod 8)*0.125+0.125,Floor((tex Mod 64)/8)*0.125+0.125)
-	
+
 	AddVertex (surface,-.4,.4,.10,(tex Mod 8)*0.125+0.000,Floor((tex Mod 64)/8)*0.125+0.000)
 	AddVertex (surface,.4,.4,.10,(tex Mod 8)*0.125+0.125,Floor((tex Mod 64)/8)*0.125+0.000)
 	AddVertex (surface,-.4,-.4,.10,(tex Mod 8)*0.125+0.000,Floor((tex Mod 64)/8)*0.125+0.125)
 	AddVertex (surface,.4,-.4,.10,(tex Mod 8)*0.125+0.125,Floor((tex Mod 64)/8)*0.125+0.125)
 
-
-
 	AddTriangle(surface,0,1,2)
 	AddTriangle(surface,1,3,2)
-	
+
 	AddTriangle(surface,5,4,6)
 	AddTriangle(surface,5,6,7)
-	
+
 	; editor rotation only
 	;RotateMesh Entity,90,0,0
 	;PositionMesh Entity,0,.3,0
 
-	
-	
-	
 	UpdateNormals Entity
 	EntityTexture Entity,ButtonTexture
 	Return Entity
 End Function
 
-
 Function CreateCustomItemMesh(tex)
 	entity=CreateMesh()
 
-
 	surface=CreateSurface(entity)
-	
+
 	AddVertex (surface,-.4,.4,-.1,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,.4,.4,-.10,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,-.4,-.4,-.10,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.0945)
 	AddVertex (surface,.4,-.4,0-.1,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.0945)
-	
+
 	AddVertex (surface,-.4,.4,.10,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,.4,.4,.10,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,-.4,-.4,.10,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.0945)
 	AddVertex (surface,.4,-.4,.10,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.0945)
 
-
 	AddTriangle(surface,0,1,2)
 	AddTriangle(surface,1,3,2)
-	
+
 	AddTriangle(surface,5,4,6)
 	AddTriangle(surface,5,6,7)
-	
-	
+
 	tex=63
 	AddVertex (surface,-.45,.45,-.0951,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,.45,.45,-.09510,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,-.45,-.45,-.09510,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.0945)
 	AddVertex (surface,.45,-.45,0-.0951,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.0945)
-	
+
 	AddVertex (surface,-.45,.45,.09510,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,.45,.45,.09510,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.013)
 	AddVertex (surface,-.45,-.45,.09510,(tex Mod 8)*0.125+0.013,Floor((tex Mod 64)/8)*0.125+0.0945)
 	AddVertex (surface,.45,-.45,.09510,(tex Mod 8)*0.125+0.1135,Floor((tex Mod 64)/8)*0.125+0.0945)
 
-
 	AddTriangle(surface,8,9,10)
 	AddTriangle(surface,9,11,10)
-	
+
 	AddTriangle(surface,13,12,14)
 	AddTriangle(surface,13,14,15)
-	
-	
+
 	AddTriangle(surface,12,13,9)
 	AddTriangle(surface,8,12,9)
-	
-	
+
 	AddTriangle(surface,11,15,14)
 	AddTriangle(surface,11,14,10)
-	
-	
+
 	AddTriangle(surface,12,8,14)
 	AddTriangle(surface,8,10,14)
-	
-	
+
 	AddTriangle(surface,9,13,15)
 	AddTriangle(surface,9,15,11)
 
-
-
-
-
-
-
-	
-	
 	UpdateNormals Entity
 	EntityTexture Entity,IconTextureCustom
-	
+
 	; new to editor to make custom item face upwards
 	;RotateMesh Entity,90,0,0
 	;PositionMesh Entity,0,.3,0
-	
+
 	Return Entity
 
 End Function
 
 Function CreatePushbotMesh(tex,dir)
-	
+
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
-	
+
 	If dir=2 ;(180 turn around)
 		dir=0
 		;front
@@ -21776,7 +21167,6 @@ Function CreatePushbotMesh(tex,dir)
 		AddTriangle (surface,12,13,14)
 		AddTriangle (surface,13,15,14)
 
-	
 	Else
 		dir=1-dir
 		; Front
@@ -21812,8 +21202,6 @@ Function CreatePushbotMesh(tex,dir)
 		AddTriangle (surface,13,15,14)
 	EndIf
 
-	
-	
 	; Col
 	AddVertex (surface,-.05,.33,.05,(tex Mod 8)*0.125+.01,(tex/8)*0.125+.51)
 	AddVertex (surface,.05,.33,.05,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51)
@@ -21821,29 +21209,27 @@ Function CreatePushbotMesh(tex,dir)
 	AddVertex (surface,.25,.39,-.35,(tex Mod 8)*0.125+.115,(tex/8)*0.125+.51+.115)
 	AddTriangle (surface,16,17,18)
 	AddTriangle (surface,17,19,18)
-	
-		
-	
+
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,PushbotTexture
 	Return Entity
 
 End Function
 
 Function CreateSuctubeMesh(tex,col,active)
-	
+
 	If active Mod 2 =1
 		active=0
 	Else
 		active=1
 	EndIf
-	
+
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
-	
+
 	nofsegments#=16
-	
+
 	i=0
 	angle#=-(360.0/nofsegments)/2.0+i*(360.0/nofsegments)
 	; top triangle
@@ -21852,10 +21238,7 @@ Function CreateSuctubeMesh(tex,col,active)
 	AddVertex (surface,0,1.71,+0.3,(col Mod 8)*0.125+.01,(col/8)*0.125+.51+.115+.25*active)
 	;AddTriangle (surface,0,1,2)
 	AddTriangle (surface,0,2,1)
-	
-	
-	
-	
+
 	; point arrow
 	If dir=0
 		VertexCoords surface,0,-0.3,1.71,-0.3
@@ -21867,8 +21250,6 @@ Function CreateSuctubeMesh(tex,col,active)
 		VertexCoords surface,1,0,1.71,-0.3
 	EndIf
 
-
-	
 	For i=0 To nofsegments-1
 		angle#=-(360.0/nofsegments)/2.0+i*(360.0/nofsegments)
 		AddVertex (surface,1.5*Sin(angle),0.7+1.0*Cos(angle),-0.505,0.25*tex,107.0/512.0)
@@ -21879,30 +21260,25 @@ Function CreateSuctubeMesh(tex,col,active)
 		;i=i+1 ; to account for the first four vertices
 		AddTriangle(surface,i*4+0+3,i*4+1+3,i*4+2+3)
 		AddTriangle(surface,i*4+1+3,i*4+3+3,i*4+2+3)
-		
+
 		AddTriangle(surface,i*4+2+3,i*4+1+3,i*4+0+3)
 		AddTriangle(surface,i*4+2+3,i*4+3+3,i*4+1+3)
 		;i=i-1
 	Next
-	
-
-	
 
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,GateTexture
 	Return Entity
 End Function
 
 Function CreateSuctubeXMesh(tex)
-	
+
 	Entity=CreateMesh()
 	Surface=CreateSurface(Entity)
-	
+
 	nofsegments#=16
 	nofarcpoints#=8
-	
-		
 
 	For j=0 To nofarcpoints
 		angle2#=(90.0/nofarcpoints)*j
@@ -21910,8 +21286,7 @@ Function CreateSuctubeXMesh(tex)
 			angle#=-(360.0/nofsegments)/2.0+i*(360.0/nofsegments)
 			height#=0.7+1.0*Cos(angle)
 			radius#=1.5-1.5*Sin(angle)
-			
-			
+
 			If i Mod 2 =0
 				xtex#=0.25
 			Else
@@ -21923,45 +21298,34 @@ Function CreateSuctubeXMesh(tex)
 			Else
 				ytex#=0.0
 			EndIf
-			
+
 			AddVertex (surface,1.5-radius*Cos(angle2),height,-1.5+radius*Sin(angle2),0.25*tex+xtex,(107.0-ytex)/512.0)
-			
+
 		Next
 	Next
-	
+
 	For j=0 To nofarcpoints-1
 		For i=0 To nofsegments-1
-		
+
 			AddTriangle(surface,j*nofsegments+i,j*nofsegments+((i+1) Mod nofsegments),(j+1)*nofsegments+i)
 			AddTriangle(surface,(j+1)*nofsegments+i,j*nofsegments+((i+1) Mod nofsegments),(j+1)*nofsegments+((i+1) Mod nofsegments))
-			
+
 			AddTriangle(surface,j*nofsegments+((i+1) Mod nofsegments),j*nofsegments+i,(j+1)*nofsegments+i)
 			AddTriangle(surface,(j+1)*nofsegments+((i+1) Mod nofsegments),j*nofsegments+((i+1) Mod nofsegments),(j+1)*nofsegments+i)
 
-
-			
 		Next
 	Next
-	
-
-	
 
 	UpdateNormals Entity
-	
+
 	EntityTexture Entity,GateTexture
 	Return Entity
 End Function
 
-
-
-
-
-
-
 Function GetTextureNames()
 
 	dir=ReadDir("data\leveltextures")
-	
+
 	NofLevelTextures=0
 	NofWaterTextures=0
 
@@ -21980,11 +21344,9 @@ Function GetTextureNames()
 		file$=NextFile$(dir)
 
 	Wend
-	
+
 	CloseDir dir
 
-		
-	
 End Function
 
 Function MyProcessFileNameTexture$(ex$)
@@ -21993,14 +21355,14 @@ Function MyProcessFileNameTexture$(ex$)
 	Repeat
 		j=j-1
 	Until Mid$(ex$,j,1)="/" Or Mid$(ex$,j,1)="\" Or j=1
-	
+
 	If j=1
 		ex2$=""
 		j=0
 	Else
 		ex2$=Left$(ex$,j)
 	EndIf
-	
+
 	Repeat
 		j=j+1
 		b=Asc(Mid$(Lower$(ex$),j,1))
@@ -22011,7 +21373,7 @@ Function MyProcessFileNameTexture$(ex$)
 		ex2$=ex2$+Chr$(b)
 	Until Mid$(ex$,j,1)="."
 	ex2$=ex2$+"wdf"
-	
+
 	Return ex2$
 
 End Function
@@ -22021,21 +21383,20 @@ Function MyLoadTexture(ex$,flag)
 ;	MyWriteString(debugfile,"Tex: "+ex$)
 
 	exbackup$=ex$
-	
+
 	ex2$=MyProcessFileNameTexture$(ex$)
-	
- 
+
 	;Print ex2$
 	a=LoadTexture(ex2$,flag)
 	If a=0
-	
+
 		a=LoadTexture(exbackup$,flag)
 		If a=0
 			jj=0
 			Repeat
 				jj=jj+1
 			Until FileType(globaldirname$+"\temp\debug."+Str$(jj))=0
-			
+
 			debugfile=WriteFile (globaldirname$+"\temp\debug."+Str$(jj))
 			Print "Couldn't Load Texture:"+ex$
 			Delay 5000
@@ -22054,12 +21415,12 @@ Function MyLoadTexture(ex$,flag)
 					Print "Do not simply run the .exe file from within the"
 					Print "update files, or you will receive this error."
 					Print "Unzip the files into your Wonderland directory first."
-					
+
 					Delay 1000
 					Print ""
 					Print "Exiting... Press Any Key."
 					WaitKey()
-					
+
 					End
 				EndIf
 			EndIf
@@ -22083,14 +21444,14 @@ Function MyProcessFileNameModel$(ex$)
 	Repeat
 		j=j-1
 	Until Mid$(ex$,j,1)="/" Or Mid$(ex$,j,1)="\" Or j=1
-	
+
 	If j=1
 		ex2$=""
 		j=0
 	Else
 		ex2$=Left$(ex$,j)
 	EndIf
-	
+
 	Repeat
 		j=j+1
 		b=Asc(Mid$(Lower$(ex$),j,1))
@@ -22105,7 +21466,7 @@ Function MyProcessFileNameModel$(ex$)
 	Else
 		ex2$=ex2$+"wd1"
 	EndIf
-	
+
 	Return ex2$
 
 End Function
@@ -22114,15 +21475,13 @@ Function MyLoadMesh(ex$,parent)
 ;	MyWriteString(debugfile,"Mesh: "+ex$)
 
 	ex2$=MyProcessFileNameModel$(ex$)
-	
+
 	;Print ex2$
-	
-	
 
 ;	Print ex2$
-	
+
 	CopyFile ex2$,globaldirname$+"\temp\debug."+Right$(ex$,3)
- 
+
 	;Print ex2$
 	If parent>0
 		a=LoadMesh(globaldirname$+"\temp\debug."+Right$(ex$,3),parent)
@@ -22136,19 +21495,18 @@ Function MyLoadMesh(ex$,parent)
 		Repeat
 			jj=jj+1
 		Until FileType(globaldirname$+"\temp\debug."+Str$(jj))=0
-		
+
 		debugfile=WriteFile (globaldirname$+"\temp\debug."+Str$(jj))
 		ShowMessage("Couldn't Load Mesh:"+ex$,5000)
 		WriteString debugfile,ex$
 		WriteString debugfile,ex2$
-		
+
 		WriteInt debugfile,TotalVidMem()
 		WriteInt debugfile,AvailVidMem()
 		End
 	EndIf
 	Return a
 End Function
-
 
 Function MyLoadAnimMesh(ex$,parent)
 ;	MyWriteString(debugfile,"AnimMesh: "+ex$)
@@ -22159,16 +21517,16 @@ Function MyLoadAnimMesh(ex$,parent)
 	Repeat
 		j=j-1
 	Until Mid$(ex$,j,1)="/" Or Mid$(ex$,j,1)="\" Or j=1
-	
+
 	If j=1
 		ex2$=""
 		j=0
 	Else
 		ex2$=Left$(ex$,j)
 	EndIf
-	
+
 	j2=j
-	
+
 	Repeat
 		j=j+1
 		b=Asc(Mid$(Lower$(ex$),j,1))
@@ -22183,24 +21541,19 @@ Function MyLoadAnimMesh(ex$,parent)
 	Else
 		ex2$=ex2$+"wd1"
 	EndIf
-	
-	
 
 ;	Print ex2$
 ;	Print ex$
 	If j2>0
 		ex$=Right$(ex$,Len(ex$)-j2)
 	EndIf
-	
+
 ;	Print ex$
-		
+
 	ex$=GlobalDirName$+"\Temp\"+ex$
-	
-	
-	
+
 	CopyFile ex2$,ex$
 
- 
 	;Print ex2$
 	If parent>0
 		a=LoadAnimMesh(ex$,parent)
@@ -22213,13 +21566,13 @@ Function MyLoadAnimMesh(ex$,parent)
 		Repeat
 			jj=jj+1
 		Until FileType("debug."+Str$(jj))=0
-		
+
 		debugfile=WriteFile ("debug."+Str$(jj))
 		Print "Couldn't Load AnimMesh:"+ex$
 		Delay 5000
 		WriteString debugfile,ex$
 		WriteString debugfile,ex2$
-		
+
 		WriteInt debugfile,TotalVidMem()
 		WriteInt debugfile,AvailVidMem()
 		End
@@ -22235,14 +21588,14 @@ Function MyLoadMD2(ex$)
 	Repeat
 		j=j-1
 	Until Mid$(ex$,j,1)="/" Or Mid$(ex$,j,1)="\" Or j=1
-	
+
 	If j=1
 		ex2$=""
 		j=0
 	Else
 		ex2$=Left$(ex$,j)
 	EndIf
-	
+
 	Repeat
 		j=j+1
 		b=Asc(Mid$(Lower$(ex$),j,1))
@@ -22253,23 +21606,22 @@ Function MyLoadMD2(ex$)
 		ex2$=ex2$+Chr$(b)
 	Until Mid$(ex$,j,1)="."
 	ex2$=ex2$+"wd2"
-	
- 
+
 	;Print ex2$
 	a=LoadMD2(ex2$,parent)
-	
+
 	If a=0
 		jj=0
 		Repeat
 			jj=jj+1
 		Until FileType(globaldirname$+"\temp\debug."+Str$(jj))=0
-		
+
 		debugfile=WriteFile (globaldirname$+"\temp\debug."+Str$(jj))
 		Print "Couldn't Load MD2:"+ex$
 		Delay 5000
 		WriteString debugfile,ex$
 		WriteString debugfile,ex2$
-		
+
 		WriteInt debugfile,TotalVidMem()
 		WriteInt debugfile,AvailVidMem()
 		End
@@ -22285,14 +21637,14 @@ Function MyLoadSound(ex$)
 	Repeat
 		j=j-1
 	Until Mid$(ex$,j,1)="/" Or Mid$(ex$,j,1)="\" Or j=1
-	
+
 	If j=1
 		ex2$=""
 		j=0
 	Else
 		ex2$=Left$(ex$,j)
 	EndIf
-	
+
 	Repeat
 		j=j+1
 		b=Asc(Mid$(Lower$(ex$),j,1))
@@ -22303,8 +21655,7 @@ Function MyLoadSound(ex$)
 		ex2$=ex2$+Chr$(b)
 	Until Mid$(ex$,j,1)="."
 	ex2$=ex2$+"wdf"
-	
- 
+
 	;Print ex2$
 	a=LoadSound(ex2$)
 	If a=0
@@ -22312,38 +21663,37 @@ Function MyLoadSound(ex$)
 		Repeat
 			jj=jj+1
 		Until FileType("debug."+Str$(jj))=0
-		
+
 		debugfile=WriteFile ("debug."+Str$(jj))
 	;	Print "Couldn't Load MD2:"+ex$
 	;	Delay 5000
 		WriteString debugfile,ex$
 		WriteString debugfile,ex2$
-		
+
 		WriteInt debugfile,TotalVidMem()
 		WriteInt debugfile,AvailVidMem()
 	;	End
 	EndIf
-
 
 	Return a
 End Function
 
 Function myFileType(ex$)
 	j=Len(ex$)
-	
+
 	If j<>1
 		Repeat
 			j=j-1
 		Until Mid$(ex$,j,1)="/" Or Mid$(ex$,j,1)="\" Or j=1
 	EndIf
-	
+
 	If j=1
 		ex2$=""
 		j=0
 	Else
 		ex2$=Left$(ex$,j)
 	EndIf
-	
+
 	Repeat
 		j=j+1
 		b=Asc(Mid$(Lower$(ex$),j,1))
@@ -22359,18 +21709,18 @@ Function myFileType(ex$)
 End Function
 
 Function DisplayText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
-	
+
 	For i=1 To Len(mytext$)
 		let=Asc(Mid$(mytext$,i,1))-32
 		AddLetter(let,-.97+(x+(i-1)*widthmult)*CharWidth#,DisplayText2Y#(y),1,0,.04,0,0,0,0,0,0,0,0,0,red,green,blue)
 	Next
-	
+
 End Function
 
 Function DisplayText2Y#(y)
 
 	Return .5-(y-4)*CharHeight#
-	
+
 End Function
 
 Function DisplayCenteredText2(mytext$,x#,y#,red,green,blue,widthmult#=1.0)
@@ -22464,45 +21814,45 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		EndIf
 		ColEffect=-1
 		TxtEffect=-1
-		
+
 		AddUnsavedChange()
 	EndIf
 	If CtrlDown() And MouseDown(1)
 		; ctrl+click
 		tex$=Left$(tex$,x)+InputString$("String to insert: ")+Right$(tex$,Len(tex$)-x)
-		
+
 		ColEffect=-1
 		TxtEffect=-1
-		
+
 		AddUnsavedChange()
 	EndIf
 	If KeyDown(14)
 		; backspace
-		If x>0 
+		If x>0
 			tex$=Left$(tex$,x-1)+Right$(tex$,Len(tex$)-x)
 			MouseTextEntryMoveMouse(x-1,y,yadjust)
 			Delay CharacterDeleteDelay
 		EndIf
 		ColEffect=-1
 		TxtEffect=-1
-		
+
 		AddUnsavedChange()
 		MouseTextEntryDelete=True
 	EndIf
 	If KeyDown(211)
 		; delete
-		If x<Len(tex$) 
+		If x<Len(tex$)
 			tex$=Left$(tex$,x)+Right$(tex$,Len(tex$)-x-1)
 			HidePointer
 			Delay CharacterDeleteDelay
 		EndIf
 		ColEffect=-1
 		TxtEffect=-1
-		
+
 		AddUnsavedChange()
 		MouseTextEntryDelete=True
 	EndIf
-	
+
 	; cursor movement
 	If (KeyDown(200) Or KeyDown(72))
 		; up arrow or numpad 8
@@ -22520,7 +21870,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	
+
 	If (KeyDown(203)) And x>0
 		; left arrow
 		MouseTextEntryMoveMouse(x-1,y,yadjust)
@@ -22535,13 +21885,13 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	
+
 	If KeyDown(199) ; home
 		MouseTextEntryMoveMouse(0,y,yadjust)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	
+
 	If KeyDown(207) ; end
 		endx=Len(tex$)
 		If endx>37
@@ -22551,7 +21901,7 @@ Function MouseTextEntry$(tex$,let,x,y,yadjust,ScreenId)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	
+
 	Return tex$
 
 End Function
@@ -22568,12 +21918,12 @@ End Function
 
 Function StartUserSelectScreen()
 	SetEditorMode(4)
-	
+
 	EditorUserNameEntered$=""
 	NofEditorUserNames=0
-	
+
 	dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Profiles")
-	
+
 	Repeat
 		ex$=NextFile$(dirfile)
 		If ex$<>"." And ex$<>".." And ex$<>"" And FileType(GlobalDirName$+"\custom\Editing\Profiles\"+ex$)=2
@@ -22581,22 +21931,22 @@ Function StartUserSelectScreen()
 			NofEditorUserNames=NofEditorUserNames+1
 		EndIf
 	Until ex$=""
-	
+
 	CloseDir dirfile
-	
+
 	Camera1Proj=0
 	Camera2Proj=0
 	Camera3Proj=0
 	Camera4Proj=0
 	CameraProj=1
 	UpdateCameraProj()
-		
+
 End Function
 
 Function UserSelectScreen()
 
 	leveltimer=leveltimer+1
-	
+
 	my=MouseY()
 	StartY=LetterHeight*15
 	If mY>=StartY
@@ -22604,7 +21954,7 @@ Function UserSelectScreen()
 	Else
 		EditorUserNameSelected=-1
 	EndIf
-	
+
 	DisplayText2("Editor Profile Name Selector",0,0,255,255,255)
 	DisplayText2("-------------------------------------------",0,1,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("Select your Editor Profile Name. This name",0,2,155,155,155)
@@ -22612,16 +21962,15 @@ Function UserSelectScreen()
 	DisplayText2("should use the same name as your Wonderland",0,4,155,155,155)
 	DisplayText2("Forum login, so other players can identify",0,5,155,155,155)
 	DisplayText2("your levels easily.",0,6,155,155,155)
-	 
+
 	DisplayText2("-------------------------------------------",0,7,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	DisplayText2("Enter New Profile Name (use Keyboard):",0,10,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(EditorUserNameEntered$,0,11,255,255,255)
 	If leveltimer Mod 100 <50
 		DisplayText2(":",Len(EditorUserNameEntered$),11,255,255,255)
 	EndIf
-	
-	
+
 	If NofEditorUserNames>0
 		DisplayText2("Or Select Existing Profile (use Mouse):",0,14,TextMenusR,TextMenusG,TextMenusB)
 		For i=0 To NofEditorUserNames-1
@@ -22630,14 +21979,12 @@ Function UserSelectScreen()
 			Else
 				DisplayText2(EditorUserNamesListed$(i),5,15+i,155,155,155)
 			EndIf
-				
+
 		Next
 	EndIf
-	
-	
-	
+
 ;	DisplayText2("---CANCEL---",16.5,27,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	; Entering New Name
 	let=GetKey()
 	If let>=32 And let<=122 And Len(editorusernameentered$)<20
@@ -22657,7 +22004,7 @@ Function UserSelectScreen()
 	EndIf
 	If (KeyPressed(28) Or KeyPressed(156)) And ReturnKeyReleased=True
 		; Enter key
-		
+
 		If EditorUserNameEntered$=""
 			DisplayText2("INVALID PROFILE NAME - Empty Name!",0,12,TextMenusR,TextMenusG,TextMenusB)
 		Else If FileType(GlobalDirName$+"\Editor Profiles\"+EditorUserNameEntered$)=2
@@ -22666,7 +22013,7 @@ Function UserSelectScreen()
 			DisplayText2("SAVING PROFILE NAME - Please Wait!",0,12,TextMenusR,TextMenusG,TextMenusB)
 			CreateDir GlobalDirName$+"\custom\Editing\Profiles\"+EditorUserNameEntered$
 
-			EditorUserName$=EditorUserNameEntered$			
+			EditorUserName$=EditorUserNameEntered$
 			file=WriteFile(GlobalDirName$+"\custom\Editing\Profiles\currentuser.dat")
 			WriteString file,EditorUserName$
 			CloseFile file
@@ -22675,7 +22022,7 @@ Function UserSelectScreen()
 		EndIf
 		waitflag=True
 	EndIf
-	
+
 	If LeftMouse
 		If FileType(GlobalDirName$+"\custom\Editing\Profiles\"+EditorUserNamesListed$(EditorUserNameSelected))=2 And EditorUserNamesListed$(EditorUserNameSelected)<>""
 			EditorUserName$=EditorUserNamesListed$(EditorUserNameSelected)
@@ -22689,24 +22036,19 @@ Function UserSelectScreen()
 		EndIf
 	EndIf
 
-
-	
-
-	
 	RenderLetters()
-	UpdateWorld 
+	UpdateWorld
 	RenderWorld
-	
-	FinishDrawing()
-	
-	If waitflag=True Delay 2000
 
+	FinishDrawing()
+
+	If waitflag=True Delay 2000
 
 End Function
 
 Function SetAdventureFileNamesListedStart(Target)
 
-	AdventureFileNamesListedStart=Target	
+	AdventureFileNamesListedStart=Target
 
 	If AdventureFileNamesListedStart>NofAdventureFileNames-19 Then AdventureFileNamesListedStart=NofAdventureFileNames-19
 	If AdventureFileNamesListedStart<0 Then AdventureFileNamesListedStart=0
@@ -22733,14 +22075,10 @@ Function StartAdventureSelectScreen()
 	Camera4Proj=0
 	CameraProj=1
 	UpdateCameraProj()
-	
-	
-	GetAdventures()
-	
-	
-	AdventureNameEntered$=""
-	
 
+	GetAdventures()
+
+	AdventureNameEntered$=""
 
 End Function
 
@@ -22756,17 +22094,16 @@ Function AdventureSelectScreen()
 		AdventureNameSelected=-1
 	EndIf
 
-
 	If EditorMode=5
 		DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		;DisplayText2("================================",0,1,TextMenusR,TextMenusG,TextMenusB)
 		;DisplayText2("            ====================",0,1,TextMenusR,TextMenusG,TextMenusB)
 		;DisplayText2("            ================================",0,1,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2("            ======================",0,1,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("                                  (Settings)",0,1,255,255,255)
-		
+
 	;	If displayfullscreen=True
 	;		DisplayText2("                                (FullScreen)",0,1,255,255,255)
 	;	Else
@@ -22780,10 +22117,9 @@ Function AdventureSelectScreen()
 			DisplayText2("(Adventures)",0,1,255,255,255)
 			DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,TextMenusR,TextMenusG,TextMenusB)
 		EndIf
-		
+
 		DisplayText2("Or Select Existing To Edit:                 ",0,6,TextMenusR,TextMenusG,TextMenusB)
-		
-		
+
 		DisplayText2("User:",0,28,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(EditorUserName$,6,28,255,255,255)
 		DisplayText2("(CHANGE)",36,28,TextMenusR,TextMenusG,TextMenusB)
@@ -22803,24 +22139,23 @@ Function AdventureSelectScreen()
 		Else
 			DisplayText2("Adventure"+HubSelectedAdventure,32+x,0,TextMenusR,TextMenusG,TextMenusB)
 		EndIf
-		
+
 		DisplayText2("Enter New Adventure Filename (e.g. 'Test34')",0,3,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2("Or Select Existing To Add:                 ",0,6,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2("(BACK)",0,28,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
-	
+
 	DisplayText2("============================================",0,27,TextMenusR,TextMenusG,TextMenusB)
-	
-	
+
 	If leveltimer Mod 100 <50
 		DisplayText2(":",Len(AdventureNameEntered$),4,255,255,255)
 	EndIf
 	DisplayText2(AdventureNameEntered$,0,4,255,255,255)
-	
+
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	If CanChangeAdventureCurrentArchive()
 ;		If AdventureCurrentArchive=0
 ;			DisplayText2("Current",28,6,255,255,255)
@@ -22856,12 +22191,12 @@ Function AdventureSelectScreen()
 		DisplayText2("Pg",0,24,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("Dn",0,25,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("--",0,26,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2("--",42,8,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("Pg",42,9,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("Up",42,10,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("--",42,11,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2("--",42,23,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("Pg",42,24,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("Dn",42,25,TextMenusR,TextMenusG,TextMenusB)
@@ -22875,19 +22210,18 @@ Function AdventureSelectScreen()
 	For i=0 To 18
 		If AdventureFileNamesListedStart+i<NofAdventureFileNames
 			AdventureFileName$=AdventureFileNamesListed$(AdventureFileNamesListedStart+i)
-			If i=AdventureNameSelected				
+			If i=AdventureNameSelected
 				DisplayText2(AdventureFileName$,22-Len(AdventureFileName$)/2,8+i,255,255,255)
-				
+
 				;ShowTooltipCenterAligned(LetterX(LettersCountX/2),LetterY(8.5+i),AdventureTitlesListed$(AdventureFileNamesListedStart+i))
-				
+
 				ShowTooltipCenterAligned(LetterX(LettersCountX/2+0.5),LetterY(8.5+i),GetAdventureTitle$(AdventureFileName$))
 			Else
 				DisplayText2(AdventureFileName$,22-Len(AdventureFileName$)/2,8+i,155,155,155)
 			EndIf
 		EndIf
 	Next
-	
-	
+
 	; Entering New Name
 	let=GetKey()
 	If let>=32 And let<=122 And Len(AdventureNameEntered$)<38
@@ -22910,25 +22244,25 @@ Function AdventureSelectScreen()
 		If hubmode And EditorMode=5
 			If AdventureNameEntered$=""
 				DisplayText2(" INVALID HUB NAME - Empty Name!",0,5,TextMenusR,TextMenusG,TextMenusB)
-			Else If FileType(GlobalDirName$+"\Custom\Editing\Hubs\"+AdventureNameEntered$)=2 
+			Else If FileType(GlobalDirName$+"\Custom\Editing\Hubs\"+AdventureNameEntered$)=2
 				DisplayText2(" INVALID HUB NAME - Already Exists!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else
 				DisplayText2("--> STARTING HUB EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
 				CreateDir GlobalDirName$+"\Custom\Editing\Hubs\"+AdventureNameEntered$
-	
+
 				HubFileName$=AdventureNameEntered$
-				
+
 				GetHubs()
-				
-				For i=0 To NofAdventureFileNames-1	
+
+				For i=0 To NofAdventureFileNames-1
 					If HubFileName$=AdventureFileNamesListed$(i)
-						AdventureNameSelected=i	
+						AdventureNameSelected=i
 						Repeat
 						Until LeftMouseDown()=0
 						StartHub()
 					EndIf
 				Next
-				
+
 			EndIf
 		Else
 			If AdventureNameEntered$=""
@@ -22943,24 +22277,24 @@ Function AdventureSelectScreen()
 				DisplayText2(" INVALID ADVENTURE NAME - Already in Data\Adventures!",0,5,TextMenusR,TextMenusG,TextMenusB)
 			Else
 				DisplayText2("--> STARTING MAIN EDITOR - Please Wait!",0,5,TextMenusR,TextMenusG,TextMenusB)
-				
+
 				AdventureCurrentArchive=AdventureCurrentArchiveCurrent ; Set to current.
-				
+
 				CreateDir GetAdventuresDir$(AdventureCurrentArchiveCurrent)+AdventureNameEntered$
-	
+
 				AdventureFileName$=AdventureNameEntered$
-				
+
 				GetAdventures()
-				
-				For i=0 To NofAdventureFileNames-1	
+
+				For i=0 To NofAdventureFileNames-1
 					If AdventureFileName$=AdventureFileNamesListed$(i)
 						ThisEditorMode=EditorMode
-					
+
 						AdventureNameSelected=i
 						Repeat
 						Until LeftMouseDown()=0
 						StartMaster()
-						
+
 						If ThisEditorMode=12
 							HubAdventuresFilenames$(HubSelectedAdventure)=AdventureCurrentArchiveToHubPrefix$()+AdventureFileNamesListed$(AdventureNameSelected)
 							HubAdventuresMissing(HubSelectedAdventure)=False
@@ -22974,9 +22308,7 @@ Function AdventureSelectScreen()
 		EndIf
 		waitflag=True
 	EndIf
-	
-	
-	
+
 	If CanChangeAdventureCurrentArchive()
 		If my>LetterHeight*6 And my<LetterHeight*7 And mx>LetterX(28) And mx<LetterX(44) And MouseDebounceFinished()
 			If LeftMouse Or MouseScroll>0
@@ -22995,7 +22327,7 @@ Function AdventureSelectScreen()
 		;	GetAdventures()
 		;EndIf
 	EndIf
-	
+
 	If LeftMouse Or RightMouse Or MouseScroll<>0
 		If MouseDebounceFinished()
 			If mx<LetterX(12) And my>LetterHeight And my<LetterHeight*2 ;hubmode
@@ -23005,12 +22337,12 @@ Function AdventureSelectScreen()
 				Else
 					GetAdventures()
 				EndIf
-				
+
 				If MouseScroll=0 Then MouseDebounceSet(10)
-			EndIf	
+			EndIf
 		EndIf
 	EndIf
-	
+
 	If LeftMouse
 		If EditorMode=5
 			If mx>LetterX(36) And my>LetterHeight*28
@@ -23019,31 +22351,31 @@ Function AdventureSelectScreen()
 				Repeat
 				Until LeftMouseDown()=0
 			EndIf
-			
+
 			If mx>LetterX(34) And my<LetterHeight*2
 				; switch window/fullscreen
 	;			DisplayFullScreen = Not DisplayFullScreen
 	;			filed=WriteFile (globaldirname$+"\display-ed.wdf")
 	;			If filed>0
-	;			
+	;
 	;				WriteInt filed,DisplayFullScreen
 	;				CloseFile filed
 	;			EndIf
-	;			
+	;
 	;			; and restart
 	;			Cls
 	;			Flip
 	;			Print "Note: Screenmode will be switched upon next restart."
 	;			Delay 4000
-				
+
 				;ShowMessage("Here we go!",1000)
 				SetEditorMode(13)
 				Repeat
 				Until LeftMouseDown()=0
 				;ShowMessage("We're here!",1000)
-				
+
 			EndIf
-			
+
 			If AdventureNameSelected>=0
 				Repeat
 				Until LeftMouseDown()=0
@@ -23059,7 +22391,7 @@ Function AdventureSelectScreen()
 				Repeat
 				Until LeftMouseDown()=0
 			EndIf
-			
+
 			If AdventureNameSelected>=0
 				Repeat
 				Until LeftMouseDown()=0
@@ -23071,8 +22403,6 @@ Function AdventureSelectScreen()
 				EndIf
 			EndIf
 		EndIf
-		
-		
 
 	EndIf
 
@@ -23098,24 +22428,21 @@ Function AdventureSelectScreen()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	If KeyPressed(201) ; page up
 		AdventureFileNamesListPageUp()
 	EndIf
 	If KeyPressed(209) ; page down
 		AdventureFileNamesListPageDown()
 	EndIf
-		
-	
+
 	RenderLetters()
-	UpdateWorld 
+	UpdateWorld
 	RenderWorld
-	
+
 	FinishDrawing()
 	If waitflag=True Delay 2000
-	
 
-	
 End Function
 Function AdventureSelectScreen2()
 
@@ -23124,7 +22451,7 @@ Function AdventureSelectScreen2()
 	StartY=LetterHeight*9
 	If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
 		Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
-	Else 
+	Else
 		Selected=-1
 	EndIf
 
@@ -23136,18 +22463,17 @@ Function AdventureSelectScreen2()
 	Else
 		DisplayText2("             Adventure Selected:",0,3,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
-	
+
 	AdventureFileName$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
 	DisplayText2(AdventureFileName$,22-Len(AdventureFileName$)/2,4,255,255,255)
-	
+
 	If Not hubmode
 		If MasterFileExists()
 			LoadMasterFile()
 			DisplayText2(AdventureTitle$,22-Len(AdventureTitle$)/2,5,255,255,255)
 		EndIf
 	EndIf
-	
-		
+
 	DisplayText2("               Choose Option:",0,6,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
 
@@ -23160,7 +22486,7 @@ Function AdventureSelectScreen2()
 	EndIf
 	If hubmode=False
 		If AdventureCurrentArchive=AdventureCurrentArchiveCurrent
-			If Selected=1 
+			If Selected=1
 				DisplayText2("MOVE TO ARCHIVE",14.5,11,255,255,255)
 			Else
 				DisplayText2("MOVE TO ARCHIVE",14.5,11,155,155,155)
@@ -23179,7 +22505,7 @@ Function AdventureSelectScreen2()
 			EndIf
 		EndIf
 	EndIf
-	
+
 	If AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 		If Selected=2
 			DisplayText2("DELETE",19,13,255,255,255)
@@ -23196,19 +22522,19 @@ Function AdventureSelectScreen2()
 	If LeftMouse And Selected<>-1
 		Repeat
 		Until LeftMouseDown()=0
-		
+
 		; Check again to make sure the mouse is still on the button.
 		OldSelected=Selected
-		
+
 		mx=MouseX()
 		my=MouseY()
-		
+
 		If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
 			Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
-		Else 
+		Else
 			Selected=-1
 		EndIf
-		
+
 		If Selected=OldSelected
 			If selected=0 And AdventureCurrentArchive=AdventureCurrentArchiveCurrent Or AdventureCurrentArchive=AdventureCurrentArchiveDataAdventures
 				If hubmode
@@ -23223,57 +22549,56 @@ Function AdventureSelectScreen2()
 				Repeat
 				Until LeftMouseDown()=0
 			EndIf
-	
+
 			If selected=1
 				ex$=AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart)
-				
+
 				FromDir$=GetAdventureDir$()
 				If AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 					ToDir$=GetAdventuresDir$(AdventureCurrentArchiveArchive)+ex$
 				Else
 					ToDir$=GetAdventuresDir$(AdventureCurrentArchiveCurrent)+ex$
 				EndIf
-				
+
 				CreateDir ToDir$
 				dirfile=ReadDir(FromDir$)
 				Repeat
 					ex2$=NextFile$(dirfile)
 					If ex2$<>"" And ex2$<>"." And ex2$<>".."
 						CopyFile FromDir$+ex2$,ToDir$+"\"+ex2$
-						
+
 						If AdventureCurrentArchive=AdventureCurrentArchiveCurrent Or AdventureCurrentArchive=AdventureCurrentArchiveArchive
 							DeleteFile FromDir$+"\"+ex2$
 						EndIf
 					EndIf
 				Until ex2$=""
 				CloseDir dirfile
-				
+
 				If AdventureCurrentArchive=AdventureCurrentArchiveCurrent Or AdventureCurrentArchive=AdventureCurrentArchiveArchive
 					DeleteDir FromDir$
 				EndIf
-				
+
 				GetAdventures()
-				
+
 				SetEditorMode(5)
 			EndIf
 			If selected=2 And AdventureCurrentArchive=AdventureCurrentArchiveCurrent
 				SetEditorMode(7)
 			EndIf
-	
+
 			If selected=3
 				SetEditorMode(5)
 			EndIf
 		EndIf
 	EndIf
-			
+
 	RenderLetters()
-	UpdateWorld 
+	UpdateWorld
 	RenderWorld
-	
+
 	FinishDrawing()
 	If waitflag=True Delay 2000
 
-	
 End Function
 
 Function AdventureSelectScreen3()
@@ -23283,29 +22608,27 @@ Function AdventureSelectScreen3()
 	StartY=LetterHeight*9
 	If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
 		Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
-	Else 
+	Else
 		Selected=-1
 	EndIf
 
-
 	DisplayText2(Versiontext$,0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("============================================",0,1,TextMenusR,TextMenusG,TextMenusB)
-
 
 	If hubmode
 		DisplayText2("               Hub Selected:",0.5,3,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2("             Adventure Selected:",0,3,TextMenusR,TextMenusG,TextMenusB)
-	EndIf	
+	EndIf
 	DisplayText2(AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart),22-Len(AdventureFileNamesListed$(AdventureNameSelected+AdventureFileNamesListedStart))/2,4,255,255,255)
-	
+
 	If hubmode
 		DisplayText2("         DELETE HUB - ARE YOU SURE?",0,6,TextMenusR,TextMenusG,TextMenusB)
 	Else
 		DisplayText2("      DELETE ADVENTURE - ARE YOU SURE?",0,6,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 	DisplayText2("============================================",0,7,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	If Selected=0
 		DisplayText2("YES!",20,9,255,255,255)
 	Else
@@ -23316,7 +22639,6 @@ Function AdventureSelectScreen3()
 	Else
 		DisplayText2("NO!!",20,11,155,155,155)
 	EndIf
-	
 
 	If LeftMouse
 		If selected=0
@@ -23346,7 +22668,6 @@ Function AdventureSelectScreen3()
 				GetAdventures()
 			EndIf
 
-			
 			Repeat
 			Until LeftMouseDown()=0
 			SetEditorMode(5)
@@ -23359,13 +22680,12 @@ Function AdventureSelectScreen3()
 	EndIf
 
 	RenderLetters()
-	UpdateWorld 
+	UpdateWorld
 	RenderWorld
-	
+
 	FinishDrawing()
 	If waitflag=True Delay 2000
 
-	
 End Function
 
 Function SetAdventureCurrentArchive(NewValue)
@@ -23385,14 +22705,13 @@ Function SettingsMainLoop()
 	StartY=LetterHeight*9
 	If mx>LetterX(15) And mx<LetterX(29) And my>StartY And my<StartY+LetterHeight*8
 		Selected=(my-StartY-LetterHeight*0.5)/(LetterHeight*2)
-	Else 
+	Else
 		Selected=-1
 	EndIf
 
-
 	DisplayText2("Settings",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("============================================",0,1,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	If Selected=0
 		DisplayCenteredText2("Controls",22,9,255,255,255)
 	Else
@@ -23414,18 +22733,18 @@ Function SettingsMainLoop()
 	Else
 		DisplayText2("Back",20,15,155,155,155)
 	EndIf
-	
+
 	If LeftMouse
-		If selected=0			
+		If selected=0
 			ConfigureControls()
-			
+
 			Repeat
 			Until LeftMouseDown()=0
 		EndIf
 		If selected=1
 			GfxMode=GfxMode+1
 			If GfxMode=NofMyGfxModes Then GfxMode=0
-			
+
 			Repeat
 			Until LeftMouseDown()=0
 		EndIf
@@ -23433,22 +22752,22 @@ Function SettingsMainLoop()
 			GfxWidth=MyGfxModeWidth(gfxmode)
 			GfxHeight=MyGfxModeHeight(gfxmode)
 			GfxDepth=MyGfxModeDepth(gfxmode)
-			
+
 			;Graphics3D GfxWidth,GfxHeight,GfxDepth,GfxWindowed
 			;ResolutionWasChanged()
-			
+
 			WriteDisplayFile()
-			
+
 			Repeat
 			Until LeftMouseDown()=0
-			
+
 			ExecFile ("editor3d.exe")
 			EndApplication()
-			
+
 		EndIf
 		If selected=3
 			SetEditorMode(5)
-			
+
 			Repeat
 			Until LeftMouseDown()=0
 		EndIf
@@ -23457,20 +22776,19 @@ Function SettingsMainLoop()
 		If selected=1
 			GfxMode=GfxMode-1
 			If GfxMode=-1 Then GfxMode=NofMyGfxModes-1
-			
+
 			Repeat
 			Until RightMouseDown()=0
 		EndIf
 	EndIf
-	
+
 	RenderLetters()
-	UpdateWorld 
+	UpdateWorld
 	RenderWorld
-	
+
 	FinishDrawing()
 
 End Function
-
 
 Function GetAdventureTitle$(ex$)
 
@@ -23487,46 +22805,45 @@ Function GetAdventures()
 
 	NofAdventureFileNames=0
 	AdventureFileNamesListedStart=0
-	
+
 	TheDir$=GetAdventuresDir$(AdventureCurrentArchive)
 	dirfile=ReadDir(TheDir$)
-	
+
 	Repeat
 		ex$=NextFile$(dirfile)
 		If ex$<>"." And ex$<>".." And ex$<>"" And FileType(TheDir$+ex$)=2
 			; check if there's a hash or name is too long
 			flag=True
-			
+
 			;For i=1 To Len(ex$)
 			;	If Mid$(ex$,i,1)="#" Then flag=False
 			;Next
 			;If Len(ex$)>38 Then flag=False
-			
+
 			If flag=True
 				; good file name - add to list
 				AdventureFileNamesListed$(NofAdventureFileNames)=ex$
 
 				; VERY slow to do this all at once.
 				;AdventureTitlesListed$(NofAdventureFileNames)=GetAdventureTitle$(ex$)
-				
+
 				NofAdventureFileNames=NofAdventureFileNames+1
 			EndIf
 		EndIf
 	Until ex$=""
-	
+
 	CloseDir dirfile
 
 End Function
-
 
 Function GetHubs()
 
 	NofAdventureFileNames=0
 	AdventureFileNamesListedStart=0
 	AdventureCurrentArchive=AdventureCurrentArchiveCurrent
-	
+
 	dirfile=ReadDir(GlobalDirName$+"\Custom\Editing\Hubs")
-	
+
 	Repeat
 		ex$=NextFile$(dirfile)
 		If ex$<>"." And ex$<>".." And ex$<>"" And FileType(GlobalDirName$+"\Custom\Editing\Hubs\"+ex$)=2
@@ -23543,9 +22860,8 @@ Function GetHubs()
 			EndIf
 		EndIf
 	Until ex$=""
-	
-	CloseDir dirfile
 
+	CloseDir dirfile
 
 End Function
 
@@ -23581,7 +22897,7 @@ Function AdventureTitleWithoutAuthor$(ex$)
 			FoundHash=True
 		EndIf
 	Next
-	
+
 	If FoundHash=False
 		Return ex$
 	Else
@@ -23595,14 +22911,14 @@ Function GetAuthorFromAdventureTitle$(ex$)
 	TheUsername$=""
 	FoundHash=False
 	For i=1 To Len(ex$)
-		TheChar$=Mid$(ex$,i,1)	
+		TheChar$=Mid$(ex$,i,1)
 		If TheChar$="#"
 			FoundHash=True
 		ElseIf Not FoundHash
 			TheUsername$=TheUsername$+TheChar$
 		EndIf
 	Next
-	
+
 	If FoundHash=False
 		Return EditorUserName$
 	Else
@@ -23614,17 +22930,17 @@ End Function
 Function StartMaster()
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
-	
+
 	StopMusic()
-	
+
 	AdventureUserName$=GetAuthorFromAdventureTitle$(AdventureFileName$)
-	
+
 	ResetPreviousLevelNumberBuffer()
-	
+
 	PreviewCurrentDialog=0
-	
+
 	SetEditorMode(8)
-	
+
 	CopyingLevel=StateNotSpecial
 	CopyingDialog=StateNotSpecial
 
@@ -23634,7 +22950,7 @@ Function StartMaster()
 	Camera4Proj=0
 	CameraProj=1
 	UpdateCameraProj()
-	
+
 	For i=1 To MaxLevel
 		; check existence of wlv and dia files
 		MasterLevelList(i)=0
@@ -23642,16 +22958,16 @@ Function StartMaster()
 			MasterLevelList(i)=1
 		EndIf
 	Next
-	
+
 	For i=1 To MaxDialog
 		MasterDialogList(i)=0
 		If DialogExists(i)
 			MasterDialogList(i)=1
 		EndIf
 	Next
-	
+
 	; check existence of a master.dat file
-	If IconTextureCustom>0 
+	If IconTextureCustom>0
 		FreeTexture IconTextureCustom
 		IconTextureCustom=0
 	EndIf
@@ -23688,10 +23004,10 @@ Function StartMaster()
 				AdventureWonCommand(i,j)=0
 			Next	; 3 commands, each with level/command/fourdata
 		Next
-		
+
 		StarterItems=7 ;to do: decide the default value for new adventures
 		WidescreenRange=0
-		
+
 		SelectedShard=0
 		SelectedGlyph=0
 		CustomShardEnabled=0
@@ -23711,14 +23027,14 @@ Function StartMaster()
 End Function
 
 Function StartHub()
-	
+
 	SetEditorMode(11)
 	HubAdvStart=0
 	HubSelectedAdventure=-1
 	CopyingLevel=StateNotSpecial
-	
+
 	ClearHub()
-	
+
 	If FileType(globaldirname$+"\Custom\editing\Hubs\"+HubFileName$+"\hub.dat")=1
 		LoadHubFile()
 	Else
@@ -23726,7 +23042,7 @@ Function StartHub()
 		HubDescription$=""
 		HubTotalAdventures=0
 	EndIf
-	
+
 End Function
 
 Function ClearHub()
@@ -23743,16 +23059,16 @@ Function ResumeMaster()
 
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
-	
+
 	StopMusic()
-	
+
 	PreviewCurrentDialog=0
 
 	SetEditorMode(8)
-	
+
 	CopyingLevel=StateNotSpecial
 	CopyingDialog=StateNotSpecial
-	
+
 	Camera1Proj=0
 	Camera2Proj=0
 	Camera3Proj=0
@@ -23760,7 +23076,6 @@ Function ResumeMaster()
 	CameraProj=1
 	UpdateCameraProj()
 
-	
 	For i=1 To MaxLevel
 		; check existence of wlv and dia files
 		MasterLevelList(i)=0
@@ -23769,31 +23084,29 @@ Function ResumeMaster()
 		EndIf
 	Next
 	For i=1 To MaxDialog
-		
+
 		MasterDialogList(i)=0
 		If DialogExists(i)
 			MasterDialogList(i)=1
 		EndIf
 	Next
 
-	
-	
 End Function
 
 Function MasterMainLoop()
-	
+
 	If CtrlDown() And KeyDown(20) ; Ctrl+T
 		StartTestMode()
 	EndIf
-	
+
 	If HotkeySave()
 		SaveMasterFile()
 	EndIf
-	
+
 	dialogtimer=dialogtimer+1
 	adj=1
 	If KeyDown(42) Or KeyDown(54) Then adj=10
-	
+
 	DisplayText2("Adventure File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
 	If MouseY()<LetterHeight And MouseX()>LetterX(24) And MouseX()<LetterX(38) ; x: 430 to 700
@@ -23801,49 +23114,45 @@ Function MasterMainLoop()
 	Else
 		DisplayText2("                        (Adv. Options)",0,0,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
-	
+
 	WlvColumnLeft=LetterX(38.5)
-	
+
 	If MOdified>=0
-	
+
 		For i=0 To 37
-		
+
 			AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 			For j=0 To 4
 				AddLetter(Asc("X")-32,-.97+i*.045,.5-(3+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 			Next
-			
-		
-				
-	
+
 		Next
-		
+
 		For i=0 To 25
 			DisplayText2(":",38,i,TextMenusR,TextMenusG,TextMenusB)
 		Next
 		DisplayText2("EDIT",39.5,0,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("LV DG",39,1,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("-----",39,2,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4 ; X: 700 to 750
 			DisplayText2("-",39.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("-",39.5,3,TextMenuXR,TextMenuXG,TextMenuXB)
-		EndIf 
+		EndIf
 		If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()>LetterHeight*3 And MouseY()<LetterHeight*4
 			DisplayText2("-",42.5,3,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("-",42.5,3,TextMenuXR,TextMenuXG,TextMenuXB)
 		EndIf
-		
-		
+
 		DigitSpaceMult#=0.8
 		For i=1 To 20
 			flag=False
 			If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
 				flag=True
 			EndIf
-			
+
 			If i+MasterLevelListStart<10
 				ex$="00"+Str$(i+MasterLevelListStart)
 			Else If i+MasterLevelListStart<100
@@ -23851,7 +23160,7 @@ Function MasterMainLoop()
 			Else
 				ex$=Str$(i+MasterLevelListStart)
 			EndIf
-		
+
 			If flag=True ; mouse over
 				r=255
 				g=255
@@ -23874,12 +23183,12 @@ Function MasterMainLoop()
 				b=210
 			EndIf
 			DisplayText2(ex$,38.7,3+i,r,g,b,DigitSpaceMult) ; previously, x=39
-			
+
 			flag=False
 			If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()>LetterHeight*3+i*LetterHeight And MouseY()<=LetterHeight*4+i*LetterHeight
 				flag=True
 			EndIf
-			
+
 			If i+MasterDialogListStart<10
 				ex$="00"+Str$(i+MasterDialogListStart)
 			Else If i+MasterDialogListStart<100
@@ -23887,7 +23196,7 @@ Function MasterMainLoop()
 			Else
 				ex$=Str$(i+MasterDialogListStart)
 			EndIf
-			
+
 			If flag=True
 				r=255
 				g=255
@@ -23910,14 +23219,14 @@ Function MasterMainLoop()
 				b=210
 			EndIf
 			DisplayText2(ex$,41.8,3+i,r,g,b,DigitSpaceMult) ; previously, x=41.5
-	
+
 		Next
-		
+
 		If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 			DisplayText2("+",39.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
 			DisplayText2("+",39.5,24,TextMenuXR,TextMenuXG,TextMenuXB)
-		EndIf 
+		EndIf
 		If MouseX()>LetterX(41.5) And MouseX()<GfxWidth And MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 			DisplayText2("+",42.5,24,TextMenusR,TextMenusG,TextMenusB)
 		Else
@@ -23925,24 +23234,20 @@ Function MasterMainLoop()
 		EndIf
 
 		displayText2("-----",39,25,TextMenusR,TextMenusG,TextMenusB)
-		
-	
+
 		DisplayText2("--------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
-	
-		
+
 		DisplayText2("Adventure Title:",0,3,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2(AdventureTitle$,0,4,255,255,255)
 		DisplayText2("--------------------------------------",0,5,TextMenusR,TextMenusG,TextMenusB)
-		
 
-		
 		DisplayText2("Introductory Text:",0,6,TextMenusR,TextMenusG,TextMenusB)
 		For i=0 To 4
 			DisplayText2(AdventureTextline$(i),0,7+i,255,255,255)
 		Next
 		DisplayText2("--------------------------------------",0,12,TextMenusR,TextMenusG,TextMenusB)
-	
+
 		DisplayText2("Starting Coord. (Lv 01)",0,13,TextMenusR,TextMenusG,TextMenusB)
 		displaytext2("X:      Y:      Dir:",0,14,TextMenusR,TextMenusG,TextMenusB)
 		displaytext2(Str$(adventurestartx),2,14,255,255,255)
@@ -23951,21 +23256,20 @@ Function MasterMainLoop()
 		displaytext2(Str$(adventurestartdir),20,14,255,255,255)
 
 		DisplayText2("--------------------------------------",0,15,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2("Winning Condition:",0,16,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(WinningCondition$(AdventureGoal),0,17,255,255,255)
 		DisplayText2("--------------------------------------",0,18,TextMenusR,TextMenusG,TextMenusB)
-		
+
 		DisplayText2(":Gate/Keys",25,13,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(":Version #",25,14,255,255,255)
 		DisplayText2(Str$(GateKeyVersion),35,14,255,255,255)
 
-		
 		DisplayText2(":Custom Icons",25,16,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(":",25,17,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2(Left$(CustomIconName$,12),26,17,255,255,255)
 	; PUT BACK IN FOR ME
-	
+
 		If MASTERUSER=True
 			DisplayText2("Hub Commands:",0,19,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2("WonExit Lv    X    Y",0,20,TextMenusR,TextMenusG,TextMenusB)
@@ -23984,13 +23288,12 @@ Function MasterMainLoop()
 			Next
 		EndIf
 		DisplayText2("--------------------------------------",0,25,TextMenusR,TextMenusG,TextMenusB)
-	
-		
+
 		DisplayText2("========== ========== ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		DisplayText2(":        : :        : :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		DisplayText2(":        : :        : :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		DisplayText2("========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
-		
+
 		If hubmode
 			DisplayText2("                                 ==========",0.5,26,50,50,0)
 			DisplayText2("                                 :        :",0.5,27,50,50,0)
@@ -24002,10 +23305,7 @@ Function MasterMainLoop()
 			DisplayText2("                                 :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 			DisplayText2("                                 ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		EndIf
-		
-	
 
-	
 	If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
@@ -24022,7 +23322,7 @@ Function MasterMainLoop()
 		DisplayText2("+EXIT",14,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
-	
+
 	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 		DisplayText2(" SAVE",24.5,27,255,255,255)
 		DisplayText2("+TEST",25,28,255,255,255)
@@ -24043,7 +23343,7 @@ Function MasterMainLoop()
 			DisplayText2("+EXIT",36,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		EndIf
 	EndIf
-	
+
 	AdventureExitButtonsMinX=LetterX(24)
 	AdventureExitButtonsMaxX=LetterX(38)
 	AdventureExitButtonsStartY=LetterHeight*20
@@ -24052,7 +23352,7 @@ Function MasterMainLoop()
 		r=255
 		g=255
 		b=255
-		
+
 		If LeftMouse
 			adventureexitwonlevel=adventureexitlostlevel
 			adventureexitwonx=adventureexitlostx
@@ -24064,12 +23364,12 @@ Function MasterMainLoop()
 		b=TextMenuButtonB
 	EndIf
 	DisplayText2("Set To LostExt",24,20,r,g,b)
-	
+
 	If MouseX()>AdventureExitButtonsMinX And MouseX()<AdventureExitButtonsMaxX And MouseY()>AdventureExitButtonsStartY+AdventureExitButtonsGapY And MouseY()<AdventureExitButtonsStartY+AdventureExitButtonsGapY*2
 		r=255
 		g=255
 		b=255
-		
+
 		If LeftMouse
 			adventureexitlostlevel=adventureexitwonlevel
 			adventureexitlostx=adventureexitwonx
@@ -24082,26 +23382,25 @@ Function MasterMainLoop()
 	EndIf
 	DisplayText2("Set To WonExit",24,21,r,g,b)
 
-		
 		; Mouse
 		MouseTextEntryTrackMouseMovement()
 		; Mouse Pos
 		Entering=0
-		
+
 		x=GetMouseLetterX()
 		y=(MouseY()-LetterHeight*5)/LetterHeight
-	
+
 		debug1=MouseY()
 		debug2=y
-		
+
 		; cursor
-		If x<38 And MouseY()>=LetterHeight*4 And y>2 And y<8 
+		If x<38 And MouseY()>=LetterHeight*4 And y>2 And y<8
 			Entering=1
 			If x>Len(AdventureTextLine$(y-3)) Then x=Len(AdventureTextLine$(y-3))
 			If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
 				AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 			EndIf
-		EndIf	
+		EndIf
 		If x<38 And y=0
 			Entering=2
 			If x>Len(AdventureTitle$) Then x=Len(AdventureTitle$)
@@ -24110,23 +23409,20 @@ Function MasterMainLoop()
 			EndIf
 		EndIf
 	; PUT BACK IN FOR ME - (HELP LINES _ DON"T NEED)
-	;	If x<10 And y>9 And y<13 
+	;	If x<10 And y>9 And y<13
 	;		Entering=3
 	;		If x>Len(AdventureHelpLine$(y-10)) Then x=Len(AdventureHelpLine$(y-10))
 	;		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
 	;			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 	;		EndIf
-	;	EndIf	
+	;	EndIf
 
-		
-
-	
 		OldX=x
 		OldY=y
 		; entering text
 		let=GetKey()
 		If Entering>0
-		
+
 			Select entering
 			Case 1
 				tex$=AdventureTextline$(y-3)
@@ -24135,11 +23431,11 @@ Function MasterMainLoop()
 	; PUT BACK IN FOR ME - HELP LINE (DON"T NEED)
 	;		Case 3
 	;			tex$=AdventureHelpLine$(y-10)
-				
+
 			End Select
-			
+
 			tex$=MouseTextEntry$(tex$,let,x,y,0,0)
-			
+
 			Select entering
 			Case 1
 				AdventureTextline$(y-3)=tex$
@@ -24147,22 +23443,20 @@ Function MasterMainLoop()
 				AdventureTitle$=tex$
 		;	Case 3
 		;		AdventureHelpLine$(y-10)=tex$
-				
+
 			End Select
-	
-	
+
 		EndIf
-		
 
 	EndIf
-	
+
 	mb=0
 	If LeftMouse mb=1
 	If RightMouse mb=2
 	If MouseDown(3) mb=3
-	
+
 	DelayTime=10
-	
+
 	; level list start
 	If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5)
 		If MouseDebounceFinished()
@@ -24185,7 +23479,7 @@ Function MasterMainLoop()
 			If MasterLevelListStart>MaxLevel-20 Then MasterLevelListStart=MaxLevel-20
 		EndIf
 	EndIf
-	
+
 	; dialog list start
 	If MouseX()>LetterX(41.5) And MouseX()<GfxWidth
 		If MouseDebounceFinished()
@@ -24208,17 +23502,16 @@ Function MasterMainLoop()
 			If MasterDialogListStart>MaxDialog-20 Then MasterDialogListStart=MaxDialog-20
 		EndIf
 	EndIf
-	
-	
+
 	If mb>0
-	
+
 		;new advanced mode 2019
 		If MouseY()<LetterHeight And  MouseX()>LetterX(24) And MouseX()<WlvColumnLeft
 			SetEditorMode(10)
 			Repeat
 			Until LeftMouseDown()=0 And RightMouseDown()=0
 		EndIf
-	
+
 	EndIf
 
 	; Change Adventure
@@ -24240,13 +23533,10 @@ Function MasterMainLoop()
 			If adventurestartdir<0
 				adventurestartdir=adventurestartdir+360
 			EndIf
-			
+
 			ShowTooltipCenterAligned(LetterX(19.5),LetterHeight*14,GetDirectionString$(adventurestartdir))
 		EndIf
 	EndIf
-		
-		
-			
 
 	; PUT BACK IN FOR ME
 	If MASTERUSER=True
@@ -24301,23 +23591,19 @@ Function MasterMainLoop()
 						Adventurewoncommand(j-2,i)=AdjustInt("Adventure won command "+cmdbit$+": ", Adventurewoncommand(j-2,i), 1, 10, DelayTime)
 					EndIf
 				EndIf
-				
+
 			Next
 		Next
-	
-	
-	
-	
+
 	EndIf
-	
-	
+
 	; adventure goal
 	If MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And MouseX()<LetterX(25)
 		AdventureGoal=AdjustInt("Adventure goal: ", AdventureGoal, 1, 10, DelayTime)
 		If AdventureGoal<=-1 Then AdventureGoal=nofwinningconditions-1
 		If AdventureGoal>=Nofwinningconditions Then adventuregoal=0
 	EndIf
-	
+
 	; GateKeyVersion
 	If MouseY()>LetterHeight*14 And MouseY()<LetterHeight*15 And MouseX()>LetterX(26) And MouseX()<LetterX(38)
 		GateKeyVersion=AdjustInt("Gate/key version: ", GateKeyVersion, 1, 10, DelayTime)
@@ -24328,22 +23614,19 @@ Function MasterMainLoop()
 		UpdateButtonGateTexture()
 	EndIf
 
-
-	
-		
 	; custom icon
 	If mb>0 And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And MouseX()>LetterX(26) And MouseX()<LetterX(38)
-		
+
 		FreeTexture IconTextureCustom
 		IconTextureCustom=0
-		
+
 		FlushKeys
 		Locate 0,0
 		Color 0,0,0
 		Rect 0,0,500,40,True
 		Color 255,255,255
 		CustomIconName$=Input$( "Enter Custom Icon Texture Name (e.g. 'standard'):")
-					
+
 		If CustomIconName$="" Or CustomIconName$="Standard"
 			CustomIconName$="Standard"
 		Else
@@ -24354,21 +23637,17 @@ Function MasterMainLoop()
 				Color 255,255,0
 				Print "Error: Custom Icon File '"+customiconname$+"' not found."
 				Print "Reverting to 'Standard' Custom Icon Texture."
-				Delay 2000	
-				
+				Delay 2000
+
 				CustomIconName$="Standard"
 			EndIf
-			
+
 		EndIf
 
 		IconTextureCustom=myLoadTexture(globaldirname$+"\Custom\Icons\icons "+customiconname$+".bmp",4)
 
-
-
 	EndIf
 
-	
-	
 	If MouseX()>WlvColumnLeft And MouseX()<LetterX(41.5) And MouseY()<LowerButtonsCutoff
 		If CtrlDown() And mb>0
 			If OpenTypedLevel()
@@ -24384,7 +23663,7 @@ Function MasterMainLoop()
 							dirbase$=GetAdventureDir$()
 							CopyFile(dirbase$+CopiedLevel+".wlv",dirbase$+SelectedLevel+".wlv")
 							MasterLevelList(SelectedLevel)=1
-							
+
 							CopyingLevel=StateNotSpecial
 						ElseIf CopyingLevel=StateSwapping
 							SwapLevel(CopiedLevel,SelectedLevel)
@@ -24393,10 +23672,10 @@ Function MasterMainLoop()
 							AccessLevelAtCenter(SelectedLevel)
 							StartEditorMainLoop()
 						EndIf
-						
+
 						Repeat
 						Until LeftMouseDown()=0
-						
+
 						mb=0
 						Exit
 					ElseIf mb=2 And LevelExists(SelectedLevel)=True
@@ -24406,10 +23685,10 @@ Function MasterMainLoop()
 							CopyingLevel=StateCopying
 							CopiedLevel=SelectedLevel
 						EndIf
-						
+
 						Repeat
 						Until RightMouseDown()=0
-						
+
 						mb=0
 						Exit
 					ElseIf mb=3 And LevelExists(SelectedLevel)=True
@@ -24419,10 +23698,10 @@ Function MasterMainLoop()
 							CopyingLevel=StateSwapping
 							CopiedLevel=SelectedLevel
 						EndIf
-						
+
 						Repeat
 						Until MouseDown(3)=0
-						
+
 						mb=0
 						Exit
 					EndIf
@@ -24430,7 +23709,7 @@ Function MasterMainLoop()
 			Next
 		EndIf
 	EndIf
-	
+
 	; load dialog
 	StartX=LetterX(41.5)
 	If MouseX()>StartX And MouseX()<GfxWidth And MouseY()<LowerButtonsCutoff
@@ -24444,14 +23723,14 @@ Function MasterMainLoop()
 				If MouseY()>StartY And MouseY()<=StartY+LetterHeight
 					SelectedDialog = i+MasterDialogListStart
 					ShowTooltipRightAligned(StartX,StartY+LetterHeight*2,PreviewDialog$(SelectedDialog,0))
-					
+
 					If mb=1
 						If CopyingDialog=StateCopying And DialogExists(SelectedDialog)=False
 							; copy from CopiedDialog
 							dirbase$=GetAdventureDir$()
 							CopyFile(dirbase$+CopiedDialog+".dia",dirbase$+SelectedDialog+".dia")
 							MasterDialogList(SelectedDialog)=1
-							
+
 							CopyingDialog=StateNotSpecial
 						ElseIf CopyingDialog=StateSwapping
 							SwapDialog(CopiedDialog,SelectedDialog)
@@ -24460,10 +23739,10 @@ Function MasterMainLoop()
 							AccessDialog(SelectedDialog)
 							StartDialog()
 						EndIf
-						
+
 						Repeat
 						Until LeftMouseDown()=0
-						
+
 						mb=0
 						Exit
 					ElseIf mb=2 And DialogExists(SelectedDialog)=True
@@ -24473,10 +23752,10 @@ Function MasterMainLoop()
 							CopyingDialog=StateCopying
 							CopiedDialog=SelectedDialog
 						EndIf
-						
+
 						Repeat
 						Until RightMouseDown()=0
-						
+
 						mb=0
 						Exit
 					ElseIf mb=3 And DialogExists(SelectedDialog)=True
@@ -24486,10 +23765,10 @@ Function MasterMainLoop()
 							CopyingDialog=StateSwapping
 							CopiedDialog=SelectedDialog
 						EndIf
-						
+
 						Repeat
 						Until MouseDown(3)=0
-						
+
 						mb=0
 						Exit
 					EndIf
@@ -24505,12 +23784,9 @@ Function MasterMainLoop()
 		EndIf
 	EndIf
 
-		
-		
 	If mb>0
-		
 
-		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
+		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -24520,7 +23796,7 @@ Function MasterMainLoop()
 				StartAdventureSelectScreen()
 			EndIf
 		EndIf
-		
+
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
@@ -24533,7 +23809,7 @@ Function MasterMainLoop()
 			EndIf
 
 		EndIf
-		
+
 		; SAVE+TEST ; SAVE AND TEST
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
@@ -24558,28 +23834,17 @@ Function MasterMainLoop()
 			EndIf
 			Repeat
 			Until LeftMouseDown()=False
-			
+
 		EndIf
 
-		
-		
-
 	EndIf
-		
-			
 
-		
-	
-	
 	RenderLetters()
 	RenderWorld()
-	
+
 	FinishDrawing()
-	
+
 	If waitflag=True Delay 1000
-	
-
-
 
 End Function
 
@@ -24588,22 +23853,22 @@ Function MasterAdvancedLoop()
 	If CtrlDown() And KeyDown(20) ; Ctrl+T
 		StartTestMode()
 	EndIf
-	
+
 	adj=1
 	If KeyDown(42) Or KeyDown(54) Then adj=10
-	
+
 	DisplayText2("Adventure File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AdventureFileName$,0,1,255,255,255)
 	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	If MouseY()<LetterHeight And  MouseX()>LetterX(30)
 		DisplayText2("                              (Main Options)",0,0,255,255,255)
 	Else
 		DisplayText2("                              (Main Options)",0,0,TextMenusR,TextMenusG,TextMenusB)
 	EndIf
-		
+
 	DisplayText2("Adventure Title:",0,3,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	DisplayText2(AdventureTitle$,0,4,255,255,255)
 	DisplayText2("--------------------------------------------",0,5,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("Starting items:",0,6,TextMenusR,TextMenusG,TextMenusB)
@@ -24616,22 +23881,22 @@ Function MasterAdvancedLoop()
 	Else
 		DisplayText2("       No",0,7,255,255,255)
 	EndIf
-	
+
 	If StarterItems And 2
 		DisplayText2("       Yes",17,7,255,255,255)
 	Else
 		DisplayText2("       No",17,7,255,255,255)
 	EndIf
-	
+
 	If StarterItems And 4
 		DisplayText2("       Yes",34,7,255,255,255)
 	Else
 		DisplayText2("       No",34,7,255,255,255)
 	EndIf
-	
+
 	DisplayText2("--------------------------------------------",0,8,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("Widescreen Spell Range:",0,9,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	If WidescreenRange
 		DisplayText2("                       On ",0,9,255,255,255)
 	Else
@@ -24658,15 +23923,14 @@ Function MasterAdvancedLoop()
 		DisplayText2(CustomMapName$,16,15,255,255,255)
 	EndIf
 	DisplayText2("--------------------------------------------",0,16,TextMenusR,TextMenusG,TextMenusB)
-		
+
 	DisplayText2("--------------------------------------------",0,25,TextMenusR,TextMenusG,TextMenusB)
-	
-		
+
 	DisplayText2("========== ========== ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	DisplayText2(":        : :        : :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	DisplayText2(":        : :        : :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	DisplayText2("========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
-	
+
 	If hubmode
 		DisplayText2("                                 ==========",0.5,26,50,50,0)
 		DisplayText2("                                 :        :",0.5,27,50,50,0)
@@ -24678,9 +23942,7 @@ Function MasterAdvancedLoop()
 		DisplayText2("                                 :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		DisplayText2("                                 ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
-	
-	
-	
+
 	If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
@@ -24689,7 +23951,7 @@ Function MasterAdvancedLoop()
 		DisplayText2("+EXIT",3,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
 
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)		
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 		DisplayText2(" SAVE",13.5,27,255,255,255)
 		DisplayText2("+EXIT",14,28,255,255,255)
 	Else
@@ -24697,8 +23959,8 @@ Function MasterAdvancedLoop()
 		DisplayText2("+EXIT",14,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
-	
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)		
+
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 		DisplayText2(" SAVE",24.5,27,255,255,255)
 		DisplayText2("+TEST",25,28,255,255,255)
 	Else
@@ -24718,7 +23980,7 @@ Function MasterAdvancedLoop()
 			DisplayText2("+EXIT",36,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		EndIf
 	EndIf
-		
+
 	mb=0
 	If LeftMouse mb=1
 	If RightMouse mb=2
@@ -24728,35 +23990,35 @@ Function MasterAdvancedLoop()
 			Repeat
 			Until LeftMouseDown()=0 And RightMouseDown()=0
 		EndIf
-		
+
 		If MouseY()>LetterHeight*7 And MouseY()<LetterHeight*8
 			If MouseX()<LetterX(14.6)
 				StarterItems=StarterItems Xor 1
 				Repeat
 				Until LeftMouseDown()=0 And RightMouseDown()=0
 			EndIf
-			
+
 			If MouseX()>LetterX(14.6) And MouseX()<LetterX(29.2)
 				StarterItems=StarterItems Xor 2
 				Repeat
 				Until LeftMouseDown()=0 And RightMouseDown()=0
 			EndIf
-			
+
 			If MouseX()>LetterX(29.2)
 				StarterItems=StarterItems Xor 4
 				Repeat
 				Until LeftMouseDown()=0 And RightMouseDown()=0
 			EndIf
-			
-		EndIf 
-		
+
+		EndIf
+
 		If MouseY()>LetterHeight*9 And MouseY()<LetterHeight*10 And MouseX()<LetterX(24)
 			WidescreenRange=Not WidescreenRange
 			Repeat
 			Until LeftMouseDown()=0 And RightMouseDown()=0
 		EndIf
-		
-		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
+
+		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
@@ -24766,7 +24028,7 @@ Function MasterAdvancedLoop()
 				StartAdventureSelectScreen()
 			EndIf
 		EndIf
-		
+
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22)
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
@@ -24779,13 +24041,13 @@ Function MasterAdvancedLoop()
 			EndIf
 
 		EndIf
-		
+
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
 			StartTestMode()
 		EndIf
-		
+
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33) And hubmode=False ; Compile
 			If CtrlDown()
 				PackContent=True
@@ -24804,9 +24066,9 @@ Function MasterAdvancedLoop()
 			EndIf
 			Repeat
 			Until LeftMouseDown()=0
-			
+
 		EndIf
-		
+
 		For i=0 To 5
 			For j=0 To 2
 				If MouseX()>LetterX(10+i*5) And MouseX()<LetterX(14+i*5) And MouseY()>LetterHeight*9+(j+2)*LetterHeight And MouseY()<LetterHeight*10+(j+2)*LetterHeight And MouseDebounceFinished()
@@ -24834,10 +24096,10 @@ Function MasterAdvancedLoop()
 						If mb=2 CustomGlyphCMD(SelectedGlyph,i-1)=CustomGlyphCMD(SelectedGlyph,i-1)-adj
 					EndIf
 					MouseDebounceSet(10)
-				EndIf				
+				EndIf
 			Next
 		Next
-		
+
 		If MouseY()>LetterHeight*15 And MouseY()<LetterHeight*16 And MouseX()>LetterX(16)
 			FlushKeys
 			Locate 0,0
@@ -24860,12 +24122,12 @@ Function MasterAdvancedLoop()
 			EndIf
 		EndIf
 	EndIf
-		
+
 	RenderLetters()
 	RenderWorld()
-	
+
 	FinishDrawing()
-	
+
 	If waitflag=True Delay 1000
 End Function
 
@@ -24884,23 +24146,23 @@ Function HubMainLoop()
 	DisplayText2("Hub File Name: ",0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(HubFileName$,0,1,255,255,255)
 	DisplayText2("--------------------------------------------",0,2,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	adj=1
 	If ShiftDown() Then adj=10
-		
+
 	For i=0 To 43
 		AddLetter(Asc("X")-32,-.97+i*.045,.5-0*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		For j=0 To 0
 			AddLetter(Asc("X")-32,-.97+i*.045,.5-(3+j)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		Next
 	Next
-	
+
 	DisplayText2("Hub Title:",0,3,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	DisplayText2(HubTitle$,0,4,255,255,255)
 	DisplayText2("--------------------------------------------",0,5,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("Hub Description:",0,6,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	DisplayText2(HubDescription$,0,7,255,255,255)
 	DisplayText2("--------------------------------------------",0,8,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("Starting items:",0,6,TextMenusR,TextMenusG,TextMenusB)
@@ -24908,12 +24170,12 @@ Function HubMainLoop()
 	;DisplayText2("Gloves:Yes                      Spy-eye:Yes",0,7,255,255,255)
 	;DisplayText2("               GlowGem:Yes",0.5,7,255,255,255)
 	;If MouseY()<22 And  MouseX()>580
-	
+
 	For i=9 To 25
 		DisplayText2("    :                         :",0,i,TextMenusR,TextMenusG,TextMenusB)
-		
+
 	Next
-	
+
 	;HubAdvStart=0
 	For i=0 To 12
 		c=HubAdvStart+i
@@ -24921,7 +24183,7 @@ Function HubMainLoop()
 		If MouseX()<LetterX(4) And MouseY()>11*LetterHeight+i*LetterHeight And MouseY()<=12*LetterHeight+i*LetterHeight
 			flag=True
 		EndIf
-		
+
 		If c=0
 			s$="Hub"
 		Else
@@ -24955,7 +24217,7 @@ Function HubMainLoop()
 			ColorB=100
 		EndIf
 		DisplayText2(s$,0.5,11+i,ColorR,ColorG,ColorB)
-		
+
 		If c<=HubTotalAdventures
 			If HubAdventuresMissing(c)
 				ColorR=255
@@ -24973,7 +24235,7 @@ Function HubMainLoop()
 			DisplayText2(HubAdventuresFilenames$(c),5,11+i,ColorR,ColorG,ColorB)
 		EndIf
 	Next
-	
+
 	If HubSelectedAdventure=-1
 		HubSelectedAdventureText$="---"
 	ElseIf HubSelectedAdventure=0
@@ -25028,7 +24290,7 @@ Function HubMainLoop()
 	;DisplayText2("Hub :myHub                      :Edit:Remove",0,11,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("001 :(Click to add)             :Edit:Remove",0,12,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("002 :(Click to add)             :Edit:Remove",0,13,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	;DisplayText2("Adv#:FileName                 :Selected: 001",0,9,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("     ------------------------- -------------",0,10,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2("Hub :myHub                    : ",0,11,TextMenusR,TextMenusG,TextMenusB)
@@ -25037,14 +24299,12 @@ Function HubMainLoop()
 	;DisplayText2("--------------------------------------------",0,10,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("   ",0,24,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("---- ------------------------- -------------",0,25,TextMenusR,TextMenusG,TextMenusB)
-	
-		
+
 	DisplayText2("========== ========== ========== ==========",0.5,26,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	DisplayText2(":        : :        : :        : :        :",0.5,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	DisplayText2(":        : :        : :        : :        :",0.5,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	DisplayText2("========== ========== ========== ==========",0.5,29,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
-	
-	
+
 	If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 		DisplayText2("CANCEL",2.5,27,255,255,255)
 		DisplayText2("+EXIT",3,28,255,255,255)
@@ -25061,8 +24321,8 @@ Function HubMainLoop()
 		DisplayText2("+EXIT",14,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
-	
-	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)		
+
+	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 		DisplayText2("BUILD",25,27,255,255,255)
 		DisplayText2("+EXIT",25,28,255,255,255)
 	Else
@@ -25070,7 +24330,7 @@ Function HubMainLoop()
 		DisplayText2("+EXIT",25,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 
 	EndIf
-	
+
 	If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
 		DisplayText2("COMPILE",35,27,255,255,255)
 		DisplayText2("+EXIT",36,28,255,255,255)
@@ -25078,12 +24338,12 @@ Function HubMainLoop()
 		DisplayText2("COMPILE",35,27,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 		DisplayText2("+EXIT",36,28,TextMenuButtonR,TextMenuButtonG,TextMenuButtonB)
 	EndIf
-		
+
 	mb=0
 	If LeftMouse mb=1
 	If RightMouse mb=2
 	If MouseDown(3) mb=3
-	
+
 	;If MouseY()<22 And  MouseX()>540
 	;	SetEditorMode(8)
 	;	Repeat
@@ -25101,25 +24361,25 @@ Function HubMainLoop()
 				HubAdvStart=HubAdvStart-adj
 				MouseDebounceSet(10)
 			EndIf
-		
+
 			If MouseY()>LetterHeight*24 And MouseY()<LetterHeight*25
 				HubAdvStart=HubAdvStart+adj
 				MouseDebounceSet(10)
 			EndIf
-			
+
 			;If CtrlDown()
 			;	HubSelectedAdventure=InputInt("Enter adventure number to select: ")
 			;	LeftMouseReleased=False
 			;EndIf
 		EndIf
-		
+
 		If HubAdvStart<0
 			HubAdvStart=0
 		ElseIf HubAdvStart+12>HubAdvMax
 			HubAdvStart=HubAdvMax-12
 		EndIf
 	EndIf
-		
+
 	If mb>0 And LeftMouseReleased=True
 		For i=0 To 12
 			If MouseX()<LetterX(4) And MouseY()>LetterHeight*11+i*LetterHeight And MouseY()<=LetterHeight*12+i*LetterHeight
@@ -25128,9 +24388,9 @@ Function HubMainLoop()
 					If CopyingLevel=StateCopying And HubAdventuresFilenames$(HubSelectedAdventure)=""
 						HubAdventuresFilenames$(HubSelectedAdventure)=HubAdventuresFilenames$(CopiedLevel)
 						HubAdventuresMissing(HubSelectedAdventure)=HubAdventuresMissing(CopiedLevel)
-						
+
 						CopyingLevel=StateNotSpecial
-						
+
 						If HubSelectedAdventure>HubTotalAdventures
 							HubTotalAdventures=HubSelectedAdventure
 						EndIf
@@ -25141,9 +24401,9 @@ Function HubMainLoop()
 						HubAdventuresMissing(HubSelectedAdventure)=HubAdventuresMissing(CopiedLevel)
 						HubAdventuresFilenames$(CopiedLevel)=TempFilename$
 						HubAdventuresMissing(CopiedLevel)=TempMissing
-						
+
 						CopyingLevel=StateNotSpecial
-						
+
 						If HubSelectedAdventure>HubTotalAdventures
 							HubTotalAdventures=HubSelectedAdventure
 						EndIf
@@ -25155,15 +24415,15 @@ Function HubMainLoop()
 						SetEditorMode(12)
 					Else
 						CopyingLevel=StateNotSpecial
-						
+
 						If KeyDown(45) ; x key
 							HubAdventuresIncludeInTotals(HubSelectedAdventure)=Not HubAdventuresIncludeInTotals(HubSelectedAdventure)
 						EndIf
 					EndIf
-					
+
 					Repeat
 					Until LeftMouseDown()=0
-					
+
 					mb=0
 					Exit
 				ElseIf HubAdventuresFilenames$(HubSelectedAdventure)="" Or HubSelectedAdventure>HubTotalAdventures
@@ -25172,17 +24432,17 @@ Function HubMainLoop()
 					GetAdventures()
 					AdventureNameEntered$=""
 					SetEditorMode(12)
-				ElseIf mb=2 
+				ElseIf mb=2
 					If CopyingLevel=StateCopying And HubSelectedAdventure=CopiedLevel
 						CopyingLevel=StateNotSpecial
 					Else
 						CopyingLevel=StateCopying
 						CopiedLevel=HubSelectedAdventure
 					EndIf
-					
+
 					Repeat
 					Until RightMouseDown()=0
-					
+
 					mb=0
 					Exit
 				ElseIf mb=3
@@ -25192,17 +24452,16 @@ Function HubMainLoop()
 						CopyingLevel=StateSwapping
 						CopiedLevel=HubSelectedAdventure
 					EndIf
-					
+
 					Repeat
 					Until MouseDown(3)=0
-					
+
 					mb=0
 					Exit
 				EndIf
 			EndIf
 		Next
-		
-		
+
 		; edit
 		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And HubSelectedAdventure>=0
 			AdventureFileName$=TrimHubAdventureName$(HubAdventuresFilenames$(HubSelectedAdventure))
@@ -25210,18 +24469,18 @@ Function HubMainLoop()
 			MasterLevelListStart=0
 			StartMaster()
 			Repeat
-			Until LeftMouseDown()=0 
+			Until LeftMouseDown()=0
 		EndIf
-		
+
 		; replace
 		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*17 And MouseY()<LetterHeight*18 And HubSelectedAdventure>=0
 			SetAdventureCurrentArchive(0)
 			GetAdventures()
 			SetEditorMode(12)
 			Repeat
-			Until LeftMouseDown()=0 
+			Until LeftMouseDown()=0
 		EndIf
-		
+
 		; remove
 		If MouseX()>LetterX(33) And MouseX()<LetterX(41) And MouseY()>LetterHeight*21 And MouseY()<LetterHeight*22 And HubSelectedAdventure>=0
 			HubAdventuresFilenames$(HubSelectedAdventure)=""
@@ -25239,14 +24498,14 @@ Function HubMainLoop()
 			Repeat
 			Until LeftMouseDown()=0
 		EndIf
-		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)	
+		If MouseY()>LowerButtonsCutoff And MouseX()<LetterX(11)
 			DisplayText2(">       <",1,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",1,28,TextMenusR,TextMenusG,TextMenusB)
 			WaitFlag=True
 			hubmode=False
 			StartAdventureSelectScreen()
 		EndIf
-		
+
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(11) And MouseX()<LetterX(22) ; Save+Exit
 			DisplayText2(">       <",12,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",12,28,TextMenusR,TextMenusG,TextMenusB)
@@ -25256,7 +24515,7 @@ Function HubMainLoop()
 			StartAdventureSelectScreen()
 
 		EndIf
-		
+
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(22) And MouseX()<LetterX(33)
 			DisplayText2(">       <",23,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",23,28,TextMenusR,TextMenusG,TextMenusB)
@@ -25269,7 +24528,7 @@ Function HubMainLoop()
 			Repeat
 			Until LeftMouseDown()=False
 		EndIf
-		
+
 		If MouseY()>LowerButtonsCutoff And MouseX()>LetterX(33)
 			DisplayText2(">       <",34,27,TextMenusR,TextMenusG,TextMenusB)
 			DisplayText2(">       <",34,28,TextMenusR,TextMenusG,TextMenusB)
@@ -25287,16 +24546,16 @@ Function HubMainLoop()
 			EndIf
 			Repeat
 			Until LeftMouseDown()=False
-			
+
 		EndIf
 	EndIf
-	
+
 	If HotkeySave()
 		SaveHubFile()
 	EndIf
-	
+
 	MouseTextEntryTrackMouseMovement()
-	
+
 	Entering=0
 	x=GetMouseLetterX()
 	y=(MouseY()-LetterHeight*5)/LetterHeight
@@ -25306,7 +24565,7 @@ Function HubMainLoop()
 		If DialogTimer Mod 50 <25 Or OldX<>x Or OldY<>y
 			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 		EndIf
-	EndIf	
+	EndIf
 	If x<38 And y=0
 		Entering=2
 		If x>Len(HubTitle$) Then x=Len(HubTitle$)
@@ -25314,13 +24573,13 @@ Function HubMainLoop()
 			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 		EndIf
 	EndIf
-		
+
 	OldX=x
 	OldY=y
 	; entering text
 	let=GetKey()
 	If Entering>0
-	
+
 		Select entering
 		Case 1
 			tex$=HubDescription$
@@ -25329,11 +24588,11 @@ Function HubMainLoop()
 ; PUT BACK IN FOR ME - HELP LINE (DON"T NEED)
 ;		Case 3
 ;			tex$=AdventureHelpLine$(y-10)
-			
+
 		End Select
-		
+
 		tex$=MouseTextEntry$(tex$,let,x,y,0,2)
-		
+
 		Select entering
 		Case 1
 			HubDescription$=tex$
@@ -25341,17 +24600,16 @@ Function HubMainLoop()
 			HubTitle$=tex$
 	;	Case 3
 	;		AdventureHelpLine$(y-10)=tex$
-			
+
 		End Select
 
-	EndIf	
-		
-	
+	EndIf
+
 	RenderLetters()
 	RenderWorld()
-	
+
 	FinishDrawing()
-	
+
 	If waitflag=True Delay 1000
 End Function
 
@@ -25367,7 +24625,7 @@ Function ReadTestFile()
 		EndIf
 		StartMaster()
 		SetEditorMode(ReadInt(testfile))
-		
+
 		If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
 			level=ReadInt(testfile)
 			x=ReadInt(testfile)
@@ -25375,21 +24633,20 @@ Function ReadTestFile()
 			AccessLevelAt(level,x,y)
 			StartEditorMainLoop()
 		EndIf
-		
+
 		CloseFile testfile
 		DeleteFile globaldirname$+"\temp\test.dat"
-		
-		
+
 	EndIf
 
 End Function
 
 ; AKA Save and Test / SaveAndTest / Save+Test
 Function StartTestMode(TestAtX=0,TestAtY=0)
-	
+
 	WaitFlag=True
 	SaveMasterFile()
-	
+
 	file=WriteFile(globaldirname$+"\temp\test.dat")
 	WriteString file,AdventureFileName$
 	If hubmode
@@ -25397,24 +24654,24 @@ Function StartTestMode(TestAtX=0,TestAtY=0)
 	Else
 		WriteString file,""
 	EndIf
-	
+
 	WriteInt file, EditorMode
-	
+
 	If EditorMode=EditorModeTile Or EditorMode=EditorModeObject
 		WriteInt file,CurrentLevelNumber
 		WriteInt file,TestAtX
 		WriteInt file,TestAtY
 	EndIf
-	
+
 	CloseFile file
-	
+
 	If hubmode
 		SaveHubFile()
 	EndIf
-	
+
 	ExecFile ("wg.exe")
 	EndApplication()
-	
+
 End Function
 
 Const OriginalMasterDat$="__master_ORIGINAL__.bak"
@@ -25427,7 +24684,7 @@ Function StartTestModeAt(level,x,y)
 
 	RestoreOriginalMaster()
 	RestoreOriginal1Wlv()
-	
+
 	SaveMasterFile()
 	DuplicateMaster("master",OriginalMasterDat$)
 	; Change adventure start coordinates to likely be out-of-bounds.
@@ -25435,7 +24692,7 @@ Function StartTestModeAt(level,x,y)
 	AdventureStartX=100
 	AdventureStartY=100
 	; master.dat gets saved in StartTestMode, so we don't have to save it here.
-	
+
 	If CurrentLevelNumber<>1
 		AccessLevel(1)
 		; If 1.wlv does not exist, create the file.
@@ -25493,15 +24750,15 @@ Function LoadAdventureTitle$()
 
 End Function
 
-Function LoadMasterFile()	
+Function LoadMasterFile()
 
 	file=ReadFile (GetAdventureDir$()+"master.dat")
-	
+
 	adventuretitle$=ReadString$(file)
 	For i=0 To 4
 		adventuretextline$(i)=ReadString$(file)
 	Next
-	
+
 	ReadString$(file) ;user (not loaded)
 	CustomIconName$=ReadString$(file)
 	If CustomIconName$="" Or CustomIconName$="Standard"
@@ -25514,9 +24771,9 @@ Function LoadMasterFile()
 			Delay 2000
 			CustomIconName$="Standard"
 		EndIf
-		
+
 	EndIf
-	
+
 	CustomMapName$=ReadString$(file)
 	If CustomMapName$<>""
 		For i=0 To 8
@@ -25534,9 +24791,7 @@ Function LoadMasterFile()
 	ReadString$(file)
 	ReadString$(file)
 	ReadString$(file)
-	
-	
-		
+
 	AdventureExitWonLevel=ReadInt(file)
 	AdventureExitWonX=ReadInt(file)
 	AdventureExitWonY =ReadInt(file); at what hub level and x/y do you reappear if won.
@@ -25544,30 +24799,28 @@ Function LoadMasterFile()
 	AdventureExitLostX=ReadInt(file)
 	AdventureExitLostY =ReadInt(file); at what hub level and x/y do you reappear if won.
 
-
 	AdventureGoal=ReadInt(file)	; when is adventure done
 						; 1-NofWeeStinkersInAdventure=0
-
 
 	For i=0 To 2
 		For j=0 To 5
 			AdventureWonCommand(i,j)=ReadInt(file)
 		Next
 	Next
-	
+
 	adventurestartx=ReadInt(file)
 	adventurestarty=ReadInt(file)
 	GateKeyVersion=1
 	If Eof(file)=False GateKeyVersion=ReadInt(file)
-		
+
 	adventurestartdir=180 ;0
 	If Eof(file)=False Adventurestartdir=ReadInt(file)+180
-	
+
 	StarterItems=7
 	If Eof(file)=False StarterItems=ReadInt(file)
 	WidescreenRange=0
 	If Eof(file)=False WidescreenRange=ReadInt(file)
-	
+
 	; reset
 	CustomShardEnabled=0
 	CustomGlyphEnabled=0
@@ -25583,7 +24836,7 @@ Function LoadMasterFile()
 			CustomGlyphCMD(i,j)=0
 		Next
 	Next
-	
+
 	; load
 	If Eof(file)=False
 		CustomShardEnabled=ReadInt(file)
@@ -25603,16 +24856,12 @@ Function LoadMasterFile()
 			Next
 		EndIf
 	EndIf
-	CloseFile file	
+	CloseFile file
 
-	
-	
 	FreeTexture buttontexture
 	FreeTexture gatetexture
 	ButtonTexture=MyLoadTexture("data\graphics\buttons"+Str$(GateKeyVersion)+".bmp",4)
 	GateTexture=MyLoadTexture("data\graphics\gates"+Str$(GateKeyVersion)+".bmp",1)
-
-	
 
 End Function
 
@@ -25676,7 +24925,7 @@ Function IsHubMissingAdventures()
 			Return True
 		EndIf
 	Next
-	
+
 	Return False
 
 End Function
@@ -25739,12 +24988,11 @@ Function SaveMasterFile()
 
 	file=WriteFile (GetAdventureDir$()+"master.dat")
 
-
 	WriteString file,adventuretitle$
 	For i=0 To 4
 		WriteString file,adventuretextline$(i)
 	Next
-	
+
 	WriteString file,AdventureUserName$
 	WriteString file,CustomIconName$
 	WriteString file,CustomMapName$ ;""
@@ -25752,17 +25000,13 @@ Function SaveMasterFile()
 	WriteString file,""
 	WriteString file,""
 	WriteString file,""
-	
 
-	
-		
 	WriteInt file, AdventureExitWonLevel
 	WriteInt file, AdventureExitWonX
 	WriteInt file, AdventureExitWonY ; at what hub level and x/y do you reappear if won.
 	WriteInt file, AdventureExitLostLevel
 	WriteInt file, AdventureExitLostX
 	WriteInt file, AdventureExitLostY ; at what hub level and x/y do you reappear if won.
-
 
 	WriteInt file, AdventureGoal	; when is adventure done
 						; 1-NofWeeStinkersInAdventure=0
@@ -25772,31 +25016,31 @@ Function SaveMasterFile()
 			WriteInt file, AdventureWonCommand(i,j)
 		Next
 	Next
-	
+
 	WriteInt file,adventurestartx
 	WriteInt file,adventurestarty
-	
+
 	WriteInt file,GateKeyVersion
-	
+
 	WriteInt file,AdventureStartDir-180
-	
-	WriteInt file,StarterItems 
+
+	WriteInt file,StarterItems
 	WriteInt file,WidescreenRange
-	
+
 	CustomShardEnabled=0
 	For i=0 To NoOfShards-1
 		If CustomShardCMD(i,0)>0
 			CustomShardEnabled=NoOfShards
 		EndIf
 	Next
-	
+
 	CustomGlyphEnabled=0
 	For i=0 To NoOfGlyphs-1
 		If CustomGlyphCMD(i,0)>0
 			CustomGlyphEnabled=NoOfGlyphs
 		EndIf
 	Next
-	
+
 	WriteInt file,CustomShardEnabled
 	If CustomShardEnabled>0
 		For i=0 To CustomShardEnabled-1
@@ -25814,8 +25058,7 @@ Function SaveMasterFile()
 			Next
 		Next
 	EndIf
-	CloseFile file	
-	
+	CloseFile file
 
 End Function
 
@@ -25826,19 +25069,19 @@ Function SetInterChange(i)
 	ElseIf i>MaxInterChanges
 		i=MaxInterChanges
 	EndIf
-	
+
 	If i<>WhichInterChange
 		SetAnswer(0)
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	
+
 	WhichInterChange=i
-	
+
 	If WhichInterChange>=NofInterChanges
 		NofInterChanges=WhichInterChange+1
 	EndIf
-	
+
 	; for old dialogs
 	RemoveDanglingDialogTextCommands()
 	DeduplicateDialogTextCommands()
@@ -25852,12 +25095,12 @@ Function SetAnswer(i)
 	ElseIf i>MaxReply
 		i=MaxReply
 	EndIf
-	
+
 	If i<>WhichAnswer
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	
+
 	WhichAnswer=i
 
 End Function
@@ -25869,12 +25112,12 @@ Function SetAskabout(i)
 	ElseIf i>100
 		i=100
 	EndIf
-	
+
 	If i<>WhichAskabout
 		ColEffect=-1
 		TxtEffect=-1
 	EndIf
-	
+
 	WhichAskabout=i
 
 End Function
@@ -25882,7 +25125,7 @@ End Function
 Function StartDialog()
 
 	SetEditorMode(9)
-	
+
 	Camera1Proj=0
 	Camera2Proj=0
 	Camera3Proj=0
@@ -25895,27 +25138,27 @@ End Function
 Function AccessDialog(TargetDialog)
 
 	CurrentDialog=TargetDialog
-	
+
 	SetInterChange(0)
 	WhichAnswer=0
 	WhichAskAbout=0
-	
+
 	ColEffect=-1
 	TxtEffect=-1
-	
+
 	; check existence of this dialog file
 	If DialogExists(CurrentDialog)
 		LoadDialogFile()
 	Else
 		NewDialog()
 	EndIf
-	
+
 End Function
 
 Function NewDialog()
 
 	ClearDialogFile()
-	
+
 	UnsavedChanges=0
 
 End Function
@@ -26040,7 +25283,6 @@ Function PreviewAskAbout$(DialogNumber,AskAboutNumber)
 
 End Function
 
-
 Function DialogTextCommandIsColor(k)
 
 	Return Left$(DialogTextCommand$(WhichInterChange,k),1)="C"
@@ -26065,7 +25307,7 @@ Function SwapDialogTextCommand(Source,Dest)
 	temp=DialogTextCommandPos(WhichInterChange,Dest)
 	DialogTextCommandPos(WhichInterChange,Dest)=DialogTextCommandPos(WhichInterChange,Source)
 	DialogTextCommandPos(WhichInterChange,Source)=temp
-	
+
 	temp2$=DialogTextCommand$(WhichInterChange,Dest)
 	DialogTextCommand$(WhichInterChange,Dest)=DialogTextCommand$(WhichInterChange,Source)
 	DialogTextCommand$(WhichInterChange,Source)=temp2$
@@ -26087,7 +25329,7 @@ Function AddDialogTextCommand(x,y,command$)
 	DialogTextCommandPos(WhichInterChange,NofTextCommands(WhichInterChange))=x+(y*CharactersPerLine)
 	DialogTextCommand$(WhichInterChange,NofTextCommands(WhichInterChange))=command$
 	NofTextCommands(WhichInterChange)=NofTextCommands(WhichInterChange)+1
-	
+
 	AddUnsavedChange()
 
 End Function
@@ -26095,7 +25337,7 @@ End Function
 Function ReplaceDialogTextCommand(k,NewEffect$)
 
 	DialogTextCommand$(WhichInterChange,k)=NewEffect$
-	
+
 	AddUnsavedChange()
 
 End Function
@@ -26149,7 +25391,7 @@ Function DeduplicateDialogTextCommands()
 End Function
 
 Function RemoveDanglingDialogTextCommands()
-	
+
 	For k=0 To NofTextCommands(WhichInterChange)-1
 		thePos=DialogTextCommandPos(WhichInterChange,k)
 		x=thePos Mod CharactersPerLine
@@ -26162,14 +25404,13 @@ Function RemoveDanglingDialogTextCommands()
 
 End Function
 
-
 Function DialogMainLoop()
-	
+
 	DialogTimer=DialogTimer+1
-	
+
 	adj=1
 	If ShiftDown() Then adj=10
-	
+
 	If HotkeySave()
 		SaveDialogFile()
 ;	ElseIf HotKeyOpen()
@@ -26177,13 +25418,13 @@ Function DialogMainLoop()
 ;			OpenTypedDialog()
 ;		EndIf
 	EndIf
-	
+
 	If KeyPressed(1) ; Esc key
 		If AskToSaveDialogAndExit()
 			ResumeMaster()
 		EndIf
 	EndIf
-	
+
 	If CtrlDown()
 		If KeyPressed(209) ; Ctrl+PageDown
 			If AskToSaveDialogAndExit()
@@ -26195,13 +25436,10 @@ Function DialogMainLoop()
 			EndIf
 		EndIf
 	EndIf
-	
-	
+
 	DisplayText2("Adventure: "+Left$(AdventureFileName$,20),0,0,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("Dialog #"+Str$(CurrentDialog),36-Len(Str$(CurrentDialog)),0,TextMenusR,TextMenusG,TextMenusB)
-	
-	
-	
+
 	DisplayText2("W",39,3,255,255,255)
 	DisplayText2("G",41,3,195,195,195)
 	DisplayText2("R",43,3,255,100,100)
@@ -26214,28 +25452,27 @@ Function DialogMainLoop()
 	DisplayText2("R",39,6,Rand(0,255),Rand(0,255),Rand(0,255))
 	DisplayText2("B",41,6,GetAnimatedFlashing(DialogTimer),GetAnimatedFlashing(DialogTimer),GetAnimatedFlashing(DialogTimer))
 	DisplayText2("W",43,6,GetAnimatedFlashing(DialogTimer),60,60)
-	
+
 	DisplayText2("NO SH",39,7,255,255,255)
 	DisplayText2("JI WA",39,8,255,255,255)
 	DisplayText2("BO ZO",39,9,255,255,255)
 	DisplayText2("ZS CR",39,10,255,255,255)
 	DisplayText2("EI UD",39,11,255,255,255)
 	DisplayText2("LR RT",39,12,255,255,255)
-	
+
 	DisplayText2("CLEAR",39,14,255,255,0)
 	DisplayText2("COPY",39.5,16,255,255,0)
 	DisplayText2("PASTE",39,18,255,255,0)
 	DisplayText2("ERASE",39,20,255,255,0)
-	
+
 	If KeyDown(62) ; F4 Key
 		; LOL
 		DisplayText2("ALT+F4",-7,8,255,255,0)
 	EndIf
-	
+
 	AutofillLabel$="AUTOFILL EVERY MISSING FIRST ANSWER"
 	DisplayText2(AutofillLabel$,0,19,255,255,0)
-	
-	
+
 	If MouseX()>LetterX(38) And MouseY()>23*LetterHeight And MouseY()<25*LetterHeight
 		DisplayText2("CANCEL",38.2,23,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("+EXIT",38.7,24,TextMenusR,TextMenusG,TextMenusB)
@@ -26244,7 +25481,7 @@ Function DialogMainLoop()
 		DisplayText2("+EXIT",38.7,24,255,255,255)
 
 	EndIf
-	
+
 	If MouseX()>LetterX(38) And MouseY()>27*LetterHeight
 		DisplayText2("SAVE",39.2,27,TextMenusR,TextMenusG,TextMenusB)
 		DisplayText2("+EXIT",38.7,28,TextMenusR,TextMenusG,TextMenusB)
@@ -26261,19 +25498,16 @@ Function DialogMainLoop()
 		DisplayText2("__",39+3*(TxtEffect Mod 2),7+(TxtEffect/2),TextMenusR,TextMenusG,TextMenusB)
 	EndIf
 
-
-	
-		
 	DisplayText2("--------------------------------------------",0,1,TextMenusR,TextMenusG,TextMenusB)
 
 	;DisplayText2("InterChange #"+Str$(WhichInterChange),20,0,TextMenusR,TextMenusG,TextMenusB)
 	;DisplayText2(" COPY                PASTE",0,2,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("----- INTERCHANGE #"+Str$(WhichInterChange)+" -----",0,3,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	DisplayText2("--------------------------------------",0,12,TextMenusR,TextMenusG,TextMenusB) ; Formerly 0,11
-	
+
 	DisplayText2("----- ANSWER #"+Str$(WhichAnswer)+" -----",0,13,TextMenusR,TextMenusG,TextMenusB)
-	
+
 	DisplayText2("FNC  Data  CMD  Dat1  Dat2  Dat3  Dat4",0,15,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(Str$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)),0,16,255,255,255)		;**
 	DisplayText2(Str$(InterChangeReplyData(WhichInterChange,WhichAnswer)),5,16,255,255,255)
@@ -26286,18 +25520,16 @@ Function DialogMainLoop()
 
 	DisplayText2("----- ASKABOUT #"+Str$(WhichAskAbout)+" -----",0,22,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2("Active    InterChange   Repeat",0,24,TextMenusR,TextMenusG,TextMenusB)
-	DisplayText2(Str$(AskAboutActive(WhichAskAbout)),0,25,255,255,255)	
-	
-	DisplayText2(Str$(AskAboutInterChange(WhichAskAbout)),12,25,255,255,255)	
-	DisplayText2(Str$(AskAboutRepeat(WhichAskAbout)),24,25,255,255,255)	
+	DisplayText2(Str$(AskAboutActive(WhichAskAbout)),0,25,255,255,255)
+
+	DisplayText2(Str$(AskAboutInterChange(WhichAskAbout)),12,25,255,255,255)
+	DisplayText2(Str$(AskAboutRepeat(WhichAskAbout)),24,25,255,255,255)
 	DisplayText2("AskAbout Title Line:",0,27,TextMenusR,TextMenusG,TextMenusB)
 	DisplayText2(AskAboutTopText$,0,28,255,255,255)
 ;	DisplayText2("--------------------------------------",0,28,TextMenusR,TextMenusG,TextMenusB)
 
-
-	
 	For i=0 To 37
-	
+
 		For j=0 To MaxInterChangeTextLine
 			AddLetter(Asc("X")-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		Next
@@ -26305,12 +25537,8 @@ Function DialogMainLoop()
 		AddLetter(Asc("X")-32,-.97+i*.045,.5-19*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 		AddLetter(Asc("X")-32,-.97+i*.045,.5-24*.05,1,0,.04,0,0,0,0,0,0,0,0,0,TextMenuXR,TextMenuXG,TextMenuXB)
 
-
-
-
-
 	Next
-	
+
 	; Display
 	DialogCurrentRed=255
 	DialogCurrentGreen=255
@@ -26397,11 +25625,10 @@ Function DialogMainLoop()
 					Case "EROT"
 						DialogCurrentEffect=11
 
-						
 					End Select
 				EndIf
 			Next
-			
+
 			size#=1.0
 			spacing#=1.0
 			angle#=0.0
@@ -26443,37 +25670,28 @@ Function DialogMainLoop()
 				If Abs((-dialogtimer*8+(i+j*75)*10)) Mod 3600 <3400
 					size=1.0
 
-
-
 				Else
 					size=1.3
 				EndIf
 				spacing=1.0/size
 			;	yoff#=0.2*Sin(dialogtimer*8+i*180)
 
-			
-				
-
-			
-
 			End Select
-			
+
 			charx#=(i)+xoff
 			chary#=YOffset/2.0+j+yoff
-			
-			
+
 			AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,(-.97+charx*.045*size*spacing)/1.0,(.5-chary*.05*size*spacing)/1.0,1.0,rot,.04*size/1.0,0,0,0,0,0,0,0,0,0,dialogcurrentred,dialogcurrentgreen,dialogcurrentblue)
-		
+
  				totalletters=totalletters+1
 		;	AddLetter(Asc(Mid$(InterChangeTextLine$(WhichInterChange,j),i+1,1))-32,-.97+i*.045,.5-j*.05,1,0,.04,0,0,0,0,0,0,0,0,0,DialogCurrentRed,DialogCurrentGreen,DialogCurrentBlue)
 		Next
 	Next
-	
-	
+
 	For i=0 To Len(InterChangeReplyText$(WhichInterChange,WhichAnswer))
 		AddLetter(Asc(Mid$(InterChangeReplyText$(WhichInterChange,WhichAnswer),i+1,1))-32,-.97+i*.045,.5-(10)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
 	Next
-	
+
 	For i=0 To Len(AskAboutText$(WhichAskAbout))
 		AddLetter(Asc(Mid$(AskAboutText$(WhichAskAbout),i+1,1))-32,-.97+i*.045,.5-(19)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
 	Next
@@ -26481,25 +25699,23 @@ Function DialogMainLoop()
 		AddLetter(Asc(Mid$(AskAboutTopText$,i+1,1))-32,-.97+i*.045,.5-(24)*.05,1,0,.04,0,0,0,0,0,0,0,0,0,255,255,255)
 	Next
 
-
-
 	; Mouse
 	MouseTextEntryTrackMouseMovement()
 	; Mouse Pos
 	Entering=0
-	
+
 	x=GetMouseLetterX()
 	If MouseY()<LetterHeight*14
 		y=(MouseY()-LetterHeight*5)/LetterHeight
 	Else If MouseY()<LetterHeight*15
 		y=(MouseY()-LetterHeight*4.8)/LetterHeight ; 4.5
-	Else 
+	Else
 		y=(MouseY()-LetterHeight*4.6)/LetterHeight ; 4
 	EndIf
-	
+
 	debug1=MouseY()
 	debug2=y
-	
+
 	; cursor
 	If x<CharactersPerLine And MouseY()>=LetterHeight*4 And y<8 And y>-1
 		Entering=1
@@ -26554,12 +25770,11 @@ Function DialogMainLoop()
 			EndIf
 			;ColEffect=-1
 			;TxtEffect=-1
-			
+
 			DeduplicateDialogTextCommands()
 
 		EndIf
-		
-					
+
 	EndIf
 	If x<CharactersPerLine And y=10
 		Entering=2
@@ -26568,7 +25783,7 @@ Function DialogMainLoop()
 			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 		EndIf
 	EndIf
-	
+
 	If x<CharactersPerLine And y=19
 		Entering=3
 		If x>Len(AskAboutText$(WhichAskAbout)) Then x=Len(AskAboutText$(WhichAskAbout))
@@ -26576,7 +25791,7 @@ Function DialogMainLoop()
 			AddLetter(Asc("_")-32,-.97+x*.045,.5-y*.05,1,0,.05,0,0,0,0,0,0,0,0,0,255,255,255)
 		EndIf
 	EndIf
-	
+
 	If x<CharactersPerLine And y=24
 		Entering=4
 		If x>Len(AskAboutTopText$) Then x=Len(AskAboutTopText$)
@@ -26585,16 +25800,14 @@ Function DialogMainLoop()
 		EndIf
 	EndIf
 
-
-
 	OldX=x
 	OldY=y
 	; entering text
 	let=GetKey()
 	If Entering=1
-		
+
 		InterChangeTextLine$(WhichInterChange,y)=MouseTextEntry$(InterChangeTextLine$(WhichInterChange,y),let,x,y,0,1)
-		
+
 		If MouseTextEntryDelete=True
 			RemoveDanglingDialogTextCommands()
 			DeduplicateDialogTextCommands()
@@ -26602,23 +25815,21 @@ Function DialogMainLoop()
 
 	EndIf
 	If Entering=2
-		
+
 		InterChangeReplyText$(WhichInterChange,WhichAnswer)=MouseTextEntry$(InterChangeReplyText$(WhichInterChange,WhichAnswer),let,x,y,0,1)
 
 	EndIf
 	If Entering=3
-		
+
 		AskaboutText$(WhichAskAbout)=MouseTextEntry$(AskaboutText$(WhichAskAbout),let,x,y,-8,1)
 
 	EndIf
 	If Entering=4
-		
+
 		AskaboutTopText$=MouseTextEntry$(AskaboutTopText$,let,x,y,-8,1)
 
 	EndIf
 
-
-	
 	mb=0
 	If LeftMouse mb=1
 	If RightMouse mb=2
@@ -26626,7 +25837,7 @@ Function DialogMainLoop()
 	If mb>0
 		; Change Adventure
 		; Load/Save
-		
+
 		If MouseX()>LetterX(38) And MouseY()>LetterHeight*23 And MouseY()<LetterHeight*25
 			If AskToSaveDialogAndExit()
 				ClearDialogFile()
@@ -26635,7 +25846,7 @@ Function DialogMainLoop()
 			Repeat
 			Until LeftMouseDown()=0
 		EndIf
-	
+
 		If MouseX()>LetterX(38) And MouseY()>LetterHeight*27
 			SaveDialogAndExit()
 			Repeat
@@ -26653,7 +25864,7 @@ Function DialogMainLoop()
 		target=AdjustInt("Interchange: ", WhichInterChange, 1, 10, DelayTime)
 		SetInterChange(target)
 	EndIf
-	
+
 	; Change Answer
 	If MouseY()>LetterHeight*13 And MouseY()<LetterHeight*14 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
 		target=AdjustInt("Answer: ", WhichAnswer, 1, 10, DelayTime)
@@ -26672,7 +25883,7 @@ Function DialogMainLoop()
 			If OldValue<>InterChangeReplyFunction(WhichInterChange,WhichAnswer)
 				AddUnsavedChange()
 			EndIf
-			
+
 			ShowTooltipCenterAligned(TooltipX, TooltipY, ReplyFunctionToName$(InterChangeReplyFunction(WhichInterChange,WhichAnswer)))
 		Case 1
 			OldValue=InterChangeReplyData(WhichInterChange,WhichAnswer)
@@ -26680,7 +25891,7 @@ Function DialogMainLoop()
 			If OldValue<>InterChangeReplyData(WhichInterChange,WhichAnswer)
 				AddUnsavedChange()
 			EndIf
-			
+
 			Fnc=InterChangeReplyFunction(WhichInterChange,WhichAnswer)
 			tex$=ReplyFunctionToDataName$(Fnc)
 			If Fnc=1 Or Fnc=2
@@ -26693,7 +25904,7 @@ Function DialogMainLoop()
 			If OldValue<>InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 				AddUnsavedChange()
 			EndIf
-			
+
 			ShowTooltipCenterAligned(TooltipX, TooltipY, GetCommandName$(InterChangeReplyCommand(WhichInterChange,WhichAnswer)))
 		Case 3
 			OldValue=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
@@ -26701,10 +25912,10 @@ Function DialogMainLoop()
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
 				AddUnsavedChange()
 			EndIf
-			
+
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 			Data1=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
-			
+
 			tex$=GetCMDData1NameAndValue(Cmd, Data1, ": ")+WithJoinerIfNotEmpty$(GetCmdData1ExtraInfo$(Cmd,Data1),": ")
 			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		Case 4
@@ -26713,11 +25924,11 @@ Function DialogMainLoop()
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
 				AddUnsavedChange()
 			EndIf
-			
+
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 			Data1=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
 			Data2=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
-			
+
 			tex$=GetCMDData2NameAndValue(Cmd, Data2, ": ")+WithJoinerIfNotEmpty$(GetCmdData2ExtraInfo$(Cmd,Data1,Data2),": ")
 			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		Case 5
@@ -26726,12 +25937,12 @@ Function DialogMainLoop()
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
 				AddUnsavedChange()
 			EndIf
-			
+
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 			Data1=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,0)
 			Data2=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,1)
 			Data3=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,2)
-			
+
 			tex$=GetCMDData3NameAndValue(Cmd, Data2, Data3, ": ")+WithJoinerIfNotEmpty$(GetCmdData3ExtraInfo$(Cmd,Data1,Data3),": ")
 			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		Case 6
@@ -26740,22 +25951,20 @@ Function DialogMainLoop()
 			If OldValue<>InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
 				AddUnsavedChange()
 			EndIf
-			
+
 			Cmd=InterChangeReplyCommand(WhichInterChange,WhichAnswer)
 			Data4=InterChangeReplyCommandData(WhichInterChange,WhichAnswer,3)
-			
+
 			tex$=GetCMDData4NameAndValue(Cmd, Data4, ": ")
 			ShowTooltipCenterAligned(TooltipX, TooltipY, tex$)
 		End Select
-		
+
 		If Modified
 			ColEffect=-1
 			TxtEffect=-1
 		EndIf
 	EndIf
-		
 
-	
 	; Change Askabout
 	If MouseY()>LetterHeight*22 And MouseY()<LetterHeight*23 And MouseX()>LetterX(5) And MouseX()<LetterX(21)
 		target=AdjustInt("AskAbout: ", WhichAskabout, 1, 10, DelayTime)
@@ -26770,7 +25979,7 @@ Function DialogMainLoop()
 			If OldValue<>AskAboutActive(WhichAskAbout)
 				AddUnsavedChange()
 			EndIf
-			
+
 			ShowTooltipCenterAligned(LetterX(4),TooltipY,GetAskAboutActiveName$(AskAboutActive(WhichAskAbout)))
 
 		Else If MouseX()<LetterX(22.5)
@@ -26779,7 +25988,7 @@ Function DialogMainLoop()
 			If OldValue<>AskAboutInterChange(WhichAskAbout)
 				AddUnsavedChange()
 			EndIf
-			
+
 			ShowTooltipCenterAligned(LetterX(15.25),TooltipY,"Destination Interchange: "+PreviewCurrentDialog$(AskAboutInterChange(WhichAskAbout)))
 		Else If MouseX()<LetterX(38)
 			OldValue=AskAboutRepeat(WhichAskAbout)
@@ -26787,16 +25996,16 @@ Function DialogMainLoop()
 			If OldValue<>AskAboutRepeat(WhichAskAbout)
 				AddUnsavedChange()
 			EndIf
-			
+
 			ShowTooltipCenterAligned(LetterX(27.5),TooltipY,GetAskAboutRepeatName$(AskAboutRepeat(WhichAskAbout)))
 		EndIf
-		
+
 		If Modified
 			ColEffect=-1
 			TxtEffect=-1
 		EndIf
 	EndIf
-	
+
 	; Colours/Effects
 	If LeftMouse=True And LeftMouseReleased=True
 		LeftMouseReleased=False
@@ -26820,7 +26029,7 @@ Function DialogMainLoop()
 						DialogTextCommandpos(WhichInterChange,i)=-1
 					Next
 					NofTextCommands(WhichInterChange)=0
-					
+
 					AddUnsavedChange()
 				EndIf
 			ElseIf MouseY()>LetterHeight*16 And MouseY()<LetterHeight*17
@@ -26863,8 +26072,7 @@ Function DialogMainLoop()
 			EndIf
 		EndIf
 	EndIf
-		
-			
+
 	If CtrlDown() ; ctrl+...
 		If KeyPressed(17) Then ToggleColEffect(0) ; w: white
 		If KeyPressed(18) Then ToggleColEffect(1) ; e: grey
@@ -26891,17 +26099,11 @@ Function DialogMainLoop()
 		If KeyPressed(38) Then ToggleTxtEffect(10) ; l: left+right
 		If KeyPressed(20) Then ToggleTxtEffect(11) ; t: rt
 	EndIf
-		
-	
-	
+
 	RenderLetters()
 	RenderWorld()
-	
 
 	FinishDrawing()
-	
-	
-
 
 End Function
 
@@ -26939,7 +26141,7 @@ End Function
 
 Function ClearInterChange(i)
 
-	NofInterChangeTextLines(i)=0	
+	NofInterChangeTextLines(i)=0
 	For j=0 To MaxInterChangeTextLine
 		InterChangeTextLine$(i,j)=""
 	Next
@@ -26951,11 +26153,11 @@ Function ClearInterChange(i)
 	NofInterChangeReplies(i)=1
 	For j=0 To MaxReply
 		InterChangeReplyText$(i,j)=""
-		
+
 		; Make the default FNC end the dialog and return to this Interchange.
 		InterChangeReplyFunction(i,j)=1
 		InterChangeReplyData(i,j)=i
-		
+
 		InterChangeReplyCommand(i,j)=0
 		For k=0 To 3
 			InterChangeReplyCommandData(i,j,k)=0
@@ -26966,7 +26168,7 @@ End Function
 
 Function CopyInterChange(i)
 
-	CopiedNofInterChangeTextLines=NofInterChangeTextLines(i)	
+	CopiedNofInterChangeTextLines=NofInterChangeTextLines(i)
 	For j=0 To MaxInterChangeTextLine
 		CopiedInterChangeTextLine$(j)=InterChangeTextLine$(i,j)
 	Next
@@ -26978,10 +26180,10 @@ Function CopyInterChange(i)
 	CopiedNofInterChangeReplies=NofInterChangeReplies(i)
 	For j=0 To MaxReply
 		CopiedInterChangeReplyText(j)=InterChangeReplyText$(i,j)
-		
+
 		CopiedInterChangeReplyFunction(j)=InterChangeReplyFunction(i,j)
 		CopiedInterChangeReplyData(j)=InterChangeReplyData(i,j)
-		
+
 		CopiedInterChangeReplyCommand(j)=InterChangeReplyCommand(i,j)
 		For k=0 To 3
 			CopiedInterChangeReplyCommandData(j,k)=InterChangeReplyCommandData(i,j,k)
@@ -26993,8 +26195,8 @@ End Function
 Function PasteInterChange(i)
 
 	ClearInterChange(i)
-	
-	NofInterChangeTextLines(i)=CopiedNofInterChangeTextLines	
+
+	NofInterChangeTextLines(i)=CopiedNofInterChangeTextLines
 	For j=0 To MaxInterChangeTextLine
 		InterChangeTextLine$(i,j)=CopiedInterChangeTextLine$(j)
 	Next
@@ -27006,10 +26208,10 @@ Function PasteInterChange(i)
 	NofInterChangeReplies(i)=CopiedNofInterChangeReplies
 	For j=0 To MaxReply
 		InterChangeReplyText$(i,j)=CopiedInterChangeReplyText(j)
-		
+
 		InterChangeReplyFunction(i,j)=CopiedInterChangeReplyFunction(j)
 		InterChangeReplyData(i,j)=CopiedInterChangeReplyData(j)
-		
+
 		InterChangeReplyCommand(i,j)=CopiedInterChangeReplyCommand(j)
 		For k=0 To 3
 			InterChangeReplyCommandData(i,j,k)=CopiedInterChangeReplyCommandData(j,k)
@@ -27025,13 +26227,13 @@ Function InterChangeIsEmpty(i)
 			Return False
 		EndIf
 	Next
-	
+
 	For j=0 To MaxReply
 		If InterChangeReplyText(i,j)<>""
 			Return False
 		EndIf
 	Next
-	
+
 	Return True
 
 End Function
@@ -27040,7 +26242,7 @@ Function ClearDialogPreview()
 	; first clear all data
 	PreviewNofInterchanges=1
 	For i=0 To MaxInterChanges ;-1
-		PreviewNofInterChangeTextLines(i)=0	
+		PreviewNofInterChangeTextLines(i)=0
 		For j=0 To MaxInterChangeTextLine
 			PreviewInterChangeTextLine$(i,j)=""
 		Next
@@ -27052,17 +26254,17 @@ Function ClearDialogPreview()
 		PreviewNofInterChangeReplies(i)=1
 		For j=0 To MaxReply
 			PreviewInterChangeReplyText$(i,j)=""
-			
+
 			; Make the default FNC end the dialog and return to this Interchange.
 			PreviewInterChangeReplyFunction(i,j)=1
 			PreviewInterChangeReplyData(i,j)=i
-			
+
 			PreviewInterChangeReplyCommand(i,j)=0
 			For k=0 To 3
 				PreviewInterChangeReplyCommandData(i,j,k)=0
 			Next
 		Next
-		
+
 	Next
 	PreviewNofAskAbouts=0
 	PreviewAskAboutTopText$=""
@@ -27077,18 +26279,18 @@ End Function
 Function LoadDialogFile()
 
 	ClearDialogFile()
-		
+
 	; yep - load
 	file=ReadFile(GetAdventureDir$()+Str$(currentdialog)+".dia")
 
 	NofInterchanges=ReadInt(file)
 	For i=0 To NofInterchanges-1
-		NofInterChangeTextLines(i)=ReadInt(file)	
+		NofInterChangeTextLines(i)=ReadInt(file)
 		For j=0 To NofInterChangeTextLines(i)-1
 			InterChangeTextLine$(i,j)=ReadString$(file)
 		Next
 		NofTextCommands(i)=ReadInt(file)
-		
+
 		For j=0 To NofTextCommands(i)-1
 			DialogTextCommand$(i,j)=ReadString$(file)
 			DialogTextCommandPos(i,j)=ReadInt(file)
@@ -27113,7 +26315,7 @@ Function LoadDialogFile()
 		AskAboutRepeat(i)=ReadInt(file)
 	Next
 	CloseFile file
-	
+
 	UnsavedChanges=0
 
 End Function
@@ -27121,18 +26323,18 @@ End Function
 Function PreviewDialogFile()
 
 	ClearDialogPreview()
-		
+
 	; yep - load
 	file=ReadFile(GetAdventureDir$()+Str$(PreviewCurrentDialog)+".dia")
 
 	PreviewNofInterchanges=ReadInt(file)
 	For i=0 To PreviewNofInterchanges-1
-		PreviewNofInterChangeTextLines(i)=ReadInt(file)	
+		PreviewNofInterChangeTextLines(i)=ReadInt(file)
 		For j=0 To PreviewNofInterChangeTextLines(i)-1
 			PreviewInterChangeTextLine$(i,j)=ReadString$(file)
 		Next
 		PreviewNofTextCommands(i)=ReadInt(file)
-		
+
 		For j=0 To PreviewNofTextCommands(i)-1
 			PreviewDialogTextCommand$(i,j)=ReadString$(file)
 			PreviewDialogTextCommandPos(i,j)=ReadInt(file)
@@ -27161,29 +26363,29 @@ Function PreviewDialogFile()
 End Function
 
 Function SaveDialogFile()
-	
+
 	file=WriteFile(GetAdventureDir$()+Str$(currentdialog)+".dia")
-	
+
 	;NofInterChanges=NofInterChanges+1 ; MS, why would you do this?
-		
+
 	WriteInt File,NofInterchanges
-	
+
 	For i=0 To NofInterchanges-1
 		; calculuate nofinterchangetextlines
 		For j=7 To 0 Step -1
-			If InterChangeTextLine$(i,j)<>"" 
+			If InterChangeTextLine$(i,j)<>""
 				NofInterChangeTextLines(i)=j+1
 				j=-3
 			EndIf
 		Next
 		If j=-1 NofInterChangeTextLines(i)=0
-		
+
 		If DialogKillLineEight
 			If NofInterChangeTextLines(i)>7
 				NofInterChangeTextLines(i)=7
 			EndIf
 		EndIf
-		
+
 		WriteInt File,NofInterChangeTextLines(i)
 		For j=0 To NofInterChangeTextLines(i)-1
 			WriteString file,InterChangeTextLine$(i,j)
@@ -27193,7 +26395,7 @@ Function SaveDialogFile()
 			WriteString file,DialogTextCommand$(i,j)
 			WriteInt File,DialogTextCommandPos(i,j)
 		Next
-		
+
 		; calculate nofinterchangereplies
 		;For j=0 To 8
 		;	If InterChangeReplyText$(i,j)=""
@@ -27202,13 +26404,12 @@ Function SaveDialogFile()
 		;	EndIf
 		;Next
 		;If j=9 Then NofInterChangeReplies(i)=9
-		
+
 		For j=0 To MaxReply
 			If InterChangeReplyText$(i,j)<>""
 				NofInterChangeReplies(i)=j+1
 			EndIf
 		Next
-
 
 		WriteInt File,NofInterChangeReplies(i)
 		For j=0 To NofInterChangeReplies(i)-1
@@ -27238,9 +26439,9 @@ Function SaveDialogFile()
 		WriteInt File,AskAboutRepeat(i)
 	Next
 	CloseFile file
-	
+
 	UnsavedChanges=0
-	
+
 End Function
 
 Function GetCommandName$(id)
@@ -27495,7 +26696,7 @@ Function GetCMDData4Name$(id)
 End Function
 
 Function GetCmdData1ValueName$(Cmd, Data1)
-	
+
 	Select Cmd
 	Case 6
 		Return GetLightColorAndAmbientString$(Data1)
@@ -28321,7 +27522,7 @@ Function GetSoundName$(value)
 	Case 198
 		Return "NPCWhatUDoin"
 	Case 199
-		Return "NPCNice2CU!"	
+		Return "NPCNice2CU!"
 	Default
 		Return "N/A"
 	End Select
@@ -28395,7 +27596,7 @@ Function GetStinkerNPCWalkAnimName$(Value)
 	Case 20
 		Return "Sit5"
 	Case 21
-		Return "Sit6"		
+		Return "Sit6"
 	Default
 		Return Value+"/None"
 	End Select
@@ -28597,7 +27798,7 @@ Function GetCmdData1ExtraInfo$(Cmd,Data1)
 	Case 21,22,23,24,25,26,27
 		Return PreviewDialog$(Data1,0)
 	End Select
-	
+
 	Return ""
 
 End Function
@@ -28614,7 +27815,7 @@ Function GetCmdData2ExtraInfo$(Cmd,Data1,Data2)
 	Case 64
 		Return "{PARTICLE}"+Data2
 	End Select
-	
+
 	Return ""
 
 End Function
@@ -28625,7 +27826,7 @@ Function GetCmdData3ExtraInfo$(Cmd,Data1,Data3)
 	Case 27
 		Return PreviewDialog$(Data1,Data3)
 	End Select
-	
+
 	Return ""
 
 End Function
@@ -28762,7 +27963,7 @@ Function GetTypeString$(value)
 	Case 280
 		Return "Spring"
 	Case 281
-		Return "Suctube -"	
+		Return "Suctube -"
 	Case 282
 		Return "Suctube X"
 	Case 290
@@ -28833,10 +28034,10 @@ Function GetTypeString$(value)
 		Return "MODDED NPC"
 	Case 805
 		Return "IceBlk Again?"
-		
-	Default	
+
+	Default
 		Return "NotVanilla"
-		
+
 	End Select
 
 End Function
@@ -28909,7 +28110,7 @@ Function GetCommandColor(id,index)
 		r=0
 		g=100
 		b=255
-		
+
 		; #e079cb
 		;r=224 ;0
 		;g=121 ;0
@@ -28930,7 +28131,7 @@ Function GetCommandColor(id,index)
 		g=dark
 		b=dark
 	End Select
-	
+
 	If index=0
 		Return r
 	ElseIf index=1
@@ -28938,7 +28139,7 @@ Function GetCommandColor(id,index)
 	Else
 		Return b
 	EndIf
-	
+
 End Function
 
 Function HubChecks()
@@ -28949,14 +28150,14 @@ Function HubChecks()
 		Delay 3000
 		Return False
 	EndIf
-	
+
 	If HubAdventuresFilenames$(0)=""
 		Print "ERROR: No Hub defined."
 		Print "Aborting..."
 		Delay 3000
 		Return False
 	EndIf
-	
+
 	If IsHubMissingAdventures()
 		Print "ERROR: Hub is missing adventures (see red names in hub editor)."
 		Print "Aborting..."
@@ -28976,18 +28177,18 @@ Function BuildHub()
 	Print "------------"
 	Print ""
 	Print ""
-	
+
 	If HubChecks()=False
 		Return False
 	EndIf
-	
+
 	fn$=HubTitle$
 	If HubDescription$<>""
 		fn$=HubTitle$+"#"+HubDescription$
 	EndIf
 	HubDir$=globaldirname$+"\Custom\hubs\"+fn$
 	CreateDir(HubDir$)
-	
+
 	If FileType(HubDir$)<>2
 		Print "ERROR: Unable to create directory."
 		Print "Check that any characters in the hub title or description can be part of a folder name."
@@ -28995,7 +28196,7 @@ Function BuildHub()
 		Delay 3000
 		Return False
 	EndIf
-	
+
 	; clear directory first
 	dirfileclear=ReadDir(HubDir$)
 	Repeat
@@ -29014,11 +28215,11 @@ Function BuildHub()
 		EndIf
 	Until f$=""
 	;WaitKey()
-	
+
 	NofWlvFiles=0
 	NofDiaFiles=0
 	NofAdventures=0
-	
+
 	; copy files
 	For i=0 To HubTotalAdventures
 		AdvFilename$=""
@@ -29041,16 +28242,16 @@ Function BuildHub()
 			Until ex$=""
 		EndIf
 	Next
-	
+
 	If FileType(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\hublogo.jpg")
 		Print "Copying hublogo.jpg..."
 		CopyFile globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\hublogo.jpg", HubDir$+"\hublogo.jpg"
 	EndIf
-	
+
 	If FileType(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp")
 		Print "Copying wonderlandadventures.bmp..."		CopyFile globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp", HubDir$+"\wonderlandadventures.bmp"
 	EndIf
-	
+
 	Print ""
 	Print ""
 	Color 0,255,0
@@ -29059,10 +28260,10 @@ Function BuildHub()
 	Color 255,255,255
 	Print ""
 	Print ""
-	
+
 	Print "Build Completed..."
 	Print "You can now play/test your hub."
-	
+
 	Delay 500
 	Print ""
 	Print "Click to Continue."
@@ -29071,29 +28272,29 @@ Function BuildHub()
 	Repeat
 	Until LeftMouseDown()=False
 	Return True
-	
+
 End Function
 
 Function CompileHub(PackContent)
 	Cls
 	Locate 0,0
-	
+
 	Print ""
 	Print "Compiling..."
 	Print "------------"
 	Print ""
-	
+
 	If HubChecks()=False
 		Return False
 	EndIf
-	
+
 	fn$=HubTitle$
 	If HubDescription$<>""
 		fn$=HubTitle$+"#"+HubDescription$
 	EndIf
-	
+
 	file1=WriteFile(globaldirname$+"\Custom\downloads inbox\"+fn$+".wah")
-	
+
 	If file1=0
 		Print "ERROR: Unable to create WAH file."
 		Print "Check that any characters in the hub title or description can be part of a filename."
@@ -29101,7 +28302,7 @@ Function CompileHub(PackContent)
 		Delay 3000
 		Return False
 	EndIf
-	
+
 	NofWlvFiles=0
 	NofDiaFiles=0
 	NofAdventures=0
@@ -29114,7 +28315,7 @@ Function CompileHub(PackContent)
 			AdvFilename$="Adventure"+Str(i)
 		EndIf
 		If HubAdventuresFilenames$(i)<>""
-			
+
 			ThePath$=GetHubAdventurePath$(HubAdventuresFilenames$(i))
 			If PackContent
 				SearchForCustomContent(ThePath$)
@@ -29129,10 +28330,10 @@ Function CompileHub(PackContent)
 					Print "Reading... "+ex$
 					HubCompilerFileName$(i,NofHubCompilerFiles(i))=ex$
 					HubCompilerFileSize(i,NofHubCompilerFiles(i))=FileSize(ThePath$+"\"+ex$)
-					NofHubCompilerFiles(i)=NofHubCompilerFiles(i)+1		
+					NofHubCompilerFiles(i)=NofHubCompilerFiles(i)+1
 				EndIf
 			Until ex$=""
-			
+
 		EndIf
 	Next
 	Delay  1000
@@ -29140,7 +28341,8 @@ Function CompileHub(PackContent)
 	Print ""
 	Print "Writing WAH File to Downloads Inbox..."
 	Print ""
-	
+	Print ""
+
 	HubTotal=0
 	For k=0 To HubTotalAdventures
 		If HubAdventuresFilenames$(k)<>""
@@ -29152,7 +28354,7 @@ Function CompileHub(PackContent)
 	For k=0 To HubTotalAdventures
 		If HubAdventuresFilenames$(k)<>""
 			Print ""
-			If k=0 
+			If k=0
 				Print "Writing Hub..."
 			Else
 				Print "Writing Adventure"+Str$(k)+"..."
@@ -29161,23 +28363,23 @@ Function CompileHub(PackContent)
 			WriteInt file1,NofHubCompilerFiles(k)
 			For i=0 To NofHubCompilerFiles(k)-1
 				Print "Writing... "+HubCompilerFileName$(k,i)
-				
+
 				WriteString file1,HubCompilerFileName$(k,i)
 				WriteInt file1,HubCompilerFileSize(k,i)
-		
+
 				file2=ReadFile(GetHubAdventurePath$(HubAdventuresFilenames$(k))+"\"+HubCompilerFileName$(k,i))
-				
+
 				For j=0 To HubCompilerFileSize(k,i)-1
 					WriteByte file1,ReadByte (file2)
 				Next
 				CloseFile file2
-				
+
 			Next
 		EndIf
 	Next
-	
+
 	If PackContent
-		Print 
+		Print
 		Print "Packing custom content..."
 		WriteInt file1, NofCustomContentFiles
 		For i=0 To NofCustomContentFiles-1
@@ -29194,8 +28396,7 @@ Function CompileHub(PackContent)
 	Else
 		WriteInt file1,0
 	EndIf
-	
-	
+
 	;hublogo.jpg
 	If FileType(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\hublogo.jpg")
 		file2=ReadFile(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\hublogo.jpg")
@@ -29208,12 +28409,12 @@ Function CompileHub(PackContent)
 	Else
 		WriteInt file1,0
 	EndIf
-	
+
 	;wonderlandadventures.bmp
-	If FileType(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp")	
+	If FileType(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp")
 		file2=ReadFile(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp")
 		logosize=FileSize(globaldirname$+"\Custom\editing\hubs\"+HubFileName$+"\wonderlandadventures.bmp")
-		Print "Packing wonderlandadventures.bmp..."+logosize	
+		Print "Packing wonderlandadventures.bmp..."+logosize
 		WriteInt file1,logosize
 		For j=0 To logosize-1
 			WriteByte file1,ReadByte (file2)
@@ -29221,27 +28422,26 @@ Function CompileHub(PackContent)
 	Else
 		WriteInt file1,0
 	EndIf
-	
+
 	CloseFile file1
-	
+
 	Print ""
 	Print ""
 	Color 0,255,0
 	Print NofWlvFiles+" wlv files and "+NofDiaFiles+" dia files in total."
 	Print NofAdventures+" adventures in total."
 	Color 255,255,255
-	
+
 	Delay 1000
 	Print ""
 	Print ""
 	Print "Copying File to Downloads Outbox..."
 	CopyFile globaldirname$+"\Custom\downloads inbox\"+fn$+".wah",globaldirname$+"\Custom\downloads outbox\"+fn$+".wah"
 	Print ""
-	Print ""
 	Delay 1000
 	Print "Compile Completed... Filename: "+fn$+".wah"
 	Print "You can now play/test your hub."
-	
+
 	Delay 500
 	Print ""
 	Print "Click to Continue."
@@ -29258,7 +28458,7 @@ Function MyCreateDir(dirpath$)
 		If Mid$(dirpath$,i,1)=Chr$(47) Then
 			folder$=Left$(dirpath$,i-1)
 			d=ReadDir(folder$)
-			If d Then 
+			If d Then
 				CloseDir(d)
 			Else
 			    CreateDir(folder$)
@@ -29310,7 +28510,6 @@ Function CompileAdventure(PackCustomContent)
 	Print "Compiling..."
 	Print "------------"
 	Print ""
-	Print ""
 	; do some basic checks
 	If adventuretitle$=""
 		Print "ERROR: No Adventure Title set."
@@ -29318,16 +28517,16 @@ Function CompileAdventure(PackCustomContent)
 		Delay 3000
 		Return False
 	EndIf
-	
+
 	AdventureFolder$=GetAdventureFolder$()
-	
-	If FileType(AdventureFolder$+"\1.wlv")=0		
+
+	If FileType(AdventureFolder$+"\1.wlv")=0
 		Print "ERROR: No Level 1 present."
 		Print "Aborting..."
 		Delay 3000
 		Return False
 	EndIf
-	
+
 	If PackCustomContent
 		; find custom content
 		Print "Finding Custom Content..."
@@ -29335,7 +28534,7 @@ Function CompileAdventure(PackCustomContent)
 		Print "Number of Custom Content Files: " + NofCustomContentFiles
 		Print
 	EndIf
-	
+
 	If DialogKillLineEight
 		For i=1 To 100
 			If DialogExists(i)
@@ -29343,27 +28542,27 @@ Function CompileAdventure(PackCustomContent)
 				LoadDialogFile()
 				SaveDialogFile()
 			EndIf
-		Next	
+		Next
 	EndIf
-	
+
 	; now go through directory and check names and sizes of files
 	dirfile=ReadDir(AdventureFolder$)
-	
+
 	NofCompilerFiles=0
 	NofWlvFiles=0
 	NofDiaFiles=0
-	
+
 	Repeat
 		ex$=NextFile$(dirfile)
-		
+
 		If FileSatisfiesCompiler(ex$,True,False)
 			Print "Reading... "+ex$
 			CompilerFileName$(NofCompilerFiles)=ex$
 			CompilerFileSize(NofCompilerFiles)=FileSize(AdventureFolder$+"\"+ex$)
-			NofCompilerFiles=NofCompilerFiles+1			
+			NofCompilerFiles=NofCompilerFiles+1
 		EndIf
 	Until ex$=""
-	
+
 	If PackCustomContent And NofCustomContentFiles>0
 		; read custom content
 		Print "Copying custom content files to: "+GlobalDirName$+"/Custom/Downloads Outbox/"+AdventureFileName$+"_Content"
@@ -29383,7 +28582,7 @@ Function CompileAdventure(PackCustomContent)
 		Print ""
 		Print ""
 	EndIf
-	
+
 	Delay 1000
 	; and now make the master file
 	Print ""
@@ -29398,12 +28597,12 @@ Function CompileAdventure(PackCustomContent)
 		Delay 3000
 		Return False
 	EndIf
-		
+
 	WriteInt file1,NofCompilerFiles
 
 	For i=0 To NofCompilerFiles-1
 		Print "Writing... "+CompilerFileName$(i)
-		
+
 		WriteString file1,CompilerFileName$(i)
 		WriteInt file1,CompilerFileSize(i)
 
@@ -29411,32 +28610,30 @@ Function CompileAdventure(PackCustomContent)
 		If Not file2
 			file2=ReadFile(CompilerFileName$(i))
 		EndIf
-		
+
 		For j=0 To CompilerFileSize(i)-1
 			WriteByte file1,ReadByte (file2)
 		Next
-		
+
 		CloseFile file2
 	Next
 	CloseFile file1
-	
-	Print ""
+
 	Print ""
 	Color 0,255,0
 	Print NofWlvFiles+" wlv files and "+NofDiaFiles+" dia files in total."
 	Color 255,255,255
-	
+
 	Delay 1000
 	Print ""
 	Print ""
 	Print "Copying File to Downloads Outbox..."
 	CopyFile globaldirname$+"\Custom\downloads inbox\"+OutputFileName$,globaldirname$+"\Custom\downloads outbox\"+OutputFileName$
 	Print ""
-	Print ""
 	Delay 1000
 	Print "Compile Completed... Filename: "+OutputFileName$
 	Print "You can now play/test your level."
-	
+
 	Delay 500
 	Print ""
 	Print "Click to Continue."
@@ -29444,9 +28641,9 @@ Function CompileAdventure(PackCustomContent)
 	Until LeftMouseDown()=True
 	Repeat
 	Until LeftMouseDown()=False
-	
+
 	Return True
-	
+
 End Function
 
 Function decode$(ex$)
@@ -29462,7 +28659,6 @@ Function decode$(ex$)
 	Return output$
 End Function
 
-
 Function SpecialFolderLocation$(folderID)
 
 	str_bank = CreateBank(256)
@@ -29476,9 +28672,9 @@ Function SpecialFolderLocation$(folderID)
 	Else
 		location$ = ""
 	EndIf
-	
+
 	FreeBank str_bank
-	
+
 	Return location$
 
 End Function
@@ -29486,11 +28682,11 @@ End Function
 Function ObjectIndexEditorToGameInner(Index)
 
 	Result=Index
-	
+
 	For i=0 To Index-1
 		Result=Result+ObjectCountExtraInstantiations(LevelObjects(i)\Attributes)
 	Next
-	
+
 	Return Result
 
 End Function
@@ -29508,11 +28704,11 @@ End Function
 Function ObjectIndexGameToEditorInner(Index)
 
 	Result=Index
-	
+
 	For i=0 To Result-1
 		Result=Result-ObjectCountExtraInstantiations(LevelObjects(i)\Attributes)
 	Next
-	
+
 	Return Result
 
 End Function
@@ -29525,7 +28721,7 @@ Function ObjectIndexGameToEditor(Index, PlayerIndex)
 	Else
 		Return Result
 	EndIf
-	
+
 	;If Index=PlayerIndex
 	;	Return -2
 	;Else
@@ -29554,7 +28750,6 @@ Function ObjectHasShadow(ModelName$)
 	End Select
 
 End Function
-
 
 Function ObjectCountAccessories(Attributes.GameObjectAttributes)
 
@@ -29589,7 +28784,7 @@ Function ObjectCountAccessories(Attributes.GameObjectAttributes)
 			EndIf
 			Code$=Code$+Chr$(65+Attributes\Data5)+"0"
 		EndIf
-		
+
 		Return CodeCountAccessories(Code$)
 	Else
 		Return 0
@@ -29597,19 +28792,17 @@ Function ObjectCountAccessories(Attributes.GameObjectAttributes)
 
 End Function
 
-
 Function CodeCountAccessories(code$)
 
 	Result=0
-	
+
 	For j=1 To (Len(code$)-5)/6
 		Result=Result+1
 	Next
-	
+
 	Return Result
 
 End Function
-
 
 Function ObjectCountExtraInstantiations(Attributes.GameObjectAttributes)
 
@@ -29626,15 +28819,15 @@ End Function
 Function RetrieveDefaultTrueMovement()
 
 	Select CurrentObject\Attributes\LogicType
-	
+
 	Case 1 ; Player
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^3+2^4+2^5+2^6+2^8
-	
+
 	Case 50 ; Spellball
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^13+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=0 ; -1 in-game, but probably doesn't make a difference.
-	
+
 	Case 110 ; Stinker NPC
 		CurrentObject\Attributes\Data10=-1
 
@@ -29642,86 +28835,86 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObject\Attributes\ObjectTypeCollision=2^6
 		;If CurrentObject\Attributes\MoveXGoal=0 And CurrentObject\Attributes\MoveYGoal=0
 			;CurrentObject\Attributes\MoveXGoal=Floor(CurrentObject\Position\X)
-			;CurrentObject\Attributes\MoveYGoal=Floor(CurrentObject\Position\Y) 
+			;CurrentObject\Attributes\MoveYGoal=Floor(CurrentObject\Position\Y)
 			;CurrentObject\Attributes\CurrentAnim=10
 		;EndIf
-	
+
 	Case 120 ; Wee Stinker
 		CurrentObject\Attributes\MovementType=0
 		CurrentObject\Attributes\MovementSpeed=35
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6+2^8
-		
+
 		CurrentObject\Attributes\XScale=0.025
 		CurrentObject\Attributes\YScale=0.025
 		CurrentObject\Attributes\ZScale=0.025
-	
+
 	Case 150 ; Scritter
 		CurrentObject\Attributes\MovementSpeed=50
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6
-		
+
 	Case 151 ; Rainbow Bubble
 		CurrentObject\Attributes\MovementType=33
 		CurrentObject\Attributes\MovementSpeed=25
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
-		
+
 	Case 220 ; Dragon Turtle
 		CurrentObject\Attributes\MovementType=41+CurrentObject\Attributes\Data0*2+CurrentObject\Attributes\Data1
 		CurrentObject\Attributes\MovementSpeed=25
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6
-		
+
 	Case 230 ; Fireflower
 		CurrentObject\Attributes\TileTypeCollision=2^0
-		
+
 	Case 250 ; Chomper
 		CurrentObject\Attributes\MovementType=13
 		CurrentObject\Attributes\MovementSpeed=20+5*CurrentObject\Attributes\Data0
-		
+
 		If CurrentObject\Attributes\LogicSubType=0 ; Non-Water Chomper
 			CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		Else ; Water Chomper
-			CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14	
+			CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		EndIf
-		
+
 		If CurrentObject\Attributes\Data1=1 ; Ghost Chomper
 			CurrentObject\Attributes\ObjectTypeCollision=2^1+2^4+2^6
 		Else ; Non-Ghost Chomper
 			CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
 		EndIf
-		
+
 	Case 260 ; Spikeyball
 		CurrentObject\Attributes\MovementSpeed=25+5*CurrentObject\Attributes\Data2
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^2+2^3+2^6+2^9
-		
+
 		Data0=CurrentObject\Attributes\Data0 Mod 8
 		If CurrentObject\Attributes\Data1=0 Or CurrentObject\Attributes\Data1=1
 			; zbot movement
 			CurrentObject\Attributes\MovementType=41+Data0*2+CurrentObject\Attributes\Data1
 		Else If CurrentObject\Attributes\Data1=2
 			; bounce movement
-			CurrentObject\Attributes\MovementType=71+Data0	
+			CurrentObject\Attributes\MovementType=71+Data0
 		EndIf
-		
+
 	Case 270 ; Busterfly/Glowworm
 		CurrentObject\Attributes\TileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
-		
+
 		If CurrentObject\Attributes\ModelName$="!Busterfly"
 
 			CurrentObject\Attributes\XScale=.01
 			CurrentObject\Attributes\YScale=.01
 			CurrentObject\Attributes\ZScale=.01
 			CurrentObject\Attributes\Roll2=90
-			
+
 		EndIf
-		
+
 	Case 271 ; Zipper
 		CurrentObject\Attributes\TileTypeCollision=1 ; -1 in-game, but probably doesn't matter.
 		CurrentObject\Attributes\Data1=Rand(0,360)
 		CurrentObject\Attributes\Data2=Rand(1,4)
-	
+
 	Case 290 ; Thwart
 		CurrentObject\Attributes\Data10=-1
 
@@ -29729,30 +28922,30 @@ Function RetrieveDefaultTrueMovement()
 		CurrentObject\Attributes\ObjectTypeCollision=2^4+2^6
 		;If CurrentObject\Attributes\MoveXGoal=0 And CurrentObject\Attributes\MoveYGoal=0
 			;CurrentObject\Attributes\MoveXGoal=Floor(CurrentObject\Position\X)
-			;CurrentObject\Attributes\MoveYGoal=Floor(CurrentObject\Position\Y) 
+			;CurrentObject\Attributes\MoveYGoal=Floor(CurrentObject\Position\Y)
 			;CurrentObject\Attributes\CurrentAnim=10
 		;EndIf
-		
+
 	Case 310 ; Rubberducky
 		CurrentObject\Attributes\MovementSpeed=4
 		CurrentObject\Attributes\TileTypeCollision=2^2 ; -1 in-game, but probably doesn't make a difference.
 		CurrentObject\Attributes\Data1=Rand(1,3)
 		CurrentObject\Attributes\Data2=Rand(0,360)
-		
+
 	Case 330 ; Wysp
 		CurrentObject\Attributes\Data10=-1
 		;CurrentObject\Attributes\MoveXGoal=Floor(CurrentObject\Position\X)
 		;CurrentObject\Attributes\MoveYGoal=Floor(CurrentObject\Position\Y)
-		
+
 		CurrentObject\Attributes\MovementType=10
 		CurrentObject\Attributes\MovementSpeed=45
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6+2^8
-		
+
 	Case 370 ; Crab
 		CurrentObject\Attributes\MovementSpeed=40
 		CurrentObject\Attributes\ObjectTypeCollision=2^6
-		
+
 		If CurrentObject\Attributes\LogicSubType=0 ; green
 			CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 			Select CurrentObject\Attributes\Data1
@@ -29786,101 +28979,100 @@ Function RetrieveDefaultTrueMovement()
 			End Select
 
 		EndIf
-		
+
 	Case 380 ; Ice Troll
 		CurrentObject\Attributes\Data10=-1
 
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^4+2^6
-		
+
 	Case 390 ; Kaboom! NPC
 		CurrentObject\Attributes\Data10=-1
 
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6
-		
+
 	Case 400 ; Baby Boomer
 		CurrentObject\Attributes\MovementType=0
 		CurrentObject\Attributes\MovementSpeed=35
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6+2^8
 		CurrentObject\Attributes\LogicSubType=1  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged when directed 5 caged when follow
-		CurrentObject\Attributes\CurrentAnim=3 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
-		
+		CurrentObject\Attributes\CurrentAnim=3 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice
+
 	Case 420 ; Coily
 		CurrentObject\Attributes\MovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObject\Attributes\MovementSpeed=30
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^9+2^10+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
-	
+
 	Case 422 ; UFO
 		CurrentObject\Attributes\MovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObject\Attributes\MovementSpeed=20
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^3+2^6
-	
+
 	Case 423 ; Retro Z-Bot
 		CurrentObject\Attributes\MovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObject\Attributes\MovementSpeed=60
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
-		
+
 	Case 430 ; Zipbot
 		CurrentObject\Attributes\MovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObject\Attributes\MovementSpeed=120
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
-		
+
 	Case 431 ; Zapbot
 		CurrentObject\Attributes\MovementType=41+2*CurrentObject\Attributes\Data0+CurrentObject\Attributes\Data1
 		CurrentObject\Attributes\MovementSpeed=20*CurrentObject\Attributes\Data2
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^2+2^3+2^4+2^5+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^3+2^6
-		
+
 	Case 432 ; Moobot
 		CurrentObject\Attributes\MovementType=0
 		CurrentObject\Attributes\MovementSpeed=60
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6
-		
+
 		CurrentObject\Attributes\ID=500+CurrentObject\Attributes\Data0*5+CurrentObject\Attributes\Data1
-		
+
 	Case 433 ; Z-Bot NPC
 		CurrentObject\Attributes\Data10=-1
 
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^6
-		
+
 	Case 434 ; Mothership
 		CurrentObject\Attributes\MovementSpeed=10
 		CurrentObject\Attributes\TileTypeCollision=0
 		CurrentObject\Attributes\ObjectTypeCollision=0
-		
+
 		CurrentObject\Attributes\Data1=-1
 		CurrentObject\Position\Z=4
-		
+
 	Case 470 ; Ghost
 		CurrentObject\Attributes\MovementType=0
 		CurrentObject\Attributes\MovementSpeed=5+5*CurrentObject\Attributes\Data1
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
-		
+
 	Case 471 ; Wraith
 		CurrentObject\Attributes\MovementType=0
 		CurrentObject\Attributes\MovementSpeed=20+5*CurrentObject\Attributes\Data0
 		CurrentObject\Attributes\TileTypeCollision=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		CurrentObject\Attributes\ObjectTypeCollision=2^1+2^3+2^6
-		
+
 	Default
 		Return False
 	End Select
-	
+
 	CurrentObjectWasChanged()
 	BuildCurrentObjectModel()
 	Return True
 
 End Function
-
 
 ; Checks if the level is dark enough to use a GlowGem/Lamp.
 Function TooDark()
@@ -29890,19 +29082,18 @@ Function TooDark()
 	Return False
 End Function
 
-
 Function TurnObjectTowardDirection(i,dx#,dy#,speed,Adjust)
-	
-	; Turns Object by speed degrees toward the angle made by dx/dy. 
-	; Adjust is a fixed angle added to goal (in case the base models orientation is off, for example) 
-	
+
+	; Turns Object by speed degrees toward the angle made by dx/dy.
+	; Adjust is a fixed angle added to goal (in case the base models orientation is off, for example)
+
 	If dx<>0 Or dy<>0
-		
+
 		ObjectYawGoal=ATan2(-dy,dx)+90+Adjust
-		While ObjectYawGoal>180 
+		While ObjectYawGoal>180
 			ObjectYawGoal=ObjectYawGoal-360
 		Wend
-		While ObjectYawGoal<=-180 
+		While ObjectYawGoal<=-180
 			ObjectYawGoal=ObjectYawGoal+360
 		Wend
 
@@ -29927,7 +29118,7 @@ Function TurnObjectTowardDirection(i,dx#,dy#,speed,Adjust)
 		EndIf
 		If SimulatedObjectYaw(i)>180 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)-360
 		If SimulatedObjectYaw(i)<-180 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+360
-		
+
 	EndIf
 
 End Function
@@ -29950,26 +29141,25 @@ Function PlayerTileY()
 End Function
 
 Function PlayerX#()
-	
+
 	Return PlayerTileX()+0.5
-	
+
 End Function
 
 Function PlayerY#()
-	
+
 	Return PlayerTileY()+0.5
-	
+
 End Function
 
-
 Function ControlParticleEmitters(i)
-	
+
 	;If ObjectActive(i)=0 Then Return
-	
+
 	TheX#=SimulatedObjectXAdjust(i)+LevelObjects(i)\Position\TileX+0.5
 	TheY#=SimulatedObjectYAdjust(i)+LevelObjects(i)\Position\TileY+0.5
 	TheZ#=SimulatedObjectZAdjust(i)
-	
+
 	Select SimulatedObjectSubType(i)
 	Case 1
 		; steam
@@ -29980,9 +29170,9 @@ Function ControlParticleEmitters(i)
 			EndIf
 		Else
 			If Rand(0,200*SimulatedObjectData(i,1))<2
-				
+
 				SimulatedObjectStatus(i)=0
-				
+
 			EndIf
 			Select SimulatedObjectData(i,2)
 			Case 0
@@ -29998,15 +29188,14 @@ Function ControlParticleEmitters(i)
 			Case 5
 				If Rand(0,10)<SimulatedObjectData(i,1) AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,0,-.03,0,.01,0,0,0,100,3)
 			End Select
-					
-				
+
 		EndIf
 	Case 2
 		; splish
 		If Rand (0,1000)<=SimulatedObjectData(i,1)*2
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.01,0,0,0,0,.01,0,0,0,100,4)
 		EndIf
-		
+
 	Case 3
 		; fountain
 		Select SimulatedObjectData(i,2)
@@ -30023,7 +29212,7 @@ Function ControlParticleEmitters(i)
 		Case 5
 			If Rand(0,12)<SimulatedObjectData(i,1)*3-2 AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,Rnd(-.01,.01),Rnd(.02,.01),-Rnd(.05,.07),0,.001,0,-.001,0,100,3)
 		End Select
-		
+
 	Case 4
 		; sparks
 		If Rand(0,1000)<SimulatedObjectData(i,1)*SimulatedObjectData(i,1)
@@ -30058,7 +29247,7 @@ Function ControlParticleEmitters(i)
 					PlaySoundFX(90,TheX#,TheY#)
 				EndIf
 				If SimulatedObjectData(i,3)=2 ; loud mecha
-					
+
 					PlaySoundFX(35,TheX#,TheY#)
 				EndIf
 
@@ -30067,25 +29256,25 @@ Function ControlParticleEmitters(i)
 					PlaySoundFX(13,TheX#,TheY#)
 				EndIf
 				If SimulatedObjectData(i,3)=4 ; grow
-					
+
 					PlaySoundFX(92,TheX#,TheY#)
 				EndIf
-				
+
 				If SimulatedObjectData(i,3)=5 ; floing
-					
+
 					PlaySoundFX(93,TheX#,TheY#)
 				EndIf
-				
+
 				If SimulatedObjectData(i,3)=6 ; gem
-					
+
 					PlaySoundFX(11,TheX#,TheY#)
 				EndIf
 			EndIf
 
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0.01,.4,0,0,0,0,.0005,0,0,0,100,3)
-			
+
 		EndIf
-		
+
 	Case 6
 		; circle
 		If (SimulatedObjectData(i,4)=0 And Rand(0,200)<SimulatedObjectData(i,1)) Or (SimulatedObjectData(i,4)=1 And LevelTimer Mod (500-SimulatedObjectData(i,1)*100)=0)
@@ -30098,12 +29287,11 @@ Function ControlParticleEmitters(i)
 					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,.01*SimulatedObjectData(i,1)*Cos(j*8),.01*SimulatedObjectData(i,1)*Sin(j*8),0,.001,0,0,0,100,3)
 				Case 4,5
 					AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,.01*SimulatedObjectData(i,1)*Cos(j*8),.01*SimulatedObjectData(i,1)*Sin(j*8),0,0,.001,0,0,0,100,3)
-				
+
 				End Select
 			Next
 		EndIf
 
-		
 	Case 7
 		; spiral
 		Select SimulatedObjectData(i,2)
@@ -30113,7 +29301,7 @@ Function ControlParticleEmitters(i)
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,0,.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
 		Case 4
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,0,.001,0,0,0,100,3)
-		
+
 		Case 1
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,-.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,.001,0,0,0,100,3)
 		Case 3
@@ -30122,12 +29310,10 @@ Function ControlParticleEmitters(i)
 			AddParticle(SimulatedObjectData(i,0),TheX#,TheZ#,-TheY#,0,.2,-.02*SimulatedObjectData(i,1)*Cos((Leveltimer*SimulatedObjectData(i,1)) Mod 360),.02*SimulatedObjectData(i,1)*Sin((Leveltimer*SimulatedObjectData(i,1)) Mod 360),0,0,.001,0,0,0,100,3)
 
 		End Select
-	
-	
+
 	End Select
 
 End Function
-
 
 Function ControlWaterfall(i)
 
@@ -30144,15 +29330,15 @@ Function ControlWaterfall(i)
 		k2=-1
 	EndIf
 
-	If Rand(0,100)<10  	
+	If Rand(0,100)<10
 		If SimulatedObjectData(i,0)=1
 			AddParticle(1,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.55,0.6),SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
-		Else 
+		Else
 			AddParticle(5,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.55,0.6),SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*Rnd(0.55,0.6),0,.11,k1*Rnd(-.005,0.005)+k2*Rnd(0,.005),Rnd(0.01,0.03),-k1*Rnd(0,.001)+k2*Rnd(-.005,0.005),0,0,0,-0.0004,0,100,3)
 		EndIf
 	EndIf
 
-	If Rand(0,100)<3 
+	If Rand(0,100)<3
 		If SimulatedObjectData(i,0)=0
 			AddParticle(6,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(SimulatedObjectZAdjust(i),SimulatedObjectZAdjust(i)+SimulatedObjectZScale(i)/2.0),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
 		Else If SimulatedObjectData(i,0)=1
@@ -30161,17 +29347,15 @@ Function ControlWaterfall(i)
 			AddParticle(27,SimulatedObjectX(i)+k1*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))+k2*Rnd(0.65,0.7),Rnd(SimulatedObjectZAdjust(i),SimulatedObjectZAdjust(i)+SimulatedObjectZScale(i)/2.0),-SimulatedObjectY(i)+k2*Rnd(-.5*SimulatedObjectXScale(i),.5*SimulatedObjectXScale(i))-k1*0.6,0,.5,k2*Rnd(0,0.005),Rnd(0.01,0.02),0,0,.01,0,0,0,100,3)
 		EndIf
 	EndIf
-	If Rand(0,100)<10 
+	If Rand(0,100)<10
 		If SimulatedObjectData(i,0)=1
 			AddParticle(32,SimulatedObjectX(i)+k1*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))+k2*0.5,(-.2*SimulatedObjectZScale(i))+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))-k1*0.5,0,.1,0,0,0,0,.012,0,0,0,100,4)
-		Else 
+		Else
 			AddParticle(4,SimulatedObjectX(i)+k1*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))+k2*0.5,(-.2*SimulatedObjectZScale(i))+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+k2*Rnd(-.35*SimulatedObjectXScale(i),.35*SimulatedObjectXScale(i))-k1*0.5,0,.2,0,0,0,0,.012,0,0,0,100,4)
 		EndIf
 	EndIf
 
-
 End Function
-
 
 Function ControlVoid(i)
 
@@ -30182,17 +29366,16 @@ Function ControlVoid(i)
 	EndIf
 
 	SimulatedObjectZ(i)=-.2
-	
+
 	PositionTexture voidtexture,((leveltimer/10) Mod 100)/100.0,((leveltimer/10) Mod 100)/100.0
-	
+
 	SimulatedObjectXScale(i)=(.8+.4*Sin((leveltimer+SimulatedobjectData(i,0)) Mod 360))*(1.0+Float(SimulatedObjectData(i,2)))
 	SimulatedObjectYScale(i)=(.8+.4*Sin((leveltimer+SimulatedobjectData(i,0)) Mod 360))*(1.0+Float(SimulatedObjectData(i,2)))
 
 	SimulatedObjectZScale(i)=(1.3+.6*Sin((leveltimer*2+SimulatedobjectData(i,0)) Mod 360));*(1.0+Float(ObjectData(i,2)))
 
-		
 	TurnEntity Obj\Model\Entity,0,.1,0
-	
+
 	If Obj\Attributes\ModelName$="!Void"
 		surface=GetSurface(Obj\Model\Entity,1)
 		For i=0 To 17
@@ -30203,9 +29386,7 @@ Function ControlVoid(i)
 		Next
 	EndIf
 
-	
 End Function
-
 
 Function ControlTeleporter(i)
 
@@ -30214,9 +29395,9 @@ Function ControlTeleporter(i)
 		b#=Rnd(0.002,0.006)
 		AddParticle(23,SimulatedObjectX(i)+0.5*Sin(a),0,-SimulatedObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
 	EndIf
-	
+
 	MyId=CalculateEffectiveID(LevelObjects(i)\Attributes)
-	
+
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+.5
 	If MyId Mod 5<3
 		; standard effect
@@ -30243,7 +29424,6 @@ Function ControlTeleporter(i)
 
 End Function
 
-
 Function ControlObstacle(i)
 
 	ModelName$=LevelObjects(i)\Attributes\ModelName$
@@ -30268,7 +29448,7 @@ Function ControlObstacle(i)
 		If Rand(0,100)=0
 			AddParticle(35,SimulatedObjectX(i)+Rnd(-.3,.6),2.0+SimulatedObjectZAdjust(i),-SimulatedObjectY(i)+Rnd(-.6,.3),0,.04,0,0,0,0,.001,0,0,0,100,4)
 		EndIf
-		
+
 	Else If ModelName$="!Obstacle45" ; waterwheel
 		If SimulatedObjectYawAdjust(i)=0
 			SimulatedObjectRoll(i)=SimulatedObjectRoll(i)+2
@@ -30282,7 +29462,7 @@ Function ControlObstacle(i)
 		If SimulatedObjectYawAdjust(i)=270
 			SimulatedObjectPitch(i)=SimulatedObjectPitch(i)-2
 		EndIf
-	
+
 	Else If ModelName$="!Obstacle48" ; UFO - by mistake in here
 		If SimulatedObjectData(i,0)=0
 			SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
@@ -30290,19 +29470,15 @@ Function ControlObstacle(i)
 	Else If ModelName$="!Crystal" ; UFO - by mistake in here
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
 
-					
-	
-
 	EndIf
-	If ModelName$="!CustomModel"	; Custom Model 
+	If ModelName$="!CustomModel"	; Custom Model
 		ControlCustomModel(i)
 	EndIf
 
 End Function
 
-
 Function ControlCustomModel(i)
-	
+
 	Obj.GameObject=LevelObjects(i)
 
 ;	If ObjectOldX(i)=-999;0 And ObjectOldY(i)=0 And ObjectOldZ(i)=0
@@ -30310,27 +29486,25 @@ Function ControlCustomModel(i)
 ;		ObjectOldY(i)=ObjectYAdjust(i)
 ;		ObjectOldZ(i)=ObjectZAdjust(i)
 ;	EndIf
-	
-
 
 	;ObjectScaleAdjust(i)*(1.5+0.8*Sin((leveltimer+ObjectData(i,7)+30) Mod 360))
-	
+
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+SimulatedObjectData(i,0)
 	If SimulatedObjectYaw(i)>360 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)-360
 	If SimulatedObjectYaw(i)<0 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+360
-	
+
 	SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+SimulatedObjectData(i,1)
 	If SimulatedObjectPitch(i)>360 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)-360
 	If SimulatedObjectPitch(i)<0 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+360
-	
+
 	SimulatedObjectroll(i)=SimulatedObjectroll(i)+SimulatedObjectData(i,2)
 	If SimulatedObjectroll(i)>360 Then SimulatedObjectroll(i)=SimulatedObjectroll(i)-360
 	If SimulatedObjectroll(i)<0 Then SimulatedObjectroll(i)=SimulatedObjectroll(i)+360
-	
+
 	BaseX#=Obj\Attributes\XAdjust
 	BaseY#=Obj\Attributes\YAdjust
 	BaseZ#=Obj\Attributes\ZAdjust
-	
+
 	If SimulatedObjectData(i,3)>0
 		; Technically these ObjectX/Y/ZAdjust instances should be OldX/Y/Z. But no one's crazy enough to edit OldX/Y/Z directly, right?
 		SimulatedObjectXAdjust(i)=BaseX#+Float(SimulatedObjectData(i,3))*Sin((leveltimer Mod 36000)*Float(SimulatedObjectData(i,6)/100.0))
@@ -30347,9 +29521,8 @@ Function ControlCustomModel(i)
 	Else
 		SimulatedObjectZAdjust(i)=BaseZ#+Float(SimulatedObjectData(i,5))*Cos((leveltimer Mod 36000)*Float(SimulatedObjectData(i,8)/100.0))
 	EndIf
-	
-End Function
 
+End Function
 
 Function ControlGoldStar(i)
 
@@ -30374,15 +29547,14 @@ Function ControlGoldStar(i)
 
 End Function
 
-
 Function ControlGoldCoin(i)
 
 	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i)>0
 		Pos.GameObjectPosition=LevelObjects(i)\Position
-	
+
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
-		
+
 		If SimulatedObjectActive(i)>600
 			SimulatedObjectZ(i)=.2+Float(1000-SimulatedObjectActive(i))/400.0
 		Else
@@ -30407,14 +29579,13 @@ Function ControlGoldCoin(i)
 
 End Function
 
-
 Function ControlGem(i)
 
 	Obj.GameObject=LevelObjects(i)
 	Pos.GameObjectPosition=Obj\Position
 
 	;If ObjectActive(i) Mod 2=1 Then ShowEntity ObjectEntity(i) ; What did MS mean by this?
-	
+
 	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i)>0
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
@@ -30425,14 +29596,14 @@ Function ControlGem(i)
 			SimulatedObjectZ(i)=1.6
 		EndIf
 		If SimulatedObjectActive(i)=400
-			
+
 			; Little Spark
 			For j=1 To 20
 				AddParticle(19,Pos\TileX+0.5,1.6,-Pos\TileY-0.5,Rand(0,360),0.15,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
 			Next
-			If WaEpisode=1 And (adventurecurrentnumber>=200 And adventurecurrentnumber<=203) 
+			If WaEpisode=1 And (adventurecurrentnumber>=200 And adventurecurrentnumber<=203)
 				; not in pacman level or WA1
-			
+
 			Else If Obj\Attributes\ID=-1
 				If SimulatedObjectData(i,0)=0 Then AddParticle(14,Pos\TileX+0.5,1.6,-Pos\TileY-0.5,0,1,0,0.01,0,0,.01,0,0,0,50,3)
 				If SimulatedObjectData(i,0)=1 Then AddParticle(15,Pos\TileX+0.5,1.6,-Pos\TileY-0.5,0,1,0,0.01,0,0,.01,0,0,0,50,3)
@@ -30443,36 +29614,33 @@ Function ControlGem(i)
 			SimulatedObjectScaleYAdjust(i)=Float(SimulatedObjectActive(i))/600.0
 			SimulatedObjectScaleZAdjust(i)=Float(SimulatedObjectActive(i))/600.0
 		EndIf
-		
-		
-		
+
 	Else
 		If SimulatedObjectData(i,0)=2
 			If Rand(0,10)<3
-				
+
 				AddParticle(16+SimulatedObjectData(i,1)+Rand(0,1)*8,Pos\TileX+.5,Rnd(0,1),-Pos\TileY-.5,0,.01,Rnd(-.01,.01),Rnd(-.01,.01),Rnd(0,.02),Rnd(-4,4),.01,0,0,0,70,3)
 			EndIf
 		EndIf
-	
+
 		If SimulatedObjectYaw(i)=0 And SimulatedObjectData(i,0)<>1
 			SimulatedObjectRoll(i)=Rand(-10,10)
 			SimulatedObjectYaw(i)=Rand(1,180)
-	
+
 		EndIf
 		If SimulatedObjectData(i,0)=0 Or SimulatedObjectData(i,0)=2 Then SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Rnd(1.8,2.2)
 		If SimulatedObjectData(i,0)=1 Then SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+Rnd(2,3)+(i Mod 3)/3.0
 		SimulatedObjectZ(i)=.4
 	EndIf
-	
-End Function
 
+End Function
 
 Function ControlKey(i)
 
 	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i)>0
-	
+
 		; picked up animation
-		
+
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
 
 		If SimulatedObjectActive(i)>600
@@ -30482,7 +29650,7 @@ Function ControlKey(i)
 		EndIf
 		If SimulatedObjectActive(i)=400
 			Pos.GameObjectPosition=LevelObjects(i)\Position
-			
+
 			; Little Spark
 			For j=1 To 60
 				AddParticle(Rnd(16,23),Pos\TileX+0.5,2.6,-Pos\TileY-0.5,Rand(0,360),0.2,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
@@ -30493,12 +29661,10 @@ Function ControlKey(i)
 			SimulatedObjectScaleYAdjust(i)=Float(SimulatedObjectActive(i))/600.0
 			SimulatedObjectScaleZAdjust(i)=Float(SimulatedObjectActive(i))/600.0
 		EndIf
-		
-		
-		
+
 	Else
 		Obj.GameObject=LevelObjects(i)
-		
+
 	;	ObjectYaw(i)=ObjectYaw(i)+2
 		If Obj\Attributes\ModelName$="!KeyCard"
 			SimulatedObjectYaw(i)=((leveltimer) Mod 90)*4
@@ -30510,14 +29676,11 @@ Function ControlKey(i)
 
 End Function
 
-
 Function ControlCustomItem(i)
-	
+
 	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i)>0
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
-		
-
 
 		If SimulatedObjectActive(i)>600
 			SimulatedObjectZ(i)=.6+2*Float(1000-SimulatedObjectActive(i))/400.0
@@ -30526,7 +29689,7 @@ Function ControlCustomItem(i)
 		EndIf
 		If SimulatedObjectActive(i)=400
 			Pos.GameObjectPosition=LevelObjects(i)\Position
-		
+
 			; Little Spark
 			For j=1 To 60
 				AddParticle(Rnd(16,23),Pos\TileX+0.5,2.6,-Pos\TileY-0.5,Rand(0,360),0.2,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
@@ -30537,31 +29700,25 @@ Function ControlCustomItem(i)
 ;			ObjectScaleYAdjust(i)=Float(ObjectActive(i))/600.0
 ;			ObjectScaleZAdjust(i)=Float(ObjectActive(i))/600.0
 ;
-;
 ;		EndIf
-		
-		
-		
-		
+
 	Else
-		
+
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Cos(Leveltimer Mod 360)
-		
+
 		SimulatedObjectZ(i)=.5
 
 	EndIf
-	
+
 	;SimulateObjectPosition(i)
 	;SimulateObjectRotation(i)
-	
+
 End Function
 
-
 Function ControlSigns(i)
-	
-	
+
 	Select SimulatedObjectData(i,2)
-	
+
 	Case 0
 		; nuthin'
 	Case 1
@@ -30578,17 +29735,14 @@ Function ControlSigns(i)
 		; turn
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
 	End Select
-	
+
 End Function
 
-
 Function ControlRetroRainbowCoin(i)
-	
+
 	If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i)>0
 		; picked up animation
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+10
-		
-
 
 		If SimulatedObjectActive(i)>600
 			SimulatedObjectZ(i)=1.2+Float(1000-SimulatedObjectActive(i))/400.0
@@ -30597,7 +29751,7 @@ Function ControlRetroRainbowCoin(i)
 		EndIf
 		If SimulatedObjectActive(i)=400
 			Pos.GameObjectPosition=LevelObjects(i)\Position
-		
+
 			; Little Spark
 			For j=1 To 20
 				AddParticle(19,Pos\TileX+0.5,2.6,-Pos\TileY-0.5,Rand(0,360),0.15,Rnd(-.035,.035),Rnd(-.015,.015),Rnd(-.035,.035),0,0,0,0,0,50,3)
@@ -30608,9 +29762,7 @@ Function ControlRetroRainbowCoin(i)
 			SimulatedObjectScaleYAdjust(i)=Float(SimulatedObjectActive(i))/600.0
 			SimulatedObjectScaleZAdjust(i)=Float(SimulatedObjectActive(i))/600.0
 		EndIf
-		
-		
-		
+
 	Else
 		SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+3
 		SimulatedObjectZ(i)=0
@@ -30618,29 +29770,26 @@ Function ControlRetroRainbowCoin(i)
 
 End Function
 
-
 Function ControlWisp(i)
 
 	Obj.GameObject=LevelObjects(i)
 	EntityFX Obj\Model\Entity,1
-	
+
 	If Leveltimer Mod 360 =0
 		a=Rand(0,100)
 		If a<60
 			SimulatedObjectStatus(i)=0
 		Else If a<80
-			
+
 			SimulatedObjectStatus(i)=1
 		Else If a<90
-		
 
 			Simulatedobjectstatus(i)=2
 		Else
-		
 
 			Simulatedobjectstatus(i)=3
 		EndIf
-		
+
 	EndIf
 	If SimulatedObjectStatus(i)=0
 		SimulatedObjectZ(i)=0.6+.1*Sin(leveltimer Mod 360)
@@ -30661,7 +29810,6 @@ Function ControlWisp(i)
 		SimulatedObjectYaw(i)=60*Sin((leveltimer*4) Mod 360)
 		SimulatedObjectRoll(i)=20*Sin((leveltimer*2) Mod 360)
 
-
 	EndIf
 	If Rand(0,100)<3 And SimulatedObjectActive(i)=1001
 		Pos.GameObjectPosition=Obj\Position
@@ -30669,7 +29817,6 @@ Function ControlWisp(i)
 	EndIf
 
 End Function
-
 
 Function ControlRetroZbotUfo(i)
 
@@ -30682,31 +29829,28 @@ Function ControlRetroZbotUfo(i)
 
 End Function
 
-
 Function ControlRetroLaserGate(i)
-	
+
 	If SimulatedObjectYawAdjust(i)=0 Or SimulatedObjectYawAdjust(i)=180
 		SimulatedObjectPitch(i)=(SimulatedObjectPitch(i)+2) Mod 360
 	Else
 		SimulatedObjectRoll(i)=(SimulatedObjectRoll(i)+2) Mod 360
 	EndIf
-	
+
 	Obj.GameObject=LevelObjects(i)
 	; This behavior is OpenWA-exclusive.
 	EntityAlpha Obj\Model\Entity,0.5
-			
-End Function
 
+End Function
 
 Function ControlTentacle(i)
 
 	If SimulatedObjectData(i,0)=0 Then SimulatedObjectData(i,0)=Rand(-10,10)
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+Float(SimulatedObjectData(i,0))/10.0
-	
-	;SimulateObjectRotation(i)
-	
-End Function
 
+	;SimulateObjectRotation(i)
+
+End Function
 
 Function ControlRainbowBubble(i)
 
@@ -30719,27 +29863,26 @@ Function ControlRainbowBubble(i)
 
 	EntityAlpha Obj\Model\Entity,.8
 	EntityBlend Obj\Model\Entity,3
-	
+
 	l=leveltimer/4+SimulatedObjectData(i,2)
-	
+
 	SimulatedObjectXScale(i)=0.5-0.1*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
 
 	SimulatedObjectYScale(i)=0.5-0.1*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
 
 	SimulatedObjectZScale(i)=0.6+0.2*Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360)
-	
+
 	SimulatedObjectPitch(i)=(SimulatedObjectPitch(i)+1) Mod 360
 	SimulatedObjectYaw(i)=360*Sin(l Mod 360)
 	SimulatedObjectRoll(i)=180*Cos(l Mod 360)
-	
+
 	SimulatedObjectZ(i)=0.5+0.3*Abs(Sin((leveltimer + SimulatedObjectData(i,2)) Mod 360))
-	
+
 	;SimulateObjectPosition(i)
 	;SimulateObjectRotation(i)
 	;SimulateObjectScale(i)
 
 End Function
-
 
 Function ControlBowler(i)
 
@@ -30748,49 +29891,47 @@ Function ControlBowler(i)
 		Direction=Direction*2
 	EndIf
 	SimulatedObjectYawAdjust(i)=(-45*Direction +3600) Mod 360
-	
+
 	SimulatedObjectPitch2(i)=(SimulatedObjectPitch2(i)+Rnd(3,5)) Mod 360
 	SimulatedObjectZ(i)=.4+.4*Sin((Leveltimer*4) Mod 180)
-	
+
 	;SimulateObjectPosition(i)
 	;SimulateObjectRotation(i)
 
 End Function
 
-
 Function ControlMothership(i)
 
 	SimulatedObjectYaw(i)=((SimulatedObjectYaw(i)+.3) Mod 360)
-	
+
 	If SimulatedObjectMovementSpeed(i)<>10 ; first time
 		SimulatedObjectData(i,1)=-1
 		SimulatedObjectYawAdjust(i)=0
 		SimulatedObjectMovementSpeed(i)=10
 		SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectZ(i)=4
-		
+
 		;CreateShadow(i,ObjectScaleAdjust(i)*5)
 	EndIf
-	
-	
+
 	If SimulatedObjectStatus(i)<0
-		
+
 		SimulatedObjectRoll(i)=((SimulatedObjectRoll(i)+.3) Mod 360)
 
 		SimulatedObjectPitch(i)=((SimulatedObjectPitch(i)-.1) Mod 360)
-		
+
 		AddParticle(Rand(0,3),SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.1,.1),Rnd(-.01,.01),Rnd(-.1,.1),3,.02,0,0,0,125,3)
 
 ;		If SimulatedObjectStatus(i) Mod 30 = 0
 ;			PlaySoundFX(96,SimulatedObjectX(i),SimulatedObjectY(i))
 ;		EndIf
-	
+
 		SimulatedObjectStatus(i)=SimulatedObjectStatus(i)-1
 		;If ObjectStatus(i)=-200
 		;	destroyobject(i,0)
 		;	NofZBotsInAdventure=NofZBotsInAdventure-1
 		;EndIf
-	
+
 	Else
 		SimulatedObjectSubType(i)=SimulatedObjectSubType(i)+1
 		If SimulatedObjectSubType(i)>100
@@ -30798,9 +29939,8 @@ Function ControlMothership(i)
 ;			PlaySoundFX(95,SimulatedObjectX(i),SimulatedObjectY(i))
 		EndIf
 	EndIf
-	
-End Function
 
+End Function
 
 Function ControlRubberducky(i)
 
@@ -30809,30 +29949,29 @@ Function ControlRubberducky(i)
 		SimulatedObjectData(i,1)=Rand(1,3)
 		SimulatedObjectData(i,2)=Rand(0,360)
 	EndIf
-		
+
 	SimulatedObjectroll(i)=1*SimulatedObjectData(i,1)*Sin((LevelTimer+SimulatedObjectData(i,2)) Mod 360)
 	SimulatedObjectpitch(i)=2*SimulatedObjectData(i,1)*Cos((LevelTimer*3+SimulatedObjectData(i,2))  Mod 360)
-	
+
 	If SimulatedObjectData(i,0)<>1
 		TurnObjectTowardDirection(i,PlayerX()-SimulatedObjectX(i),PlayerY()-SimulatedObjectY(i),2,0)
 	EndIf
 
 End Function
 
-
 Function ControlGloveCharge(i)
 
 	Obj.GameObject=LevelObjects(i)
 	Pos.GameObjectPosition=Obj\Position
-	
+
 	SubType=Obj\Attributes\LogicSubType
 
 	SimulatedObjectZ(i)=0.04
-	
+
 	myparticle=16+SimulatedObjectData(i,0)
-	
+
 	SimulatedObjectData(i,3)=1
-	
+
 	j2=Rand(0,359)
 	If SubType=1 ; one time charge
 		If leveltimer Mod 5 = 0
@@ -30843,33 +29982,30 @@ Function ControlGloveCharge(i)
 			AddParticle(myparticle,Pos\TileX+.5+.3*Sin(j2*3),0,-Pos\TileY-.5-.3*Cos(j2*3),0,.3,0,.04,0,4,0,0,0,0,50,3)
 		EndIf
 	EndIf
-	
-End Function
 
+End Function
 
 Function ControlWindmillRotor(i)
 
 	If SimulatedObjectYawAdjust(i)=0 Or SimulatedObjectYawAdjust(i)=180
 		SimulatedObjectRoll(i)=SimulatedObjectRoll(i)+1
-	Else 
+	Else
 		SimulatedObjectPitch(i)=SimulatedObjectPitch(i)+1
 	EndIf
-	
+
 	;SimulatedObjectZ(i)=5.65
 	Obj.GameObject=LevelObjects(i)
 	Obj\Attributes\ZAdjust=5.65
 
 End Function
 
-
-Function ControlIceFloat(i)	
+Function ControlIceFloat(i)
 	SimulatedObjectPitch(i)=2*SimulatedObjectData(i,2)*Sin((LevelTimer + SimulatedObjectData(i,1)) Mod 360)
 	SimulatedObjectRoll(i)=3*SimulatedObjectData(i,3)*Cos((LevelTimer+ SimulatedObjectData(i,1))  Mod 360)
-	
+
 	;SimulateObjectRotation(i)
 
 End Function
-
 
 Function ControlPlantFloat(i)
 
@@ -30879,15 +30015,14 @@ Function ControlPlantFloat(i)
 
 	l=leveltimer+SimulatedObjectData(i,2)
 	EntityColor Obj\Model\Entity,128+120*Cos(l Mod 360),128+120*Sin(l Mod 360),200+50*Cos(l Mod 360)
-	
+
 	;ObjectPitch(i)=4*ObjectData(i,2)*Sin((LevelTimer + ObjectData(i,1)) Mod 360)
 	;Objectroll(i)=6*ObjectData(i,3)*Cos((LevelTimer+ ObjectData(i,1))  Mod 360)
 	SimulatedObjectYaw(i)=leveltimer Mod 360
-	
+
 	;SimulateObjectRotation(i)
 
 End Function
-
 
 Function ControlBurstFlower(i)
 
@@ -30898,7 +30033,7 @@ Function ControlBurstFlower(i)
 		SimulatedObjectTileTypeCollision(i)=1
 		SimulatedObjectData(i,0)=Rand(0,360)
 	EndIf
-	
+
 	SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+1) Mod 720
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+.5*Sin(SimulatedObjectData(i,0)/2)
 	SimulatedObjectXScale(i)=0.3+0.02*Cos(SimulatedObjectData(i,0)*2)
@@ -30907,7 +30042,7 @@ Function ControlBurstFlower(i)
 	If SimulatedObjectData(i,1)>=0 And Rand(0,100)<2 And Obj\Attributes\Indigo=0 AddParticle(7,SimulatedObjectX(i),0.5,-SimulatedObjectY(i),Rand(0,360),0.4,0,0.02,0,Rnd(0,2),.01,0,0,0,50,4)
 
 	If SimulatedObjectData(i,1)<0 Then SimulatedObjectData(i,1)=SimulatedObjectData(i,1)+1
-	
+
 	x=Pos\TileX
 	y=Pos\TileY
 	; player near or other stinkers near? increase burst timer
@@ -30944,14 +30079,13 @@ Function ControlBurstFlower(i)
 				; fire spellballs
 			EndIf
 		EndIf
-		
+
 		If flag=0 And SimulatedObjectData(i,1)>0
 			SimulatedObjectData(i,1)=SimulatedObjectData(i,1)-1
 		EndIf
 	EndIf
 
 End Function
-
 
 Function ControlLurker(i)
 
@@ -30965,28 +30099,26 @@ Function ControlLurker(i)
 		SimulatedObjectZ(i)=-0.1
 		SimulatedObjectData(i,2)=-1
 	EndIf
-	
+
 	;SimulateObjectPosition(i)
 	;SimulateObjectRotation(i)
 
 End Function
 
-
 Function ControlSunSphere1(i)
 
 	If SimulatedObjectData(i,9)=0
 		SimulatedObjectData(i,9)=1
-		
+
 		SimulatedObjectData(i,7)=Rand(0,360)
 		SimulatedObjectData(i,8)=Rand(50,100)
 		;CreateSunSphere2(i)
 	EndIf
-	
+
 	; in-game this uses ScaleAdjust as a multiplier, but this is pointless since it always gets set to 1.0 when nonzero
 	SimulatedObjectZ(i)=1.5+0.8*Sin((leveltimer+SimulatedObjectData(i,7)+30) Mod 360)
-	
+
 	;SimulateObjectPosition(i)
-	
 
 End Function
 
@@ -30996,15 +30128,12 @@ Function ControlSunSphere2(i)
 	SimulatedObjectYScale(i)=0.5*(1+0.1*Cos((leveltimer+30) Mod 360))
 	SimulatedObjectZScale(i)=0.5*(1+0.1*Cos((leveltimer+60) Mod 360))
 
-
-	
 	If Rand(0,100)<3 AddParticle(Rand(16,23),SimulatedObjectX(i),SimulatedObjectZ(i),-SimulatedObjectY(i),Rand(0,360),0.16,Rnd(-.025,.025),Rnd(-.025,.025),Rnd(-.025,.025),0,0.001,0,0,0,100,3)
 
 	;SimulateObjectPosition(i)
 	;SimulateObjectScale(i)
 
 End Function
-
 
 Function ControlStinkerWee(i)
 
@@ -31020,17 +30149,17 @@ Function ControlStinkerWee(i)
 
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
-		SimulatedObjectMovementSpeed(i)=35	
+		SimulatedObjectMovementSpeed(i)=35
 		SimulatedObjectSubType(i)=0  ; -2 dying, -1 exiting, 0- asleep, 1-follow, 2-directive, 3-about to fall asleep (still walking), 4 caged
 		If Obj\Attributes\ModelName$="!StinkerWee"
 			MaybeAnimateMD2(Obj\Model\Entity,1,Rnd(.002,.008),217,219,1)
 		EndIf
-		SimulatedObjectCurrentAnim(i)=1 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice	
+		SimulatedObjectCurrentAnim(i)=1 ; 1-asleep, 2-getting up, 3-idle, 4-wave, 5-tap, 6-walk, 7 sit down, 8-fly, 9-sit on ice
 		SimulatedObjectXScale(i)=0.025
 		SimulatedObjectYScale(i)=0.025
 		SimulatedObjectZScale(i)=0.025
 	EndIf
-	
+
 	If Obj\Attributes\Dead=1
 		; spinning out of control
 		SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
@@ -31045,12 +30174,12 @@ Function ControlStinkerWee(i)
 		;ObjectSubType(i)=-2
 		Return
 	EndIf
-	
-	If SimulatedObjectSubType(i)=-1 
+
+	If SimulatedObjectSubType(i)=-1
 		TurnObjectTowardDirection(i,0,1,4,0)
 		Return ; already on its way out
 	EndIf
-	
+
 	If Obj\Attributes\Caged=True And SimulatedObjectSubType(i)<>4 And SimulatedObjectSubType(i)<>5
 		; just Caged
 		If SimulatedObjectData(i,8)>=0 And SimulatedObjectData(i,8)<=2
@@ -31062,7 +30191,7 @@ Function ControlStinkerWee(i)
 		Else
 			SimulatedObjectSubType(i)=4
 		EndIf
-		
+
 		If Obj\Attributes\ModelName$="!StinkerWee"
 			MaybeAnimateMD2(Obj\Model\Entity,1,.2,108,114,1)
 		EndIf
@@ -31081,12 +30210,11 @@ Function ControlStinkerWee(i)
 		;SimulatedObjectMovementTypeData(i)=0
 	EndIf
 
-	
 	If Obj\Attributes\Caged=True
 		TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,3,0)
 		Return
 	EndIf
-	
+
 	If SimulatedObjectSubType(i)=0
 		If SimulatedObjectData(i,8)>=0 And SimulatedObjectData(i,8)<=2
 			EntityTexture Obj\Model\Entity,StinkerWeeTextureSleep(SimulatedObjectData(i,8)+1)
@@ -31096,7 +30224,7 @@ Function ControlStinkerWee(i)
 			EntityTexture Obj\Model\Entity,StinkerWeeTexture(SimulatedObjectData(i,8)+1)
 		EndIf
 	EndIf
-	
+
 	If SimulatedObjectSubType(i)=3 ; asleep after walking
 		; fall asleep now
 		;EntityTexture ObjectEntity(i),StinkerWeeTextureSleep
@@ -31114,19 +30242,18 @@ Function ControlStinkerWee(i)
 		; stopped - but wait a few frames before switching animation
 		; (to avoid start/stop animation)
 		SimulatedObjectData(i,2)=SimulatedObjectData(i,2)+1
-		
+
 	Else
 		; not walking
 		If SimulatedObjectSubType(i)=0 ; asleep
 			SimulatedObjectData(i,2)=SimulatedObjectData(i,2)+1
 			If SimulatedObjectData(i,2)>200
-				If Rand(0,100)<3  
+				If Rand(0,100)<3
 					AddParticle(9,Pos\TileX+.5,.9,-Pos\TileY-.5,0,0.5,0,0.01,0,0,.001,0,0,0,200,3)
 					SimulatedObjectData(i,2)=0
 					;PlaySoundFX(59,Pos\TileX,Pos\TileY)
 				EndIf
-				
-				
+
 			EndIf
 			If SimulatedObjectCurrentAnim(i)<>1
 				If Obj\Attributes\ModelName$="!StinkerWee"
@@ -31135,10 +30262,9 @@ Function ControlStinkerWee(i)
 				SimulatedObjectCurrentAnim(i)=1
 			EndIf
 			If SimulatedObjectYaw(i)<>180 Then TurnObjectTowardDirection(i,0,1,5,0)
-		
 
 		Else ; either in follow or directive mode, but standing
-			
+
 			If SimulatedObjectCurrentAnim(i)<>7
 				; turn toward player unless sitting
 				TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,3,0)
@@ -31164,7 +30290,7 @@ Function ControlStinkerWee(i)
 							MaybeAnimateMD2(Obj\Model\Entity,1,.2,121,140,1)
 						EndIf
 						SimulatedObjectCurrentAnim(i)=5
-					EndIf			
+					EndIf
 				EndIf
 			Else If SimulatedObjectCurrentAnim(i)=4
 				SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
@@ -31193,7 +30319,7 @@ Function ControlStinkerWee(i)
 ;					SimulatedObjectSubType(i)=0
 ;				EndIf
 			EndIf
-			
+
 			; If in directive mode - use timer to see if falling asleep again
 ;			If ObjectSubType(i)=1
 ;				ObjectData(i,1)=ObjectData(i,1)+1
@@ -31206,7 +30332,7 @@ Function ControlStinkerWee(i)
 
 ;			If ObjectSubType(i)=2
 ;				ObjectData(i,1)=ObjectData(i,1)+1
-;				
+;
 ;				If ObjectData(i,1)>4800
 ;					; fell asleep again
 ;					PlaySoundFX(69,Pos\TileX,Pos\TileY)
@@ -31220,7 +30346,6 @@ Function ControlStinkerWee(i)
 		EndIf
 	EndIf
 
-
 End Function
 
 Function ControlStinkerWeeExit(i)
@@ -31229,7 +30354,6 @@ Function ControlStinkerWeeExit(i)
 		AddParticle(Rand(16,23),Pos\TileX+0.5+0.2*Sin(LevelTimer*10),0,-Pos\TileY-0.5-0.2*Cos(LevelTimer*10),Rand(0,360),0.1,0,0.02,0,0,0.005,0,0,0,100,3)
 	EndIf
 End Function
-
 
 Function ControlScritter(i)
 
@@ -31242,7 +30366,6 @@ Function ControlScritter(i)
 	;EndIf
 
 End Function
-
 
 Function ControlCrab(i)
 
@@ -31272,7 +30395,7 @@ Function ControlCrab(i)
 			SimulatedObjectXScale(i)=0.006
 			SimulatedObjectYScale(i)=0.006
 			SimulatedObjectZScale(i)=0.006
-			
+
 			;SimulateObjectScale(i)
 		Else
 			;female
@@ -31291,9 +30414,9 @@ Function ControlCrab(i)
 ;			End Select
 
 		EndIf
-		
+
 	EndIf
-	
+
 	If Obj\Attributes\ModelName$="!Crab"
 		; anim
 		; 1-idle
@@ -31305,13 +30428,11 @@ Function ControlCrab(i)
 			MaybeAnimateMD2(Obj\Model\Entity,2,.01,1,2)
 			SimulatedObjectCurrentAnim(i)=0
 		Else If Obj\Attributes\MovementTimer=0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=3) And SimulatedObjectdata(i,1)<2
-			
-			
+
 			MaybeAnimateMD2(Obj\Model\Entity,2,Rnd(.02,.04),1,13)
 			SimulatedObjectCurrentAnim(i)=1
-			
-			
-		Else If SimulatedObjectCurrentAnim(i)=2 
+
+		Else If SimulatedObjectCurrentAnim(i)=2
 			SimulatedObjectCurrentAnim(i)=3
 		Else If Obj\Attributes\MovementTimer>0 And (SimulatedObjectCurrentAnim(i)=0 Or SimulatedObjectCurrentAnim(i)=1 Or SimulatedObjectCurrentAnim(i)=20)
 			MaybeAnimateMD2(Obj\Model\Entity,1,1,1,30)
@@ -31321,18 +30442,17 @@ Function ControlCrab(i)
 			SimulatedObjectCurrentAnim(i)=SimulatedObjectCurrentAnim(i)+1
 		EndIf
 	EndIf
-	
+
 	If SimulatedObjectStatus(i)=0 And SimulatedObjectData(i,1)<2
 		SimulatedObjectZ(i)=0
-		;If Obj\Attributes\MovementTimer>0 
+		;If Obj\Attributes\MovementTimer>0
 		;	TurnObjectTowardDirection(i,-(Pos\TileX2-Pos\TileX),-(Pos\TileY2-Pos\TileY),10,0)
 		;Else
 			TurnObjectTowardDirection(i,-(PlayerX()-SimulatedObjectX(i)),-(PlayerY()-SimulatedObjectY(i)),6,0)
 		;EndIf
 	EndIf
-	
-End Function
 
+End Function
 
 Function ControlTrap(i)
 
@@ -31358,29 +30478,27 @@ Function ControlTrap(i)
 				SimulatedObjectStatus(i)=0
 			EndIf
 		EndIf
-	
-		
+
 		Select SimulatedObjectSubType(i)
 			Case 0
 				; fire - create particle when on
-				
+
 			If SimulatedObjectStatus(i)=1
 				;If Rand(0,100)<50 AddParticle(2,Pos\X+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
 				If Rand(0,100)<50 AddParticle(2,SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZAdjust(i),-SimulatedObjectY(i),0-Rnd(-.1,.1),.5,Rnd(-.005,.005),.05,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
 			EndIf
-			
+
 		End Select
 	Else
-		
+
 		;If Rand(0,100)<2 AddParticle(0,Pos\X+Rnd(-.1,.1),ObjectZAdjust(i),-ObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,0)
 		If Rand(0,100)<2 AddParticle(0,SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZAdjust(i),-SimulatedObjectY(i),0-Rnd(-.1,.1),.3,Rnd(-.005,.005),.02,Rnd(-.005,.005),0,.01,0,-.0001,0,50,4)
-		
+
 	EndIf
-	
+
 	;SimulateObjectPosition(i)
 
 End Function
-
 
 Function ControlFireFlower(i)
 
@@ -31395,15 +30513,15 @@ Function ControlFireFlower(i)
 		SimulatedObjectData(i,2)=1
 		MaybeAnimateMD2(Obj\Model\Entity,1,.2,1,20,1)
 	EndIf
-	
+
 	;If ObjectActive(i)<1001
 	;	SimulatedObjectTimer(i)=ObjectTimerMax1(i)
 	;EndIf
-	
+
 	If Attributes\Indigo=0 SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
 	SimulatedObjectData(i,0)=(SimulatedObjectData(i,0)+80) Mod 8
 	SimulatedObjectYawAdjust(i)=0 ; Necessary to make the model face the correct way due to the weird special case handling of its rotation.
-	
+
 	dx#=0
 	dy#=0
 	If SimulatedObjectSubType(i)=1
@@ -31413,7 +30531,7 @@ Function ControlFireFlower(i)
 		total#=Sqr(dx^2+dy^2)
 		dx=dx/total
 		dy=dy/total
-		
+
 	Else
 		; turn or static
 		If SimulatedObjectData(i,0)>0 And SimulatedObjectData(i,0)<4
@@ -31432,18 +30550,18 @@ Function ControlFireFlower(i)
 	If SimulatedObjectTimer(i)>-10
 		TurnObjectTowardDirection(i,dx,dy,3,180)
 	EndIf
-	
+
 	If SimulatedObjectTimer(i)<0
 
 		If SimulatedObjectData(i,2)=1
 			MaybeAnimateMD2(Obj\Model\Entity,1,.5,21,60,1)
 			SimulatedObjectData(i,2)=0
 		EndIf
-	
+
 		If SimulatedObjectTimer(i)=-80
 			SimulatedObjectTimer(i)=Attributes\TimerMax1
 		EndIf
-		
+
 		; and fire
 		If SimulatedObjectTimer(i)=-60
 
@@ -31456,9 +30574,7 @@ Function ControlFireFlower(i)
 
 		EndIf
 
-		
 	EndIf
-
 
 End Function
 
@@ -31478,7 +30594,7 @@ Function RedoSuctubeMesh(Entity, col, objactive, direction, yawadjust)
 		; switched from original
 		dir=1
 	EndIf
-	
+
 	; point arrow
 	If dir=0
 		VertexCoords surface,0,-0.3,1.71,-0.3
@@ -31489,19 +30605,16 @@ Function RedoSuctubeMesh(Entity, col, objactive, direction, yawadjust)
 		VertexCoords surface,2,+0.3,1.71,+0.3
 		VertexCoords surface,1,0,1.71,-0.3
 	EndIf
-	
+
 	; and give colour
-	
+
 	VertexTexCoords surface,0,(col Mod 8)*0.125+.01,(col/8)*0.125+.51+.25*active
 	VertexTexCoords surface,1,(col Mod 8)*0.125+.115,(col/8)*0.125+.51+.25*active
 	VertexTexCoords surface,2,(col Mod 8)*0.125+.051,(col/8)*0.125+.51+.115+.25*active
 
 	UpdateNormals Entity
-	
-
 
 End Function
-
 
 Function ToggleObject(i)
 	Obj.GameObject=LevelObjects(i)
@@ -31513,7 +30626,7 @@ Function ToggleObject(i)
 			;ActivateFlipBridge(i)
 		Else
 			SimulatedObjectActive(i)=SimulatedObjectActive(i)+Attributes\ActivationSpeed+1
-			
+
 		EndIf
 		If SimulatedObjectActive(i)>1001 Then SimulatedObjectActive(i)=1001
 	Else If SimulatedObjectActive(i)>0 And SimulatedObjectActive(i) Mod 2 =1
@@ -31521,16 +30634,15 @@ Function ToggleObject(i)
 			;DeActivateFlipBridge(i)
 		Else
 			SimulatedObjectActive(i)=SimulatedObjectActive(i)-Attributes\ActivationSpeed-1
-			
+
 		EndIf
 		If SimulatedObjectActive(i)<0 Then SimulatedObjectActive(i)=0
 	EndIf
 	If Attributes\LogicType=281 And Attributes\ModelName$="!SucTube"
 		Redosuctubemesh(Obj\Model\Entity, SimulatedObjectData(i,0), SimulatedObjectActive(i), SimulatedObjectData(i,2), SimulatedObjectYawAdjust(i))
 	EndIf
-	
-End Function
 
+End Function
 
 Function ControlChangeActive(i)
 	Obj.GameObject=LevelObjects(i)
@@ -31542,13 +30654,12 @@ Function ControlChangeActive(i)
 	Else If SimulatedObjectActive(i)<1001 And SimulatedObjectActive(i) Mod 2=1
 		; activating
 		SimulatedObjectActive(i)=SimulatedObjectActive(i)+Attributes\ActivationSpeed
-		
+
 	EndIf
 	If SimulatedObjectActive(i)<0 	SimulatedObjectActive(i)=0
 	If SimulatedObjectActive(i)>1001 SimulatedObjectActive(i)=1001
 
 End Function
-
 
 Function ControlSteppingStone(i)
 	Obj.GameObject=LevelObjects(i)
@@ -31562,11 +30673,10 @@ Function ControlSteppingStone(i)
 			ToggleObject(i)
 			SimulatedObjectTimer(i)=Attributes\TimerMax1
 		EndIf
-		
+
 		ControlChangeActive(i)
 	EndIf
-		
-	
+
 	; 0-submerged, 1001-surfaced
 	If (SimulatedObjectActive(i)<1001-4*Attributes\ActivationSpeed) And SimulatedObjectLastActive(i)>=1001-4*Attributes\ActivationSpeed
 
@@ -31574,34 +30684,31 @@ Function ControlSteppingStone(i)
 		If SimulatedObjectData(i,3)=0
 			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,LevelTiles(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))\Water\Height-0.2,-Floor(SimulatedObjectY(i))-0.5,0,.6,0,0,0,0,.006,0,0,0,50,4)
 		EndIf
-	
+
 	EndIf
-	
+
 	If (SimulatedObjectActive(i)=>1001-4*Attributes\ActivationSpeed) And SimulatedObjectLastActive(i)<1001-4*Attributes\ActivationSpeed
-		
+
 		; just emerged
 		If SimulatedObjectData(i,3)=0
 			AddParticle(4,Floor(SimulatedObjectX(i))+0.5,LevelTiles(Floor(SimulatedObjectX(i)),Floor(SimulatedObjectY(i)))\Water\Height-0.2,-Floor(SimulatedObjectY(i))-0.5,0,1,0,0,0,0,.006,0,0,0,100,4)
 		EndIf
-				
+
 	EndIf
 
-	
 End Function
-
-
 
 Function ControlFlipBridge(i)
 
 	Obj.GameObject=LevelObjects(i)
 	Attributes.GameObjectAttributes=Obj\Attributes
-	
+
 	YScale#=6.6
-	
+
 	If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
 		YScale#=1+5.6*Float(SimulatedObjectActive(i))/1001.0
 	EndIf
-	
+
 	If Attributes\ModelName$="!FlipBridge"
 		ScaleEntity GetChild(Obj\Model\Entity,1),1.0,1.0,YScale#
 	Else
@@ -31610,13 +30717,11 @@ Function ControlFlipBridge(i)
 
 End Function
 
-
 Function ControlSpring(i)
 
 	SimulatedObjectZ(i)=.5
 
 End Function
-
 
 Function ControlBabyBoomer(i)
 
@@ -31637,7 +30742,7 @@ Function ControlBabyBoomer(i)
 		;ObjectSubType(i)=-2
 		Return
 	EndIf
-	
+
 	If SimulatedObjectData(i,8)=1
 		; lit
 ;		For j=1 To 5
@@ -31646,7 +30751,7 @@ Function ControlBabyBoomer(i)
 			EndIf
 ;		Next
 	EndIf
-	
+
 	If SimulatedObjectData(i,8)>0
 		;EntityTexture Obj\Model\Entity,KaboomTextureSquint
 		; lit and burning
@@ -31659,11 +30764,10 @@ Function ControlBabyBoomer(i)
 
 End Function
 
-
 Function ControlSuctube(i)
 
 	If SimulatedObjectActive(i)<>1001 Then Return
-	
+
 	Obj.GameObject=LevelObjects(i)
 	Attributes.GameObjectAttributes=Obj\Attributes
 	Pos.GameObjectPosition=Obj\Position
@@ -31671,39 +30775,38 @@ Function ControlSuctube(i)
 	suck=True
 	blow=True
 
-	
 	; check if sucking/blowing active (e.g. if another tube in front of it)
 	For j=0 To NofObjects-1
 		OtherObj.GameObject=LevelObjects(j)
 		OtherAttributes.GameObjectAttributes=Obj\Attributes
 		OtherPos.GameObjectPosition=Obj\Position
-		
+
 		If OtherAttributes\LogicType=281 And i<>j
 			; found another suctube
 			If Attributes\Data2=OtherAttributes\Data2 And Attributes\Data0=OtherAttributes\Data0 And Attributes\Data1=OtherAttributes\Data1
 				; same direction
-				If SimulatedObjectData(i,2)=0 
+				If SimulatedObjectData(i,2)=0
 					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY-1
 						suck=False
 					EndIf
 					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY+1
 						blow=False
 					EndIf
-				Else If SimulatedObjectData(i,2)=1 
+				Else If SimulatedObjectData(i,2)=1
 					If Pos\TileX=OtherPos\TileX+1 And Pos\TileY=OtherPos\TileY
 						suck=False
 					EndIf
 					If Pos\TileX=OtherPos\TileX-1 And Pos\TileY=OtherPos\TileY
 						blow=False
 					EndIf
-				Else If SimulatedObjectData(i,2)=2 
+				Else If SimulatedObjectData(i,2)=2
 					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY+1
 						suck=False
 					EndIf
 					If Pos\TileX=OtherPos\TileX And Pos\TileY=OtherPos\TileY-1
 						blow=False
 					EndIf
-				Else If SimulatedObjectData(i,2)=3 
+				Else If SimulatedObjectData(i,2)=3
 					If Pos\TileX=OtherPos\TileX-1 And Pos\TileY=OtherPos\TileY
 						suck=False
 					EndIf
@@ -31714,7 +30817,7 @@ Function ControlSuctube(i)
 			EndIf
 		EndIf
 	Next
-	
+
 	If SimulatedObjectData(i,5)=0
 		; particle effects
 		If Rand(0,100)<30
@@ -31729,7 +30832,7 @@ Function ControlSuctube(i)
 					AddParticle(parttex,SimulatedObjectX(i)-Rnd(1.0,1.5),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(-1,1),0,psize,Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
 		 		Case 2
 				;	AddParticle(0,0,Rnd(0.5,5.5),0,0,5,0.0,0.0,Rnd(-0.01,-0.02),0,0,0,0,0,Rand(10,50),3)
-		
+
 					AddParticle(parttex,SimulatedObjectX(i)+Rnd(-1,1),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(1.0,1.9),0,psize,0.0,0.0,Rnd(-0.01,-0.02)*pspeed,0,0,0,0,0,Rand(10,50),3)
 		 		Case 3
 					AddParticle(parttex,SimulatedObjectX(i)+Rnd(1.0,1.5),Rnd(0.5,1.4),-SimulatedObjectY(i)+Rnd(-1,1),0,psize,-Rnd(0.01,0.02)*pspeed,0.0,0.0,0,0,0,0,0,Rand(10,50),3)
@@ -31750,9 +30853,7 @@ Function ControlSuctube(i)
 		EndIf
 	EndIf
 
-
 End Function
-
 
 Function ControlThwart(i)
 
@@ -31760,7 +30861,7 @@ Function ControlThwart(i)
 	Attributes.GameObjectAttributes=Obj\Attributes
 
 	TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
-	
+
 	; shooting?
 	If SimulatedObjectData(i,6)>0 And Attributes\Indigo=0
 		dx#=PlayerX()-SimulatedObjectX(i)
@@ -31768,9 +30869,9 @@ Function ControlThwart(i)
 		total#=Sqr(dx^2+dy^2)
 		dx=dx/total
 		dy=dy/total
-		
+
 		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
-		
+
 		If SimulatedObjectTimer(i)<0
 			If SimulatedObjectTimer(i)=-10
 				; aquire target now
@@ -31782,7 +30883,7 @@ Function ControlThwart(i)
 					MaybeAnimateMD2(Obj\Model\Entity,3,1,81,120,1)
 				EndIf
 			EndIf
-		
+
 			If SimulatedObjectTimer(i)=-40
 				SimulatedObjectTimer(i)=SimulatedObjectData(i,7)
 			EndIf
@@ -31791,14 +30892,13 @@ Function ControlThwart(i)
 
 End Function
 
-
 Function ControlTroll(i)
 
 	Obj.GameObject=LevelObjects(i)
 	Attributes.GameObjectAttributes=Obj\Attributes
 
 	TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
-	
+
 	; shooting?
 	If SimulatedObjectData(i,6)>0 And SimulatedObjectActive(i)=1001 And Attributes\Indigo=0
 		dx#=PlayerX()-SimulatedObjectX(i)
@@ -31806,9 +30906,9 @@ Function ControlTroll(i)
 		total#=Sqr(dx^2+dy^2)
 		dx=dx/total
 		dy=dy/total
-		
+
 		SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
-		
+
 		If SimulatedObjectTimer(i)<0
 			If SimulatedObjectTimer(i)=-10
 				; aquire target now
@@ -31820,7 +30920,7 @@ Function ControlTroll(i)
 					MaybeAnimateMD2(Obj\Model\Entity,3,1,81,119,1)
 				EndIf
 			EndIf
-		
+
 			If SimulatedObjectTimer(i)=-40
 				SimulatedObjectTimer(i)=SimulatedObjectData(i,7)
 			EndIf
@@ -31829,13 +30929,11 @@ Function ControlTroll(i)
 
 End Function
 
-
 Function ControlRetroCoily(i)
 
 	SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+2
 
 End Function
-
 
 Function ControlCuboid(i)
 
@@ -31850,18 +30948,17 @@ Function ControlCuboid(i)
 	SimulatedObjectXScale(i)=.9+.1*Sin((LevelTimer*2) Mod 360)
 	SimulatedObjectYScale(i)=.9+.1*Sin((LevelTimer*2) Mod 360)
 	SimulatedObjectZScale(i)=.9+.1*Sin((LevelTimer*2) Mod 360)
-	
+
 	If SimulatedObjectData(i,1)<>0 SimulatedObjectYaw(i)=SimulatedObjectYaw(i)+1
 
 End Function
-
 
 Function ControlFountain(i)
 
 	If SimulatedObjectActive(i)>0
 		Obj.GameObject=LevelObjects(i)
 		Pos.GameObjectPosition=Obj\Position
-		
+
 		AddParticle(SimulatedObjectData(i,0),Pos\TileX+.5,SimulatedObjectZAdjust(i)+.5,-Pos\TileY-.5,0,.1,Rnd(-.01,.01),Rnd(.07,.099),Rnd(-.01,.01),0,.001,0,-.001,0,150,3)
 	EndIf
 
@@ -31870,26 +30967,26 @@ End Function
 Function ControlMeteorite(i)
 
 	AddParticle(Rand(0,3),SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,Rnd(0.1,.5),Rnd(-.01,.01),Rnd(-.01,.01),Rnd(-.01,.01),3,.02,0,0,0,125,3)
-	
+
 End Function
 
 Function ControlZipper(i)
-	
+
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=-1 ; not really used
-		
+
 		Obj.GameObject=LevelObjects(i)
-		
+
 		EntityBlend Obj\Model\Entity,3
-		
+
 		SimulatedObjectData(i,1)=Rand(0,360)
 		SimulatedObjectData(i,2)=Rand(1,4)
-		
+
 	EndIf
 
 	;zz#=.05*Sin(((Leveltimer+ObjectData(i,1))) Mod 360)
 	SimulatedObjectZ(i)=0
-	size#=.7+.1*Sin(leveltimer Mod 360) 
+	size#=.7+.1*Sin(leveltimer Mod 360)
 	If size<0 Then size=0
 
 	SimulatedObjectXScale(i)=size
@@ -31903,27 +31000,26 @@ Function ControlButterfly(i)
 
 	Obj.GameObject=LevelObjects(i)
 	Attributes.GameObjectAttributes=Obj\Attributes
-	
+
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectTileTypeCollision(i)=-1 ; not really used
-		
+
 		If Attributes\ModelName$="!Busterfly"
 
 			SimulatedObjectXScale(i)=.01
 			SimulatedObjectYScale(i)=.01
 			SimulatedObjectZScale(i)=.01
 			SimulatedObjectRoll2(i)=90
-			
+
 			;AnimateMD2 Obj\Model\Entity,2,.4,2,9
 		Else
 			EntityBlend Obj\Model\Entity,3
 		EndIf
-		
+
 		SimulatedObjectData(i,1)=Rand(0,360)
 		SimulatedObjectData(i,2)=Rand(1,4)
-		
+
 	EndIf
-	
 
 	If Attributes\ModelName$="!Busterfly"
 		zz#=.2*Sin((SimulatedObjectData(i,2)*(Leveltimer+SimulatedObjectData(i,1))) Mod 360)
@@ -31951,7 +31047,7 @@ Function ControlSpellBall(i)
 	Else
 		myparticle=Rand(24,31)
 	EndIf
-	
+
 	; do the trail
 	If (LevelTimer Mod 2=0) And SimulatedObjectData(i,8)<>-99
 		AddParticle(myparticle,SimulatedObjectX(i)+Rnd(-.1,.1),SimulatedObjectZ(i)+Rnd(-.1,.1),-SimulatedObjectY(i)+Rnd(-.1,.1),0,0.5,0,0.00,0,3,.01,0,0,0,75,3)
@@ -31976,14 +31072,13 @@ Function ControlChomper(i)
 		If SimulatedObjectData(i,1)=1
 			;SimulatedObjectObjectTypeCollision(i)=2^1+2^6+2^4
 			EntityBlend Obj\Model\Entity,3
-			
+
 		EndIf
 		If SimulatedObjectData(i,1)=2
 			EntityFX Obj\Model\Entity,1
 		EndIf
 	EndIf
-	
-	
+
 	If SimulatedObjectData(i,1)=1
 		If leveltimer Mod 360<180
 			EntityAlpha Obj\Model\Entity,Abs(Sin(LevelTimer Mod 360))
@@ -31992,8 +31087,7 @@ Function ControlChomper(i)
 
 		EndIf
 	EndIf
-	
-	
+
 	;If Obj\Attributes\MovementTimer>0
 	;	TurnObjectTowardDirection(i,Pos\TileX2-Pos\TileX,Pos\TileY2-Pos\TileY,3,180)
 	;Else
@@ -32009,12 +31103,10 @@ Function ControlNPC(i)
 	Pos.GameObjectPosition=Obj\Position
 
 	If Attributes\ModelName$<>"!NPC" Return ; don't want to risk a MAV
-	
-	
 
 	If SimulatedObjectFrozen(i)=1 Or SimulatedObjectFrozen(i)=10001 Or SimulatedObjectFrozen(i)=-1
 		; freeze
-		If SimulatedObjectFrozen(i)=10001 
+		If SimulatedObjectFrozen(i)=10001
 			SimulatedObjectFrozen(i)=SimulatedObjectFrozen(i)+999
 		Else
 			SimulatedObjectFrozen(i)=1000*SimulatedObjectFrozen(i)
@@ -32034,7 +31126,7 @@ Function ControlNPC(i)
 ;	If SimulatedObjectFrozen(i)>2 Or SimulatedObjectFrozen(i)<0
 ;		; frozen
 ;		SimulatedObjectFrozen(i)=SimulatedObjectFrozen(i)-1
-;		
+;
 ;		Return
 ;	EndIf
 
@@ -32045,11 +31137,10 @@ Function ControlNPC(i)
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)-100
 	EndIf
 	If SimulatedObjectExclamation(i)>=0 And SimulatedObjectExclamation(i)<100 And Dist<4
-		
+
 		AddParticle(SimulatedObjectExclamation(i),Pos\TileX+.5,1.3,-Pos\TileY-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)+100
 	EndIf
-
 
 	If SimulatedObjectTileTypeCollision(i)=0
 		SimulatedObjectData10(i)=-1
@@ -32061,14 +31152,14 @@ Function ControlNPC(i)
 			SimulatedObjectMoveYGoal(i)=Floor(SimulatedObjectY(i))
 			;ObjectMovementType(i)=0
 			;ObjectMovementTimer(i)=0
-			;ObjectSubType(i)=0  
+			;ObjectSubType(i)=0
 			SimulatedObjectCurrentAnim(i)=10
 		EndIf
 
 	EndIf
-	
+
 	If Attributes\Linked=-1 And SimulatedObjectData10(i)>=0
-		
+
 		; just restarted after talking and/or after transporter
 	;	If ObjectMoveXGoal(i)=Pos\TileX And ObjectMoveYGoal(i)=Pos\TileY
 			SimulatedObjectMoveXGoal(i)=SimulatedObjectData10(i) Mod 200
@@ -32077,7 +31168,7 @@ Function ControlNPC(i)
 	;	EndIf
 		SimulatedObjectData10(i)=-1
 	EndIf
-	
+
 	If Attributes\Flying/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
@@ -32092,9 +31183,9 @@ Function ControlNPC(i)
 			SimulatedObjectCurrentAnim(i)=13
 		EndIf
 
-	Else 
+	Else
 		; standing controls
-		
+
 		; Turning?
 		Select SimulatedObjectData(i,7) Mod 10
 		Case 0
@@ -32105,7 +31196,7 @@ Function ControlNPC(i)
 		Case 1
 			; Turn Toward Player
 			TurnObjectTowardDirection(i,PlayerX()-SimulatedObjectX(i),PlayerY()-SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
-		
+
 		Case 2
 			; Various turning options
 			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+.5) Mod 360
@@ -32119,14 +31210,14 @@ Function ControlNPC(i)
 			; Various turning options
 			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)-2) Mod 360
 		End Select
-		
+
 		; Jumping?
 		If SimulatedObjectData(i,7)/10=1
 			SimulatedObjectZ(i)=0.4*Abs(Sin((Float(Leveltimer)*3.6) Mod 360))
 		Else If SimulatedObjectData(i,7)/10=2
 			SimulatedObjectZ(i)=0.2*Abs(Sin((Float(Leveltimer)*7.2) Mod 360))
 		EndIf
-		
+
 		; Animation?
 		Select SimulatedObjectData(i,8)
 		Case 0
@@ -32138,7 +31229,7 @@ Function ControlNPC(i)
 		Case 1
 			; Wave from time to Time
 			If SimulatedObjectCurrentAnim(i)=10
-				If Rand(1,10)<5 And Leveltimer Mod 120 =0 
+				If Rand(1,10)<5 And Leveltimer Mod 120 =0
 					SimulatedObjectCurrentAnim(i)=8
 					MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.2,8)
 				EndIf
@@ -32146,7 +31237,6 @@ Function ControlNPC(i)
 				SimulatedObjectCurrentAnim(i)=10
 				MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 			EndIf
-
 
 		Case 2
 			; Wave All The Time
@@ -32157,24 +31247,24 @@ Function ControlNPC(i)
 		Case 3
 			; Foottap from time to Time
 			If SimulatedObjectCurrentAnim(i)=10
-				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
+				If Rand(1,10)<5 And Leveltimer Mod 240 =0
 					SimulatedObjectCurrentAnim(i)=9
 					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.4,9)
 				EndIf
-			Else 
+			Else
 				If Rand(0,1000)<2
 					SimulatedObjectCurrentAnim(i)=10
 					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 				EndIf
 			EndIf
-	
+
 		Case 4
 			; Foottap All The Time
 			If SimulatedObjectCurrentAnim(i)<>9
 				SimulatedObjectCurrentAnim(i)=9
 				MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.2,9)
 			EndIf
-			
+
 		Case 5
 			; Dance
 			If SimulatedObjectCurrentAnim(i)<>12
@@ -32193,7 +31283,7 @@ Function ControlNPC(i)
 			EndIf
 		Case 7
 			; Sit if far from player, otherwise stand
-			
+
 			If SimulatedObjectCurrentAnim(i)<>14 And dist>3
 				SimulatedObjectCurrentAnim(i)=14
 				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.4,14)
@@ -32217,19 +31307,16 @@ Function ControlNPC(i)
 				MaybeAnimate(GetChild(Obj\Model\Entity,3),3,.4,15)
 			EndIf
 
-
-
-
 		Case 9
 			; Deathwave from time to Time (+Jumping)
 			If SimulatedObjectCurrentAnim(i)=10
-				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
+				If Rand(1,10)<5 And Leveltimer Mod 240 =0
 					SimulatedObjectCurrentAnim(i)=11
 					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.4,11)
 					If SimulatedObjectData(i,y)<10 Then SimulatedObjectData(i,7)=SimulatedObjectData(i,7)+20
 				EndIf
-			Else 
-				If Leveltimer Mod 120 =0 
+			Else
+				If Leveltimer Mod 120 =0
 					SimulatedObjectCurrentAnim(i)=10
 					MaybeAnimate(GetChild(Obj\Model\Entity,3),1,.05,10)
 					SimulatedObjectData(i,7)=SimulatedObjectData(i,7)-20
@@ -32250,14 +31337,9 @@ Function ControlNPC(i)
 			EndIf
 		End Select
 
-
-
-
 	EndIf
 
-
 End Function
-
 
 Function ControlKaboom(i)
 
@@ -32266,7 +31348,7 @@ Function ControlKaboom(i)
 	Pos.GameObjectPosition=Obj\Position
 
 	If Attributes\ModelName$<>"!Kaboom" Return
-	
+
 	If SimulatedObjectTileTypeCollision(i)=0
 		; First time (should later be put into object creation at level editor)
 		SimulatedObjectData10(i)=-1
@@ -32278,33 +31360,29 @@ Function ControlKaboom(i)
 			SimulatedObjectMoveYGoal(i)=Floor(SimulatedObjectY(i))
 			;ObjectMovementType(i)=0
 			;ObjectMovementTimer(i)=0
-			;ObjectSubType(i)=0  
+			;ObjectSubType(i)=0
 			SimulatedObjectCurrentAnim(i)=10
 			AnimateMD2 Obj\Model\Entity,0,.2,1,2
 
 		EndIf
-		
-				
-		
+
 	EndIf
-	
-	
+
 	If Attributes\Dead=1
 		; spinning out of control
 		SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
 		SimulatedObjectZ(i)=SimulatedObjectZ(i)+.01
-		
+
 		Return
 	EndIf
 	If Attributes\Dead=3
 		; drowning
 		SimulatedObjectYaw(i)=0
 		SimulatedObjectZ(i)=SimulatedObjectZ(i)-.005
-		
+
 		Return
 	EndIf
-	
-	
+
 	;dist=100 ; Distance to player
 	Dist=maximum2(Abs(Pos\TileX-PlayerTileX()),Abs(Pos\TileY-PlayerTileY()))
 	; Exclamation
@@ -32312,11 +31390,11 @@ Function ControlKaboom(i)
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)-100
 	EndIf
 	If SimulatedObjectExclamation(i)>=0 And SimulatedObjectExclamation(i)<100 And Dist<4
-		
+
 		AddParticle(SimulatedObjectExclamation(i),Pos\TileX+.5,1.3,-Pos\TileY-.5,0,.5,0,0.0125,0,0,.004,0,-.0001,0,150,3)
 		SimulatedObjectExclamation(i)=SimulatedObjectExclamation(i)+100
 	EndIf
-	
+
 	If Attributes\Flying/10=1
 		; flying
 		If SimulatedObjectCurrentAnim(i)<>11
@@ -32333,9 +31411,9 @@ Function ControlKaboom(i)
 			SimulatedObjectCurrentAnim(i)=11
 		EndIf
 
-	Else 
+	Else
 		; standing controls
-		
+
 		; Turning?
 		Select SimulatedObjectData(i,7) Mod 10
 		Case 0
@@ -32346,7 +31424,7 @@ Function ControlKaboom(i)
 		Case 1
 			; Turn Toward Player
 			TurnObjectTowardDirection(i,PlayerX()-SimulatedObjectX(i),PlayerY()-SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
-		
+
 		Case 2
 			; Various turning options
 			SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)-.5) Mod 360
@@ -32375,7 +31453,7 @@ Function ControlKaboom(i)
 				;Animate GetChild(Obj\Model\Entity,3),1,.05,10
 				AnimateMD2 Obj\Model\Entity,0,.2,1,2
 			EndIf
-		
+
 		Case 1
 			; Just Sit
 			If SimulatedObjectCurrentAnim(i)<>13
@@ -32385,7 +31463,7 @@ Function ControlKaboom(i)
 			EndIf
 		Case 2
 			; Sit if far from player, otherwise stand
-			
+
 			If SimulatedObjectCurrentAnim(i)<>13 And dist>3
 				SimulatedObjectCurrentAnim(i)=13
 				;Animate GetChild(Obj\Model\Entity,3),3,.4,14
@@ -32396,24 +31474,22 @@ Function ControlKaboom(i)
 				;Animate GetChild(Obj\Model\Entity,3),3,-.4,14
 				AnimateMD2 Obj\Model\Entity,3,-.5,50,31
 			EndIf
-		
 
 		Case 3
 			; Shiver from time to time
 			If SimulatedObjectCurrentAnim(i)=10
-				If Rand(1,10)<5 And Leveltimer Mod 240 =0 
+				If Rand(1,10)<5 And Leveltimer Mod 240 =0
 					SimulatedObjectCurrentAnim(i)=15
 					;Animate GetChild(Obj\Model\Entity,3),1,.4,11
 					AnimateMD2 Obj\Model\Entity,2,.5,55,70
-					
+
 				EndIf
-			Else 
-				If Leveltimer Mod 240 =0 
+			Else
+				If Leveltimer Mod 240 =0
 					SimulatedObjectCurrentAnim(i)=10
 					;Animate GetChild(Obj\Model\Entity,3),1,.05,10
 					AnimateMD2 Obj\Model\Entity,3,-.2,70,53
-					
-					
+
 				EndIf
 			EndIf
 
@@ -32422,7 +31498,7 @@ Function ControlKaboom(i)
 			If SimulatedObjectCurrentAnim(i)<>15
 				SimulatedObjectCurrentAnim(i)=15
 				AnimateMD2 Obj\Model\Entity,2,.5,59,70
-				
+
 			EndIf
 		Case 5
 			; Bounce
@@ -32434,15 +31510,9 @@ Function ControlKaboom(i)
 
 		End Select
 
-
-
-
 	EndIf
 
-
-
 End Function
-
 
 Function ControlZbotNPC(i)
 
@@ -32451,7 +31521,7 @@ Function ControlZbotNPC(i)
 
 	If SimulatedObjectData(i,0)>0 And Attributes\Indigo=0
 		SimulatedObjectData(i,0)=SimulatedObjectData(i,0)+1
-		If SimulatedObjectData(i,0)=120 
+		If SimulatedObjectData(i,0)=120
 			;DestroyObject(i,0)
 			Return
 		EndIf
@@ -32471,24 +31541,23 @@ Function ControlZbotNPC(i)
 			AddParticle(23,SimulatedObjectX(i)+0.5*Sin(a),0,-SimulatedObjectY(i)-0.5*Cos(a),0,.2,b*Sin(a),0.015,-b*Cos(a),1,0,0,0,0,150,3)
 		EndIf
 	EndIf
-	
+
 	If SimulatedObjectData(i,2)=0
 		TurnObjectTowardDirection(i,-PlayerX()+SimulatedObjectX(i),-PlayerY()+SimulatedObjectY(i),6,-SimulatedObjectYawAdjust(i))
 	EndIf
 
 End Function
 
-
 Function ControlMirror(i)
 
 	Obj.GameObject=LevelObjects(i)
 
-	Select SimulatedObjectSubtype(i)	
+	Select SimulatedObjectSubtype(i)
 
 	Case 0	; inactive
 		;ObjectActivationSpeed(i)=20
 		;DeActivateObject(i)
-		
+
 	Case 1,2,3,4,5	; fire, ice, time, acid, home
 		;ObjectActivationSpeed(i)=4
 		;ActivateObject(i)
@@ -32496,17 +31565,12 @@ Function ControlMirror(i)
 		PositionTexture MirrorTexture(SimulatedObjectSubtype(i)),Sin(Leveltimer/10.0),Cos(leveltimer/17.0)
 		ScaleTexture mirrortexture(Simulatedobjectsubtype(i)),0.5+0.1*Sin(leveltimer/7.0),0.5+0.1*Cos(leveltimer/11.0)
 		RotateTexture mirrortexture(Simulatedobjectsubtype(i)),leveltimer / 24.0
-		
-		;If Leveltimer Mod 400 = 0 playsoundfx(123,objectx(i),objectY(i))
-		
-		
-		
-	End Select
-		
 
+		;If Leveltimer Mod 400 = 0 playsoundfx(123,objectx(i),objectY(i))
+
+	End Select
 
 End Function
-
 
 Function ControlGhost(i)
 
@@ -32514,7 +31578,7 @@ Function ControlGhost(i)
 	Pos.GameObjectPosition=Obj\Position
 
 	If SimulatedObjectTileTypeCollision(i)=0
-	
+
 		SimulatedObjectYawAdjust(i)=0
 		;SimulatedObjectMovementSpeed(i)=5+5*ObjectData(i,1)
 		;SimulatedPos\TileX=Floor(ObjectX(i))
@@ -32522,7 +31586,7 @@ Function ControlGhost(i)
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
 		;SimulatedObjectMovementType(i)=0
-		
+
 	EndIf
 
 	;If ObjectMovementTimer(i)>0
@@ -32530,23 +31594,23 @@ Function ControlGhost(i)
 	;Else
 		TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,1,180)
 	;EndIf
-	
+
 	If SimulatedObjectStatus(i)=0
 		If Rand(0,100)<5
 			If SimulatedObjectData(i,8)=1
 				a=Rand(0,360)
 				b#=Rnd(0.002,0.003)
-	
+
 				AddParticle(30,SimulatedObjectX(i)+0.2*Sin(a),0,-SimulatedObjectY(i)-0.2*Cos(a),0,.2,b*Sin(a),0.005,-b*Cos(a),1,0,0,0,0,80,3)
-	
+
 			EndIf
 		EndIf
-		
-		If SimulationLevel>=2	
+
+		If SimulationLevel>=2
 			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
-		
+
 		;ObjectMovementType(i)=0
 		If Abs(SimulatedObjectX(i)-PlayerX())<=SimulatedObjectData(i,0) And Abs(SimulatedObjectY(i)-PlayerY())<=SimulatedObjectData(i,0)
 
@@ -32556,8 +31620,7 @@ Function ControlGhost(i)
 
 			;PlaySoundFX(28,ObjectX(i),ObjectY(i))
 		EndIf
-			
-	
+
 	Else If SimulatedObjectStatus(i)=1
 		SimulatedObjectData(i,8)=1
 		;ObjectMovementTYpe(i)=13
@@ -32565,19 +31628,16 @@ Function ControlGhost(i)
 			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
 		If SimulatedObjectData(i,9)<50 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)+2
-		
+
 		If Abs(SimulatedObjectX(i)-PlayerX())>SimulatedObjectData(i,0) Or Abs(SimulatedObjectY(i)-PlayerY())>SimulatedObjectData(i,0)
 
 			SimulatedObjectStatus(i)=0
 			;PlaySoundFX(102,ObjectX(i),ObjectY(i))
 		EndIf
 
-
 	EndIf
 
-
 End Function
-
 
 Function ControlWraith(i)
 
@@ -32585,7 +31645,7 @@ Function ControlWraith(i)
 	Pos.GameObjectPosition=Obj\Position
 
 	If SimulatedObjectTileTypeCollision(i)=0
-	
+
 		SimulatedObjectYawAdjust(i)=0
 		;ObjectMovementSpeed(i)=20+5*ObjectData(i,0)
 		;Pos\TileX=Floor(ObjectX(i))
@@ -32593,7 +31653,7 @@ Function ControlWraith(i)
 		SimulatedObjectTileTypeCollision(i)=2^0+2^3+2^4+2^9+2^10+2^11+2^12+2^14
 		;SimulatedObjectObjectTypeCollision(i)=2^1+2^3+2^6
 		;SimulatedObjectMovementType(i)=0
-		
+
 	EndIf
 
 	;If ObjectMovementTimer(i)>0
@@ -32601,17 +31661,16 @@ Function ControlWraith(i)
 	;Else
 		TurnObjectTowardDirection(i,PlayerTileX()-Pos\TileX,PlayerTileY()-Pos\TileY,1,180)
 	;EndIf
-	
+
 	If SimulatedObjectStatus(i)=0
 		If SimulationLevel>=2
 			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
-			
+
 		If SimulatedObjectData(i,9)>0 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)-1
-		
+
 		;ObjectMovementType(i)=0
 		If Abs(SimulatedObjectX(i)-PlayerX())<=SimulatedObjectData(i,0) And Abs(SimulatedObjectY(i)-PlayerY())<=SimulatedObjectData(i,0)
-
 
 			; in range
 			SimulatedObjectStatus(i)=1
@@ -32619,31 +31678,28 @@ Function ControlWraith(i)
 		EndIf
 		SimulatedObjectData(i,8)=0
 
-			
-	
 	Else If SimulatedObjectStatus(i)=1
-		
+
 		If SimulationLevel>=2
 			EntityAlpha Obj\Model\Entity,Float(SimulatedObjectData(i,9))/60.0
 		EndIf
-		
-		
+
 		If SimulatedObjectData(i,9)<50 Then SimulatedObjectData(i,9)=SimulatedObjectData(i,9)+2
-		
+
 		If SimulatedObjectData(i,8)<SimulatedObjectData(i,1)
 			SimulatedObjectData(i,8)=SimulatedObjectData(i,8)+1
 		 	If SimulatedObjectData(i,8)=SimulatedObjectData(i,1)-20
 				Select SimulatedObjectData(i,2)
-					
+
 					Case 0
 						part=25
 					Case 1
 						part=28
 					Case 2
 						part=27
-					
+
 				End Select
-				
+
 				For xx=1 To 30
 					AddParticle(part,SimulatedObjectX(i)+Sin(xx*12),1.1,-SimulatedObjectY(i)+Cos(xx*12),Rand(0,360),.3,-0.05*Sin(xx*12),0,-0.05*Cos(xx*12),Rnd(0,2),0,0,0,0,30,4)
 				Next
@@ -32655,9 +31711,7 @@ Function ControlWraith(i)
 				;	SimulatedObjectData(i,7)=ObjectY(PlayerObject)*100+0
 				;EndIf
 
-				
-
-			EndIf	
+			EndIf
 		Else
 			;fire
 ;			If ObjectData(i,6)=-1
@@ -32676,34 +31730,30 @@ Function ControlWraith(i)
 
 ;			SimulatedObjectData(i,6)=-1
 
-			
 		EndIf
-		
+
 		If Abs(SimulatedObjectX(i)-PlayerX())>SimulatedObjectData(i,0) Or Abs(SimulatedObjectY(i)-PlayerY())>SimulatedObjectData(i,0)
 
 			SimulatedObjectData(i,8)=0
-			
+
 			SimulatedObjectStatus(i)=0
 			;PlaySoundFX(102,ObjectX(i),ObjectY(i))
 		EndIf
-
 
 	EndIf
 
 End Function
 
-
 Function ControlPickUpItem(i)
 
 	SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+2) Mod 360
-	
+
 	SimulatedObjectPitch2(i)=10*Sin(LevelTimer Mod 360)
 
 End Function
 
-
 Function ControlUsedItem(i)
-		
+
 	SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+10) Mod 360
 
 	If SimulatedObjectTimer(i)=120
@@ -32712,11 +31762,10 @@ Function ControlUsedItem(i)
 			AddParticle(23,SimulatedObjectX(i)+1.8*Sin(k),SimulatedObjectZ(i),-SimulatedObjectY(i)-1.8*Cos(k),0,.4,-0.06*Sin(k),0,0.06*Cos(k),5,0,0,0,0,30,3)
 		Next
 	EndIf
-	
-	SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
-	
-End Function
 
+	SimulatedObjectTimer(i)=SimulatedObjectTimer(i)-1
+
+End Function
 
 Function ControlConveyorLead(i)
 
@@ -32736,12 +31785,12 @@ Function ControlConveyorLead(i)
 		dx=-1
 		dy=0
 	End Select
-	
+
 	If SimulatedObjectData(i,4)=3 TurnobjectTowardDirection(i,dx,dy,20,180)
-	
+
 	If SimulatedObjectData(i,4)=4 SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+SimulatedObjectData(i,9)/10.0) Mod 360
 
-	If Obj\Attributes\MovementTimer=0 
+	If Obj\Attributes\MovementTimer=0
 		size#=1.0
 	Else
 		size#=Float(1001-Obj\Attributes\MovementTimer)/Float(1001)
@@ -32760,10 +31809,9 @@ Function ControlConveyorLead(i)
 
 End Function
 
-
 Function ControlConveyorTail(i)
 
-	If SimulatedObjectActive(i)=1001 
+	If SimulatedObjectActive(i)=1001
 
 		Select (SimulatedObjectData(i,2)+40) Mod 4
 		Case 0
@@ -32779,10 +31827,10 @@ Function ControlConveyorTail(i)
 			dx=-1
 			dy=0
 		End Select
-		
+
 		If SimulatedObjectData(i,4)=3 TurnobjectTowardDirection(i,dx,dy,6,180)
 		If SimulatedObjectData(i,4)=4 SimulatedObjectYaw(i)=(SimulatedObjectYaw(i)+SimulatedObjectData(i,9)/10.0) Mod 360
-	
+
 		If SimulatedObjectData(i,4)=4
 			SimulatedObjectXScale(i)=1.5*(0.9+0.095*Sin((leveltimer*4) Mod 360))
 			SimulatedObjectYScale(i)=1.5*(0.9+0.095*Sin((leveltimer*4) Mod 360))
@@ -32796,14 +31844,12 @@ Function ControlConveyorTail(i)
 
 End Function
 
-
-
 Function SetLight(red,green,blue,speed,ared,agreen,ablue,aspeed)
 	SimulatedLightRedGoal=Red
 	SimulatedLightGreenGoal=Green
 	SimulatedLightBlueGoal=Blue
 	SimulatedLightChangeSpeed=speed
-	
+
 	SimulatedAmbientRedGoal=aRed
 	SimulatedAmbientGreenGoal=aGreen
 	SimulatedAmbientBlueGoal=aBlue
@@ -32817,7 +31863,7 @@ Function SetLightNow(red,green,blue,ared,agreen,ablue)
 	SimulatedLightRedGoal=Red
 	SimulatedLightGreenGoal=Green
 	SimulatedLightBlueGoal=Blue
-	
+
 	SimulatedAmbientRed=aRed
 	SimulatedAmbientBlue=aBlue
 	SimulatedAmbientGreen=aGreen
@@ -32829,24 +31875,23 @@ End Function
 Function StartMusic()
 
 	LevelMusicCustomVolume=100
-	
+
 	If levelmusic<>CurrentMusic And GlobalMusicVolume2>0
 		StopMusic()
-		
+
 		If levelmusic>0
 			If levelmusic=21
 				MusicChannel=PlayMusic ("data\models\ladder\valetfile.ogg")
 			Else
 				MusicChannel=PlayMusic ("data\music\"+levelmusic+".ogg")
 			EndIf
-		EndIf	
-		
+		EndIf
+
 		CurrentMusic=levelmusic
 	EndIf
-	
+
 	ChannelVolume musicchannel,GlobalMusicVolume*Float(LevelMusicCustomVolume)/100.0
-	
-	
+
 	LevelMusicCustomPitch=44
 	If LevelMusic=12 Then LevelMusicCustomPitch=22
 	ChannelPitch MusicChannel,LevelMusicCustomPitch*1000
@@ -32877,8 +31922,7 @@ Function LoopMusic()
 	If currentmusic>0 ;And (gamemode<10 Or currentmenu<>10)
 		; music looping
 		If ChannelPlaying(musicchannel)=0
-			
-		
+
 			If currentmusic=21
 				MusicChannel=PlayMusic("data\models\ladder\valetfile.ogg")
 
@@ -32889,8 +31933,6 @@ Function LoopMusic()
 			ChannelVolume MusicChannel,GlobalMusicVolume * Float(LevelMusicCustomVolume)/100.0
 			ChannelPitch MusicChannel,LevelMusicCustomPitch*1000
 
-			
-				
 		EndIf
 	EndIf
 
@@ -32899,15 +31941,15 @@ End Function
 Function ControlSoundscapes()
 
 	If currentmusic=-1 ; beach
-		If leveltimer Mod 250 = 0 
+		If leveltimer Mod 250 = 0
 			sfxa=126+Rand(0,1)
 			SoundPitch SoundFX(sfxa),Rand(10000,12000)
 			playSoundfx(sfxa,-1,-1)
 		EndIf
-		If Rand(0,300)=0 
+		If Rand(0,300)=0
 			sfxa=128+Rand(0,1)
 			If sfxa=128
-				If Rand(0,10)=4 
+				If Rand(0,10)=4
 					SoundPitch SoundFX(sfxa),Rand(10000,12000)
 				Else
 					SoundPitch SoundFX(sfxa),Rand(19000,22000)
@@ -32921,12 +31963,10 @@ Function ControlSoundscapes()
 
 End Function
 
-
-
 Function ControlLight()
-	
+
 	If SimulationLevel>=3
-		
+
 		If SimulatedLightRed>SimulatedLightRedGoal
 			SimulatedLightRed=SimulatedLightRed-SimulatedLightChangeSpeed
 			If SimulatedLightRed<SimulatedLightRedGoal Then SimulatedLightRed=SimulatedLightRedGoal
@@ -32948,13 +31988,13 @@ Function ControlLight()
 			SimulatedLightBlue=SimulatedLightBlue+SimulatedLightChangeSpeed
 			If SimulatedLightBlue>SimulatedLightBlueGoal Then SimulatedLightBlue=SimulatedLightBlueGoal
 		EndIf
-	
+
 		If SimulatedAmbientRed>SimulatedAmbientRedGoal
-			
+
 			SimulatedAmbientRed=SimulatedAmbientRed-SimulatedAmbientChangeSpeed
 			If SimulatedAmbientRed<SimulatedAmbientRedGoal Then SimulatedAmbientRed=SimulatedAmbientRedGoal
 		Else If SimulatedAmbientRed<SimulatedAmbientRedGoal
-			
+
 			SimulatedAmbientRed=SimulatedAmbientRed+SimulatedAmbientChangeSpeed
 			If SimulatedAmbientRed>SimulatedAmbientRedGoal Then SimulatedAmbientRed=SimulatedAmbientRedGoal
 		EndIf
@@ -32972,19 +32012,19 @@ Function ControlLight()
 			SimulatedAmbientBlue=SimulatedAmbientBlue+SimulatedAmbientChangeSpeed
 			If SimulatedAmbientBlue>SimulatedAmbientBlueGoal Then SimulatedAmbientBlue=SimulatedAmbientBlueGoal
 		EndIf
-	
+
 		LightColor Light,SimulatedLightRed,SimulatedLightGreen,SimulatedLightBlue
 		AmbientLight SimulatedAmbientRed,SimulatedAmbientGreen,SimulatedAmbientBlue
 		RotateEntity Light,35,-35,0
-		
+
 	Else
-	
+
 		LightColor Light,255,255,255
 		AmbientLight 155,155,155
 		RotateEntity Light,80,15,0
-		
+
 	EndIf
-	
+
 	If SimulationLevel>=4 And TooDark()
 		LightColor SpotLight,10,4,0
 		PositionEntity SpotLight,BrushCursorX+0.5,5,-BrushCursorY-3.5
@@ -32995,12 +32035,11 @@ Function ControlLight()
 
 End Function
 
-
 Function ControlWeather()
 
 	CentreX#=EntityX(Camera1)
 	CentreY#=EntityZ(Camera1)
-	
+
 	Select levelweather
 	Case 1
 		; light snow
@@ -33016,18 +32055,17 @@ Function ControlWeather()
 		; very heavy snow left to right
 		AddParticle(40,CentreX+Rnd(-10,-5),5,CentreY+Rnd(-8,4),0,.4,0.3,-.09,0,2,0,0,0,0,80,3)
 
-
 	Case 5
 		; rain
 		AddParticle(41,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.2,0,-.2,0,0,0,0,0,0,60,2)
-	
+
 		; leaves
 	;	If Rand(1,3)=1 AddParticle(42,Objectx(CameraFocusObject)+Rnd(-10,10),5,-ObjectY(CameraFocusObject)+Rnd(-10,10),0,1,Rnd(0,.2),Rnd(-.1,0),0,Rand(1,5),0,0,0,0,60,3)
 
 	Case 6
 		If leveltimer<1000000000
 			; void
-			If Rand(0,200)<2 
+			If Rand(0,200)<2
 				SetLight(Rand(0,255),Rand(0,255),Rand(0,255),2,Rand(0,255),Rand(0,255),Rand(0,255),2)
 			EndIf
 		EndIf
@@ -33048,53 +32086,50 @@ Function ControlWeather()
 					;playsoundfx(Rand(155,157),-1,-1)
 				EndIf
 			EndIf
-			
+
 			SetLight(lightningstorm,lightningstorm,lightningstorm,10,70,70,70,10)
 		EndIf
 	Case 8
 		If leveltimer<1000000000
 			; red alert
-			
 
 			alarm=leveltimer Mod 240
 			;If alarm=1 Then playsoundfxnow(98)
 			If alarm <120
-			
+
 				SetLight(alarm*2,0,0,10,70,20,20,10)
 			Else
 				SetLight(240-alarm*2,0,0,10,70,20,20,10)
 			EndIf
 		EndIf
-		
+
 	Case 9
-	
+
 		; light rising
 		If Rand(1,8)=3 	AddParticle(1,CentreX+Rnd(-10,10),0,CentreY+Rnd(-10,10),0,.2,0,+.03,0,2,0,0,0,0,200,3)
 
 	Case 10
-	
+
 		; light falling
 		If Rand(1,8)=3 	AddParticle(1,CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.2,0,-.03,0,2,0,0,0,0,200,3)
 
-
 	Case 11
-	
+
 		; stars rising
 		If Rand(1,5)=3 	AddParticle(Rand(32,38),CentreX+Rnd(-10,10),0,CentreY+Rnd(-10,10),0,.8,0,+.03,0,2,0,0,0,0,200,3)
 
-
 	Case 12
-	
+
 		; stars rising
 		If Rand(1,5)=3 	AddParticle(Rand(32,38),CentreX+Rnd(-10,10),8,CentreY+Rnd(-10,10),0,.8,0,-.03,0,2,0,0,0,0,200,3)
 
 	Case 13
-	
+
 		; foggy
 		If Rand(1,3)=3 	AddParticle(0,CentreX+Rnd(-10,10),-.8,CentreY+Rnd(-10,10),0,2,0,+.005,0,2,0,0,0,0,500,2)
 
 	Case 14
-	
+
 		; green foggy
 		If Rand(1,3)=3 	AddParticle(27,CentreX+Rnd(-10,10),-.8,CentreY+Rnd(-10,10),0,2,0,+.005,0,2,0,0,0,0,500,2)
 
@@ -33115,34 +32150,32 @@ Function ControlWeather()
 
 End Function
 
-
 Function ControlObjects()
 
 	For i=0 To NofObjects-1
-	
+
 		Obj.GameObject=LevelObjects(i)
 		Attributes.GameObjectAttributes=Obj\Attributes
 		Pos.GameObjectPosition=Obj\Position
-	
+
 		If Attributes\Reactive=True
-			
+
 			; Get Scale
 			ObjXScale#=SimulatedObjectXScale(i)*SimulatedObjectScaleXAdjust(i)
 			ObjYScale#=SimulatedObjectYScale(i)*SimulatedObjectScaleYAdjust(i)
 			ObjZScale#=SimulatedObjectZScale(i)*SimulatedObjectScaleZAdjust(i)
-		
+
 			;If (SimulatedObjectActive(i)<>0 And SimulatedObjectActive(i)<>1001) Or SimulationLevel>=2
 			If SimulatedObjectActive(i)<>0 Or SimulationLevel>=2
-			
-				; Select Visual Animation	
+
+				; Select Visual Animation
 				Select Attributes\ActivationType
 				Case 0
 					; nothing
 				Case 1
 					; Scale Vertical 0-1
 					ObjZScale=ObjZScale*Float(SimulatedObjectActive(i))/1001.0
-				
-				
+
 				Case 2
 					; scale all directions 0-1
 					ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
@@ -33152,35 +32185,30 @@ Function ControlObjects()
 					; scale planar only
 					ObjXScale=ObjXScale*Float(SimulatedObjectActive(i))/1001.0
 					ObjYScale=ObjYScale*Float(SimulatedObjectActive(i))/1001.0
-			
-			
+
 				Case 11
 					; push up from -1.01 to -0.01
 					SimulatedObjectZ#(i)=-0.99+Float(SimulatedObjectActive(i))/1001.0
-					
+
 				Case 12,13,14,15,16
 					; push up from -x.01 to -5.01 (used for stepping stones)
 					SimulatedObjectZ#(i)=-(Attributes\ActivationType-6)-.01+(Attributes\ActivationType-11)*Float(SimulatedObjectActive(i))/1001.0
-					
+
 				Case 17 ; *** THESE ONLY WORK FOR AUTODOORS - OBJECTTILEX MUST BE PRE_SET
 					; push north
 					SimulatedObjectY#(i)=Pos\TileY+0.5-SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
 				Case 18
 					; push East
 					SimulatedObjectX#(i)=Pos\TileX+0.5+SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
-			
+
 				Case 19
 					; push south
 					SimulatedObjectY#(i)=Pos\TileY+0.5+SimulatedObjectYScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
-			
+
 				Case 20
 					; push west
 					SimulatedObjectX#(i)=Pos\TileX+0.5-SimulatedObjectXScale(i)*(0.99-Float(SimulatedObjectActive(i))/1001.0)
-			
-			
-			
-				
-				
+
 				Case 21
 					If Attributes\ModelName$="!NPC" Or Attributes\ModelName$="!Tentacle"
 						Entity=GetChild(Obj\Model\Entity,3)
@@ -33191,27 +32219,21 @@ Function ControlObjects()
 					EndIf
 					; Fade in
 					EntityAlpha Entity,Float(SimulatedObjectActive(i))/1001.0
-											
+
 				Case 31
 					; push down from 1.01 to 0.01
 					SimulatedObjectZ#(i)=1.01-Float(SimulatedObjectActive(i))/1001.0
-					
+
 				Case 41
 					; rotate out (doors)
 					SimulatedObjectYaw#(i)=-160+160*Float(SimulatedObjectActive(i))/1001.0
-			
-				
-						
+
 				End Select
-				
+
 			EndIf
-			
-			
-			
-			
-			
+
 			Select Attributes\LogicType
-			
+
 			Case 20
 				ControlTrap(i)
 			Case 30
@@ -33282,7 +32304,7 @@ Function ControlObjects()
 				ControlSpring(i)
 			Case 281
 				ControlSucTube(i)
-			Case 290 
+			Case 290
 				ControlThwart(i)
 			Case 300
 				ControlIceFloat(i)
@@ -33330,45 +32352,43 @@ Function ControlObjects()
 				ControlGhost(i)
 			Case 471
 				ControlWraith(i)
-				
+
 			End Select
-			
-			
-			
+
 			SimulateObjectPosition(i)
 			SimulateObjectRotation(i)
 			ScaleEntity Obj\Model\Entity,ObjXScale#,ObjZScale#,ObjYScale#
-			
+
 			SimulatedObjectLastActive(i)=SimulatedObjectActive(i)
-			
+
 		;Else
 		;	AddParticle(2,ObjectXAdjust(i)+Pos\TileX+.5,ObjectZAdjust(i),-ObjectYAdjust(i)-Pos\TileY-.5,0,.2,0,.03,0,0,.01,0,0,0,100,3)
-		
+
 			If Obj\Model\HatEntity>0
 				TransformAccessoryEntityOntoBone(Obj\Model\HatEntity,Obj\Model\Entity)
 			EndIf
 			If Obj\Model\AccEntity>0
 				TransformAccessoryEntityOntoBone(Obj\Model\AccEntity,Obj\Model\Entity)
 			EndIf
-			
+
 		EndIf
-	
+
 	Next
-	
+
 	; Scroll Teleporters
 	For i=0 To 9
 		If TeleporterTexture(i)>0
 			PositionTexture TeleporterTexture(i),0,-Float((LevelTimer/3) Mod 100)/100.0
 		EndIf
 	Next
-	
+
 	PositionTexture StarTexture,0,Float(leveltimer Mod 1000) / 1000.0
 	PositionTexture RainbowTexture,0,Float(leveltimer Mod 1000) / 1000.0
 	PositionTexture GhostTexture,0,Float(leveltimer Mod 1000) / 1000.0
 	For i=0 To 2
 		PositionTexture WraithTexture(i),Float(leveltimer Mod 100) / 100.0,0
 	Next
-	
+
 	For i=0 To 2
 		PositionTexture WaterFallTexture(i),0,((LevelTimer) Mod 50)/50.0
 	Next
@@ -33378,9 +32398,6 @@ Function ControlObjects()
 	PositionTexture RainbowTexture2,(leveltimer Mod 7000)/7000.0,(leveltimer Mod 1000)/1000.0
 
 End Function
-
-
-
 
 Include "particles.bb"
 Include "sound.bb"
